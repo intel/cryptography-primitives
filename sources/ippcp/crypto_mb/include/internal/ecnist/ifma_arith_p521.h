@@ -88,6 +88,7 @@ __INLINE void MB_FUNC_NAME(mov_FE521_)(U64 r[], const U64 a[])
 }
 
 /* move coordinate using mask: R = k? A : B */
+OPTIMIZE_OFF_VS19
 __INLINE void MB_FUNC_NAME(mask_mov_FE521_)(U64 R[], const U64 B[], __mb_mask k, const U64 A[])
 {
    R[0] = mask_mov64(B[0], k, A[0]);

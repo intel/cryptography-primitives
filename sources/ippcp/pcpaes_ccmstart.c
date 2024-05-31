@@ -16,7 +16,7 @@
 
 /*
 //     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
-// 
+//
 //     Context:
 //        ippsAES_CCMStart()
 //
@@ -34,7 +34,7 @@
 /*F*
 //    Name: ippsAES_CCMStart
 //
-// Purpose: Start the process (encryption+generation) or (decryption+veryfication).
+// Purpose: Start the process (encryption+generation) or (decryption+verification).
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pState == NULL

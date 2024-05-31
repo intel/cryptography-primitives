@@ -81,9 +81,9 @@
                 : "zmm0");
                 return v;
             }
-            
+
         #else
-            // Use IFMA instrinsics for all other compilers
+            // Use IFMA intrinsics for all other compilers
             #define _mm512_madd52lo_epu64_(r, a, b, c, o) {\
                 r=fma52lo(a, b, _mm512_loadu_si512((U64*)(((char*)c)+o))); \
             }
@@ -96,7 +96,7 @@
             __INLINE U64 select64(__mb_mask k, U64 v, U64 *d) {
                 return _mm512_mask_blend_epi64(k, v, _mm512_load_si512(d));
             }
-            
+
             #pragma optimize("", on)
         #endif
 
@@ -164,7 +164,7 @@
         #else
             #define mask_xor _kxor_mask8
         #endif
-        
+
         #define get_mask(a)       (a)
         #define get_mask_value(a) (a)
 
@@ -196,7 +196,7 @@
             X5_ = _mm512_mask_shuffle_i64x2(X45H, 0b11001111, X0123H, X67H, 0b10001000 ); \
             X7_ = _mm512_mask_shuffle_i64x2(X67H, 0b00111111, X0123H, X45H, 0b10111101 ); \
         }
-        
+
     #else
         #error "Incorrect SIMD length"
     #endif  // SIMD_LEN

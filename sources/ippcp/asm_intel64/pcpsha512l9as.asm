@@ -354,7 +354,7 @@ vmovdqa  YMMWORD [rsi+(%%W_AHEAD/2)*sizeof(ymmword)+(%%nr/2)*sizeof(ymmword)],yT
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 
 align IPP_ALIGN_FACTOR
@@ -409,6 +409,7 @@ SHA512_YMM_BF  dq 00001020304050607h, 008090a0b0c0d0e0fh, 00001020304050607h, 00
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+segment .text align=IPP_ALIGN_FACTOR
 align IPP_ALIGN_FACTOR
 IPPASM UpdateSHA512,PUBLIC
 %assign LOCAL_FRAME (sizeof(qword)*4 + sizeof(qword)*80*2)

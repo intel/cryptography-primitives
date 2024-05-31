@@ -331,7 +331,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 
 align IPP_ALIGN_FACTOR
@@ -344,7 +344,7 @@ SHA1_YMM_K     dd 05a827999h, 05a827999h, 05a827999h, 05a827999h, 05a827999h, 05
 SHA1_YMM_BF   dd 00010203h,04050607h,08090a0bh,0c0d0e0fh
               dd 00010203h,04050607h,08090a0bh,0c0d0e0fh
 
-
+segment .text align=IPP_ALIGN_FACTOR
 ;*****************************************************************************************
 ;* Purpose:     Update internal digest according to message block
 ;*
@@ -365,7 +365,7 @@ IPPASM UpdateSHA1,PUBLIC
 
 %xdefine MBS_SHA1    (64)
 
-   mov            r15, rsp                ; store orifinal rsp
+   mov            r15, rsp                ; store original rsp
    and            rsp, -IPP_ALIGN_FACTOR  ; 32-byte aligned stack
 
    movsxd         r14, edx                ; input length in bytes

@@ -19,7 +19,7 @@
 
 #include <crypto_mb/defs.h>
 
-/* exponetiation processing window */
+/* exponentiation processing window */
 #define EXP_WIN_SIZE (5)
 #define EXP_WIN_MASK ((1<<EXP_WIN_SIZE) -1)
 

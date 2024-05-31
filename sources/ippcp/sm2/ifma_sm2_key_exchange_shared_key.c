@@ -115,7 +115,7 @@ IPP_OWN_DEFN(IppStatus, gfec_key_exchange_sm2_shared_key_avx512, (Ipp8u* pShared
    cpEcGFpReleasePool(1, pEC);
    IPP_BADARG_RET(!result, ippStsEphemeralKeyErr);
 
-   /* create buffer data (it needes further use compute tmp_p)
+   /* create buffer data (it needs further use compute tmp_p)
     * -> SM3( x(u/v)(0) || Za(1) || Zb(2) || xa(3) || ya(4) || xb(5) || yb(6) )
     */
    BNU_CHUNK_T *pDataBuff = cpGFpGetPool(7, pME);

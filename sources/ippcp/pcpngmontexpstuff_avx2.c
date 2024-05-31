@@ -384,7 +384,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU_sscm_avx2, (BNU_CHUNK_T* dataY, const BNU
 // "fast" fixed-size window montgomery exponentiation
 //
 // scratch buffer structure:
-//    precomuted table of multipliers[(1<<w)*redLen]
+//    precomputed table of multipliers[(1<<w)*redLen]
 //    redM[redBufferLen]
 //    redY[redBufferLen]
 //    redT[redBufferLen]
@@ -479,7 +479,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpWin_BNU_avx2, (BNU_CHUNK_T* dataY, const BNU_CHUN
       int eBit = bitsizeE - window;
 
       /* Note:  Static analysis can generate error/warning on the expression below.
-      
+
       The value of "bitSizeE" is limited, (modulusBitSize > bitSizeE > 0),
       it is checked in initialization phase by (ippsRSA_GetSizePublickey() and ippsRSA_InitPublicKey).
       Buffer "redE" assigned for copy of dataE, is 1 (64-bit) chunk longer than size of RSA modulus,
@@ -538,7 +538,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpWin_BNU_avx2, (BNU_CHUNK_T* dataY, const BNU_CHUN
 // "safe" fixed-size window montgomery exponentiation
 //
 // scratch buffer structure:
-//    precomuted table of multipliers[(1<<w)*redLen]
+//    precomputed table of multipliers[(1<<w)*redLen]
 //    redM[redBufferLen]
 //    redY[redBufferLen]
 //    redT[redBufferLen]

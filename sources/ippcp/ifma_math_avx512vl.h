@@ -80,7 +80,7 @@
           __asm__ ( "vpmadd52huq " #o "(%2), %1, %0" : "+x" (r): "x" (b), "r" (c) ); \
       }
   #else
-      /* Use IFMA instrinsics for all other compilers */
+      /* Use IFMA intrinsics for all other compilers */
       static U64 fma52lo(U64 a, U64 b, U64 c)
       {
         return _mm256_madd52lo_epu64(a, b, c);

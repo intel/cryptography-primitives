@@ -386,7 +386,8 @@ typedef enum {
     idCtxSM3,
     idCtxAESXTS,
     idxCtxECES_SM2,
-    idCtxGFPECKE
+    idCtxGFPECKE,
+    idCtxLMS
 } IppCtxId;
 
 

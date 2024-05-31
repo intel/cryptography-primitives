@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     DL over Prime Finite Field (generate domain parameters)
-// 
+//
 //  Contents:
 //     ippsDLPGenerateDH()
 //     ippsDLPGenerateDSA()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -103,7 +103,7 @@ IPPFUN(IppStatus, ippsDLPGenerateDH,(const IppsBigNumState* pSeedIn,
       IppsBigNumState* pSeed1 = cpBigNumListGet(&pList);
       IppsBigNumState* pSeed2 = cpBigNumListGet(&pList);
 
-      /* interally generates SeedIn value by default */
+      /* internally generates SeedIn value by default */
       IppBool seed_is_random = ippTrue;
       int seedBitSize = DLP_BITSIZER(pDL);
 

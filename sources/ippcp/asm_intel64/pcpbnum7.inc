@@ -111,7 +111,7 @@
 %endmacro
 
 ;;
-;; CMP_BNU     comare BNUs
+;; CMP_BNU     compare BNUs
 ;;
 ;; input
 ;;    rSrc1    points BNU1

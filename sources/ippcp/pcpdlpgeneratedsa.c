@@ -109,7 +109,7 @@ IPPFUN(IppStatus, ippsDLPGenerateDSA,(const IppsBigNumState* pSeedIn,
 
       IppsBigNumState* pSeed = cpBigNumListGet(&pList);
 
-      /* interally generates SeedIn value */
+      /* internally generates SeedIn value */
       int seedBitSize = MIN_DLPDSA_SEEDSIZE;
       IppBool seed_is_random = ippTrue;
 

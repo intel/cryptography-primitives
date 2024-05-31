@@ -30,6 +30,10 @@
 #define STR2(x)           #x
 #define STR(x)       STR2(x)
 
+#ifndef STR_BASE_VERSION
+#define STR_BASE_VERSION() STR(IPP_VERSION_MAJOR) "," STR(IPP_VERSION_MINOR) ", " STR(IPP_VERSION_UPDATE)
+#endif
+
 #ifndef STR_VERSION
  #ifdef IPP_REVISION
   #define STR_VERSION() IPP_VERSION_STR " (r" STR( IPP_REVISION ) ")"

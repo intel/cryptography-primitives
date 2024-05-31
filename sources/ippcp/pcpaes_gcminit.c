@@ -30,7 +30,7 @@
 #include "owncp.h"
 #include "pcpaesm.h"
 #include "pcptool.h"
-#include "pcpaes_internal_func.h"
+#include "pcpaes_gcm_internal_func.h"
 
 #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
 #  include "pcprijtables.h"
@@ -89,7 +89,7 @@ IPPFUN(IppStatus, ippsAES_GCMInit,(const Ipp8u* pKey, int keyLen, IppsAES_GCMSta
 
    Ipp8u zeroKey[32] = {0};
    const Ipp8u* pActualKey = pKey? pKey : zeroKey;
-   
+
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
       /* Reset AES noise parameters */
       cpAESNoiseParams *params = (cpAESNoiseParams *)&AESGCM_NOISE_PARAMS(pState);
@@ -132,7 +132,7 @@ IPPFUN(IppStatus, ippsAES_GCMInit,(const Ipp8u* pKey, int keyLen, IppsAES_GCMSta
    }
 
 #else
-   
+
    /* init cipher */
    {
       IppStatus sts = ippsAESInit(pKey, keyLen, AESGCM_CIPHER(pState), cpSizeofCtx_AES());
@@ -155,24 +155,24 @@ IPPFUN(IppStatus, ippsAES_GCMInit,(const Ipp8u* pKey, int keyLen, IppsAES_GCMSta
       #endif
    }
 
+   #if (_IPP >=_IPP_H9) || (_IPP32E>=_IPP32E_L9)
+      if (IsFeatureEnabled(ippCPUID_AVX2VAES|ippCPUID_AVX2VCLMUL)) {
+         AesGcmPrecompute_avx2_vaes(AESGCM_CPWR(pState), AESGCM_HKEY(pState));
+      }
+      else
+   #endif /* #if (_IPP==_IPP_H9) || (_IPP32E==_IPP32E_L9) */
+
    #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   // the dead code that currently is unused
-   //#if(_IPP32E>=_IPP32E_K0)
-   //if (IsFeatureEnabled(ippCPUID_AVX512VAES)) {
-   //   /* pre-compute hKey<<1, (hKey<<1)^2, (hKey<<1)^3, ... , (hKey<<1)^15 and corresponding
-   //      Karatsuba constant multipliers for aggregated reduction */
-   //   AesGcmPrecompute_vaes(AESGCM_CPWR(pState), AESGCM_HKEY(pState));
-   //}
-   //else
-   //#endif /* #if(_IPP32E>=_IPP32E_K0) */
-   if(IsFeatureEnabled(ippCPUID_AES|ippCPUID_CLMUL) || IsFeatureEnabled(ippCPUID_AVX2VAES|ippCPUID_AVX2VCLMUL)) {
-      /* pre-compute reflect(hkey) and hKey<<1, (hKey<<1)^2 and (hKey<<1)^4 powers of hKey */
-      AesGcmPrecompute_avx(AESGCM_CPWR(pState), AESGCM_HKEY(pState));
-   }
-   else
-   #endif
-      AesGcmPrecompute_table2K(AES_GCM_MTBL(pState), AESGCM_HKEY(pState));
-   #endif /* #if(_IPP32E>=_IPP32E_K0) */
+         if(IsFeatureEnabled(ippCPUID_AES|ippCPUID_CLMUL)) {
+            /* pre-compute reflect(hkey) and hKey<<1, (hKey<<1)^2 and (hKey<<1)^4 powers of hKey */
+            AesGcmPrecompute_avx(AESGCM_CPWR(pState), AESGCM_HKEY(pState));
+         }
+         else
+   #endif /* #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8) */
+         AesGcmPrecompute_table2K(AES_GCM_MTBL(pState), AESGCM_HKEY(pState));
+
+#endif /* #if(_IPP32E>=_IPP32E_K0) */
+
 
    return ippStsNoErr;
 }

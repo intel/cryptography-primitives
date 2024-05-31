@@ -562,3 +562,9 @@ _ippsXMSSSetSignatureState
 _ippsXMSSSignatureStateGetSize
 _ippsXMSSPublicKeyStateGetSize
 _ippsXMSSBufferGetSize
+_ippsLMSBufferGetSize
+_ippsLMSSignatureStateGetSize
+_ippsLMSPublicKeyStateGetSize
+_ippsLMSSetPublicKeyState
+_ippsLMSSetSignatureState
+_ippsLMSVerify

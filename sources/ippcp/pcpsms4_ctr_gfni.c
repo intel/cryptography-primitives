@@ -42,12 +42,12 @@
 
 #include "pcpsms4_gfni.h"
 
-static __ALIGN32 Ipp8u endiannes_swap[] = {12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3,
+static __ALIGN32 Ipp8u endianness_swap[] = {12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3,
                                            12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3,
                                            12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3,
                                            12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3};
 
-static __ALIGN32 Ipp8u endiannes[] = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0,
+static __ALIGN32 Ipp8u endianness[] = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0,
                                       15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0,
                                       15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0,
                                       15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0};
@@ -88,9 +88,9 @@ static
 int cpSMS4_CTR_gfni512x32(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey, const Ipp8u* pCtrMask, Ipp8u* pCtr);
 static
 int cpSMS4_CTR_gfni512x16(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey, const Ipp8u* pCtrMask, Ipp8u* pCtr);
-static 
+static
 int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey, const Ipp8u* pCtrMask, Ipp8u* pCtr);
-static 
+static
 int cpSMS4_CTR_gfni128x8(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey, const Ipp8u* pCtrMask, Ipp8u* pCtr);
 static
 int cpSMS4_ECB_gfni128x4(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey, const Ipp8u* pCtrMask, Ipp8u* pCtr);
@@ -113,94 +113,94 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_gfni512, (Ipp8u* pOut, const Ipp8u* pInp, int len,
       // TMP[22] - ctrUnch
 
       TMP[20]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtr));
-      TMP[21]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtrMask)); 
+      TMP[21]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtrMask));
 
       /* read string counter and convert to numerical */
-      TMP[20]  = _mm512_shuffle_epi8(TMP[20], M512(endiannes));
+      TMP[20]  = _mm512_shuffle_epi8(TMP[20], M512(endianness));
 
       /* read string mask and convert to numerical */
-      TMP[21]  = _mm512_shuffle_epi8(TMP[21], M512(endiannes));
+      TMP[21]  = _mm512_shuffle_epi8(TMP[21], M512(endianness));
 
       /* upchanged counter bits */
       TMP[22] = _mm512_andnot_si512(TMP[21], TMP[20]);
-      
+
       /* first incremention */
       TMP[20] = inc512(TMP[20], first_inc);
-      
+
       TMP[20] = _mm512_and_si512(TMP[21], TMP[20]);
 
       for (n = 0; n < processedLen; n += (64 * MBS_SMS4), pInp += (64 * MBS_SMS4), pOut += (64 * MBS_SMS4)) {
-         int itr; 
+         int itr;
 
          TMP[0]  = TMP[20];
          TMP[1]  = inc512(TMP[0], next_inc);
          TMP[2]  = inc512(TMP[1], next_inc);
          TMP[3]  = inc512(TMP[2], next_inc);
-         TMP[20] = inc512(TMP[3], next_inc);    
+         TMP[20] = inc512(TMP[3], next_inc);
 
          TMP[0] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[0], TMP[21]));
          TMP[1] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[1], TMP[21]));
          TMP[2] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[2], TMP[21]));
          TMP[3] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[3], TMP[21]));
 
-         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
          TRANSPOSE_INP_512(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
-         
+
          TMP[0]  = TMP[20];
          TMP[1]  = inc512(TMP[0], next_inc);
          TMP[2]  = inc512(TMP[1], next_inc);
          TMP[3]  = inc512(TMP[2], next_inc);
-         TMP[20] = inc512(TMP[3], next_inc);    
+         TMP[20] = inc512(TMP[3], next_inc);
 
          TMP[0] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[0], TMP[21]));
          TMP[1] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[1], TMP[21]));
          TMP[2] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[2], TMP[21]));
          TMP[3] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[3], TMP[21]));
 
-         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
          TRANSPOSE_INP_512(TMP[8], TMP[9], TMP[10], TMP[11], TMP[0], TMP[1], TMP[2], TMP[3]);
 
          TMP[0]  = TMP[20];
          TMP[1]  = inc512(TMP[0], next_inc);
          TMP[2]  = inc512(TMP[1], next_inc);
          TMP[3]  = inc512(TMP[2], next_inc);
-         TMP[20] = inc512(TMP[3], next_inc);    
+         TMP[20] = inc512(TMP[3], next_inc);
 
          TMP[0] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[0], TMP[21]));
          TMP[1] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[1], TMP[21]));
          TMP[2] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[2], TMP[21]));
          TMP[3] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[3], TMP[21]));
 
-         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
          TRANSPOSE_INP_512(TMP[12], TMP[13], TMP[14], TMP[15], TMP[0], TMP[1], TMP[2], TMP[3]);
 
          TMP[0]  = TMP[20];
          TMP[1]  = inc512(TMP[0], next_inc);
          TMP[2]  = inc512(TMP[1], next_inc);
          TMP[3]  = inc512(TMP[2], next_inc);
-         TMP[20] = inc512(TMP[3], next_inc);    
+         TMP[20] = inc512(TMP[3], next_inc);
 
          TMP[0] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[0], TMP[21]));
          TMP[1] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[1], TMP[21]));
          TMP[2] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[2], TMP[21]));
          TMP[3] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[3], TMP[21]));
 
-         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
          TRANSPOSE_INP_512(TMP[16], TMP[17], TMP[18], TMP[19], TMP[0], TMP[1], TMP[2], TMP[3]);
 
-         
+
          for (itr = 0; itr < 8; itr++, pRKey += 4) {
          /* initial xors */
          TMP[3] = TMP[2] = TMP[1] = TMP[0] = _mm512_set1_epi32((Ipp32s)pRKey[0]);
@@ -303,7 +303,7 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_gfni512, (Ipp8u* pOut, const Ipp8u* pInp, int len,
          TMP[19] = _mm512_xor_si512(_mm512_xor_si512(TMP[19], TMP[3]), L512(TMP[3]));
 
          }
-         
+
          pRKey -= 32;
 
          TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
@@ -350,7 +350,7 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_gfni512, (Ipp8u* pOut, const Ipp8u* pInp, int len,
 
       /* Save counter */
       TMP[20] = _mm512_xor_si512(TMP[22], _mm512_and_si512(TMP[20], TMP[21]));
-      TMP[20] = _mm512_shuffle_epi8(TMP[20],  M512(endiannes));
+      TMP[20] = _mm512_shuffle_epi8(TMP[20],  M512(endianness));
       _mm_storeu_si128((__m128i*)pCtr, _mm512_castsi512_si128(TMP[20]));
 
       /* clear secret data */
@@ -359,7 +359,7 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_gfni512, (Ipp8u* pOut, const Ipp8u* pInp, int len,
       }
 
    }
-   
+
    len -= processedLen;
    if (len)
       processedLen += cpSMS4_CTR_gfni512x48(pOut, pInp, len, pRKey, pCtrMask, pCtr);
@@ -386,76 +386,76 @@ int cpSMS4_CTR_gfni512x48(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
       // TMP[18] - ctrUnch
 
       TMP[16]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtr));
-      TMP[17]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtrMask)); 
+      TMP[17]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtrMask));
 
       /* read string counter and convert to numerical */
-      TMP[16]  = _mm512_shuffle_epi8(TMP[16], M512(endiannes));
+      TMP[16]  = _mm512_shuffle_epi8(TMP[16], M512(endianness));
 
       /* read string mask and convert to numerical */
-      TMP[17]  = _mm512_shuffle_epi8(TMP[17], M512(endiannes));
+      TMP[17]  = _mm512_shuffle_epi8(TMP[17], M512(endianness));
 
       /* upchanged counter bits */
       TMP[18] = _mm512_andnot_si512(TMP[17], TMP[16]);
-      
+
       /* first incremention */
       TMP[16] = inc512(TMP[16], first_inc);
-      
+
       TMP[16] = _mm512_and_si512(TMP[17], TMP[16]);
 
       for (n = 0; n < processedLen; n += (48 * MBS_SMS4), pInp += (48 * MBS_SMS4), pOut += (48 * MBS_SMS4)) {
-         int itr; 
+         int itr;
 
             TMP[0]  = TMP[16];
             TMP[1]  = inc512(TMP[0], next_inc);
             TMP[2]  = inc512(TMP[1], next_inc);
             TMP[3]  = inc512(TMP[2], next_inc);
-            TMP[16] = inc512(TMP[3], next_inc);    
+            TMP[16] = inc512(TMP[3], next_inc);
 
             TMP[0] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[0], TMP[17]));
             TMP[1] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[1], TMP[17]));
             TMP[2] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[2], TMP[17]));
             TMP[3] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[3], TMP[17]));
 
-            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
             TRANSPOSE_INP_512(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
-            
+
             TMP[0]  = TMP[16];
             TMP[1]  = inc512(TMP[0], next_inc);
             TMP[2]  = inc512(TMP[1], next_inc);
             TMP[3]  = inc512(TMP[2], next_inc);
-            TMP[16] = inc512(TMP[3], next_inc);    
+            TMP[16] = inc512(TMP[3], next_inc);
 
             TMP[0] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[0], TMP[17]));
             TMP[1] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[1], TMP[17]));
             TMP[2] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[2], TMP[17]));
             TMP[3] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[3], TMP[17]));
 
-            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
             TRANSPOSE_INP_512(TMP[8], TMP[9], TMP[10], TMP[11], TMP[0], TMP[1], TMP[2], TMP[3]);
 
             TMP[0]  = TMP[16];
             TMP[1]  = inc512(TMP[0], next_inc);
             TMP[2]  = inc512(TMP[1], next_inc);
             TMP[3]  = inc512(TMP[2], next_inc);
-            TMP[16] = inc512(TMP[3], next_inc);    
+            TMP[16] = inc512(TMP[3], next_inc);
 
             TMP[0] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[0], TMP[17]));
             TMP[1] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[1], TMP[17]));
             TMP[2] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[2], TMP[17]));
             TMP[3] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[3], TMP[17]));
 
-            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
             TRANSPOSE_INP_512(TMP[12], TMP[13], TMP[14], TMP[15], TMP[0], TMP[1], TMP[2], TMP[3]);
-            
+
             for (itr = 0; itr < 8; itr++, pRKey += 4) {
             /* initial xors */
             TMP[2] = TMP[1] = TMP[0] = _mm512_set1_epi32((Ipp32s)pRKey[0]);
@@ -538,7 +538,7 @@ int cpSMS4_CTR_gfni512x48(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
             TMP[15] = _mm512_xor_si512(_mm512_xor_si512(TMP[15], TMP[2]), L512(TMP[2]));
 
          }
-         
+
          pRKey -= 32;
 
          TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
@@ -575,7 +575,7 @@ int cpSMS4_CTR_gfni512x48(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
 
       /* Save counter */
       TMP[16] = _mm512_xor_si512(TMP[18], _mm512_and_si512(TMP[16], TMP[17]));
-      TMP[16] = _mm512_shuffle_epi8(TMP[16],  M512(endiannes));
+      TMP[16] = _mm512_shuffle_epi8(TMP[16],  M512(endianness));
       _mm_storeu_si128((__m128i*)pCtr, _mm512_castsi512_si128(TMP[16]));
 
       /* clear secret data */
@@ -584,7 +584,7 @@ int cpSMS4_CTR_gfni512x48(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
       }
 
    }
-   
+
    len -= processedLen;
    if (len)
       processedLen += cpSMS4_CTR_gfni512x32(pOut, pInp, len, pRKey, pCtrMask, pCtr);
@@ -611,59 +611,59 @@ int cpSMS4_CTR_gfni512x32(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
       // TMP[14] - ctrUnch
 
       TMP[12]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtr));
-      TMP[13]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtrMask)); 
+      TMP[13]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtrMask));
 
       /* read string counter and convert to numerical */
-      TMP[12]  = _mm512_shuffle_epi8(TMP[12], M512(endiannes));
+      TMP[12]  = _mm512_shuffle_epi8(TMP[12], M512(endianness));
 
       /* read string mask and convert to numerical */
-      TMP[13]  = _mm512_shuffle_epi8(TMP[13], M512(endiannes));
+      TMP[13]  = _mm512_shuffle_epi8(TMP[13], M512(endianness));
 
       /* upchanged counter bits */
       TMP[14] = _mm512_andnot_si512(TMP[13], TMP[12]);
-      
+
       /* first incremention */
       TMP[12] = inc512(TMP[12], first_inc);
-      
+
       TMP[12] = _mm512_and_si512(TMP[13], TMP[12]);
 
       for (n = 0; n < processedLen; n += (32 * MBS_SMS4), pInp += (32 * MBS_SMS4), pOut += (32 * MBS_SMS4)) {
-         int itr; 
+         int itr;
 
             TMP[0]  = TMP[12];
             TMP[1]  = inc512(TMP[0], next_inc);
             TMP[2]  = inc512(TMP[1], next_inc);
             TMP[3]  = inc512(TMP[2], next_inc);
-            TMP[12] = inc512(TMP[3], next_inc);    
+            TMP[12] = inc512(TMP[3], next_inc);
 
             TMP[0] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[0], TMP[13]));
             TMP[1] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[1], TMP[13]));
             TMP[2] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[2], TMP[13]));
             TMP[3] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[3], TMP[13]));
 
-            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
             TRANSPOSE_INP_512(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
-            
+
             TMP[0]  = TMP[12];
             TMP[1]  = inc512(TMP[0], next_inc);
             TMP[2]  = inc512(TMP[1], next_inc);
             TMP[3]  = inc512(TMP[2], next_inc);
-            TMP[12] = inc512(TMP[3], next_inc);    
+            TMP[12] = inc512(TMP[3], next_inc);
 
             TMP[0] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[0], TMP[13]));
             TMP[1] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[1], TMP[13]));
             TMP[2] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[2], TMP[13]));
             TMP[3] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[3], TMP[13]));
 
-            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+            TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+            TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+            TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+            TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
             TRANSPOSE_INP_512(TMP[8], TMP[9], TMP[10], TMP[11], TMP[0], TMP[1], TMP[2], TMP[3]);
-            
+
             for (itr = 0; itr < 8; itr++, pRKey += 4) {
             /* initial xors */
             TMP[1] = TMP[0] = _mm512_set1_epi32((Ipp32s)pRKey[0]);
@@ -726,7 +726,7 @@ int cpSMS4_CTR_gfni512x32(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
             TMP[11] = _mm512_xor_si512(_mm512_xor_si512(TMP[11], TMP[1]), L512(TMP[1]));
 
          }
-         
+
          pRKey -= 32;
 
          TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
@@ -753,7 +753,7 @@ int cpSMS4_CTR_gfni512x32(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
 
       /* Save counter */
       TMP[12] = _mm512_xor_si512(TMP[14], _mm512_and_si512(TMP[12], TMP[13]));
-      TMP[12] = _mm512_shuffle_epi8(TMP[12],  M512(endiannes));
+      TMP[12] = _mm512_shuffle_epi8(TMP[12],  M512(endianness));
       _mm_storeu_si128((__m128i*)pCtr, _mm512_castsi512_si128(TMP[12]));
 
       /* clear secret data */
@@ -762,7 +762,7 @@ int cpSMS4_CTR_gfni512x32(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
       }
 
    }
-   
+
    len -= processedLen;
    if (len)
       processedLen += cpSMS4_CTR_gfni512x16(pOut, pInp, len, pRKey, pCtrMask, pCtr);
@@ -789,40 +789,40 @@ int cpSMS4_CTR_gfni512x16(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
       // TMP[10] - ctrUnch
 
       TMP[8]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtr));
-      TMP[9]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtrMask)); 
+      TMP[9]  = _mm512_broadcast_i64x2(_mm_loadu_si128((__m128i*)pCtrMask));
 
       /* read string counter and convert to numerical */
-      TMP[8]  = _mm512_shuffle_epi8(TMP[8], M512(endiannes));
+      TMP[8]  = _mm512_shuffle_epi8(TMP[8], M512(endianness));
 
       /* read string mask and convert to numerical */
-      TMP[9]  = _mm512_shuffle_epi8(TMP[9], M512(endiannes));
+      TMP[9]  = _mm512_shuffle_epi8(TMP[9], M512(endianness));
 
       /* upchanged counter bits */
       TMP[10] = _mm512_andnot_si512(TMP[9], TMP[8]);
-      
+
       /* first incremention */
       TMP[8] = inc512(TMP[8], first_inc);
-      
+
       TMP[8] = _mm512_and_si512(TMP[9], TMP[8]);
 
       for (n = 0; n < processedLen; n += (16 * MBS_SMS4), pInp += (16 * MBS_SMS4), pOut += (16 * MBS_SMS4)) {
-         int itr; 
+         int itr;
 
          TMP[0] = TMP[8];
          TMP[1] = inc512(TMP[0], next_inc);
          TMP[2] = inc512(TMP[1], next_inc);
          TMP[3] = inc512(TMP[2], next_inc);
-         TMP[8] = inc512(TMP[3], next_inc);    
+         TMP[8] = inc512(TMP[3], next_inc);
 
          TMP[0] = _mm512_xor_si512(TMP[10], _mm512_and_si512(TMP[0], TMP[9]));
          TMP[1] = _mm512_xor_si512(TMP[10], _mm512_and_si512(TMP[1], TMP[9]));
          TMP[2] = _mm512_xor_si512(TMP[10], _mm512_and_si512(TMP[2], TMP[9]));
          TMP[3] = _mm512_xor_si512(TMP[10], _mm512_and_si512(TMP[3], TMP[9]));
 
-         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endiannes_swap));
-         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endiannes_swap));
-         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endiannes_swap));
-         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endiannes_swap));
+         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(endianness_swap));
+         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(endianness_swap));
+         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(endianness_swap));
+         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(endianness_swap));
          TRANSPOSE_INP_512(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
 
          for (itr = 0; itr < 8; itr++, pRKey += 4) {
@@ -883,7 +883,7 @@ int cpSMS4_CTR_gfni512x16(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
 
       /* Save counter */
       TMP[8] = _mm512_xor_si512(TMP[10], _mm512_and_si512(TMP[8], TMP[9]));
-      TMP[8] = _mm512_shuffle_epi8(TMP[8],  M512(endiannes));
+      TMP[8] = _mm512_shuffle_epi8(TMP[8],  M512(endianness));
       _mm_storeu_si128((__m128i*)pCtr, _mm512_castsi512_si128(TMP[8]));
 
       /* clear secret data */
@@ -892,7 +892,7 @@ int cpSMS4_CTR_gfni512x16(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
       }
 
    }
-   
+
    len -= processedLen;
    if (len)
       processedLen += cpSMS4_CTR_gfni128x12(pOut, pInp, len, pRKey, pCtrMask, pCtr);
@@ -904,14 +904,14 @@ int cpSMS4_CTR_gfni512x16(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
 // 12*MBS_SMS4 processing
 */
 
-static 
+static
 int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey, const Ipp8u* pCtrMask, Ipp8u* pCtr)
 {
    int processedLen = len - (len % (12 * MBS_SMS4));
    int n;
 
    if(processedLen){
-   
+
       __ALIGN16 __m128i TMP[22];
 
       // TMP[15] - ctr
@@ -921,8 +921,8 @@ int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
       TMP[15] = _mm_loadu_si128((__m128i*)pCtr);
       TMP[16] = _mm_loadu_si128((__m128i*)pCtrMask);
 
-      TMP[16] = _mm_shuffle_epi8(TMP[16], M128(endiannes));
-      TMP[15] = _mm_shuffle_epi8(TMP[15], M128(endiannes));
+      TMP[16] = _mm_shuffle_epi8(TMP[16], M128(endianness));
+      TMP[15] = _mm_shuffle_epi8(TMP[15], M128(endianness));
       TMP[17] = _mm_andnot_si128(TMP[16], TMP[15]);
 
       for(n=0; n<processedLen; n+=(12*MBS_SMS4), pInp+=(12*MBS_SMS4), pOut+=(12*MBS_SMS4)) {
@@ -939,10 +939,10 @@ int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
          TMP[20] = _mm_xor_si128(TMP[17], _mm_and_si128(TMP[20], TMP[16]));
          TMP[21] = _mm_xor_si128(TMP[17], _mm_and_si128(TMP[21], TMP[16]));
 
-         TMP[3] = _mm_shuffle_epi8(TMP[18], M128(endiannes_swap));
-         TMP[4] = _mm_shuffle_epi8(TMP[19], M128(endiannes_swap));
-         TMP[5] = _mm_shuffle_epi8(TMP[20], M128(endiannes_swap));
-         TMP[6] = _mm_shuffle_epi8(TMP[21], M128(endiannes_swap));
+         TMP[3] = _mm_shuffle_epi8(TMP[18], M128(endianness_swap));
+         TMP[4] = _mm_shuffle_epi8(TMP[19], M128(endianness_swap));
+         TMP[5] = _mm_shuffle_epi8(TMP[20], M128(endianness_swap));
+         TMP[6] = _mm_shuffle_epi8(TMP[21], M128(endianness_swap));
 
          TRANSPOSE_INP_128(TMP[3],TMP[4],TMP[5],TMP[6], TMP[0]);
 
@@ -957,10 +957,10 @@ int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
          TMP[20] = _mm_xor_si128(TMP[17], _mm_and_si128(TMP[20], TMP[16]));
          TMP[21] = _mm_xor_si128(TMP[17], _mm_and_si128(TMP[21], TMP[16]));
 
-         TMP[7]  = _mm_shuffle_epi8(TMP[18], M128(endiannes_swap));
-         TMP[8]  = _mm_shuffle_epi8(TMP[19], M128(endiannes_swap));
-         TMP[9]  = _mm_shuffle_epi8(TMP[20], M128(endiannes_swap));
-         TMP[10] = _mm_shuffle_epi8(TMP[21], M128(endiannes_swap));
+         TMP[7]  = _mm_shuffle_epi8(TMP[18], M128(endianness_swap));
+         TMP[8]  = _mm_shuffle_epi8(TMP[19], M128(endianness_swap));
+         TMP[9]  = _mm_shuffle_epi8(TMP[20], M128(endianness_swap));
+         TMP[10] = _mm_shuffle_epi8(TMP[21], M128(endianness_swap));
 
          TRANSPOSE_INP_128(TMP[7],TMP[8],TMP[9],TMP[10], TMP[0]);
 
@@ -975,10 +975,10 @@ int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
          TMP[20] = _mm_xor_si128(TMP[17], _mm_and_si128(TMP[20], TMP[16]));
          TMP[21] = _mm_xor_si128(TMP[17], _mm_and_si128(TMP[21], TMP[16]));
 
-         TMP[11] = _mm_shuffle_epi8(TMP[18], M128(endiannes_swap));
-         TMP[12] = _mm_shuffle_epi8(TMP[19], M128(endiannes_swap));
-         TMP[13] = _mm_shuffle_epi8(TMP[20], M128(endiannes_swap));
-         TMP[14] = _mm_shuffle_epi8(TMP[21], M128(endiannes_swap));
+         TMP[11] = _mm_shuffle_epi8(TMP[18], M128(endianness_swap));
+         TMP[12] = _mm_shuffle_epi8(TMP[19], M128(endianness_swap));
+         TMP[13] = _mm_shuffle_epi8(TMP[20], M128(endianness_swap));
+         TMP[14] = _mm_shuffle_epi8(TMP[21], M128(endianness_swap));
 
          TRANSPOSE_INP_128(TMP[11],TMP[12],TMP[13],TMP[14], TMP[0]);
 
@@ -1097,7 +1097,7 @@ int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
          _mm_storeu_si128((__m128i*)(pOut + MBS_SMS4 * 5), _mm_xor_si128(TMP[9],  _mm_loadu_si128((__m128i*)(pInp + MBS_SMS4 * 5))));
          _mm_storeu_si128((__m128i*)(pOut + MBS_SMS4 * 6), _mm_xor_si128(TMP[8],  _mm_loadu_si128((__m128i*)(pInp + MBS_SMS4 * 6))));
          _mm_storeu_si128((__m128i*)(pOut + MBS_SMS4 * 7), _mm_xor_si128(TMP[7],  _mm_loadu_si128((__m128i*)(pInp + MBS_SMS4 * 7))));
-        
+
 
          TRANSPOSE_OUT_128(TMP[11],TMP[12],TMP[13],TMP[14], TMP[0]);
 
@@ -1114,7 +1114,7 @@ int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
       }
 
       TMP[15] = _mm_xor_si128(TMP[17], _mm_and_si128(TMP[15], TMP[16]));
-      TMP[15] = _mm_shuffle_epi8(TMP[15], M128(endiannes));
+      TMP[15] = _mm_shuffle_epi8(TMP[15], M128(endianness));
       _mm_storeu_si128((__m128i*)pCtr, TMP[15]);
 
       /* clear secret data */
@@ -1134,14 +1134,14 @@ int cpSMS4_CTR_gfni128x12(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u*
 // 8*MBS_SMS4 processing
 */
 
-static 
+static
 int cpSMS4_CTR_gfni128x8(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey, const Ipp8u* pCtrMask, Ipp8u* pCtr)
 {
    int processedLen = len - (len % (8 * MBS_SMS4));
    int n;
 
    if(processedLen){
-   
+
       __ALIGN16 __m128i TMP[18];
 
       // TMP[11] - ctr
@@ -1151,8 +1151,8 @@ int cpSMS4_CTR_gfni128x8(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* 
       TMP[11] = _mm_loadu_si128((__m128i*)pCtr);
       TMP[12] = _mm_loadu_si128((__m128i*)pCtrMask);
 
-      TMP[12] = _mm_shuffle_epi8(TMP[12], M128(endiannes));
-      TMP[11] = _mm_shuffle_epi8(TMP[11], M128(endiannes));
+      TMP[12] = _mm_shuffle_epi8(TMP[12], M128(endianness));
+      TMP[11] = _mm_shuffle_epi8(TMP[11], M128(endianness));
       TMP[13] = _mm_andnot_si128(TMP[12], TMP[11]);
 
       for(n=0; n<processedLen; n+=(8*MBS_SMS4), pInp+=(8*MBS_SMS4), pOut+=(8*MBS_SMS4)) {
@@ -1169,10 +1169,10 @@ int cpSMS4_CTR_gfni128x8(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* 
          TMP[16] = _mm_xor_si128(TMP[13], _mm_and_si128(TMP[16], TMP[12]));
          TMP[17] = _mm_xor_si128(TMP[13], _mm_and_si128(TMP[17], TMP[12]));
 
-         TMP[3] = _mm_shuffle_epi8(TMP[14], M128(endiannes_swap));
-         TMP[4] = _mm_shuffle_epi8(TMP[15], M128(endiannes_swap));
-         TMP[5] = _mm_shuffle_epi8(TMP[16], M128(endiannes_swap));
-         TMP[6] = _mm_shuffle_epi8(TMP[17], M128(endiannes_swap));
+         TMP[3] = _mm_shuffle_epi8(TMP[14], M128(endianness_swap));
+         TMP[4] = _mm_shuffle_epi8(TMP[15], M128(endianness_swap));
+         TMP[5] = _mm_shuffle_epi8(TMP[16], M128(endianness_swap));
+         TMP[6] = _mm_shuffle_epi8(TMP[17], M128(endianness_swap));
 
          TRANSPOSE_INP_128(TMP[3],TMP[4],TMP[5],TMP[6], TMP[0]);
 
@@ -1187,10 +1187,10 @@ int cpSMS4_CTR_gfni128x8(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* 
          TMP[16] = _mm_xor_si128(TMP[13], _mm_and_si128(TMP[16], TMP[12]));
          TMP[17] = _mm_xor_si128(TMP[13], _mm_and_si128(TMP[17], TMP[12]));
 
-         TMP[7]  = _mm_shuffle_epi8(TMP[14], M128(endiannes_swap));
-         TMP[8]  = _mm_shuffle_epi8(TMP[15], M128(endiannes_swap));
-         TMP[9]  = _mm_shuffle_epi8(TMP[16], M128(endiannes_swap));
-         TMP[10] = _mm_shuffle_epi8(TMP[17], M128(endiannes_swap));
+         TMP[7]  = _mm_shuffle_epi8(TMP[14], M128(endianness_swap));
+         TMP[8]  = _mm_shuffle_epi8(TMP[15], M128(endianness_swap));
+         TMP[9]  = _mm_shuffle_epi8(TMP[16], M128(endianness_swap));
+         TMP[10] = _mm_shuffle_epi8(TMP[17], M128(endianness_swap));
 
          TRANSPOSE_INP_128(TMP[7],TMP[8],TMP[9],TMP[10], TMP[0]);
 
@@ -1290,7 +1290,7 @@ int cpSMS4_CTR_gfni128x8(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* 
       }
 
       TMP[11] = _mm_xor_si128(TMP[13], _mm_and_si128(TMP[11], TMP[12]));
-      TMP[11] = _mm_shuffle_epi8(TMP[11], M128(endiannes));
+      TMP[11] = _mm_shuffle_epi8(TMP[11], M128(endianness));
       _mm_storeu_si128((__m128i*)pCtr, TMP[11]);
 
       /* clear secret data */
@@ -1331,8 +1331,8 @@ int cpSMS4_ECB_gfni128x4(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* 
    TMP[6] = _mm_loadu_si128((__m128i*)pCtrMask);
    TMP[7] = _mm_loadu_si128((__m128i*)pCtr);
 
-   TMP[6] = _mm_shuffle_epi8(TMP[6], M128(endiannes));
-   TMP[7] = _mm_shuffle_epi8(TMP[7], M128(endiannes));
+   TMP[6] = _mm_shuffle_epi8(TMP[6], M128(endianness));
+   TMP[7] = _mm_shuffle_epi8(TMP[7], M128(endianness));
    TMP[5] = _mm_andnot_si128(TMP[6], TMP[7]);
 
    for(n=0; n<processedLen; n+=(4*MBS_SMS4), pInp+=(4*MBS_SMS4), pOut+=(4*MBS_SMS4)) {
@@ -1348,10 +1348,10 @@ int cpSMS4_ECB_gfni128x4(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* 
       TMP[3] = _mm_xor_si128(TMP[5], _mm_and_si128(TMP[3], TMP[6]));
       TMP[4] = _mm_xor_si128(TMP[5], _mm_and_si128(TMP[4], TMP[6]));
 
-      TMP[1] = _mm_shuffle_epi8(TMP[1], M128(endiannes_swap));
-      TMP[2] = _mm_shuffle_epi8(TMP[2], M128(endiannes_swap));
-      TMP[3] = _mm_shuffle_epi8(TMP[3], M128(endiannes_swap));
-      TMP[4] = _mm_shuffle_epi8(TMP[4], M128(endiannes_swap));
+      TMP[1] = _mm_shuffle_epi8(TMP[1], M128(endianness_swap));
+      TMP[2] = _mm_shuffle_epi8(TMP[2], M128(endianness_swap));
+      TMP[3] = _mm_shuffle_epi8(TMP[3], M128(endianness_swap));
+      TMP[4] = _mm_shuffle_epi8(TMP[4], M128(endianness_swap));
       TRANSPOSE_INP_128(TMP[1],TMP[2],TMP[3],TMP[4], TMP[0]);
 
       for(itr=0; itr<8; itr++, pRKey+=4) {
@@ -1410,7 +1410,7 @@ int cpSMS4_ECB_gfni128x4(Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* 
    }
 
    TMP[7] = _mm_xor_si128(TMP[5], _mm_and_si128(TMP[7], TMP[6]));
-   TMP[7] = _mm_shuffle_epi8(TMP[7], M128(endiannes));
+   TMP[7] = _mm_shuffle_epi8(TMP[7], M128(endianness));
    _mm_storeu_si128((__m128i*)pCtr, TMP[7]);
 
    /* clear secret data */

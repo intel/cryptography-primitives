@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //               Intel(R) Integrated Performance Primitives
 //                   Cryptographic Primitives (ippcp)
-// 
-// 
-// 
+//
+//
+//
 */
 
 #if !defined(_CP_BN_H)
@@ -146,7 +146,7 @@ __INLINE int cpBN_tst(const IppsBigNumState* pA)
 }
 
 
-// some addtition functions
+// some addition functions
 __INLINE int IsZero_BN(const IppsBigNumState* pA)
 {
    return ( BN_SIZE(pA)==1 ) && ( BN_NUMBER(pA)[0]==0 );

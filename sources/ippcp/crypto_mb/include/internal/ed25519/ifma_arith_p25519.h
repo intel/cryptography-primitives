@@ -105,6 +105,7 @@ __INLINE void fe52_cmov1_mb(fe52_mb r, const fe52_mb b, __mb_mask k, const fe52 
    r[3] = mask_mov64(b[3], k, set1(a[3]));
    r[4] = mask_mov64(b[4], k, set1(a[4]));
 }
+OPTIMIZE_OFF_VS19
 __INLINE void fe52_cmov_mb(fe52_mb r, const fe52_mb b, __mb_mask k, const fe52_mb a)
 {
    r[0] = mask_mov64(b[0], k, a[0]);

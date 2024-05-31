@@ -297,7 +297,7 @@ void ifma_ed25519_mul_basepoint(ge52_ext_mb* r, const U64 scalar[])
    __ALIGN64 ge52_p1p1_mb t;
    __ALIGN64 ge52_homo_mb s;
 
-   /* initial values are nuetral */
+   /* initial values are neutral */
    neutral_ge52_ext_mb(&r0);
    neutral_ge52_ext_mb(&r1);
 

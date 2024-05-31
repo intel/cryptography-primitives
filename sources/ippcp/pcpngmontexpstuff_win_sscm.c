@@ -14,8 +14,8 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Modular Exponentiation (windowed "safe" version)
@@ -36,7 +36,7 @@
 // - possible inplace mode
 //
 // scratch buffer structure:
-//    precomuted table of multipliers[(1<<w)*nsM]
+//    precomputed table of multipliers[(1<<w)*nsM]
 //    RR[nsM]   tmp result if inplace operation
 //    TT[nsM]  unscrmbled table entry
 //    EE[nsM+1] power expasin

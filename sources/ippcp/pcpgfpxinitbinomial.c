@@ -14,10 +14,10 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
 //     Operations over GF(p) ectension.
-// 
+//
 //     Context:
 //        pcpgfpxinitbinomial.c()
 //
@@ -49,7 +49,7 @@
 //    ippStsBadArgErr            IPP_MIN_GF_EXTDEG > extDeg || extDeg > IPP_MAX_GF_EXTDEG
 //                                  (IPP_MIN_GF_EXTDEG==2, IPP_MAX_GF_EXTDEG==8)
 //
-//                               cpID_Poly!=pGFpMethod->modulusID  -- method does not refferenced to polynomial one
+//                               cpID_Poly!=pGFpMethod->modulusID  -- method does not reference the polynomial one
 //                               pGFpMethod->modulusBitDeg!=extDeg -- fixed method does not match to degree extension
 //
 //    ippStsNoErr                no error

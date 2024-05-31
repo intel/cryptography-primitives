@@ -35,6 +35,7 @@
 - GCC 11.4
 - Clang 9.0
 - Clang 12.0
+- Clang 16.0
 - GNU binutils 2.32
 ### Windows* OS
 - [Common tools](#common-tools)

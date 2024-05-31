@@ -19,8 +19,6 @@
 //  Purpose:
 //     Cryptography Primitive.
 //        Initialization functions for internal methods and pointers inside AES cipher context
-//        and AES-GCM context;
-//        AES-GCM encryption kernels with the conditional noise injections mechanism;
 //
 */
 
@@ -31,14 +29,5 @@
 
 #define cpAes_setup_ptrs_and_methods OWNAPI(cpAes_setup_ptrs_and_methods)
 IPP_OWN_DECL(void, cpAes_setup_ptrs_and_methods, (IppsAESSpec * pCtx))
-
-#define cpAesGCM_setup_ptrs_and_methods OWNAPI(cpAesGCM_setup_ptrs_and_methods)
-IPP_OWN_DECL(void, cpAesGCM_setup_ptrs_and_methods, (IppsAES_GCMState * pCtx, Ipp64u keyByteLen))
-
-#define condNoisedGCMEncryption OWNAPI(condNoisedGCMEncryption)
-IPP_OWN_DECL(void, condNoisedGCMEncryption, (const Ipp8u* pSrc, Ipp8u* pDst, int ptxt_len, IppsAES_GCMState* pState))
-
-#define condNoisedGCMDecryption OWNAPI(condNoisedGCMDecryption)
-IPP_OWN_DECL(void, condNoisedGCMDecryption, (const Ipp8u* pSrc, Ipp8u* pDst, int ptxt_len, IppsAES_GCMState* pState))
 
 #endif /* _PCP_AES_INTERNAL_FUNC_H */

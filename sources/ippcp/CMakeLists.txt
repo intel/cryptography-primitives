@@ -184,7 +184,7 @@ if(IPP_REVISION)
 endif()
 
 # Enable tech-preview feature in the library
-set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_PREVIEW_XMSS")
+set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_PREVIEW_XMSS -DIPPCP_PREVIEW_LMS")
 
 set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -D_NO_IPP_DEPRECATED") # do not warn about ippcp deprecated functions
 # set BN_OPENSSL_DISABLE for Intel IPP Cryptography
@@ -232,6 +232,7 @@ file(GLOB LIBRARY_C_SOURCES_ORIGINAL
     ${IPP_CRYPTO_SOURCES_DIR}/ecnist/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/sm2/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/xmss/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/lms/*.c
 )
 
 file(GLOB LIBRARY_ASM_SOURCES_ORIGINAL

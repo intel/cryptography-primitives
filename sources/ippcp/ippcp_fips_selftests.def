@@ -564,6 +564,12 @@ ippsXMSSSetSignatureState
 ippsXMSSSignatureStateGetSize
 ippsXMSSPublicKeyStateGetSize
 ippsXMSSBufferGetSize
+ippsLMSBufferGetSize
+ippsLMSSignatureStateGetSize
+ippsLMSPublicKeyStateGetSize
+ippsLMSSetPublicKeyState
+ippsLMSSetSignatureState
+ippsLMSVerify
 
 ippcp_is_fips_approved_func
 

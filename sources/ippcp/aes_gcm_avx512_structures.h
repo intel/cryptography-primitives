@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
-//     AES GCM otimized for AVX512 and AVX512-VAES features
+//     AES GCM optimized for AVX512 and AVX512-VAES features
 //     Internal Definitions
-// 
-// 
+//
+//
 */
 
 #ifndef __AES_GCM_AVX512_STRUCTURES_H_

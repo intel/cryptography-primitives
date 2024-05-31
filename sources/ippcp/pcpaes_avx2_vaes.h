@@ -33,11 +33,49 @@
 
 #if (_IPP==_IPP_H9) || (_IPP32E==_IPP32E_L9)
 
+#ifdef __GNUC__
+#define ASM(a) __asm__(a);
+#else
+#define ASM(a)
+#endif
+
+/*
+// Zeroes the memory by 32 bit parts, 
+// because "epi32" is the minimal available granularity for avx2 store instructions.
+// input:
+//   Ipp32u* out - pointer to the memory that needs to be zeroize
+//   int len - length of the "out" array, in 32-bit chunks
+*/
+static __NOINLINE
+void zeroize_256(Ipp32u* out, int len)
+{
+#if defined(__GNUC__)
+   // Avoid dead code elimination for GNU compilers
+   ASM("");
+#endif
+   __m256i T = _mm256_setzero_si256();
+   int i;
+   int tmp[8];
+   int rest = len % 8;
+   if (rest == 0)
+      for(i=0; i<8; i++)
+         tmp[i] = (int)0xFFFFFFFF;
+   else {
+      for(i=0; i<rest; i++)
+         tmp[i] = (int)0xFFFFFFFF;
+      for(i=rest; i<8; i++)
+         tmp[i] = 0;
+   }
+   __m256i mask = _mm256_set_epi32(tmp[7], tmp[6], tmp[5], tmp[4], tmp[3], tmp[2], tmp[1], tmp[0]);
+   for(i=0; i<len-7; i+=8)
+      _mm256_storeu_si256((void*)(out+i), T);
+   if (i < len)
+      _mm256_maskstore_epi32((void*)(out+i), mask, T);
+}
+
 #define MAX_NK 15 //the largest possible number of keys
 
 #define SHUFD_MASK 78 // 01001110b
-#define STEP_SIZE 64 // 4*BLOCK_SIZE, due to block size is always 16 for AES
-#define HALF_STEP_SIZE 32 // 2*BLOCK_SIZE, due to block size is always 16 for AES
 
 //is used to increment two 128-bit words in a 256-bit register
 #define IncrementRegister256(t_block, t_incr, t_shuffle_mask) \
@@ -46,8 +84,11 @@
    t_block = _mm256_shuffle_epi8(t_block, t_shuffle_mask)
 
 // these constants are used to increment two 128-bit words in a 256-bit register
+__ALIGN32 static const Ipp32u _increment1[] = {0, 0, 0, 1, 0, 0, 0, 1};
 __ALIGN32 static const Ipp32u _increment2[] = {0, 0, 0, 2, 0, 0, 0, 2};
 __ALIGN32 static const Ipp32u _increment4[] = {0, 0, 0, 4, 0, 0, 0, 4};
+__ALIGN32 static const Ipp32u _increment8[] = {0, 0, 0, 8, 0, 0, 0, 8};
+__ALIGN32 static const Ipp32u _increment16[] = {0, 0, 0, 16, 0, 0, 0, 16};
 __ALIGN32 static const Ipp8u swapBytes256[] = {
    16, 17, 18, 19, 20, 21, 22, 23,
    24, 25, 26, 27, 31, 30, 29, 28,
@@ -59,138 +100,271 @@ __ALIGN32 static const Ipp8u swapBytes256[] = {
 __ALIGN32 static const Ipp8u _shuff_mask_128[] = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
 __ALIGN32 static const Ipp8u _shuff_mask_256[] = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
 
-// masks for operations with intrinsics 
-__ALIGN32 static const Ipp8u _mask_lo_256[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0};
-__ALIGN32 static const Ipp8u _mask_hi_256[] = {0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+/*
+// performs Karatsuba carry-less multiplication
+// input:
+//   __m256i GH - contains current GHASH
+//   const __m256i HK - contains hashed keys
+// input/output:
+//   __m256i *tmpX0, __m128i *tmpX5 - contains temporary data for multiplication
+// output:
+//   __m256i part of the multiplication result
+*/
+__INLINE __m256i avx2_internal_mul(__m256i GH, const __m256i HK, __m256i *tmpX0, __m256i *tmpX5) {
+   __m256i tmpX2, tmpX3, tmpX4;
+
+   tmpX2 = _mm256_shuffle_epi32 (GH, SHUFD_MASK);
+   tmpX3 = _mm256_shuffle_epi32 (HK, SHUFD_MASK);
+   tmpX2 = _mm256_xor_si256(tmpX2, GH);
+   tmpX3 = _mm256_xor_si256(tmpX3, HK);
+   tmpX4 = _mm256_clmulepi64_epi128(GH, HK, 0x11);
+   *tmpX0 = _mm256_xor_si256(*tmpX0, tmpX4);
+   tmpX4 = _mm256_clmulepi64_epi128(GH, HK, 0x00);
+   *tmpX5 = _mm256_xor_si256(*tmpX5, tmpX4);
+   return _mm256_clmulepi64_epi128(tmpX2, tmpX3, 0x00);
+}
 
 /*
-// sse_clmul_gcm performs clmul with 128-bit registers; is used in the combine hash step
-// input:
-//    const __m128i *HK - contains hashed keys
+// performs the reduction phase after carry-less multiplication
 // input/output:
-//    __m128i *GH - contains GHASH. Will be overwritten in this function
+//   __m128i *hash0, __m128i *hash1 - contains the two parts of the GHASH
 */
-__INLINE void sse_clmul_gcm(__m128i *GH, const __m128i *HK) {
-   __m128i tmpX0, tmpX1, tmpX2, tmpX3;
-   tmpX2 = _mm_shuffle_epi32 (*GH, SHUFD_MASK); //tmpX2 = {GH0:GH1}
-   tmpX0 = _mm_shuffle_epi32 (*HK, SHUFD_MASK); //tmpX0 = {HK0:HK1}
-   tmpX2 = _mm_xor_si128(tmpX2, *GH); //tmpX2 = {GH0+GH1:GH1+GH0}
-   tmpX0 = _mm_xor_si128(tmpX0, *HK); //tmpX0 = {HK0+HK1:HK1+HK0}
-   tmpX2 = _mm_clmulepi64_si128 (tmpX2, tmpX0, 0x00); //tmpX2 = (a1+a0)*(b1+b0);  tmpX2 = (GH1+GH0)*(HK1+HK0)
-   tmpX1 = *GH;
-   *GH = _mm_clmulepi64_si128 (*GH, *HK, 0x00); //GH = a0*b0;  GH = GH0*HK0
-   tmpX0 = _mm_xor_si128(tmpX0, tmpX0);
-   tmpX1 = _mm_clmulepi64_si128 (tmpX1, *HK, 0x11); //tmpX1 = a1*b1;   tmpX1 = GH1*HK1
-   tmpX2 = _mm_xor_si128(tmpX2, *GH); //tmpX2 = (GH1+GH0)*(HK1+HK0) + GH0*HK0
-   tmpX2 = _mm_xor_si128(tmpX2, tmpX1); //tmpX2 = a0*b1+a1*b0;    tmpX2 = (GH1+GH0)*(HK1+HK0) + GH0*HK0 + GH1*HK1 = GH0*HK1+GH1*HK0
-   tmpX0 = _mm_alignr_epi8 (tmpX0, tmpX2, 8); //tmpX0 = {Zeros : HI(a0*b1+a1*b0)}
-   tmpX2 = _mm_slli_si128 (tmpX2, 8); //tmpX2 = {LO(HI(a0*b1+a1*b0)) : Zeros}
-   tmpX1 = _mm_xor_si128(tmpX1, tmpX0); //<tmpX1:GH> holds the result of the carry-less multiplication of GH by HK
-   *GH = _mm_xor_si128(*GH, tmpX2);
+__INLINE void reduction(__m128i *hash0, __m128i *hash1) {
+   __m128i T1, T2, T3;
 
    //first phase of the reduction
-   tmpX0 = *GH; //copy GH into tmpX0, tmpX2, tmpX3
-   tmpX2 = *GH;
-   tmpX3 = *GH;
-   tmpX0 = _mm_slli_epi64 (tmpX0, 63); //packed left shifting << 63
-   tmpX2 = _mm_slli_epi64 (tmpX2, 62); //packed left shifting shift << 62
-   tmpX3 = _mm_slli_epi64 (tmpX3, 57); //packed left shifting shift << 57
-   tmpX0 = _mm_xor_si128(tmpX0, tmpX2); //xor the shifted versions
-   tmpX0 = _mm_xor_si128(tmpX0, tmpX3);
-   tmpX2 = tmpX0;
-   tmpX2 = _mm_slli_si128 (tmpX2, 8); //shift-L tmpX2 2 DWs
-   tmpX0 = _mm_srli_si128 (tmpX0, 8); //shift-R xmm2 2 DWs
-   *GH = _mm_xor_si128(*GH, tmpX2); //first phase of the reduction complete
-   tmpX1 = _mm_xor_si128(tmpX1, tmpX0); //save the lost MS 1-2-7 bits from first phase
+   T1 = *hash1; //copy GH into T1, T2, T3
+   T2 = *hash1;
+   T3 = *hash1;
+   T1 = _mm_slli_epi64 (T1, 63); //packed left shifting << 63
+   T2 = _mm_slli_epi64 (T2, 62); //packed left shifting << 62
+   T3 = _mm_slli_epi64 (T3, 57); //packed left shifting << 57
+   T1 = _mm_xor_si128(T1, T2); //xor the shifted versions
+   T1 = _mm_xor_si128(T1, T3);
+   T2 = T1;
+   T2 = _mm_slli_si128 (T2, 8); //shift-L T2 2 DWs
+   T1 = _mm_srli_si128 (T1, 8); //shift-R T1 2 DWs
+   *hash1 = _mm_xor_si128(*hash1, T2); //first phase of the reduction complete
+   *hash0 = _mm_xor_si128(*hash0, T1); //save the lost MS 1-2-7 bits from first phase
 
    //second phase of the reduction
-   tmpX2 = *GH;
-   tmpX2 = _mm_srli_epi64(tmpX2, 5); //packed right shifting >> 5
-   tmpX2 = _mm_xor_si128(tmpX2, *GH); //xor shifted versions
-   tmpX2 = _mm_srli_epi64(tmpX2, 1); //packed right shifting >> 1
-   tmpX2 = _mm_xor_si128(tmpX2, *GH); //xor shifted versions
-   tmpX2 = _mm_srli_epi64(tmpX2, 1); //packed right shifting >> 1
-   *GH = _mm_xor_si128(*GH, tmpX2); //second phase of the reduction complete
-   *GH = _mm_xor_si128(*GH, tmpX1); //the result is in GH
+   T2 = *hash1;
+   T2 = _mm_srli_epi64(T2, 5); //packed right shifting >> 5
+   T2 = _mm_xor_si128(T2, *hash1); //xor shifted versions
+   T2 = _mm_srli_epi64(T2, 1); //packed right shifting >> 1
+   T2 = _mm_xor_si128(T2, *hash1); //xor shifted versions
+   T2 = _mm_srli_epi64(T2, 1); //packed right shifting >> 1
+   *hash1 = _mm_xor_si128(*hash1, T2); //second phase of the reduction complete
 }
 
 /*
-// avx2_clmul_gcm performs clmul with 256-bit registers; is used in the hash calculation step
+// avx2_clmul_gcm16 performs the hash calculation with 256-bit registers for 16 blocks
+// GH order - 0, 1 | 2, 3 | 4, 5 | 6, 7 | 8, 9 | 10, 11 | 12, 13 | 14, 15
+// HK order - 1, 0 | 3, 2 | 5, 4 | 7, 6 | 9, 8 | 11, 10 | 13, 12 | 15, 14
 // input:
-//    const __m128i *HK - contains hashed keys
-//    const __m256i *HKeyKaratsuba - contains temporary data for Karatsuba method
-//    const __m256i *mask_lo - contains mask for taking lower bits
-//    const __m256i *mask_hi - contains mask for taking higher bits
+//    const __m256i *HK - contains hashed keys
 // input/output:
-//    __m128i *GH - contains GHASH. Will be overwritten in this function
+//    __m256i *GH - contains GHASH. Will be overwritten in this function
+// output:
+//    __m128i GH[0]
 */
-__INLINE void avx2_clmul_gcm(__m256i *GH, const __m256i *HK, const __m256i *HKeyKaratsuba, const __m256i *mask_lo, const __m256i *mask_hi) {
-   __m256i tmpX0, tmpX1, tmpX2;
-   
-   tmpX2 = _mm256_shuffle_epi32 (*GH, SHUFD_MASK);
-   // Karatsuba Method
-   tmpX1 = *GH;
-   tmpX2 = _mm256_xor_si256(tmpX2, *GH);
-   *GH = _mm256_clmulepi64_epi128(*GH, *HK, 0x00);
-   // Karatsuba Method
+__INLINE __m128i avx2_clmul_gcm16(__m256i *GH, const __m256i *HK) {  
+   __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;                
+   tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
+   tmpX3 = _mm256_shuffle_epi32 (HK[7], SHUFD_MASK);
+   tmpX2 = _mm256_xor_si256(tmpX2, GH[0]);
+   tmpX3 = _mm256_xor_si256(tmpX3, HK[7]);
+   tmpX0 = _mm256_clmulepi64_epi128 (GH[0], HK[7], 0x11);
+   tmpX5 = _mm256_clmulepi64_epi128 (GH[0], HK[7], 0x00);
+   GH[0] = _mm256_clmulepi64_epi128 (tmpX2, tmpX3, 0x00);
 
-   tmpX1 = _mm256_clmulepi64_epi128(tmpX1, *HK, 0x11);
-   tmpX2 = _mm256_clmulepi64_epi128(tmpX2, *HKeyKaratsuba, 0x00);
-   tmpX2 = _mm256_xor_si256(tmpX2, *GH);
-   tmpX2 = _mm256_xor_si256(tmpX2, tmpX1);
-   tmpX0 = _mm256_shuffle_epi32 (tmpX2, SHUFD_MASK);
-   tmpX2 = tmpX0;
-   tmpX0 = _mm256_and_si256(tmpX0, *mask_hi);
-   tmpX2 = _mm256_and_si256(tmpX2, *mask_lo);
-   *GH = _mm256_xor_si256(*GH, tmpX0);
-   tmpX1 = _mm256_xor_si256(tmpX1, tmpX2);
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[1], HK[6], &tmpX0, &tmpX5));
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[2], HK[5], &tmpX0, &tmpX5));
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[3], HK[4], &tmpX0, &tmpX5));
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[4], HK[3], &tmpX0, &tmpX5));
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[5], HK[2], &tmpX0, &tmpX5));
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[6], HK[1], &tmpX0, &tmpX5));
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[7], HK[0], &tmpX0, &tmpX5));
 
-   // first phase of the reduction
-   tmpX0 = *GH;
-   *GH = _mm256_slli_epi64 (*GH, 1);
-   *GH = _mm256_xor_si256(*GH, tmpX0);
-   *GH = _mm256_slli_epi64 (*GH, 5);
-   *GH = _mm256_xor_si256(*GH, tmpX0);
-   *GH = _mm256_slli_epi64 (*GH, 57);
-   tmpX2 = _mm256_shuffle_epi32(*GH, SHUFD_MASK);
-   *GH = tmpX2;
-   tmpX2 = _mm256_and_si256(tmpX2, *mask_lo);
-   *GH = _mm256_and_si256(*GH, *mask_hi);
-   *GH = _mm256_xor_si256(*GH, tmpX0);
-   tmpX1 = _mm256_xor_si256(tmpX1, tmpX2);
+   GH[0] = _mm256_xor_si256(GH[0], tmpX0);
+   tmpX2 = _mm256_xor_si256(GH[0], tmpX5);
+   tmpX4 = _mm256_slli_si256(tmpX2, 8);
+   tmpX2 = _mm256_srli_si256(tmpX2, 8);
+   tmpX5 = _mm256_xor_si256(tmpX5, tmpX4); //
+   tmpX0 = _mm256_xor_si256(tmpX0, tmpX2); // tmpX0:tmpX5> holds the result of the accumulated carry-less multiplications
 
-   // second phase of the reduction
-   tmpX2 = *GH;
-   *GH = _mm256_srli_epi64(*GH, 5);
-   *GH = _mm256_xor_si256(*GH, tmpX2);
-   *GH = _mm256_srli_epi64(*GH, 1);
-   *GH = _mm256_xor_si256(*GH, tmpX2);
-   *GH = _mm256_srli_epi64(*GH, 1);
-   *GH = _mm256_xor_si256(*GH, tmpX2);
-   *GH = _mm256_xor_si256(*GH, tmpX1);
+   __m128i T0, T1;
+   T0 = _mm_xor_si128(_mm256_extractf128_si256(tmpX0, 0), _mm256_extractf128_si256(tmpX0, 1));
+   T1 = _mm_xor_si128(_mm256_extractf128_si256(tmpX5, 0), _mm256_extractf128_si256(tmpX5, 1));
+
+   // reduction phase
+   reduction(&T0, &T1);
+
+   GH[0] = _mm256_setr_m128i(_mm_xor_si128(T1, T0), _mm_setzero_si128()); //the result is in GH
+   return _mm_xor_si128(T1, T0);
 }
 
 /*
-// aes_encoder_avx2vaes_sb is used for single block encryption
+// avx2_clmul_gcm8 performs the hash calculation with 256-bit registers for 8 blocks
+// GH order - 0, 1 | 2, 3 | 4, 5 | 6, 7
+// HK order - 1, 0 | 3, 2 | 5, 4 | 7, 6
 // input:
-//    const Ipp8u *in - contains data for encryprion
-//    const int Nr - contains number of the rounds 
-//    const __m256i* keys - contains keys
+//    const __m256i *HK - contains hashed keys
+// input/output:
+//    __m256i *GH - contains GHASH. Will be overwritten in this function
 // output:
-//    Ipp8u *out - stores encrypted data.
+//    __m128i GH[0]
 */
-__INLINE void aes_encoder_avx2vaes_sb(const Ipp8u *in, Ipp8u *out, const int Nr, const __m256i* keys) {
-   __m128i lo = _mm_loadu_si128((void*)in);
-   __m128i hi = _mm_setzero_si128();
-   __m256i block = _mm256_setr_m128i(lo, hi);
-   block = _mm256_xor_si256(block, *keys);
-   for(int round = 1; round < Nr; round++) {
-      keys++;
-      block = _mm256_aesenc_epi128(block, *keys);
-   }
-   keys++;
-   block = _mm256_aesenclast_epi128(block, *keys);
-   _mm_storeu_si128((void*)out, _mm256_castsi256_si128(block));
+__INLINE __m128i avx2_clmul_gcm8(__m256i *GH, const __m256i *HK) { 
+   __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
+   tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
+   tmpX3 = _mm256_shuffle_epi32 (HK[3], SHUFD_MASK);
+   tmpX2 = _mm256_xor_si256(tmpX2, GH[0]);
+   tmpX3 = _mm256_xor_si256(tmpX3, HK[3]);
+   tmpX0 = _mm256_clmulepi64_epi128 (GH[0], HK[3], 0x11);
+   tmpX5 = _mm256_clmulepi64_epi128 (GH[0], HK[3], 0x00);
+   GH[0] = _mm256_clmulepi64_epi128 (tmpX2, tmpX3, 0x00);
+
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[1], HK[2], &tmpX0, &tmpX5));
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[2], HK[1], &tmpX0, &tmpX5));
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[3], HK[0], &tmpX0, &tmpX5));
+
+   GH[0] = _mm256_xor_si256(GH[0], tmpX0);
+   tmpX2 = _mm256_xor_si256(GH[0], tmpX5);
+   tmpX4 = _mm256_slli_si256(tmpX2, 8);
+   tmpX2 = _mm256_srli_si256(tmpX2, 8);
+   tmpX5 = _mm256_xor_si256(tmpX5, tmpX4); //
+   tmpX0 = _mm256_xor_si256(tmpX0, tmpX2); // tmpX0:tmpX5> holds the result of the accumulated carry-less multiplications
+
+   __m128i T0, T1;
+   T0 = _mm_xor_si128(_mm256_extractf128_si256(tmpX0, 0), _mm256_extractf128_si256(tmpX0, 1));
+   T1 = _mm_xor_si128(_mm256_extractf128_si256(tmpX5, 0), _mm256_extractf128_si256(tmpX5, 1));
+
+   // reduction phase
+   reduction(&T0, &T1);
+
+   GH[0] = _mm256_setr_m128i(_mm_xor_si128(T1, T0), _mm_setzero_si128()); //the result is in GH
+   return _mm_xor_si128(T1, T0);
+}
+
+/*
+// avx2_clmul_gcm4 performs the hash calculation with 256-bit registers for 4 blocks
+// GH order - 0, 1 | 2, 3
+// HK order - 1, 0 | 3, 2
+// input:
+//    const __m256i *HK - contains hashed keys
+// input/output:
+//    __m256i *GH - contains GHASH. Will be overwritten in this function
+// output:
+//    __m128i GH[0]
+*/
+__INLINE __m128i avx2_clmul_gcm4(__m256i *GH, const __m256i *HK) {
+   __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
+   tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
+   tmpX3 = _mm256_shuffle_epi32 (HK[1], SHUFD_MASK);
+   tmpX2 = _mm256_xor_si256(tmpX2, GH[0]);
+   tmpX3 = _mm256_xor_si256(tmpX3, HK[1]);
+   tmpX0 = _mm256_clmulepi64_epi128 (GH[0], HK[1], 0x11);
+   tmpX5 = _mm256_clmulepi64_epi128 (GH[0], HK[1], 0x00);
+   GH[0] = _mm256_clmulepi64_epi128 (tmpX2, tmpX3, 0x00);
+
+   GH[0] = _mm256_xor_si256(GH[0], avx2_internal_mul(GH[1], HK[0], &tmpX0, &tmpX5));
+
+   GH[0] = _mm256_xor_si256(GH[0], tmpX0);
+   tmpX2 = _mm256_xor_si256(GH[0], tmpX5);
+   tmpX4 = _mm256_slli_si256(tmpX2, 8);
+   tmpX2 = _mm256_srli_si256(tmpX2, 8);
+   tmpX5 = _mm256_xor_si256(tmpX5, tmpX4); //
+   tmpX0 = _mm256_xor_si256(tmpX0, tmpX2); // tmpX0:tmpX5> holds the result of the accumulated carry-less multiplications
+
+   __m128i T0, T1;
+   T0 = _mm_xor_si128(_mm256_extractf128_si256(tmpX0, 0), _mm256_extractf128_si256(tmpX0, 1));
+   T1 = _mm_xor_si128(_mm256_extractf128_si256(tmpX5, 0), _mm256_extractf128_si256(tmpX5, 1));
+
+   // reduction phase
+   reduction(&T0, &T1);
+
+   GH[0] = _mm256_setr_m128i(_mm_xor_si128(T1, T0), _mm_setzero_si128()); //the result is in GH
+
+   return _mm_xor_si128(T1, T0);
+}
+
+/*
+// avx2_clmul_gcm2 performs the hash calculation with 256-bit registers for 2 blocks
+// GH order - 0, 1
+// HK order - 1, 0
+// input:
+//    const __m256i *HK - contains hashed keys
+// input/output:
+//    __m256i *GH - contains GHASH. Will be overwritten in this function
+// output:
+//    __m128i GH[0]
+*/
+__INLINE __m128i avx2_clmul_gcm2(__m256i *GH, const __m256i *HK) {
+   __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
+   tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
+   tmpX3 = _mm256_shuffle_epi32 (HK[0], SHUFD_MASK);
+   tmpX2 = _mm256_xor_si256(tmpX2, GH[0]);
+   tmpX3 = _mm256_xor_si256(tmpX3, HK[0]);
+   tmpX0 = _mm256_clmulepi64_epi128 (GH[0], HK[0], 0x11);
+   tmpX5 = _mm256_clmulepi64_epi128 (GH[0], HK[0], 0x00);
+   GH[0] = _mm256_clmulepi64_epi128 (tmpX2, tmpX3, 0x00);
+
+   GH[0] = _mm256_xor_si256(GH[0], tmpX0);
+   tmpX2 = _mm256_xor_si256(GH[0], tmpX5);
+   tmpX4 = _mm256_slli_si256(tmpX2, 8);
+   tmpX2 = _mm256_srli_si256(tmpX2, 8);
+   tmpX5 = _mm256_xor_si256(tmpX5, tmpX4); //
+   tmpX0 = _mm256_xor_si256(tmpX0, tmpX2); // tmpX0:tmpX5> holds the result of the accumulated carry-less multiplications
+
+   __m128i T0, T1;
+   T0 = _mm_xor_si128(_mm256_extractf128_si256(tmpX0, 0), _mm256_extractf128_si256(tmpX0, 1));
+   T1 = _mm_xor_si128(_mm256_extractf128_si256(tmpX5, 0), _mm256_extractf128_si256(tmpX5, 1));
+
+   // reduction phase
+   reduction(&T0, &T1);
+
+   GH[0] = _mm256_setr_m128i(_mm_xor_si128(T1, T0), _mm_setzero_si128()); //the result is in GH
+   return _mm_xor_si128(T1, T0);
+}
+
+/*
+// avx2_clmul_gcm performs the hash calculation with 256-bit registers for 1 blocks
+// GH order - 0
+// HK order - 0
+// input:
+//    const __m256i *HK - contains hashed keys
+// input/output:
+//    __m256i *GH - contains GHASH. Will be overwritten in this function
+// output:
+//    __m128i GH[0]
+*/
+__INLINE __m128i avx2_clmul_gcm(__m256i *GH, const __m256i *HK) {
+   __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
+   tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
+   tmpX3 = _mm256_shuffle_epi32 (HK[0], SHUFD_MASK);
+   tmpX2 = _mm256_xor_si256(tmpX2, GH[0]);
+   tmpX3 = _mm256_xor_si256(tmpX3, HK[0]);
+   tmpX0 = _mm256_clmulepi64_epi128 (GH[0], HK[0], 0x11);
+   tmpX5 = _mm256_clmulepi64_epi128 (GH[0], HK[0], 0x00);
+   GH[0] = _mm256_clmulepi64_epi128 (tmpX2, tmpX3, 0x00);
+
+   GH[0] = _mm256_xor_si256(GH[0], tmpX0);
+   tmpX2 = _mm256_xor_si256(GH[0], tmpX5);
+   tmpX4 = _mm256_slli_si256(tmpX2, 8);
+   tmpX2 = _mm256_srli_si256(tmpX2, 8);
+   tmpX5 = _mm256_xor_si256(tmpX5, tmpX4); //
+   tmpX0 = _mm256_xor_si256(tmpX0, tmpX2); // tmpX0:tmpX5> holds the result of the accumulated carry-less multiplications
+
+   __m128i T0, T1;
+   T0 = _mm256_extractf128_si256(tmpX0, 0);
+   T1 = _mm256_extractf128_si256(tmpX5, 0);
+
+   // reduction phase
+   reduction(&T0, &T1);
+
+   GH[0] = _mm256_setr_m128i(_mm_xor_si128(T1, T0), _mm_setzero_si128()); //the result is in GH
+   return _mm_xor_si128(T1, T0);
 }
 
 #endif /* #if(_IPP==_IPP_H9) || (_IPP32E==_IPP32E_L9) */

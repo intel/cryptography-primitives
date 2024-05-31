@@ -107,7 +107,7 @@
    PLOOKUP_MEM    %%xmmB, %%xmmT, GF16_expTbl
 %endmacro
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 
 align IPP_ALIGN_FACTOR
@@ -256,6 +256,7 @@ ColumnROR    \
    DB 1,2,3,0,5,6,7,4,9,10,11,8,13,14,15,12
 
 
+segment .text align=IPP_ALIGN_FACTOR
 ;*************************************************************
 ; convert GF(2^128) -> GF((2^4)^2)
 ;*************************************************************

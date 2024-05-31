@@ -32,7 +32,7 @@
 #include "pcprsa_emsa_pkcs1v15.h"
 
 static int VerifySign(const Ipp8u* pMsg, int msgLen,  /* message representation */
-    const Ipp8u* pSalt, int saltLen, /* fied string */
+    const Ipp8u* pSalt, int saltLen,
     const Ipp8u* pSign,
     int* pIsValid,
     const IppsRSAPublicKeyState* pKey,

@@ -38,7 +38,7 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "Intel Corporation.\0"
-            VALUE "FileVersion", STR( MBX_VERSION() ) "\0"
+            VALUE "FileVersion", STR_FILE_MBX_VERSION() "\0"
             VALUE "ProductName", MBX_LIB_SHORTNAME() ". Intel(R) Integrated Performance Primitives. " MBX_LIB_LONGNAME() ".\0"
             VALUE "ProductVersion", CRYPTO_MB_STR_VERSION() "\0"
             VALUE "LegalCopyright", "Copyright (C) 1999-2021, Intel Corporation. All rights reserved.\0"

@@ -221,7 +221,7 @@ my_pclmulqdq   %%tmpX1, %%HK,   11h     ;; tmpX1 = a1*b1               xmm1 = GH
 
 %if (_IPP32E >= _IPP32E_Y8)
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 POLY        DQ    00000000000000001h,0C200000000000000h  ;; 0xC2000000000000000000000000000001
@@ -231,11 +231,12 @@ MASK1       DQ    0ffffffffffffffffh,00000000000000000h  ;; 0x0000000000000000ff
 MASK2       DQ    00000000000000000h,0ffffffffffffffffh  ;; 0xffffffffffffffff0000000000000000
 INC_1       DQ    1,0
 
+segment .text align=IPP_ALIGN_FACTOR
 %assign sizeof_oword_  (16)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; void AesGcmPrecomute_avx(Ipp8u* pPrecomutedData, const Ipp8u* pHKey)
+;;; void AesGcmPrecomute_avx(Ipp8u* pPrecomData, const Ipp8u* pHKey)
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 align IPP_ALIGN_FACTOR
@@ -279,6 +280,92 @@ IPPASM AesGcmPrecompute_avx,PUBLIC
    REST_GPR
    ret
 ENDFUNC AesGcmPrecompute_avx
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; void AesGcmPrecompute_avx2_vaes(Ipp8u* pPrecomputedData, const Ipp8u* pHKey)
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; calculates 16 hash keys - HashKey<<1, (HashKey^2)<<1, ..., (HashKey^16)<<1
+align IPP_ALIGN_FACTOR
+IPPASM AesGcmPrecompute_avx2_vaes,PUBLIC
+        USES_GPR rdi,rsi
+        USES_XMM xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13,xmm14,xmm15
+        COMP_ABI 2
+
+%xdefine pPrecomputedData rdi ; (rdi) pointer to the reflected multipliers reflect(hkey),(hkey<<1), (hkey^2)<<1, (hkey^4)<<1,
+%xdefine pHKey       rsi ; (rsi) pointer to the Hkey value
+
+   movdqu   xmm0, oword [rel pHKey] ;  xmm0 holds HashKey
+   pshufb   xmm0, [rel SHUF_CONST]
+
+   ; precompute HashKey<<1 mod poly from the HashKey
+   movdqa   xmm4, xmm0
+   psllq    xmm0, 1
+   psrlq    xmm4, 63
+   movdqa   xmm3, xmm4
+   pslldq   xmm4, 8
+   psrldq   xmm3, 8
+   por      xmm0, xmm4
+   ;reduction
+   pshufd   xmm4, xmm3, 00100100b
+   pcmpeqd  xmm4, oword [rel TWOONE]     ; [TWOONE] = 0x00000001000000000000000000000001
+   pand     xmm4, oword [rel POLY]
+   pxor     xmm0, xmm4                          ; xmm0 holds the HashKey<<1 mod poly
+
+   movdqu   oword [pPrecomputedData+sizeof_oword_*0], xmm0
+
+   movdqa         xmm1, xmm0
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^2)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*1], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^3)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*2], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^4)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*3], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^5)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*4], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^6)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*5], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^7)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*6], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^8)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*7], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^9)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*8], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^10)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*9], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^11)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*10], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^12)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*11], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^13)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*12], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^14)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*13], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^15)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*14], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^16)<<1 mod poly
+   movdqu   oword [pPrecomputedData+sizeof_oword_*15], xmm1
+
+   REST_XMM
+   REST_GPR
+   ret
+ENDFUNC AesGcmPrecompute_avx2_vaes
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

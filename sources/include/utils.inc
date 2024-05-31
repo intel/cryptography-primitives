@@ -58,7 +58,7 @@
 ; The macro searches intersection between two lists.
 ; Input: two comma-separated lists, enclosed in curly braces.
 ; Output:
-; - Intersection will be located in the %$instersection context macro (can be empty).
+; - Intersection will be located in the %$intersection context macro (can be empty).
 ; - Count of intersection elements list will be stored in the %$cardinality context variable.
 %macro INTERSECT 2.nolist
   %ifnctx _INTERSECT_CTX_

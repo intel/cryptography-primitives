@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Encrypt byte data stream according to TDES (CBC mode)
-// 
+//
 //  Contents:
-//     EncyptCBC_TDES()
-// 
-// 
+//     EncryptCBC_TDES()
+//
+//
 */
 
 #include "owndefs.h"

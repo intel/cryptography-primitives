@@ -14,6 +14,9 @@
 * limitations under the License.
 *************************************************************************/
 
+#if defined( _WIN32 ) || defined( _WIN64 )
+#include <intrin.h>
+#endif
 #include <crypto_mb/cpu_features.h>
 #include <internal/common/ifma_defs.h>
 

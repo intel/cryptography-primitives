@@ -57,7 +57,7 @@ IPPFUN(IppStatus, ippsBigNumInit, (int length, IppsBigNumState* pBN))
         cpSize len = INTERNAL_BNU_LENGTH(length);
 
         BN_SIGN(pBN) = ippBigNumPOS;
-        BN_SIZE(pBN) = 1;     /* initial valie is zero */
+        BN_SIZE(pBN) = 1;     /* initial value is zero */
         BN_ROOM(pBN) = len;   /* close to what has been passed by user */
 
                               /* reserve one BNU_CHUNK_T more for cpDiv_BNU,

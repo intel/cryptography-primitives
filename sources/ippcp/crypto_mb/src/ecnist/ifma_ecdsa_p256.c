@@ -57,7 +57,7 @@ static void nistp256_ecdsa_inv_keys_mb8(U64 inv_skey[],
 // r = ([skey]*G).x mod n256
 //
 // note: pay attention on skey[] presenttaion
-//       it should be transposed and zero expanded 
+//       it should be transposed and zero expanded
 */
 static __mb_mask nistp256_ecdsa_sign_r_mb8(U64 sign_r[],
                                      const U64 skey[],
@@ -180,7 +180,7 @@ static __mb_mask nistp256_ecdsa_verify_mb8(U64 sign_r[],
 // pre-computation of ECDSA signature
 //
 // pa_inv_eph_skey[] array of pointers to the inversion of signer's ephemeral private keys
-// pa_sign_rp[]      array of pointers to the r-components of the signatures 
+// pa_sign_rp[]      array of pointers to the r-components of the signatures
 // pa_eph_skey[]     array of pointers to the ephemeral (nonce) signer's ephemeral private keys
 // pBuffer           pointer to the scratch buffer
 //
@@ -256,10 +256,10 @@ mbx_status mbx_nistp256_ecdsa_sign_setup_mb8(int64u* pa_inv_eph_skey[8],
 /*
 // computes ECDSA signature
 //
-// pa_sign_r[]       array of pointers to the r-components of the signatures 
-// pa_sign_s[]       array of pointers to the s-components of the signatures 
+// pa_sign_r[]       array of pointers to the r-components of the signatures
+// pa_sign_s[]       array of pointers to the s-components of the signatures
 // pa_msg[]          array of pointers to the messages are being signed
-// pa_sign_rp[]      array of pointers to the pre-computed r-components of the signatures 
+// pa_sign_rp[]      array of pointers to the pre-computed r-components of the signatures
 // pa_inv_eph_skey[] array of pointers to the inversion of signer's ephemeral private keys
 // pa_reg_skey[]     array of pointers to the regular signer's ephemeral (nonce) private keys
 // pBuffer           pointer to the scratch buffer
@@ -277,7 +277,7 @@ mbx_status mbx_nistp256_ecdsa_sign_complete_mb8(int8u* pa_sign_r[8],
    int buf_no;
 
    /* test input pointers */
-   if(NULL==pa_sign_r || NULL==pa_sign_s || NULL==pa_msg || 
+   if(NULL==pa_sign_r || NULL==pa_sign_s || NULL==pa_msg ||
       NULL==pa_sign_rp || NULL==pa_inv_eph_skey || NULL==pa_reg_skey) {
       status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
       return status;
@@ -436,7 +436,7 @@ mbx_status mbx_nistp256_ecdsa_sign_mb8(int8u* pa_sign_r[8],
    int8u stt_mask_r = MB_FUNC_NAME(is_zero_FE256_)(sign_r);
    int8u stt_mask_s = MB_FUNC_NAME(is_zero_FE256_)(sign_s);
 
-   /* convert singnature components to strings */
+   /* convert signature components to strings */
    ifma_mb8_to_HexStr8(pa_sign_r, (const int64u(*)[8])sign_r, P256_BITSIZE);
    ifma_mb8_to_HexStr8(pa_sign_s, (const int64u(*)[8])sign_s, P256_BITSIZE);
 
@@ -447,7 +447,7 @@ mbx_status mbx_nistp256_ecdsa_sign_mb8(int8u* pa_sign_r[8],
 
 /*
 // Verifies ECDSA signature
-// pa_sign_r[]       array of pointers to the computed r-components of the signatures 
+// pa_sign_r[]       array of pointers to the computed r-components of the signatures
 // pa_sign_s[]       array of pointers to the computed s-components of the signatures
 // pa_msg[]          array of pointers to the messages are being signed
 // pa_pubx[]         array of pointers to the public keys X-coordinates
@@ -460,7 +460,7 @@ mbx_status mbx_nistp256_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
                                          const int8u* const pa_msg[8],
                                          const int64u* const pa_pubx[8],
                                          const int64u* const pa_puby[8],
-                                         const int64u* const pa_pubz[8],                                       
+                                         const int64u* const pa_pubz[8],
                                                int8u* pBuffer)
 {
    mbx_status status = 0;
@@ -605,7 +605,7 @@ mbx_status mbx_nistp256_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey[8],
       MB_FUNC_NAME(zero_)((int64u (*)[8])T, sizeof(T)/sizeof(U64));
       return status;
    }
-      
+
    nistp256_ecdsa_inv_keys_mb8(T, T, 0);
    /* store results in suitable format */
    ifma_mb8_to_BN_256(pa_inv_skey, (const int64u (*)[8])T);
@@ -643,7 +643,7 @@ mbx_status mbx_nistp256_ecdsa_sign_complete_ssl_mb8(int8u* pa_sign_r[8],
    int buf_no;
 
    /* test input pointers */
-   if(NULL==pa_sign_r || NULL==pa_sign_s || NULL==pa_msg || 
+   if(NULL==pa_sign_r || NULL==pa_sign_s || NULL==pa_msg ||
       NULL==pa_sign_rp || NULL==pa_inv_eph_skey || NULL==pa_reg_skey) {
       status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
       return status;
@@ -785,7 +785,7 @@ mbx_status mbx_nistp256_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
    /* clear copy of the regular secret keys */
    MB_FUNC_NAME(zero_)((int64u (*)[8])reg_key, sizeof(reg_key)/sizeof(U64));
 
-   /* convert singnature components to strings */
+   /* convert signature components to strings */
    ifma_mb8_to_HexStr8(pa_sign_r, (const int64u(*)[8])sign_r, P256_BITSIZE);
    ifma_mb8_to_HexStr8(pa_sign_s, (const int64u(*)[8])sign_s, P256_BITSIZE);
 
@@ -802,7 +802,7 @@ mbx_status mbx_nistp256_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_sig[8],
                                              const int8u*  const pa_msg[8],
                                              const BIGNUM* const pa_pubx[8],
                                              const BIGNUM* const pa_puby[8],
-                                             const BIGNUM* const pa_pubz[8],                                       
+                                             const BIGNUM* const pa_pubz[8],
                                                    int8u* pBuffer)
 {
    mbx_status status = 0;
@@ -840,7 +840,7 @@ mbx_status mbx_nistp256_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_sig[8],
    {
       if(pa_sig[buf_no] != NULL)
       {
-         ECDSA_SIG_get0(pa_sig[buf_no], (const BIGNUM(**))pa_sign_r + buf_no, 
+         ECDSA_SIG_get0(pa_sig[buf_no], (const BIGNUM(**))pa_sign_r + buf_no,
                                         (const BIGNUM(**))pa_sign_s + buf_no);
       }
    }

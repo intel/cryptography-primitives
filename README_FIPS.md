@@ -25,7 +25,7 @@ In general, software may be certified at up to level 2.
 
 Intel® Integrated Performance Primitives Cryptography (Intel(R) IPP Cryptography)
 provides building blocks of FIPS-mode API (such as self-tests, FIPS-approved
-functionality status query) which can help the end users to fullfill FIPS level 1 requirements.
+functionality status query) which can help the end users to fulfill FIPS level 1 requirements.
 Please, refer to [Covered Algorithms](#covered-algorithms) section for the full
 list of FIPS-Approved API which are covered with the selftests.
 
@@ -41,7 +41,7 @@ Intel(R) IPP Cryptography may be built in FIPS-mode with IPPCP_FIPS_MODE=on
 configuration for ippcp and MBX_FIPS_MODE=on for crypto_MB (see details in [Build section](#build)).
 
 Application, which uses Intel(R) IPP Cryptography may be **FIPS-Certified** by
-matching FIPS 140 requirement and obtaining NIST sertificate or also be **FIPS-Compliant** for their own customers.
+matching FIPS 140 requirement and obtaining NIST certificate or also be **FIPS-Compliant** for their own customers.
 
 Please, refer to [Level 1 Specific Requirements](#level-1-specific-requirements)
 for the detailed description of what is done on Intel(R) IPP Cryptography-side
@@ -59,7 +59,7 @@ and what should be done by a more high-level application.
 | 6 | Run pairwise consistency selftest for newly generated RSA/ECC keypair | Intel(R) IPP Cryptography provides [fips_selftest_ippcp<algorithm name> API](#covered-algorithms) to run selftests |
 | 7 | Module to guarantee uniqueness of GSM key + IV | **User's application effort required** |
 | 8 | Module to guarantee XTS key1 != key2 | Intel(R) IPP Cryptography-side check |
-| 9 | (non-production) Extract raw noise source output samples of RBG for quality analysis | DBRNG is currenty out of the cryptography boundary |
+| 9 | (non-production) Extract raw noise source output samples of RBG for quality analysis | DBRNG is currently out of the cryptography boundary |
 | 10| (non-production) Run crypto algorithm testing with NIST-generated vectors | Done offline by Intel(R) IPP Cryptography for the [covered algorithms](#covered-algorithms) |
 
 For the implementation details about the steps in [Level 1 Specific Requirements](#level-1-specific-requirements)
@@ -107,7 +107,7 @@ Configuration example for ippcp with Intel® C++ Compiler:
 
 `CC=icc CXX=icpc cmake CMakeLists.txt -B_build -DARCH=intel64 -DIPPCP_FIPS_MODE:BOOL=on[-DIPPCP_SELFTEST_USE_MALLOC:BOOL=on]`
 
-> Note: selftests with intenal memory allocation uses malloc, which introduces
+> Note: selftests with internal memory allocation uses malloc, which introduces
 a c runtime dependency.
 To avoid the dependency, use IPPCP_SELFTEST_USE_MALLOC:BOOL=off or do not specify
 it as this as the default. In this case, all self-tests will require external memory allocation.
@@ -186,7 +186,7 @@ mbx_nistp256_ecdh_mb8(sharedBA, prvB, pubAx, pubAy, pubAz_curr, 0);
 #### Intel(R) IPP Cryptography
 
 Each API from the list is covered with the selftest fips_selftest_ipps<API_name>
-availible in Intel(R) IPP Cryptography build in FIPS mode.
+available in Intel(R) IPP Cryptography build in FIPS mode.
 
 ##### AES
 

@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Initialization of Rijndael
-// 
+//
 //  Contents:
 //     EncRijndaelKeys()
 //     DecRijndaelKeys()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -143,7 +143,7 @@ static const Ipp32u RconTbl[] = {
 
 /// commented due to mitigation
 //
-///* precomputed table for InvMixColumn() operation */ 
+///* precomputed table for InvMixColumn() operation */
 //static const Ipp32u InvMixCol_Tbl[4][256] = {
 //   { LINE(inv_t0) },
 //   { LINE(inv_t1) },
@@ -193,7 +193,7 @@ IPP_OWN_DEFN (void, ExpandRijndaelKey, (const Ipp8u* pKey, int NK, int NB, int N
       Ipp32u k3 = enc_keys[3];
 
       for(n=NK128; n<nKeys; n+=NK128) {
-         /* key expansion: extract bytes, substitute via Sbox and rorate */
+         /* key expansion: extract bytes, substitute via Sbox and rotate */
          k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k3, 1)),
                              getSboxValue(EBYTE(k3, 2)),
                              getSboxValue(EBYTE(k3, 3)),
@@ -221,7 +221,7 @@ IPP_OWN_DEFN (void, ExpandRijndaelKey, (const Ipp8u* pKey, int NK, int NB, int N
       Ipp32u k5 = enc_keys[5];
 
       for(n=NK192; n<nKeys; n+=NK192) {
-         /* key expansion: extract bytes, substitute via Sbox and rorate */
+         /* key expansion: extract bytes, substitute via Sbox and rotate */
          k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k5, 1)),
                              getSboxValue(EBYTE(k5, 2)),
                              getSboxValue(EBYTE(k5, 3)),
@@ -255,7 +255,7 @@ IPP_OWN_DEFN (void, ExpandRijndaelKey, (const Ipp8u* pKey, int NK, int NB, int N
       Ipp32u k7 = enc_keys[7];
 
       for(n=NK256; n<nKeys; n+=NK256) {
-         /* key expansion: extract bytes, substitute via Sbox and rorate */
+         /* key expansion: extract bytes, substitute via Sbox and rotate */
          k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k7, 1)),
                              getSboxValue(EBYTE(k7, 2)),
                              getSboxValue(EBYTE(k7, 3)),

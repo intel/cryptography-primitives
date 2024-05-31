@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Constants
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -219,7 +219,7 @@ const Ipp8u* cpHashIV[] = {
 ////////////////////////////////////////////////////////////
 
 /*
-// additive constatns
+// additive constants
 */
 #if defined(_ENABLE_ALG_SHA1_)
 __ALIGN16 const Ipp32u SHA1_cnt[] = {

@@ -303,7 +303,7 @@
      mov    %%hash0, %%hashAdd
 %endmacro
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 
 align IPP_ALIGN_FACTOR
@@ -319,6 +319,7 @@ shuffle_mask   DD 00010203h
                DD 0c0d0e0fh
 
 
+segment .text align=IPP_ALIGN_FACTOR
 ;*****************************************************************************************
 ;* Purpose:     Update internal digest according to message block
 ;*

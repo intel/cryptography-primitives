@@ -50,12 +50,6 @@ static const Ipp8u r[]          = { 0xac,0xc2,0xc8,0x79,0x6f,0x5e,0xbb,0xca,0x7a
 static const Ipp8u s[]          = { 0x03,0x89,0x05,0xcc,0x2a,0xda,0xcd,0x3c,0x5a,0x17,0x6f,0xe9,0x18,0xb2,0x97,0xef,
                                     0x1c,0x37,0xf7,0x2b,0x26,0x76,0x6c,0x78,0xb2,0xa6,0x05,0xca,0x19,0x78,0xf7,0x8b };
 
-/* pub key coordinates */
-static const Ipp8u qx[]          = { 0x83,0xbf,0x71,0xc2,0x46,0xff,0x59,0x3c,0x2f,0xb1,0xbf,0x4b,0xe9,0x5d,0x56,0xd3,
-                                     0xcc,0x8f,0xdb,0x48,0xa2,0xbf,0x33,0xf0,0xf4,0xc7,0x5f,0x07,0x1c,0xe9,0xcb,0x1c};
-static const Ipp8u qy[]          = { 0xa9,0x4c,0x9a,0xa8,0x5c,0xcd,0x7c,0xdc,0x78,0x4e,0x40,0xb7,0x93,0xca,0xb7,0x6d,
-                                     0xe0,0x13,0x61,0x0e,0x2c,0xdb,0x1f,0x1a,0xa2,0xf9,0x11,0x88,0xc6,0x14,0x40,0xce };
-
 static const unsigned int primeBitSize = 256;
 
 static const unsigned int ordWordSize   = 8;
@@ -169,12 +163,18 @@ IPPFUN(fips_test_status, fips_selftest_ippsGFpECSignDSA, (Ipp8u *pGFpBuff, Ipp8u
 
         int gfpECBuffSize = 0;
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_GFpEC_buff(&gfpECBuffSize, pGFpBuff);
-        if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE(pGFpBuff)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
         pGFpECBuff = malloc((size_t)gfpECBuffSize);
 
         int dataBuffSize = 0;
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_data_buff(&dataBuffSize, pGFpBuff, pGFpECBuff);
-        if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE_2(pGFpBuff, pGFpECBuff)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
         pDataBuff = malloc((size_t)dataBuffSize);
     }
 #else
@@ -325,12 +325,18 @@ IPPFUN(fips_test_status, fips_selftest_ippsGFpECVerifyDSA, (Ipp8u *pGFpBuff, Ipp
 
         int gfpECBuffSize = 0;
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_GFpEC_buff(&gfpECBuffSize, pGFpBuff);
-        if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE(pGFpBuff)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
         pGFpECBuff = malloc((size_t)gfpECBuffSize);
 
         int dataBuffSize = 0;
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_data_buff(&dataBuffSize, pGFpBuff, pGFpECBuff);
-        if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE_2(pGFpBuff, pGFpECBuff)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
         pDataBuff = malloc((size_t)dataBuffSize);
     }
 #else
@@ -472,12 +478,18 @@ IPPFUN(fips_test_status, fips_selftest_ippsGFpECPrivateKey, (Ipp8u *pGFpBuff, Ip
 
         int gfpECBuffSize = 0;
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_GFpEC_buff(&gfpECBuffSize, pGFpBuff);
-        if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE(pGFpBuff)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
         pGFpECBuff = malloc((size_t)gfpECBuffSize);
 
         int dataBuffSize = 0;
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_data_buff(&dataBuffSize, pGFpBuff, pGFpECBuff);
-        if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE_2(pGFpBuff, pGFpECBuff)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
         pDataBuff = malloc((size_t)dataBuffSize);
     }
 #else
