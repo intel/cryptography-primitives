@@ -16,7 +16,7 @@
 
 /*
 //     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
-// 
+//
 //     Context:
 //        cpFastMontMultiExp()
 //
@@ -49,9 +49,9 @@ static cpSize GetIndex(const Ipp8u** ppE, cpSize numItems, cpSize nBit)
 //    y = x[0]^e[0] * x[1]^e[1] *...* x[numItems-1]^e[numItems-1] mod M
 //
 // Input:
-//    - table pTbl of precomuted values pTbl[i] = x[0]^i[0] * x[1]^i[1] *...* x[numItems-1]^i[numItems-1] mod M,
+//    - table pTbl of precomputed values pTbl[i] = x[0]^i[0] * x[1]^i[1] *...* x[numItems-1]^i[numItems-1] mod M,
 //      where i[0], i[1], ..., i[numItems-1] are bits of i value;
-//      each entry has sizeM length (i.e. equial to modulo M size)
+//      each entry has sizeM length (i.e. equal to modulo M size)
 //    - array of pointers to the BNU exponents e[0], e[1],...,e[numItems-1]
 //    - pointer to the Montgomery engine
 */

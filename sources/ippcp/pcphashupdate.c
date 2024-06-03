@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     General Functionality
-// 
+//
 //  Contents:
 //        ippsHashUpdate()
 //
@@ -50,7 +50,7 @@
 //    pState   pointer to the Hash context
 //
 *F*/
-__INLINE int IsExceedMsgLen(Ipp64u maxLo, Ipp64u maxHi, Ipp64u lenLo, Ipp64u lenHi)
+__IPPCP_INLINE int IsExceedMsgLen(Ipp64u maxLo, Ipp64u maxHi, Ipp64u lenLo, Ipp64u lenHi)
 {
    int isExceed = lenLo > maxLo;
    isExceed = (lenHi+(Ipp64u)isExceed) > maxHi;

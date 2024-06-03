@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //               Intel(R) Integrated Performance Primitives
 //                   Cryptographic Primitives (ippcp)
-// 
-// 
+//
+//
 */
 
 #if !defined(_CP_MONTGOMETRY_H)
@@ -64,14 +64,14 @@ struct _cpMontgomery
 /*
 // Montgomery reduction, multiplication and squaring
 */
-__INLINE void cpMontRed_BNU(BNU_CHUNK_T* pR,
+__IPPCP_INLINE void cpMontRed_BNU(BNU_CHUNK_T* pR,
                             BNU_CHUNK_T* pProduct,
                             gsModEngine* pModEngine)
 {
    MOD_METHOD( pModEngine )->red(pR, pProduct, pModEngine);
 }
 
-__INLINE void cpMontMul_BNU(BNU_CHUNK_T* pR,
+__IPPCP_INLINE void cpMontMul_BNU(BNU_CHUNK_T* pR,
                      const BNU_CHUNK_T* pA,
                      const BNU_CHUNK_T* pB,
                            gsModEngine* pModEngine)
@@ -79,7 +79,7 @@ __INLINE void cpMontMul_BNU(BNU_CHUNK_T* pR,
    MOD_METHOD( pModEngine )->mul(pR, pA, pB, pModEngine);
 }
 
-__INLINE cpSize cpMontMul_BNU_EX(BNU_CHUNK_T* pR,
+__IPPCP_INLINE cpSize cpMontMul_BNU_EX(BNU_CHUNK_T* pR,
                            const BNU_CHUNK_T* pA, cpSize nsA,
                            const BNU_CHUNK_T* pB, cpSize nsB,
                                  gsModEngine* pModEngine)
@@ -100,14 +100,14 @@ __INLINE cpSize cpMontMul_BNU_EX(BNU_CHUNK_T* pR,
    return nsM;
 }
 
-__INLINE void cpMontSqr_BNU(BNU_CHUNK_T* pR,
+__IPPCP_INLINE void cpMontSqr_BNU(BNU_CHUNK_T* pR,
                       const BNU_CHUNK_T* pA,
                             gsModEngine* pModEngine)
 {
    MOD_METHOD( pModEngine )->sqr(pR, pA, pModEngine);
 }
 
-__INLINE void cpMontSqr_BNU_EX(BNU_CHUNK_T* pR,
+__IPPCP_INLINE void cpMontSqr_BNU_EX(BNU_CHUNK_T* pR,
                          const BNU_CHUNK_T* pA, cpSize nsA,
                                gsModEngine* pModEngine)
 {
@@ -120,7 +120,7 @@ __INLINE void cpMontSqr_BNU_EX(BNU_CHUNK_T* pR,
 /*
 // Montgomery encoding/decoding
 */
-__INLINE cpSize cpMontEnc_BNU(BNU_CHUNK_T* pR,
+__IPPCP_INLINE cpSize cpMontEnc_BNU(BNU_CHUNK_T* pR,
                         const BNU_CHUNK_T* pXreg,
                               gsModEngine* pModEngine)
 {
@@ -132,7 +132,7 @@ __INLINE cpSize cpMontEnc_BNU(BNU_CHUNK_T* pR,
    return nsM;
 }
 
-__INLINE cpSize cpMontEnc_BNU_EX(BNU_CHUNK_T* pR,
+__IPPCP_INLINE cpSize cpMontEnc_BNU_EX(BNU_CHUNK_T* pR,
                            const BNU_CHUNK_T* pXreg, cpSize nsX,
                                  gsModEngine* pModEngine)
 {
@@ -147,7 +147,7 @@ __INLINE cpSize cpMontEnc_BNU_EX(BNU_CHUNK_T* pR,
    return nsM;
 }
 
-__INLINE cpSize cpMontDec_BNU(BNU_CHUNK_T* pR,
+__IPPCP_INLINE cpSize cpMontDec_BNU(BNU_CHUNK_T* pR,
                         const BNU_CHUNK_T* pXmont, cpSize nsX,
                               gsModEngine* pModEngine)
 {
@@ -161,7 +161,7 @@ __INLINE cpSize cpMontDec_BNU(BNU_CHUNK_T* pR,
    return nsM;
 }
 
-__INLINE void cpMontMul_BN(IppsBigNumState* pRbn,
+__IPPCP_INLINE void cpMontMul_BN(IppsBigNumState* pRbn,
                      const IppsBigNumState* pXbn,
                      const IppsBigNumState* pYbn,
                            gsModEngine*     pModEngine)
@@ -176,7 +176,7 @@ __INLINE void cpMontMul_BN(IppsBigNumState* pRbn,
    BN_SIGN(pRbn) = ippBigNumPOS;
 }
 
-__INLINE void cpMontEnc_BN(IppsBigNumState* pRbn,
+__IPPCP_INLINE void cpMontEnc_BN(IppsBigNumState* pRbn,
                      const IppsBigNumState* pXbn,
                            gsModEngine*     pModEngine)
 {
@@ -188,7 +188,7 @@ __INLINE void cpMontEnc_BN(IppsBigNumState* pRbn,
    BN_SIGN(pRbn) = ippBigNumPOS;
 }
 
-__INLINE void cpMontDec_BN(IppsBigNumState* pRbn,
+__IPPCP_INLINE void cpMontDec_BN(IppsBigNumState* pRbn,
                      const IppsBigNumState* pXbn,
                            gsModEngine*     pModEngine)
 {
@@ -207,7 +207,7 @@ __INLINE void cpMontDec_BN(IppsBigNumState* pRbn,
 #define cpMontExpBin_BNU_sscm OWNAPI(cpMontExpBin_BNU_sscm)
    IPP_OWN_DECL (cpSize, cpMontExpBin_BNU_sscm, (BNU_CHUNK_T* pY, const BNU_CHUNK_T* pX, cpSize nsX, const BNU_CHUNK_T* pE, cpSize nsE, gsModEngine* pModEngine))
 
-__INLINE void cpMontExpBin_BN_sscm(IppsBigNumState* pYbn,
+__IPPCP_INLINE void cpMontExpBin_BN_sscm(IppsBigNumState* pYbn,
                              const IppsBigNumState* pXbn,
                              const IppsBigNumState* pEbn,
                                    gsModEngine*     pMont)
@@ -223,7 +223,7 @@ __INLINE void cpMontExpBin_BN_sscm(IppsBigNumState* pYbn,
    BN_SIGN(pYbn) = ippBigNumPOS;
 }
 
-__INLINE void cpMontExpBin_BN(IppsBigNumState* pYbn,
+__IPPCP_INLINE void cpMontExpBin_BN(IppsBigNumState* pYbn,
                         const IppsBigNumState* pXbn,
                         const IppsBigNumState* pEbn,
                               gsModEngine* pModEngine)

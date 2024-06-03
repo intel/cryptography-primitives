@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Decrypt 128-bit data block according to Rijndael
 //     (compact S-box based implementation)
-// 
+//
 //  Contents:
 //     Safe2Decrypt_RIJ128()
-// 
-// 
+//
+//
 */
 
 #include "owncp.h"
@@ -41,7 +41,7 @@
 #define SELECTION_BITS  ((sizeof(BNU_CHUNK_T)/sizeof(Ipp8u)) -1)
 
 #if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER)
-__INLINE Ipp8u getInvSboxValue(Ipp8u x)
+__IPPCP_INLINE Ipp8u getInvSboxValue(Ipp8u x)
 {
    BNU_CHUNK_T selection = 0;
    const BNU_CHUNK_T* SboxEntry = (BNU_CHUNK_T*)RijDecSbox;
@@ -58,7 +58,7 @@ __INLINE Ipp8u getInvSboxValue(Ipp8u x)
 
 #else
 #include "pcpmask_ct.h"
-__INLINE Ipp8u getInvSboxValue(Ipp8u x)
+__IPPCP_INLINE Ipp8u getInvSboxValue(Ipp8u x)
 {
    BNU_CHUNK_T selection = 0;
    const BNU_CHUNK_T* SboxEntry = (BNU_CHUNK_T*)RijDecSbox;
@@ -74,21 +74,21 @@ __INLINE Ipp8u getInvSboxValue(Ipp8u x)
 }
 #endif
 
-__INLINE void invSubBytes(Ipp8u state[])
+__IPPCP_INLINE void invSubBytes(Ipp8u state[])
 {
    int i;
    for(i=0;i<16;i++)
       state[i] = getInvSboxValue(state[i]);
 }
 
-__INLINE void invShiftRows(Ipp32u* state)
+__IPPCP_INLINE void invShiftRows(Ipp32u* state)
 {
    state[1] =  ROR32(state[1], 24);
    state[2] =  ROR32(state[2], 16);
    state[3] =  ROR32(state[3],  8);
 }
 
-__INLINE void invMixColumns(Ipp32u* state)
+__IPPCP_INLINE void invMixColumns(Ipp32u* state)
 {
    Ipp32u y0 = state[1] ^ state[2] ^ state[3];
    Ipp32u y1 = state[0] ^ state[2] ^ state[3];

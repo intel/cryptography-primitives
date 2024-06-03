@@ -45,11 +45,11 @@
   #define SIMD_BYTES  (SIMD_LEN/8)
   #define SIMD_QWORDS (SIMD_LEN/64)
 
-  __INLINE U64 loadu64(const void *p) {
+  __IPPCP_INLINE U64 loadu64(const void *p) {
     return _mm256_loadu_si256((U64*)p);
   }
 
-  __INLINE void storeu64(const void *p, U64 v) {
+  __IPPCP_INLINE void storeu64(const void *p, U64 v) {
     _mm256_storeu_si256((U64*)p, v);
   }
 
@@ -80,7 +80,7 @@
           __asm__ ( "vpmadd52huq " #o "(%2), %1, %0" : "+x" (r): "x" (b), "r" (c) ); \
       }
   #else
-      /* Use IFMA instrinsics for all other compilers */
+      /* Use IFMA intrinsics for all other compilers */
       static U64 fma52lo(U64 a, U64 b, U64 c)
       {
         return _mm256_madd52lo_epu64(a, b, c);
@@ -102,7 +102,7 @@
       }
   #endif
 
-  __INLINE U64 mul52lo(U64 b, U64 c)
+  __IPPCP_INLINE U64 mul52lo(U64 b, U64 c)
   {
     return fma52lo(_mm256_setzero_si256(), b, c);
   }
@@ -110,44 +110,44 @@
   #define fma52lo_mem(r, a, b, c, o) _mm_madd52lo_epu64_(r, a, b, c, o)
   #define fma52hi_mem(r, a, b, c, o) _mm_madd52hi_epu64_(r, a, b, c, o)
 
-  __INLINE U64 add64(U64 a, U64 b)
+  __IPPCP_INLINE U64 add64(U64 a, U64 b)
   {
     return _mm256_add_epi64(a, b);
   }
 
-  __INLINE U64 sub64(U64 a, U64 b)
+  __IPPCP_INLINE U64 sub64(U64 a, U64 b)
   {
     return _mm256_sub_epi64(a, b);
   }
 
-  __INLINE U64 get_zero64()
+  __IPPCP_INLINE U64 get_zero64()
   {
     return _mm256_setzero_si256();
   }
 
-  __INLINE void set_zero64(U64 *a)
+  __IPPCP_INLINE void set_zero64(U64 *a)
   {
     *a = _mm256_xor_si256(*a, *a);
   }
 
-  __INLINE U64 set1(unsigned long long a)
+  __IPPCP_INLINE U64 set1(unsigned long long a)
   {
     return _mm256_set1_epi64x((long long)a);
   }
 
-  __INLINE U64 srli64(U64 a, int s)
+  __IPPCP_INLINE U64 srli64(U64 a, int s)
   {
     return _mm256_srli_epi64(a, s);
   }
 
   #define slli64 _mm256_slli_epi64
 
-  __INLINE U64 and64_const(U64 a, unsigned long long mask)
+  __IPPCP_INLINE U64 and64_const(U64 a, unsigned long long mask)
   {
     return _mm256_and_si256(a, _mm256_set1_epi64x((long long)mask));
   }
 
-  __INLINE U64 and64(U64 a, U64 mask)
+  __IPPCP_INLINE U64 and64(U64 a, U64 mask)
   {
     return _mm256_and_si256(a, mask);
   }

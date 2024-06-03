@@ -33,11 +33,11 @@
 
 #define MIN(a, b) ( ((a) < (b)) ? a : b )
 
-__INLINE __mmask8 MB_MASK(int L) {
+__MBX_INLINE __mmask8 MB_MASK(int L) {
    return (L > 0) ? (__mmask8)0xFF : (__mmask8)0;
 }
 
-__INLINE __mmask64 SB_MASK1(int L, int REV)
+__MBX_INLINE __mmask64 SB_MASK1(int L, int REV)
 {
    if (L <= 0)
       return (__mmask64)0x0;
@@ -65,7 +65,7 @@ __INLINE __mmask64 SB_MASK1(int L, int REV)
 //    - 8 hex strings -> mb8
 */
 DISABLE_OPTIMIZATION
-__INLINE void transform_8sb_to_mb8(U64 out_mb8[], int bitLen, int8u *inp[8], int inpLen[8], int flag) {
+__MBX_INLINE void transform_8sb_to_mb8(U64 out_mb8[], int bitLen, int8u *inp[8], int inpLen[8], int flag) {
    // inverse bytes (reverse=1)
    const __m512i bswap_mask = _mm512_set_epi64(
                      0x0001020304050607, 0x08090a0b0c0d0e0f,
@@ -254,7 +254,7 @@ int8u ifma_HexStr8_to_mb8(int64u out_mb8[][8], const int8u* const pStr[8], int b
 //    - mb8 -> 8 hex strings
 */
 DISABLE_OPTIMIZATION
-__INLINE void transform_mb8_to_8sb(int8u* out[8], int outLen[8], const U64 inp_mb8[], int bitLen, int flag)
+__MBX_INLINE void transform_mb8_to_8sb(int8u* out[8], int outLen[8], const U64 inp_mb8[], int bitLen, int flag)
 {
    // inverse bytes (reverse=1)
    const __m512i bswap_mask = _mm512_set_epi64(

@@ -105,7 +105,7 @@ void ifma52_sub_with_borrow(U64 r[], const U64 x[], const U64 y[])
    #endif
 }
 
-// r = x<ed25519n? x : x-ed25519n 
+// r = x<ed25519n? x : x-ed25519n
 void ifma52_sub_ed25519n(U64 r[], const U64 x[])
 {
    U64* n = (U64*)ed25519n_mb;
@@ -236,7 +236,7 @@ void ifma52_ed25519n_reduce(U64 r[NE_LEN52], const U64 x[NE_LEN52*2])
    ROUND_MUL(q3_9, q3_10, q1[4], mu[5]);
    ROUND_MUL(q3_9, q3_10, q1[5], mu[4]);
 
-   /* note, that the lates (2*k+2) digit will always be 0 (count bits presentation of x and mu) */
+   /* note, that the latest (2*k+2) digit will always be 0 (count bits presentation of x and mu) */
    ROUND_MUL(q3_10, q3_11, q1[5], mu[5]);
 
    /* normalization,  q3 = {q3_11, q3_10, q3_9, q3_8, q3_7, q3_6}, note q3_11 is zero */

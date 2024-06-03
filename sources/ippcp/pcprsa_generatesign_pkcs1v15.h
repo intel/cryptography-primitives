@@ -31,7 +31,7 @@
 #include "pcprsa_emsa_pkcs1v15.h"
 
 static int GenerateSign(const Ipp8u* pMsg, int msgLen,  /* message representation */
-    const Ipp8u* pSalt, int saltLen, /* fied string */
+    const Ipp8u* pSalt, int saltLen,
     Ipp8u* pSign,
     const IppsRSAPrivateKeyState* pPrvKey,
     const IppsRSAPublicKeyState*  pPubKey,

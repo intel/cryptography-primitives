@@ -31,8 +31,7 @@
 %if (_SHA_NI_ENABLING_ == _FEATURE_ON_) || (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_)
 ;;%if (_IPP32E >= _IPP32E_Y8 )
 
-segment .text align=IPP_ALIGN_FACTOR
-
+segment .data align=IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 
@@ -41,6 +40,7 @@ UPPER_DWORD_MASK \
 PSHUFFLE_BYTE_FLIP_MASK \
       DB    15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
 
+segment .text align=IPP_ALIGN_FACTOR
 align IPP_ALIGN_FACTOR
 ;*****************************************************************************************
 ;* Purpose:     Update internal digest according to message block

@@ -142,7 +142,7 @@ static void sm4_ctr128_mask_kernel_mb16(__m512i* CTR, const __m512i* p_rk, __m51
 }
 
 
-__INLINE __m128i IncBlock128(__m128i x, int32u increment)
+__MBX_INLINE __m128i IncBlock128(__m128i x, int32u increment)
 {
    __m128i t = _mm_add_epi64(x, _mm_maskz_loadu_epi32(1, &increment));
    __mmask8 carryMask = _mm_cmplt_epu64_mask(t, x);

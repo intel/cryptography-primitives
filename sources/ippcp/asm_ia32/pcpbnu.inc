@@ -29,7 +29,7 @@
 ;
 
 ;;
-;; CMP_BNU     comare arbitrary BNUs
+;; CMP_BNU     compare arbitrary BNUs
 ;;
 ;; input
 ;;    rSrc1    points BNU1

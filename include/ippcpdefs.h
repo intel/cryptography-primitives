@@ -853,28 +853,84 @@ IPPAPI( const char*, ippcpGetStatusString, ( IppStatus StsCode ))
 IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
 IPPAPI( Ipp64u, ippcpGetCpuClocks, (void) )
 
-#ifdef IPPCP_PREVIEW_XMSS
+/* Defines related to experimental features enabling */
+#ifdef IPPCP_PREVIEW_ALL
+    #ifndef IPPCP_PREVIEW_XMSS
+    #define IPPCP_PREVIEW_XMSS (1)
+    #endif
+    #ifndef IPPCP_PREVIEW_LMS
+    #define IPPCP_PREVIEW_LMS  (1)
+    #endif
+#endif
+
 /*
 // =========================================================
 // XMSS Algo
 // =========================================================
 */
+#ifdef IPPCP_PREVIEW_XMSS
+    typedef enum
+    {
+        reserved = 0,
+        XMSS_SHA2_10_256 = 1,
+        XMSS_SHA2_16_256 = 2,
+        XMSS_SHA2_20_256 = 3,
+        XMSS_SHA2_10_512 = 4,
+        XMSS_SHA2_16_512 = 5,
+        XMSS_SHA2_20_512 = 6
+    } IppsXMSSAlgo;
 
-typedef enum
-{
-    reserved = 0,
-    XMSS_SHA2_10_256 = 1,
-    XMSS_SHA2_16_256 = 2,
-    XMSS_SHA2_20_256 = 3,
-    XMSS_SHA2_10_512 = 4,
-    XMSS_SHA2_16_512 = 5,
-    XMSS_SHA2_20_512 = 6
-} IppsXMSSAlgo;
-
-typedef struct _cpXMSSSignatureState IppsXMSSSignatureState;
-typedef struct _cpXMSSPublicKeyState IppsXMSSPublicKeyState;
+    typedef struct _cpXMSSSignatureState IppsXMSSSignatureState;
+    typedef struct _cpXMSSPublicKeyState IppsXMSSPublicKeyState;
 
 #endif // IPPCP_PREVIEW_XMSS
+
+
+/*
+// =========================================================
+// LMS Algo
+// =========================================================
+*/
+#ifdef IPPCP_PREVIEW_LMS
+    /* Parameters set is based on two articles:
+     *  RFC8554 (https://datatracker.ietf.org/doc/html/rfc8554)
+     *  https://datatracker.ietf.org/doc/html/draft-fluhrer-lms-more-parm-sets-00
+     */
+    typedef enum
+    {
+        LMOTS_SHA256_N32_W1 = 1,
+        LMOTS_SHA256_N32_W2 = 2,
+        LMOTS_SHA256_N32_W4 = 3,
+        LMOTS_SHA256_N32_W8 = 4,
+        LMOTS_SHA256_N24_W1 = 5,
+        LMOTS_SHA256_N24_W2 = 6,
+        LMOTS_SHA256_N24_W4 = 7,
+        LMOTS_SHA256_N24_W8 = 8
+    } IppsLMOTSAlgo;
+
+    typedef enum
+    {
+        LMS_SHA256_M32_H5  = 5,
+        LMS_SHA256_M32_H10 = 6,
+        LMS_SHA256_M32_H15 = 7,
+        LMS_SHA256_M32_H20 = 8,
+        LMS_SHA256_M32_H25 = 9,
+        LMS_SHA256_M24_H5  = 10,
+        LMS_SHA256_M24_H10 = 11,
+        LMS_SHA256_M24_H15 = 12,
+        LMS_SHA256_M24_H20 = 13,
+        LMS_SHA256_M24_H25 = 14
+    } IppsLMSAlgo;
+
+    typedef struct {
+        IppsLMOTSAlgo lmotsOIDAlgo;
+        IppsLMSAlgo   lmsOIDAlgo;
+    } IppsLMSAlgoType;
+
+    typedef struct _cpLMSSignatureState IppsLMSSignatureState;
+    typedef struct _cpLMSPublicKeyState IppsLMSPublicKeyState;
+#endif // IPPCP_PREVIEW_LMS
+
 
 #ifdef __cplusplus
 }

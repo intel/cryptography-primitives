@@ -391,7 +391,7 @@ vmovdqa  YMMWORD [rsi+(%%W_AHEAD/4)*sizeof(ymmword)+(%%round/4)*sizeof(ymmword)]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 
 align IPP_ALIGN_FACTOR
@@ -421,6 +421,7 @@ SHA256_zzBA db 0,1,2,3, 8,9,10,11, 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh
             db 0,1,2,3, 8,9,10,11, 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh
 
 
+segment .text align=IPP_ALIGN_FACTOR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; UpdateSHA256(Ipp32u digest[], Ipp8u dataBlock[], int datalen, Ipp32u K_256[])

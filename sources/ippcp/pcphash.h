@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Internal Definitions and Internal Functions Prototypes
-// 
-// 
+//
+//
 */
 
 #if !defined(_PCP_HASH_H)
@@ -183,19 +183,19 @@ extern const Ipp8u* cpHashIV[];
 extern const cpHashAttr cpHashAlgAttr[];
 
 /* IV size helper */
-__INLINE int cpHashIvSize(IppHashAlgId algID)
+__IPPCP_INLINE int cpHashIvSize(IppHashAlgId algID)
 { return cpHashAlgAttr[algID].ivSize; }
 
 /* hash size helper */
-__INLINE int cpHashSize(IppHashAlgId algID)
+__IPPCP_INLINE int cpHashSize(IppHashAlgId algID)
 { return cpHashAlgAttr[algID].hashSize; }
 
 /* message block size helper */
-__INLINE int cpHashMBS(IppHashAlgId algID)
+__IPPCP_INLINE int cpHashMBS(IppHashAlgId algID)
 { return cpHashAlgAttr[algID].msgBlkSize; }
 
 /* maps algID into enabled IppHashAlgId value */
-__INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
+__IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
 {
    /* maps algID into the valid range */
    algID = (((int)ippHashAlg_Unknown < (int)algID) && ((int)algID < (int)ippHashAlg_MaxNo))? algID : ippHashAlg_Unknown;

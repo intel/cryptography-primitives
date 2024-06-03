@@ -18,7 +18,7 @@
 //
 //  Purpose:
 //     Cryptography Primitive.
-//     AES GCM otimized for AVX512 and AVX512-VAES features
+//     AES GCM optimized for AVX512 and AVX512-VAES features
 //     Internal Definitions
 //
 //
@@ -98,10 +98,10 @@ struct _cpAES_GCM {
    EncryptUpdate_   encryptUpdateFunc;    // Encryption-authentication
    DecryptUpdate_   decryptUpdateFunc;    // Decryption-verification
    GetTag_          getTagFunc;           // Get tag
-   
+
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
    __ALIGN16
-   cpAESNoiseParams noiseParams; 
+   cpAESNoiseParams noiseParams;
 #endif
 };
 

@@ -1555,6 +1555,23 @@ IPPAPI(IppStatus, ippsXMSSVerify, (const Ipp8u* pMsg,
 
 #endif // IPPCP_PREVIEW_XMSS
 
+#ifdef IPPCP_PREVIEW_LMS
+
+IPPAPI(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
+IPPAPI(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
+IPPAPI(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
+IPPAPI(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType, const Ipp8u* pI, const Ipp8u* pK,
+                                             IppsLMSPublicKeyState* pState))
+IPPAPI(IppStatus, ippsLMSSetSignatureState, (const IppsLMSAlgoType lmsType, Ipp32u q, const Ipp8u* pC,
+                                             const Ipp8u* pY, const Ipp8u* pAuthPath,
+                                             IppsLMSSignatureState* pState))
+IPPAPI(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
+                                  const IppsLMSSignatureState* pSign,
+                                  int*  pIsSignValid,
+                                  const IppsLMSPublicKeyState* pKey,
+                                  Ipp8u* pBuffer))
+#endif // IPPCP_PREVIEW_LMS
+
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
 #pragma warning(pop)
 #endif

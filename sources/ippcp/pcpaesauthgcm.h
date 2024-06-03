@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Message Authentication Algorithm
 //     Internal Definitions and Internal Functions Prototypes
-// 
-// 
+//
+//
 */
 
 #if !defined(_CP_AESAUTH_GCM_H)
@@ -54,7 +54,7 @@ typedef enum {
 } GcmState;
 
 struct _cpAES_GCM {
-   
+
    Ipp32u   idCtx;                  /* AES-GCM id                    */
    GcmState state;                  /* GCM state: Init, IV|AAD|TXT processing */
    Ipp64u   ivLen;                  /* IV length (bytes)             */
@@ -77,13 +77,19 @@ struct _cpAES_GCM {
    IppsAESSpec cipher;
 
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-   __ALIGN16 
+   __ALIGN16
    cpAESNoiseParams noiseParams;
 #endif
 
    __ALIGN16                        /* aligned pre-computed data:    */
    Ipp8u multiplier[BLOCK_SIZE];    /* - (default) hKey                             */
                                     /* - (aes_ni)  hKey*t, (hKey*t)^2, (hKey*t)^4   */
+                                    /* - (avx2_vaes) 16 vectors by 128-bit values
+                                       hKey<<1,    hKey^2<<1,  hKey^3<<1,  hKey^4<<1,
+                                       hKey^5<<1,  hKey^6<<1,  hKey^7<<1,  hKey^8<<1,
+                                       hKey^9<<1,  hKey^10<<1, hKey^11<<1, hKey^12<<1,
+                                       hKey^13<<1, hKey^14<<1, hKey^15<<1, hKey^16<<1,
+                                    */
                                     /* - (vaes_ni) 8 reverted ordered vectors by 4 128-bit values.
                                       hKeys derivations in the multiplier[] array in order of appearance
                                       (zero-index starts from the left):
@@ -101,9 +107,10 @@ struct _cpAES_GCM {
 /* alignment */
 #define AESGCM_ALIGNMENT   (16)
 
-#define PRECOMP_DATA_SIZE_AES_NI_AESGCM   (BLOCK_SIZE*4)
-#define PRECOMP_DATA_SIZE_VAES_NI_AESGCM  (BLOCK_SIZE*16*2)
-#define PRECOMP_DATA_SIZE_FAST2K          (BLOCK_SIZE*128)
+#define PRECOMP_DATA_SIZE_AES_NI_AESGCM    (BLOCK_SIZE*4)
+#define PRECOMP_DATA_SIZE_AVX2_VAES_AESGCM (BLOCK_SIZE*16)
+#define PRECOMP_DATA_SIZE_VAES_NI_AESGCM   (BLOCK_SIZE*16*2)
+#define PRECOMP_DATA_SIZE_FAST2K           (BLOCK_SIZE*128)
 
 /*
 // Useful macros
@@ -139,13 +146,13 @@ struct _cpAES_GCM {
 #define AESGCM_VALID_ID(context)     ((((context)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((context))) == (Ipp32u)idCtxAESGCM)
 
 #if 0
-__INLINE void IncrementCounter32(Ipp8u* pCtr)
+__IPPCP_INLINE void IncrementCounter32(Ipp8u* pCtr)
 {
    int i;
    for(i=BLOCK_SIZE-1; i>=CTR_POS && 0==(Ipp8u)(++pCtr[i]); i--) ;
 }
 #endif
-__INLINE void IncrementCounter32(Ipp8u* pCtr)
+__IPPCP_INLINE void IncrementCounter32(Ipp8u* pCtr)
 {
    Ipp32u* pCtr32 = (Ipp32u*)pCtr;
    Ipp32u ctrVal = pCtr32[3];
@@ -156,6 +163,8 @@ __INLINE void IncrementCounter32(Ipp8u* pCtr)
 }
 
 #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
+#define AesGcmPrecompute_avx2_vaes OWNAPI(AesGcmPrecompute_avx2_vaes)
+   IPP_OWN_DECL (void, AesGcmPrecompute_avx2_vaes, (Ipp8u* pPrecomputeData, const Ipp8u* pHKey))
 #define AesGcmPrecompute_avx OWNAPI(AesGcmPrecompute_avx)
    IPP_OWN_DECL (void, AesGcmPrecompute_avx, (Ipp8u* pPrecomputeData, const Ipp8u* pHKey))
 #define AesGcmMulGcm_avx OWNAPI(AesGcmMulGcm_avx)
@@ -217,7 +226,9 @@ static int cpSizeofCtx_AESGCM(void)
    int precomp_size;
 
    #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   if(IsFeatureEnabled(ippCPUID_AES|ippCPUID_CLMUL) || IsFeatureEnabled(ippCPUID_AVX2VAES|ippCPUID_AVX2VCLMUL))
+   if (IsFeatureEnabled(ippCPUID_AVX2VAES|ippCPUID_AVX2VCLMUL))
+      precomp_size = PRECOMP_DATA_SIZE_AVX2_VAES_AESGCM;
+   else if (IsFeatureEnabled(ippCPUID_AES|ippCPUID_CLMUL))
       precomp_size = PRECOMP_DATA_SIZE_AES_NI_AESGCM;
    else
    #endif

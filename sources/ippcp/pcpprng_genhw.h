@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     PRNG Functions
-// 
+//
 //  Contents:
 //     HW random generator
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -36,7 +36,7 @@
 #define _PCP_PRN_GEN_HW_H
 
 #if ((_IPP>=_IPP_G9) || (_IPP32E>=_IPP32E_E9))
-__INLINE int cpRand_hw_sample(BNU_CHUNK_T* pSample)
+__IPPCP_INLINE int cpRand_hw_sample(BNU_CHUNK_T* pSample)
 {
 #define LOCAL_COUNTER (8)
    int n;
@@ -54,7 +54,7 @@ __INLINE int cpRand_hw_sample(BNU_CHUNK_T* pSample)
 }
 
 #if (_IPP32E>=_IPP32E_E9)
-__INLINE int cpRand_hw_sample32(Ipp32u* pSample)
+__IPPCP_INLINE int cpRand_hw_sample32(Ipp32u* pSample)
 {
 #define LOCAL_COUNTER (8)
    int n;
@@ -81,7 +81,7 @@ __INLINE int cpRand_hw_sample32(Ipp32u* pSample)
 //    bufLen    buffer length
 *F*/
 
-__INLINE int cpRandHW_buffer(Ipp32u* pBuffer, int bufLen)
+__IPPCP_INLINE int cpRandHW_buffer(Ipp32u* pBuffer, int bufLen)
 {
    int nSamples = bufLen/((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)));
 

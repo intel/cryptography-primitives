@@ -466,11 +466,12 @@
    ROTATE_W
 %endmacro
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 SHUFB_BSWAP DB    7,6,5,4,3,2,1,0, 15,14,13,12,11,10,9,8
 
+segment .text align=IPP_ALIGN_FACTOR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; UpdateSHA512(Ipp64u digest[], Ipp8u dataBlock[], int datalen, Ipp64u K_512[])

@@ -134,7 +134,7 @@ IPP_OWN_DECL(void, gesm2_select_ap_w7_ifma, (BNU_CHUNK_T * pAffinePoint, const B
 #include "pcpgfpstuff.h"
 #include "pcpgfpecstuff.h"
 
-__INLINE void recode_point_to_mont52(PSM2_POINT_IFMA* pR,
+__IPPCP_INLINE void recode_point_to_mont52(PSM2_POINT_IFMA* pR,
                                      const BNU_CHUNK_T* pP,
                                      BNU_CHUNK_T* pPool,
                                      ifmaArithMethod* method,
@@ -161,7 +161,7 @@ __INLINE void recode_point_to_mont52(PSM2_POINT_IFMA* pR,
     pR->z = p_to_mont(pR->z);
 }
 
-__INLINE void recode_point_to_mont64(IppsGFpECPoint* pR,
+__IPPCP_INLINE void recode_point_to_mont64(IppsGFpECPoint* pR,
                                      PSM2_POINT_IFMA* pP,
                                      BNU_CHUNK_T* pPool,
                                      ifmaArithMethod* method,

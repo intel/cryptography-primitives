@@ -36,7 +36,7 @@ __ALIGN64 static const int64u VPRIME25519_HI[sizeof(U64) / sizeof(int64u)] = {
     R##I = and64_const(R##I, DIGIT_MASK);
 
 
-//__INLINE
+//__MBX_INLINE
 void fe52_mb_add_mod25519(fe52_mb vr, const fe52_mb va, const fe52_mb vb)
 {
    /* r = a+b */
@@ -75,7 +75,7 @@ void fe52_mb_add_mod25519(fe52_mb vr, const fe52_mb va, const fe52_mb vb)
    vr[4] = mask_mov64(t4, cmask, r4);
 }
 
-//__INLINE
+//__MBX_INLINE
 void fe52_mb_sub_mod25519(fe52_mb vr, const fe52_mb va, const fe52_mb vb)
 {
    /* r = a-b */
@@ -114,7 +114,7 @@ void fe52_mb_sub_mod25519(fe52_mb vr, const fe52_mb va, const fe52_mb vb)
    vr[4] = mask_mov64(r4, cmask, t4);
 }
 
-//__INLINE
+//__MBX_INLINE
 void fe52_mb_neg_mod25519(fe52_mb vr, const fe52_mb va)
 {
    __mb_mask non_zero = ~fe52_mb_is_zero(va);
@@ -168,7 +168,7 @@ __ALIGN64 static const int64u MOD_2_260_[sizeof(U64) / sizeof(int64u)] = { REP8_
         srli64(r##R5, 52), MOD_2_260);
 
 
-//__INLINE
+//__MBX_INLINE
 void fe52_mb_mul_mod25519(fe52_mb vr, const fe52_mb va, const fe52_mb vb)
 {
    U64 r0, r1, r2, r3, r4, r5, r6, r7, r8, r9;
@@ -238,7 +238,7 @@ c=6  (2,4)  (3,3)
 c=7  (3,4)
 c=8  (4,4)
 */
-//__INLINE
+//__MBX_INLINE
 void fe52_mb_sqr_mod25519(fe52_mb vr, const fe52_mb va)
 {
    U64 *vb = (U64*)va;
@@ -386,7 +386,7 @@ void fe52_mb_sqr_mod25519_times(fe52_mb vr, const fe52_mb va, int count)
    considering the exponent as
    2^255 - 21 = (2^5) * (2^250 - 1) + 11.
 */
-//__INLINE
+//__MBX_INLINE
 void fe52_mb_inv_mod25519(fe52_mb r, const fe52_mb z)
 {
    __ALIGN64 fe52_mb t0;

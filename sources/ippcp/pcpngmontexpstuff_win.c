@@ -14,8 +14,8 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Modular Exponentiation (windowed GPR version)
@@ -47,7 +47,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpWinBuffer, (int modulusBits))
 // - possible inplace mode
 //
 // scratch buffer structure:
-//    precomuted table of multipliers[(1<<w)*nsM]
+//    precomputed table of multipliers[(1<<w)*nsM]
 //    RR[nsM]     tmp result if inplace operation
 //    EE[nsM+1]   power expasin
 */
@@ -99,7 +99,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpWin_BNU, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* 
          int eBit = bitsizeE-winSize;
 
          /* Note: Static analysis can generate error/warning on the expression below.
-         
+
          The value of "bitSizeE" is limited, ((modulusBitSize > bitSizeE > 0),
          it is checked in initialization phase by (ippsRSA_GetSizePublickey() and ippsRSA_InitPublicKey).
          Buffer "dataEE" assigned for copy of dataExp, is 1 (64-bit) chunk longer than size of RSA modulus,

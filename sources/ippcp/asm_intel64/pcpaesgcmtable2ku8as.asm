@@ -30,7 +30,7 @@
 
 %if (_IPP32E >= _IPP32E_U8)
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 ;
 ; getAesGcmConst_table_ct provides c-e-t access to pre-computed Ipp16u AesGcmConst_table[256]
@@ -49,6 +49,7 @@ align IPP_ALIGN_FACTOR
 INIT_IDX    dw    000h,001h,002h,003h,004h,005h,006h,007h   ;; initial search inx = {0:1:2:3:4:5:6:7}
 INCR_IDX    dw    008h,008h,008h,008h,008h,008h,008h,008h   ;; index increment = {8:8:8:8:8:8:8:8}
 
+segment .text align=IPP_ALIGN_FACTOR
 align IPP_ALIGN_FACTOR
 IPPASM getAesGcmConst_table_ct,PRIVATE
    pxor     xmm2, xmm2                 ;; accumulator xmm2 = 0

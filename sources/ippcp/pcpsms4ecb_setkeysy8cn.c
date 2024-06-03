@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 ECB encryption/decryption
-// 
+//
 //  Contents:
 //     cpSMS4_SetRoundKeys_aesni()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -35,7 +35,7 @@
 
 #include "pcpsms4_y8cn.h"
 
-__INLINE __m128i Ltag(__m128i x)
+__IPPCP_INLINE __m128i Ltag(__m128i x)
 {
    __m128i T = _mm_slli_epi32(x, 13);
    T = _mm_xor_si128(T, _mm_srli_epi32 (x,19));

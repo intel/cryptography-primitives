@@ -30,8 +30,8 @@
 
 /*
 // Presentation of point at infinity:
-//    - projective (X : Y : 0) 
-//    - affine     (0 : 0)   
+//    - projective (X : Y : 0)
+//    - affine     (0 : 0)
 */
 
 /*
@@ -333,7 +333,7 @@ static __NOINLINE void clear_secret_context(U64* wval, U64* dval, __mb_mask* dsi
    *sign = s & 1;
    *digit = (Ipp8u)d;
 */
-__INLINE void MB_FUNC_NAME(booth_recode_)(__mb_mask* sign, U64* dvalue, U64 wvalue)
+__MBX_INLINE void MB_FUNC_NAME(booth_recode_)(__mb_mask* sign, U64* dvalue, U64 wvalue)
 {
    U64 one = set1(1);
    U64 zero = get_zero64();
@@ -496,7 +496,7 @@ void MB_FUNC_NAME(ifma_ec_nistp521_mul_point_)(P521_POINT* r, const P521_POINT* 
 
 #define BP_WIN_SIZE  MUL_BASEPOINT_WIN_SIZE  /* defined in the header above */
 
-__INLINE void MB_FUNC_NAME(booth_recode_bp_)(__mb_mask* sign, U64* dvalue, U64 wvalue)
+__MBX_INLINE void MB_FUNC_NAME(booth_recode_bp_)(__mb_mask* sign, U64* dvalue, U64 wvalue)
 {
    U64 one = set1(1);
    U64 zero = get_zero64();
@@ -512,7 +512,7 @@ __INLINE void MB_FUNC_NAME(booth_recode_bp_)(__mb_mask* sign, U64* dvalue, U64 w
 }
 
 /* extract affine affine point */
-__INLINE void MB_FUNC_NAME(extract_point_affine_)(P521_POINT_AFFINE* r, const SINGLE_P521_POINT_AFFINE* tbl, U64 idx)
+__MBX_INLINE void MB_FUNC_NAME(extract_point_affine_)(P521_POINT_AFFINE* r, const SINGLE_P521_POINT_AFFINE* tbl, U64 idx)
 {
    /* decrement index (the table does not contain [0]*P */
    U64 targIdx = sub64(idx, set1(1));

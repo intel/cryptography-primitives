@@ -271,12 +271,13 @@
    movdqa   %%xS, %%xS0
 %endmacro
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 
 align IPP_ALIGN_FACTOR
 pByteSwp DB    3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12
 
+segment .text align=IPP_ALIGN_FACTOR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; UpdateSHA256(Ipp32u digest[], Ipp8u dataBlock[], int datalen, Ipp32u K_256[])

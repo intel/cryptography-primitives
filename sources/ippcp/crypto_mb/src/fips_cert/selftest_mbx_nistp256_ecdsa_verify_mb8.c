@@ -116,7 +116,7 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_verify_ssl_mb8(void) {
     test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
     MEM_FREE(BN_Qx, BN_Qy, sig)
     // Handled separately, since memory management of
-    // these variables will below be transfered to sig
+    // these variables is transferred to sig below
     BN_free(BN_r);
     BN_free(BN_s);
     return test_result;

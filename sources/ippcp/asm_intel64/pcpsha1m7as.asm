@@ -258,9 +258,9 @@
    mov      [rsp+(%%nr & 0Fh)*4],%%regU
 %endmacro
 
+
+
 segment .text align=IPP_ALIGN_FACTOR
-
-
 ;*****************************************************************************************
 ;* Purpose:     Update internal digest according to message block
 ;*

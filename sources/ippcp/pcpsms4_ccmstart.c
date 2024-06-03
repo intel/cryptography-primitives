@@ -18,7 +18,7 @@
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4-CCM implementation.
-// 
+//
 //     Content:
 //        ippsSMS4_CCMStart()
 //
@@ -32,7 +32,7 @@
 /*F*
 //    Name: ippsSMS4_CCMStart
 //
-// Purpose: Start the process (encryption+generation) or (decryption+veryfication).
+// Purpose: Start the process (encryption+generation) or (decryption+verification).
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pCtx == NULL

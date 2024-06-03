@@ -67,7 +67,7 @@ static __ALIGN64 const int64u sha512_cnt[] = {
 #define LSR32(x,nBits)  ((x)>>(nBits))
 #define LSL32(x,nBits)  ((x)<<(nBits))
 
-/* Rorate (right and left) of WORD */
+/* Rotate (right and left) of WORD */
 #if defined(_MSC_VER) && !defined( __ICL )
 #  include <stdlib.h>
 #  define ROR32(x, nBits)  _lrotr((x),(nBits))
@@ -81,7 +81,7 @@ static __ALIGN64 const int64u sha512_cnt[] = {
 #define LSR64(x,nBits)  ((x)>>(nBits))
 #define LSL64(x,nBits)  ((x)<<(nBits))
 
-/* Rorate (right and left) of DWORD */
+/* Rotate (right and left) of DWORD */
 #define ROR64(x, nBits) (LSR64((x),(nBits)) | LSL64((x),64-(nBits)))
 #define ROL64(x, nBits) ROR64((x),(64-(nBits)))
 

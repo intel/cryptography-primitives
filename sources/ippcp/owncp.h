@@ -111,7 +111,7 @@ typedef int cpSize;
 #define LSR32(x,nBits)  ((x)>>(nBits))
 #define LSL32(x,nBits)  ((x)<<(nBits))
 
-/* Rorate (right and left) of WORD */
+/* Rotate (right and left) of WORD */
 #if defined(_MSC_VER) && !defined( __ICL )
 #  include <stdlib.h>
 #  define ROR32(x, nBits)  _lrotr((x),(nBits))
@@ -125,7 +125,7 @@ typedef int cpSize;
 #define LSR64(x,nBits)  ((x)>>(nBits))
 #define LSL64(x,nBits)  ((x)<<(nBits))
 
-/* Rorate (right and left) of DWORD */
+/* Rotate (right and left) of DWORD */
 #define ROR64(x, nBits) (LSR64((x),(nBits)) | LSL64((x),64-(nBits)))
 #define ROL64(x, nBits) ROR64((x),(64-(nBits)))
 
@@ -167,7 +167,7 @@ typedef int cpSize;
 /* test if library's feature is ON */
 int cpGetFeature( Ipp64u Feature );
 /* test CPU crypto features */
-__INLINE Ipp32u IsFeatureEnabled(Ipp64u niMmask)
+__IPPCP_INLINE Ipp32u IsFeatureEnabled(Ipp64u niMmask)
 {
    return (Ipp32u)cpGetFeature(niMmask);
 }
@@ -194,7 +194,7 @@ _mm_cvtsi64_si128(__int64 a)
 }
 #endif
 
-#if !defined( __x86_64__ ) && defined(__GNUC__)
+#if !defined( __x86_64__ ) && defined(__GNUC__) && (!defined(__clang__) || (__clang_major__ < 16))
 extern __inline __m128i __attribute__((__gnu_inline__, __always_inline__, __artificial__))
 _mm_cvtsi64_si128 (long long __A)
 {

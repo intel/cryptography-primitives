@@ -2,6 +2,12 @@
 
 This is a list of notable changes to Intel(R) IPP Cryptography, in reverse chronological order.
 
+## Intel(R) IPP Cryptography 2021.12
+- Added single-buffer implementation of Leighton-Micali Hash-Based Signatures(LMS) algorithm, verification part.
+- Added support of Clang 16.0 compiler for Linux.
+- Added examples of AES-GCM Encryption/Decryption usage.
+- AES-GCM algorithm with Intel® Advanced Vector Extensions 2 (Intel® AVX2) vector extensions of Intel® AES New Instructions (Intel® AES-NI) was optimized.
+
 ## Intel(R) IPP Cryptography 2021.11
 - Minimal supported BoringSSL version was increased to [45cf810d](https://github.com/google/boringssl/archive/45cf810dbdbd767f09f8cb0b0fcccd342c39041f.tar.gz) tag.
 

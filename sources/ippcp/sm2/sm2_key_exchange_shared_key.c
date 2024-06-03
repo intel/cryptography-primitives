@@ -57,7 +57,7 @@
  * ippStsRangeErr            - if BitSize(pEC) < IPP_SM3_DIGEST_BITSIZE
  * ippStsBadArgErr           - if role(pKE) no equal ippKESM2Requester|ippKESM2Responder or sharedKeySize <= 0
  * ippStsInvalidPrivateKey   - if test is failed 0 < pPrvKey|pEphPrvKey < Order
- * ippStsEphemeralKeyErr     - if test is failed pEphPrvKey == pEphPublicKeySelf*G or if calculated U(V) is an 
+ * ippStsEphemeralKeyErr     - if test is failed pEphPrvKey == pEphPublicKeySelf*G or if calculated U(V) is an
  *                             infinity point, U/V = [h*t(a/b)]( P(b/a) + [x(b/a)`]R(b/a) ) = ( x(u/v), y(u/v) )
  */
 /* clang-format off */
@@ -148,7 +148,7 @@ IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_SharedKey, (Ipp8u* pSharedKey, int sha
       const int elemBytes = (elemBits + 7) / 8; /* size Bytes */
       const int elemSize  = GFP_FELEN(pME);     /* size BNU_CHUNK */
 
-      /* create buffer data (it needes further use compute tmp_p)
+      /* create buffer data (it needs further use compute tmp_p)
        * -> SM3( x(u/v)(0) || Za(1) || Zb(2) || xa(3) || ya(4) || xb(5) || yb(6) )
        */
       BNU_CHUNK_T *pDataBuff = cpGFpGetPool(7, pME);

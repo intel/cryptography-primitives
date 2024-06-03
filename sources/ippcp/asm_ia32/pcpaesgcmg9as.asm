@@ -170,6 +170,91 @@ IPPASM AesGcmPrecompute_avx,PUBLIC
    ret
 ENDFUNC AesGcmPrecompute_avx
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; void AesGcmPrecompute_avx2_vaes(const Ipp8u* pRefHkey, Ipp8u* pMultipliers);
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+align IPP_ALIGN_FACTOR
+IPPASM AesGcmPrecompute_avx2_vaes,PUBLIC
+  USES_GPR esi
+
+%xdefine pHkey        [esp + ARG_1 + 0*sizeof(dword)] ; pointer to the reflected hkey
+%xdefine pMultipliers [esp + ARG_1 + 1*sizeof(dword)] ; output to the precomputed multipliers
+
+   LD_ADDR  esi, CONST_TABLE
+
+   mov      eax, pHkey
+   movdqu   xmm0, oword [eax]   ;  xmm0 holds HashKey
+   pshufb   xmm0, u128_str
+
+   ; precompute HashKey<<1 mod poly from the HashKey
+   movdqa   xmm4, xmm0
+   psllq    xmm0, 1
+   psrlq    xmm4, 63
+   movdqa   xmm3, xmm4
+   pslldq   xmm4, 8
+   psrldq   xmm3, 8
+   por      xmm0, xmm4
+   ;reduction
+   pshufd   xmm4, xmm3, 00100100b
+   pcmpeqd  xmm4, oword TWOONE  ; TWOONE = 0x00000001000000000000000000000001
+   pand     xmm4, oword POLY
+   pxor     xmm0, xmm4              ; xmm0 holds the HashKey<<1 mod poly
+
+   mov      eax, pMultipliers
+   movdqu   oword [eax+sizeof_oword_*0], xmm0
+
+   movdqa         xmm1, xmm0
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^2)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*1], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^3)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*2], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^4)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*3], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^5)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*4], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^6)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*5], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^7)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*6], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^8)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*7], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^9)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*8], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^10)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*9], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^11)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*10], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^12)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*11], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^13)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*12], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^14)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*13], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^15)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*14], xmm1
+
+   sse_clmul_gcm  xmm1, xmm0, xmm3, xmm4, xmm5  ; xmm1 holds (HashKey^16)<<1 mod poly
+   movdqu   oword [eax+sizeof_oword_*15], xmm1
+
+   REST_GPR
+   ret
+ENDFUNC AesGcmPrecompute_avx2_vaes
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

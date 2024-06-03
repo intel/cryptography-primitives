@@ -60,9 +60,12 @@ if(UNIX)
     set(LINK_FLAG_S_ST_LINUX "-Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now")
     if(NOT NONPIC_LIB)
       ippcp_extend_variable(LINK_FLAG_S_ST_LINUX "-fpie")
+      ippcp_extend_variable(CMAKE_CXX_FLAGS "-fpie -fPIE")
+    else()
+      ippcp_extend_variable(LINK_FLAG_S_ST_LINUX "-no-pie")
     endif()
 
-    ippcp_extend_variable(CMAKE_CXX_FLAGS "-D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -fpie -fPIE")
+    ippcp_extend_variable(CMAKE_CXX_FLAGS "-D_FORTIFY_SOURCE=2 -Wformat -Wformat-security")
 
     if(${ARCH} MATCHES "ia32")
       ippcp_extend_variable(LINK_FLAG_S_ST_LINUX "-m32")

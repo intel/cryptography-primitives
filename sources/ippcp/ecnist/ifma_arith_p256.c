@@ -171,14 +171,14 @@ IPP_OWN_DEFN(void, ifma_amm52_dual_p256, (m512 * r1, const m512 a1, const m512 b
 }
 
 /* R = (A*B) with norm */
-__INLINE m512 ifma_amm52_p256_norm(const m512 a, const m512 b)
+__IPPCP_INLINE m512 ifma_amm52_p256_norm(const m512 a, const m512 b)
 {
    m512 r = ifma_amm52_p256(a, b);
    return ifma_lnorm52(r);
 }
 
 /* R = (A*A) with norm */
-__INLINE m512 ifma_ams52_p256_norm(const m512 a)
+__IPPCP_INLINE m512 ifma_ams52_p256_norm(const m512 a)
 {
    return ifma_amm52_p256_norm(a, a);
 }
@@ -263,7 +263,7 @@ IPP_OWN_DEFN(m512, ifma_frommont52_p256, (const m512 a))
 #define sqr(R, A) (R) = ifma_ams52_p256_norm((A))
 #define mul(R, A, B) (R) = ifma_amm52_p256_norm((A), (B));
 
-__INLINE m512 ifma_ams52_p256_ntimes(m512 a, Ipp32s n)
+__IPPCP_INLINE m512 ifma_ams52_p256_ntimes(m512 a, Ipp32s n)
 {
    for (; n > 0; --n)
       sqr(a, a);

@@ -230,7 +230,7 @@ fips_test_status fips_selftest_mbx_nistp521_ecpublic_key_ssl_mb8(void) {
       test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
       MEM_FREE(pa_pub_Qx, pa_pub_Qy, pa_sig, BN_d, BN_k)
       // Handled separately, since memory management of
-      // these variables is transfered to sig below
+      // these variables is transferred to sig below
       BN_free(BN_r);
       BN_free(BN_s);
       return test_result;

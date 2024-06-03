@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Internal Definitions and
 //     Internal ng RSA Function Prototypes
-// 
-// 
+//
+//
 */
 
 #if !defined(_CP_NG_MONT_EXP_STUFF_H)
@@ -35,7 +35,7 @@
 /*
 // optimal size of fixed window exponentiation
 */
-__INLINE cpSize gsMontExp_WinSize(cpSize bitsize)
+__IPPCP_INLINE cpSize gsMontExp_WinSize(cpSize bitsize)
 {
    #if defined(_USE_WINDOW_EXP_)
    // new computations
@@ -56,7 +56,7 @@ __INLINE cpSize gsMontExp_WinSize(cpSize bitsize)
 /*
 // Montgomery encoding/decoding
 */
-__INLINE cpSize gsMontEnc_BNU(BNU_CHUNK_T* pR,
+__IPPCP_INLINE cpSize gsMontEnc_BNU(BNU_CHUNK_T* pR,
                         const BNU_CHUNK_T* pXreg, cpSize nsX,
                         const gsModEngine* pMont)
 {
@@ -66,7 +66,7 @@ __INLINE cpSize gsMontEnc_BNU(BNU_CHUNK_T* pR,
    return nsM;
 }
 
-__INLINE cpSize gsMontDec_BNU(BNU_CHUNK_T* pR,
+__IPPCP_INLINE cpSize gsMontDec_BNU(BNU_CHUNK_T* pR,
                         const BNU_CHUNK_T* pXmont,
                               gsModEngine* pMont)
 {
@@ -75,7 +75,7 @@ __INLINE cpSize gsMontDec_BNU(BNU_CHUNK_T* pR,
    return nsM;
 }
 
-__INLINE void gsMontEnc_BN(IppsBigNumState* pRbn,
+__IPPCP_INLINE void gsMontEnc_BN(IppsBigNumState* pRbn,
                      const IppsBigNumState* pXbn,
                            gsModEngine* pMont)
 {

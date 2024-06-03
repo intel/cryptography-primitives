@@ -14,10 +14,10 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //               Intel(R) Integrated Performance Primitives
 //                   Cryptographic Primitives (ippcp)
-// 
+//
 */
 #if !defined(_CP_MONTRED_H)
 #define _CP_MONTRED_H
@@ -34,7 +34,7 @@
 #define cpMontRedAdx_BNU OWNAPI(cpMontRedAdx_BNU)
     IPP_OWN_DECL (void, cpMontRedAdx_BNU, (BNU_CHUNK_T* pR, BNU_CHUNK_T* pProduct, const BNU_CHUNK_T* pModulus, cpSize nsM, BNU_CHUNK_T m0))
 
-__INLINE void cpMontRed_BNU_opt(BNU_CHUNK_T* pR,
+__IPPCP_INLINE void cpMontRed_BNU_opt(BNU_CHUNK_T* pR,
                                 BNU_CHUNK_T* pProduct,
                           const BNU_CHUNK_T* pModulus, cpSize nsM, BNU_CHUNK_T m0)
 {

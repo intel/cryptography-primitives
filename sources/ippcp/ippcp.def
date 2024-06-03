@@ -564,3 +564,9 @@ ippsXMSSSetSignatureState
 ippsXMSSSignatureStateGetSize
 ippsXMSSPublicKeyStateGetSize
 ippsXMSSBufferGetSize
+ippsLMSBufferGetSize
+ippsLMSSignatureStateGetSize
+ippsLMSPublicKeyStateGetSize
+ippsLMSSetPublicKeyState
+ippsLMSSetSignatureState
+ippsLMSVerify

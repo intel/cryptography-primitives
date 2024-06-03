@@ -311,7 +311,7 @@ IPPASM Safe2Decrypt_RIJ128,PUBLIC
   mov   ebp, esp ; save original esp to use it to reach parameters
 
 %xdefine pInp    [ebp + ARG_1 + 0*sizeof(dword)] ; input buffer
-%xdefine pOut    [ebp + ARG_1 + 1*sizeof(dword)] ; outpu buffer
+%xdefine pOut    [ebp + ARG_1 + 1*sizeof(dword)] ; output buffer
 %xdefine nrounds [ebp + ARG_1 + 2*sizeof(dword)] ; number of rounds
 %xdefine pRK     [ebp + ARG_1 + 3*sizeof(dword)] ; round keys
 %xdefine pSbox   [ebp + ARG_1 + 4*sizeof(dword)] ; S-box

@@ -14,10 +14,10 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //               Intel(R) Integrated Performance Primitives
 //                   Cryptographic Primitives (ippcp)
-// 
+//
 //  Contents:
 //        cpMontSet()
 //
@@ -31,7 +31,7 @@
 
 
 /* Auxilirary function */
-__INLINE int cpGetBitSize(Ipp32u offset, Ipp32u val)
+__IPPCP_INLINE int cpGetBitSize(Ipp32u offset, Ipp32u val)
 {
     int bitSize = 31;
     if (val == 0) return 0;

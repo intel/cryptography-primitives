@@ -100,7 +100,7 @@ static int dig27_regular(Ipp32u* pRegular, int regLen, const Ipp64u* pRep27, int
 
 /*
    normalize "redundant" representation (pUnorm, len) into (pNorm, len)
-   and returns extansion
+   and returns extension
 */
 static Ipp64u cpDigit27_normalize(Ipp64u* pNorm, const Ipp64u* pUnorm, int len)
 {
@@ -643,7 +643,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU_sscm_sse2, (BNU_CHUNK_T* dataY, const BNU
 // "fast" fixed-size window montgomery exponentiation
 //
 // scratch buffer structure:
-//    precomuted table of multipliers[(1<<w)*redLen]
+//    precomputed table of multipliers[(1<<w)*redLen]
 //    redM[redBufferLen]
 //    redY[redBufferLen]
 //    redT[redBufferLen]

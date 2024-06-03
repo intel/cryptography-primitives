@@ -101,7 +101,7 @@ typedef struct _gsModEngine
 //    poolReq   Required pool
 *F*/
 
-__INLINE BNU_CHUNK_T* gsModPoolAlloc(gsModEngine* pME, int poolReq)
+__IPPCP_INLINE BNU_CHUNK_T* gsModPoolAlloc(gsModEngine* pME, int poolReq)
 {
    BNU_CHUNK_T* pPool = MOD_BUFFER(pME, pME->poolLenUsed);
 
@@ -126,7 +126,7 @@ __INLINE BNU_CHUNK_T* gsModPoolAlloc(gsModEngine* pME, int poolReq)
 //    poolReq   Required pool
 *F*/
 
-__INLINE void gsModPoolFree(gsModEngine* pME, int poolReq)
+__IPPCP_INLINE void gsModPoolFree(gsModEngine* pME, int poolReq)
 {
    if(pME->poolLenUsed < poolReq)
       poolReq = pME->poolLenUsed;

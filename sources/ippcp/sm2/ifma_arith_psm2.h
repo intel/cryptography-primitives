@@ -62,7 +62,7 @@ IPP_OWN_DECL(fesm2, fesm2_mul, (const fesm2 a, const fesm2 b))
  * \param[in] a value (in radix 2^52)
  * \return fesm2 not normalization value
  */
-__INLINE IPP_OWN_DEFN(fesm2, fesm2_sqr, (const fesm2 a)) {
+__IPPCP_INLINE IPP_OWN_DEFN(fesm2, fesm2_sqr, (const fesm2 a)) {
     return fesm2_mul(a, a);
 }
 
@@ -98,7 +98,7 @@ IPP_OWN_DECL(void, fesm2_mul_dual, (fesm2 pr1[], const fesm2 a1, const fesm2 b1,
  * \param[out] pr2 ptr second value no normalization
  * \param[in]  a2  value (in radix 2^52)
  */
-__INLINE IPP_OWN_DEFN(void, fesm2_sqr_dual, (fesm2 pr1[], const fesm2 a1, fesm2 pr2[], const fesm2 a2)) {
+__IPPCP_INLINE IPP_OWN_DEFN(void, fesm2_sqr_dual, (fesm2 pr1[], const fesm2 a1, fesm2 pr2[], const fesm2 a2)) {
     fesm2_mul_dual(pr1, a1, a1, pr2, a2, a2);
     return;
 }

@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 EBC decryption
-// 
+//
 //  Contents:
 //     cpSMS4_CTR_aesni()
-// 
-// 
+//
+//
 */
 
 #include "pcpsms4.h"
@@ -35,10 +35,10 @@
 
 #include "pcpsms4_l9cn.h"
 
-static __ALIGN32 Ipp8u endiannes_swap[] = {12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3,
+static __ALIGN32 Ipp8u endianness_swap[] = {12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3,
                                            12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3};
 
-static __ALIGN32 Ipp8u endiannes[] = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0,
+static __ALIGN32 Ipp8u endianness[] = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0,
                                       15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0};
 
 static __ALIGN32 Ipp8u two256[] = {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -46,7 +46,7 @@ static __ALIGN32 Ipp8u two256[] = {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 static __ALIGN16 Ipp8u one256[] = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-__INLINE __m128i inc128(__m128i x)
+__IPPCP_INLINE __m128i inc128(__m128i x)
 {
    __m128i t = _mm_add_epi64(x,  M128(one256));
    x = _mm_cmpeq_epi64(t,  _mm_setzero_si128());
@@ -54,14 +54,14 @@ __INLINE __m128i inc128(__m128i x)
    return t;
 }
 
-__INLINE __m256i inc256(__m256i x)
+__IPPCP_INLINE __m256i inc256(__m256i x)
 {
    __m256i t = _mm256_add_epi64(x,  M256(two256));
    x = _mm256_cmpeq_epi64(t,  _mm256_setzero_si256());
    t = _mm256_sub_epi64(t, _mm256_slli_si256(x, sizeof(Ipp64u)));
    return t;
 }
-__INLINE __m256i inc256_2(__m256i x)
+__IPPCP_INLINE __m256i inc256_2(__m256i x)
 {
    __m256i t = _mm256_add_epi64(x,  M256(one256));
    x = _mm256_cmpeq_epi64(t,  _mm256_setzero_si256());
@@ -100,10 +100,10 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, c
    */
 
       /* read string counter and convert to numerical */
-      TMP[12]  = _mm256_shuffle_epi8(_mm256_castsi128_si256(_mm_loadu_si128((__m128i*)pCtr)), M256(endiannes));
+      TMP[12]  = _mm256_shuffle_epi8(_mm256_castsi128_si256(_mm_loadu_si128((__m128i*)pCtr)), M256(endianness));
 
       /* read string mask and convert to numerical */
-      TMP[13] = _mm256_shuffle_epi8(_mm256_castsi128_si256(_mm_loadu_si128((__m128i*)pCtrMask)), M256(endiannes));
+      TMP[13] = _mm256_shuffle_epi8(_mm256_castsi128_si256(_mm_loadu_si128((__m128i*)pCtrMask)), M256(endianness));
 
       /* upchanged counter bits */
       TMP[14] = _mm256_andnot_si256(TMP[13], TMP[12]);
@@ -125,10 +125,10 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, c
          TMP[1] = _mm256_xor_si256(TMP[14], _mm256_and_si256(TMP[1], TMP[13]));
          TMP[2] = _mm256_xor_si256(TMP[14], _mm256_and_si256(TMP[2], TMP[13]));
          TMP[3] = _mm256_xor_si256(TMP[14], _mm256_and_si256(TMP[3], TMP[13]));
-         TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(endiannes_swap));
-         TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(endiannes_swap));
-         TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(endiannes_swap));
-         TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(endiannes_swap));
+         TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(endianness_swap));
+         TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(endianness_swap));
+         TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(endianness_swap));
+         TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(endianness_swap));
          TRANSPOSE_INP(TMP[4],TMP[5],TMP[6],TMP[7], TMP[0],TMP[1],TMP[2],TMP[3]);
 
          TMP[0] = TMP[12];
@@ -140,10 +140,10 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, c
          TMP[1] = _mm256_xor_si256(TMP[14], _mm256_and_si256(TMP[1], TMP[13]));
          TMP[2] = _mm256_xor_si256(TMP[14], _mm256_and_si256(TMP[2], TMP[13]));
          TMP[3] = _mm256_xor_si256(TMP[14], _mm256_and_si256(TMP[3], TMP[13]));
-         TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(endiannes_swap));
-         TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(endiannes_swap));
-         TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(endiannes_swap));
-         TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(endiannes_swap));
+         TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(endianness_swap));
+         TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(endianness_swap));
+         TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(endianness_swap));
+         TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(endianness_swap));
          TRANSPOSE_INP(TMP[8],TMP[9],TMP[10],TMP[11], TMP[0],TMP[1],TMP[2],TMP[3]);
 
          for(itr=0; itr<8; itr++, pRKey+=4) {
@@ -232,7 +232,7 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, c
       }
 
       TMP[12] = _mm256_xor_si256(TMP[14], _mm256_and_si256(TMP[12], TMP[13]));
-      TMP[12] = _mm256_shuffle_epi8(TMP[12], M256(endiannes));
+      TMP[12] = _mm256_shuffle_epi8(TMP[12], M256(endianness));
       _mm_storeu_si128((__m128i*)pCtr, _mm256_castsi256_si128(TMP[12]));
 
       /* clear secret data */

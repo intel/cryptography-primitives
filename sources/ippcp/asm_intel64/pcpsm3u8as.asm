@@ -195,12 +195,13 @@
    mov   [rsp+ctr*sizeof(dword)+%%i*sizeof(dword)], t3
 %endmacro
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 
 bswap128 DB 3,2,1,0,7,6,5,4,11,10,9,8,15,14,13,12
 
+segment .text align=IPP_ALIGN_FACTOR
 ;********************************************************************
 ;* void UpdateSM3(uint32_t hash[8],
 ;                const uint32_t msg[16], int msgLen,

@@ -34,15 +34,15 @@
   #include "ippcpdefs.h"
 #endif
 
-#if !defined(__INLINE)
+#if !defined(__IPPCP_INLINE)
 #if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(_MSC_VER)
-  #define __INLINE static __inline
+  #define __IPPCP_INLINE static __inline
 #elif defined( __GNUC__ )
-  #define __INLINE static __inline__
+  #define __IPPCP_INLINE static __inline__
 #else
-  #define __INLINE static
+  #define __IPPCP_INLINE static
 #endif
-#endif /*__INLINE*/
+#endif /*__IPPCP_INLINE*/
 
 /* TODO: to check ICX compiler */
 #if !defined(__NOINLINE)
@@ -59,7 +59,7 @@
 #if defined(_MSC_VER)
   #define __FORCEINLINE __forceinline
 #elif defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined( __GNUC__ )
-  #define __FORCEINLINE __INLINE __attribute__((always_inline))
+  #define __FORCEINLINE __IPPCP_INLINE __attribute__((always_inline))
 #else
   #define __FORCEINLINE
 #endif
@@ -267,7 +267,7 @@
 #endif
 
 #if ((_IPP_ARCH == _IPP_ARCH_IA32))
-__INLINE Ipp32s IPP_INT_PTR ( const void* ptr )
+__IPPCP_INLINE Ipp32s IPP_INT_PTR ( const void* ptr )
 {
     union {
         void*   Ptr;
@@ -277,7 +277,7 @@ __INLINE Ipp32s IPP_INT_PTR ( const void* ptr )
     return dd.Int;
 }
 
-__INLINE Ipp32u IPP_UINT_PTR( const void* ptr )
+__IPPCP_INLINE Ipp32u IPP_UINT_PTR( const void* ptr )
 {
     union {
         void*   Ptr;
@@ -287,7 +287,7 @@ __INLINE Ipp32u IPP_UINT_PTR( const void* ptr )
     return dd.Int;
 }
 #elif ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LRB2))
-__INLINE Ipp64s IPP_INT_PTR( const void* ptr )
+__IPPCP_INLINE Ipp64s IPP_INT_PTR( const void* ptr )
 {
     union {
         void*   Ptr;
@@ -297,7 +297,7 @@ __INLINE Ipp64s IPP_INT_PTR( const void* ptr )
     return dd.Int;
 }
 
-__INLINE Ipp64u IPP_UINT_PTR( const void* ptr )
+__IPPCP_INLINE Ipp64u IPP_UINT_PTR( const void* ptr )
 {
     union {
         void*    Ptr;
@@ -386,7 +386,8 @@ typedef enum {
     idCtxSM3,
     idCtxAESXTS,
     idxCtxECES_SM2,
-    idCtxGFPECKE
+    idCtxGFPECKE,
+    idCtxLMS
 } IppCtxId;
 
 

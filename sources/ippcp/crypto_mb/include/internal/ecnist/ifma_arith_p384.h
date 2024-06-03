@@ -53,24 +53,24 @@ static const int64u VMASK52[sizeof(U64)/sizeof(int64u)] = {
 
 
 /* set FE to zero */
-__INLINE void MB_FUNC_NAME(zero_FE384_)(U64 T[])
+__MBX_INLINE void MB_FUNC_NAME(zero_FE384_)(U64 T[])
 {
    T[0] = T[1] = T[2] = T[3] = T[4] = T[5] = T[6] = T[7] = get_zero64();
 }
 
 /* check if FE is zero */
-__INLINE __mb_mask MB_FUNC_NAME(is_zero_FE384_)(const U64 T[])
+__MBX_INLINE __mb_mask MB_FUNC_NAME(is_zero_FE384_)(const U64 T[])
 {
    //U64 Z = or64(or64(or64(or64(or64(or64(or64(T[0], T[1]), T[2]), T[3]), T[4]), T[5]), T[6]), T[7]);
    U64 Z = or64(or64(or64(T[0], T[1]), or64(T[2], T[3])), or64(or64(T[4], T[5]), or64(T[6], T[7])));
    return cmpeq64_mask(Z, get_zero64());
 }
 
-__INLINE U64 cmov_U64(U64 a, U64 b, __mb_mask kmask)
+__MBX_INLINE U64 cmov_U64(U64 a, U64 b, __mb_mask kmask)
 {  return mask_mov64 (a, kmask, b); }
 
 /* move field element */
-__INLINE void MB_FUNC_NAME(mov_FE384_)(U64 r[], const U64 a[])
+__MBX_INLINE void MB_FUNC_NAME(mov_FE384_)(U64 r[], const U64 a[])
 {
    r[0] = a[0];
    r[1] = a[1];
@@ -83,7 +83,8 @@ __INLINE void MB_FUNC_NAME(mov_FE384_)(U64 r[], const U64 a[])
 }
 
 /* move coordinate using mask: R = k? A : B */
-__INLINE void MB_FUNC_NAME(mask_mov_FE384_)(U64 R[], const U64 B[], __mb_mask k, const U64 A[])
+OPTIMIZE_OFF_VS19
+__MBX_INLINE void MB_FUNC_NAME(mask_mov_FE384_)(U64 R[], const U64 B[], __mb_mask k, const U64 A[])
 {
    R[0] = mask_mov64(B[0], k, A[0]);
    R[1] = mask_mov64(B[1], k, A[1]);
@@ -95,7 +96,7 @@ __INLINE void MB_FUNC_NAME(mask_mov_FE384_)(U64 R[], const U64 B[], __mb_mask k,
    R[7] = mask_mov64(B[7], k, A[7]);
 }
 
-__INLINE void MB_FUNC_NAME(secure_mask_mov_FE384_)(U64 R[], U64 B[], __mb_mask k, const U64 A[])
+__MBX_INLINE void MB_FUNC_NAME(secure_mask_mov_FE384_)(U64 R[], U64 B[], __mb_mask k, const U64 A[])
 {
    R[0] = select64(k, B[0], (U64*)(&A[0]));
    R[1] = select64(k, B[1], (U64*)(&A[1]));
@@ -107,7 +108,7 @@ __INLINE void MB_FUNC_NAME(secure_mask_mov_FE384_)(U64 R[], U64 B[], __mb_mask k
    R[7] = select64(k, B[7], (U64*)(&A[7]));
 }
 
-__INLINE __mb_mask MB_FUNC_NAME(cmp_lt_FE384_)(const U64 A[], const U64 B[])
+__MBX_INLINE __mb_mask MB_FUNC_NAME(cmp_lt_FE384_)(const U64 A[], const U64 B[])
 {
    /* r = a - b */
    U64 r0 = sub64(A[0], B[0]);
@@ -134,7 +135,7 @@ __INLINE __mb_mask MB_FUNC_NAME(cmp_lt_FE384_)(const U64 A[], const U64 B[])
 }
 
 /* compare two FE */
-__INLINE __mb_mask MB_FUNC_NAME(cmp_eq_FE384_)(const U64 A[], const U64 B[])
+__MBX_INLINE __mb_mask MB_FUNC_NAME(cmp_eq_FE384_)(const U64 A[], const U64 B[])
 {
     U64 T[P384_LEN52];
     T[0] = xor64(A[0], B[0]);

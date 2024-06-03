@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-XTS Internal Definitions
-// 
-// 
+//
+//
 */
 
 #if !defined(_PCP_AES_XTS_H)
@@ -53,7 +53,7 @@ struct _cpAES_XTS
 #define VALID_AES_XTS_ID(ctx)   ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxAESXTS)
 
 /* size of AES-XTS context */
-__INLINE int cpSizeof_AES_XTS_Ctx(void)
+__IPPCP_INLINE int cpSizeof_AES_XTS_Ctx(void)
 {
    return sizeof(IppsAES_XTSSpec);
 }

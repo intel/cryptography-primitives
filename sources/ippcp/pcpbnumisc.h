@@ -67,10 +67,10 @@
 
 
 /* copy and set */
-__INLINE void cpCpy_BNU(BNU_CHUNK_T* pDst, const BNU_CHUNK_T* pSrc, cpSize ns)
+__IPPCP_INLINE void cpCpy_BNU(BNU_CHUNK_T* pDst, const BNU_CHUNK_T* pSrc, cpSize ns)
 {  COPY_BNU(pDst, pSrc, ns); }
 
-__INLINE void cpSet_BNU(BNU_CHUNK_T* pDst, cpSize ns, BNU_CHUNK_T val)
+__IPPCP_INLINE void cpSet_BNU(BNU_CHUNK_T* pDst, cpSize ns, BNU_CHUNK_T val)
 {
    ZEXPAND_BNU(pDst, 0, ns);
    pDst[0] = val;
@@ -90,7 +90,7 @@ __INLINE void cpSet_BNU(BNU_CHUNK_T* pDst, cpSize ns, BNU_CHUNK_T val)
 //    nsA      Size of pA
 //
 */
-__INLINE int cpFix_BNU(const BNU_CHUNK_T* pA, int nsA)
+__IPPCP_INLINE int cpFix_BNU(const BNU_CHUNK_T* pA, int nsA)
 {
    BNU_CHUNK_T zscan = (BNU_CHUNK_T)(-1);
    int outLen = nsA;
@@ -120,7 +120,7 @@ __INLINE int cpFix_BNU(const BNU_CHUNK_T* pA, int nsA)
 //
 */
 #if 0
-__INLINE int cpCmp_BNU(const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB, cpSize nsB)
+__IPPCP_INLINE int cpCmp_BNU(const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB, cpSize nsB)
 {
    if(nsA!=nsB)
       return nsA>nsB? 1 : -1;
@@ -133,7 +133,7 @@ __INLINE int cpCmp_BNU(const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB,
 }
 #endif
 
-__INLINE int cpCmp_BNU0(const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, int len)
+__IPPCP_INLINE int cpCmp_BNU0(const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, int len)
 {
    const Ipp32u* a32 = (const Ipp32u*)a;
    const Ipp32u* b32 = (const Ipp32u*)b;
@@ -153,7 +153,7 @@ __INLINE int cpCmp_BNU0(const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, int len)
    return (int)(resb|resd);
 }
 
-__INLINE int cpCmp_BNU(const BNU_CHUNK_T* a, int aLen, const BNU_CHUNK_T* b, int bLen)
+__IPPCP_INLINE int cpCmp_BNU(const BNU_CHUNK_T* a, int aLen, const BNU_CHUNK_T* b, int bLen)
 {
    BNU_CHUNK_T aLen_eq_bLen = cpIsZero_ct((BNU_CHUNK_T)(aLen-bLen));    // FFFF/0000 if (aLen=bLen) / (aLen!=bLen)
    BNU_CHUNK_T aLen_gt_bLen = cpIsMsb_ct((BNU_CHUNK_T)(bLen-aLen)) & 1; // 1/0       if (aLen>bLen) / (aLen<bLen)
@@ -180,7 +180,7 @@ __INLINE int cpCmp_BNU(const BNU_CHUNK_T* a, int aLen, const BNU_CHUNK_T* b, int
 //    b        BNU_CHUNK_T to compare
 //
 */
-__INLINE int cpEqu_BNU_CHUNK(const BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_T b)
+__IPPCP_INLINE int cpEqu_BNU_CHUNK(const BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_T b)
 {
    BNU_CHUNK_T res = pA[0] ^ b;
    int n;
@@ -197,7 +197,7 @@ __INLINE int cpEqu_BNU_CHUNK(const BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_T b)
 //    >0, if A > 0
 //    <0, looks like impossible (or error) case
 */
-__INLINE int cpTst_BNU(const BNU_CHUNK_T* pA, int nsA)
+__IPPCP_INLINE int cpTst_BNU(const BNU_CHUNK_T* pA, int nsA)
 {
    for(; (nsA>0) && (0==pA[nsA-1]); nsA--) ;
    return nsA;
@@ -208,7 +208,7 @@ __INLINE int cpTst_BNU(const BNU_CHUNK_T* pA, int nsA)
 #define cpNLZ_BNU OWNAPI(cpNLZ_BNU)
    IPP_OWN_DECL (cpSize, cpNLZ_BNU, (BNU_CHUNK_T x))
 #else
-   __INLINE cpSize cpNLZ_BNU(BNU_CHUNK_T x)
+   __IPPCP_INLINE cpSize cpNLZ_BNU(BNU_CHUNK_T x)
    {
       #if (BNU_CHUNK_BITS == BNU_CHUNK_64BIT)
          return (cpSize)_lzcnt_u64(x);

@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-XTS Internal Functions
-// 
-// 
+//
+//
 */
 
 #if !defined(_PCP_AES_XTS_STUFF_H)
@@ -39,7 +39,7 @@
 #define GF_MASK   (0x8000000000000000)
 #define GF_POLY   (0x0000000000000087)
 
-__INLINE void gf_mul_by_primitive(void* x)
+__IPPCP_INLINE void gf_mul_by_primitive(void* x)
 {
    Ipp64u* x64 = (Ipp64u*)x;
    Ipp64u xorL = ((Ipp64s)x64[1] >> 63) & GF_POLY;

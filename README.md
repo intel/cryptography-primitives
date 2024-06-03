@@ -26,6 +26,7 @@ The library provides a comprehensive set of routines commonly used for cryptogra
 - Finite Field Arithmetic Functions
 - Big Number Integer Arithmetic Functions
 - PRNG/TRNG and Prime Numbers Generation
+- Hash-based signature algorithms
 
 ## Reasons to Use Intel IPP Cryptography
 - Security (constant-time execution for secret processing functions)

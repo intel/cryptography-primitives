@@ -42,7 +42,7 @@ public:
    friend IppsBigNumState* BN(const BigNumber& bn) {return bn.m_pBN;}
    operator IppsBigNumState* () const { return m_pBN; }
 
-   // some useful constatns
+   // some useful constants
    static const BigNumber& Zero();
    static const BigNumber& One();
    static const BigNumber& Two();

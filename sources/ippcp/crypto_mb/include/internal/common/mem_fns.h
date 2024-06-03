@@ -17,7 +17,7 @@
 /*
  * Auxiliary functions to set and copy memory
  */
-__INLINE void CopyBlock(const void* pSrc, void* pDst, int numBytes)
+__MBX_INLINE void CopyBlock(const void* pSrc, void* pDst, int numBytes)
 {
     const int8u* s = (int8u*)pSrc;
     int8u* d = (int8u*)pDst;
@@ -26,7 +26,7 @@ __INLINE void CopyBlock(const void* pSrc, void* pDst, int numBytes)
         d[k] = s[k];
 }
 
-__INLINE void PadBlock(int8u paddingByte, void* pDst, int numBytes)
+__MBX_INLINE void PadBlock(int8u paddingByte, void* pDst, int numBytes)
 {
     int8u* d = (int8u*)pDst;
     int k;

@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Internal Definitions and
 //     Internal AES Function Prototypes
-// 
-// 
+//
+//
 */
 
 #if !defined(_PCP_AES_H)
@@ -65,13 +65,13 @@ static int rij128nKeys[3] = {44,  52,  60 };
 // helper for nRounds[] and estnKeys[] access
 // note: x is length in 32-bits words
 */
-__INLINE int rij_index(int x)
+__IPPCP_INLINE int rij_index(int x)
 {
    return (x-NB(128))>>1;
 }
 
 /* size of AES context */
-__INLINE int cpSizeofCtx_AES(void)
+__IPPCP_INLINE int cpSizeofCtx_AES(void)
 {
    return sizeof(IppsAESSpec);
 }

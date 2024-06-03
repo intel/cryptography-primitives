@@ -109,7 +109,7 @@ EXTERN_C fips_test_status fips_selftest_mbx_rsa4k_private_crt_ssl_mb8(void);
 
 #endif // BN_OPEN_SSL_DISABLE
 
-/* 
+/*
 // Enumerator that contains information about FIPS-approved
 // functions inside the crypto_mb cryptographic boundary
 */
@@ -138,11 +138,11 @@ enum FIPS_CRYPTO_MB_FUNC {
   nistp256_ecdsa_verify_mb8,
   nistp384_ecdsa_verify_mb8,
   nistp521_ecdsa_verify_mb8,
-  
+
   ed25519_public_key_mb8,
   ed25519_sign_mb8,
   ed25519_verify_mb8,
-  
+
   rsa_public_mb8,
   rsa_private_mb8,
   rsa_private_crt_mb8,
@@ -170,7 +170,7 @@ enum FIPS_CRYPTO_MB_FUNC {
   nistp256_ecdsa_verify_ssl_mb8,
   nistp384_ecdsa_verify_ssl_mb8,
   nistp521_ecdsa_verify_ssl_mb8,
-  
+
   rsa_public_ssl_mb8,
   rsa_private_ssl_mb8,
   rsa_private_crt_ssl_mb8,
@@ -184,7 +184,7 @@ enum FIPS_CRYPTO_MB_FUNC {
 
   x25519_public_key_mb8,
   x25519_mb8,
-  
+
   sm2_ecpublic_key_mb8,
   sm2_ecdh_mb8,
   sm2_ecdsa_sign_mb8,
@@ -233,20 +233,20 @@ enum FIPS_CRYPTO_MB_FUNC {
 /**
  * \brief
  *
- *  An indicator if a function is FIPS-approved or not  
- * 
- * \param[in] function              member of FIPS_CRYPTO_MB_FUNC enumerator  
+ *  An indicator if a function is FIPS-approved or not
+ *
+ * \param[in] function              member of FIPS_CRYPTO_MB_FUNC enumerator
  *                                  that corresponds to API being checked.
  * \return    func_fips_approved    equal to 1 if FIPS-approved algorithm is used
  *
- * Example: 
- *          Library API           FIPS_CRYPTO_MB_FUNC  
+ * Example:
+ *          Library API           FIPS_CRYPTO_MB_FUNC
  *       mbx_rsa_public_mb8   ->    rsa_public_mb8
  *     mbx_nistp256_ecdh_mb8  ->   nistp256_ecdh_mb8
  *      mbx_<functionality>   ->    <functionality>
- * 
+ *
  */
-__INLINE func_fips_approved mbx_is_fips_approved_func(enum FIPS_CRYPTO_MB_FUNC function)
+__MBX_INLINE func_fips_approved mbx_is_fips_approved_func(enum FIPS_CRYPTO_MB_FUNC function)
 {
   return ((int)function > 0);
 }

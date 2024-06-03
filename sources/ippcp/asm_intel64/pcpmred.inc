@@ -474,7 +474,7 @@ DECLARE_FUNC mred_N,PRIVATE
 
    lea      rdi, [rdi+rdx*sizeof(qword)]
 
-   ; accumulate carryLCL and update hight product above
+   ; accumulate carryLCL and update high product above
    pop      rax
    shr      rax, 1
    mov      rbx, rdx
@@ -502,7 +502,7 @@ DECLARE_FUNC mred_N,PRIVATE
 
    pop      rbp         ; mul_8xn procedure
 
-   ; accumulate carryGBL and store hight product above
+   ; accumulate carryGBL and store high product above
    pop      rbx         ; carryGBL
    add      r8,  rbx
    mov      qword [rdi+sizeof(qword)*0], r8

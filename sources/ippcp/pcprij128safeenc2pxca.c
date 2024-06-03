@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Encrypt 128-bit data block according to Rijndael
 //     (compact S-box based implementation)
-// 
+//
 //  Contents:
 //     Safe2Encrypt_RIJ128()
-// 
-// 
+//
+//
 */
 
 #include "owncp.h"
@@ -37,7 +37,7 @@
 #include "pcprij128safe2.h"
 #include "pcprijtables.h"
 
-__INLINE void SubBytes(Ipp8u state[])
+__IPPCP_INLINE void SubBytes(Ipp8u state[])
 {
    int i;
    for(i=0;i<16;i++) {
@@ -46,7 +46,7 @@ __INLINE void SubBytes(Ipp8u state[])
 }
 
 
-__INLINE void ShiftRows(Ipp32u* state)
+__IPPCP_INLINE void ShiftRows(Ipp32u* state)
 {
    state[1] =  ROR32(state[1], 8);
    state[2] =  ROR32(state[2], 16);
@@ -54,7 +54,7 @@ __INLINE void ShiftRows(Ipp32u* state)
 }
 
 // MixColumns4 function mixes the columns of the state matrix
-__INLINE void MixColumns(Ipp32u* state)
+__IPPCP_INLINE void MixColumns(Ipp32u* state)
 {
    Ipp32u y0 = state[1] ^ state[2] ^ state[3];
    Ipp32u y1 = state[0] ^ state[2] ^ state[3];

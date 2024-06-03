@@ -208,10 +208,12 @@ segment .text align=IPP_ALIGN_FACTOR
 %xdefine KK_SHA512  rbp
 
 %if _IPP32E >= _IPP32E_U8
+segment .data align=IPP_ALIGN_FACTOR
 align IPP_ALIGN_FACTOR
 pByteSwp DB    7,6,5,4,3,2,1,0,  15,14,13,12,11,10,9,8
 %endif
 
+segment .text align=IPP_ALIGN_FACTOR
 align IPP_ALIGN_FACTOR
 IPPASM UpdateSHA512,PUBLIC
 %assign LOCAL_FRAME (16*sizeof(qword)+sizeof(qword))

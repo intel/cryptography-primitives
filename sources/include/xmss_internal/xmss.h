@@ -98,7 +98,7 @@ IPP_OWN_DECL(IppStatus, rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
  *    params    WOTS parameters (w, log2_w, n, len, len_1, hash_method)
  */
 
-__INLINE IppStatus setXMSSParams(IppsXMSSAlgo OIDAlgo, Ipp32s* h, cpWOTSParams* params) {
+__IPPCP_INLINE IppStatus setXMSSParams(IppsXMSSAlgo OIDAlgo, Ipp32s* h, cpWOTSParams* params) {
 
     // Digits below are from the XMSS algo spec
     // don't depend on the algo

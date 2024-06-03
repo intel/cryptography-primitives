@@ -20,9 +20,12 @@
 
 # List of examples for targets generation
 set(IPPCP_EXAMPLES
-  # AES examples
+  # AES-CTR examples
   aes/aes-256-ctr-encryption.cpp
   aes/aes-256-ctr-decryption.cpp
+  # AES-GCM examples
+  aes/aes-128-gcm-encryption.cpp
+  aes/aes-128-gcm-decryption.cpp
   # DSA
   dsa/dsa-dlp-sha-1-verification.cpp
   dsa/dsa-dlp-sha-256-verification.cpp

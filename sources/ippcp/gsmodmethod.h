@@ -54,17 +54,17 @@ typedef struct _gsModMethod {
 
 /* These functions should not be used, because they have non-constant execution time, see their safe analogues in pcpmask_ct.h */
 #if 0
-__INLINE BNU_CHUNK_T cpIsZero(BNU_CHUNK_T x)
+__IPPCP_INLINE BNU_CHUNK_T cpIsZero(BNU_CHUNK_T x)
 {  return x==0; }
-__INLINE BNU_CHUNK_T cpIsNonZero(BNU_CHUNK_T x)
+__IPPCP_INLINE BNU_CHUNK_T cpIsNonZero(BNU_CHUNK_T x)
 {  return x!=0; }
-__INLINE BNU_CHUNK_T cpIsOdd(BNU_CHUNK_T x)
+__IPPCP_INLINE BNU_CHUNK_T cpIsOdd(BNU_CHUNK_T x)
 {  return x&1; }
-__INLINE BNU_CHUNK_T cpIsEven(BNU_CHUNK_T x)
+__IPPCP_INLINE BNU_CHUNK_T cpIsEven(BNU_CHUNK_T x)
 {  return 1-cpIsOdd(x); }
 
 /* dst[] = (flag)? src[] : dst[] */
-__INLINE void cpMaskMove_gs(BNU_CHUNK_T* dst, const BNU_CHUNK_T* src, int len, BNU_CHUNK_T moveFlag)
+__IPPCP_INLINE void cpMaskMove_gs(BNU_CHUNK_T* dst, const BNU_CHUNK_T* src, int len, BNU_CHUNK_T moveFlag)
 {
    BNU_CHUNK_T srcMask = 0-cpIsNonZero(moveFlag);
    BNU_CHUNK_T dstMask = ~srcMask;

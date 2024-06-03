@@ -14,19 +14,19 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     DES Cipher function (MemJam mitigation included)
-// 
+//
 //  Contents:
 //     initial permutation: ip()
 //     final permutation: fp()
 //     round function: rndm()
-//     DES block encypt/decrypt: Chipher_DES()
-// 
-// 
+//     DES block encrypt/decrypt: Chipher_DES()
+//
+//
 */
 
 

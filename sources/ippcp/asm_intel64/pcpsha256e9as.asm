@@ -281,7 +281,7 @@
 %endif
 %endmacro
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 
 align IPP_ALIGN_FACTOR
@@ -289,6 +289,7 @@ SHUFB_BSWAP DB    3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12
 SHUFD_ZZ10  DB    0,1,2,3, 8,9,10,11, 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh
 SHUFD_32ZZ  DB    0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh, 0,1,2,3, 8,9,10,11
 
+segment .text align=IPP_ALIGN_FACTOR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; UpdateSHA256(Ipp32u digest[], Ipp8u dataBlock[], int datalen, Ipp32u K_256[])

@@ -37,14 +37,14 @@
 #pragma warning(disable: 4310) // zmmintrin.h bug: truncation of constant value
 #endif
 
-__INLINE Ipp64u broadcast_16to64(Ipp16u mask16)
+__IPPCP_INLINE Ipp64u broadcast_16to64(Ipp16u mask16)
 {
    Ipp64u mask64 = (Ipp64u)mask16;
    mask64 = (mask64 << 48) | (mask64 << 32) | (mask64 << 16) | mask64;
    return mask64;
 }
 
-__INLINE __m512i getInputBlocks(__m128i * const currentState, const __m512i * const pCipherBlocks, __mmask16 blocksCompressMask)
+__IPPCP_INLINE __m512i getInputBlocks(__m128i * const currentState, const __m512i * const pCipherBlocks, __mmask16 blocksCompressMask)
 {
    // extract 128-bit cipher blocks
    __m128i c0 = _mm512_extracti64x2_epi64(*pCipherBlocks, 0);

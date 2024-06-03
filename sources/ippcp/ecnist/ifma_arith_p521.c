@@ -940,14 +940,14 @@ IPP_OWN_DEFN(void, ifma_frommont52_p521, (fe521 pr[], const fe521 a))
    return;
 }
 
-__INLINE IPP_OWN_DEFN(void, ifma_amm52_p521_norm, (fe521 pr[], const fe521 a, const fe521 b))
+__IPPCP_INLINE IPP_OWN_DEFN(void, ifma_amm52_p521_norm, (fe521 pr[], const fe521 a, const fe521 b))
 {
    ifma_amm52_p521(pr, a, b);
    ifma_lnorm52_p521(pr, *pr);
    return;
 }
 
-__INLINE IPP_OWN_DEFN(void, ifma_ams52_p521_norm, (fe521 pr[], const fe521 a))
+__IPPCP_INLINE IPP_OWN_DEFN(void, ifma_ams52_p521_norm, (fe521 pr[], const fe521 a))
 {
    ifma_ams52_p521(pr, a);
    ifma_lnorm52_p521(pr, *pr);
@@ -961,7 +961,7 @@ __INLINE IPP_OWN_DEFN(void, ifma_ams52_p521_norm, (fe521 pr[], const fe521 a))
    ifma_lnorm52_dual_p521(&(R1), (R1), &(R2), (R2))
 
 /* r = base^(2^n) */
-__INLINE IPP_OWN_DEFN(void, ifma_ams52_p521_ntimes, (fe521 pr[], const fe521 a, int n))
+__IPPCP_INLINE IPP_OWN_DEFN(void, ifma_ams52_p521_ntimes, (fe521 pr[], const fe521 a, int n))
 {
    fe521 r;
    FE521_COPY(r, a);

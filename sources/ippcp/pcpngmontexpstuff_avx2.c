@@ -99,7 +99,7 @@ static int dig27_regular(Ipp32u* pRegular, int regLen, const Ipp64u* pRep27, int
 }
 
 /* mont_mul wrapper */
-__INLINE void cpMontMul_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pB, const Ipp64u* pModulus, int mLen, Ipp64u k0, Ipp64u* pBuffer)
+__IPPCP_INLINE void cpMontMul_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pB, const Ipp64u* pModulus, int mLen, Ipp64u k0, Ipp64u* pBuffer)
 {
    if(mLen==38)  /* corresponds to 1024-bit regular representation */
       cpMontMul1024_avx2(pR, pA, pB, pModulus, mLen, k0);
@@ -115,7 +115,7 @@ __INLINE void cpMontMul_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pB, con
 }
 
 /* mont_sqr wrapper */
-__INLINE void cpMontSqr_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pModulus, int mLen, Ipp64u k0, Ipp64u* pBuffer)
+__IPPCP_INLINE void cpMontSqr_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pModulus, int mLen, Ipp64u k0, Ipp64u* pBuffer)
 {
    if(mLen==38) /* corresponds to 1024-bit regular representation */
       cpMontSqr1024_avx2(pR, pA, pModulus, mLen, k0, pBuffer);
@@ -384,7 +384,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU_sscm_avx2, (BNU_CHUNK_T* dataY, const BNU
 // "fast" fixed-size window montgomery exponentiation
 //
 // scratch buffer structure:
-//    precomuted table of multipliers[(1<<w)*redLen]
+//    precomputed table of multipliers[(1<<w)*redLen]
 //    redM[redBufferLen]
 //    redY[redBufferLen]
 //    redT[redBufferLen]
@@ -479,7 +479,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpWin_BNU_avx2, (BNU_CHUNK_T* dataY, const BNU_CHUN
       int eBit = bitsizeE - window;
 
       /* Note:  Static analysis can generate error/warning on the expression below.
-      
+
       The value of "bitSizeE" is limited, (modulusBitSize > bitSizeE > 0),
       it is checked in initialization phase by (ippsRSA_GetSizePublickey() and ippsRSA_InitPublicKey).
       Buffer "redE" assigned for copy of dataE, is 1 (64-bit) chunk longer than size of RSA modulus,
@@ -538,7 +538,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpWin_BNU_avx2, (BNU_CHUNK_T* dataY, const BNU_CHUN
 // "safe" fixed-size window montgomery exponentiation
 //
 // scratch buffer structure:
-//    precomuted table of multipliers[(1<<w)*redLen]
+//    precomputed table of multipliers[(1<<w)*redLen]
 //    redM[redBufferLen]
 //    redY[redBufferLen]
 //    redT[redBufferLen]

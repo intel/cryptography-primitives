@@ -161,7 +161,6 @@
    mov      [rsp+((%%nr-16) & 0Fh)*4], %%sig0
 %endmacro
 
-segment .text align=IPP_ALIGN_FACTOR
 
 
 ;******************************************************************************************
@@ -191,12 +190,13 @@ segment .text align=IPP_ALIGN_FACTOR
 ;; Caller = ippsHMACSHA224MessageDigest
 ;;
 
-
+segment .data align=IPP_ALIGN_FACTOR
 %if (_IPP32E >= _IPP32E_U8)
 align IPP_ALIGN_FACTOR
 pByteSwp DB    3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12
 %endif
 
+segment .text align=IPP_ALIGN_FACTOR
 align IPP_ALIGN_FACTOR
 IPPASM UpdateSHA256,PUBLIC
 %assign LOCAL_FRAME (16*sizeof(dword) + sizeof(qword))

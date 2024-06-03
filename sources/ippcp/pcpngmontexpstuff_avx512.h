@@ -39,7 +39,7 @@
 #define NUMBER_OF_DIGITS(bitsize, digsize)   (((bitsize) + (digsize)-1)/(digsize))
 
 /* number of "EXP_DIGIT_SIZE_AVX512" chunks in "bitSize" bit string matched for AMM */
-__INLINE cpSize numofVariable_avx512(int modulusBits)
+__IPPCP_INLINE cpSize numofVariable_avx512(int modulusBits)
 {
    cpSize ammBitSize = 2 + NUMBER_OF_DIGITS(modulusBits, BITSIZE(BNU_CHUNK_T)) * BITSIZE(BNU_CHUNK_T);
    cpSize redNum = NUMBER_OF_DIGITS(ammBitSize, EXP_DIGIT_SIZE_AVX512);
@@ -52,7 +52,7 @@ __INLINE cpSize numofVariable_avx512(int modulusBits)
  *
  * |regCapacity| is a capacity of a single register in qwords
  */
-__INLINE int numofVariableBuff_avx512(int len, int regCapacity)
+__IPPCP_INLINE int numofVariableBuff_avx512(int len, int regCapacity)
 {
    int tail = len % regCapacity;
    if(0==tail) tail = regCapacity;
@@ -65,7 +65,7 @@ __INLINE int numofVariableBuff_avx512(int len, int regCapacity)
 */
 
 /* pair of 52-bit digits occupys 13 bytes (the fact is using in implementation beloow) */
-__INLINE Ipp64u getDig52(const Ipp8u* pStr, int strLen)
+__IPPCP_INLINE Ipp64u getDig52(const Ipp8u* pStr, int strLen)
 {
    Ipp64u digit = 0;
    for(; strLen>0; strLen--) {
@@ -109,7 +109,7 @@ static void regular_dig52(Ipp64u* out, int outLen /* in qwords */, const Ipp64u*
    converts "redundant" (base = 2^DIGIT_SIZE) representation
    into regular (base = 2^64)
 */
-__INLINE void putDig52(Ipp8u* pStr, int strLen, Ipp64u digit)
+__IPPCP_INLINE void putDig52(Ipp8u* pStr, int strLen, Ipp64u digit)
 {
    for(; strLen>0; strLen--) {
       *pStr++ = (Ipp8u)(digit&0xFF);

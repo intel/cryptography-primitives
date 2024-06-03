@@ -30,13 +30,13 @@
 %if (_AES_NI_ENABLING_ == _FEATURE_ON_) || (_AES_NI_ENABLING_ == _FEATURE_TICKTOCK_)
 %if (_IPP32E >= _IPP32E_Y8)
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 
 ALPHA_MUL_CNT  dq 00000000000000087h, 00000000000000001h
 
-
+segment .text align=IPP_ALIGN_FACTOR
 ;***************************************************************
 ;* Purpose:    AES-XTS encryption
 ;*

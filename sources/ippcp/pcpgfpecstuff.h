@@ -188,22 +188,22 @@ IPP_OWN_DECL (const cpPrecompAP*, gfpec_precom_sm2_radix52_fun,        (void))
 /*
 // get/release n points from/to the pool
 */
-__INLINE BNU_CHUNK_T* cpEcGFpGetPool(int n, IppsGFpECState* pEC)
+__IPPCP_INLINE BNU_CHUNK_T* cpEcGFpGetPool(int n, IppsGFpECState* pEC)
 {
    BNU_CHUNK_T* pPool = ECP_POOL(pEC);
    ECP_POOL(pEC) += n*GFP_FELEN(GFP_PMA(ECP_GFP(pEC)))*3;
    return pPool;
 }
-__INLINE void cpEcGFpReleasePool(int n, IppsGFpECState* pEC)
+__IPPCP_INLINE void cpEcGFpReleasePool(int n, IppsGFpECState* pEC)
 {
    int chunk_size = n*GFP_FELEN(GFP_PMA(ECP_GFP(pEC)))*3;
    ECP_POOL(pEC) -= chunk_size;
-   // Clean the pool for the security reasons 
+   // Clean the pool for the security reasons
    // (intermediate sensitive data may be stored here)
-   ZEXPAND_BNU(ECP_POOL(pEC), 0, chunk_size);   
+   ZEXPAND_BNU(ECP_POOL(pEC), 0, chunk_size);
 }
 
-__INLINE IppsGFpECPoint* cpEcGFpInitPoint(IppsGFpECPoint* pPoint, BNU_CHUNK_T* pData, int flags, const IppsGFpECState* pEC)
+__IPPCP_INLINE IppsGFpECPoint* cpEcGFpInitPoint(IppsGFpECPoint* pPoint, BNU_CHUNK_T* pData, int flags, const IppsGFpECState* pEC)
 {
    ECP_POINT_SET_ID(pPoint);
    ECP_POINT_FLAGS(pPoint) = flags;
@@ -213,7 +213,7 @@ __INLINE IppsGFpECPoint* cpEcGFpInitPoint(IppsGFpECPoint* pPoint, BNU_CHUNK_T* p
 }
 
 /* copy one point into another */
-__INLINE IppsGFpECPoint* gfec_CopyPoint(IppsGFpECPoint* pPointR, const IppsGFpECPoint* pPointA, int elemLen)
+__IPPCP_INLINE IppsGFpECPoint* gfec_CopyPoint(IppsGFpECPoint* pPointR, const IppsGFpECPoint* pPointA, int elemLen)
 {
    cpGFpElementCopy(ECP_POINT_DATA(pPointR), ECP_POINT_DATA(pPointA), 3*elemLen);
    ECP_POINT_FLAGS(pPointR) = ECP_POINT_FLAGS(pPointA);
@@ -221,7 +221,7 @@ __INLINE IppsGFpECPoint* gfec_CopyPoint(IppsGFpECPoint* pPointR, const IppsGFpEC
 }
 
 
-__INLINE IppsGFpECPoint* gfec_SetPointAtInfinity(IppsGFpECPoint* pPoint)
+__IPPCP_INLINE IppsGFpECPoint* gfec_SetPointAtInfinity(IppsGFpECPoint* pPoint)
 {
    int elemLen = ECP_POINT_FELEN(pPoint);
    cpGFpElementPad(ECP_POINT_X(pPoint), elemLen, 0);
@@ -235,7 +235,7 @@ __INLINE IppsGFpECPoint* gfec_SetPointAtInfinity(IppsGFpECPoint* pPoint)
 // test infinity:
 //    IsProjectivePointAtInfinity
 */
-__INLINE int gfec_IsPointAtInfinity(const IppsGFpECPoint* pPoint)
+__IPPCP_INLINE int gfec_IsPointAtInfinity(const IppsGFpECPoint* pPoint)
 {
    return GFP_IS_ZERO( ECP_POINT_Z(pPoint), ECP_POINT_FELEN(pPoint));
 }
@@ -243,7 +243,7 @@ __INLINE int gfec_IsPointAtInfinity(const IppsGFpECPoint* pPoint)
 
 
 /* signed encode */
-__INLINE void booth_recode(Ipp8u* sign, Ipp8u* digit, Ipp8u in, int w)
+__IPPCP_INLINE void booth_recode(Ipp8u* sign, Ipp8u* digit, Ipp8u in, int w)
 {
    Ipp8u s = (Ipp8u)(~((in >> w) - 1));
    int d = (1 << (w+1)) - in - 1;
@@ -288,7 +288,7 @@ IPP_OWN_DECL (int, gfec_MakePoint, (IppsGFpECPoint* pPoint, const BNU_CHUNK_T* p
 IPP_OWN_DECL (int, gfec_ComparePoint, (const IppsGFpECPoint* pP, const IppsGFpECPoint* pQ, IppsGFpECState* pEC))
 IPP_OWN_DECL (int, gfec_IsPointOnCurve, (const IppsGFpECPoint* pP, IppsGFpECState* pEC))
 
-__INLINE IppsGFpECPoint* gfec_DblPoint(IppsGFpECPoint* pR,
+__IPPCP_INLINE IppsGFpECPoint* gfec_DblPoint(IppsGFpECPoint* pR,
                         const IppsGFpECPoint* pP, IppsGFpECState* pEC)
 {
    gfec_point_double(ECP_POINT_X(pR), ECP_POINT_X(pP), pEC);
@@ -296,7 +296,7 @@ __INLINE IppsGFpECPoint* gfec_DblPoint(IppsGFpECPoint* pR,
    return pR;
 }
 
-__INLINE IppsGFpECPoint* gfec_AddPoint(IppsGFpECPoint* pR,
+__IPPCP_INLINE IppsGFpECPoint* gfec_AddPoint(IppsGFpECPoint* pR,
                         const IppsGFpECPoint* pP, const IppsGFpECPoint* pQ,
                         IppsGFpECState* pEC)
 {

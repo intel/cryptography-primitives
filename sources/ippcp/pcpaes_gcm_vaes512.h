@@ -59,7 +59,7 @@ static __ALIGN64 Ipp8u swapBytes[] = {
  *
  *  NB: make sure unused parts of input registers are zeroed to avoid issues with further horizontal XOR.
  */
-__INLINE void AesGcmKaratsubaMul4(const __m512i * const pA,              /* A3 A2 A1 A0                   */
+__IPPCP_INLINE void AesGcmKaratsubaMul4(const __m512i * const pA,              /* A3 A2 A1 A0                   */
                                 const __m512i * const pHKeys,          /* B3 B2 B1 B0                   */
                                 const __m512i * const pHKeysKaratsuba, /* precomputed (b1i^b0i)         */
                                 __m512i * const pH,
@@ -77,7 +77,7 @@ __INLINE void AesGcmKaratsubaMul4(const __m512i * const pA,              /* A3 A
 /* The function performs horizontal XOR for 4 128-bit values in 512-bit register
    128-bit result value saved in the low part of the 512-bit register
  */
-__INLINE void HXor4x128(const __m512i * const zmm,
+__IPPCP_INLINE void HXor4x128(const __m512i * const zmm,
                       __m128i * const xmm)
 {
    __m256i ymm;
@@ -92,7 +92,7 @@ __INLINE void HXor4x128(const __m512i * const zmm,
 /* The function performs Montgomery reduction of 256-bit polynomial to 128-bit one
    with irreducible polynomial
  */
-__INLINE void ReducePoly2x128(const __m128i * const pHI,
+__IPPCP_INLINE void ReducePoly2x128(const __m128i * const pHI,
                             const __m128i * const pLO,
                             __m128i * const result)
 {
@@ -114,7 +114,7 @@ __INLINE void ReducePoly2x128(const __m128i * const pHI,
 }
 
 /* The function aggregates partial products of Karatsuba multiplication into final ghash value */
-__INLINE void AggregateKaratsubaPartialProducts(const __m512i * const pH,
+__IPPCP_INLINE void AggregateKaratsubaPartialProducts(const __m512i * const pH,
                                      const __m512i * const pM,
                                      const __m512i * const pL,
                                      __m128i * const result)

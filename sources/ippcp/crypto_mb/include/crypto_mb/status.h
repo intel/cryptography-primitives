@@ -29,23 +29,23 @@ typedef int64u mbx_status16;
 #define MBX_STATUS_LOW_ORDER_ERR      (4)
 #define MBX_STATUS_SIGNATURE_ERR      (8)
 
-__INLINE mbx_status MBX_SET_STS(mbx_status status, int numb, mbx_status sttVal)
+__MBX_INLINE mbx_status MBX_SET_STS(mbx_status status, int numb, mbx_status sttVal)
 {
    numb &= 7; /* 0 <= numb < 8 */
    status &= (mbx_status)(~(0xF << (numb*4)));
    return status |= (sttVal & 0xF) << (numb*4);
 }
 
-__INLINE mbx_status MBX_GET_STS(mbx_status status, int numb)
+__MBX_INLINE mbx_status MBX_GET_STS(mbx_status status, int numb)
 {
    return (status >>(numb*4)) & 0xF;
 }
-__INLINE mbx_status MBX_SET_STS_ALL(mbx_status stsVal)
+__MBX_INLINE mbx_status MBX_SET_STS_ALL(mbx_status stsVal)
 {
    return (stsVal<<4*7) | (stsVal<<4*6) | (stsVal<<4*5) | (stsVal<<4*4)  | (stsVal<<4*3) | (stsVal<<4*2) | (stsVal<<4*1) | stsVal;
 }
 
-__INLINE mbx_status MBX_SET_STS_BY_MASK(mbx_status status, int8u mask, mbx_status sttVal)
+__MBX_INLINE mbx_status MBX_SET_STS_BY_MASK(mbx_status status, int8u mask, mbx_status sttVal)
 {
    int numb;
 
@@ -56,7 +56,7 @@ __INLINE mbx_status MBX_SET_STS_BY_MASK(mbx_status status, int8u mask, mbx_statu
    return status;
 }
 
-__INLINE int MBX_IS_ANY_OK_STS(mbx_status status)
+__MBX_INLINE int MBX_IS_ANY_OK_STS(mbx_status status)
 {
    int ret = MBX_STATUS_OK==MBX_GET_STS(status, 0)
           || MBX_STATUS_OK==MBX_GET_STS(status, 1)
@@ -74,30 +74,30 @@ __INLINE int MBX_IS_ANY_OK_STS(mbx_status status)
 */
 
 /* Accessors for the low and high part of 64-bit status */
-__INLINE mbx_status MBX_GET_HIGH_PART_STS16(mbx_status16 status16)
+__MBX_INLINE mbx_status MBX_GET_HIGH_PART_STS16(mbx_status16 status16)
 {
    return ((mbx_status)(((mbx_status16)(status16) >> 32) & 0xFFFFFFFF));
 }
 
-__INLINE mbx_status MBX_GET_LOW_PART_STS16(mbx_status16 status16)
+__MBX_INLINE mbx_status MBX_GET_LOW_PART_STS16(mbx_status16 status16)
 {
    return ((mbx_status)(status16));
 }
 
-__INLINE mbx_status16 MBX_SET_STS16_ALL(mbx_status16 stsVal)
+__MBX_INLINE mbx_status16 MBX_SET_STS16_ALL(mbx_status16 stsVal)
 {
    return (stsVal<<4*15) | (stsVal<<4*14) | (stsVal<<4*13) | (stsVal<<4*12) | (stsVal<<4*11)  | (stsVal<<4*10) | (stsVal<<4*9) | (stsVal<<4*8) | \
           (stsVal<<4*7)  | (stsVal<<4*6)  | (stsVal<<4*5)  | (stsVal<<4*4)  | (stsVal<<4*3)   | (stsVal<<4*2)  | (stsVal<<4*1) | stsVal;
 }
-   
-__INLINE mbx_status16 MBX_SET_STS16(mbx_status16 status, int numb, mbx_status16 sttVal)
+
+__MBX_INLINE mbx_status16 MBX_SET_STS16(mbx_status16 status, int numb, mbx_status16 sttVal)
 {
    numb &= 15; /* 0 <= numb < 16 */
    status &= (mbx_status16)(~((int64u)0xF << (numb*4)));
    return status |= (sttVal & 0xF) << (numb*4);
 }
 
-__INLINE mbx_status16 MBX_SET_STS16_BY_MASK(mbx_status16 status, int16u mask, mbx_status16 sttVal)
+__MBX_INLINE mbx_status16 MBX_SET_STS16_BY_MASK(mbx_status16 status, int16u mask, mbx_status16 sttVal)
 {
     int numb;
     for (numb = 0; numb < 16; numb++) {
@@ -107,7 +107,7 @@ __INLINE mbx_status16 MBX_SET_STS16_BY_MASK(mbx_status16 status, int16u mask, mb
     return status;
 }
 
-__INLINE int MBX_IS_ANY_OK_STS16(mbx_status16 status)
+__MBX_INLINE int MBX_IS_ANY_OK_STS16(mbx_status16 status)
 {
    return MBX_IS_ANY_OK_STS(MBX_GET_HIGH_PART_STS16(status)) || \
           MBX_IS_ANY_OK_STS(MBX_GET_LOW_PART_STS16(status));

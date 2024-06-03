@@ -34,30 +34,30 @@
         #define SIMD_BYTES (SIMD_LEN/8)
         #define MB_WIDTH   (SIMD_LEN/64)
 
-        __INLINE U64 loadu64(const void *p) {
+        __MBX_INLINE U64 loadu64(const void *p) {
             return _mm512_loadu_si512((U64*)p);
         }
 
-        __INLINE U64 loadstream64(const void *p) {
+        __MBX_INLINE U64 loadstream64(const void *p) {
             return _mm512_stream_load_si512 ((U64*)p);
         }
 
-        __INLINE void storeu64(const void *p, U64 v) {
+        __MBX_INLINE void storeu64(const void *p, U64 v) {
             _mm512_storeu_si512((U64*)p, v);
         }
 
         #define mask_mov64 _mm512_mask_mov_epi64
         #define set64      _mm512_set1_epi64
 
-        __INLINE U64 fma52lo(U64 a, U64 b, U64 c) {
+        __MBX_INLINE U64 fma52lo(U64 a, U64 b, U64 c) {
             return _mm512_madd52lo_epu64(a, b, c);
         }
 
-        __INLINE U64 fma52hi(U64 a, U64 b, U64 c) {
+        __MBX_INLINE U64 fma52hi(U64 a, U64 b, U64 c) {
             return _mm512_madd52hi_epu64(a, b, c);
         }
 
-        __INLINE U64 mul52lo(U64 b, U64 c) {
+        __MBX_INLINE U64 mul52lo(U64 b, U64 c) {
             return _mm512_madd52lo_epu64(_mm512_setzero_si512(), b, c);
         }
 
@@ -73,7 +73,7 @@
                 __asm__ ( "vpmadd52huq " #o "(%2), %1, %0" : "+x" (r): "x" (b), "r" (c) ); \
             }
 
-            __INLINE U64 select64(__mb_mask k, U64 v, U64 *d) {
+            __MBX_INLINE U64 select64(__mb_mask k, U64 v, U64 *d) {
                 __asm__("vmovdqu64 %2, %%zmm0 \n"
                         "vpblendmq %%zmm0, %0, %0 %{%1%} \n"
                 : "+v"(v)
@@ -81,9 +81,9 @@
                 : "zmm0");
                 return v;
             }
-            
+
         #else
-            // Use IFMA instrinsics for all other compilers
+            // Use IFMA intrinsics for all other compilers
             #define _mm512_madd52lo_epu64_(r, a, b, c, o) {\
                 r=fma52lo(a, b, _mm512_loadu_si512((U64*)(((char*)c)+o))); \
             }
@@ -93,48 +93,48 @@
             }
 
             #pragma optimize("", off)
-            __INLINE U64 select64(__mb_mask k, U64 v, U64 *d) {
+            __MBX_INLINE U64 select64(__mb_mask k, U64 v, U64 *d) {
                 return _mm512_mask_blend_epi64(k, v, _mm512_load_si512(d));
             }
-            
+
             #pragma optimize("", on)
         #endif
 
         #define fma52lo_mem(r, a, b, c, o) _mm512_madd52lo_epu64_(r, a, b, c, o) // gres
         #define fma52hi_mem(r, a, b, c, o) _mm512_madd52hi_epu64_(r, a, b, c, o) // gres
 
-        __INLINE U64 add64(U64 a, U64 b) {
+        __MBX_INLINE U64 add64(U64 a, U64 b) {
             return _mm512_add_epi64(a, b);
         }
 
-        __INLINE U64 sub64(U64 a, U64 b) {
+        __MBX_INLINE U64 sub64(U64 a, U64 b) {
             return _mm512_sub_epi64(a, b);
         }
 
-        __INLINE U64 get_zero64() {
+        __MBX_INLINE U64 get_zero64() {
             return _mm512_setzero_si512();
         }
 
-        __INLINE void set_zero64(U64 *a) {
+        __MBX_INLINE void set_zero64(U64 *a) {
             *a = _mm512_xor_si512(*a, *a);
         }
 
-        __INLINE U64 set1(unsigned long long a) {
+        __MBX_INLINE U64 set1(unsigned long long a) {
             return _mm512_set1_epi64((long long)a);
         }
 
-        __INLINE U64 srli64(U64 a, int s) {
+        __MBX_INLINE U64 srli64(U64 a, int s) {
             return _mm512_srli_epi64(a, s);
         }
 
         #define srai64 _mm512_srai_epi64
         #define slli64 _mm512_slli_epi64
 
-        __INLINE U64 and64_const(U64 a, unsigned long long mask) {
+        __MBX_INLINE U64 and64_const(U64 a, unsigned long long mask) {
             return _mm512_and_epi64(a, _mm512_set1_epi64((long long)mask));
         }
 
-        __INLINE U64 and64(U64 a, U64 mask) {
+        __MBX_INLINE U64 and64(U64 a, U64 mask) {
             return _mm512_and_epi64(a, mask);
         }
 
@@ -150,7 +150,7 @@
         #define mask_sub64   _mm512_mask_sub_epi64
         #define maskz_sub64  _mm512_maskz_sub_epi64
 
-        __INLINE __mb_mask is_zero(U64* p, int len) {
+        __MBX_INLINE __mb_mask is_zero(U64* p, int len) {
             U64 Z = p[0];
             for(int i = 1; i < len; i++) {
                 Z = or64(Z, p[i]);
@@ -164,7 +164,7 @@
         #else
             #define mask_xor _kxor_mask8
         #endif
-        
+
         #define get_mask(a)       (a)
         #define get_mask_value(a) (a)
 
@@ -196,7 +196,7 @@
             X5_ = _mm512_mask_shuffle_i64x2(X45H, 0b11001111, X0123H, X67H, 0b10001000 ); \
             X7_ = _mm512_mask_shuffle_i64x2(X67H, 0b00111111, X0123H, X45H, 0b10111101 ); \
         }
-        
+
     #else
         #error "Incorrect SIMD length"
     #endif  // SIMD_LEN

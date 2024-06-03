@@ -28,7 +28,7 @@
 %assign _xEMULATION_ 1
 %assign _ADCX_ADOX_  1
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 
@@ -42,7 +42,7 @@ LOne     DD    1,1,1,1,1,1,1,1
 LTwo     DD    2,2,2,2,2,2,2,2
 LThree   DD    3,3,3,3,3,3,3,3
 
-
+segment .text align=IPP_ALIGN_FACTOR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ; void sm2_mul_by_2(uint64_t res[4], uint64_t a[4]);

@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Message block processing according to SM5
-// 
+//
 //  Contents:
 //     UpdateSM3()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -141,14 +141,14 @@
 *F*/
 #if defined(_ALG_SM3_COMPACT_)
 
-__INLINE Ipp32u MagicFF(int s, Ipp32u a, Ipp32u b, Ipp32u c)
+__IPPCP_INLINE Ipp32u MagicFF(int s, Ipp32u a, Ipp32u b, Ipp32u c)
 {
    switch(s) {
       case 0: return FF1(a,b,c);
       default:return FF2(a,b,c);
    }
 }
-__INLINE Ipp32u MagicGG(int s, Ipp32u e, Ipp32u f, Ipp32u g)
+__IPPCP_INLINE Ipp32u MagicGG(int s, Ipp32u e, Ipp32u f, Ipp32u g)
 {
    switch(s) {
       case 0: return GG1(e,f,g);

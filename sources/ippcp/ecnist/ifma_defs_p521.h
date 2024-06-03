@@ -61,12 +61,12 @@ static const __ALIGN64 Ipp64u P521R1_ONE52[P521R1_NUM_CHUNK][P521R1_LENFE521_52]
    FE521_MID(R) = m256_loadu_i64(FE521_MID(A)); \
    FE521_HI(R)  = m256_loadu_i64(FE521_HI(A))
 
-__INLINE mask8 is_msb_m256(const mask8 a)
+__IPPCP_INLINE mask8 is_msb_m256(const mask8 a)
 {
    return ((mask8)0 - (a >> 7));
 }
 
-__INLINE mask8 is_zero_m256(const m256i a)
+__IPPCP_INLINE mask8 is_zero_m256(const m256i a)
 {
    const mask8 mask = _mm256_cmp_epi64_mask(a, m256_setzero_i64(), _MM_CMPINT_NE);
    return is_msb_m256((~mask & (mask - 1)));

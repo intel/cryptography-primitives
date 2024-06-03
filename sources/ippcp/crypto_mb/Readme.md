@@ -1,7 +1,7 @@
 # Crypto Multi-buffer Library
 
 Currently, the library provides optimized version of the following algorithms:
-1. RSA, ECDSA, ECDH, x25519, SM2 multi-buffer algorithms based on Intel® Advanced Vector Extensions 512 (Intel® AVX-512) integer fused multiply-add (IFMA) operations. This CPU feature is introduced with Intel® Microarchitecture Code Named Ice Lake. 
+1. RSA, ECDSA, ECDH, x25519, SM2 multi-buffer algorithms based on Intel® Advanced Vector Extensions 512 (Intel® AVX-512) integer fused multiply-add (IFMA) operations. This CPU feature is introduced with Intel® Microarchitecture Code Named Ice Lake.
 2. SM4 based on Intel(R) Advanced Vector Extensions 512 (Intel(R) AVX-512) GFNI instructions.
 3. SM3 based on Intel® Advanced Vector Extensions 512 (Intel® AVX-512) instructions.
 
@@ -32,6 +32,7 @@ This library consists of highly-optimized kernels taking advantage of Intel’s 
 - GCC 11.4
 - Clang 9.0
 - Clang 12.0
+- Clang 16.0
 - GNU binutils 2.32
 
 ### Windows* OS
@@ -96,11 +97,11 @@ You can find the installed files in:
 ```
 > **Note**: This project uses the default `RPATH` settings:
 >
-> CMake is linking the executables and shared libraries with full `RPATH` to all used 
-> libraries in the build tree. When installing, CMake will clear the `RPATH` of these 
-> targets so they are installed with an empty `RPATH`.  
-> In this case to resolve the Crypto Multi-buffer Library dependency on OpenSSL it is 
-> necessary to update `LD_LIBRARY_PATH` with the path to the target OpenSSL library. 
+> CMake is linking the executables and shared libraries with full `RPATH` to all used
+> libraries in the build tree. When installing, CMake will clear the `RPATH` of these
+> targets so they are installed with an empty `RPATH`.
+> In this case to resolve the Crypto Multi-buffer Library dependency on OpenSSL it is
+> necessary to update `LD_LIBRARY_PATH` with the path to the target OpenSSL library.
 
 
 ## How to Build

@@ -14,6 +14,9 @@
 * limitations under the License.
 *************************************************************************/
 
+#if defined( _WIN32 ) || defined( _WIN64 )
+#include <intrin.h>
+#endif
 #include <crypto_mb/cpu_features.h>
 #include <internal/common/ifma_defs.h>
 
@@ -58,7 +61,7 @@
 #define edx_   (3)
 
 
-__INLINE void _mbcp_cpuid(int32u buf[4], int32u leaf, int32u subleaf)
+__MBX_INLINE void _mbcp_cpuid(int32u buf[4], int32u leaf, int32u subleaf)
 {
    #ifdef __GNUC__
    __asm__ ("cpuid" : "=a" (buf[0]), "=b" (buf[1]), "=c" (buf[2]), "=d" (buf[3]) : "a" (leaf), "c" (subleaf));

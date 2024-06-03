@@ -687,7 +687,7 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 %endmacro
 
-segment .text align=IPP_ALIGN_FACTOR
+segment .data align=IPP_ALIGN_FACTOR
 
 
 align IPP_ALIGN_FACTOR
@@ -697,6 +697,7 @@ rol_32_8    DB    3,0,1,2, 7,4,5,6, 11,8,9,10, 15,12,13,14
 bcast       DB    0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3
 wzzz        DB    80h,80h,80h,80h, 80h,80h,80h,80h, 80h,80h,80h,80h,12,13,14,15
 
+segment .text align=IPP_ALIGN_FACTOR
 ;********************************************************************
 ;* void UpdateSM3(Ipp32u* hash,
 ;                 const Ipp8u* msg, int msgLen,

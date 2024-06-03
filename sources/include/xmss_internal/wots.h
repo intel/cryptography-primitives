@@ -20,6 +20,8 @@
 #include "owndefs.h"
 #include "pcptool.h"
 
+#include "stateful_sig_common/common.h"
+
 // WOTS+ algorithms params. See 3.1.1. XMSS spec.
 typedef struct {
     Ipp32s n;
@@ -60,7 +62,7 @@ IPP_OWN_DECL(IppStatus, WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSee
  *    adrs      changed array of bytes
  */
 
-__INLINE void set_adrs_idx(Ipp8u* adrs, Ipp32u idx, int word_id){
+__IPPCP_INLINE void set_adrs_idx(Ipp8u* adrs, Ipp32u idx, int word_id){
     adrs[4 * word_id + 3] = (Ipp8u) idx        & 0xff;
     adrs[4 * word_id + 2] = (Ipp8u)(idx >>  8) & 0xff;
     adrs[4 * word_id + 1] = (Ipp8u)(idx >> 16) & 0xff;
@@ -77,26 +79,8 @@ __INLINE void set_adrs_idx(Ipp8u* adrs, Ipp32u idx, int word_id){
  *    word_id   int32 idx in the adrs array
  */
 
-__INLINE Ipp8u set_adrs_1_byte(int word_id){
+__IPPCP_INLINE Ipp8u set_adrs_1_byte(int word_id){
     return (Ipp8u)(4 * word_id + 3);
-}
-
-/*
- * Represent the `in` value as the `out` array that length is `outlen`
- *
- * Input parameters:
- *    outlen   length of resulted array
- *    in       value that needs to be represent as an array
- * Output parameters:
- *    out      resulted array of bytes
- */
-
-__INLINE void toByte(Ipp8u *out, Ipp32s outlen, Ipp32u in) {
-    /* Iterate over out in decreasing order, for big-endianness. */
-    for (Ipp32s i = outlen - 1; i >= 0; i--) {
-        out[i] = (Ipp8u)(in & 0xff);
-        in = in >> /*bitsize of 1 byte*/ 8;
-    }
 }
 
 /*
@@ -106,7 +90,7 @@ __INLINE void toByte(Ipp8u *out, Ipp32s outlen, Ipp32u in) {
  *    x   double precision floating point value
  */
 
-__INLINE Ipp32s cpCeil(double x) {
+__IPPCP_INLINE Ipp32s cpCeil(double x) {
     Ipp32s int_val = (Ipp32s) x;
     if(int_val == x || x <= 0.0){
         return int_val;

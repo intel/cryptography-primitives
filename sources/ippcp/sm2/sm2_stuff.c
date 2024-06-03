@@ -51,7 +51,7 @@ IPP_OWN_DEFN(IppStatus, computeZa_user_id_hash_sm2, (Ipp8u * pZa_digest,
    IPP_BAD_PTR2_RET(pZa_digest, p_user_id);
    /* check border (user_id_len > 0) | (elem_len > 0) */
    IPP_BADARG_RET(!(user_id_len > 0) || !(elem_len > 0), ippStsBadArgErr);
-   /* check (user_id_len*8 <= 0xFFFF) ~ (user_id_len <= 0x1FFF) for two bytes overflow. 
+   /* check (user_id_len*8 <= 0xFFFF) ~ (user_id_len <= 0x1FFF) for two bytes overflow.
       user_id_len*8 operation will be executed in algorithm's flow */
    IPP_BADARG_RET(user_id_len > 0x1FFF, ippStsBadArgErr);
    /* param curve: a, b, Gx, Gy */
@@ -97,7 +97,7 @@ IPP_OWN_DEFN(IppStatus, computeZa_user_id_hash_sm2, (Ipp8u * pZa_digest,
 
 #define SIZE_CT (4)
 
-__INLINE void convert_ct_to_big_endian(Ipp8u pCt[SIZE_CT], const Ipp32u ct)
+__IPPCP_INLINE void convert_ct_to_big_endian(Ipp8u pCt[SIZE_CT], const Ipp32u ct)
 {
    pCt[0] = (Ipp8u)(ct >> 24);
    pCt[1] = (Ipp8u)(ct >> 16);

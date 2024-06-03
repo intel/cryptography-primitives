@@ -562,6 +562,12 @@ EXTERN (ippsXMSSSetSignatureState)
 EXTERN (ippsXMSSSignatureStateGetSize)
 EXTERN (ippsXMSSPublicKeyStateGetSize)
 EXTERN (ippsXMSSBufferGetSize)
+EXTERN (ippsLMSBufferGetSize)
+EXTERN (ippsLMSSignatureStateGetSize)
+EXTERN (ippsLMSPublicKeyStateGetSize)
+EXTERN (ippsLMSSetPublicKeyState)
+EXTERN (ippsLMSSetSignatureState)
+EXTERN (ippsLMSVerify)
 
 EXTERN (ippcp_is_fips_approved_func)
 EXTERN (fips_selftest_ippsAESEncryptDecrypt_get_size)
@@ -1183,6 +1189,12 @@ VERSION {
    ippsXMSSSignatureStateGetSize;
    ippsXMSSPublicKeyStateGetSize;
    ippsXMSSBufferGetSize;
+   ippsLMSBufferGetSize;
+   ippsLMSSignatureStateGetSize;
+   ippsLMSPublicKeyStateGetSize;
+   ippsLMSSetPublicKeyState;
+   ippsLMSSetSignatureState;
+   ippsLMSVerify;
 
    ippcp_is_fips_approved_func;
    fips_selftest_ippsAESEncryptDecrypt_get_size;

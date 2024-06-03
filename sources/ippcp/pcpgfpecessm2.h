@@ -54,7 +54,7 @@ struct _cpStateECES_SM2 {
 #define VALID_ECES_SM2_ID(stt) ((((stt)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((stt))) == (Ipp32u)idxCtxECES_SM2)
 
 /* get a byte, update 0-kdf status */
-__INLINE Ipp8u cpECES_SM2KdfNextByte(IppsECESState_SM2* pState) {
+__IPPCP_INLINE Ipp8u cpECES_SM2KdfNextByte(IppsECESState_SM2* pState) {
    if (pState->kdfIndex == IPP_SM3_DIGEST_BITSIZE / BYTESIZE) {
       ++pState->kdfCounter;
       pState->kdfIndex = 0;

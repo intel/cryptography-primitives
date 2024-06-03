@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 CTR decryption
-// 
+//
 //  Contents:
 //     cpSMS4_CTR_aesni_x4()
-// 
-// 
+//
+//
 */
 
 #include "pcpsms4.h"
@@ -36,10 +36,10 @@
 #include "pcpsms4_y8cn.h"
 
 static __ALIGN16 Ipp8u one128[] = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-static __ALIGN16 Ipp8u endiannes[] = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0};
-static __ALIGN16 Ipp8u endiannes_swap[] = {12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3};
+static __ALIGN16 Ipp8u endianness[] = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0};
+static __ALIGN16 Ipp8u endianness_swap[] = {12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3};
 
-__INLINE __m128i inc128(__m128i x)
+__IPPCP_INLINE __m128i inc128(__m128i x)
 {
    __m128i t = _mm_add_epi64(x,  M128(one128));
    x = _mm_cmpeq_epi64(t,  _mm_setzero_si128());
@@ -71,8 +71,8 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, c
    TMP[6] = _mm_loadu_si128((__m128i*)pCtrMask);
    TMP[7] = _mm_loadu_si128((__m128i*)pCtr);
 
-   TMP[6] = _mm_shuffle_epi8(TMP[6], M128(endiannes));
-   TMP[7] = _mm_shuffle_epi8(TMP[7], M128(endiannes));
+   TMP[6] = _mm_shuffle_epi8(TMP[6], M128(endianness));
+   TMP[7] = _mm_shuffle_epi8(TMP[7], M128(endianness));
    TMP[5] = _mm_andnot_si128(TMP[6], TMP[7]);
 
    for(n=0; n<processedLen; n+=(4*MBS_SMS4), pInp+=(4*MBS_SMS4), pOut+=(4*MBS_SMS4)) {
@@ -88,10 +88,10 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, c
       TMP[3] = _mm_xor_si128(TMP[5], _mm_and_si128(TMP[3], TMP[6]));
       TMP[4] = _mm_xor_si128(TMP[5], _mm_and_si128(TMP[4], TMP[6]));
 
-      TMP[1] = _mm_shuffle_epi8(TMP[1], M128(endiannes_swap));
-      TMP[2] = _mm_shuffle_epi8(TMP[2], M128(endiannes_swap));
-      TMP[3] = _mm_shuffle_epi8(TMP[3], M128(endiannes_swap));
-      TMP[4] = _mm_shuffle_epi8(TMP[4], M128(endiannes_swap));
+      TMP[1] = _mm_shuffle_epi8(TMP[1], M128(endianness_swap));
+      TMP[2] = _mm_shuffle_epi8(TMP[2], M128(endianness_swap));
+      TMP[3] = _mm_shuffle_epi8(TMP[3], M128(endianness_swap));
+      TMP[4] = _mm_shuffle_epi8(TMP[4], M128(endianness_swap));
       TRANSPOSE_INP(TMP[1],TMP[2],TMP[3],TMP[4], TMP[0]);
 
       for(itr=0; itr<8; itr++, pRKey+=4) {
@@ -150,7 +150,7 @@ IPP_OWN_DEFN (int, cpSMS4_CTR_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, c
    }
 
    TMP[7] = _mm_xor_si128(TMP[5], _mm_and_si128(TMP[7], TMP[6]));
-   TMP[7] = _mm_shuffle_epi8(TMP[7], M128(endiannes));
+   TMP[7] = _mm_shuffle_epi8(TMP[7], M128(endianness));
    _mm_storeu_si128((__m128i*)pCtr, TMP[7]);
 
    /* clear secret data */

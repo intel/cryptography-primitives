@@ -510,7 +510,7 @@ static __NOINLINE void clear_secret_context(Ipp16u *wval,
 
 #define WIN_SIZE (5)
 
-__INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b)
+__IPPCP_INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b)
 {
    const Ipp32s eq  = a ^ b;
    const Ipp32s v   = ~eq & (eq - 1);
@@ -518,7 +518,7 @@ __INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b)
    return (mask8)(0 - msb);
 }
 
-__INLINE void extract_table_point(P256_POINT_IFMA *r, const Ipp32s digit, const P256_POINT_IFMA *tbl)
+__IPPCP_INLINE void extract_table_point(P256_POINT_IFMA *r, const Ipp32s digit, const P256_POINT_IFMA *tbl)
 {
    Ipp32s idx = digit - 1;
 
@@ -659,7 +659,7 @@ IPP_OWN_DEFN(void, ifma_ec_nistp256_mul_point, (P256_POINT_IFMA * r, const P256_
 #define BP_WIN_SIZE BASE_POINT_WIN_SIZE
 #define BP_N_ENTRY BASE_POINT_N_ENTRY
 
-__INLINE void extract_point_affine(P256_POINT_AFFINE_IFMA *r,
+__IPPCP_INLINE void extract_point_affine(P256_POINT_AFFINE_IFMA *r,
                                    const P256_POINT_AFFINE_IFMA_MEM *tbl,
                                    const Ipp32s digit)
 {

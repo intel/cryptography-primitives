@@ -22,12 +22,12 @@
 #define SM4_GCM_MB_H
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/* 
-// Constant from NIST Special Publication 800-38D 
+/*
+// Constant from NIST Special Publication 800-38D
 // (Recommendation for GCMmode, p.5.2.1.1 Input Data)
 // len(P) <= 2^39-256 bits
 */
-static const int64u MAX_TXT_LEN = ((int64u)1 << 36) - 32; // length in bytes 
+static const int64u MAX_TXT_LEN = ((int64u)1 << 36) - 32; // length in bytes
 
 /*
 // Internal functions
@@ -167,7 +167,7 @@ static const int rearrangeOrder[] = { 0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3,
    to[14] = from[11];       \
    to[15] = from[15];
 
-__INLINE __m512i inc_block32(__m512i x, const int8u *increment) { return mask_add_epi32(x, 0x1111, x, M512(increment)); }
+__MBX_INLINE __m512i inc_block32(__m512i x, const int8u *increment) { return mask_add_epi32(x, 0x1111, x, M512(increment)); }
 
 static __ALIGN64 const int8u initialInc[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                               1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };

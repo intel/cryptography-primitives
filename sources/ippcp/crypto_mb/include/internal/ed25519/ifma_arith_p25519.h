@@ -47,19 +47,19 @@ typedef U64 fe52_mb[FE_LEN52];
 
 
 /* set FE to zero */
-__INLINE void fe52_0_mb(fe52_mb fe)
+__MBX_INLINE void fe52_0_mb(fe52_mb fe)
 {
    fe[0] = fe[1] = fe[2] = fe[3] = fe[4] = get_zero64();
 }
 /* set FE to 1 */
-__INLINE void fe52_1_mb(fe52_mb fe)
+__MBX_INLINE void fe52_1_mb(fe52_mb fe)
 {
    fe[0] = set1(1LL);
    fe[1] = fe[2] = fe[3] = fe[4] = get_zero64();
 }
 
 /* copy FE */
-__INLINE void fe52_copy_mb(fe52_mb r, const fe52_mb a)
+__MBX_INLINE void fe52_copy_mb(fe52_mb r, const fe52_mb a)
 {
    r[0] = a[0];
    r[1] = a[1];
@@ -69,7 +69,7 @@ __INLINE void fe52_copy_mb(fe52_mb r, const fe52_mb a)
 }
 
 /* convert fe52_mb => fe64_mb */
-__INLINE void fe52_to_fe64_mb(fe64_mb r, const fe52_mb a)
+__MBX_INLINE void fe52_to_fe64_mb(fe64_mb r, const fe52_mb a)
 {
    r[0] = xor64(slli64(a[1],52), a[0]);
    r[1] = xor64(slli64(a[2],40), srli64(a[1],12));
@@ -78,14 +78,14 @@ __INLINE void fe52_to_fe64_mb(fe64_mb r, const fe52_mb a)
 }
 
 /* check if FE is zero */
-__INLINE __mb_mask fe52_mb_is_zero(const fe52_mb a)
+__MBX_INLINE __mb_mask fe52_mb_is_zero(const fe52_mb a)
 {
    U64 t = or64(or64(a[0], a[1]), or64(or64(a[2], a[3]), a[4]));
    return cmpeq64_mask(t, get_zero64());
 }
 
 /* check if a==b */
-__INLINE __mb_mask fe52_mb_is_equ(const fe52_mb a, const fe52_mb b)
+__MBX_INLINE __mb_mask fe52_mb_is_equ(const fe52_mb a, const fe52_mb b)
 {
    __ALIGN64 fe52_mb t;
    t[0] = xor64(a[0], b[0]);
@@ -97,7 +97,7 @@ __INLINE __mb_mask fe52_mb_is_equ(const fe52_mb a, const fe52_mb b)
 }
 
 /* move FE under mask (conditionally): r = k? a : b */
-__INLINE void fe52_cmov1_mb(fe52_mb r, const fe52_mb b, __mb_mask k, const fe52 a)
+__MBX_INLINE void fe52_cmov1_mb(fe52_mb r, const fe52_mb b, __mb_mask k, const fe52 a)
 {
    r[0] = mask_mov64(b[0], k, set1(a[0]));
    r[1] = mask_mov64(b[1], k, set1(a[1]));
@@ -105,7 +105,8 @@ __INLINE void fe52_cmov1_mb(fe52_mb r, const fe52_mb b, __mb_mask k, const fe52 
    r[3] = mask_mov64(b[3], k, set1(a[3]));
    r[4] = mask_mov64(b[4], k, set1(a[4]));
 }
-__INLINE void fe52_cmov_mb(fe52_mb r, const fe52_mb b, __mb_mask k, const fe52_mb a)
+OPTIMIZE_OFF_VS19
+__MBX_INLINE void fe52_cmov_mb(fe52_mb r, const fe52_mb b, __mb_mask k, const fe52_mb a)
 {
    r[0] = mask_mov64(b[0], k, a[0]);
    r[1] = mask_mov64(b[1], k, a[1]);
@@ -115,13 +116,13 @@ __INLINE void fe52_cmov_mb(fe52_mb r, const fe52_mb b, __mb_mask k, const fe52_m
 }
 
 /* swap FE under mask (conditionally): r = k? a : b */
-__INLINE void cswap_U64(U64* x, __mb_mask k, U64* y)
+__MBX_INLINE void cswap_U64(U64* x, __mb_mask k, U64* y)
 {
    *x = _mm512_mask_xor_epi64(*x, k, *x, *y);
    *y = _mm512_mask_xor_epi64(*y, k, *y, *x);
    *x = _mm512_mask_xor_epi64(*x, k, *x, *y);
 }
-__INLINE void fe52_cswap_mb(fe52_mb a, __mb_mask k, fe52_mb b)
+__MBX_INLINE void fe52_cswap_mb(fe52_mb a, __mb_mask k, fe52_mb b)
 {
    cswap_U64(&a[0], k, &b[0]);
    cswap_U64(&a[1], k, &b[1]);

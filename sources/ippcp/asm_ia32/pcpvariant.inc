@@ -44,7 +44,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;
-;; it possible to force use of C-version of some implementtaions
+;; it possible to force use of C-version of some implementations
 ;; instead of ASM one
 ;;
 %ifndef _USE_C_cpAdd_BNU_

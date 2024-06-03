@@ -23,7 +23,7 @@
 // Implementation is the same with SM4-CTR
 */
 
-__INLINE __m128i IncBlock128(__m128i x, int32u increment) { return _mm_add_epi32(x, _mm_maskz_loadu_epi32(1, &increment)); }
+__MBX_INLINE __m128i IncBlock128(__m128i x, int32u increment) { return _mm_add_epi32(x, _mm_maskz_loadu_epi32(1, &increment)); }
 
 static void sm4_gctr_mask_kernel_mb16(__m512i *CTR,
                                       const __m512i *p_rk,

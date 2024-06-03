@@ -27,16 +27,16 @@ TBB    = 'tbb'
 OPENMP = 'openmp'
 TL_TYPES = [TBB, OPENMP]
 
-PATH_TO_PACKAGE_REGEX        = '(?P<path>.*)\Wtools\W.*'
-COMPONENTS_INSTALL_DIR_REGEX = '(?P<path>.*)\Wipp.*'
-VERSION_REGEX                = '.*VERSION_STR\s*(?P<ver>.*)\s*'
-STR_MACROS_REGEX             = '.*STR\((?P<macros>\S*)\).*'
-C_STRING_REGEX               = '.*(\S|^)(?P<string>\s*".*"\s*)(\S|$).*'
-C_STRING_VALUE_REGEX         = '.*"(?P<value>.*)".*'
-FUNCTION_NAME_REGEX          = 'IPPAPI\s*\(\s*(?P<ret_type>.*?)\s*,' \
-                               '\s*(?P<function_name>\S*)\s*,' \
-                               '\s*\(?(?P<args>.*?)\s*\)?\s*\)?\s*$'
-ARGUMENT_REGEX               = '.*\W*\w+\W*\s+\W*(?P<arg>[^\W\d]+\w*)\W*?'
+PATH_TO_PACKAGE_REGEX        = r'(?P<path>.*)\Wtools\W.*'
+COMPONENTS_INSTALL_DIR_REGEX = r'(?P<path>.*)\Wipp.*'
+VERSION_REGEX                = r'.*VERSION_STR\s*(?P<ver>.*)\s*'
+STR_MACROS_REGEX             = r'.*STR\((?P<macros>\S*)\).*'
+C_STRING_REGEX               = r'.*(\S|^)(?P<string>\s*".*"\s*)(\S|$).*'
+C_STRING_VALUE_REGEX         = r'.*"(?P<value>.*)".*'
+FUNCTION_NAME_REGEX          = r'IPPAPI\s*\(\s*(?P<ret_type>.*?)\s*,' \
+                               r'\s*(?P<function_name>\S*)\s*,' \
+                               r'\s*\(?(?P<args>.*?)\s*\)?\s*\)?\s*$'
+ARGUMENT_REGEX               = r'.*\W*\w+\W*\s+\W*(?P<arg>[^\W\d]+\w*)\W*?'
 
 CUSTOM_LIBRARY_NAME = 'Custom library name'
 BUILD_SCRIPT_NAME   = 'Build script name'
