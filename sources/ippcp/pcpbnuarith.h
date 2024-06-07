@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
+/* 
 //  Purpose:
 //     Intel(R) Integrated Performance Primitives.
 //     Internal Unsigned internal arithmetic
-//
-//
+// 
+// 
 */
 
 #if !defined(_CP_BNU_ARITH_H)
@@ -60,7 +60,7 @@
 //
 *F*/
 
-__IPPCP_INLINE BNU_CHUNK_T cpMul_BNU_school(BNU_CHUNK_T* pR,
+__INLINE BNU_CHUNK_T cpMul_BNU_school(BNU_CHUNK_T* pR,
                                 const BNU_CHUNK_T* pA, cpSize nsA,
                                 const BNU_CHUNK_T* pB, cpSize nsB)
 {
@@ -94,7 +94,7 @@ __IPPCP_INLINE BNU_CHUNK_T cpMul_BNU_school(BNU_CHUNK_T* pR,
 //
 *F*/
 
-__IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU_school(BNU_CHUNK_T * pR, const BNU_CHUNK_T * pA, cpSize nsA)
+__INLINE BNU_CHUNK_T cpSqr_BNU_school(BNU_CHUNK_T * pR, const BNU_CHUNK_T * pA, cpSize nsA)
 {
 #if(_ADCOX_NI_ENABLING_==_FEATURE_ON_)
    return cpSqrAdx_BNU_school(pR, pA,nsA);
@@ -114,7 +114,7 @@ __IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU_school(BNU_CHUNK_T * pR, const BNU_CHUNK_T 
 /*
 // multiplication/squaring wrappers
 */
-__IPPCP_INLINE BNU_CHUNK_T cpMul_BNU(BNU_CHUNK_T* pR,
+__INLINE BNU_CHUNK_T cpMul_BNU(BNU_CHUNK_T* pR,
                          const BNU_CHUNK_T* pA, cpSize nsA,
                          const BNU_CHUNK_T* pB, cpSize nsB,
                                BNU_CHUNK_T* pBuffer)
@@ -122,7 +122,7 @@ __IPPCP_INLINE BNU_CHUNK_T cpMul_BNU(BNU_CHUNK_T* pR,
    IPP_UNREFERENCED_PARAMETER(pBuffer);
    return cpMul_BNU_school(pR, pA,nsA, pB,nsB);
 }
-__IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T * pR,
+__INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T * pR,
                          const BNU_CHUNK_T * pA, cpSize nsA,
                                BNU_CHUNK_T* pBuffer)
 {
@@ -148,7 +148,7 @@ __IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T * pR,
 //
 *F*/
 
-__IPPCP_INLINE cpSize cpDiv_BNU(BNU_CHUNK_T* pQ, cpSize* pnsQ, BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_T* pB, cpSize nsB)
+__INLINE cpSize cpDiv_BNU(BNU_CHUNK_T* pQ, cpSize* pnsQ, BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_T* pB, cpSize nsB)
 {
    int nsR = cpDiv_BNU32((Ipp32u*)pQ, pnsQ,
                          (Ipp32u*)pA, nsA*(Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)),
@@ -180,7 +180,7 @@ __IPPCP_INLINE cpSize cpDiv_BNU(BNU_CHUNK_T* pQ, cpSize* pnsQ, BNU_CHUNK_T* pA, 
 //
 *F*/
 
-__IPPCP_INLINE cpSize cpMod_BNU(BNU_CHUNK_T* pX, cpSize nsX, BNU_CHUNK_T* pModulus, cpSize nsM)
+__INLINE cpSize cpMod_BNU(BNU_CHUNK_T* pX, cpSize nsX, BNU_CHUNK_T* pModulus, cpSize nsM)
 {
    return cpDiv_BNU(NULL,NULL, pX,nsX, pModulus, nsM);
 }

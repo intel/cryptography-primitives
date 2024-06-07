@@ -57,7 +57,7 @@
 // The case is important in GF((p^2)^3) arithmetic for Intel(R) EPID 2.0.
 //
 */
-__IPPCP_INLINE BNU_CHUNK_T* cpFq2Mul_xi(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx)
+__INLINE BNU_CHUNK_T* cpFq2Mul_xi(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx)
 {
    gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
    mod_mul addF = GFP_METHOD(pGroundGFE)->add;

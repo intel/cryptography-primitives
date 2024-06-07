@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     AES GCM AVX2
 //     Internal Functions Implementations
-//
+// 
 */
 
 #ifndef __AES_GCM_AVX2_H_
@@ -40,7 +40,7 @@
 #endif
 
 /*
-// Zeroes the memory by 32 bit parts,
+// Zeroes the memory by 32 bit parts, 
 // because "epi32" is the minimal available granularity for avx2 store instructions.
 // input:
 //   Ipp32u* out - pointer to the memory that needs to be zeroize
@@ -110,7 +110,7 @@ __ALIGN32 static const Ipp8u _shuff_mask_256[] = {15, 14, 13, 12, 11, 10, 9, 8, 
 // output:
 //   __m256i part of the multiplication result
 */
-__IPPCP_INLINE __m256i avx2_internal_mul(__m256i GH, const __m256i HK, __m256i *tmpX0, __m256i *tmpX5) {
+__INLINE __m256i avx2_internal_mul(__m256i GH, const __m256i HK, __m256i *tmpX0, __m256i *tmpX5) {
    __m256i tmpX2, tmpX3, tmpX4;
 
    tmpX2 = _mm256_shuffle_epi32 (GH, SHUFD_MASK);
@@ -129,7 +129,7 @@ __IPPCP_INLINE __m256i avx2_internal_mul(__m256i GH, const __m256i HK, __m256i *
 // input/output:
 //   __m128i *hash0, __m128i *hash1 - contains the two parts of the GHASH
 */
-__IPPCP_INLINE void reduction(__m128i *hash0, __m128i *hash1) {
+__INLINE void reduction(__m128i *hash0, __m128i *hash1) {
    __m128i T1, T2, T3;
 
    //first phase of the reduction
@@ -168,8 +168,8 @@ __IPPCP_INLINE void reduction(__m128i *hash0, __m128i *hash1) {
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm16(__m256i *GH, const __m256i *HK) {
-   __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
+__INLINE __m128i avx2_clmul_gcm16(__m256i *GH, const __m256i *HK) {  
+   __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;                
    tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
    tmpX3 = _mm256_shuffle_epi32 (HK[7], SHUFD_MASK);
    tmpX2 = _mm256_xor_si256(tmpX2, GH[0]);
@@ -215,7 +215,7 @@ __IPPCP_INLINE __m128i avx2_clmul_gcm16(__m256i *GH, const __m256i *HK) {
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm8(__m256i *GH, const __m256i *HK) {
+__INLINE __m128i avx2_clmul_gcm8(__m256i *GH, const __m256i *HK) { 
    __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
    tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
    tmpX3 = _mm256_shuffle_epi32 (HK[3], SHUFD_MASK);
@@ -258,7 +258,7 @@ __IPPCP_INLINE __m128i avx2_clmul_gcm8(__m256i *GH, const __m256i *HK) {
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm4(__m256i *GH, const __m256i *HK) {
+__INLINE __m128i avx2_clmul_gcm4(__m256i *GH, const __m256i *HK) {
    __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
    tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
    tmpX3 = _mm256_shuffle_epi32 (HK[1], SHUFD_MASK);
@@ -300,7 +300,7 @@ __IPPCP_INLINE __m128i avx2_clmul_gcm4(__m256i *GH, const __m256i *HK) {
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm2(__m256i *GH, const __m256i *HK) {
+__INLINE __m128i avx2_clmul_gcm2(__m256i *GH, const __m256i *HK) {
    __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
    tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
    tmpX3 = _mm256_shuffle_epi32 (HK[0], SHUFD_MASK);
@@ -339,7 +339,7 @@ __IPPCP_INLINE __m128i avx2_clmul_gcm2(__m256i *GH, const __m256i *HK) {
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm(__m256i *GH, const __m256i *HK) {
+__INLINE __m128i avx2_clmul_gcm(__m256i *GH, const __m256i *HK) {
    __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
    tmpX2 = _mm256_shuffle_epi32 (GH[0], SHUFD_MASK);
    tmpX3 = _mm256_shuffle_epi32 (HK[0], SHUFD_MASK);

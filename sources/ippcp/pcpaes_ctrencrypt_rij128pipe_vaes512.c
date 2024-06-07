@@ -54,7 +54,7 @@ static __ALIGN64 Ipp64u nextIncLoMask[]  = { 0x0, 0x4, 0x0, 0x4, 0x0, 0x4, 0x0, 
 static __ALIGN64 Ipp64u incLoByOneMask[] = { 0x0, 0x1, 0x0, 0x1, 0x0, 0x1, 0x0, 0x1 };
 static __ALIGN64 Ipp64u incHiByOneMask[] = { 0x1, 0x0, 0x1, 0x0, 0x1, 0x0, 0x1, 0x0 };
 
-__IPPCP_INLINE __m512i adcLo_epi64(__m512i a, __m512i b)
+__INLINE __m512i adcLo_epi64(__m512i a, __m512i b)
 {
    a = _mm512_add_epi64(a, b);
    // check overflow in each low 64-bit of 128-bit numbers
@@ -65,7 +65,7 @@ __IPPCP_INLINE __m512i adcLo_epi64(__m512i a, __m512i b)
    return a;
 }
 
-__IPPCP_INLINE __m512i applyNonce(__m512i a, __m512i ctrBitMask, __m512i templateCtr)
+__INLINE __m512i applyNonce(__m512i a, __m512i ctrBitMask, __m512i templateCtr)
 {
    a = _mm512_shuffle_epi8(a, M512(swapBytes));
    a = _mm512_and_epi64(a, ctrBitMask);

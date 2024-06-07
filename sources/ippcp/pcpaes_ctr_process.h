@@ -61,7 +61,7 @@
 //    counter will updated on return
 //
 */
-__IPPCP_INLINE void MaskCounter128(Ipp8u* pMaskIV, int ctrBtSize)
+__INLINE void MaskCounter128(Ipp8u* pMaskIV, int ctrBtSize)
 {
    /* construct ctr mask */
    int maskPosition = (MBS_RIJ128*8-ctrBtSize)/8;
@@ -99,15 +99,15 @@ IppStatus cpProcessAES_ctr(const Ipp8u* pSrc, Ipp8u* pDst, int dataLen,
    if(ctrNumBitSize < (8 * (int)sizeof(int) - 5))
    {
       /*
-      // dataLen is int, and it is always positive
-      // data blocks number compute from dataLen
-      // by dividing it to MBS_RIJ128 = 16
-      // and additing 1 if dataLen % 16 != 0
-      // so if ctrNumBitSize >= 8 * sizeof(int) - 5
-      // function can process data with any possible
-      // passed dataLen without counter overflow
+      // dataLen is int, and it is always positive   
+      // data blocks number compute from dataLen     
+      // by dividing it to MBS_RIJ128 = 16           
+      // and additing 1 if dataLen % 16 != 0         
+      // so if ctrNumBitSize >= 8 * sizeof(int) - 5                      
+      // function can process data with any possible 
+      // passed dataLen without counter overflow     
       */
-
+      
       int dataBlocksNum = dataLen >> 4;
       if(dataLen & 15){
          dataBlocksNum++;

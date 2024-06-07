@@ -45,7 +45,7 @@
    polynomial reduction. 2 polynomials can be processed at one call.
    The inputs are bit-reflected. The result is bit-reflected.
  */
-__IPPCP_INLINE void AesGcmGhash2(const __m256i* const src1,
+__INLINE void AesGcmGhash2(const __m256i* const src1,
                          const __m256i* const src2,
                          __m256i * const result)
 {
@@ -101,7 +101,7 @@ __IPPCP_INLINE void AesGcmGhash2(const __m256i* const src1,
    polynomial reduction.
    The inputs are bit-reflected. The result is bit-reflected.
  */
-__IPPCP_INLINE void AesGcmGhash(const __m128i* const a,
+__INLINE void AesGcmGhash(const __m128i* const a,
                         const __m128i* const b,
                         __m128i * const result)
 {
@@ -119,7 +119,7 @@ __IPPCP_INLINE void AesGcmGhash(const __m128i* const a,
    polynomial reduction. 4 polynomials can be processed at one call.
    The inputs are bit-reflected. The result is bit-reflected.
  */
-__IPPCP_INLINE void AesGcmGhash4(const __m512i* const src1,
+__INLINE void AesGcmGhash4(const __m512i* const src1,
                          const __m512i* const src2,
                          __m512i * const result)
 {

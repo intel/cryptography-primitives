@@ -196,7 +196,7 @@ IPP_OWN_DEFN(m512, ifma_frommont52_n384, (const m512 a))
  * note: z in in Montgomery domain
  *       r in Montgomery domain
  */
-__IPPCP_INLINE m512 ifma_ams52_n384_ntimes(const m512 a, int n)
+__INLINE m512 ifma_ams52_n384_ntimes(const m512 a, int n)
 {
    m512 r = a;
    for (; n > 0; --n) {

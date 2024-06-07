@@ -99,7 +99,7 @@ void MB_FUNC_NAME(ifma_amm52_p521_)(U64 r[], const U64 va[], const U64 vb[])
    U64 r10, r11, r12, r13, r14, r15, r16, r17, r18, r19;
    U64 r20, r21;
 
-   r0 = r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 =
+   r0 = r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = 
    r10 = r11 = r12 = r13 = r14 = r15 = r16 = r17 = r18 = r19=
    r20 = r21 = get_zero64();
 
@@ -282,7 +282,7 @@ void MB_FUNC_NAME(ifma_ams52_p521_)(U64 r[], const U64 va[])
    U64 r10, r11, r12, r13, r14, r15, r16, r17, r18, r19;
    U64 r20, r21;
 
-   r0  = r1  = r2  = r3  = r4  = r5  = r6  = r7  = r8  = r9  = r10 =
+   r0  = r1  = r2  = r3  = r4  = r5  = r6  = r7  = r8  = r9  = r10 = 
    r11 = r12 = r13 = r14 = r15 = r16 = r17 = r18 = r19 = r20 = r21 = get_zero64();
 
    // full square
@@ -486,7 +486,7 @@ void MB_FUNC_NAME(ifma_frommont52_p521_)(U64 r[], const U64 a[])
 #define fe52_mul  MB_FUNC_NAME(ifma_amm52_p521_)
 
 /* r = base^(2^n) */
-__MBX_INLINE void fe52_sqr_pwr(U64 r[], const U64 base[], int n)
+__INLINE void fe52_sqr_pwr(U64 r[], const U64 base[], int n)
 {
    if(r!=base)
       MB_FUNC_NAME(mov_FE521_)(r, base);
@@ -574,7 +574,7 @@ void MB_FUNC_NAME(ifma_aminv52_p521_)(U64 r[], const U64 z[])
  Specialized single operations over p521:  add, sub, neg
 
 =====================================================================*/
-__MBX_INLINE __mb_mask MB_FUNC_NAME(lt_mbx_digit_)(const U64 a, const U64 b, const __mb_mask lt_mask)
+__INLINE __mb_mask MB_FUNC_NAME(lt_mbx_digit_)(const U64 a, const U64 b, const __mb_mask lt_mask)
 {
    U64 d = mask_sub64(sub64(a, b), lt_mask, sub64(a, b), set1(1));
    return cmp64_mask(d, get_zero64(), _MM_CMPINT_LT);

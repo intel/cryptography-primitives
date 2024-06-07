@@ -310,7 +310,7 @@ void MB_FUNC_NAME(ifma_frommont52_n384_)(U64 r[], const U64 a[])
 #define fe52_mul    MB_FUNC_NAME(ifma_amm52_n384_)
 
 /* r = base^(2^n) */
-__MBX_INLINE void fe52_sqr_pwr(U64 r[], const U64 base[], int n)
+__INLINE void fe52_sqr_pwr(U64 r[], const U64 base[], int n)
 {
    if(r!=base) {
       fe52_sqr(r,base);

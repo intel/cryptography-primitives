@@ -33,8 +33,8 @@ typedef unsigned long long int64u;
       #define __ALIGN64 __attribute__((aligned(64)))
    #endif
 
-   #if !defined(__MBX_INLINE)
-      #define __MBX_INLINE static __inline__
+   #if !defined(__INLINE)
+      #define __INLINE static __inline__
    #endif
 
    #if !defined(__NOINLINE)
@@ -45,8 +45,8 @@ typedef unsigned long long int64u;
       #define __ALIGN64 __declspec(align(64))
    #endif
 
-   #if !defined(__MBX_INLINE)
-      #define __MBX_INLINE static __forceinline
+   #if !defined(__INLINE)
+      #define __INLINE static __forceinline
    #endif
 
    #if !defined(__NOINLINE)

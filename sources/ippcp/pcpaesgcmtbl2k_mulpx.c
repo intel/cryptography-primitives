@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     Encrypt/Decrypt byte data stream according to Rijndael128 (GCM mode)
-//
+// 
 //     "fast" stuff
-//
+// 
 //  Contents:
 //      AesGcmMulGcm_table2K()
-//
+// 
 */
 
 
@@ -55,7 +55,7 @@ typedef struct{
 //
 // Ghash = Ghash * HKey mod G()
 */
-__IPPCP_INLINE Ipp16u getAesGcmConst_table_ct(int idx)
+__INLINE Ipp16u getAesGcmConst_table_ct(int idx)
 {
    #define TBL_SLOTS_REP_READ  (Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(AesGcmConst_table[0]))
    const BNU_CHUNK_T* TblEntry = (BNU_CHUNK_T*)AesGcmConst_table;
@@ -137,13 +137,13 @@ void AesGcmMulGcm_table2K(Ipp8u* pGhash, const Ipp8u* pPrecomputeData, const voi
 // CTE version of AesGcmMulGcm_table2K()
 */
 #if (_IPP_ARCH ==_IPP_ARCH_EM64T)
-__IPPCP_INLINE void MaskedXorBlock16(const Ipp8u* pSrc1, const Ipp8u* pSrc2, Ipp8u* pDst, Ipp64u src2mask)
+__INLINE void MaskedXorBlock16(const Ipp8u* pSrc1, const Ipp8u* pSrc2, Ipp8u* pDst, Ipp64u src2mask)
 {
    ((Ipp64u*)pDst)[0] = ((Ipp64u*)pSrc1)[0] ^ (((Ipp64u*)pSrc2)[0] & src2mask);
    ((Ipp64u*)pDst)[1] = ((Ipp64u*)pSrc1)[1] ^ (((Ipp64u*)pSrc2)[1] & src2mask);
 }
 #else /* IPP_ARCH == IPP_ARCH_IA32 */
-__IPPCP_INLINE void MaskedXorBlock16(const Ipp8u* pSrc1, const Ipp8u* pSrc2, Ipp8u* pDst, Ipp32u src2mask)
+__INLINE void MaskedXorBlock16(const Ipp8u* pSrc1, const Ipp8u* pSrc2, Ipp8u* pDst, Ipp32u src2mask)
 {
    ((Ipp32u*)pDst)[0] = ((Ipp32u*)pSrc1)[0] ^ (((Ipp32u*)pSrc2)[0] & src2mask);
    ((Ipp32u*)pDst)[1] = ((Ipp32u*)pSrc1)[1] ^ (((Ipp32u*)pSrc2)[1] & src2mask);
@@ -238,7 +238,7 @@ IPP_OWN_DEFN (void, AesGcmMulGcm_table2K_ct, (Ipp8u* pGhash, const Ipp8u* pPreco
 
 #if ((_IPP>=_IPP_V8) || (_IPP32E>=_IPP32E_N8))
 
-__IPPCP_INLINE Ipp16u getAesGcmConst_table_ct(int idx)
+__INLINE Ipp16u getAesGcmConst_table_ct(int idx)
 {
    /* init current indexes */
    __ALIGN16 Ipp16u idx_start[] = { 0,1,2,3,4,5,6,7 };

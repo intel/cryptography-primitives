@@ -46,7 +46,7 @@
 #define HASH_BUFF(ctx)              ((ctx)->msg_buffer)
 
 /*
-// constants
+// constants 
 */
 
 static const int32u sm3_iv[] = { 0x7380166F, 0x4914B2B9, 0x172442D7, 0xDA8A0600,
@@ -65,11 +65,11 @@ __ALIGN64 static const int32u tj_calculated[] = { 0x79CC4519,0xF3988A32,0xE73114
                                                   0x879D8A7A,0x0F3B14F5,0x1E7629EA,0x3CEC53D4,0x79D8A7A8,0xF3B14F50,0xE7629EA1,0xCEC53D43 };
 
 /*
-// internal functions
+// internal functions 
 */
 
 
-__MBX_INLINE void pad_block(int8u padding_byte, void* dst_p, int num_bytes)
+__INLINE void pad_block(int8u padding_byte, void* dst_p, int num_bytes)
 {
    int8u* d  = (int8u*)dst_p;
    int k;
@@ -77,7 +77,7 @@ __MBX_INLINE void pad_block(int8u padding_byte, void* dst_p, int num_bytes)
       d[k] = padding_byte;
 }
 
-__MBX_INLINE void TRANSPOSE_8X8_I32(__m256i *v0, __m256i *v1, __m256i *v2, __m256i *v3,
+__INLINE void TRANSPOSE_8X8_I32(__m256i *v0, __m256i *v1, __m256i *v2, __m256i *v3,
     __m256i *v4, __m256i *v5, __m256i *v6, __m256i *v7)
 {
     __m256i w0, w1, w2, w3, w4, w5, w6, w7;
@@ -134,7 +134,7 @@ __MBX_INLINE void TRANSPOSE_8X8_I32(__m256i *v0, __m256i *v1, __m256i *v2, __m25
     *v7 = _mm256_permute2x128_si256(x3, x7, 0b110001);
 }
 
-__MBX_INLINE void MASK_TRANSPOSE_8X8_I32(int32u* out[8], const int32u* const inp[8], __mmask16 mb_mask) {
+__INLINE void MASK_TRANSPOSE_8X8_I32(int32u* out[8], const int32u* const inp[8], __mmask16 mb_mask) {
     __m256i v0 = _mm256_loadu_si256((__m256i*)inp[0]);
     __m256i v1 = _mm256_loadu_si256((__m256i*)inp[1]);
     __m256i v2 = _mm256_loadu_si256((__m256i*)inp[2]);
@@ -158,7 +158,7 @@ __MBX_INLINE void MASK_TRANSPOSE_8X8_I32(int32u* out[8], const int32u* const inp
 
 }
 
-__MBX_INLINE void TRANSPOSE_8X16_I32(int32u* out[16], const int32u* const inp[8], __mmask16 mb_mask) {
+__INLINE void TRANSPOSE_8X16_I32(int32u* out[16], const int32u* const inp[8], __mmask16 mb_mask) {
     __m256i v0 = _mm256_loadu_si256((__m256i*)inp[0]);
     __m256i v1 = _mm256_loadu_si256((__m256i*)inp[1]);
     __m256i v2 = _mm256_loadu_si256((__m256i*)inp[2]);

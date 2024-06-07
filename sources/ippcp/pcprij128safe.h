@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     Internal Safe Rijndael Encrypt, Decrypt
-//
-//
+// 
+// 
 */
 
 #if !defined(_PCP_RIJ_SAFE_H)
@@ -54,7 +54,7 @@
     IPP_OWN_DECL (void, TransformComposite2Native, (Ipp8u out[16], const Ipp8u inp[16]))
 
 /* add round key operation */
-__IPPCP_INLINE void AddRoundKey(Ipp8u out[16], const Ipp8u inp[16], const Ipp8u rkey[16])
+__INLINE void AddRoundKey(Ipp8u out[16], const Ipp8u inp[16], const Ipp8u rkey[16])
 {
    ((Ipp64u*)out)[0] = ((Ipp64u*)inp)[0] ^ ((Ipp64u*)rkey)[0];
    ((Ipp64u*)out)[1] = ((Ipp64u*)inp)[1] ^ ((Ipp64u*)rkey)[1];
@@ -63,7 +63,7 @@ __IPPCP_INLINE void AddRoundKey(Ipp8u out[16], const Ipp8u inp[16], const Ipp8u 
 /* add logs of GF(2^4) elements
 // the exp table has been build matched for that implementation
 */
-__IPPCP_INLINE Ipp8u AddLogGF16(Ipp8u loga, Ipp8u logb)
+__INLINE Ipp8u AddLogGF16(Ipp8u loga, Ipp8u logb)
 {
    //Ipp8u s = loga+logb;
    //return (s>2*14)? 15 : (s>14)? s-15 : s;
@@ -77,7 +77,7 @@ __IPPCP_INLINE Ipp8u AddLogGF16(Ipp8u loga, Ipp8u logb)
 
 #define SELECTION_BITS  ((sizeof(BNU_CHUNK_T)/sizeof(Ipp8u)) -1)
 
-__IPPCP_INLINE Ipp8u getSboxValue(Ipp8u x)
+__INLINE Ipp8u getSboxValue(Ipp8u x)
 {
   BNU_CHUNK_T selection = 0;
   const Ipp8u* SboxEntry = RijEncSbox;

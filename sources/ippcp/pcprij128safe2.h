@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     Internal Safe Rijndael Encrypt, Decrypt
-//
-//
+// 
+// 
 */
 
 #if !defined(_PCP_RIJ_SAFE2_H)
@@ -48,7 +48,7 @@
    (out)[11] = (inp)[14]; \
    (out)[15] = (inp)[15]
 
-__IPPCP_INLINE void XorRoundKey(Ipp32u* state, const Ipp32u* RoundKey)
+__INLINE void XorRoundKey(Ipp32u* state, const Ipp32u* RoundKey)
 {
    state[0] ^= RoundKey[0];
    state[1] ^= RoundKey[1];
@@ -57,13 +57,13 @@ __IPPCP_INLINE void XorRoundKey(Ipp32u* state, const Ipp32u* RoundKey)
 }
 
 // xtime is a macro that finds the product of {02} and the argument to xtime modulo {1b}
-__IPPCP_INLINE Ipp32u mask4(Ipp32u x)
+__INLINE Ipp32u mask4(Ipp32u x)
 {
    x &= 0x80808080;
    return (Ipp32u)((x<<1) - (x>>7));
 }
 
-__IPPCP_INLINE Ipp32u xtime4(Ipp32u x)
+__INLINE Ipp32u xtime4(Ipp32u x)
 {
    Ipp32u t = (x+x) &0xFEFEFEFE;
    t ^= mask4(x) & 0x1B1B1B1B;

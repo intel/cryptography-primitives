@@ -54,7 +54,7 @@ __ALIGN64 static const int64u MOD_2_260_[8] = {19*32, 19*32, 19*32, 19*32,
 
 ////////////////////////////////////////////////////////////
 
-__MBX_INLINE void ed25519_mul(U64 out[], const U64 a[], const U64 b[]) {
+__INLINE void ed25519_mul(U64 out[], const U64 a[], const U64 b[]) {
     U64 r0, r1, r2, r3, r4, r5, r6, r7, r8, r9;
 
     U64 *va = (U64*) a;
@@ -83,7 +83,7 @@ __MBX_INLINE void ed25519_mul(U64 out[], const U64 a[], const U64 b[]) {
     ROUND_MUL(2, 4, r6, r7)
     ROUND_MUL(3, 3, r6, r7)
     ROUND_MUL(4, 2, r6, r7)
-
+    
     ROUND_MUL(0, 0, r0, r1)
     ROUND_MUL(0, 1, r1, r2)
     ROUND_MUL(0, 2, r2, r3)
@@ -116,18 +116,18 @@ __MBX_INLINE void ed25519_mul(U64 out[], const U64 a[], const U64 b[]) {
 }
 
 /* SQR
-c=0  (0,0)
-c=1  (0,1)
-c=2  (0,2)  (1,1)
-c=3  (0,3)  (1,2)
-c=4  (0,4)  (1,3)  (2,2)
-c=5  (1,4)  (2,3)
-c=6  (2,4)  (3,3)
-c=7  (3,4)
+c=0  (0,0)  
+c=1  (0,1)  
+c=2  (0,2)  (1,1)  
+c=3  (0,3)  (1,2)  
+c=4  (0,4)  (1,3)  (2,2)  
+c=5  (1,4)  (2,3)  
+c=6  (2,4)  (3,3)  
+c=7  (3,4)  
 c=8  (4,4)
 */
 
-__MBX_INLINE void ed25519_sqr(U64 out[], const U64 a[]) {
+__INLINE void ed25519_sqr(U64 out[], const U64 a[]) {
     U64 r0, r1, r2, r3, r4, r5, r6, r7, r8, r9;
 
     U64 *va = (U64*) a;
@@ -299,7 +299,7 @@ static const int64u VMASK52[8] = {MASK52, MASK52, MASK52, MASK52,
     R##0 = fma52lo(R##0, srli64(R##4, 47), MOD_2_255);            \
     R##4 = and64(R##4, loadu64(VMASK_R4));
 
-__MBX_INLINE void ed25519_mul_dual(U64 out0[], U64 out1[],
+__INLINE void ed25519_mul_dual(U64 out0[], U64 out1[],
                 const U64 a0[], const U64 b0[],
                 const U64 a1[], const U64 b1[]) {
 
@@ -406,7 +406,7 @@ __MBX_INLINE void ed25519_mul_dual(U64 out0[], U64 out1[],
     storeu64(&vr1[4], r14);
 }
 
-__MBX_INLINE void ed25519_sqr_dual(U64 out0[], U64 out1[],
+__INLINE void ed25519_sqr_dual(U64 out0[], U64 out1[],
                 const U64 a0[], const U64 a1[]) {
 
     U64 r00, r01, r02, r03, r04, r05, r06, r07, r08, r09;
@@ -514,7 +514,7 @@ __MBX_INLINE void ed25519_sqr_dual(U64 out0[], U64 out1[],
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-__MBX_INLINE void fe52mb8_set(U64 out[], int64u value)
+__INLINE void fe52mb8_set(U64 out[], int64u value)
 {
     storeu64(&out[0], set64((long long)value));
     storeu64(&out[1], get_zero64());
@@ -522,7 +522,7 @@ __MBX_INLINE void fe52mb8_set(U64 out[], int64u value)
     storeu64(&out[3], get_zero64());
     storeu64(&out[4], get_zero64());
 }
-__MBX_INLINE void fe52mb8_copy(U64 out[], const U64 in[])
+__INLINE void fe52mb8_copy(U64 out[], const U64 in[])
 {
     storeu64(&out[0], loadu64(&in[0]));
     storeu64(&out[1], loadu64(&in[1]));
@@ -533,7 +533,7 @@ __MBX_INLINE void fe52mb8_copy(U64 out[], const U64 in[])
 
 // Clang warning -Wunused-function
 #if(0)
-__MBX_INLINE void fe52mb8_mul_mod25519(U64 vr[], const U64 va[], const U64 vb[])
+__INLINE void fe52mb8_mul_mod25519(U64 vr[], const U64 va[], const U64 vb[])
 {
     U64 r0, r1, r2, r3, r4, r5, r6, r7, r8, r9;
     r0 = r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = get_zero64();
@@ -558,7 +558,7 @@ __MBX_INLINE void fe52mb8_mul_mod25519(U64 vr[], const U64 va[], const U64 vb[])
     ROUND_MUL(2, 4, r6, r7)
     ROUND_MUL(3, 3, r6, r7)
     ROUND_MUL(4, 2, r6, r7)
-
+    
     ROUND_MUL(0, 0, r0, r1)
     ROUND_MUL(0, 1, r1, r2)
     ROUND_MUL(0, 2, r2, r3)
@@ -594,13 +594,13 @@ __MBX_INLINE void fe52mb8_mul_mod25519(U64 vr[], const U64 va[], const U64 vb[])
     storeu64(&vr[4], r4);
 }
 
-__MBX_INLINE void fe52mb8_sqr_mod25519(U64 out[], const U64 a[])
+__INLINE void fe52mb8_sqr_mod25519(U64 out[], const U64 a[])
 {
    fe52mb8_mul_mod25519(out, a, a);
 }
 #endif
 
-__MBX_INLINE void fe52mb8_mul121666_mod25519(U64 vr[], const U64 va[])
+__INLINE void fe52mb8_mul121666_mod25519(U64 vr[], const U64 va[])
 {
     U64 multiplier = set64(121666);
 
@@ -647,20 +647,20 @@ __MBX_INLINE void fe52mb8_mul121666_mod25519(U64 vr[], const U64 va[])
 // __ALIGN64 static const int64u prime25519[5] = {
 //   PRIME25519_LO, PRIME25519_MID, PRIME25519_MID, PRIME25519_MID, PRIME25519_HI};
 
-__ALIGN64 static const int64u VPRIME25519_LO[8] =
-    { PRIME25519_LO, PRIME25519_LO, PRIME25519_LO, PRIME25519_LO,
+__ALIGN64 static const int64u VPRIME25519_LO[8] = 
+    { PRIME25519_LO, PRIME25519_LO, PRIME25519_LO, PRIME25519_LO, 
       PRIME25519_LO, PRIME25519_LO, PRIME25519_LO, PRIME25519_LO };
 
-__ALIGN64 static const int64u VPRIME25519_MID[8] =
-    { PRIME25519_MID, PRIME25519_MID, PRIME25519_MID, PRIME25519_MID,
+__ALIGN64 static const int64u VPRIME25519_MID[8] = 
+    { PRIME25519_MID, PRIME25519_MID, PRIME25519_MID, PRIME25519_MID, 
       PRIME25519_MID, PRIME25519_MID, PRIME25519_MID, PRIME25519_MID };
 
-__ALIGN64 static const int64u VPRIME25519_HI[8] =
-    { PRIME25519_HI, PRIME25519_HI, PRIME25519_HI, PRIME25519_HI,
+__ALIGN64 static const int64u VPRIME25519_HI[8] = 
+    { PRIME25519_HI, PRIME25519_HI, PRIME25519_HI, PRIME25519_HI, 
       PRIME25519_HI, PRIME25519_HI, PRIME25519_HI, PRIME25519_HI };
 
 
-__MBX_INLINE U64 cmov_U64(U64 a, U64 b, __mb_mask kmask)
+__INLINE U64 cmov_U64(U64 a, U64 b, __mb_mask kmask)
 {  return mask_mov64 (a, kmask, b); }
 
 #define NORM_ASHIFTR(R, I, J) \
@@ -671,7 +671,7 @@ __MBX_INLINE U64 cmov_U64(U64 a, U64 b, __mb_mask kmask)
     R##J = add64(R##J, srli64(R##I, DIGIT_SIZE)); \
     R##I = and64(R##I, loadu64(VMASK52));
 
-__MBX_INLINE void fe52mb8_add_mod25519(U64 vr[], const U64 va[], const U64 vb[])
+__INLINE void fe52mb8_add_mod25519(U64 vr[], const U64 va[], const U64 vb[])
 {
     /* r = a+b */
     U64 r0 = add64(va[0], vb[0]);
@@ -709,7 +709,7 @@ __MBX_INLINE void fe52mb8_add_mod25519(U64 vr[], const U64 va[], const U64 vb[])
     storeu64(&vr[4], cmov_U64(t4, r4, cmask));
 }
 
-__MBX_INLINE void fe52mb8_sub_mod25519(U64 vr[], const U64 va[], const U64 vb[])
+__INLINE void fe52mb8_sub_mod25519(U64 vr[], const U64 va[], const U64 vb[])
 {
     /* r = a-b */
     U64 r0 = sub64(va[0], vb[0]);
@@ -747,7 +747,7 @@ __MBX_INLINE void fe52mb8_sub_mod25519(U64 vr[], const U64 va[], const U64 vb[])
     storeu64(&vr[4], cmov_U64(r4, t4, cmask));
 }
 
-__MBX_INLINE void fe52mb8_red_p25519(U64 vr[], const U64 va[])
+__INLINE void fe52mb8_red_p25519(U64 vr[], const U64 va[])
 {
    /* r = a-p */
    U64 r0 = sub64(va[0], loadu64(VPRIME25519_LO));
@@ -788,7 +788,7 @@ __MBX_INLINE void fe52mb8_red_p25519(U64 vr[], const U64 va[])
    considering the exponent as
    2^255 - 21 = (2^5) * (2^250 - 1) + 11.
 */
-__MBX_INLINE void fe52mb8_inv_mod25519(U64 out[], const U64 z[])
+__INLINE void fe52mb8_inv_mod25519(U64 out[], const U64 z[])
 {
     __ALIGN64 U64 t0[5];
     __ALIGN64 U64 t1[5];
@@ -906,7 +906,7 @@ static void x25519_scalar_mul(U64 out[], U64 scalar[], U64 point[])
         swap = b;
         fe52_sub(tmp0, x3, z3);
         fe52_sub(tmp1, x2, z2);
-        fe52_add(x2, x2, z2);
+        fe52_add(x2, x2, z2); 
         fe52_add(z2, x3, z3);
 
         #ifdef USE_DUAL_MUL_SQR
@@ -951,7 +951,7 @@ static void x25519_scalar_mul(U64 out[], U64 scalar[], U64 point[])
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-__MBX_INLINE void ed25519_mul_dual_wonorm(U64 out0[], U64 out1[],
+__INLINE void ed25519_mul_dual_wonorm(U64 out0[], U64 out1[],
                 const U64 a0[], const U64 b0[],
                 const U64 a1[], const U64 b1[]) {
 
@@ -1047,7 +1047,7 @@ __MBX_INLINE void ed25519_mul_dual_wonorm(U64 out0[], U64 out1[],
     storeu64(&vr1[4], r14);
 }
 
-__MBX_INLINE void fe52mb8_mul_mod25519_wonorm(U64 vr[], const U64 va[], const U64 vb[])
+__INLINE void fe52mb8_mul_mod25519_wonorm(U64 vr[], const U64 va[], const U64 vb[])
 {
     U64 r0, r1, r2, r3, r4, r5, r6, r7, r8, r9;
     r0 = r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = get_zero64();
@@ -1072,7 +1072,7 @@ __MBX_INLINE void fe52mb8_mul_mod25519_wonorm(U64 vr[], const U64 va[], const U6
     ROUND_MUL(2, 4, r6, r7)
     ROUND_MUL(3, 3, r6, r7)
     ROUND_MUL(4, 2, r6, r7)
-
+    
     ROUND_MUL(0, 0, r0, r1)
     ROUND_MUL(0, 1, r1, r2)
     ROUND_MUL(0, 2, r2, r3)
@@ -1102,7 +1102,7 @@ __MBX_INLINE void fe52mb8_mul_mod25519_wonorm(U64 vr[], const U64 va[], const U6
     storeu64(&vr[4], r4);
 }
 
-__MBX_INLINE void fe52mb8_mul121666_mod25519_wonorm(U64 vr[], const U64 va[])
+__INLINE void fe52mb8_mul121666_mod25519_wonorm(U64 vr[], const U64 va[])
 {
     U64 multiplier = set64(121666);
 
@@ -1136,7 +1136,7 @@ __MBX_INLINE void fe52mb8_mul121666_mod25519_wonorm(U64 vr[], const U64 va[])
     storeu64(&vr[4], r4);
 }
 
-__MBX_INLINE void x25519_scalar_mul_dual(U64 out[], U64 scalar[], U64 point[])
+__INLINE void x25519_scalar_mul_dual(U64 out[], U64 scalar[], U64 point[])
 {
     __ALIGN64 U64 x1[5], x2[5], x3[5];
     __ALIGN64 U64        z2[5], z3[5];
@@ -1180,7 +1180,7 @@ __MBX_INLINE void x25519_scalar_mul_dual(U64 out[], U64 scalar[], U64 point[])
 
         fe52_sub(tmp0, x3, z3);
         fe52_sub(tmp1, x2, z2);
-        fe52_add(x2, x2, z2);
+        fe52_add(x2, x2, z2); 
         fe52_add(z2, x3, z3);
 
         ed25519_mul_dual_wonorm(z3, z2, x2,tmp0, z2,tmp1);
@@ -1575,19 +1575,19 @@ __ALIGN64 static int64u muTBL52[255][NUMBER_OF_DIGITS(256,DIGIT_SIZE)] = {
    {0x000deda7f334d2df, 0x00051af2a57b4a6a, 0x0006dceaa87bde9c, 0x000d07ba98fc64f8, 0x00006bbe0335c20e},
 };
 
-__ALIGN64 static const int64u U2_0[8] =
+__ALIGN64 static const int64u U2_0[8] = 
     {0x000b1e0137d48290, 0x000b1e0137d48290, 0x000b1e0137d48290, 0x000b1e0137d48290,
      0x000b1e0137d48290, 0x000b1e0137d48290, 0x000b1e0137d48290, 0x000b1e0137d48290};
-__ALIGN64 static const int64u U2_1[8] =
+__ALIGN64 static const int64u U2_1[8] = 
     {0x00051eb4d1207816, 0x00051eb4d1207816, 0x00051eb4d1207816, 0x00051eb4d1207816,
      0x00051eb4d1207816, 0x00051eb4d1207816, 0x00051eb4d1207816, 0x00051eb4d1207816};
-__ALIGN64 static const int64u U2_2[8] =
+__ALIGN64 static const int64u U2_2[8] = 
     {0x000ca2b71d440f6a, 0x000ca2b71d440f6a, 0x000ca2b71d440f6a, 0x000ca2b71d440f6a,
      0x000ca2b71d440f6a, 0x000ca2b71d440f6a, 0x000ca2b71d440f6a, 0x000ca2b71d440f6a};
-__ALIGN64 static const int64u U2_3[8] =
+__ALIGN64 static const int64u U2_3[8] = 
     {0x00054cb52385f46d, 0x00054cb52385f46d, 0x00054cb52385f46d, 0x00054cb52385f46d,
      0x00054cb52385f46d, 0x00054cb52385f46d, 0x00054cb52385f46d, 0x00054cb52385f46d};
-__ALIGN64 static const int64u U2_4[8] =
+__ALIGN64 static const int64u U2_4[8] = 
     {0x0000215132111d83, 0x0000215132111d83, 0x0000215132111d83, 0x0000215132111d83,
      0x0000215132111d83, 0x0000215132111d83, 0x0000215132111d83, 0x0000215132111d83};
 

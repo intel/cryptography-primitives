@@ -18,7 +18,7 @@
 #include "pcphash_rmf.h"
 
 // Check all the ippsRSASign_PKCS1v15_rmf parameters and align pPrvKey, pPubKey pointers
-__IPPCP_INLINE IppStatus SingleSignPkcs1v15RmfPreproc(const Ipp8u* pMsg, int msgLen,
+__INLINE IppStatus SingleSignPkcs1v15RmfPreproc(const Ipp8u* pMsg, int msgLen,
    Ipp8u* pSign,
    const IppsRSAPrivateKeyState** pPrvKey,
    const IppsRSAPublicKeyState**  pPubKey,
@@ -49,7 +49,7 @@ __IPPCP_INLINE IppStatus SingleSignPkcs1v15RmfPreproc(const Ipp8u* pMsg, int msg
 }
 
 // Check all the ippsRSAVerify_PKCS1v15_rmf parameters, set valid=0, align pKey pointer
-__IPPCP_INLINE IppStatus SingleVerifyPkcs1v15RmfPreproc(const Ipp8u* pMsg, int msgLen,
+__INLINE IppStatus SingleVerifyPkcs1v15RmfPreproc(const Ipp8u* pMsg, int msgLen,
    const Ipp8u* pSign, int* pIsValid,
    const IppsRSAPublicKeyState** pKey,
    const IppsHashMethod* pMethod,

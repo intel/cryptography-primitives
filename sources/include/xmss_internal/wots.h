@@ -62,7 +62,7 @@ IPP_OWN_DECL(IppStatus, WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSee
  *    adrs      changed array of bytes
  */
 
-__IPPCP_INLINE void set_adrs_idx(Ipp8u* adrs, Ipp32u idx, int word_id){
+__INLINE void set_adrs_idx(Ipp8u* adrs, Ipp32u idx, int word_id){
     adrs[4 * word_id + 3] = (Ipp8u) idx        & 0xff;
     adrs[4 * word_id + 2] = (Ipp8u)(idx >>  8) & 0xff;
     adrs[4 * word_id + 1] = (Ipp8u)(idx >> 16) & 0xff;
@@ -79,7 +79,7 @@ __IPPCP_INLINE void set_adrs_idx(Ipp8u* adrs, Ipp32u idx, int word_id){
  *    word_id   int32 idx in the adrs array
  */
 
-__IPPCP_INLINE Ipp8u set_adrs_1_byte(int word_id){
+__INLINE Ipp8u set_adrs_1_byte(int word_id){
     return (Ipp8u)(4 * word_id + 3);
 }
 
@@ -90,7 +90,7 @@ __IPPCP_INLINE Ipp8u set_adrs_1_byte(int word_id){
  *    x   double precision floating point value
  */
 
-__IPPCP_INLINE Ipp32s cpCeil(double x) {
+__INLINE Ipp32s cpCeil(double x) {
     Ipp32s int_val = (Ipp32s) x;
     if(int_val == x || x <= 0.0){
         return int_val;

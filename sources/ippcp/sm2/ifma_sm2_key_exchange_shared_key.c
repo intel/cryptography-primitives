@@ -26,7 +26,7 @@
 
 
 /* clang-format off */
-__IPPCP_INLINE void ifma_sm2_set_affine_point_radix52(PSM2_POINT_IFMA *rp,
+__INLINE void ifma_sm2_set_affine_point_radix52(PSM2_POINT_IFMA *rp,
                                                 const BNU_CHUNK_T *x, const BNU_CHUNK_T *y,
                                                 ifmaArithMethod *method)
 /* clang-format on */
@@ -45,7 +45,7 @@ __IPPCP_INLINE void ifma_sm2_set_affine_point_radix52(PSM2_POINT_IFMA *rp,
 }
 
 /* clang-format off */
-__IPPCP_INLINE void ifma_sm2_get_affine(BNU_CHUNK_T *x, BNU_CHUNK_T *y,
+__INLINE void ifma_sm2_get_affine(BNU_CHUNK_T *x, BNU_CHUNK_T *y,
                                   const PSM2_POINT_IFMA* p,
                                   ifmaArithMethod* method)
 /* clang-format on */

@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     Message block processing according to SHA1
-//
+// 
 //  Contents:
 //     UpdateSHA1()
-//
-//
+// 
+// 
 */
 
 #include "owndefs.h"
@@ -62,7 +62,7 @@
 }
 
 #if defined(_ALG_SHA1_COMPACT_)
-__IPPCP_INLINE Ipp32u MagicFun(int s, Ipp32u b, Ipp32u c, Ipp32u d)
+__INLINE Ipp32u MagicFun(int s, Ipp32u b, Ipp32u c, Ipp32u d)
 {
    switch(s) {
       case 0: return MAGIC_F0(b,c,d);

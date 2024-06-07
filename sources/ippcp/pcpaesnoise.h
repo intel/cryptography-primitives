@@ -17,9 +17,9 @@
 #if !defined(_PCP_AES_NOISE_H)
 #define _PCP_AES_NOISE_H
 
-/*
+/* 
  * The parameters below are empirical and chosen in advance to guarantee
- * the high level of security protection against Mistletoe3 attack.
+ * the high level of security protection against Mistletoe3 attack. 
  */
 #define MISTLETOE3_MAX_CHUNK_SIZE   (16000)     /* maximum chunks size allowed to be processed without noise injection (in bytes) \
                                                    16000 bytes = 16*1000 bytes = 1000 AES blocks */
@@ -47,7 +47,7 @@ typedef struct _cpAESNoiseParams {
 #define AES_NOISE_LEVEL(ctx)          ((ctx)->noiseLevel)
 
 /* size of _cpAESNoiseParams structure */
-__IPPCP_INLINE int cpSizeofNoise_Params(void)
+__INLINE int cpSizeofNoise_Params(void)
 {
    return sizeof(cpAESNoiseParams);
 }

@@ -320,25 +320,25 @@ EXTERN_C void sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[
                                   const int8u* pa_tweak[SM4_LINES], __mmask16 mb_mask, const int dir);
 
 // The transformation based on SM4 sbox algebraic structure, parameters were computed manually
-__MBX_INLINE __m512i sBox512(__m512i block)
+__INLINE __m512i sBox512(__m512i block)
 {
     block = _mm512_gf2p8affine_epi64_epi8(block, M512(affineIn), 0x65);
     block = _mm512_gf2p8affineinv_epi64_epi8(block, M512(affineOut), 0xd3);
     return block;
 }
 
-__MBX_INLINE __m512i Lblock512(__m512i x)
+__INLINE __m512i Lblock512(__m512i x)
 {
     return _mm512_ternarylogic_epi32(_mm512_xor_si512(_mm512_rol_epi32(x, 2), _mm512_rol_epi32(x, 10)), _mm512_rol_epi32(x, 18),
                                      _mm512_shuffle_epi8 (x, _mm512_loadu_si512(shuf8)), 0x96);
 }
 
-__MBX_INLINE __m512i Lkey512(__m512i x)
+__INLINE __m512i Lkey512(__m512i x)
 {
     return _mm512_xor_epi32(_mm512_rol_epi32(x, 13), _mm512_rol_epi32(x, 23));
 }
 
-__MBX_INLINE __m512i IncBlock512(__m512i x, const int8u* increment)
+__INLINE __m512i IncBlock512(__m512i x, const int8u* increment)
 {
     __m512i t = _mm512_add_epi64(x, M512(increment));
     __mmask8 carryMask = _mm512_cmplt_epu64_mask(t, x);
@@ -472,7 +472,7 @@ __MBX_INLINE __m512i IncBlock512(__m512i x, const int8u* increment)
    \
    T0=K0,T1=K1,T2=K2,T3=K3
 
-__MBX_INLINE void TRANSPOSE_16x4_I32_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, const int8u* p_inp[16], __mmask16 mb_mask) {
+__INLINE void TRANSPOSE_16x4_I32_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, const int8u* p_inp[16], __mmask16 mb_mask) {
     __mmask16 loc_mb_mask = mb_mask;
 
     // L0 - L3
@@ -510,7 +510,7 @@ __MBX_INLINE void TRANSPOSE_16x4_I32_EPI32(__m512i* t0, __m512i* t1, __m512i* t2
     *t3 = _mm512_unpackhi_epi64(z1, z3);
 }
 
-__MBX_INLINE void TRANSPOSE_16x4_I32_XMM_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, const __m128i in[16]) {
+__INLINE void TRANSPOSE_16x4_I32_XMM_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, const __m128i in[16]) {
     // L0 - L3
     __m512i z0 = _mm512_castsi128_si512(in[0]);
     __m512i z1 = _mm512_castsi128_si512(in[1]);
@@ -546,7 +546,7 @@ __MBX_INLINE void TRANSPOSE_16x4_I32_XMM_EPI32(__m512i* t0, __m512i* t1, __m512i
     *t3 = _mm512_unpackhi_epi64(z1, z3);
 }
 
-__MBX_INLINE void TRANSPOSE_4x16_I32_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, int8u* p_out[16], __mmask16 mb_mask) {
+__INLINE void TRANSPOSE_4x16_I32_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, int8u* p_out[16], __mmask16 mb_mask) {
 
     #define STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti)                              \
             _mm512_mask_storeu_epi32(OUT, store_mask * (0x1&loc_mb_mask), Ti);    \
@@ -591,7 +591,7 @@ __MBX_INLINE void TRANSPOSE_4x16_I32_EPI32(__m512i* t0, __m512i* t1, __m512i* t2
 
 }
 
-__MBX_INLINE void TRANSPOSE_4x16_I32_XMM_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, __m128i out[16]) {
+__INLINE void TRANSPOSE_4x16_I32_XMM_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, __m128i out[16]) {
 
     __m512i z0 = _mm512_unpacklo_epi32(*t0, *t1);
     __m512i z1 = _mm512_unpackhi_epi32(*t0, *t1);
@@ -630,7 +630,7 @@ __MBX_INLINE void TRANSPOSE_4x16_I32_XMM_EPI32(__m512i* t0, __m512i* t1, __m512i
 
 }
 
-__MBX_INLINE void TRANSPOSE_4x16_I32_O128_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, __m128i p_out[16], __mmask16 mb_mask) {
+__INLINE void TRANSPOSE_4x16_I32_O128_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, __m128i p_out[16], __mmask16 mb_mask) {
 
     #define STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti)                              \
             _mm512_mask_storeu_epi32(OUT, store_mask * (0x1&loc_mb_mask), Ti);    \
@@ -675,7 +675,7 @@ __MBX_INLINE void TRANSPOSE_4x16_I32_O128_EPI32(__m512i* t0, __m512i* t1, __m512
 
 }
 
-__MBX_INLINE void TRANSPOSE_4x16_I32_EPI8(__m512i t0, __m512i t1, __m512i t2, __m512i t3, int8u* p_out[16], int* p_loc_len, __mmask16 mb_mask) {
+__INLINE void TRANSPOSE_4x16_I32_EPI8(__m512i t0, __m512i t1, __m512i t2, __m512i t3, int8u* p_out[16], int* p_loc_len, __mmask16 mb_mask) {
 
     #define STORE_RESULT_EPI8(OUT, store_mask, loc_mb_mask, Ti)                              \
             _mm512_mask_storeu_epi8(OUT, store_mask * (0x1&loc_mb_mask), Ti);    \
@@ -737,7 +737,7 @@ __MBX_INLINE void TRANSPOSE_4x16_I32_EPI8(__m512i t0, __m512i t1, __m512i t2, __
     STORE_RESULT_EPI8((__m128i*)p_out[15] - 3, stream_mask << 48, loc_mb_mask, t3);
 }
 
-__MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, int8u* p_out[16], const int8u* p_iv[16], __mmask16 mb_mask) {
+__INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI32(__m512i* t0, __m512i* t1, __m512i* t2, __m512i* t3, int8u* p_out[16], const int8u* p_iv[16], __mmask16 mb_mask) {
 
     #define XOR_AND_STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti, IV, TMP)                              \
             TMP = _mm512_maskz_loadu_epi32(store_mask * (0x1&loc_mb_mask), IV);                       \
@@ -787,7 +787,7 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI32(__m512i* t0, __m512i* t1, __m
     XOR_AND_STORE_RESULT((__m128i*)p_out[15] - 3, 0xF000, loc_mb_mask, *t3, (__m128i*)p_iv[15] - 3, z3);
 }
 
-__MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI8(__m512i t0, __m512i t1, __m512i t2, __m512i t3, int8u* p_out[16], const int8u* p_iv[16], int* p_loc_len, __mmask16 mb_mask) {
+__INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI8(__m512i t0, __m512i t1, __m512i t2, __m512i t3, int8u* p_out[16], const int8u* p_iv[16], int* p_loc_len, __mmask16 mb_mask) {
 
     #define XOR_AND_STORE_RESULT_EPI8(OUT, store_mask, loc_mb_mask, Ti, IV, TMP)                            \
             TMP = _mm512_maskz_loadu_epi8(store_mask * (0x1&loc_mb_mask), IV);                       \

@@ -167,7 +167,7 @@ typedef int cpSize;
 /* test if library's feature is ON */
 int cpGetFeature( Ipp64u Feature );
 /* test CPU crypto features */
-__IPPCP_INLINE Ipp32u IsFeatureEnabled(Ipp64u niMmask)
+__INLINE Ipp32u IsFeatureEnabled(Ipp64u niMmask)
 {
    return (Ipp32u)cpGetFeature(niMmask);
 }

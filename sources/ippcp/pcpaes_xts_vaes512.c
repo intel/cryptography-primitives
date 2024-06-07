@@ -42,7 +42,7 @@
 #define M512(mem)    (*((__m512i*)(mem)))
 
 /* Generate next 4 tweaks with 2^8 multiplier */
-__IPPCP_INLINE __m512i nextTweaks_x8(__m512i tweak128x4)
+__INLINE __m512i nextTweaks_x8(__m512i tweak128x4)
 {
    const __m512i poly = _mm512_set_epi64(0, 0x87, 0, 0x87, 0, 0x87, 0, 0x87);
 
@@ -55,7 +55,7 @@ __IPPCP_INLINE __m512i nextTweaks_x8(__m512i tweak128x4)
 }
 
 /* Generate next 4 tweaks with 2^32 multiplier */
-__IPPCP_INLINE __m512i nextTweaks_x32(__m512i tweak128x4)
+__INLINE __m512i nextTweaks_x32(__m512i tweak128x4)
 {
    const __m512i poly = _mm512_set_epi64(0, 0x87, 0, 0x87, 0, 0x87, 0, 0x87);
 

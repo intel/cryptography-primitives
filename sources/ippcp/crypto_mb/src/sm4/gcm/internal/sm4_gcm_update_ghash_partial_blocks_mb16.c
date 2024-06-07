@@ -17,7 +17,7 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/sm4/sm4_gcm_mb.h>
 
-__MBX_INLINE void read_first(__m512i *data_blocks[4], const int8u *const pa_input[SM4_LINES], __m512i *input_len, __mmask16 load_mask)
+__INLINE void read_first(__m512i *data_blocks[4], const int8u *const pa_input[SM4_LINES], __m512i *input_len, __mmask16 load_mask)
 {
    __mmask16 load_mask_0 = load_mask >> 0 * 4;
    __mmask16 load_mask_1 = load_mask >> 1 * 4;

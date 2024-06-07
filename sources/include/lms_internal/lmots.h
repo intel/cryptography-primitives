@@ -58,7 +58,7 @@ typedef struct {
  * Output parameters:
  *    params         LMOTS parameters (w, p, ls, n, hash_method)
  */
-__IPPCP_INLINE IppStatus setLMOTSParams(IppsLMOTSAlgo lmotsOIDAlgo, cpLMOTSParams* params) {
+__INLINE IppStatus setLMOTSParams(IppsLMOTSAlgo lmotsOIDAlgo, cpLMOTSParams* params) {
     switch (lmotsOIDAlgo) {
         case LMOTS_SHA256_N32_W1: {
             params->w = 1;
@@ -134,11 +134,11 @@ __IPPCP_INLINE IppStatus setLMOTSParams(IppsLMOTSAlgo lmotsOIDAlgo, cpLMOTSParam
  *    Target element of a specified length
  *
  */
-__IPPCP_INLINE Ipp32u cpCoef(Ipp8u* S, Ipp32u i, Ipp32u w) {
+__INLINE Ipp32u cpCoef(Ipp8u* S, Ipp32u i, Ipp32u w) {
     return ((1 << w) - 1) & ( S[(i * w) / 8] >> (8 - (w * (i % (8 / w)) + w)));
 }
 
-__IPPCP_INLINE Ipp32u cpCksm(Ipp8u* S, cpLMOTSParams lmotsParams) {
+__INLINE Ipp32u cpCksm(Ipp8u* S, cpLMOTSParams lmotsParams) {
     Ipp32u w = lmotsParams.w;
     Ipp32u n = lmotsParams.n;
     Ipp32u ls = lmotsParams.ls;

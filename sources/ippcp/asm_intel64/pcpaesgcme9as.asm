@@ -248,7 +248,7 @@ IPPASM AesGcmPrecompute_avx,PUBLIC
 %xdefine pPrecomData rdi ; (rdi) pointer to the reflected multipliers reflect(hkey),(hkey<<1), (hkey^2)<<1, (hkey^4)<<1,
 %xdefine pHKey       rsi ; (rsi) pointer to the Hkey value
 
-   movdqu   xmm0, oword [pHKey] ;  xmm0 holds HashKey
+   movdqu   xmm0, oword [rel pHKey] ;  xmm0 holds HashKey
    pshufb   xmm0, [rel SHUF_CONST]
   ;movdqu   oword [pPrecomData+sizeof_oword_*0], xmm0
 
@@ -296,7 +296,7 @@ IPPASM AesGcmPrecompute_avx2_vaes,PUBLIC
 %xdefine pPrecomputedData rdi ; (rdi) pointer to the reflected multipliers reflect(hkey),(hkey<<1), (hkey^2)<<1, (hkey^4)<<1,
 %xdefine pHKey       rsi ; (rsi) pointer to the Hkey value
 
-   movdqu   xmm0, oword [pHKey] ;  xmm0 holds HashKey
+   movdqu   xmm0, oword [rel pHKey] ;  xmm0 holds HashKey
    pshufb   xmm0, [rel SHUF_CONST]
 
    ; precompute HashKey<<1 mod poly from the HashKey
@@ -381,14 +381,14 @@ IPPASM AesGcmMulGcm_avx,PUBLIC
 %xdefine pHash   rdi         ; (rdi) pointer to the Hash value
 %xdefine pHKey   rsi         ; (rsi) pointer to the (hkey<<1) value
 
-   movdqa   xmm0, oword [pHash]
+   movdqa   xmm0, oword [rel pHash]
    pshufb   xmm0, [rel SHUF_CONST]
-   movdqa   xmm1, oword [pHKey]
+   movdqa   xmm1, oword [rel pHKey]
 
    sse_clmul_gcm  xmm0, xmm1, xmm2, xmm3, xmm4  ; xmm0 holds Hash*HKey mod poly
 
    pshufb   xmm0, [rel SHUF_CONST]
-   movdqa   oword [pHash], xmm0
+   movdqa   oword [rel pHash], xmm0
 
    REST_XMM
    REST_GPR
@@ -413,15 +413,15 @@ IPPASM AesGcmAuth_avx,PUBLIC
 
 %assign  BYTES_PER_BLK (16)
 
-   movdqa   xmm0, oword [pHash]
+   movdqa   xmm0, oword [rel pHash]
    pshufb   xmm0, [rel SHUF_CONST]
-   movdqa   xmm1, oword [pHKey]
+   movdqa   xmm1, oword [rel pHKey]
 
    movsxd   rdx, edx
 
 align IPP_ALIGN_FACTOR
 .auth_loop:
-   movdqu   xmm2, oword [pSrc]  ; src[]
+   movdqu   xmm2, oword [rel pSrc]  ; src[]
    pshufb   xmm2, [rel SHUF_CONST]
    add      pSrc, BYTES_PER_BLK
    pxor     xmm0, xmm2              ; hash ^= src[]

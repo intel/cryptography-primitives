@@ -107,7 +107,7 @@ in_{FunName}:
 {FunName}:
     {endbr32}
     mov   eax, dword [ippcpJumpIndexForMergedLibs]
-    jmp   dword [arraddr_{FunName} + eax*4]
+    jmp   dword [rel arraddr_{FunName} + eax*4]
 .LEnd{FunName}:
 """.format(FunName=FunName, size=size, endbr32='db 0xf3, 0x0f, 0x1e, 0xfb'))
             ASMDISP.close()

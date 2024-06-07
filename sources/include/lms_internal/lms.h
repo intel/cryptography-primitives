@@ -86,7 +86,7 @@ struct _cpLMSSignatureState {
  * Output parameters:
  *    params    LMS parameters (h, m, hash_method)
  */
-__IPPCP_INLINE IppStatus setLMSParams(IppsLMSAlgo lmsOIDAlgo, cpLMSParams* params) {
+__INLINE IppStatus setLMSParams(IppsLMSAlgo lmsOIDAlgo, cpLMSParams* params) {
     /* Set h */
     switch (lmsOIDAlgo % 5) {
         case 0: { params->h = 5;  break; } // LMS_SHA256_M32_H5  and LMS_SHA256_M24_H5

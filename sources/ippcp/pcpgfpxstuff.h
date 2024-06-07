@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
+/* 
 //               Intel(R) Integrated Performance Primitives
 //               Cryptographic Primitives (ippCP)
 //               GF(p) extension internal
-//
+// 
 */
 
 #if !defined(_PCP_GFPEXT_H_)
@@ -35,7 +35,7 @@
 #define GFPX_IDX_ELEMENT(pxe, idx, eleSize) ((pxe)+(eleSize)*(idx))
 
 
-__IPPCP_INLINE int degree(const BNU_CHUNK_T* pE, const gsModEngine* pGFEx)
+__INLINE int degree(const BNU_CHUNK_T* pE, const gsModEngine* pGFEx)
 {
     int groundElemLen = GFP_FELEN(GFP_PARENT(pGFEx));
     int deg;
@@ -45,14 +45,14 @@ __IPPCP_INLINE int degree(const BNU_CHUNK_T* pE, const gsModEngine* pGFEx)
     return deg;
 }
 
-__IPPCP_INLINE gsModEngine* cpGFpBasic(const gsModEngine* pGFEx)
+__INLINE gsModEngine* cpGFpBasic(const gsModEngine* pGFEx)
 {
    while( !GFP_IS_BASIC(pGFEx) ) {
       pGFEx = GFP_PARENT(pGFEx);
    }
    return (gsModEngine*)pGFEx;
 }
-__IPPCP_INLINE int cpGFpBasicDegreeExtension(const gsModEngine* pGFEx)
+__INLINE int cpGFpBasicDegreeExtension(const gsModEngine* pGFEx)
 {
    int degree = GFP_EXTDEGREE(pGFEx);
    while( !GFP_IS_BASIC(pGFEx) ) {
@@ -65,7 +65,7 @@ __IPPCP_INLINE int cpGFpBasicDegreeExtension(const gsModEngine* pGFEx)
 /* convert external data (Ipp32u) => internal element (BNU_CHUNK_T) representation
    returns length of element (in BNU_CHUNK_T)
 */
-__IPPCP_INLINE int cpGFpxCopyToChunk(BNU_CHUNK_T* pElm, const Ipp32u* pA, int nsA, const gsModEngine* pGFEx)
+__INLINE int cpGFpxCopyToChunk(BNU_CHUNK_T* pElm, const Ipp32u* pA, int nsA, const gsModEngine* pGFEx)
 {
    gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
    int basicExtension = cpGFpBasicDegreeExtension(pGFEx);
@@ -84,7 +84,7 @@ __IPPCP_INLINE int cpGFpxCopyToChunk(BNU_CHUNK_T* pElm, const Ipp32u* pA, int ns
 /* convert internal element (BNU_CHUNK_T) => external data (Ipp32u) representation
    returns length of data (in Ipp32u)
 */
-__IPPCP_INLINE int cpGFpxCopyFromChunk(Ipp32u* pA, const BNU_CHUNK_T* pElm, const gsModEngine* pGFEx)
+__INLINE int cpGFpxCopyFromChunk(Ipp32u* pA, const BNU_CHUNK_T* pElm, const gsModEngine* pGFEx)
 {
    gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
    int basicExtension = cpGFpBasicDegreeExtension(pGFEx);

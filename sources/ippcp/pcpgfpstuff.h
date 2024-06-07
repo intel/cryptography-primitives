@@ -89,24 +89,24 @@ typedef struct _cpGFp {
 #define cpGFpReleasePool(n, gfe) gsModPoolFree((gfe), (n))
 
 
-__IPPCP_INLINE int cpGFpElementLen(const BNU_CHUNK_T* pE, int nsE)
+__INLINE int cpGFpElementLen(const BNU_CHUNK_T* pE, int nsE)
 {
    for(; nsE>1 && 0==pE[nsE-1]; nsE--) ;
    return nsE;
 }
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpElementCopy(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pE, int nsE)
+__INLINE BNU_CHUNK_T* cpGFpElementCopy(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pE, int nsE)
 {
    int n;
    for(n=0; n<nsE; n++) pR[n] = pE[n];
    return pR;
 }
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpElementPad(BNU_CHUNK_T* pE, int nsE, BNU_CHUNK_T filler)
+__INLINE BNU_CHUNK_T* cpGFpElementPad(BNU_CHUNK_T* pE, int nsE, BNU_CHUNK_T filler)
 {
    int n;
    for(n=0; n<nsE; n++) pE[n] = filler;
    return pE;
 }
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpElementCopyPad(BNU_CHUNK_T* pR, int nsR, const BNU_CHUNK_T* pE, int nsE)
+__INLINE BNU_CHUNK_T* cpGFpElementCopyPad(BNU_CHUNK_T* pR, int nsR, const BNU_CHUNK_T* pE, int nsE)
 {
    int n;
    for(n=0; n<nsE; n++) pR[n] = pE[n];
@@ -114,7 +114,7 @@ __IPPCP_INLINE BNU_CHUNK_T* cpGFpElementCopyPad(BNU_CHUNK_T* pR, int nsR, const 
    return pR;
 }
 
-__IPPCP_INLINE int cpGFpElementIsEquChunk(const BNU_CHUNK_T* pE, int nsE, BNU_CHUNK_T x)
+__INLINE int cpGFpElementIsEquChunk(const BNU_CHUNK_T* pE, int nsE, BNU_CHUNK_T x)
 {
    BNU_CHUNK_T res = pE[0] ^ x;
    int n;
@@ -123,37 +123,37 @@ __IPPCP_INLINE int cpGFpElementIsEquChunk(const BNU_CHUNK_T* pE, int nsE, BNU_CH
    return cpIsZero_ct(res) & 1;
 }
 
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpElementSetChunk(BNU_CHUNK_T* pR, int nsR, BNU_CHUNK_T x)
+__INLINE BNU_CHUNK_T* cpGFpElementSetChunk(BNU_CHUNK_T* pR, int nsR, BNU_CHUNK_T x)
 {
    return cpGFpElementCopyPad(pR, nsR, &x, 1);
 }
 
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpAdd(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsModEngine* pGFE)
+__INLINE BNU_CHUNK_T* cpGFpAdd(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsModEngine* pGFE)
 {
    return GFP_METHOD(pGFE)->add(pR, pA, pB, pGFE);
 }
 
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpSub(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsModEngine* pGFE)
+__INLINE BNU_CHUNK_T* cpGFpSub(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsModEngine* pGFE)
 {
    return GFP_METHOD(pGFE)->sub(pR, pA, pB, pGFE);
 }
 
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpNeg(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE)
+__INLINE BNU_CHUNK_T* cpGFpNeg(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE)
 {
    return GFP_METHOD(pGFE)->neg(pR, pA, pGFE);
 }
 
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpMul(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsModEngine* pGFE)
+__INLINE BNU_CHUNK_T* cpGFpMul(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsModEngine* pGFE)
 {
    return GFP_METHOD(pGFE)->mul(pR, pA, pB, pGFE);
 }
 
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpSqr(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE)
+__INLINE BNU_CHUNK_T* cpGFpSqr(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE)
 {
    return GFP_METHOD(pGFE)->sqr(pR, pA, pGFE);
 }
 
-__IPPCP_INLINE BNU_CHUNK_T* cpGFpHalve(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE)
+__INLINE BNU_CHUNK_T* cpGFpHalve(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE)
 {
    return GFP_METHOD(pGFE)->div2(pR, pA, pGFE);
 }
@@ -169,7 +169,7 @@ __IPPCP_INLINE BNU_CHUNK_T* cpGFpHalve(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, g
 
 
 /* construct GF element */
-__IPPCP_INLINE IppsGFpElement* cpGFpElementConstruct(IppsGFpElement* pR, BNU_CHUNK_T* pDataBufer, int ns)
+__INLINE IppsGFpElement* cpGFpElementConstruct(IppsGFpElement* pR, BNU_CHUNK_T* pDataBufer, int ns)
 {
    GFPE_SET_ID(pR);
    GFPE_ROOM(pR) = ns;

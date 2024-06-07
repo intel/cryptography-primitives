@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     SHA512 message digest
-//
+// 
 //  Contents:
 //     SHA512 stuff
-//
-//
+// 
+// 
 */
 
 #include "owndefs.h"
@@ -81,7 +81,7 @@ static __ALIGN16 const Ipp64u sha512_cnt[] = {
 };
 
 /* setup init hash value */
-__IPPCP_INLINE void hashInit(Ipp64u* pHash, const Ipp64u* iv)
+__INLINE void hashInit(Ipp64u* pHash, const Ipp64u* iv)
 {
    pHash[0] = iv[0];
    pHash[1] = iv[1];
@@ -177,7 +177,7 @@ IPP_OWN_DEFN (static void, cpFinalizeSHA512, (DigestSHA512 pHash, const Ipp8u* i
 {
    /* local buffer and it length */
    Ipp8u buffer[MBS_SHA512*2];
-   int bufferLen = inpLen < (MBS_SHA512-(int)MLR_SHA512)? MBS_SHA512 : MBS_SHA512*2;
+   int bufferLen = inpLen < (MBS_SHA512-(int)MLR_SHA512)? MBS_SHA512 : MBS_SHA512*2; 
 
    /* copy rest of message into internal buffer */
    CopyBlock(inpBuffer, buffer, inpLen);

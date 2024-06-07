@@ -38,13 +38,13 @@ typedef struct {
 
 
 /* check if coordinate is zero */
-__MBX_INLINE __mb_mask MB_FUNC_NAME(is_zero_point_cordinate_)(const U64 T[])
+__INLINE __mb_mask MB_FUNC_NAME(is_zero_point_cordinate_)(const U64 T[])
 {
    return MB_FUNC_NAME(is_zero_FE256_)(T);
 }
 
 /* set point to infinity */
-__MBX_INLINE void MB_FUNC_NAME(set_point_to_infinity_)(P256_POINT* r)
+__INLINE void MB_FUNC_NAME(set_point_to_infinity_)(P256_POINT* r)
 {
    r->X[0] = r->X[1] = r->X[2] = r->X[3] = r->X[4] = get_zero64();
    r->Y[0] = r->Y[1] = r->Y[2] = r->Y[3] = r->Y[4] = get_zero64();
@@ -52,7 +52,7 @@ __MBX_INLINE void MB_FUNC_NAME(set_point_to_infinity_)(P256_POINT* r)
 }
 
 /* set point to infinity by mask */
-__MBX_INLINE void MB_FUNC_NAME(mask_set_point_to_infinity_)(P256_POINT* r, __mb_mask mask)
+__INLINE void MB_FUNC_NAME(mask_set_point_to_infinity_)(P256_POINT* r, __mb_mask mask)
 {
    U64 zeros = get_zero64();
 
@@ -76,7 +76,7 @@ __MBX_INLINE void MB_FUNC_NAME(mask_set_point_to_infinity_)(P256_POINT* r, __mb_
 }
 
 /* set affine point to infinity */
-__MBX_INLINE void MB_FUNC_NAME(set_point_affine_to_infinity_)(P256_POINT_AFFINE* r)
+__INLINE void MB_FUNC_NAME(set_point_affine_to_infinity_)(P256_POINT_AFFINE* r)
 {
    r->x[0] = r->x[1] = r->x[2] = r->x[3] = r->x[4] = get_zero64();
    r->y[0] = r->y[1] = r->y[2] = r->y[3] = r->y[4] = get_zero64();

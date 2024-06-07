@@ -100,7 +100,7 @@ IPP_OWN_DECL(void, ifma_ec_nistp521_add_point_affine, (P521_POINT_IFMA * r, cons
 #include "pcpgfpstuff.h"
 #include "pcpgfpecstuff.h"
 
-__IPPCP_INLINE void recode_point_to_mont52(P521_POINT_IFMA *pR,
+__INLINE void recode_point_to_mont52(P521_POINT_IFMA *pR,
                                      const BNU_CHUNK_T *pP,
                                      BNU_CHUNK_T *pPool,
                                      ifmaArithMethod_p521 *method,
@@ -128,7 +128,7 @@ __IPPCP_INLINE void recode_point_to_mont52(P521_POINT_IFMA *pR,
    p_to_mont(&(pR->z), pR->z);
 }
 
-__IPPCP_INLINE void recode_point_to_mont64(IppsGFpECPoint *pR,
+__INLINE void recode_point_to_mont64(IppsGFpECPoint *pR,
                                      P521_POINT_IFMA *pP,
                                      BNU_CHUNK_T *pPool,
                                      ifmaArithMethod_p521 *method,

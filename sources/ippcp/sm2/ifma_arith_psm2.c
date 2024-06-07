@@ -246,12 +246,12 @@ IPP_OWN_DEFN(fesm2, fesm2_from_mont, (const fesm2 a)) {
     return r;
 }
 
-__IPPCP_INLINE fesm2 fesm2_mul_norm(const fesm2 a, const fesm2 b) {
+__INLINE fesm2 fesm2_mul_norm(const fesm2 a, const fesm2 b) {
     fesm2 r = fesm2_mul(a, b);
     return ifma_lnorm52(r);
 }
 
-__IPPCP_INLINE fesm2 fesm2_sqr_norm(const fesm2 a) {
+__INLINE fesm2 fesm2_sqr_norm(const fesm2 a) {
     fesm2 r = fesm2_sqr(a);
     return ifma_lnorm52(r);
 }
@@ -262,7 +262,7 @@ __IPPCP_INLINE fesm2 fesm2_sqr_norm(const fesm2 a) {
     fesm2_mul_dual(&(R1), (A1), (B1), &(R2), (A2), (B2)); \
     ifma_lnorm52_dual(&(R1), (R1), &(R2), (R2));
 
-__IPPCP_INLINE fesm2 fesm2_sqr_ntimes(const fesm2 a, int n) {
+__INLINE fesm2 fesm2_sqr_ntimes(const fesm2 a, int n) {
     fesm2 r = a;
     for (; n > 0; --n)
         sqr(r, r);

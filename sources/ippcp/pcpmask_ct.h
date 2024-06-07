@@ -81,7 +81,7 @@ static __NOINLINE BNU_CHUNK_T cpIsMsb_ct(BNU_CHUNK_T a)
 #else
 
 /* replace under mask: dst[] = replaceFlag? src[] : dst[] */
-__IPPCP_INLINE void cpMaskedReplace_ct(BNU_CHUNK_T* dst, const BNU_CHUNK_T* src, int len, BNU_CHUNK_T replaceMask)
+__INLINE void cpMaskedReplace_ct(BNU_CHUNK_T* dst, const BNU_CHUNK_T* src, int len, BNU_CHUNK_T replaceMask)
 {
    BNU_CHUNK_T dstMask = ~replaceMask;
    int n;
@@ -90,7 +90,7 @@ __IPPCP_INLINE void cpMaskedReplace_ct(BNU_CHUNK_T* dst, const BNU_CHUNK_T* src,
 }
 
 /* copy under mask: dst[] = src1[] & mask) ^ src2[] & ~mask  */
-__IPPCP_INLINE void cpMaskedCopyBNU_ct(BNU_CHUNK_T* dst, BNU_CHUNK_T mask, const BNU_CHUNK_T* src1, const BNU_CHUNK_T* src2, int len)
+__INLINE void cpMaskedCopyBNU_ct(BNU_CHUNK_T* dst, BNU_CHUNK_T mask, const BNU_CHUNK_T* src1, const BNU_CHUNK_T* src2, int len)
 {
    int i;
    for(i=0; i<len; i++)
@@ -98,7 +98,7 @@ __IPPCP_INLINE void cpMaskedCopyBNU_ct(BNU_CHUNK_T* dst, BNU_CHUNK_T mask, const
 }
 
 /* tests if MSB(a)==1 */
-__IPPCP_INLINE BNU_CHUNK_T cpIsMsb_ct(BNU_CHUNK_T a)
+__INLINE BNU_CHUNK_T cpIsMsb_ct(BNU_CHUNK_T a)
 {
    return (BNU_CHUNK_T)0 - (a >> (sizeof(a) * 8 - 1));
 }
@@ -110,43 +110,43 @@ __IPPCP_INLINE BNU_CHUNK_T cpIsMsb_ct(BNU_CHUNK_T a)
 #endif
 
 /* tests if LSB(a)==1 */
-__IPPCP_INLINE BNU_CHUNK_T cpIsLsb_ct(BNU_CHUNK_T a)
+__INLINE BNU_CHUNK_T cpIsLsb_ct(BNU_CHUNK_T a)
 {
    return (BNU_CHUNK_T)0 - (a & 1);
 }
 
 /* tests if a is odd */
-__IPPCP_INLINE BNU_CHUNK_T cpIsOdd_ct(BNU_CHUNK_T a)
+__INLINE BNU_CHUNK_T cpIsOdd_ct(BNU_CHUNK_T a)
 {
    return cpIsLsb_ct(a);
 }
 
 /* tests if a is even */
-__IPPCP_INLINE BNU_CHUNK_T cpIsEven_ct(BNU_CHUNK_T a)
+__INLINE BNU_CHUNK_T cpIsEven_ct(BNU_CHUNK_T a)
 {
    return ~cpIsLsb_ct(a);
 }
 
 /* tests if a==0 */
-__IPPCP_INLINE BNU_CHUNK_T cpIsZero_ct(BNU_CHUNK_T a)
+__INLINE BNU_CHUNK_T cpIsZero_ct(BNU_CHUNK_T a)
 {
    return cpIsMsb_ct(~a & (a - 1));
 }
 
 /* tests if a==b */
-__IPPCP_INLINE BNU_CHUNK_T cpIsEqu_ct(BNU_CHUNK_T a, BNU_CHUNK_T b)
+__INLINE BNU_CHUNK_T cpIsEqu_ct(BNU_CHUNK_T a, BNU_CHUNK_T b)
 {
    return cpIsZero_ct(a ^ b);
 }
 
 /* test if a<b */
-__IPPCP_INLINE BNU_CHUNK_T cpIsLt_ct(BNU_CHUNK_T a, BNU_CHUNK_T b)
+__INLINE BNU_CHUNK_T cpIsLt_ct(BNU_CHUNK_T a, BNU_CHUNK_T b)
 {
    return cpIsMsb_ct(a ^ ((a ^ b) | ((a - b) ^ b)));
 }
 
 /* test if GF element is equal to x chunk */
-__IPPCP_INLINE BNU_CHUNK_T cpIsGFpElemEquChunk_ct(const BNU_CHUNK_T* pE, int nsE, BNU_CHUNK_T x)
+__INLINE BNU_CHUNK_T cpIsGFpElemEquChunk_ct(const BNU_CHUNK_T* pE, int nsE, BNU_CHUNK_T x)
 {
    int i;
    BNU_CHUNK_T accum = pE[0] ^ x;
@@ -157,7 +157,7 @@ __IPPCP_INLINE BNU_CHUNK_T cpIsGFpElemEquChunk_ct(const BNU_CHUNK_T* pE, int nsE
 }
 
 /* test if memory blocks are equal */
-__IPPCP_INLINE BNU_CHUNK_T cpIsEquBlock_ct(const void* pSrc1, const void* pSrc2, int len)
+__INLINE BNU_CHUNK_T cpIsEquBlock_ct(const void* pSrc1, const void* pSrc2, int len)
 {
    const Ipp8u* p1 = (const Ipp8u*)pSrc1;
    const Ipp8u* p2 = (const Ipp8u*)pSrc2;
@@ -171,17 +171,17 @@ __IPPCP_INLINE BNU_CHUNK_T cpIsEquBlock_ct(const void* pSrc1, const void* pSrc2,
 #define GFPE_IS_ZERO_CT(a,size)  cpIsGFpElemEquChunk_ct((a),(size), 0)
 
 /* r = mask? a : b */
-__IPPCP_INLINE BNU_CHUNK_T cpSelect_ct(BNU_CHUNK_T mask, BNU_CHUNK_T a, BNU_CHUNK_T b)
+__INLINE BNU_CHUNK_T cpSelect_ct(BNU_CHUNK_T mask, BNU_CHUNK_T a, BNU_CHUNK_T b)
 {
    return (mask & a) | (~mask & b);
 }
 
-__IPPCP_INLINE int cpSelect_ct_int(BNU_CHUNK_T mask, int a, int b)
+__INLINE int cpSelect_ct_int(BNU_CHUNK_T mask, int a, int b)
 {
    return (int)cpSelect_ct(mask, (BNU_CHUNK_T)a, (BNU_CHUNK_T)b);
 }
 
-__IPPCP_INLINE Ipp8u cpSelect_ct_8u(BNU_CHUNK_T mask, Ipp8u a, Ipp8u b)
+__INLINE Ipp8u cpSelect_ct_8u(BNU_CHUNK_T mask, Ipp8u a, Ipp8u b)
 {
    return (Ipp8u)cpSelect_ct(mask, a, b);
 }

@@ -38,7 +38,7 @@ static const __ALIGN64 Ipp64u psm2_x8[PSM2_LEN52] = {
     0x000ffffffffffff8, 0x000f800000007fff, 0x000fffffffffffff, 0x000fffffffffffff, 0x0007fffffff7ffff};
 
 /* Mont(a) = a*r mod psm2, where r = 2^(6*52) mod psm2 */
-static const __ALIGN64 Ipp64u psm2_a[PSM2_LEN52] = {
+static const __ALIGN64 Ipp64u psm2_a[PSM2_LEN52] = { 
     0x000ffffffcffffff, 0x000ff03000000fcf, 0x000cffffffffffff, 0x000fffffffffffff, 0x0000fcfffffeffff};
 
 /* Mont(b) = b*r mod psm2, where r = 2^(6*52) mod psm2 */
@@ -502,7 +502,7 @@ static __NOINLINE void clear_secret_context(Ipp16u* wval,
     return;
 }
 
-__IPPCP_INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b) {
+__INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b) {
     const Ipp32s eq  = a ^ b;
     const Ipp32s v   = ~eq & (eq - 1);
     const Ipp32s msb = 0 - (v >> (sizeof(a) * 8 - 1));
@@ -649,7 +649,7 @@ IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
 #define BP_WIN_SIZE BASE_POINT_WIN_SIZE
 #define BP_N_ENTRY  BASE_POINT_N_ENTRY
 
-__IPPCP_INLINE void extract_point_affine(PSM2_AFFINE_POINT_IFMA* r,
+__INLINE void extract_point_affine(PSM2_AFFINE_POINT_IFMA* r,
                                    const SINGLE_PSM2_AFFINE_POINT_IFMA* tbl,
                                    const Ipp32s digit) {
     const Ipp32s idx = digit - 1;

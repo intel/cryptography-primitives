@@ -57,7 +57,7 @@
 // The case is important in GF(((p^2)^3)^2) arithmetic for Intel(R) EPID 2.0.
 //
 */
-__IPPCP_INLINE BNU_CHUNK_T* cpFq6Mul_vi(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx)
+__INLINE BNU_CHUNK_T* cpFq6Mul_vi(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx)
 {
    gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
    int termLen = GFP_FELEN(pGroundGFE);
@@ -250,7 +250,7 @@ static gsModMethod* gsPolyArith_binom2_epid2 (void)
 //
 // Purpose: Returns a reference to the implementation of arithmetic operations over GF(pd).
 //
-// Returns:          pointer to a structure containing
+// Returns:          pointer to a structure containing 
 //                   an implementation of arithmetic operations over GF(pd)
 //                   g(x) = x^2 - a0, a0 from GF(q), a0 = 1
 //                   g(w) = w^2 - V0, v0 from GF((q^2)^3), V0 = 0*s^2 + v + 0

@@ -157,7 +157,7 @@ static const Ipp32u RconTbl[] = {
 //    ^(tbl)[2][ EBYTE((x),2) ] \
 //    ^(tbl)[3][ EBYTE((x),3) ] )
 
-__IPPCP_INLINE Ipp32u InvMixColumn(Ipp32u x)
+__INLINE Ipp32u InvMixColumn(Ipp32u x)
 {
   Ipp32u x_mul_2 = xtime4(x);
   Ipp32u x_mul_4 = xtime4(x_mul_2);

@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     Message Authentication Algorithm
 //     Internal Definitions and Internal Functions Prototypes
-//
-//
+// 
+// 
 */
 
 #if !defined(_CP_AESAUTH_GCM_H)
@@ -54,7 +54,7 @@ typedef enum {
 } GcmState;
 
 struct _cpAES_GCM {
-
+   
    Ipp32u   idCtx;                  /* AES-GCM id                    */
    GcmState state;                  /* GCM state: Init, IV|AAD|TXT processing */
    Ipp64u   ivLen;                  /* IV length (bytes)             */
@@ -77,7 +77,7 @@ struct _cpAES_GCM {
    IppsAESSpec cipher;
 
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-   __ALIGN16
+   __ALIGN16 
    cpAESNoiseParams noiseParams;
 #endif
 
@@ -146,13 +146,13 @@ struct _cpAES_GCM {
 #define AESGCM_VALID_ID(context)     ((((context)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((context))) == (Ipp32u)idCtxAESGCM)
 
 #if 0
-__IPPCP_INLINE void IncrementCounter32(Ipp8u* pCtr)
+__INLINE void IncrementCounter32(Ipp8u* pCtr)
 {
    int i;
    for(i=BLOCK_SIZE-1; i>=CTR_POS && 0==(Ipp8u)(++pCtr[i]); i--) ;
 }
 #endif
-__IPPCP_INLINE void IncrementCounter32(Ipp8u* pCtr)
+__INLINE void IncrementCounter32(Ipp8u* pCtr)
 {
    Ipp32u* pCtr32 = (Ipp32u*)pCtr;
    Ipp32u ctrVal = pCtr32[3];

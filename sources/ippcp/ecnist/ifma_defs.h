@@ -45,7 +45,7 @@
  * \return 0xFF - if MSB = 1
  * \return 0x00 - if MSB = 0
  */
-__IPPCP_INLINE mask8 check_bit(const mask8 a, int bit)
+__INLINE mask8 check_bit(const mask8 a, int bit)
 {
    return (mask8)((mask8)0 - ((a >> bit) & 1u));
 }
@@ -59,7 +59,7 @@ __IPPCP_INLINE mask8 check_bit(const mask8 a, int bit)
  * \return 0xFF - if input value is all zeroes
  * \return 0x00 - if input value is not all zeroes
  */
-__IPPCP_INLINE mask8 is_zero_i64(const m512 a)
+__INLINE mask8 is_zero_i64(const m512 a)
 {
    const mask8 mask = cmp_i64_mask(a, setzero_i64(), _MM_CMPINT_NE);
    return check_bit((~mask & (mask - 1u)), 7);

@@ -46,7 +46,7 @@ static __ALIGN32 Ipp8u two256[] = {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 static __ALIGN16 Ipp8u one256[] = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-__IPPCP_INLINE __m128i inc128(__m128i x)
+__INLINE __m128i inc128(__m128i x)
 {
    __m128i t = _mm_add_epi64(x,  M128(one256));
    x = _mm_cmpeq_epi64(t,  _mm_setzero_si128());
@@ -54,14 +54,14 @@ __IPPCP_INLINE __m128i inc128(__m128i x)
    return t;
 }
 
-__IPPCP_INLINE __m256i inc256(__m256i x)
+__INLINE __m256i inc256(__m256i x)
 {
    __m256i t = _mm256_add_epi64(x,  M256(two256));
    x = _mm256_cmpeq_epi64(t,  _mm256_setzero_si256());
    t = _mm256_sub_epi64(t, _mm256_slli_si256(x, sizeof(Ipp64u)));
    return t;
 }
-__IPPCP_INLINE __m256i inc256_2(__m256i x)
+__INLINE __m256i inc256_2(__m256i x)
 {
    __m256i t = _mm256_add_epi64(x,  M256(one256));
    x = _mm256_cmpeq_epi64(t,  _mm256_setzero_si256());

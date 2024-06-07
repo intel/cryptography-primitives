@@ -39,7 +39,7 @@ static __ALIGN16 Ipp8u one128[] = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 static __ALIGN16 Ipp8u endianness[] = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0};
 static __ALIGN16 Ipp8u endianness_swap[] = {12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3};
 
-__IPPCP_INLINE __m128i inc128(__m128i x)
+__INLINE __m128i inc128(__m128i x)
 {
    __m128i t = _mm_add_epi64(x,  M128(one128));
    x = _mm_cmpeq_epi64(t,  _mm_setzero_si128());

@@ -55,7 +55,7 @@ __ALIGN64 static const int64u ed25519_2_pm1_4[FE_LEN52][sizeof(U64) / sizeof(int
 };
 
 /* ext => cached */
-__MBX_INLINE void ge_ext_to_cached_mb(ge52_cached_mb *r, const ge52_ext_mb* p)
+__INLINE void ge_ext_to_cached_mb(ge52_cached_mb *r, const ge52_ext_mb* p)
 {
    fe52_add(r->YaddX, p->Y, p->X);
    fe52_sub(r->YsubX, p->Y, p->X);
@@ -272,15 +272,15 @@ static void extract_precomputed_basepoint_dual(ge52_precomp_mb* p0,
 */
 
 /* if msb set */
-__MBX_INLINE int32u isMsb_ct(int32u a)
+__INLINE int32u isMsb_ct(int32u a)
 { return (int32u)0 - (a >> (sizeof(a) * 8 - 1)); }
 
 /* tests if a==0 */
-__MBX_INLINE int32u isZero(int32u a)
+__INLINE int32u isZero(int32u a)
 { return isMsb_ct(~a & (a - 1)); }
 
 /* tests if a==b */
-__MBX_INLINE int32u isEqu(int32u a, int32u b)
+__INLINE int32u isEqu(int32u a, int32u b)
 { return isZero(a ^ b); }
 
 void ifma_ed25519_mul_basepoint(ge52_ext_mb* r, const U64 scalar[])
@@ -377,7 +377,7 @@ void ifma_ed25519_mul_basepoint(ge52_ext_mb* r, const U64 scalar[])
    *sign = s & 1;
    *digit = (Ipp8u)d;
 */
-__MBX_INLINE void booth_recode(__mb_mask* sign, U64* dvalue, U64 wvalue)
+__INLINE void booth_recode(__mb_mask* sign, U64* dvalue, U64 wvalue)
 {
    U64 one = set1(1);
    U64 zero = get_zero64();

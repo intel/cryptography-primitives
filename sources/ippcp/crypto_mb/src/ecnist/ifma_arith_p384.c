@@ -332,7 +332,7 @@ void MB_FUNC_NAME(ifma_frommont52_p384_)(U64 r[], const U64 a[])
 #define fe52_mul  MB_FUNC_NAME(ifma_amm52_p384_)
 
 /* r = base^(2^n) */
-__MBX_INLINE void fe52_sqr_pwr(U64 r[], const U64 base[], int n)
+__INLINE void fe52_sqr_pwr(U64 r[], const U64 base[], int n)
 {
    if(r!=base)
       MB_FUNC_NAME(mov_FE384_)(r, base);
@@ -402,7 +402,7 @@ void MB_FUNC_NAME(ifma_aminv52_p384_)(U64 r[], const U64 z[])
  Specialized single operations over p384:  add, sub, neg
 
 =====================================================================*/
-__MBX_INLINE __mb_mask MB_FUNC_NAME(lt_mbx_digit_)(const U64 a, const U64 b, const __mb_mask lt_mask)
+__INLINE __mb_mask MB_FUNC_NAME(lt_mbx_digit_)(const U64 a, const U64 b, const __mb_mask lt_mask)
 {
    U64 d = mask_sub64(sub64(a, b), lt_mask, sub64(a, b), set1(1));
    return cmp64_mask(d, get_zero64(), _MM_CMPINT_LT);

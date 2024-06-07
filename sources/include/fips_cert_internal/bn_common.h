@@ -31,9 +31,9 @@
  * \param[in] sgn sign of big number
  * \param[in] pdata pointer to integer big number
  * \param[in] data_word_len length of integer big number in 32bit size
- *
+ * 
  */
-__IPPCP_INLINE IppStatus ippcp_init_set_bn(IppsBigNumState *pbn, int max_word_len,
+__INLINE IppStatus ippcp_init_set_bn(IppsBigNumState *pbn, int max_word_len,
                                      IppsBigNumSGN sgn, const Ipp32u *pdata, int data_word_len)
 {
   IppStatus sts;

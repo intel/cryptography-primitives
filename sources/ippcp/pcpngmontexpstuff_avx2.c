@@ -99,7 +99,7 @@ static int dig27_regular(Ipp32u* pRegular, int regLen, const Ipp64u* pRep27, int
 }
 
 /* mont_mul wrapper */
-__IPPCP_INLINE void cpMontMul_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pB, const Ipp64u* pModulus, int mLen, Ipp64u k0, Ipp64u* pBuffer)
+__INLINE void cpMontMul_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pB, const Ipp64u* pModulus, int mLen, Ipp64u k0, Ipp64u* pBuffer)
 {
    if(mLen==38)  /* corresponds to 1024-bit regular representation */
       cpMontMul1024_avx2(pR, pA, pB, pModulus, mLen, k0);
@@ -115,7 +115,7 @@ __IPPCP_INLINE void cpMontMul_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* p
 }
 
 /* mont_sqr wrapper */
-__IPPCP_INLINE void cpMontSqr_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pModulus, int mLen, Ipp64u k0, Ipp64u* pBuffer)
+__INLINE void cpMontSqr_avx2(Ipp64u* pR, const Ipp64u* pA, const Ipp64u* pModulus, int mLen, Ipp64u k0, Ipp64u* pBuffer)
 {
    if(mLen==38) /* corresponds to 1024-bit regular representation */
       cpMontSqr1024_avx2(pR, pA, pModulus, mLen, k0, pBuffer);

@@ -46,7 +46,7 @@
  * @param[in out] arr array data
  * @param[in]     len length array
  */
-__IPPCP_INLINE void cpSM2KE_reverse_inplace(Ipp8u *arr, const int len)
+__INLINE void cpSM2KE_reverse_inplace(Ipp8u *arr, const int len)
 {
 #define SWAPXOR(x, y) \
    (x) ^= (y);        \
@@ -68,7 +68,7 @@ __IPPCP_INLINE void cpSM2KE_reverse_inplace(Ipp8u *arr, const int len)
  * @param[in]  p    point copy
  * @param[in]  pEC  context Elliptic Curve
  */
-__IPPCP_INLINE void cpSM2KE_CopyPointData(IppsGFpECPoint *r, BNU_CHUNK_T *data, const IppsGFpECPoint *p, const IppsGFpECState *pEC)
+__INLINE void cpSM2KE_CopyPointData(IppsGFpECPoint *r, BNU_CHUNK_T *data, const IppsGFpECPoint *p, const IppsGFpECState *pEC)
 {
    ECP_POINT_SET_ID(r);
    cpEcGFpInitPoint(r, data, ECP_POINT_FLAGS(p), pEC);
@@ -86,7 +86,7 @@ __IPPCP_INLINE void cpSM2KE_CopyPointData(IppsGFpECPoint *r, BNU_CHUNK_T *data, 
  * @param[in]  a   value x
  * @param[in]  pEC context Elliptic Curve
  */
-__IPPCP_INLINE void cpSM2KE_reduction_x2w(BNU_CHUNK_T *r, const BNU_CHUNK_T *a, const IppsGFpECState *pEC)
+__INLINE void cpSM2KE_reduction_x2w(BNU_CHUNK_T *r, const BNU_CHUNK_T *a, const IppsGFpECState *pEC)
 {
    const gsModEngine *pME = GFP_PMA(ECP_GFP(pEC));
 
@@ -107,7 +107,7 @@ __IPPCP_INLINE void cpSM2KE_reduction_x2w(BNU_CHUNK_T *r, const BNU_CHUNK_T *a, 
 }
 
 /* clang-format off */
-__IPPCP_INLINE void cpSM2KE_get_affine_ext_euclid(BNU_CHUNK_T *x, BNU_CHUNK_T *y,
+__INLINE void cpSM2KE_get_affine_ext_euclid(BNU_CHUNK_T *x, BNU_CHUNK_T *y,
                                             const IppsGFpECPoint *p,
                                             IppsGFpECState *pEC)
 /* clang-format on */
@@ -120,7 +120,7 @@ __IPPCP_INLINE void cpSM2KE_get_affine_ext_euclid(BNU_CHUNK_T *x, BNU_CHUNK_T *y
    return;
 }
 
-__IPPCP_INLINE void cpSM2KE_xy_to_BE(BNU_CHUNK_T *x, BNU_CHUNK_T *y, const IppsGFpECState *pEC)
+__INLINE void cpSM2KE_xy_to_BE(BNU_CHUNK_T *x, BNU_CHUNK_T *y, const IppsGFpECState *pEC)
 {
    const gsModEngine *pME = GFP_PMA(ECP_GFP(pEC));
 
@@ -139,7 +139,7 @@ __IPPCP_INLINE void cpSM2KE_xy_to_BE(BNU_CHUNK_T *x, BNU_CHUNK_T *y, const IppsG
  * @param[in]  a        hashing an array data
  * @param[in]  numBytes number of bytes
  */
-__IPPCP_INLINE void cpSM2KE_compute_hash_SM3(Ipp8u *r, const Ipp8u *a, const int numBytes)
+__INLINE void cpSM2KE_compute_hash_SM3(Ipp8u *r, const Ipp8u *a, const int numBytes)
 {
    static IppsHashState_rmf ctx;
 

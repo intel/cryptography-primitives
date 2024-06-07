@@ -41,11 +41,11 @@
 
 
 /* number of "diSize" chunks in "bitSize" bit string */
-__IPPCP_INLINE int cpDigitNum_avx2(int bitSize, int digSize)
+__INLINE int cpDigitNum_avx2(int bitSize, int digSize)
 { return (bitSize + digSize-1)/digSize; }
 
 /* number of "EXP_DIGIT_SIZE_AVX2" chunks in "bitSize" bit string matched for AMM */
-__IPPCP_INLINE cpSize numofVariable_avx2(int modulusBits)
+__INLINE cpSize numofVariable_avx2(int modulusBits)
 {
    cpSize ammBitSize = 2 + cpDigitNum_avx2(modulusBits, BITSIZE(BNU_CHUNK_T)) * BITSIZE(BNU_CHUNK_T);
    cpSize redNum = cpDigitNum_avx2(ammBitSize, EXP_DIGIT_SIZE_AVX2);
@@ -53,7 +53,7 @@ __IPPCP_INLINE cpSize numofVariable_avx2(int modulusBits)
 }
 
 /* buffer corresponding to numofVariable_avx2() */
-__IPPCP_INLINE cpSize numofVariableBuff_avx2(int numV)
+__INLINE cpSize numofVariableBuff_avx2(int numV)
 {
    return numV +4;
 }

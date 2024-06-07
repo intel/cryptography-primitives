@@ -238,7 +238,7 @@ static void ifma_ams52_n521(fe521 pr[], const fe521 a)
 #define sqr(R, A) ifma_ams52_n521(&(R), (A))
 
 /* r = base^(2^n) */
-__IPPCP_INLINE IPP_OWN_DEFN(void, ifma_ams52_p521_ntimes, (fe521 pr[], const fe521 a, int n))
+__INLINE IPP_OWN_DEFN(void, ifma_ams52_p521_ntimes, (fe521 pr[], const fe521 a, int n))
 {
    fe521 r;
    FE521_COPY(r, a);

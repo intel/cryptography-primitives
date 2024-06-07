@@ -21,14 +21,14 @@
 
 /* crypto_mb name & version */
 #define MBX_LIB_NAME()    "crypto_mb"
-#define MBX_VER_MAJOR  2
+#define MBX_VER_MAJOR  1
 #define MBX_VER_MINOR  0
-#define MBX_VER_REV    0
+#define MBX_VER_REV    14
 
 /* major interface version */
-#define MBX_INTERFACE_VERSION_MAJOR 12
+#define MBX_INTERFACE_VERSION_MAJOR 11
 /* minor interface version */
-#define MBX_INTERFACE_VERSION_MINOR 0
+#define MBX_INTERFACE_VERSION_MINOR 15
 
 typedef struct {
    int    major;          /* e.g. 1               */

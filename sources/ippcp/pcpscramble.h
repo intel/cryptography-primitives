@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     Fixed window exponentiation scramble/unscramble
-//
+// 
 //  Contents:
 //     cpScramblePut()
 //     cpScrambleGet()
-//
-//
+// 
+// 
 */
 
 #if !defined(_PC_SCRAMBLE_H)
@@ -35,7 +35,7 @@
 // stores to/retrieves from pScrambleEntry position
 // pre-computed data if fixed window method is used
 */
-__IPPCP_INLINE void cpScramblePut(Ipp8u* pArray, cpSize colummSize,
+__INLINE void cpScramblePut(Ipp8u* pArray, cpSize colummSize,
                       const Ipp32u* pData, cpSize dataSize)
 {
    int i;
@@ -107,7 +107,7 @@ __IPPCP_INLINE void cpScramblePut(Ipp8u* pArray, cpSize colummSize,
   ((x) = (Ipp64u)(dw0), \
    (x)|= (((Ipp64u)(dw1))<<32))
 
-__IPPCP_INLINE void cpScrambleGet(Ipp32u* pData, cpSize dataSize,
+__INLINE void cpScrambleGet(Ipp32u* pData, cpSize dataSize,
                       const Ipp8u* pArray, cpSize colummSize)
 {
    int i;

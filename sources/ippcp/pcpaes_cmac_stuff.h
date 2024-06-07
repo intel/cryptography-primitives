@@ -15,11 +15,11 @@
 *************************************************************************/
 
 /*
-//
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-CMAC Functions
-//
+// 
 //  Contents:
 //        init()
 //
@@ -34,7 +34,7 @@
 #if !defined(_PCP_AES_CMAC_STUFF_H_)
 #define _PCP_AES_CMAC_STUFF_H_
 
-__IPPCP_INLINE int cpSizeofCtx_AESCMAC(void)
+__INLINE int cpSizeofCtx_AESCMAC(void)
 {
    return sizeof(IppsAES_CMACState);
 }
