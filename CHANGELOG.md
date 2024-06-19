@@ -2,6 +2,9 @@
 
 This is a list of notable changes to Intel(R) IPP Cryptography, in reverse chronological order.
 
+## Intel(R) IPP Cryptography 2021.12.1
+- Added `FIPS_CUSTOM_IPPCP_API_HEADER` build flag to support FIPS self-tests for a specific use case when Custom Library Tool is used with custom prefix for IPPCP API.
+
 ## Intel(R) IPP Cryptography 2021.12
 - Added single-buffer implementation of Leighton-Micali Hash-Based Signatures(LMS) algorithm, verification part.
 - Added support of Clang 16.0 compiler for Linux.

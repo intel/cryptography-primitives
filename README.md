@@ -75,4 +75,8 @@ Intel IPP Cryptography is licensed under Apache License, Version 2.0. By contrib
 
 ## Certification
 
-Intel IPP Cryptography library is not certified for FIPS-140-2 (Security Requirements for Cryptographic Modules) and CMVP (Cryptographic Module Validation Program).
+Intel IPP Cryptography 2021.10 release is validated for FIPS-140-3 (Security Requirements for Cryptographic Modules) compliance and has the following CAVP (Cryptographic Algorithm Validation Program) certificates:
+
+- [Intel® Crypto Multi-buffer Library](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=17987)
+- [Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) optimized for Intel® AVX2 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=17988)
+- [Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) optimized for Intel® AVX512 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=17989)

@@ -1272,7 +1272,7 @@
 %define %%ZT7                   %21 ; [clobbered] ZMM temporary
 %define %%ZT8                   %22 ; [clobbered] ZMM temporary
 %define %%GH                    %23 ; [in] ZMM with hi product part
-%define %%GM                    %24 ; [in] ZMM with mid prodcut part
+%define %%GM                    %24 ; [in] ZMM with mid product part
 %define %%GL                    %25 ; [in] ZMM with lo product part
 
 

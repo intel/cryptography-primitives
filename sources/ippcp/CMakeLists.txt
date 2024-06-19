@@ -273,7 +273,18 @@ if(IPPCP_FIPS_MODE)
    )
   list(APPEND IPPCP_PUBLIC_HEADERS "${IPPCP_FIPS_CERT_PUBLIC_HEADERS}")
   list(APPEND LIBRARY_HEADERS "${IPPCP_FIPS_CERT_INTERNAL_HEADERS}")
-  list(APPEND LIBRARY_C_SOURCES_ORIGINAL "${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES}")
+
+  set_source_files_properties(${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES} PROPERTIES INCLUDE_DIRECTORIES "${C_INCLUDE_DIRECTORIES}")
+
+  # Add FIPS custom API header
+  if(FIPS_CUSTOM_IPPCP_API_HEADER)
+    message (STATUS "Using FIPS_CUSTOM_IPPCP_API_HEADER ......................... " ${FIPS_CUSTOM_IPPCP_API_HEADER})
+    if(WIN32)
+      set_source_files_properties(${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES} PROPERTIES COMPILE_FLAGS "/FI${FIPS_CUSTOM_IPPCP_API_HEADER}")
+    else()
+      set_source_files_properties(${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES} PROPERTIES COMPILE_FLAGS "-imacros ${FIPS_CUSTOM_IPPCP_API_HEADER}")
+    endif()
+  endif()
 endif()
 
 # Because of CMake bug (https://gitlab.kitware.com/cmake/cmake/issues/19178) it is impossible to add
@@ -370,6 +381,7 @@ foreach(opt ${PLATFORM_LIST})
                                            pcpver.rc
                                            ${LIBRARY_HEADERS}
                                            ${LIBRARY_C_SOURCES_${opt}}
+                                           ${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES}
                                            $<TARGET_OBJECTS:${IPPCP_DYN_ITER_ASMOBJS}>)
 
       set_target_properties(${IPPCP_DYN_ITER} PROPERTIES LINK_FLAGS ${LINK_FLAG_DYNAMIC_WINDOWS})
@@ -383,6 +395,7 @@ foreach(opt ${PLATFORM_LIST})
       add_library(${IPPCP_DYN_ITER_ASMOBJS} OBJECT ${LIBRARY_ASM_SOURCES_${opt}})
       add_library(${IPPCP_DYN_ITER} SHARED ${LIBRARY_HEADERS}
                                            ${LIBRARY_C_SOURCES_${opt}}
+                                           ${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES}
                                            $<TARGET_OBJECTS:${IPPCP_DYN_ITER_ASMOBJS}>)
       if(APPLE)
         ## gres: copy LINK_FLAG_DYNAMIC_LINUX
@@ -433,7 +446,7 @@ foreach(opt ${PLATFORM_LIST})
   set(IPPCP_ST_ITER ${TARGET_NAME}_s_${opt})
   set(IPPCP_ST_ITER_ASMOBJS ${TARGET_NAME}_s_${opt}-asmobjs)
   if(MERGED_BLD)
-    add_library(${IPPCP_ST_ITER} OBJECT ${LIBRARY_HEADERS} ${LIBRARY_C_SOURCES_${opt}})
+    add_library(${IPPCP_ST_ITER} OBJECT ${LIBRARY_HEADERS} ${LIBRARY_C_SOURCES_${opt}} ${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES})
     add_library(${IPPCP_ST_ITER_ASMOBJS} OBJECT ${LIBRARY_ASM_SOURCES_${opt}})
     set(merged_dependency ${merged_dependency} $<TARGET_OBJECTS:${IPPCP_ST_ITER}>
                                                $<TARGET_OBJECTS:${IPPCP_ST_ITER_ASMOBJS}>)
@@ -441,6 +454,7 @@ foreach(opt ${PLATFORM_LIST})
     add_library(${IPPCP_ST_ITER_ASMOBJS} OBJECT ${LIBRARY_ASM_SOURCES_${opt}})
     add_library(${IPPCP_ST_ITER} STATIC ${LIBRARY_HEADERS}
                                         ${LIBRARY_C_SOURCES_${opt}}
+                                        ${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES}
                                         $<TARGET_OBJECTS:${IPPCP_ST_ITER_ASMOBJS}>)
   endif()
 

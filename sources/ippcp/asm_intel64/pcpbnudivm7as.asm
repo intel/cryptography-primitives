@@ -158,7 +158,7 @@
 
 
 ;;
-;; Multuply BNU by 32-bit digit and Subtract
+;; Multiply BNU by 32-bit digit and Subtract
 ;;
 ;; input
 ;;    rSrc     points source BNU

@@ -162,7 +162,7 @@ IPP_OWN_DEFN(IppStatus, KDF_sm3, (Ipp8u * pKDF, int kdf_len, const Ipp8u *pZ, co
          }
          cpSM2_CopyBlock(pKDF, buff, num_copy);
 
-         /* update copy next reult */
+         /* update copy next result */
          pKDF += num_copy;
          kdf_len -= num_copy;
       }
