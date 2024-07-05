@@ -23,11 +23,12 @@ typedef int32u mbx_status;
 typedef int64u mbx_status16;
 
 // error statuses and manipulators
-#define MBX_STATUS_OK                 (0)
-#define MBX_STATUS_MISMATCH_PARAM_ERR (1)
-#define MBX_STATUS_NULL_PARAM_ERR     (2)
-#define MBX_STATUS_LOW_ORDER_ERR      (4)
-#define MBX_STATUS_SIGNATURE_ERR      (8)
+#define MBX_STATUS_OK                   (0)
+#define MBX_STATUS_MISMATCH_PARAM_ERR   (1)
+#define MBX_STATUS_NULL_PARAM_ERR       (2)
+#define MBX_STATUS_LOW_ORDER_ERR        (4)
+#define MBX_STATUS_SIGNATURE_ERR        (8)
+#define MBX_STATUS_UNSUPPORTED_ISA_ERR  (10)
 
 __MBX_INLINE mbx_status MBX_SET_STS(mbx_status status, int numb, mbx_status sttVal)
 {

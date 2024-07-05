@@ -18,7 +18,12 @@
 //   Macros and definitions that is necessary for SHA512 computation
 */
 
+#ifndef SHA_512_H
+#define SHA_512_H
+
 #include <internal/common/ifma_defs.h>
+
+#if (_MBX>=_MBX_K1)
 
 /* define 64-bit constant */
 #if !defined(__GNUC__)
@@ -168,3 +173,6 @@ void SHA512Init(SHA512State* pState);
 void SHA512Update(const int8u* pSrc, int len, SHA512State* pState);
 void SHA512Final(int8u* pMD, SHA512State* pState);
 
+#endif /* #if (_MBX>=_MBX_K1) */
+
+#endif /* SHA_512_H */

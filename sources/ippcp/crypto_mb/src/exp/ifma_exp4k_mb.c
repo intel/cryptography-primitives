@@ -18,6 +18,7 @@
 #include <internal/rsa/ifma_rsa_arith.h>
 #include <internal/exp/ifma_exp_method.h>
 
+#if (_MBX>=_MBX_K1)
 
 #define USE_AMS
 #ifdef USE_AMS
@@ -396,3 +397,5 @@ void ifma_modexp4096_mb(int64u out[][8],
 
    zero_mb8(red_Y, LEN52);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

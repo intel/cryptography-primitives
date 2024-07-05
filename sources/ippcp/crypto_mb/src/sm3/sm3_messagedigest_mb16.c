@@ -21,11 +21,10 @@
 #include <internal/common/ifma_defs.h>
 
 DLL_PUBLIC
-mbx_status16 mbx_sm3_msg_digest_mb16(const int8u* const msg_pa[16],
+mbx_status16 OWNAPI(mbx_sm3_msg_digest_mb16)(const int8u* const msg_pa[16],
                                               int len[16],
                                            int8u* hash_pa[16])
 {
-    int buf_no;
     mbx_status16 status = 0;
 
     /* test input pointers */
@@ -34,24 +33,10 @@ mbx_status16 mbx_sm3_msg_digest_mb16(const int8u* const msg_pa[16],
         return status;
     }
 
-    for (buf_no = 0; buf_no < SM3_NUM_BUFFERS; buf_no++) {
-        if ((len[buf_no] && !hash_pa[buf_no]) || (len[buf_no] && !msg_pa[buf_no])) {
-            status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            return status;
-        }    
-    }
-
-    /* initialize the context of SM3 hash */
-    SM3_CTX_mb16  p_state;
-    mbx_sm3_init_mb16(&p_state);
-
-    /* process main part of the message */
-    status = mbx_sm3_update_mb16(msg_pa, len, &p_state);
-
-    if(MBX_IS_ANY_OK_STS16(status)) {
-        /* finalize message processing */
-        status = mbx_sm3_final_mb16(hash_pa, &p_state);
-    }
-    
+#if (_MBX>=_MBX_K1)
+    status |= internal_avx512_sm3_msg_digest_mb16(msg_pa, len, hash_pa);
+#else
+    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
     return status;
 }

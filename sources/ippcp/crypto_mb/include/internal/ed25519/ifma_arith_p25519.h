@@ -20,6 +20,8 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_math.h>
 
+#if (_MBX>=_MBX_K1)
+
 /*
 // prime25519 = 2^255-19
 // in the radix 2^52
@@ -150,5 +152,7 @@ void fe52mb8_red_p25519(fe52_mb r, const fe52_mb a);
 #define fe52_p2n  fe52_mb_sqr_mod25519_times
 #define fe52_p2_252m3 fe52_pow_2_252m3_mod25519
 #define fe52_red  fe52mb8_red_p25519
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* IFMA_ARITH_P25519_H */

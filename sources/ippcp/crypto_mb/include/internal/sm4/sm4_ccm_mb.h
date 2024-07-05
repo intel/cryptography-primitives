@@ -27,6 +27,8 @@
 // Internal functions
 */
 
+#if (_MBX>=_MBX_K1)
+
 /*
  * Set IV for 16 buffers in SM4-CCM context
  *
@@ -64,24 +66,32 @@ EXTERN_C void sm4_ccm_set_tag_len_mb16(const int tag_len[SM4_LINES],
                                        __mmask16 mb_mask,
                                        SM4_CCM_CTX_mb16 *p_context);
 
-EXTERN_C void sm4_ccm_update_aad_mb16(const int8u *const pa_aad[SM4_LINES],
+EXTERN_C mbx_status16 sm4_ccm_update_aad_mb16(const int8u *const pa_aad[SM4_LINES],
                                       const int aad_len[SM4_LINES],
                                       __mmask16 mb_mask,
                                       SM4_CCM_CTX_mb16 *p_context);
 
-EXTERN_C void sm4_ccm_encrypt_mb16(int8u *pa_out[SM4_LINES],
+EXTERN_C mbx_status16 sm4_ccm_encrypt_mb16(int8u *pa_out[SM4_LINES],
                                    const int8u *const pa_in[SM4_LINES],
                                    const int in_len[SM4_LINES],
                                    __mmask16 mb_mask,
                                    SM4_CCM_CTX_mb16 *p_context);
 
-EXTERN_C void sm4_ccm_decrypt_mb16(int8u *pa_out[SM4_LINES],
+EXTERN_C mbx_status16 sm4_ccm_decrypt_mb16(int8u *pa_out[SM4_LINES],
                                    const int8u *const pa_in[SM4_LINES],
                                    const int in_len[SM4_LINES],
                                    __mmask16 mb_mask,
                                    SM4_CCM_CTX_mb16 *p_context);
 
-EXTERN_C void sm4_ccm_get_tag_mb16(int8u *pa_out[SM4_LINES], const int tag_len[SM4_LINES], __mmask16 mb_mask, SM4_CCM_CTX_mb16 *p_context);
+EXTERN_C mbx_status16 sm4_ccm_get_tag_mb16(int8u *pa_out[SM4_LINES], const int tag_len[SM4_LINES], __mmask16 mb_mask, SM4_CCM_CTX_mb16 *p_context);
+
+mbx_status16 internal_avx512_sm4_ccm_init_mb16(const sm4_key *const pa_key[SM4_LINES],
+                                               const int8u *const pa_iv[SM4_LINES],
+                                               const int iv_len[SM4_LINES],
+                                               const int tag_len[SM4_LINES],
+                                               const int64u msg_len[SM4_LINES],
+                                               SM4_CCM_CTX_mb16 *p_context, __mmask16 mb_mask);
+#endif /* #if (_MBX>=_MBX_K1) */
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

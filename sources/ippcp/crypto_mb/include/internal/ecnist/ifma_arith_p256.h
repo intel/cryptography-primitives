@@ -20,6 +20,8 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_math.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* underlying prime's size */
 #define P256_BITSIZE (256)
 
@@ -169,5 +171,7 @@ EXTERN_C void MB_FUNC_NAME(ifma_neg52_n256_)(U64 r[], const U64 a[]);
 EXTERN_C void MB_FUNC_NAME(ifma_fastred52_pn256_)(U64 r[], const U64 a[]);
 EXTERN_C __mb_mask MB_FUNC_NAME(ifma_cmp_lt_n256_)(const U64 a[]);
 EXTERN_C __mb_mask MB_FUNC_NAME(ifma_check_range_n256_)(const U64 a[]);
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif  /* IFMA_ARITH_P256_H */

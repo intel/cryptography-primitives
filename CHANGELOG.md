@@ -2,6 +2,11 @@
 
 This is a list of notable changes to Intel(R) IPP Cryptography, in reverse chronological order.
 
+## Intel(R) IPP Cryptography 2025.0
+- IPPCP SM3 hash algorithm optimization with the new instruction set (SM3-NI) for Lunar Lake and Arrow Lake CPUs.
+- Added example for SM3 Hash.
+- Added example of LMS post-quantum verification usage.
+
 ## Intel(R) IPP Cryptography 2021.12.1
 - Added `FIPS_CUSTOM_IPPCP_API_HEADER` build flag to support FIPS self-tests for a specific use case when Custom Library Tool is used with custom prefix for IPPCP API.
 

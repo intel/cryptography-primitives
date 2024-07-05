@@ -57,7 +57,7 @@ and what should be done by a more high-level application.
 | 4 |Run integrity selftest at power on for SW component | **User's application effort required** |
 | 5 | Run known-answer or comparison or fault-detection selftest for individual crypto algorithms before first use | Intel(R) IPP Cryptography provides [fips_selftest_ippcp<algorithm name> API](#covered-algorithms) to run selftests. User's application should call them before the first use of algorithm (see [Example](#example-of-api-usage)) |
 | 6 | Run pairwise consistency selftest for newly generated RSA/ECC keypair | Intel(R) IPP Cryptography provides [fips_selftest_ippcp<algorithm name> API](#covered-algorithms) to run selftests |
-| 7 | Module to guarantee uniqueness of GSM key + IV | **User's application effort required** |
+| 7 | Module to guarantee uniqueness of GCM key + IV | **User's application effort required** |
 | 8 | Module to guarantee XTS key1 != key2 | Intel(R) IPP Cryptography-side check |
 | 9 | (non-production) Extract raw noise source output samples of RBG for quality analysis | DBRNG is currently out of the cryptography boundary |
 | 10| (non-production) Run crypto algorithm testing with NIST-generated vectors | Done offline by Intel(R) IPP Cryptography for the [covered algorithms](#covered-algorithms) |

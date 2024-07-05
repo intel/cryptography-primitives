@@ -51,21 +51,39 @@
 #define   mbcpCPUID_MPX             0x10000000LL   /* Intel® Memory Protection Extensions (Intel® MPX)                                              */
 #define   mbcpCPUID_AVX512_4FMADDPS 0x20000000LL   /* Intel® Advanced Vector Extensions 512 (Intel® AVX-512) DL floating-point single precision     */
 #define   mbcpCPUID_AVX512_4VNNIW   0x40000000LL   /* Intel® Advanced Vector Extensions 512 (Intel® AVX-512) DL enhanced word variable precision    */
-#define   mbcpCPUID_KNC             0x80000000LL   /* Intel® Xeon Phi(TM) coprocessor                                                              */
+#define   mbcpCPUID_KNC             0x80000000LL   /* Intel® Xeon Phi(TM) coprocessor                                                               */
 #define   mbcpCPUID_AVX512IFMA     0x100000000LL   /* Intel® Advanced Vector Extensions 512 (Intel® AVX-512) IFMA (PMADD52) instruction set         */
 #define   mbcpAVX512_ENABLEDBYOS   0x200000000LL   /* Intel® Advanced Vector Extensions 512 (Intel® AVX-512) is supported by OS                     */
 #define   mbcpCPUID_AVX512GFNI     0x400000000LL   /* GFNI                                                                                          */
 #define   mbcpCPUID_AVX512VAES     0x800000000LL   /* VAES                                                                                          */
 #define   mbcpCPUID_AVX512VCLMUL  0x1000000000LL   /* VCLMUL                                                                                        */
 #define   mbcpCPUID_AVX512VBMI2   0x2000000000LL   /* Intel® Advanced Vector Extensions 512 (Intel® AVX-512) Bit Manipulation instructions 2        */
-#define   mbcpCPUID_BMI1          0x4000000000LL   /* BMI1 */
-#define   mbcpCPUID_BMI2          0x8000000000LL   /* BMI2 */
+#define   mbcpCPUID_BMI1          0x4000000000LL   /* BMI1                                                                                          */
+#define   mbcpCPUID_BMI2          0x8000000000LL   /* BMI2                                                                                          */
+#define   mbcpCPUID_AVXIFMA      0x10000000000LL
+
+/* general sets of the cpu features */
+#define MBX_AVX512_GENERAL_ISA ( \
+                           mbcpCPUID_BMI2 \
+                         | mbcpCPUID_AVX512F \
+                         | mbcpCPUID_AVX512DQ \
+                         | mbcpCPUID_AVX512BW \
+                         | mbcpCPUID_AVX512IFMA \
+                         | mbcpCPUID_AVX512VBMI2 \
+                         | mbcpAVX512_ENABLEDBYOS)
+
+#define MBX_AVX2_GENERAL_ISA ( \
+                           mbcpCPUID_MOVBE \
+                         | mbcpCPUID_AVX2 \
+                         | mbcpCPUID_RDSEED \
+                         | mbcpAVX_ENABLEDBYOS)
 
 /* map cpu features */
-EXTERN_C int64u mbx_get_cpu_features(void);
+MBXAPI(int64u, mbx_get_cpu_features,(void))
+MBXAPI(void, mbx_set_cpu_features,(int64u features))
 
 /* check if crypto_mb is applicable */
-EXTERN_C int mbx_is_crypto_mb_applicable(int64u cpu_features);
+MBXAPI(int, mbx_is_crypto_mb_applicable,(int64u cpu_features))
 
 /* supported algorithm */
 enum MBX_ALGO {
@@ -107,6 +125,6 @@ typedef int64u MBX_ALGO_INFO;
 /* check if algorithm is supported on current platform
  * returns: multi-buffer width mask or 0 if algorithm not supported
 */
-EXTERN_C MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo);
+MBXAPI(MBX_ALGO_INFO, mbx_get_algo_info,(enum MBX_ALGO algo))
 
 #endif /* CPU_FEATURES_H */

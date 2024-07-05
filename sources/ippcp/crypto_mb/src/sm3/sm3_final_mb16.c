@@ -21,10 +21,9 @@
 #include <internal/common/ifma_defs.h>
 
 DLL_PUBLIC
-mbx_status16 mbx_sm3_final_mb16(int8u* hash_pa[16], 
+mbx_status16 OWNAPI(mbx_sm3_final_mb16)(int8u* hash_pa[16], 
                          SM3_CTX_mb16* p_state)
 {
-    int i;
     mbx_status16 status = 0;
 
     /* test input pointers */
@@ -33,82 +32,10 @@ mbx_status16 mbx_sm3_final_mb16(int8u* hash_pa[16],
         return status;
     }
 
-    __ALIGN64 int input_len[SM3_NUM_BUFFERS];
-    __ALIGN64 int buffer_len[SM3_NUM_BUFFERS];
-    __ALIGN64 int64u sum_msg_len[SM3_NUM_BUFFERS];
-
-    /* allocate local buffer */
-    __ALIGN64 int8u loc_buffer[SM3_NUM_BUFFERS][SM3_MSG_BLOCK_SIZE*2];
-    const int8u* buffer_pa[SM3_NUM_BUFFERS] = { loc_buffer[0],  loc_buffer[1],  loc_buffer[2],  loc_buffer[3], 
-                                                loc_buffer[4],  loc_buffer[5],  loc_buffer[6],  loc_buffer[7],
-                                                loc_buffer[8],  loc_buffer[9],  loc_buffer[10], loc_buffer[11],
-                                                loc_buffer[12], loc_buffer[13], loc_buffer[14], loc_buffer[15] };
-
-    __m512i zero_buffer = _mm512_setzero_si512();
-
-    /* 
-    // create  __mmask8 and __mmask16 based on input hash_pa 
-    // corresponding element in mask = 0 if hash_pa[i] = 0 
-    */
-    __mmask8 mb_mask8[2];
-    mb_mask8[0] = _mm512_cmp_epi64_mask(_mm512_loadu_si512(hash_pa), zero_buffer, _MM_CMPINT_NE);
-    mb_mask8[1] = _mm512_cmp_epi64_mask(_mm512_loadu_si512(hash_pa + 8), zero_buffer, _MM_CMPINT_NE);
-    __mmask16 mb_mask16 = *(__mmask16*)mb_mask8;
-
-    M512(sum_msg_len) = _mm512_maskz_loadu_epi64(mb_mask8[0], MSG_LEN(p_state));
-    M512(sum_msg_len + 8) = _mm512_maskz_loadu_epi64(mb_mask8[1], MSG_LEN(p_state) + 8);
-    
-    /* put processed message length in bits */
-    M512(sum_msg_len) = _mm512_rol_epi64(M512(sum_msg_len), 3);
-    M512(sum_msg_len + 8) = _mm512_rol_epi64(M512(sum_msg_len+8), 3);
-    M512(sum_msg_len) = _mm512_shuffle_epi8(M512(sum_msg_len), M512(swapBytes));
-    M512(sum_msg_len +8) = _mm512_shuffle_epi8(M512(sum_msg_len +8), M512(swapBytes));
-
-    M512(input_len) = _mm512_maskz_loadu_epi32(mb_mask16, HASH_BUFFIDX(p_state));
-
-    __mmask16 tmp_mask = _mm512_cmplt_epi32_mask(M512(input_len), _mm512_set1_epi32(SM3_MSG_BLOCK_SIZE - (int)SM3_MSG_LEN_REPR));
-    M512(buffer_len) = _mm512_mask_set1_epi32(_mm512_set1_epi32(SM3_MSG_BLOCK_SIZE * 2), tmp_mask, SM3_MSG_BLOCK_SIZE);
-    M512(buffer_len) = _mm512_mask_set1_epi32(M512(buffer_len), ~mb_mask16, 0);
-    M512(buffer_len) = _mm512_mask_set1_epi32(M512(buffer_len), ~mb_mask16, 0);
-   
-    for (i = 0; i < SM3_NUM_BUFFERS; i++) {
-        /* Copy rest of message into internal buffer */
-        if ((mb_mask16 >> i) & 0x1) {
-            __mmask64 mb_mask64 = ~(0xFFFFFFFFFFFFFFFF << input_len[i]);
-            M512(loc_buffer[i]) = _mm512_maskz_loadu_epi8(mb_mask64, HASH_BUFF(p_state)[i]);
-
-            /* Pad message */
-            loc_buffer[i][input_len[i]++] = 0x80;
-            pad_block(0, loc_buffer[i] + input_len[i], (int)(buffer_len[i] - input_len[i] - (int)SM3_MSG_LEN_REPR));
-            ((int64u*)(loc_buffer[i] + buffer_len[i]))[-1] = sum_msg_len[i];
-        }   
-    }
-
-    /* Copmplete hash computation */
-    sm3_avx512_mb16(HASH_VALUE(p_state), buffer_pa, buffer_len);
-    
-    /* Convert hash into big endian */
-    __m512i T[8];
-    const int32u* p_T[8] = { (int32u*)&T[0], (int32u*)&T[1], (int32u*)&T[2], (int32u*)&T[3], (int32u*)&T[4], (int32u*)&T[5], (int32u*)&T[6], (int32u*)&T[7] };
-
-    T[0]  = SIMD_ENDIANNESS32(_mm512_loadu_si512(HASH_VALUE(p_state)[0]));
-    T[1]  = SIMD_ENDIANNESS32(_mm512_loadu_si512(HASH_VALUE(p_state)[1]));
-    T[2]  = SIMD_ENDIANNESS32(_mm512_loadu_si512(HASH_VALUE(p_state)[2]));
-    T[3]  = SIMD_ENDIANNESS32(_mm512_loadu_si512(HASH_VALUE(p_state)[3]));
-    T[4]  = SIMD_ENDIANNESS32(_mm512_loadu_si512(HASH_VALUE(p_state)[4]));
-    T[5]  = SIMD_ENDIANNESS32(_mm512_loadu_si512(HASH_VALUE(p_state)[5]));
-    T[6]  = SIMD_ENDIANNESS32(_mm512_loadu_si512(HASH_VALUE(p_state)[6]));
-    T[7]  = SIMD_ENDIANNESS32(_mm512_loadu_si512(HASH_VALUE(p_state)[7]));
-
-    /* Transpose hash and store in array with pointers to hash values */
-    TRANSPOSE_8X16_I32((int32u**)hash_pa, p_T, mb_mask16);
-
-    /* re-init hash value using mb masks */
-    _mm512_storeu_si512(MSG_LEN(p_state), _mm512_mask_set1_epi64(_mm512_loadu_si512(MSG_LEN(p_state)), mb_mask8[0], 0));
-    _mm512_storeu_si512(MSG_LEN(p_state)+8, _mm512_mask_set1_epi64(_mm512_loadu_si512(MSG_LEN(p_state)+8), mb_mask8[1], 0));
-    _mm512_storeu_si512(HASH_BUFFIDX(p_state), _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_BUFFIDX(p_state)), mb_mask16, 0));
-
-    sm3_mask_init_mb16(p_state, mb_mask16);
-    
+#if (_MBX>=_MBX_K1)
+    status |= internal_avx512_sm3_final_mb16(hash_pa, p_state);
+#else
+    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
     return status;
 }

@@ -19,7 +19,6 @@
 
 #include <crypto_mb/defs.h>
 
-
 /* exponentiations */
 typedef void(*EXP52x_65537_mb8)(int64u out[][8],
    const int64u base[][8],

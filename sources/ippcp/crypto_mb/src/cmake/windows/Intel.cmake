@@ -87,4 +87,5 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /D_DEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
 
 # Optimisation dependent flags
-set(AVX512_CFLAGS "-QxCORE-AVX512 -Qopt-zmm-usage:high")
+set(l9_opt "-QxCORE-AVX2")
+set(k1_opt "-QxCORE-AVX512 -Qopt-zmm-usage:high")

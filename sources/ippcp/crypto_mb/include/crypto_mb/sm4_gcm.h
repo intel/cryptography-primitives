@@ -90,23 +90,23 @@ struct _sm4_gcm_context_mb16 {
 
 typedef struct _sm4_gcm_context_mb16 SM4_GCM_CTX_mb16;
 
-EXTERN_C mbx_status16 mbx_sm4_gcm_init_mb16(const sm4_key *const pa_key[SM4_LINES],
+MBXAPI(mbx_status16, mbx_sm4_gcm_init_mb16,(const sm4_key *const pa_key[SM4_LINES],
                                             const int8u *const pa_iv[SM4_LINES],
                                             const int iv_len[SM4_LINES],
-                                            SM4_GCM_CTX_mb16 *p_context);
+                                            SM4_GCM_CTX_mb16 *p_context))
 
-EXTERN_C mbx_status16 mbx_sm4_gcm_update_iv_mb16(const int8u *const pa_iv[SM4_LINES], const int iv_len[SM4_LINES], SM4_GCM_CTX_mb16 *p_state);
-EXTERN_C mbx_status16 mbx_sm4_gcm_update_aad_mb16(const int8u *const pa_aad[SM4_LINES], const int aad_len[SM4_LINES], SM4_GCM_CTX_mb16 *p_state);
+MBXAPI(mbx_status16, mbx_sm4_gcm_update_iv_mb16,(const int8u *const pa_iv[SM4_LINES], const int iv_len[SM4_LINES], SM4_GCM_CTX_mb16 *p_state))
+MBXAPI(mbx_status16, mbx_sm4_gcm_update_aad_mb16,(const int8u *const pa_aad[SM4_LINES], const int aad_len[SM4_LINES], SM4_GCM_CTX_mb16 *p_state))
 
-EXTERN_C mbx_status16 mbx_sm4_gcm_encrypt_mb16(int8u *pa_out[SM4_LINES],
+MBXAPI(mbx_status16, mbx_sm4_gcm_encrypt_mb16,(int8u *pa_out[SM4_LINES],
                                                const int8u *const pa_in[SM4_LINES],
                                                const int in_len[SM4_LINES],
-                                               SM4_GCM_CTX_mb16 *p_context);
-EXTERN_C mbx_status16 mbx_sm4_gcm_decrypt_mb16(int8u *pa_out[SM4_LINES],
+                                               SM4_GCM_CTX_mb16 *p_context))
+MBXAPI(mbx_status16, mbx_sm4_gcm_decrypt_mb16,(int8u *pa_out[SM4_LINES],
                                                const int8u *const pa_in[SM4_LINES],
                                                const int in_len[SM4_LINES],
-                                               SM4_GCM_CTX_mb16 *p_context);
+                                               SM4_GCM_CTX_mb16 *p_context))
 
-EXTERN_C mbx_status16 mbx_sm4_gcm_get_tag_mb16(int8u *pa_tag[SM4_LINES], const int tag_len[SM4_LINES], SM4_GCM_CTX_mb16 *p_context);
+MBXAPI(mbx_status16, mbx_sm4_gcm_get_tag_mb16,(int8u *pa_tag[SM4_LINES], const int tag_len[SM4_LINES], SM4_GCM_CTX_mb16 *p_context))
 
 #endif /* SM4_GCM_H */

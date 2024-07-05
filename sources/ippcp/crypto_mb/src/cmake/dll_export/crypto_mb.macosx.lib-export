@@ -1,6 +1,7 @@
 _mbx_getversion
 
 _mbx_get_cpu_features
+_mbx_set_cpu_features
 _mbx_is_crypto_mb_applicable
 _mbx_get_algo_info
 

@@ -31,7 +31,8 @@
 #define EXP_MODULUS_UNSUPPORT (0)
 
 /* map exp modulus bit size to exp modulus slot  */
-int bits_range(int bits);
+#define bits_range OWNAPI(bits_range) 
+      int bits_range(int bits);
 
 /* exponentiation propotype */
 typedef void(*exp_mb8)(int64u out[][8],
@@ -42,8 +43,13 @@ typedef void(*exp_mb8)(int64u out[][8],
                  const int64u k0_mb8[8],
                        int64u buffer[][8]);
 
+#define ifma_exp_mb OWNAPI(ifma_exp_mb)
+      int32u ifma_exp_mb(int64u* const out_pa[8], const int64u* const base_pa[8], const int64u* const exp_pa[8], int exp_bits, const int64u* const mod_pa[8], int mod_bits, exp_mb8 expfunc, int8u* pBuffer, int bufferLen);
+
+
 /* exponentiations */
-void ifma_modexp1024_mb(int64u out[][8],
+#define ifma_modexp1024_mb OWNAPI(ifma_modexp1024_mb) 
+      void ifma_modexp1024_mb(int64u out[][8],
                   const int64u base[][8],
                   const int64u exp[][8], int exp_bits,
                   const int64u modulus[][8],
@@ -51,7 +57,8 @@ void ifma_modexp1024_mb(int64u out[][8],
                   const int64u k0[8],
                         int64u buffer[][8]);
 
-void ifma_modexp2048_mb(int64u out[][8],
+#define ifma_modexp2048_mb OWNAPI(ifma_modexp2048_mb) 
+      void ifma_modexp2048_mb(int64u out[][8],
                   const int64u base[][8],
                   const int64u exp[][8], int exp_bits,
                   const int64u modulus[][8],
@@ -59,7 +66,8 @@ void ifma_modexp2048_mb(int64u out[][8],
                   const int64u k0[8],
                         int64u buffer[][8]);
 
-void ifma_modexp3072_mb(int64u out[][8],
+#define ifma_modexp3072_mb OWNAPI(ifma_modexp3072_mb) 
+      void ifma_modexp3072_mb(int64u out[][8],
                   const int64u base[][8],
                   const int64u exp[][8], int exp_bits,
                   const int64u modulus[][8],
@@ -67,7 +75,8 @@ void ifma_modexp3072_mb(int64u out[][8],
                   const int64u k0[8],
                         int64u buffer[][8]);
 
-void ifma_modexp4096_mb(int64u out[][8],
+#define ifma_modexp4096_mb OWNAPI(ifma_modexp4096_mb) 
+      void ifma_modexp4096_mb(int64u out[][8],
                   const int64u base[][8],
                   const int64u exp[][8], int exp_bits,
                   const int64u modulus[][8],

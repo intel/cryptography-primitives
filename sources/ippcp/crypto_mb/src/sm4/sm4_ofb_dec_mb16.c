@@ -21,7 +21,7 @@
 #include <internal/sm4/sm4_mb.h>
 
 DLL_PUBLIC
-mbx_status16 mbx_sm4_decrypt_ofb_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const mbx_sm4_key_schedule* key_sched, int8u* pa_iv[SM4_LINES])
+mbx_status16 OWNAPI(mbx_sm4_decrypt_ofb_mb16)(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const mbx_sm4_key_schedule* key_sched, int8u* pa_iv[SM4_LINES])
 {
     return mbx_sm4_encrypt_ofb_mb16(pa_out, pa_inp, len, key_sched, pa_iv);
 }

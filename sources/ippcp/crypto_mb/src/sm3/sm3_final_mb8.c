@@ -20,6 +20,8 @@
 #include <internal/sm3/sm3_mb8.h>
 #include <internal/common/ifma_defs.h>
 
+#if (_MBX>=_MBX_K1)
+
 mbx_status sm3_final_mb8(int8u* hash_pa[8], SM3_CTX_mb8* p_state)
 {
     int i;
@@ -47,23 +49,27 @@ mbx_status sm3_final_mb8(int8u* hash_pa[8], SM3_CTX_mb8* p_state)
     __m512i zero_buffer = _mm512_setzero_si512();
     __mmask8 mb_mask8 = _mm512_cmp_epi64_mask(_mm512_loadu_si512(hash_pa), zero_buffer, _MM_CMPINT_NE);
 
-    M512(sum_msg_len) = _mm512_maskz_loadu_epi64(mb_mask8, MSG_LEN(p_state));
+    __m512i sum_msg_len_m512 = _mm512_maskz_loadu_epi64(mb_mask8, MSG_LEN(p_state));
     
     /* put processed message length in bits */
-    M512(sum_msg_len) = _mm512_rol_epi64(M512(sum_msg_len), 3);
-    M512(sum_msg_len) = _mm512_shuffle_epi8(M512(sum_msg_len), M512(swapBytes));
+    sum_msg_len_m512 = _mm512_shuffle_epi8(_mm512_rol_epi64(sum_msg_len_m512, 3), _mm512_loadu_si512(swapBytes));
 
-    M256(input_len) = _mm256_maskz_loadu_epi32(mb_mask8, HASH_BUFFIDX(p_state));
+    _mm512_storeu_si512(sum_msg_len, sum_msg_len_m512);
 
-    __mmask8 tmp_mask = _mm256_cmplt_epi32_mask(M256(input_len), _mm256_set1_epi32(SM3_MSG_BLOCK_SIZE - (int)SM3_MSG_LEN_REPR));
-    M256(buffer_len) = _mm256_mask_set1_epi32(_mm256_set1_epi32(SM3_MSG_BLOCK_SIZE * 2), tmp_mask, SM3_MSG_BLOCK_SIZE);
-    M256(buffer_len) = _mm256_mask_set1_epi32(M256(buffer_len), ~mb_mask8, 0);
+    __m256i input_len_m256 = _mm256_maskz_loadu_epi32(mb_mask8, HASH_BUFFIDX(p_state));
+
+    __mmask8 tmp_mask = _mm256_cmplt_epi32_mask(input_len_m256, _mm256_set1_epi32(SM3_MSG_BLOCK_SIZE - (int)SM3_MSG_LEN_REPR));
+    __m256i buffer_len_m256 = _mm256_mask_set1_epi32(_mm256_set1_epi32(SM3_MSG_BLOCK_SIZE * 2), tmp_mask, SM3_MSG_BLOCK_SIZE);
+    buffer_len_m256 = _mm256_mask_set1_epi32(buffer_len_m256, ~mb_mask8, 0);
+
+    _mm256_storeu_si256((__m256i*)input_len, input_len_m256);
+    _mm256_storeu_si256((__m256i*)buffer_len, buffer_len_m256);
   
     __mmask64 mb_mask64;
     for (i = 0; i < SM3_NUM_BUFFERS8; i++) {
         /* Copy rest of message into internal buffer */
         mb_mask64 = ~(0xFFFFFFFFFFFFFFFF << input_len[i]);
-        M512(loc_buffer[i]) = _mm512_maskz_loadu_epi8(mb_mask64, HASH_BUFF(p_state)[i]);
+        _mm512_storeu_si512(loc_buffer[i], _mm512_maskz_loadu_epi8(mb_mask64, HASH_BUFF(p_state)[i]));
 
         /* Pad message */
         loc_buffer[i][input_len[i]++] = 0x80;
@@ -98,3 +104,5 @@ mbx_status sm3_final_mb8(int8u* hash_pa[8], SM3_CTX_mb8* p_state)
 
     return status;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

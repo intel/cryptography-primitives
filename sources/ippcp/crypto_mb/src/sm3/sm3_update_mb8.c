@@ -20,6 +20,8 @@
 #include <internal/sm3/sm3_mb8.h>
 #include <internal/common/ifma_defs.h>
 
+#if (_MBX>=_MBX_K1)
+
 // Disable optimization for VS17
 #if defined(_MSC_VER) && (_MSC_VER < 1920) && !defined(__INTEL_COMPILER)
     #pragma optimize( "", off )
@@ -44,13 +46,14 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
     __m512i zero_buffer = _mm512_setzero_si512();
     
     /* generate mask based on array with messages lengths */
-    __mmask8 mb_mask = _mm256_cmp_epi32_mask(loc_len, M256(&zero_buffer), _MM_CMPINT_NE);
+    __mmask8 mb_mask = _mm256_cmp_epi32_mask(loc_len, _mm256_setzero_si256(), _MM_CMPINT_NE);
 
     /* generate mask based on msg_pa[]. Don't process the data from i buffer if in msg_pa[i] == 0 or len[i] == 0 */
     mb_mask &= _mm512_cmp_epi64_mask(_mm512_loadu_si512(msg_pa), zero_buffer, _MM_CMPINT_NE);
 
     /* handle non empty message */
     if (mb_mask) {
+        /* We need the address of the zero_buffer to form the fully valid array of pointers loc_src */
        _mm512_storeu_si512((void *)loc_src, _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer), mb_mask, msg_pa));
 
         __m256i proc_len;
@@ -67,15 +70,20 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
         int8u* p_buffer[SM3_NUM_BUFFERS8] = { HASH_BUFF(p_state)[0],  HASH_BUFF(p_state)[1],  HASH_BUFF(p_state)[2],  HASH_BUFF(p_state)[3],
                                               HASH_BUFF(p_state)[4],  HASH_BUFF(p_state)[5],  HASH_BUFF(p_state)[6],  HASH_BUFF(p_state)[7] };
 
-        __mmask8 processed_mask = _mm256_cmp_epi32_mask(idx, M256(&zero_buffer), _MM_CMPINT_NE);
+        __mmask8 processed_mask = _mm256_cmp_epi32_mask(idx, _mm256_setzero_si256(), _MM_CMPINT_NE);
 
-        M512(sum_msg_len) = _mm512_mask_add_epi64(M512(sum_msg_len), mb_mask, _mm512_loadu_si512(MSG_LEN(p_state)), M512(sum_msg_len));
+        __m512i sum_msg_len_m512 = _mm512_loadu_si512(sum_msg_len);
+        sum_msg_len_m512 = _mm512_mask_add_epi64(sum_msg_len_m512, mb_mask, _mm512_loadu_si512(MSG_LEN(p_state)), sum_msg_len_m512);
+
+        _mm512_storeu_si512(sum_msg_len, sum_msg_len_m512);
+
+        __m512i loc_src_m512 = _mm512_loadu_si512(loc_src);
 
         /* if non empty internal buffer filling */
         if (processed_mask) {
 
             __m256i tmp = _mm256_sub_epi32(_mm256_set1_epi32(SM3_MSG_BLOCK_SIZE), idx);
-            processed_mask = _mm256_cmp_epi32_mask(_mm256_sub_epi32(loc_len, tmp), M256(&zero_buffer), _MM_CMPINT_LT);
+            processed_mask = _mm256_cmp_epi32_mask(_mm256_sub_epi32(loc_len, tmp), _mm256_setzero_si256(), _MM_CMPINT_LT);
 
             /* p_proc_len[i] = MIN(p_loc_len[i], (SM3_MSG_BLOCK_SIZE - p_idx[i])) */
             proc_len = _mm256_mask_loadu_epi32(tmp, processed_mask, p_loc_len);
@@ -90,7 +98,9 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
             idx = _mm256_add_epi32(idx, proc_len);
             loc_len = _mm256_sub_epi32(loc_len, proc_len);
 
-            M512(loc_src) = _mm512_add_epi64(M512(loc_src), _mm512_cvtepu32_epi64(M256(p_proc_len)));
+            loc_src_m512 = _mm512_add_epi64(loc_src_m512, _mm512_cvtepu32_epi64(proc_len));
+
+            _mm512_storeu_si512((void*)loc_src, loc_src_m512);
 
             processed_mask = _mm256_cmp_epi32_mask(idx, _mm256_set1_epi32(SM3_MSG_BLOCK_SIZE), _MM_CMPINT_EQ);
             proc_len = _mm256_mask_set1_epi32(proc_len, processed_mask, SM3_MSG_BLOCK_SIZE);
@@ -98,22 +108,23 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
             /* update digest if at least one buffer is full */
             if (processed_mask) {
                 sm3_avx512_mb8(HASH_VALUE(p_state), (const int8u **)p_buffer, p_proc_len);
-                idx = _mm256_mask_set1_epi32(idx, ~_mm256_cmp_epi32_mask(proc_len, M256(&zero_buffer), 2), _MM_CMPINT_EQ);
+                idx = _mm256_mask_set1_epi32(idx, ~_mm256_cmp_epi32_mask(proc_len, _mm256_setzero_si256(), 2), _MM_CMPINT_EQ);
             }
         }
 
         /* main message part processing */
         proc_len = _mm256_and_si256(loc_len, _mm256_set1_epi32(-SM3_MSG_BLOCK_SIZE));
-        processed_mask = _mm256_cmp_epi32_mask(proc_len, M256(&zero_buffer), _MM_CMPINT_NLT);
+        processed_mask = _mm256_cmp_epi32_mask(proc_len, _mm256_setzero_si256(), _MM_CMPINT_NLT);
 
         if (processed_mask)
             sm3_avx512_mb8(HASH_VALUE(p_state), loc_src, p_proc_len);
 
         loc_len = _mm256_sub_epi32(loc_len, proc_len);
 
-        M512(loc_src) = _mm512_add_epi64(M512(loc_src), _mm512_cvtepu32_epi64(M256(p_proc_len)));
+        loc_src_m512 = _mm512_add_epi64(loc_src_m512, _mm512_cvtepu32_epi64(proc_len));
+        _mm512_storeu_si512((void*)loc_src, loc_src_m512);
 
-        processed_mask = _mm256_cmp_epi32_mask(loc_len, M256(&zero_buffer), _MM_CMPINT_NLE);
+        processed_mask = _mm256_cmp_epi32_mask(loc_len, _mm256_setzero_si256(), _MM_CMPINT_NLE);
 
         /* store rest of message into the internal buffer */
         if (processed_mask) {
@@ -133,3 +144,5 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
 
     return status;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

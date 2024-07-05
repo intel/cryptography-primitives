@@ -33,6 +33,8 @@ static const int64u MAX_TXT_LEN = ((int64u)1 << 36) - 32; // length in bytes
 // Internal functions
 */
 
+#if (_MBX>=_MBX_K1)
+
 EXTERN_C void sm4_gcm_ghash_mul_single_block_mb16(__m512i *data_blocks[], __m512i *hashkeys[]);
 
 EXTERN_C void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
@@ -82,7 +84,19 @@ EXTERN_C __mmask16 sm4_gcm_decrypt_mb16(int8u *pa_out[SM4_LINES],
                                         __mmask16 mb_mask,
                                         SM4_GCM_CTX_mb16 *p_context);
 
-EXTERN_C void sm4_gcm_get_tag_mb16(int8u *pa_out[SM4_LINES], const int tag_len[SM4_LINES], __mmask16 mb_mask, SM4_GCM_CTX_mb16 *p_context);
+EXTERN_C mbx_status16 sm4_gcm_get_tag_mb16(int8u *pa_out[SM4_LINES], const int tag_len[SM4_LINES], __mmask16 mb_mask, SM4_GCM_CTX_mb16 *p_context);
+
+mbx_status16 internal_avx512_sm4_gcm_init_mb16(const sm4_key *const pa_key[SM4_LINES],
+                                               const int8u *const pa_iv[SM4_LINES],
+                                               const int iv_len[SM4_LINES],
+                                               SM4_GCM_CTX_mb16 *p_context, __mmask16 mb_mask_rearranged, __mmask16 mb_mask);
+
+__MBX_INLINE __m512i inc_block32(__m512i x, const int8u *increment) { return mask_add_epi32(x, 0x1111, x, M512(increment)); }
+
+static __ALIGN64 const int8u initialInc[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                              1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -166,10 +180,5 @@ static const int rearrangeOrder[] = { 0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3,
    to[13] = from[7];        \
    to[14] = from[11];       \
    to[15] = from[15];
-
-__MBX_INLINE __m512i inc_block32(__m512i x, const int8u *increment) { return mask_add_epi32(x, 0x1111, x, M512(increment)); }
-
-static __ALIGN64 const int8u initialInc[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                              1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 #endif // SM4_GCM_MB_H

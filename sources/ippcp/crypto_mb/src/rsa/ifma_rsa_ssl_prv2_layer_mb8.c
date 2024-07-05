@@ -24,6 +24,8 @@ typedef int to_avoid_translation_unit_is_empty_warning;
 #include <internal/common/ifma_cvt52.h>
 #include <internal/rsa/ifma_rsa_arith.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define EXP_WIN_SIZE (5) //(4)
 #define EXP_WIN_MASK ((1<<EXP_WIN_SIZE) -1)
 
@@ -253,5 +255,7 @@ void ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
    #undef LEN52
    #undef LEN64
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* BN_OPENSSL_DISABLE */

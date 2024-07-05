@@ -16,6 +16,8 @@
 
 #include <internal/sm2/ifma_arith_sm2.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* Constants */
 #define LEN52    NUMBER_OF_DIGITS(256,DIGIT_SIZE)
 
@@ -216,3 +218,4 @@ __mb_mask MB_FUNC_NAME(ifma_check_range_nsm2_)(const U64 A[])
    return mask;
 }
 
+#endif /* #if (_MBX>=_MBX_K1) */

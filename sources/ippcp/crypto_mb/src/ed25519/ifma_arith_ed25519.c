@@ -21,6 +21,8 @@
 #include <internal/ed25519/ifma_arith_ed25519.h>
 #include <internal/ed25519/ifma_ed25519_precomp4.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define BP_WIN_SIZE  MUL_BASEPOINT_WIN_SIZE  /* defined in the header above */
 
 /*
@@ -537,3 +539,5 @@ void ifma_ed25519_prod_point(ge52_ext_mb* r, const ge52_ext_mb* p, const U64 sca
    ge_add(&t, r, &c);
    ge52_p1p1_to_ext_mb(r, &t);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

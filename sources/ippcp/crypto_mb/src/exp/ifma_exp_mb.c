@@ -24,6 +24,7 @@
 #include <internal/rsa/ifma_rsa_arith.h>
 #include <internal/common/ifma_cvt52.h>
 
+#if (_MBX>=_MBX_K1)
 
 mbx_status ifma_exp_mb(int64u* const out_pa[8],
                  const int64u* const base_pa[8],
@@ -122,8 +123,10 @@ mbx_status ifma_exp_mb(int64u* const out_pa[8],
    return status;
 }
 
+#endif /* #if (_MBX>=_MBX_K1) */
+
 DLL_PUBLIC
-mbx_status mbx_exp1024_mb8(int64u* const out_pa[8],
+mbx_status OWNAPI(mbx_exp1024_mb8)(int64u* const out_pa[8],
                      const int64u* const base_pa[8],
                      const int64u* const exp_pa[8], int exp_bits,
                      const int64u* const mod_pa[8], int mod_bits,
@@ -137,16 +140,21 @@ mbx_status mbx_exp1024_mb8(int64u* const out_pa[8],
       return status;
    }
 
+#if (_MBX>=_MBX_K1)
    /* 1k exponentiation */
-   return ifma_exp_mb(out_pa, base_pa,
+   status |= ifma_exp_mb(out_pa, base_pa,
                       exp_pa, exp_bits,
                       mod_pa, mod_bits,
                       ifma_modexp1024_mb,
                       pBuffer, bufferLen);
+#else
+   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
+   return status;
 }
 
 DLL_PUBLIC
-mbx_status mbx_exp2048_mb8(int64u* const out_pa[8],
+mbx_status OWNAPI(mbx_exp2048_mb8)(int64u* const out_pa[8],
                      const int64u* const base_pa[8],
                      const int64u* const exp_pa[8], int exp_bits,
                      const int64u* const mod_pa[8], int mod_bits,
@@ -160,16 +168,21 @@ mbx_status mbx_exp2048_mb8(int64u* const out_pa[8],
       return status;
    }
 
+#if (_MBX>=_MBX_K1)
    /* 2k exponentiation */
-   return ifma_exp_mb(out_pa, base_pa,
+   status |= ifma_exp_mb(out_pa, base_pa,
                       exp_pa, exp_bits,
                       mod_pa, mod_bits,
                       ifma_modexp2048_mb,
                       pBuffer, bufferLen);
+#else
+   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
+   return status;
 }
 
 DLL_PUBLIC
-mbx_status mbx_exp3072_mb8(int64u* const out_pa[8],
+mbx_status OWNAPI(mbx_exp3072_mb8)(int64u* const out_pa[8],
                      const int64u* const base_pa[8],
                      const int64u* const exp_pa[8], int exp_bits,
                      const int64u* const mod_pa[8], int mod_bits,
@@ -183,16 +196,21 @@ mbx_status mbx_exp3072_mb8(int64u* const out_pa[8],
       return status;
    }
 
+#if (_MBX>=_MBX_K1)
    /* 3k exponentiation */
-   return ifma_exp_mb(out_pa, base_pa,
+   status |= ifma_exp_mb(out_pa, base_pa,
                       exp_pa, exp_bits,
                       mod_pa, mod_bits,
                       ifma_modexp3072_mb,
                       pBuffer, bufferLen);
+#else
+   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
+   return status;
 }
 
 DLL_PUBLIC
-mbx_status mbx_exp4096_mb8(int64u* const out_pa[8],
+mbx_status OWNAPI(mbx_exp4096_mb8)(int64u* const out_pa[8],
                      const int64u* const base_pa[8],
                      const int64u* const exp_pa[8], int exp_bits,
                      const int64u* const mod_pa[8], int mod_bits,
@@ -206,16 +224,21 @@ mbx_status mbx_exp4096_mb8(int64u* const out_pa[8],
       return status;
    }
 
+#if (_MBX>=_MBX_K1)
    /* 4k exponentiation */
-   return ifma_exp_mb(out_pa, base_pa,
+   status |= ifma_exp_mb(out_pa, base_pa,
                       exp_pa, exp_bits,
                       mod_pa, mod_bits,
                       ifma_modexp4096_mb,
                       pBuffer, bufferLen);
+#else
+   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
+   return status;
 }
 
 DLL_PUBLIC
-mbx_status mbx_exp_mb8(int64u* const out_pa[8], 
+mbx_status OWNAPI(mbx_exp_mb8)(int64u* const out_pa[8], 
                  const int64u* const base_pa[8],
                  const int64u* const exp_pa[8], int exp_bits,
                  const int64u* const mod_pa[8], int mod_bits,
@@ -233,6 +256,8 @@ mbx_status mbx_exp_mb8(int64u* const out_pa[8],
    //
    // processing
    //
+
+#if (_MBX>=_MBX_K1)
    exp_mb8 expfunc = NULL;
    switch (modulus_range) {
       case EXP_MODULUS_1024: expfunc = ifma_modexp1024_mb; break;
@@ -242,9 +267,13 @@ mbx_status mbx_exp_mb8(int64u* const out_pa[8],
       default: break;
    }
 
-   return ifma_exp_mb(out_pa, base_pa,
+   status |= ifma_exp_mb(out_pa, base_pa,
                       exp_pa, exp_bits,
                       mod_pa, mod_bits,
                       expfunc,
                       pBuffer, bufferLen);
+#else
+   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
+   return status;
 }

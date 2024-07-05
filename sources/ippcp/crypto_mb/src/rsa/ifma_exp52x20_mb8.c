@@ -18,6 +18,8 @@
 #include <internal/common/ifma_math.h>
 #include <internal/rsa/ifma_rsa_arith.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define USE_AMS
 #ifdef USE_AMS
     #define SQUARE_52x20_mb8(out, Y, mod, k0) \
@@ -122,7 +124,8 @@ void EXP52x20_mb8(
     const int64u modulus[][8],
     const int64u toMont[][8],
     const int64u k0[8],
-    int64u work_buffer[][8]) {
+    int64u work_buffer[][8]) 
+{
 
     /* allocate red(undant) result Y and multiplier X */
     pint64u_x8 red_Y = (pint64u_x8) work_buffer;
@@ -214,3 +217,5 @@ void EXP52x20_mb8(
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
     ifma_amm52x20_mb8((int64u*) out, (int64u*) red_Y, (int64u*) red_X, (int64u*) modulus, (int64u*) k0);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

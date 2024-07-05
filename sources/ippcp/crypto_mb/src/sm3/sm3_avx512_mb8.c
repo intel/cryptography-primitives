@@ -16,6 +16,8 @@
 
 #include <internal/sm3/sm3_mb8.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* Boolean functions (0<=nr<16) */
 #define FF1(X,Y,Z) (_mm256_xor_si256(_mm256_xor_si256(X,Y), Z))
 #define GG1(X,Y,Z) (_mm256_xor_si256(_mm256_xor_si256(X,Y), Z))
@@ -72,7 +74,6 @@ void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8
     int i;
 
     __ALIGN64 int32u* loc_data[SM3_NUM_BUFFERS8];
-    __ALIGN64 int loc_len[SM3_NUM_BUFFERS8];
 
     __m256i W[16];
     int32u* p_W[16] = { (int32u*)&W[0], (int32u*)&W[1], (int32u*)&W[2],  (int32u*)&W[3],  (int32u*)&W[4],  (int32u*)&W[5],  (int32u*)&W[6],  (int32u*)&W[7],
@@ -85,11 +86,11 @@ void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8
     __m512i zero_buffer = _mm512_setzero_si512();
 
      /* Load processing mask */
-    __mmask8 mb_mask = _mm256_cmp_epi32_mask(_mm256_loadu_si256((__m256i*)len), M256(&zero_buffer), _MM_CMPINT_NE);
+    __mmask8 mb_mask = _mm256_cmp_epi32_mask(_mm256_loadu_si256((__m256i*)len), _mm256_setzero_si256(), _MM_CMPINT_NE);
 
     /* Load data and set the data to zero in not valid buffers */
-    M256(loc_len) = _mm256_loadu_si256((__m256i*)len);
-
+    __m256i loc_len_m256 = _mm256_loadu_si256((__m256i*)len);
+    /* We need the address of the zero_buffer to form the fully valid array of pointers loc_src */
     _mm512_storeu_si512(loc_data, _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer), mb_mask, msg_pa));
 
     /* Load hash value */
@@ -216,8 +217,10 @@ void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8
         _mm256_storeu_si256((__m256i*)(hash_pa + 7), H);
  
         /* Update pointers to data, local  lengths and mask */
-        M512(loc_data) = _mm512_mask_add_epi64(_mm512_set1_epi64((long long)&zero_buffer), (__mmask8)mb_mask, _mm512_loadu_si512(loc_data), _mm512_set1_epi64(SM3_MSG_BLOCK_SIZE));
-        M256(loc_len) = _mm256_mask_sub_epi32(M256(&zero_buffer), mb_mask, _mm256_loadu_si256((__m256i*)loc_len), _mm256_set1_epi32(SM3_MSG_BLOCK_SIZE)); 
-        mb_mask = _mm256_cmp_epi32_mask(_mm256_loadu_si256((__m256i*)loc_len), M256(&zero_buffer), _MM_CMPINT_NE); 
+        _mm512_storeu_si512(loc_data, _mm512_mask_add_epi64(zero_buffer, (__mmask8)mb_mask, _mm512_loadu_si512(loc_data), _mm512_set1_epi64(SM3_MSG_BLOCK_SIZE)));
+        loc_len_m256 = _mm256_mask_sub_epi32(_mm256_setzero_si256(), mb_mask, loc_len_m256, _mm256_set1_epi32(SM3_MSG_BLOCK_SIZE));
+        mb_mask = _mm256_cmp_epi32_mask(loc_len_m256, _mm256_setzero_si256(), _MM_CMPINT_NE);
     }
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

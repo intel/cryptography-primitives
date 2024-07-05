@@ -16,6 +16,8 @@
 
 #include <internal/ecnist/ifma_arith_p384.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* Constants */
 
 /*
@@ -635,3 +637,5 @@ __mb_mask MB_FUNC_NAME(ifma_check_range_p384_)(const U64 A[])
 
    return mask;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

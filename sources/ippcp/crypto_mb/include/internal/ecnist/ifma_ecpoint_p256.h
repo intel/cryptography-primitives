@@ -17,7 +17,18 @@
 #ifndef IFMA_ECPOINT_P256_H
 #define IFMA_ECPOINT_P256_H
 
+#include "crypto_mb/status.h"
 #include <internal/ecnist/ifma_arith_p256.h>
+
+#ifndef BN_OPENSSL_DISABLE
+#include <openssl/bn.h>
+#include <openssl/ec.h>
+#ifdef OPENSSL_IS_BORINGSSL
+#include <openssl/ecdsa.h>
+#endif
+#endif /* BN_OPENSSL_DISABLE */
+
+#if (_MBX>=_MBX_K1)
 
 typedef struct {
    U64 X[P256_LEN52];
@@ -34,7 +45,6 @@ typedef struct {
    int64u x[P256_LEN52];
    int64u y[P256_LEN52];
 } SINGLE_P256_POINT_AFFINE;
-
 
 
 /* check if coordinate is zero */
@@ -91,4 +101,92 @@ EXTERN_C void MB_FUNC_NAME(get_nistp256_ec_affine_coords_)(U64 x[], U64 y[], con
 EXTERN_C const U64* MB_FUNC_NAME(ifma_ec_nistp256_coord_one_)(void);
 EXTERN_C __mb_mask MB_FUNC_NAME(ifma_is_on_curve_p256_)(const P256_POINT* p, int use_jproj_coords);
 
-#endif  /* IFMA_ECPOINT_P256_H */
+
+#ifndef BN_OPENSSL_DISABLE
+
+mbx_status internal_avx512_mbx_nistp256_ecdh_ssl_mb8(int8u* pa_shared_key[8],
+                                              const BIGNUM* const pa_skey[8],
+                                              const BIGNUM* const pa_pubx[8],
+                                              const BIGNUM* const pa_puby[8],
+                                              const BIGNUM* const pa_pubz[8],
+                                              int8u* pBuffer, int use_jproj_coords);
+
+mbx_status internal_avx512_nistp256_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey[8],
+                                                             BIGNUM* pa_sign_rp[8],
+                                                       const BIGNUM* const pa_eph_skey[8],
+                                                             int8u* pBuffer);
+
+mbx_status internal_avx512_nistp256_ecdsa_sign_complete_ssl_mb8(int8u* pa_sign_r[8],
+                                                                int8u* pa_sign_s[8],
+                                                          const int8u* const pa_msg[8],
+                                                          const BIGNUM* const pa_sign_rp[8],
+                                                          const BIGNUM* const pa_inv_eph_skey[8],
+                                                          const BIGNUM* const pa_reg_skey[8],
+                                                                int8u* pBuffer);
+
+mbx_status internal_avx512_nistp256_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
+                                                       int8u* pa_sign_s[8],
+                                                 const int8u* const pa_msg[8],
+                                                 const BIGNUM* const pa_eph_skey[8],
+                                                 const BIGNUM* const pa_reg_skey[8],
+                                                       int8u* pBuffer);
+
+mbx_status internal_avx512_nistp256_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_sig[8],
+                                                         const int8u*  const pa_msg[8],
+                                                         const BIGNUM* const pa_pubx[8],
+                                                         const BIGNUM* const pa_puby[8],
+                                                         const BIGNUM* const pa_pubz[8],    
+                                                         int8u* pBuffer, int use_jproj_coords);
+
+mbx_status internal_avx512_nistp256_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
+                                                         BIGNUM* pa_puby[8],
+                                                         BIGNUM* pa_pubz[8],
+                                                   const BIGNUM* const pa_skey[8],
+                                                   int8u* pBuffer, int use_jproj_coords);
+
+#endif /* BN_OPENSSL_DISABLE */
+
+mbx_status internal_avx512_nistp256_ecdh_mb8(int8u* pa_shared_key[8],
+                                       const int64u* const pa_skey[8], 
+                                       const int64u* const pa_pubx[8],
+                                       const int64u* const pa_puby[8],
+                                       const int64u* const pa_pubz[8],
+                                       int8u* pBuffer, int use_jproj_coords);
+
+mbx_status internal_avx512_nistp256_ecdsa_sign_setup_mb8(int64u* pa_inv_eph_skey[8],
+                                                         int64u* pa_sign_rp[8],
+                                                   const int64u* const pa_eph_skey[8],
+                                                         int8u* pBuffer);
+
+mbx_status internal_avx512_nistp256_ecdsa_sign_complete_mb8(int8u* pa_sign_r[8],
+                                                            int8u* pa_sign_s[8],
+                                                      const int8u* const pa_msg[8],
+                                                      const int64u* const pa_sign_rp[8],
+                                                      const int64u* const pa_inv_eph_skey[8],
+                                                      const int64u* const pa_reg_skey[8],
+                                                            int8u* pBuffer);
+
+mbx_status internal_avx512_nistp256_ecdsa_sign_mb8(int8u* pa_sign_r[8],
+                                                   int8u* pa_sign_s[8],
+                                             const int8u* const pa_msg[8],
+                                             const int64u* const pa_eph_skey[8],
+                                             const int64u* const pa_reg_skey[8],
+                                                   int8u* pBuffer);
+
+mbx_status internal_avx512_nistp256_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
+                                                     const int8u* const pa_sign_s[8],
+                                                     const int8u* const pa_msg[8],
+                                                     const int64u* const pa_pubx[8],
+                                                     const int64u* const pa_puby[8],
+                                                     const int64u* const pa_pubz[8],                                       
+                                               int8u* pBuffer, int use_jproj_coords);
+
+mbx_status internal_avx512_nistp256_ecpublic_key_mb8(int64u* pa_pubx[8],
+                                                     int64u* pa_puby[8],
+                                                     int64u* pa_pubz[8],
+                                               const int64u* const pa_skey[8],
+                                               int8u* pBuffer, int use_jproj_coords);
+
+#endif /* #if (_MBX>=_MBX_K1) */
+
+#endif /* IFMA_ECPOINT_P256_H */

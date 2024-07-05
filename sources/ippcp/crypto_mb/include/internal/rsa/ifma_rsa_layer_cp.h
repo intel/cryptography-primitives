@@ -20,6 +20,8 @@
 #include <crypto_mb/defs.h>
 #include <crypto_mb/rsa.h>
 
+#if (_MBX>=_MBX_K1)
+
 EXTERN_C void ifma_cp_rsa_pub_layer_mb8(const int8u* const from_pa[8],
                                               int8u* const to_pa[8],
                                         const int64u* const n_pa[8],
@@ -43,5 +45,7 @@ EXTERN_C void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
                                                int rsaBitlen,
                                          const mbx_RSA_Method* m,
                                                int8u* pBuffer);
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* IFMA_CP_LAYER_H */

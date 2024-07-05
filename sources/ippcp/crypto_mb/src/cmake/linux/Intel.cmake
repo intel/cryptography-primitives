@@ -76,4 +76,5 @@ set(CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
 # Optimisation dependent flags
-set(AVX512_CFLAGS " -xCORE-AVX512 -qopt-zmm-usage:high")
+set(l9_opt "-xCORE-AVX2")
+set(k1_opt "-xCORE-AVX512 -qopt-zmm-usage:high")

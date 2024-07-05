@@ -19,14 +19,16 @@
 #include <internal/rsa/ifma_rsa_arith.h>
 #include <internal/rsa/ifma_rsa_method.h>
 
+
 #define EXP_WIN_SIZE (5) //(4)
 
 /*
 // rsa public key methods
 */
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA1K_pub65537_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA1K_pub65537_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_1K)
    #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
    static mbx_RSA_Method m = {
@@ -45,11 +47,15 @@ const mbx_RSA_Method* mbx_RSA1K_pub65537_Method(void)
    return &m;
    #undef RSA_BITLEN
    #undef LEN52
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA2K_pub65537_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA2K_pub65537_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
 #define RSA_BITLEN (RSA_2K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
    static mbx_RSA_Method m = {
@@ -68,11 +74,15 @@ const mbx_RSA_Method* mbx_RSA2K_pub65537_Method(void)
    return &m;
 #undef RSA_BITLEN
 #undef LEN52
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA3K_pub65537_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA3K_pub65537_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
 #define RSA_BITLEN (RSA_3K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
    static mbx_RSA_Method m = {
@@ -91,11 +101,15 @@ const mbx_RSA_Method* mbx_RSA3K_pub65537_Method(void)
    return &m;
 #undef RSA_BITLEN
 #undef LEN52
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA4K_pub65537_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA4K_pub65537_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
 #define RSA_BITLEN (RSA_4K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
    static mbx_RSA_Method m = {
@@ -114,10 +128,13 @@ const mbx_RSA_Method* mbx_RSA4K_pub65537_Method(void)
    return &m;
 #undef RSA_BITLEN
 #undef LEN52
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA_pub65537_Method(int rsaBitsize)
+const mbx_RSA_Method* OWNAPI(mbx_RSA_pub65537_Method)(int rsaBitsize)
 {
    switch (rsaBitsize) {
    case RSA_1K: return mbx_RSA1K_pub65537_Method();
@@ -133,8 +150,9 @@ const mbx_RSA_Method* mbx_RSA_pub65537_Method(int rsaBitsize)
 // rsa private key methods
 */
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA1K_private_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA1K_private_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_1K)
    #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
    #define LEN64      (NUMBER_OF_DIGITS(RSA_BITLEN, 64))
@@ -155,11 +173,15 @@ const mbx_RSA_Method* mbx_RSA1K_private_Method(void)
    #undef RSA_BITLEN
    #undef LEN52
    #undef LEN64
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA2K_private_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA2K_private_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_2K)
    #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
    #define LEN64      (NUMBER_OF_DIGITS(RSA_BITLEN, 64))
@@ -180,11 +202,15 @@ const mbx_RSA_Method* mbx_RSA2K_private_Method(void)
    #undef RSA_BITLEN
    #undef LEN52
    #undef LEN64
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA3K_private_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA3K_private_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_3K)
    #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
    #define LEN64      (NUMBER_OF_DIGITS(RSA_BITLEN, 64))
@@ -205,11 +231,15 @@ const mbx_RSA_Method* mbx_RSA3K_private_Method(void)
    #undef RSA_BITLEN
    #undef LEN52
    #undef LEN64
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA4K_private_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA4K_private_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_4K)
    #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
    #define LEN64      (NUMBER_OF_DIGITS(RSA_BITLEN, 64))
@@ -230,10 +260,13 @@ const mbx_RSA_Method* mbx_RSA4K_private_Method(void)
    #undef RSA_BITLEN
    #undef LEN52
    #undef LEN64
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA_private_Method(int rsaBitsize)
+const mbx_RSA_Method* OWNAPI(mbx_RSA_private_Method)(int rsaBitsize)
 {
    switch (rsaBitsize) {
    case RSA_1K: return mbx_RSA1K_private_Method();
@@ -249,8 +282,9 @@ const mbx_RSA_Method* mbx_RSA_private_Method(int rsaBitsize)
 // rsa private key methods (crt)
 */
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA1K_private_crt_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA1K_private_crt_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_1K)
    #define FACTOR_BITLEN (RSA_BITLEN/2)
    #define LEN52      (NUMBER_OF_DIGITS(FACTOR_BITLEN, DIGIT_SIZE))
@@ -273,11 +307,15 @@ const mbx_RSA_Method* mbx_RSA1K_private_crt_Method(void)
    #undef FACTOR_BITLEN
    #undef LEN52
    #undef LEN64
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA2K_private_crt_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA2K_private_crt_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_2K)
    #define FACTOR_BITLEN (RSA_BITLEN/2)
    #define LEN52      (NUMBER_OF_DIGITS(FACTOR_BITLEN, DIGIT_SIZE))
@@ -300,11 +338,15 @@ const mbx_RSA_Method* mbx_RSA2K_private_crt_Method(void)
    #undef FACTOR_BITLEN
    #undef LEN52
    #undef LEN64
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA3K_private_crt_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA3K_private_crt_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_3K)
    #define FACTOR_BITLEN (RSA_BITLEN/2)
    #define LEN52      (NUMBER_OF_DIGITS(FACTOR_BITLEN, DIGIT_SIZE))
@@ -327,11 +369,15 @@ const mbx_RSA_Method* mbx_RSA3K_private_crt_Method(void)
    #undef FACTOR_BITLEN
    #undef LEN52
    #undef LEN64
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA4K_private_crt_Method(void)
+const mbx_RSA_Method* OWNAPI(mbx_RSA4K_private_crt_Method)(void)
 {
+#if (_MBX>=_MBX_K1)
    #define RSA_BITLEN (RSA_4K)
    #define FACTOR_BITLEN (RSA_BITLEN/2)
    #define LEN52      (NUMBER_OF_DIGITS(FACTOR_BITLEN, DIGIT_SIZE))
@@ -354,10 +400,13 @@ const mbx_RSA_Method* mbx_RSA4K_private_crt_Method(void)
    #undef FACTOR_BITLEN
    #undef LEN52
    #undef LEN64
+#else
+   return NULL;
+#endif /* #if (_MBX>=_MBX_K1) */
 }
 
 DLL_PUBLIC
-const mbx_RSA_Method* mbx_RSA_private_crt_Method(int rsaBitsize)
+const mbx_RSA_Method* OWNAPI(mbx_RSA_private_crt_Method)(int rsaBitsize)
 {
    switch (rsaBitsize) {
    case RSA_1K: return mbx_RSA1K_private_crt_Method();
@@ -374,3 +423,4 @@ int mbx_RSA_Method_BufSize(const mbx_RSA_Method* m)
 {
    return m? m->buffSize : 0;
 }
+

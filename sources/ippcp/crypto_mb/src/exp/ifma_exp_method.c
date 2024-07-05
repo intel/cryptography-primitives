@@ -39,8 +39,9 @@ int bits_range(int modulusBits)
 
 /* size of scratch buffer */
 DLL_PUBLIC
-int mbx_exp_BufferSize(int modulusBits)
+int OWNAPI(mbx_exp_BufferSize)(int modulusBits)
 {
+#if (_MBX>=_MBX_K1)
    int modulusRange = bits_range(modulusBits);
 
    if(modulusRange) {
@@ -65,4 +66,7 @@ int mbx_exp_BufferSize(int modulusBits)
    }
    else
       return 0;
+#else
+   return 0;
+#endif /* #if (_MBX>=_MBX_K1) */
 }

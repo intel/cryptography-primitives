@@ -22,6 +22,8 @@
 
 #include <immintrin.h>
 
+#if (_MBX>=_MBX_K1)
+
 #ifndef M128
 #define M128(mem)   (*((__m128i*)(mem)))
 #endif
@@ -302,22 +304,42 @@ static __ALIGN64 const int64u xts_next_tweak_permq_enc[] = {
 #define SM4_ENC (1)
 #define SM4_DEC (-1)
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 /*
 // Internal functions
 */
 
-EXTERN_C void sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, int operation);
-EXTERN_C void sm4_cbc_enc_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, const int8u* pa_iv[SM4_LINES]);
-EXTERN_C void sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, const int8u* pa_iv[SM4_LINES]);
-EXTERN_C void sm4_cbc_mac_kernel_mb16(__m128i pa_out[SM4_LINES], const int8u *const pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, const int8u* pa_iv[SM4_LINES]);
-EXTERN_C void sm4_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, int8u* pa_ctr[SM4_LINES]);
-EXTERN_C void sm4_ofb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, int8u* pa_iv[SM4_LINES]);
-EXTERN_C void sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], const int8u* pa_iv[SM4_LINES], __mmask16 mb_mask);
-EXTERN_C void sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], const int8u* pa_iv[SM4_LINES], __mmask16 mb_mask);
-EXTERN_C void sm4_set_round_keys_mb16(int32u* key_sched[SM4_ROUNDS], const int8u* pa_inp_key[SM4_LINES], __mmask16 mb_mask);
-EXTERN_C void sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES],
-                                  const int32u* key_sched1[SM4_ROUNDS], const int32u* key_sched2[SM4_ROUNDS],
+#define sm4_ecb_kernel_mb16 OWNAPI(sm4_ecb_kernel_mb16)
+    mbx_status16 sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, int operation);
+#define sm4_cbc_enc_kernel_mb16 OWNAPI(sm4_cbc_enc_kernel_mb16)
+    mbx_status16 sm4_cbc_enc_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, const int8u* pa_iv[SM4_LINES]);
+#define sm4_cbc_dec_kernel_mb16 OWNAPI(sm4_cbc_dec_kernel_mb16)
+    mbx_status16 sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, const int8u* pa_iv[SM4_LINES]);
+#define sm4_cbc_mac_kernel_mb16 OWNAPI(sm4_cbc_mac_kernel_mb16)
+    void sm4_cbc_mac_kernel_mb16(__m128i pa_out[SM4_LINES], const int8u *const pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, const int8u* pa_iv[SM4_LINES]);
+#define sm4_ctr128_kernel_mb16 OWNAPI(sm4_ctr128_kernel_mb16)
+    mbx_status16 sm4_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, int8u* pa_ctr[SM4_LINES]);
+#define sm4_ofb_kernel_mb16 OWNAPI(sm4_ofb_kernel_mb16)
+    mbx_status16 sm4_ofb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, int8u* pa_iv[SM4_LINES]);
+#define sm4_cfb128_enc_kernel_mb16 OWNAPI(sm4_cfb128_enc_kernel_mb16)
+    mbx_status16 sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], const int8u* pa_iv[SM4_LINES], __mmask16 mb_mask);
+#define sm4_cfb128_dec_kernel_mb16 OWNAPI(sm4_cfb128_dec_kernel_mb16)
+    mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], const int8u* pa_iv[SM4_LINES], __mmask16 mb_mask);
+#define sm4_xts_kernel_mb16 OWNAPI(sm4_xts_kernel_mb16)
+    mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], \
+                                  const int32u* key_sched1[SM4_ROUNDS], const int32u* key_sched2[SM4_ROUNDS], \
                                   const int8u* pa_tweak[SM4_LINES], __mmask16 mb_mask, const int dir);
+
+mbx_status16 internal_avx512_sm4_set_round_keys_mb16(int32u* key_sched[SM4_ROUNDS], const int8u* pa_inp_key[SM4_LINES], __mmask16 mb_mask);
+mbx_status16 internal_avx512_sm4_xts_set_keys_mb16(mbx_sm4_key_schedule* key_sched1,  mbx_sm4_key_schedule* key_sched2, 
+                                                    const sm4_xts_key* pa_key[SM4_LINES], __mmask16 mb_mask);
+
+#ifdef  __cplusplus
+}
+#endif
 
 // The transformation based on SM4 sbox algebraic structure, parameters were computed manually
 __MBX_INLINE __m512i sBox512(__m512i block)
@@ -854,4 +876,7 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI8(__m512i t0, __m512i t1, __m512
     UPDATE_STREAM_MASK_16(stream_mask, p_loc_len)
     XOR_AND_STORE_RESULT_EPI8((__m128i*)p_out[15] - 3, stream_mask << 48, loc_mb_mask, t3, (__m128i*)p_iv[15] - 3, z3);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */
+
 #endif /* _SM4_GFNI_MB_H */

@@ -42,6 +42,10 @@ endif()
 set(CRYPTO_MB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(CRYPTO_MB_SOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
+set(MBX_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(CRYPTO_MB_DISPATCHER_DIR "${MBX_DIR}/dispatcher")
+
 set(MB_DYN_LIB_TARGET    "crypto_mb")   # Dynamic library
 set(MB_STATIC_LIB_TARGET "crypto_mb_s") # Static library
 
@@ -51,6 +55,12 @@ file(GLOB MB_PUBLIC_HEADERS "${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/*.h*")
 if(NOT DEFINED MBX_FIPS_MODE)
     list(REMOVE_ITEM MB_PUBLIC_HEADERS "${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/fips_cert.h")
 endif()
+
+# Platform-specific definitions
+set(l9_def "_L9" "SIMD_LEN=256")
+set(k1_def "_K1" "USE_AMS_5x" "SIMD_LEN=512")
+
+set(MBX_PLATFORM_LIST l9 k1)
 
 if(MB_STANDALONE)
     foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
@@ -62,12 +72,25 @@ if(MB_STANDALONE)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+    set(INTERNAL_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/autogen_1cpu")
 else()
     # Make variables below accessible in parent CMakeLists.txt
     set(MBX_INTERFACE_VERSION ${MBX_INTERFACE_VERSION} PARENT_SCOPE)
     set(MB_PUBLIC_HEADERS ${MB_PUBLIC_HEADERS} PARENT_SCOPE)
     set(MB_DYN_LIB_TARGET    "${MB_DYN_LIB_TARGET}" PARENT_SCOPE)
     set(MB_STATIC_LIB_TARGET "${MB_STATIC_LIB_TARGET}" PARENT_SCOPE)
+endif()
+
+if(MB_STANDALONE)
+    find_package(Python REQUIRED)
+    if(Python_Interpreter_FOUND)
+        message (STATUS "PYTHON_VERSION_STRING ................. " ${Python_VERSION})
+        else()
+        message (STATUS "PYTHON_VERSION_STRING ................. Python not found" )
+    endif()
+    if(NOT CMAKE_OUTPUT_DIR)
+        set(CMAKE_OUTPUT_DIR              "${CMAKE_BINARY_DIR}/.build")
+    endif()
 endif()
 
 if(BORINGSSL OR BABASSL) # off by default
@@ -85,11 +108,13 @@ if(BN_OPENSSL_PATCH)
 endif()
 
 include_directories(
-     ${CRYPTO_MB_INCLUDE_DIR}
-     ${OPENSSL_INCLUDE_DIR}
-     $<$<C_COMPILER_ID:Intel>:$ENV{ROOT}/compiler/include $ENV{ROOT}/compiler/include/icc>
-     $<$<NOT:$<C_COMPILER_ID:Intel>>:${CMAKE_SYSTEM_INCLUDE_PATH}>
-     $<$<OR:$<C_COMPILER_ID:Intel>,$<BOOL:${MSVC_IDE}>>:$ENV{INCLUDE}>
+    ${CRYPTO_MB_INCLUDE_DIR}
+    ${OPENSSL_INCLUDE_DIR}
+    ${INTERNAL_INCLUDE_DIR}
+    ${INTERNAL_INCLUDE_DIR}/single_cpu/crypto_mb
+    $<$<C_COMPILER_ID:Intel>:$ENV{ROOT}/compiler/include $ENV{ROOT}/compiler/include/icc>
+    $<$<NOT:$<C_COMPILER_ID:Intel>>:${CMAKE_SYSTEM_INCLUDE_PATH}>
+    $<$<OR:$<C_COMPILER_ID:Intel>,$<BOOL:${MSVC_IDE}>>:$ENV{INCLUDE}>
 )
 
 add_subdirectory(src)

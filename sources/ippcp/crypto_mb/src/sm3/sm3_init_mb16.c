@@ -20,40 +20,8 @@
 #include <internal/sm3/sm3_mb16.h>
 #include <internal/common/ifma_defs.h>
 
-void sm3_mask_init_mb16(SM3_CTX_mb16 * p_state, __mmask16 mb_mask)
-{
-    __mmask8 mb_mask8[2];
-    mb_mask8[0] = (__mmask8)mb_mask;
-    mb_mask8[1] = *((__mmask8*)&mb_mask + 1);
-
-    /* clear buffer index */
-    _mm512_storeu_si512(HASH_BUFFIDX(p_state), _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_BUFFIDX(p_state)), mb_mask, 0));
-
-    /* clear summary message length */
-    _mm512_storeu_si512(MSG_LEN(p_state), _mm512_maskz_loadu_epi64(~mb_mask8[0], MSG_LEN(p_state)));
-    _mm512_storeu_si512(MSG_LEN(p_state) + 8, _mm512_maskz_loadu_epi64(~mb_mask8[1], MSG_LEN(p_state) + 8));
-    
-
-    /* clear buffer */
-    for (int i = 0; i < SM3_NUM_BUFFERS; i++) {
-        if ((mb_mask >> i) & 1)
-            _mm512_storeu_si512(HASH_BUFF(p_state)[i], _mm512_setzero_si512());
-    }
-
-    /* setup initial digest in multi-buffer format */
-    _mm512_storeu_si512(HASH_VALUE(p_state)[0], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[0]), mb_mask, (int)sm3_iv[0]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[1], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[1]), mb_mask, (int)sm3_iv[1]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[2], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[2]), mb_mask, (int)sm3_iv[2]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[3], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[3]), mb_mask, (int)sm3_iv[3]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[4], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[4]), mb_mask, (int)sm3_iv[4]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[5], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[5]), mb_mask, (int)sm3_iv[5]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[6], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[6]), mb_mask, (int)sm3_iv[6]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[7], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[7]), mb_mask, (int)sm3_iv[7]));
-}
-
-
 DLL_PUBLIC
-mbx_status16 mbx_sm3_init_mb16(SM3_CTX_mb16 * p_state)
+mbx_status16 OWNAPI(mbx_sm3_init_mb16)(SM3_CTX_mb16 * p_state)
 {
     mbx_status16 status = 0;
 
@@ -63,7 +31,10 @@ mbx_status16 mbx_sm3_init_mb16(SM3_CTX_mb16 * p_state)
         return status;
     }
 
-    sm3_mask_init_mb16(p_state, 0xFFFF);
-
+#if (_MBX>=_MBX_K1)
+    status |= internal_avx512_sm3_mask_init_mb16(p_state, 0xFFFF);
+#else
+    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
     return status;
 }

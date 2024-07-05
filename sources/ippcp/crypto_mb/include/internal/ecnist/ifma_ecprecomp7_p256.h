@@ -19,6 +19,8 @@
 
 #include <internal/ecnist/ifma_ecpoint_p256.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define MUL_BASEPOINT_WIN_SIZE (7)
 
 #define BP_WIN_SIZE  MUL_BASEPOINT_WIN_SIZE
@@ -2469,5 +2471,7 @@ __ALIGN64 static SINGLE_P256_POINT_AFFINE ifma_ec_nistp256_bp_precomp[][BP_N_ENT
    {{0x000b43a43228d831,0x00003ad63f99ab41,0x000a5122924ae1c3,0x0002b47e525f1a46,0x00004af860fdd26d}, {0x000ef613f714aa18,0x000d6b78795ed6ba,0x000a9d694f51865a,0x00052753e21fcee6,0x00002ceb1de0a37b}},
 }
 };
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* IFMA_ECPRECOMP7_P256_H */

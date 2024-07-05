@@ -23,13 +23,14 @@
 #include <internal/rsa/ifma_rsa_method.h>
 #include <internal/rsa/ifma_rsa_layer_cp.h>
 
+
 #if !defined(NO_USE_MALLOC)
 #include <stdlib.h>
 #endif
 
 // y = x^65537 mod n
 DLL_PUBLIC
-mbx_status mbx_rsa_public_mb8(const int8u* const from_pa[8],
+mbx_status OWNAPI(mbx_rsa_public_mb8)(const int8u* const from_pa[8],
                                     int8u* const to_pa[8],
                              const int64u* const n_pa[8],
                                        int expected_rsa_bitsize,
@@ -105,10 +106,13 @@ mbx_status mbx_rsa_public_mb8(const int8u* const from_pa[8],
       }
       #endif
    
+#if (_MBX>=_MBX_K1)
       ifma_cp_rsa_pub_layer_mb8(from_pa, to_pa, n_pa,
                                 expected_rsa_bitsize, meth,
                                 buffer);
-      
+#else
+      status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
       #if !defined(NO_USE_MALLOC)
       /* release buffer */
       if(allocated_buf)
@@ -120,7 +124,7 @@ mbx_status mbx_rsa_public_mb8(const int8u* const from_pa[8],
 }
 
 DLL_PUBLIC
-mbx_status mbx_rsa_private_mb8(const int8u* const from_pa[8],
+mbx_status OWNAPI(mbx_rsa_private_mb8)(const int8u* const from_pa[8],
                                      int8u* const to_pa[8],
                               const int64u* const d_pa[8],
                               const int64u* const n_pa[8],
@@ -197,11 +201,13 @@ mbx_status mbx_rsa_private_mb8(const int8u* const from_pa[8],
          allocated_buf = 1;
       }
       #endif
-   
+#if (_MBX>=_MBX_K1)
       ifma_cp_rsa_prv2_layer_mb8(from_pa, to_pa, d_pa, n_pa,
                                 expected_rsa_bitsize, meth,
                                 buffer);
-
+#else
+      status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
       #if !defined(NO_USE_MALLOC)
       /* release buffer */
       if(allocated_buf)
@@ -213,7 +219,7 @@ mbx_status mbx_rsa_private_mb8(const int8u* const from_pa[8],
 }
 
 DLL_PUBLIC
-mbx_status mbx_rsa_private_crt_mb8(const int8u* const from_pa[8],
+mbx_status OWNAPI(mbx_rsa_private_crt_mb8)(const int8u* const from_pa[8],
                                          int8u* const to_pa[8],
                                   const int64u* const p_pa[8],
                                   const int64u* const q_pa[8],
@@ -298,10 +304,13 @@ mbx_status mbx_rsa_private_crt_mb8(const int8u* const from_pa[8],
       }
       #endif
    
+#if (_MBX>=_MBX_K1)   
       ifma_cp_rsa_prv5_layer_mb8(from_pa, to_pa, p_pa, q_pa, dp_pa, dq_pa, iq_pa,
                                 expected_rsa_bitsize, meth,
                                 buffer);
-
+#else
+      status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
       #if !defined(NO_USE_MALLOC)
       /* release buffer */
       if(allocated_buf)
@@ -311,3 +320,4 @@ mbx_status mbx_rsa_private_crt_mb8(const int8u* const from_pa[8],
 
    return status;
 }
+

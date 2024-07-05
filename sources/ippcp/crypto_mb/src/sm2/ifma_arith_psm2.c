@@ -16,6 +16,8 @@
 
 #include <internal/sm2/ifma_arith_sm2.h>
 
+#if (_MBX>=_MBX_K1)
+
 /*
 // prime256 = 2^256 - 2^224 - 2^96 + 2^64 - 1
 // in 2^52 radix
@@ -500,3 +502,5 @@ __mb_mask MB_FUNC_NAME(ifma_check_range_psm2_)(const U64 A[])
 
    return mask;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

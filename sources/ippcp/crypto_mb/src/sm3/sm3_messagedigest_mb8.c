@@ -20,6 +20,8 @@
 #include <internal/sm3/sm3_mb8.h>
 #include <internal/common/ifma_defs.h>
 
+#if (_MBX>=_MBX_K1)
+
 mbx_status sm3_msg_digest_mb8(const int8u* const msg_pa[8], int len[8], int8u* hash_pa[8])
 {
     int buf_no;
@@ -52,3 +54,5 @@ mbx_status sm3_msg_digest_mb8(const int8u* const msg_pa[8], int len[8], int8u* h
 
     return status;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

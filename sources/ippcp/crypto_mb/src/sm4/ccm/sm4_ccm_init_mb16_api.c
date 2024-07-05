@@ -19,7 +19,7 @@
 #include <internal/common/mem_fns.h>
 
 DLL_PUBLIC
-mbx_status16 mbx_sm4_ccm_init_mb16(const sm4_key *const pa_key[SM4_LINES],
+mbx_status16 OWNAPI(mbx_sm4_ccm_init_mb16)(const sm4_key *const pa_key[SM4_LINES],
                                    const int8u *const pa_iv[SM4_LINES],
                                    const int iv_len[SM4_LINES],
                                    const int tag_len[SM4_LINES],
@@ -71,35 +71,12 @@ mbx_status16 mbx_sm4_ccm_init_mb16(const sm4_key *const pa_key[SM4_LINES],
         }
     }
 
-    if (MBX_IS_ANY_OK_STS16(status)) {
-
-        /*
-        // Compute SM4 keys
-        // initialize int32u mbx_sm4_key_schedule[SM4_ROUNDS][SM4_LINES] buffer in context
-        // keys layout for each round:
-        // key0 key4 key8 key12 key1 key5 key9 key13 key2 key6 key10 key14 key3 key7 key11 key15
-        */
-
-        sm4_set_round_keys_mb16((int32u **)SM4_CCM_CONTEXT_KEY(p_context), (const int8u **)pa_key, mb_mask);
-
-        /* Process IV */
-        sm4_ccm_update_iv_mb16(pa_iv, iv_len, mb_mask, p_context);
-
-        /* Zero initial msg and tag lengths */
-        PadBlock(0, SM4_CCM_CONTEXT_MSG_LEN(p_context), sizeof(int64u)*SM4_LINES);
-        PadBlock(0, SM4_CCM_CONTEXT_PROCESSED_LEN(p_context), sizeof(int64u)*SM4_LINES);
-        PadBlock(0, SM4_CCM_CONTEXT_TAG_LEN(p_context), sizeof(int)*SM4_LINES);
-
-        /* Process msg and tag lengths */
-        sm4_ccm_set_msg_len_mb16(msg_len, mb_mask, p_context);
-
-        sm4_ccm_set_tag_len_mb16(tag_len, mb_mask, p_context);
-
-        /* Zero initial hash values */
-        PadBlock(0, SM4_CCM_CONTEXT_HASH(p_context), 16*SM4_LINES);
-
-        SM4_CCM_CONTEXT_STATE(p_context) = sm4_ccm_update_aad;
-    }
-
+#if (_MBX>=_MBX_K1)
+    if (MBX_IS_ANY_OK_STS16(status))
+        status |= internal_avx512_sm4_ccm_init_mb16(pa_key, pa_iv, iv_len, tag_len, msg_len, p_context, mb_mask);
+#else
+    MBX_UNREFERENCED_PARAMETER(mb_mask);
+    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
     return status;
 }

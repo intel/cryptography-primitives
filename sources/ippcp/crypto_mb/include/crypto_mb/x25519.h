@@ -20,11 +20,11 @@
 #include <crypto_mb/defs.h>
 #include <crypto_mb/status.h>
 
-EXTERN_C mbx_status mbx_x25519_public_key_mb8(int8u* const pa_public_key[8],
-                                     const int8u* const pa_private_key[8]);
+MBXAPI(mbx_status, mbx_x25519_public_key_mb8,(int8u* const pa_public_key[8],
+                                     const int8u* const pa_private_key[8]))
 
-EXTERN_C mbx_status mbx_x25519_mb8(int8u* const pa_shared_key[8],
+MBXAPI(mbx_status, mbx_x25519_mb8,(int8u* const pa_shared_key[8],
                                 const int8u* const pa_private_key[8],
-                                const int8u* const pa_public_key[8]);
+                                const int8u* const pa_public_key[8]))
 
 #endif /* X25519_H */

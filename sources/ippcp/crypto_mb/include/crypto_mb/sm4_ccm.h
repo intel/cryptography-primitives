@@ -81,12 +81,13 @@ typedef struct _sm4_ccm_context_mb16 SM4_CCM_CTX_mb16;
  *
  * @return Bitmask of operation status
  */
-EXTERN_C mbx_status16 mbx_sm4_ccm_init_mb16(const sm4_key *const pa_key[SM4_LINES],
+
+MBXAPI(mbx_status16, mbx_sm4_ccm_init_mb16,(const sm4_key *const pa_key[SM4_LINES],
                                             const int8u *const pa_iv[SM4_LINES],
                                             const int iv_len[SM4_LINES],
                                             const int tag_len[SM4_LINES],
                                             const int64u msg_len[SM4_LINES],
-                                            SM4_CCM_CTX_mb16 *p_context);
+                                            SM4_CCM_CTX_mb16 *p_context))
 /*
  * Digests additional authenticated data (AAD) for 16 buffers
  *
@@ -96,9 +97,9 @@ EXTERN_C mbx_status16 mbx_sm4_ccm_init_mb16(const sm4_key *const pa_key[SM4_LINE
  *
  * @return Bitmask of operation status
  */
-EXTERN_C mbx_status16 mbx_sm4_ccm_update_aad_mb16(const int8u *const pa_aad[SM4_LINES],
+MBXAPI(mbx_status16, mbx_sm4_ccm_update_aad_mb16,(const int8u *const pa_aad[SM4_LINES],
                                                   const int aad_len[SM4_LINES],
-                                                  SM4_CCM_CTX_mb16 *p_context);
+                                                  SM4_CCM_CTX_mb16 *p_context))
 /*
  * Retrieves authentication tag for 16 buffers
  *
@@ -108,9 +109,9 @@ EXTERN_C mbx_status16 mbx_sm4_ccm_update_aad_mb16(const int8u *const pa_aad[SM4_
  *
  * @return Bitmask of operation status
  */
-EXTERN_C mbx_status16 mbx_sm4_ccm_get_tag_mb16(int8u *pa_tag[SM4_LINES],
+MBXAPI(mbx_status16, mbx_sm4_ccm_get_tag_mb16,(int8u *pa_tag[SM4_LINES],
                                                const int tag_len[SM4_LINES],
-                                               SM4_CCM_CTX_mb16 *p_context);
+                                               SM4_CCM_CTX_mb16 *p_context))
 /*
  * Encrypts 16 buffers with SM4-CCM.
  *
@@ -121,10 +122,10 @@ EXTERN_C mbx_status16 mbx_sm4_ccm_get_tag_mb16(int8u *pa_tag[SM4_LINES],
  *
  * @return Bitmask of operation status
  */
-EXTERN_C mbx_status16 mbx_sm4_ccm_encrypt_mb16(int8u *pa_out[SM4_LINES],
+MBXAPI(mbx_status16, mbx_sm4_ccm_encrypt_mb16,(int8u *pa_out[SM4_LINES],
                                                const int8u *const pa_in[SM4_LINES],
                                                const int in_len[SM4_LINES],
-                                               SM4_CCM_CTX_mb16 *p_context);
+                                               SM4_CCM_CTX_mb16 *p_context))
 /*
  * Decrypts 16 buffers with SM4-CCM.
  *
@@ -135,8 +136,9 @@ EXTERN_C mbx_status16 mbx_sm4_ccm_encrypt_mb16(int8u *pa_out[SM4_LINES],
  *
  * @return Bitmask of operation status
  */
-EXTERN_C mbx_status16 mbx_sm4_ccm_decrypt_mb16(int8u *pa_out[SM4_LINES],
+MBXAPI(mbx_status16, mbx_sm4_ccm_decrypt_mb16,(int8u *pa_out[SM4_LINES],
                                                const int8u *const pa_in[SM4_LINES],
                                                const int in_len[SM4_LINES],
-                                               SM4_CCM_CTX_mb16 *p_context);
+                                               SM4_CCM_CTX_mb16 *p_context))
+
 #endif /* SM4_CCM_H */

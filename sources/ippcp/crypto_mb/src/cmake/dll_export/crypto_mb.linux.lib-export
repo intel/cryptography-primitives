@@ -1,6 +1,7 @@
 EXTERN (mbx_getversion)
 
 EXTERN (mbx_get_cpu_features)
+EXTERN (mbx_set_cpu_features)
 EXTERN (mbx_is_crypto_mb_applicable)
 EXTERN (mbx_get_algo_info)
 

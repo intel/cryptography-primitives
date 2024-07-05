@@ -17,6 +17,8 @@
 #include <internal/ed25519/sha512.h>
 #include <internal/common/mem_fns.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* setup init hash value */
 static void sha512_init(int64u* pHash)
 {
@@ -223,3 +225,5 @@ void SHA512MsgDigest(const int8u* pMsg, int len, int8u* pMD)
 
     CopyBlock(hash, pMD, SHA512_DIGEST_BITSIZE / BYTESIZE);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

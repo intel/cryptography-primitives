@@ -17,6 +17,7 @@
 #include <internal/ecnist/ifma_ecpoint_p521.h>
 #include <internal/rsa/ifma_rsa_arith.h>
 
+#if (_MBX>=_MBX_K1)
 
 /* simplify naming */
 #define sqr    MB_FUNC_NAME(ifma_ams52_p521_)
@@ -734,3 +735,5 @@ __mb_mask MB_FUNC_NAME(ifma_is_on_curve_p521_)(const P521_POINT* p, int use_jpro
 
    return is_on_curve_mask;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

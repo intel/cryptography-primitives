@@ -16,6 +16,8 @@
 
 #include <internal/sm3/sm3_mb16.h>
 
+#if (_MBX>=_MBX_K1)
+
 __MBX_INLINE void TRANSPOSE_16X16_I32(int32u out[][16], const int32u* const inp[16])
 {
     __m512i r0 = _mm512_loadu_si512(inp[0]);
@@ -178,7 +180,6 @@ void sm3_avx512_mb16(int32u hash_pa[][16], const int8u* const msg_pa[16], int le
     int i;
 
     __ALIGN64 int32u* loc_data[SM3_NUM_BUFFERS];
-    __ALIGN64 int loc_len[SM3_NUM_BUFFERS];
 
     __m512i W[16];
     __m512i Vi[8];
@@ -191,8 +192,9 @@ void sm3_avx512_mb16(int32u hash_pa[][16], const int8u* const msg_pa[16], int le
     __mmask16 mb_mask = _mm512_cmp_epi32_mask(_mm512_loadu_si512(len), zero_buffer, _MM_CMPINT_NLE);
 
     /* Load data and set the data to zero in not valid buffers */
-    M512(loc_len) = _mm512_loadu_si512(len);
+    __m512i loc_len_m512 = _mm512_loadu_si512(len);
 
+    /* We need the address of the zero_buffer to form the fully valid array of pointers loc_src */
     _mm512_storeu_si512(loc_data, _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer), (__mmask8)mb_mask, msg_pa));
     _mm512_storeu_si512(loc_data+8, _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer), *((__mmask8*)&mb_mask + 1), msg_pa + 8));
 
@@ -323,7 +325,9 @@ void sm3_avx512_mb16(int32u hash_pa[][16], const int8u* const msg_pa[16], int le
         _mm512_storeu_si512(loc_data, _mm512_mask_add_epi64(_mm512_set1_epi64((long long)&zero_buffer), (__mmask8)mb_mask, _mm512_loadu_si512(loc_data), _mm512_set1_epi64(SM3_MSG_BLOCK_SIZE)));
         _mm512_storeu_si512(loc_data + 8, _mm512_mask_add_epi64(_mm512_set1_epi64((long long)&zero_buffer), *((__mmask8*)&mb_mask + 1), _mm512_loadu_si512(loc_data+8), _mm512_set1_epi64(SM3_MSG_BLOCK_SIZE)));
 
-        M512(loc_len) = _mm512_mask_sub_epi32(zero_buffer, mb_mask, _mm512_loadu_si512(loc_len), _mm512_set1_epi32(SM3_MSG_BLOCK_SIZE));
-        mb_mask = _mm512_cmp_epi32_mask(_mm512_loadu_si512(loc_len), zero_buffer, _MM_CMPINT_NLE);
+        loc_len_m512 = _mm512_mask_sub_epi32(zero_buffer, mb_mask, loc_len_m512, _mm512_set1_epi32(SM3_MSG_BLOCK_SIZE));
+        mb_mask = _mm512_cmp_epi32_mask(loc_len_m512, zero_buffer, _MM_CMPINT_NLE);
     }
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

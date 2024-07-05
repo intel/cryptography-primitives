@@ -70,6 +70,7 @@ mbx_status mbx_rsa_private_ssl_mb8(const int8u* const from_pa[8],
       }
    }
 
+#if (_MBX>=_MBX_K1)
    /* continue processing if there are correct parameters */
    if( MBX_IS_ANY_OK_STS(status) ) {
       /* select exponentiation */
@@ -80,7 +81,9 @@ mbx_status mbx_rsa_private_ssl_mb8(const int8u* const from_pa[8],
       case RSA_4K: ifma_ssl_rsa4K_prv2_layer_mb8(from_pa, to_pa, d_pa, n_pa); break;
       }
    }
-
+#else
+   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
    return status;
 }
 

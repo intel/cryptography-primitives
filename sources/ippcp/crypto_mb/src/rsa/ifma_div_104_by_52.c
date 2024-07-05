@@ -16,6 +16,7 @@
 
 #include <internal/rsa/ifma_div_104_by_52.h>
 
+#if (_MBX>=_MBX_K1)
 
 static ALIGNSPEC const UINT64 __mask52[] = { DUP8_DECL(0x00ffffffffffffffull) };
 static ALIGNSPEC const UINT64 __one[] = { DUP8_DECL(0x3ff0000000000000ull) };
@@ -121,3 +122,5 @@ VUINT64 __div_104_by_52(VUINT64 Ah, VUINT64 Al, VUINT64 B, VUINT64* prem)
 	return Ql;
 
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

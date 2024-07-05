@@ -197,8 +197,8 @@
             X7_ = _mm512_mask_shuffle_i64x2(X67H, 0b00111111, X0123H, X45H, 0b10111101 ); \
         }
 
-    #else
-        #error "Incorrect SIMD length"
+    //#else
+    //    #error "Incorrect SIMD length"
     #endif  // SIMD_LEN
 
 #endif  // IFMA_MATH_H

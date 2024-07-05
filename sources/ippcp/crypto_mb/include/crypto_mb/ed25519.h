@@ -31,8 +31,8 @@ typedef int8u ed25519_private_key[32];
 // pa_public_key[]   array of pointers to the public keys
 // pa_private_key[]  array of pointers to the public keys Y-coordinates
 */
-EXTERN_C mbx_status mbx_ed25519_public_key_mb8(ed25519_public_key* pa_public_key[8],
-                                         const ed25519_private_key* const pa_private_key[8]);
+MBXAPI(mbx_status, mbx_ed25519_public_key_mb8,(ed25519_public_key* pa_public_key[8],
+                                         const ed25519_private_key* const pa_private_key[8]))
 
 /*
 // Computes ed25519 signature
@@ -43,11 +43,11 @@ EXTERN_C mbx_status mbx_ed25519_public_key_mb8(ed25519_public_key* pa_public_key
 // pa_private_key[]  array of pointers to the signer's private keys
 // pa_public_key[]   array of pointers to the signer's public keys
 */
-EXTERN_C mbx_status mbx_ed25519_sign_mb8(ed25519_sign_component* pa_sign_r[8],
+MBXAPI(mbx_status, mbx_ed25519_sign_mb8,(ed25519_sign_component* pa_sign_r[8],
                                          ed25519_sign_component* pa_sign_s[8],
                                          const int8u* const pa_msg[8], const int32u msgLen[8],
                                          const ed25519_private_key* const pa_private_key[8],
-                                         const ed25519_public_key* const pa_public_key[8]);
+                                         const ed25519_public_key* const pa_public_key[8]))
 
 /*
 // Verifies ed25519 signature
@@ -57,9 +57,10 @@ EXTERN_C mbx_status mbx_ed25519_sign_mb8(ed25519_sign_component* pa_sign_r[8],
 // msgLen[]          array of signed messages lengths
 // pa_public_key[]   array of pointers to the signer's public keys
 */
-EXTERN_C mbx_status mbx_ed25519_verify_mb8(const ed25519_sign_component* const pa_sign_r[8],
+MBXAPI(mbx_status, mbx_ed25519_verify_mb8,(const ed25519_sign_component* const pa_sign_r[8],
                                            const ed25519_sign_component* const pa_sign_s[8],
                                            const int8u* const pa_msg[8], const int32u msgLen[8],
-                                           const ed25519_public_key* const pa_public_key[8]);
+                                           const ed25519_public_key* const pa_public_key[8]))
+
 
 #endif /* ED25519_H */

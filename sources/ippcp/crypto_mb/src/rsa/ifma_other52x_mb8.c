@@ -18,6 +18,8 @@
 #include <internal/common/ifma_math.h>
 #include <internal/rsa/ifma_rsa_arith.h>
 
+#if (_MBX>=_MBX_K1)
+
 #ifdef __GNUC__
 #define ASM(a) __asm__(a);
 #else
@@ -124,6 +126,7 @@ void ifma_modsub52x10_mb8(int64u res[][8], const int64u inpA[][8], const int64u 
 #undef BITSIZE
 #undef LEN52
 #undef MSD_MSK
+
 }
 
 void ifma_modsub52x20_mb8(int64u res[][8], const int64u inpA[][8], const int64u inpB[][8], const int64u inpM[][8])
@@ -2396,3 +2399,5 @@ void ifma_montRR52x_mb8 (int64u pRR[][8], int64u pM[][8], int convBitLen)
 
    #undef MAX_IFMA_MODULUS_BITLEN
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

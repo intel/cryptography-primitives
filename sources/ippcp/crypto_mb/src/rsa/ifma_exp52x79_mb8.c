@@ -17,6 +17,8 @@
 #include <internal/common/ifma_math.h>
 #include <internal/rsa/ifma_rsa_arith.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define USE_AMS
 #ifdef USE_AMS
     #define SQUARE_52x79_mb8(out, Y, mod, k0) \
@@ -395,3 +397,5 @@ void EXP52x79_mb8(int64u out[][8],
    _mm512_store_si512(red_X, _mm512_set1_epi64(1));
    ifma_amm52x79_mb8((int64u*)out, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

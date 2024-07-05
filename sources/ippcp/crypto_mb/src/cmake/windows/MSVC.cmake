@@ -70,4 +70,5 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /D_DEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
 
 # Optimisation dependent flags
-set(AVX512_CFLAGS "/arch:AVX512")
+set(l9_opt "/arch:AVX2")
+set(k1_opt "/arch:AVX512")

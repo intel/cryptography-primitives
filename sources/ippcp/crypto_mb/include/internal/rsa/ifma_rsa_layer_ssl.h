@@ -14,6 +14,8 @@
 * limitations under the License.
 *************************************************************************/
 
+#if (_MBX>=_MBX_K1)
+
 #ifndef BN_OPENSSL_DISABLE
 
 #if !defined(_IFMA_INTERNAL_SSL_LAYER_H_)
@@ -83,3 +85,5 @@ EXTERN_C void ifma_ssl_rsa4K_prv5_layer_mb8(const int8u* const from_pa[8],
 #endif /* _IFMA_INTERNAL_SSL_LAYER_H_ */
 
 #endif /* BN_OPENSSL_DISABLE */
+
+#endif /* #if (_MBX>=_MBX_K1) */

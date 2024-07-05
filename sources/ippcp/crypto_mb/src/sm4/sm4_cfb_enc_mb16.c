@@ -21,7 +21,7 @@
 #include <internal/sm4/sm4_mb.h>
 
 DLL_PUBLIC
-mbx_status16 mbx_sm4_encrypt_cfb128_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const mbx_sm4_key_schedule* key_sched, const int8u* pa_iv[SM4_LINES])
+mbx_status16 OWNAPI(mbx_sm4_encrypt_cfb128_mb16)(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const mbx_sm4_key_schedule* key_sched, const int8u* pa_iv[SM4_LINES])
 {
     int buf_no;
     mbx_status16 status = 0;
@@ -47,8 +47,12 @@ mbx_status16 mbx_sm4_encrypt_cfb128_mb16(int8u* pa_out[SM4_LINES], const int8u* 
         }
     }
 
+#if (_MBX>=_MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        sm4_cfb128_enc_kernel_mb16(pa_out, (const int8u**)pa_inp, (const int*)len, (const int32u**)key_sched, pa_iv, mb_mask);
-
+        status|= sm4_cfb128_enc_kernel_mb16(pa_out, (const int8u**)pa_inp, (const int*)len, (const int32u**)key_sched, pa_iv, mb_mask);
+#else
+    MBX_UNREFERENCED_PARAMETER(mb_mask);
+    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
     return status;
 }

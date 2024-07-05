@@ -45,7 +45,7 @@ The library provides a comprehensive set of routines commonly used for cryptogra
 ## FIPS 140 Compliance
 
 Intel IPP Cryptography supports building blocks (self-tests, services) for FIPS 140-3 compliance.
-See [FIPS] (./README_FIPS.md) document for details.
+See [FIPS](./README_FIPS.md) document for details.
 
 ## Installation
 

@@ -16,6 +16,8 @@
 
 #include <internal/ecnist/ifma_arith_p256.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* Constants */
 #define LEN52    NUMBER_OF_DIGITS(256,DIGIT_SIZE)
 
@@ -685,3 +687,4 @@ __mb_mask MB_FUNC_NAME(ifma_check_range_p256_)(const U64 A[])
    return mask;
 }
 
+#endif /* #if (_MBX>=_MBX_K1) */

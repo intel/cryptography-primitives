@@ -19,6 +19,8 @@
 
 #include <assert.h>
 
+#if (_MBX>=_MBX_K1) 
+
 #if defined(_MSC_VER) && (_MSC_VER < 1920)
   // Disable optimization for VS2017 due to AVX512 masking bug
   #define DISABLE_OPTIMIZATION __pragma(optimize( "", off ))
@@ -39,13 +41,13 @@ __MBX_INLINE __mmask8 MB_MASK(int L) {
 
 __MBX_INLINE __mmask64 SB_MASK1(int L, int REV)
 {
-   if (L <= 0)
-      return (__mmask64)0x0;
-   if (L > PROC_LEN)
-      L = PROC_LEN;
-   if (REV)
-      return (__mmask64)(0xFFFFFFFFFFFFFFFFULL << ((int)sizeof(__m512i) - L));
-   return (__mmask64)(0xFFFFFFFFFFFFFFFFULL >> ((int)sizeof(__m512i) - L));
+      if (L <= 0)
+         return (__mmask64)0x0;
+      if (L > PROC_LEN)
+         L = PROC_LEN;
+      if (REV)
+         return (__mmask64)(0xFFFFFFFFFFFFFFFFULL << ((int)sizeof(__m512i) - L));
+      return (__mmask64)(0xFFFFFFFFFFFFFFFFULL >> ((int)sizeof(__m512i) - L));
 }
 
 
@@ -222,7 +224,7 @@ int8u ifma_BNU_to_mb8(int64u out_mb8[][8], const int64u* const bn[8], int bitLen
    int byteLen = NUMBER_OF_DIGITS(bitLen, 8);
    int i;
    for (i = 0; i < 8; ++i)
-       byteLens[i] = (NULL != bn[i]) ? byteLen : 0;
+      byteLens[i] = (NULL != bn[i]) ? byteLen : 0;
 
    transform_8sb_to_mb8((U64*)out_mb8, bitLen, (int8u**)bn, byteLens, RADIX_CVT);
 
@@ -516,3 +518,5 @@ int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const bn[8], int
    return _mm512_cmpneq_epi64_mask(_mm512_loadu_si512((__m512i*)bn), _mm512_setzero_si512());
 }
 #endif /* BN_OPENSSL_DISABLE */
+
+#endif /* #if (_MBX>=_MBX_K1) */

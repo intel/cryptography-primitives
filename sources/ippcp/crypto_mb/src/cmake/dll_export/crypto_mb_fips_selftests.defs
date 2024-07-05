@@ -3,6 +3,7 @@ EXPORTS
 mbx_getversion
 
 mbx_get_cpu_features
+mbx_set_cpu_features
 mbx_is_crypto_mb_applicable
 mbx_get_algo_info
 

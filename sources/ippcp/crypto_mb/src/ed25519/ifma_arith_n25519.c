@@ -19,6 +19,8 @@
 #include <internal/common/ifma_math.h>
 #include <internal/ed25519/ifma_arith_n25519.h>
 
+#if (_MBX>=_MBX_K1)
+
 /*
 // ED25519 prime base point order
 // n = 2^252+27742317777372353535851937790883648493 = 0x1000000000000000000000000000000014DEF9DEA2F79CD65812631A5CF5D3ED
@@ -387,3 +389,5 @@ void ifma52_ed25519n_madd(U64 r[NE_LEN52], const U64 a[NE_LEN52], const U64 b[NE
    t[9] = r9;
    ifma52_ed25519n_reduce(r, t);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

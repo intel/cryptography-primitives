@@ -33,11 +33,11 @@
 // pa_skey[]   array of pointers to the private keys
 // pBuffer     pointer to the scratch buffer
 */
-EXTERN_C mbx_status mbx_sm2_ecpublic_key_mb8(int64u* pa_pubx[8],
+MBXAPI(mbx_status, mbx_sm2_ecpublic_key_mb8,(int64u* pa_pubx[8],
                                              int64u* pa_puby[8],
                                              int64u* pa_pubz[8],
                                  const int64u* const pa_skey[8],
-                                              int8u* pBuffer);
+                                              int8u* pBuffer))
 
 /*
 // Computes shared key
@@ -51,12 +51,12 @@ EXTERN_C mbx_status mbx_sm2_ecpublic_key_mb8(int64u* pa_pubx[8],
 // Note:
 // This function implements ECDHE over SM2 curve according to IEEE 1363-2000 standard.
 */
-EXTERN_C mbx_status mbx_sm2_ecdh_mb8(int8u* pa_shared_key[8],
+MBXAPI(mbx_status, mbx_sm2_ecdh_mb8,(int8u* pa_shared_key[8],
                         const int64u* const pa_skey[8],
                         const int64u* const pa_pubx[8],
                         const int64u* const pa_puby[8],
                         const int64u* const pa_pubz[8],
-                                     int8u* pBuffer);
+                                     int8u* pBuffer))
 
 /*
 // Computes SM2 ECDSA signature
@@ -73,7 +73,7 @@ EXTERN_C mbx_status mbx_sm2_ecdh_mb8(int8u* pa_shared_key[8],
 // pa_pubz[]         array of pointers to the party's public keys Z-coordinates (or NULL, if affine coordinate requested)
 // pBuffer           pointer to the scratch buffer
 */
-EXTERN_C mbx_status mbx_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
+MBXAPI(mbx_status, mbx_sm2_ecdsa_sign_mb8,(int8u* pa_sign_r[8],
                                            int8u* pa_sign_s[8],
                                const int8u* const pa_user_id[8],
                                         const int user_id_len[8],
@@ -84,7 +84,7 @@ EXTERN_C mbx_status mbx_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
                               const int64u* const pa_pubx[8],
                               const int64u* const pa_puby[8],
                               const int64u* const pa_pubz[8],
-                                           int8u* pBuffer);
+                                           int8u* pBuffer))
 
 /*
 // Verifies SM2 ECDSA signature
@@ -99,7 +99,7 @@ EXTERN_C mbx_status mbx_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
 // pa_pubz[]         array of pointers to the signer's public keys Z-coordinates  (or NULL, if affine coordinate requested)
 // pBuffer           pointer to the scratch buffer
 */
-EXTERN_C mbx_status mbx_sm2_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
+MBXAPI(mbx_status, mbx_sm2_ecdsa_verify_mb8,(const int8u* const pa_sign_r[8],
                                              const int8u* const pa_sign_s[8],
                                              const int8u* const pa_user_id[8],
                                                       const int user_id_len[8],
@@ -108,26 +108,26 @@ EXTERN_C mbx_status mbx_sm2_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
                                             const int64u* const pa_pubx[8],
                                             const int64u* const pa_puby[8],
                                             const int64u* const pa_pubz[8],
-                                                         int8u* pBuffer);
+                                                         int8u* pBuffer))
 
 /*
 // OpenSSL's specific similar APIs
 */
 #ifndef BN_OPENSSL_DISABLE
-EXTERN_C mbx_status mbx_sm2_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
+MBXAPI(mbx_status, mbx_sm2_ecpublic_key_ssl_mb8,(BIGNUM* pa_pubx[8],
                                                  BIGNUM* pa_puby[8],
                                                  BIGNUM* pa_pubz[8],
                                      const BIGNUM* const pa_skey[8],
-                                                  int8u* pBuffer);
+                                                  int8u* pBuffer))
 
-EXTERN_C mbx_status mbx_sm2_ecdh_ssl_mb8(int8u* pa_shared_key[8],
+MBXAPI(mbx_status, mbx_sm2_ecdh_ssl_mb8,(int8u* pa_shared_key[8],
                             const BIGNUM* const pa_skey[8],
                             const BIGNUM* const pa_pubx[8],
                             const BIGNUM* const pa_puby[8],
                             const BIGNUM* const pa_pubz[8],
-                                         int8u* pBuffer);
+                                         int8u* pBuffer))
 
-EXTERN_C mbx_status mbx_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
+MBXAPI(mbx_status, mbx_sm2_ecdsa_sign_ssl_mb8,(int8u* pa_sign_r[8],
                                                int8u* pa_sign_s[8],
                                    const int8u* const pa_user_id[8],
                                             const int user_id_len[8],
@@ -138,9 +138,9 @@ EXTERN_C mbx_status mbx_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
                                   const BIGNUM* const pa_pubx[8],
                                   const BIGNUM* const pa_puby[8],
                                   const BIGNUM* const pa_pubz[8],
-                                               int8u* pBuffer);
+                                               int8u* pBuffer))
 
-EXTERN_C mbx_status mbx_sm2_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_sig[8],
+MBXAPI(mbx_status, mbx_sm2_ecdsa_verify_ssl_mb8,(const ECDSA_SIG* const pa_sig[8],
                                                      const int8u* const pa_user_id[8],
                                                               const int user_id_len[8],
                                                      const int8u* const pa_msg[8],
@@ -148,6 +148,7 @@ EXTERN_C mbx_status mbx_sm2_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_sig[8
                                                     const BIGNUM* const pa_pubx[8],
                                                     const BIGNUM* const pa_puby[8],
                                                     const BIGNUM* const pa_pubz[8],
-                                                                 int8u* pBuffer);
+                                                                 int8u* pBuffer))
+
 #endif // BN_OPENSSL_DISABLE
 #endif /* EC_SM2_H */

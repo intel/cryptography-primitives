@@ -16,6 +16,8 @@
 
 #include <internal/ecnist/ifma_arith_p521.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* Constants */
 
 /*
@@ -867,3 +869,5 @@ __mb_mask MB_FUNC_NAME(ifma_check_range_p521_)(const U64 A[])
 
    return mask;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

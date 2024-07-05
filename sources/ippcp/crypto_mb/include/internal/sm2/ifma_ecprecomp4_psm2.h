@@ -19,6 +19,8 @@
 
 #include <internal/sm2/ifma_ecpoint_sm2.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define MUL_BASEPOINT_WIN_SIZE (4)
 
 #define BP_WIN_SIZE  MUL_BASEPOINT_WIN_SIZE
@@ -677,5 +679,7 @@ __ALIGN64 static SINGLE_SM2_POINT_AFFINE ifma_ec_sm2_bp_precomp[][BP_N_ENTRY] = 
    {{0x0009ce39b3d6844b,0x00093320f9bee042,0x0007dc2d2af562e9,0x0005ea5fbc2c5d71,0x00006fa79ff0722f}, {0x00070a079eea8d96,0x00019377e5ee65aa,0x000ad14cb624a2b9,0x000ac930ec06eaf7,0x00008d07bdd35640}},
 },
 };
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* IFMA_ECPRECOMP4_PSM2_H */

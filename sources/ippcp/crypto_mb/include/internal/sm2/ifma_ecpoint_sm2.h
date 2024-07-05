@@ -17,7 +17,18 @@
 #ifndef IFMA_ECPOINT_SM2_H
 #define IFMA_ECPOINT_SM2_H
 
+#include <crypto_mb/status.h>
 #include <internal/sm2/ifma_arith_sm2.h>
+
+#ifndef BN_OPENSSL_DISABLE
+#include <openssl/bn.h>
+#include <openssl/ec.h>
+#ifdef OPENSSL_IS_BORINGSSL
+#include <openssl/ecdsa.h>
+#endif
+#endif /* BN_OPENSSL_DISABLE */
+
+#if (_MBX>=_MBX_K1)
 
 typedef struct {
    U64 X[PSM2_LEN52];
@@ -89,4 +100,88 @@ EXTERN_C void MB_FUNC_NAME(get_sm2_ec_affine_coords_)(U64 x[], U64 y[], const SM
 EXTERN_C const U64* MB_FUNC_NAME(ifma_ec_sm2_coord_one_)(void);
 EXTERN_C __mb_mask MB_FUNC_NAME(ifma_is_on_curve_psm2_)(const SM2_POINT* p, int use_jproj_coords);
 
-#endif  /* IFMA_ECPOINT_PSM2_H */
+
+#ifndef BN_OPENSSL_DISABLE
+
+mbx_status internal_avx512_sm2_ecdh_ssl_mb8(int8u* pa_shared_key[8],
+                                             const BIGNUM* const pa_skey[8],
+                                             const BIGNUM* const pa_pubx[8],
+                                             const BIGNUM* const pa_puby[8],
+                                             const BIGNUM* const pa_pubz[8],
+                                             int8u* pBuffer, int use_jproj_coords);
+
+mbx_status internal_avx512_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
+                                                  int8u* pa_sign_s[8],
+                                     const int8u* const pa_user_id[8],
+                                             const int user_id_len[8],
+                                         const int8u* const pa_msg[8],
+                                                 const int msg_len[8],
+                                   const BIGNUM* const pa_eph_skey[8],
+                                   const BIGNUM* const pa_reg_skey[8],
+                                       const BIGNUM* const pa_pubx[8],
+                                       const BIGNUM* const pa_puby[8],
+                                       const BIGNUM* const pa_pubz[8],
+                                   int8u* pBuffer, int use_jproj_coords, 
+                                             int* user_id_len_checked);
+
+mbx_status internal_avx512_sm2_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_sig[8],
+                                                const int8u* const pa_user_id[8],
+                                                const int user_id_len[8],
+                                                const int8u* const pa_msg[8],
+                                                const int msg_len[8],
+                                                const BIGNUM* const pa_pubx[8],
+                                                const BIGNUM* const pa_puby[8],
+                                                const BIGNUM* const pa_pubz[8],
+                                                int8u* pBuffer, int use_jproj_coords, 
+                                                      int* user_id_len_checked);
+
+mbx_status internal_avx512_sm2_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
+                                                    BIGNUM* pa_puby[8],
+                                                    BIGNUM* pa_pubz[8],
+                                        const BIGNUM* const pa_skey[8],
+                                       int8u* pBuffer, int use_jproj_coords);
+
+#endif /* BN_OPENSSL_DISABLE */
+
+mbx_status internal_avx512_sm2_ecdh_mb8(int8u* pa_shared_key[8],
+                                          const int64u* const pa_skey[8],
+                                          const int64u* const pa_pubx[8],
+                                          const int64u* const pa_puby[8],
+                                          const int64u* const pa_pubz[8],
+                                          int8u* pBuffer, int use_jproj_coords);
+
+mbx_status internal_avx512_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
+                                              int8u* pa_sign_s[8],
+                                        const int8u* const pa_user_id[8],
+                                        const int user_id_len[8],
+                                        const int8u* const pa_msg[8],
+                                                const int msg_len[8],
+                                        const int64u* const pa_eph_skey[8],
+                                        const int64u* const pa_reg_skey[8],
+                                        const int64u* const pa_pubx[8],
+                                        const int64u* const pa_puby[8],
+                                        const int64u* const pa_pubz[8],
+                                        int8u* pBuffer, int use_jproj_coords, 
+                                        int* user_id_len_checked);
+
+mbx_status internal_avx512_sm2_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
+                                                const int8u* const pa_sign_s[8],
+                                                const int8u* const pa_user_id[8],
+                                                const int user_id_len[8],
+                                                const int8u* const pa_msg[8],
+                                                const int msg_len[8],
+                                                const int64u* const pa_pubx[8],
+                                                const int64u* const pa_puby[8],
+                                                const int64u* const pa_pubz[8],
+                                                int8u* pBuffer, int use_jproj_coords, 
+                                                    int* user_id_len_checked);
+
+mbx_status internal_avx512_sm2_ecpublic_key_mb8(int64u* pa_pubx[8],
+                                                int64u* pa_puby[8],
+                                                int64u* pa_pubz[8],
+                                          const int64u* const pa_skey[8],
+                                          int8u* pBuffer, int use_jproj_coords);
+
+#endif /* #if (_MBX>=_MBX_K1) */
+
+#endif /* IFMA_ECPOINT_PSM2_H */

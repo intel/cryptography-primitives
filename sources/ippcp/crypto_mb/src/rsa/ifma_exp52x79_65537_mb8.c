@@ -17,6 +17,7 @@
 #include <internal/common/ifma_math.h>
 #include <internal/rsa/ifma_rsa_arith.h>
 
+#if (_MBX>=_MBX_K1)
 
 #define USE_AMS
 #ifdef USE_AMS
@@ -71,3 +72,4 @@ void EXP52x79_pub65537_mb8(int64u out[][8],
    ifma_amm52x79_mb8((int64u*)out, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
 }
 
+#endif /* #if (_MBX>=_MBX_K1) */

@@ -17,7 +17,10 @@
 #ifndef IFMA_ED25519_H
 #define IFMA_ED25519_H
 
+#include <crypto_mb/ed25519.h>
 #include <internal/ed25519/ifma_arith_p25519.h>
+
+#if (_MBX>=_MBX_K1)
 
 /* homogeneous: (X:Y:Z) satisfying x=X/Z, y=Y/Z */
 typedef struct ge52_homo_mb_t {
@@ -154,5 +157,21 @@ void ifma_ed25519_prod_point(ge52_ext_mb* r, const ge52_ext_mb* p, const U64 sca
 
 void ge52_ext_compress(fe52_mb fe, const ge52_ext_mb* p);
 __mb_mask ge52_ext_decompress(ge52_ext_mb* p, const fe52_mb fe);
+
+mbx_status MB_FUNC_NAME(internal_avx512_ed25519_public_key_)(ed25519_public_key* pa_public_key[8],
+                                               const ed25519_private_key* const pa_private_key[8]);
+
+mbx_status MB_FUNC_NAME(internal_avx512_ed25519_sign_)(ed25519_sign_component* pa_sign_r[8],
+                                                       ed25519_sign_component* pa_sign_s[8],
+                                                       const int8u* const pa_msg[8], const int32u msgLen[8],
+                                                       const ed25519_private_key* const pa_private_key[8],
+                                                       const ed25519_public_key* const pa_public_key[8]);
+
+mbx_status MB_FUNC_NAME(internal_avx512_ed25519_verify_)(const ed25519_sign_component* const pa_sign_r[8],
+                                                         const ed25519_sign_component* const pa_sign_s[8],
+                                                         const int8u* const pa_msg[8], const int32u msgLen[8],
+                                                         const ed25519_public_key* const pa_public_key[8]);
+
+#endif /* #if (_MBX>=_MBX_K1) */ 
 
 #endif /* IFMA_ED25519_H */

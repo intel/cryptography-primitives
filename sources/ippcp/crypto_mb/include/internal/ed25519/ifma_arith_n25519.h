@@ -20,6 +20,8 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_math.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* bitsize of base point order */
 #define N25519_BITSIZE  (253)
 #define NE_LEN52        NUMBER_OF_DIGITS(N25519_BITSIZE, DIGIT_SIZE)
@@ -27,5 +29,7 @@
 
 void ifma52_ed25519n_madd(U64 r[NE_LEN52], const U64 a[NE_LEN52], const U64 b[NE_LEN52], const U64 c[NE_LEN52]);
 void ifma52_ed25519n_reduce(U64 r[NE_LEN52], const U64 x[NE_LEN52 * 2]);
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* IFMA_ARITH_N25519_H */

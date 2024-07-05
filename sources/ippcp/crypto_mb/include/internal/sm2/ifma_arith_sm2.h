@@ -21,6 +21,8 @@
 #include <internal/common/ifma_math.h>
 #include <internal/ecnist/ifma_arith_p256.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* underlying prime's size */
 #define PSM2_BITSIZE (256)
 
@@ -132,4 +134,6 @@ EXTERN_C void MB_FUNC_NAME(ifma_fastred52_pnsm2_)(U64 r[], const U64 a[]);
 EXTERN_C __mb_mask MB_FUNC_NAME(ifma_cmp_lt_nsm2_)(const U64 a[]);
 EXTERN_C __mb_mask MB_FUNC_NAME(ifma_check_range_nsm2_)(const U64 a[]);
 
-#endif
+#endif /* #if (_MBX>=_MBX_K1) */
+
+#endif /* IFMA_ARITH_SM2_H */

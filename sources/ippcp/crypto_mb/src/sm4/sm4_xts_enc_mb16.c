@@ -21,7 +21,7 @@
 #include <internal/sm4/sm4_mb.h>
 
 DLL_PUBLIC
-mbx_status16 mbx_sm4_xts_encrypt_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES],
+mbx_status16 OWNAPI(mbx_sm4_xts_encrypt_mb16)(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES],
                                       const int len[SM4_LINES], const mbx_sm4_key_schedule* key_sched1,
                                       const mbx_sm4_key_schedule* key_sched2,
                                       const int8u* pa_tweak[SM4_LINES])
@@ -54,10 +54,14 @@ mbx_status16 mbx_sm4_xts_encrypt_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_
         }
     }
 
+#if (_MBX>=_MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        sm4_xts_kernel_mb16(pa_out, (const int8u**)pa_inp, (const int*)len,
+        status |= sm4_xts_kernel_mb16(pa_out, (const int8u**)pa_inp, (const int*)len,
                             (const int32u**)key_sched1, (const int32u**)key_sched2,
                             pa_tweak, mb_mask, SM4_ENC);
-
+#else
+    MBX_UNREFERENCED_PARAMETER(mb_mask);
+    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
     return status;
 }

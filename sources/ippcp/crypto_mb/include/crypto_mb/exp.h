@@ -20,39 +20,38 @@
 #include <crypto_mb/defs.h>
 #include <crypto_mb/status.h>
 
-
 /* size of scratch buffer */
-EXTERN_C int mbx_exp_BufferSize(int modulusBits);
+MBXAPI(int, mbx_exp_BufferSize,(int modulusBits))
 
 /* exp operation */
-EXTERN_C mbx_status mbx_exp1024_mb8(int64u* const out_pa[8],
+MBXAPI(mbx_status, mbx_exp1024_mb8,(int64u* const out_pa[8],
                              const int64u* const base_pa[8],
                              const int64u* const exp_pa[8], int exp_bits,
                              const int64u* const mod_pa[8], int mod_bits,
-                                   int8u* pBuffer, int bufferLen);
+                                   int8u* pBuffer, int bufferLen))
 
-EXTERN_C mbx_status mbx_exp2048_mb8(int64u* const out_pa[8],
+MBXAPI(mbx_status, mbx_exp2048_mb8,(int64u* const out_pa[8],
                              const int64u* const base_pa[8],
                              const int64u* const exp_pa[8], int exp_bits,
                              const int64u* const mod_pa[8], int mod_bits,
-                                   int8u* pBuffer, int bufferLen);
+                                   int8u* pBuffer, int bufferLen))
 
-EXTERN_C mbx_status mbx_exp3072_mb8(int64u* const out_pa[8],
+MBXAPI(mbx_status, mbx_exp3072_mb8,(int64u* const out_pa[8],
                              const int64u* const base_pa[8],
                              const int64u* const exp_pa[8], int exp_bits,
                              const int64u* const mod_pa[8], int mod_bits,
-                                   int8u* pBuffer, int bufferLen);
+                                   int8u* pBuffer, int bufferLen))
 
-EXTERN_C mbx_status mbx_exp4096_mb8(int64u* const out_pa[8],
+MBXAPI(mbx_status, mbx_exp4096_mb8,(int64u* const out_pa[8],
                              const int64u* const base_pa[8],
                              const int64u* const exp_pa[8], int exp_bits,
                              const int64u* const mod_pa[8], int mod_bits,
-                                   int8u* pBuffer, int bufferLen);
+                                   int8u* pBuffer, int bufferLen))
 
-EXTERN_C mbx_status mbx_exp_mb8(int64u* const out_pa[8],
+MBXAPI(mbx_status, mbx_exp_mb8,(int64u* const out_pa[8],
                          const int64u* const base_pa[8],
                          const int64u* const exp_pa[8], int exp_bits,
                          const int64u* const mod_pa[8], int mod_bits,
-                               int8u* pBuffer, int bufferLen);
+                               int8u* pBuffer, int bufferLen))
 
 #endif /* EXP_H */

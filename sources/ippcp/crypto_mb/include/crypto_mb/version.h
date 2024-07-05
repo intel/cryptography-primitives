@@ -39,6 +39,6 @@ typedef struct {
    const char* strVersion;/* e.g. "crypto_mb (ver 1.2.3 Oct 28 2019)" */
 } mbxVersion;
 
-EXTERN_C const mbxVersion* mbx_getversion(void);
+MBXAPI(const mbxVersion*, mbx_getversion,(void))
 
 #endif /* VERSION_H */

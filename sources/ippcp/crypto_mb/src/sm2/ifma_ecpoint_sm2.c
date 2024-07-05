@@ -18,6 +18,8 @@
 #include <internal/rsa/ifma_rsa_arith.h>
 #include <internal/sm2/ifma_arith_sm2.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* simplify naming */
 #define sqr    MB_FUNC_NAME(ifma_ams52_psm2_)
 #define mul    MB_FUNC_NAME(ifma_amm52_psm2_)
@@ -692,3 +694,5 @@ __mb_mask MB_FUNC_NAME(ifma_is_on_curve_psm2_)(const SM2_POINT* p, int use_jproj
 
    return is_on_curve_mask;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

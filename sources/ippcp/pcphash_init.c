@@ -52,6 +52,11 @@ IPP_OWN_DEFN (int, cpInitHash, (IppsHashState* pCtx, IppHashAlgId algID))
       #endif
    }
    #endif
+   #if (_IPP32E >= _IPP32E_L9)
+   if (ippHashAlg_SM3==algID && IsFeatureEnabled(ippCPUID_AVX2SM3)) {
+      HASH_FUNC(pCtx) = UpdateSM3ni;
+   }
+   #endif
 
    /* setup optional agr of processing function */
    HASH_FUNC_PAR(pCtx) = cpHashProcFuncOpt[algID];

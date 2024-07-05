@@ -16,6 +16,7 @@
 
 #include <internal/ecnist/ifma_arith_p256.h>
 
+#if (_MBX>=_MBX_K1)
 
 /*=====================================================================
 
@@ -365,3 +366,5 @@ void MB_FUNC_NAME(ifma_neg52x5_)(U64 R[], const U64 A[], const U64 M[])
    R[3] = r3;
    R[4] = r4;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

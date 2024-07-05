@@ -17,6 +17,8 @@
 #include <immintrin.h>
 #include <internal/common/ifma_defs.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define ALIGNSPEC __ALIGN64
 
 #define  DUP2_DECL(a)   a, a
@@ -67,3 +69,5 @@ typedef int64u UINT64;
 #define VDIV_RU_D(a, b)   _mm512_div_round_pd(a, b, _MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC)
 #define VROUND_RZ_D(a)    _mm512_roundscale_pd(a, 3)
 #define VQFMR_D(a, b, c)  _mm512_fnmadd_pd(a, b, c)
+
+#endif /* #if (_MBX>=_MBX_K1) */

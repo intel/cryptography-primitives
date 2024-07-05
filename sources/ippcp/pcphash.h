@@ -224,6 +224,8 @@ __IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
 #define UpdateSHA256ni OWNAPI(UpdateSHA256ni)
    IPP_OWN_DECL (void, UpdateSHA256ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #endif
+#define UpdateSM3ni    OWNAPI(UpdateSM3ni)
+   IPP_OWN_DECL (void, UpdateSM3ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 
 /* general methods */
 #define cpInitHash OWNAPI(cpInitHash)

@@ -29,7 +29,7 @@
 //                            lmsType.lmsOIDAlgo   > LMS_SHA256_M24_H25
 //                            lmsType.lmsOIDAlgo   < LMS_SHA256_M32_H5
 //    ippStsLengthErr         maxMessageLength < 1
-//                            maxMessageLength > (Ipp32s)(IPP_MAX_32S) - 
+//                            maxMessageLength > (Ipp32s)(IPP_MAX_32S) -
 //                            - (byteSizeI + 4(q byteSize) + 2(D_MESG byteSize) + n(C byteSize))
 //    ippStsNoErr             no errors
 //
@@ -63,7 +63,7 @@ IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength,
     /* Check message length */
     IPP_BADARG_RET(maxMessageLength < 1, ippStsLengthErr);
     // this restriction is needed to avoid overflow of Ipp32s
-    // maxMessageLength must be less than    IPP_MAX_32S       - (CP_PK_I_BYTESIZE + q + D_MESG +      C       )                        
+    // maxMessageLength must be less than    IPP_MAX_32S       - (CP_PK_I_BYTESIZE + q + D_MESG +      C       )
     IPP_BADARG_RET(maxMessageLength  >  (Ipp32s)((IPP_MAX_32S) - (CP_PK_I_BYTESIZE + 4 +   2    + lmotsParams.n)),
                    ippStsLengthErr);
 

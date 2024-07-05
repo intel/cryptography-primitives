@@ -26,7 +26,6 @@ typedef int to_avoid_translation_unit_is_empty_warning;
 #include <internal/rsa/ifma_rsa_arith.h>
 #include <internal/rsa/ifma_rsa_layer_ssl.h>
 
-
 // y = x^65537 mod n
 DLL_PUBLIC
 mbx_status mbx_rsa_public_ssl_mb8(const int8u* const from_pa[8],
@@ -79,6 +78,7 @@ mbx_status mbx_rsa_public_ssl_mb8(const int8u* const from_pa[8],
       }
    }
 
+#if (_MBX>=_MBX_K1)
    /* continue processing if there are correct parameters */
    if( MBX_IS_ANY_OK_STS(status) ) {
       /* use suitable implementation */
@@ -89,7 +89,9 @@ mbx_status mbx_rsa_public_ssl_mb8(const int8u* const from_pa[8],
       case RSA_4K: ifma_ssl_rsa4K_pub_layer_mb8(from_pa, to_pa, n_pa); break;
       }
    }
-
+#else
+   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
    return status;
 }
 

@@ -16,6 +16,8 @@
 
 #include <internal/ed25519/ifma_arith_p25519.h>
 
+#if (_MBX>=_MBX_K1)
+
 __ALIGN64 static const int64u VPRIME25519_LO[sizeof(U64) / sizeof(int64u)] = {
    REP8_DECL(PRIME25519_LO)
 };
@@ -524,3 +526,5 @@ void fe52mb8_red_p25519(fe52_mb r, const fe52_mb a)
    r[3] = mask_mov64(r3, cmask, a[3]);
    r[4] = mask_mov64(r4, cmask, a[4]);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

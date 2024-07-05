@@ -38,6 +38,10 @@ set(IPPCP_EXAMPLES
   # SMS4 examples
   sms4/sms4-128-cbc-encryption.cpp
   sms4/sms4-128-cbc-decryption.cpp
+  # Hash examples
+  hash/sm3_hash_rmf.cpp
+  # Post-quantum algorithms examples
+  post-quantum/lms_m32_h5_w8_verification.cpp
   )
 
 cmake_policy(SET CMP0003 NEW)

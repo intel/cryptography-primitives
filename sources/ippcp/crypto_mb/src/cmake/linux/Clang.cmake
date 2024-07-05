@@ -78,7 +78,8 @@ set(CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
 # Optimisation dependent flags
-set(AVX512_CFLAGS " -march=icelake-server -mavx512dq -mavx512ifma -mavx512f -mavx512vbmi2 -mavx512cd -mavx512bw -mbmi2")
+set(l9_opt "-march=haswell -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed")
+set(k1_opt "-march=icelake-server -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mavx512ifma -mpclmul -msha -mrdrnd -mrdseed -madx -mgfni -mvaes -mvpclmulqdq -mavx512vbmi -mavx512vbmi2")
 
 # Build with sanitizers
 # FIXME: so far it can be enabled from the IPPCP build only. Change it once crypto_mb build is separated.

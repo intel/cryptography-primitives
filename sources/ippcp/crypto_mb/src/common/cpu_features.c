@@ -165,6 +165,8 @@ static const cpu_feature_map cpu_feature_detector_7_0[] = {
 
    {edx_, BIT02, mbcpCPUID_AVX512_4VNNIW},
    {edx_, BIT03, mbcpCPUID_AVX512_4FMADDPS},
+
+   {eax_, BIT23, mbcpCPUID_AVXIFMA},
 };
 
 #undef eax_
@@ -191,9 +193,18 @@ static int64u _mbcp_cpu_feature_detector(const int32u cpuinfo[4], const cpu_feat
 #define  XSAVE_AVX_SUPPORT    (BIT02)
 #define  XSAVE_AVX512_SUPPORT (BIT05|BIT06|BIT07)
 
+static int64u mbx_features = 0;
+
+DLL_PUBLIC
+void mbx_set_cpu_features(int64u features) {
+   mbx_features = features;
+}
+
 DLL_PUBLIC
 int64u mbx_get_cpu_features(void)
 {
+   if (mbx_features)
+      return mbx_features;
    /* detected cpu features */
    int64u features = 0;
 
@@ -227,7 +238,7 @@ int64u mbx_get_cpu_features(void)
 
 
 // based on c-flags: -mavx512dq -mavx512ifma -mavx512f -mavx512vbmi2 -mavx512cd -mavx512bw -mbmi2
-#define CRYPTO_MB_REQUIRED_CPU_FEATURES ( \
+#define CRYPTO_MB_REQUIRED_CPU_FEATURES_K1 ( \
                            mbcpCPUID_BMI2 \
                          | mbcpCPUID_AVX512F \
                          | mbcpCPUID_AVX512DQ \
@@ -236,13 +247,32 @@ int64u mbx_get_cpu_features(void)
                          | mbcpCPUID_AVX512VBMI2 \
                          | mbcpAVX512_ENABLEDBYOS)
 
-DLL_PUBLIC
-int mbx_is_crypto_mb_applicable(int64u cpu_features)
+#define CRYPTO_MB_REQUIRED_CPU_FEATURES_L9 ( \
+                           mbcpCPUID_MOVBE \
+                         | mbcpCPUID_AVX2 \
+                         | mbcpCPUID_RDSEED \
+                         | mbcpAVX_ENABLEDBYOS)
+
+int internal_is_k1_applicable(int64u cpu_features)
 {
    int64u features = cpu_features;
    if(0 == features)
       features = mbx_get_cpu_features();
-   return (CRYPTO_MB_REQUIRED_CPU_FEATURES == (features & CRYPTO_MB_REQUIRED_CPU_FEATURES));
+   return (CRYPTO_MB_REQUIRED_CPU_FEATURES_K1 == (features & CRYPTO_MB_REQUIRED_CPU_FEATURES_K1));
+}
+
+int internal_is_l9_applicable(int64u cpu_features)
+{
+   int64u features = cpu_features;
+   if(0 == features)
+      features = mbx_get_cpu_features();
+   return (CRYPTO_MB_REQUIRED_CPU_FEATURES_L9 == (features & CRYPTO_MB_REQUIRED_CPU_FEATURES_L9));
+}
+
+DLL_PUBLIC
+int mbx_is_crypto_mb_applicable(int64u cpu_features)
+{
+   return (internal_is_k1_applicable(cpu_features) || internal_is_l9_applicable(cpu_features));
 }
 
 /* structure for determining the number of buffers(WIDTH) for the algorithm */
@@ -289,4 +319,17 @@ MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo)
    }
 
    return num_width;
+}
+
+static int mbx_own_lib_index = -1;
+
+/* choosing the code path */
+extern int* _mbx_own_get_index() {
+   if (0 > mbx_own_lib_index) {
+      if (internal_is_k1_applicable(mbx_get_cpu_features()))
+         mbx_own_lib_index = 1; // K1 code path
+      else 
+         mbx_own_lib_index = 0; // L9 code path
+   }
+   return &mbx_own_lib_index;
 }

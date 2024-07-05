@@ -193,6 +193,13 @@ static int cpGetFeatures( Ipp64u* pFeaturesMask )
        if (ecx_ & BIT09) mask |= ippCPUID_AVX512VAES;    // test bit ecx[09]
        if (ecx_ & BIT10) mask |= ippCPUID_AVX512VCLMUL;  // test bit ecx[10]
 
+      cpGetReg( (int*)buf, 0x7, 1 ); // Intel® SMX-NI and Intel® SHA512-NI Instructions set check
+      eax_ = (Ipp32u)buf[0];
+      if (eax_ & BIT00) mask |= ippCPUID_AVX2SHA512;  // test bit eax[00]
+      if (eax_ & BIT01) mask |= ippCPUID_AVX2SM3;  // test bit eax[01]
+      if (eax_ & BIT02) mask |= ippCPUID_AVX2SM4;  // test bit eax[02]
+
+
        if (mask & ippCPUID_AVX512F) {
           /* test if Intel® AVX-512 is supported by OS */
           if (cp_is_avx512_extension())

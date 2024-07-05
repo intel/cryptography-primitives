@@ -18,7 +18,7 @@
 #include <internal/sm4/sm4_ccm_mb.h>
 
 DLL_PUBLIC
-mbx_status16 mbx_sm4_ccm_update_aad_mb16(const int8u *const pa_aad[SM4_LINES], const int aad_len[SM4_LINES], SM4_CCM_CTX_mb16 *p_context)
+mbx_status16 OWNAPI(mbx_sm4_ccm_update_aad_mb16)(const int8u *const pa_aad[SM4_LINES], const int aad_len[SM4_LINES], SM4_CCM_CTX_mb16 *p_context)
 {
    int buf_no;
    mbx_status16 status = 0;
@@ -51,8 +51,12 @@ mbx_status16 mbx_sm4_ccm_update_aad_mb16(const int8u *const pa_aad[SM4_LINES], c
       }
    }
 
+#if (_MBX>=_MBX_K1)
    if (MBX_IS_ANY_OK_STS16(status))
-      sm4_ccm_update_aad_mb16(pa_aad, aad_len, mb_mask, p_context);
-
+      status |= sm4_ccm_update_aad_mb16(pa_aad, aad_len, mb_mask, p_context);
+#else
+   MBX_UNREFERENCED_PARAMETER(mb_mask);
+   status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
    return status;
 }

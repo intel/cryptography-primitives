@@ -19,6 +19,8 @@
 
 #include <internal/ecnist/ifma_ecpoint_p384.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define MUL_BASEPOINT_WIN_SIZE (4)
 
 #define BP_WIN_SIZE  MUL_BASEPOINT_WIN_SIZE
@@ -997,5 +999,7 @@ __ALIGN64 static SINGLE_P384_POINT_AFFINE ifma_ec_nistp384_bp_precomp[][BP_N_ENT
    {{0x0000b16f46a35f8c,0x00065a630c20c4e5,0x0001f4362772ed03,0x000aca10c0dec6cd,0x000ba9e2f55428c8,0x000bbb1705d34bb5,0x000f6e8e81b4f732,0x000000000008363b}, {0x000ca7950547e910,0x000969603fe028be,0x00047954fea1ddef,0x000bb8efc191d12e,0x0005dba97347c0da,0x000656aaaf0e463b,0x000cf0b7f7c207a8,0x000000000003f08d}},
 }
 };
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* IFMA_ECPRECOMP4_P384_H */

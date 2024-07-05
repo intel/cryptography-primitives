@@ -17,6 +17,8 @@
 #ifndef DEFS_H
 #define DEFS_H
 
+#include "internal/common/internal_defs.h"
+
 /* data types */
 typedef unsigned char int8u;
 typedef unsigned short int16u;
@@ -54,14 +56,6 @@ typedef unsigned long long int64u;
    #endif
 #endif
 
-
-/* externals */
-#undef EXTERN_C
-
-#ifdef __cplusplus
-   #define EXTERN_C extern "C"
-#else
-   #define EXTERN_C
-#endif
+#define MBX_UNREFERENCED_PARAMETER(p) (void)(p)
 
 #endif /* DEFS_H */

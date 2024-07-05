@@ -19,6 +19,8 @@
 
 #include <internal/ed25519/ifma_arith_ed25519.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define MUL_BASEPOINT_WIN_SIZE (4)
 
 #define BP_WIN_SIZE  MUL_BASEPOINT_WIN_SIZE
@@ -346,5 +348,7 @@ __ALIGN64 static ge52_precomp ifma_ed25519_bp_precomp[][BP_N_ENTRY] = {
 {{0x000c92af49c5342e,0x00011b2e6fad01ab,0x000cc84e29ffeed8,0x000c543efa28c8df,0x000011b5df18a44c}, {0x000bbb8a42a975fc,0x0007796ada358bf7,0x000dedaa488c5c39,0x00020a6e27fc76fc,0x000019735fd7f6bc}, {0x000b90d042c84266,0x0000f7f19547ee3a,0x0005a497b9eb848e,0x000895f2503a1d06,0x00000fef911191df}},
 },
 };
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* #define IFMA_ED25519_PRECOMP_H */

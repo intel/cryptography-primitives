@@ -19,6 +19,8 @@
 #include <internal/rsa/ifma_rsa_arith.h>
 #include <internal/rsa/ifma_rsa_method.h>
 
+#if (_MBX>=_MBX_K1)
+
 /*
 // public exponent e=65537 implied
 */
@@ -238,3 +240,5 @@ void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
    zero_mb8(q_mb8, len52);
    zero_mb8(p_mb8, len52);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

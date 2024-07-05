@@ -43,17 +43,17 @@ struct _sm3_context_mb16 {
 
 typedef struct _sm3_context_mb16 SM3_CTX_mb16;
 
-EXTERN_C mbx_status16 mbx_sm3_init_mb16(SM3_CTX_mb16* p_state);
+MBXAPI(mbx_status16, mbx_sm3_init_mb16,(SM3_CTX_mb16* p_state))
 
-EXTERN_C mbx_status16 mbx_sm3_update_mb16(const int8u* const msg_pa[16],
+MBXAPI(mbx_status16, mbx_sm3_update_mb16,(const int8u* const msg_pa[16],
                                                          int len[16],
-                                               SM3_CTX_mb16* p_state);
+                                               SM3_CTX_mb16* p_state))
 
-EXTERN_C mbx_status16 mbx_sm3_final_mb16(int8u* hash_pa[16],
-                                  SM3_CTX_mb16* p_state);
+MBXAPI(mbx_status16, mbx_sm3_final_mb16,(int8u* hash_pa[16],
+                                  SM3_CTX_mb16* p_state))
 
-EXTERN_C mbx_status16 mbx_sm3_msg_digest_mb16(const int8u* const  msg_pa[16],
+MBXAPI(mbx_status16, mbx_sm3_msg_digest_mb16,(const int8u* const  msg_pa[16],
                                                               int len[16],
-                                                           int8u* hash_pa[16]);
+                                                           int8u* hash_pa[16]))
 
 #endif /* SM3_H */

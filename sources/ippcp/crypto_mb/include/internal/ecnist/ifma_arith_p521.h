@@ -20,6 +20,8 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_math.h>
 
+#if (_MBX>=_MBX_K1)
+
 /* underlying prime's size */
 #define P521_BITSIZE (521)
 
@@ -197,5 +199,7 @@ EXTERN_C void MB_FUNC_NAME(ifma_neg52_n521_)(U64 r[], const U64 a[]);
 EXTERN_C void MB_FUNC_NAME(ifma_fastred52_pn521_)(U64 r[], const U64 a[]);
 EXTERN_C __mb_mask MB_FUNC_NAME(ifma_cmp_lt_n521_)(const U64 a[]);
 EXTERN_C __mb_mask MB_FUNC_NAME(ifma_check_range_n521_)(const U64 a[]);
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif  /* IFMA_ARITH_P521_H */

@@ -20,6 +20,8 @@
 #include <internal/sm3/sm3_mb8.h>
 #include <internal/common/ifma_defs.h>
 
+#if (_MBX>=_MBX_K1)
+
 void sm3_mask_init_mb8(SM3_CTX_mb8* p_state, __mmask8 mb_mask)
 {
     /* clear buffer index */
@@ -59,3 +61,5 @@ mbx_status sm3_init_mb8(SM3_CTX_mb8* p_state)
 
     return status;
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */

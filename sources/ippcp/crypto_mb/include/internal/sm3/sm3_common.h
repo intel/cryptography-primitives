@@ -22,15 +22,9 @@
 
 #include <immintrin.h>
 
+#if (_MBX>=_MBX_K1)
+
 #define SM3_MSG_LEN_REPR        (sizeof(int64u))               /* size of processed message length representation (bytes) */
-
-#ifndef M256
-    #define M256(mem)           (*((__m256i*)(mem)))
-#endif
-
-#ifndef M512
-    #define M512(mem)           (*((__m512i*)(mem)))
-#endif
 
 #ifndef MIN
     #define MIN(a, b) ( ((a) < (b)) ? a : b )
@@ -202,5 +196,7 @@ __MBX_INLINE void TRANSPOSE_8X16_I32(int32u* out[16], const int32u* const inp[8]
     _mm256_mask_storeu_epi32((void*)out[14], (__mmask8)(((mb_mask >> 14) & 1)) * 0xFF, v6);
     _mm256_mask_storeu_epi32((void*)out[15], (__mmask8)(((mb_mask >> 15) & 1)) * 0xFF, v7);
 }
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* _SM3_COMMON_H */

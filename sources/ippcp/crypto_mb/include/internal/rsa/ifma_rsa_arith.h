@@ -21,6 +21,7 @@
   #include <openssl/bn.h>
 #endif
 
+#include <crypto_mb/status.h>
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_math.h>
 
@@ -35,6 +36,8 @@ typedef int64u (*pint64u_x8) [8];   // pointer to 8-term vector of int64u each
 
 #define NUMBER_OF_DIGITS(bitsize, digsize) (((bitsize) + (digsize)-1)/(digsize))
 #define MULTIPLE_OF(x, factor)             ((x) + (((factor) -((x)%(factor))) %(factor)))
+
+#if (_MBX>=_MBX_K1)
 
 // ============ Multi-Buffer required functions ============
 #define redLen ((RSA_1K+(DIGIT_SIZE-1))/DIGIT_SIZE) // 20
@@ -177,5 +180,14 @@ EXTERN_C void EXP52x79_pub65537_mb8(int64u out[][8],
                               const int64u toMont[][8],
                               const int64u  k0[8],
                               int64u work_buffer[][8]);
+
+
+mbx_status MB_FUNC_NAME(internal_avx512_x25519_)(int8u* const pa_shared_key[8], const int8u* const pa_private_key[8],
+                                                        const int8u* const pa_public_key[8]);
+
+mbx_status MB_FUNC_NAME(internal_avx512_x25519_public_key_)(int8u* const pa_public_key[8],
+                                                                   const int8u* const pa_private_key[8]);
+
+#endif /* #if (_MBX>=_MBX_K1) */
 
 #endif /* _IFMA_INTERNAL_H_ */
