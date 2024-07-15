@@ -27,9 +27,11 @@ set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,noexecstack")
 set(CMAKE_C_FLAGS_SECURITY "")
 # Format string vulnerabilities
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wformat -Wformat-security -Werror=format-security")
-if(NOT DEFINED NO_FORTIFY_SOURCE)
-    # Security flag that adds compile-time and run-time checks
-    set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -D_FORTIFY_SOURCE=2")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    if(NOT DEFINED NO_FORTIFY_SOURCE)
+        # Security flag that adds compile-time and run-time checks
+        set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -D_FORTIFY_SOURCE=2")
+    endif()
 endif()
 # Stack-based Buffer Overrun Detection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fstack-protector")
