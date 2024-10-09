@@ -30,35 +30,35 @@ def readNextFunction(header, curLine, headerID):    ## read next function with a
   FunType  = ''
   success = False
   while (curLine < len(header) and success == False):
-    if not headerID and re.match( '\s*#\s*if\s*!\s*defined\s*\(\s*__IPP', header[curLine]):
-      headerID= re.sub( '.*__IPP', '__IPP', header[curLine] )
-      headerID= re.sub( "\)", '', headerID)
-      headerID= re.sub( '[\n\s]', '', headerID )
+    if not headerID and re.match(r'\s*#\s*if\s*!\s*defined\s*\(\s*__IPP', header[curLine]):
+      headerID= re.sub(r'.*__IPP', '__IPP', header[curLine] )
+      headerID= re.sub(r"\)", '', headerID)
+      headerID= re.sub(r'[\n\s]', '', headerID )
     
-    if re.match( '^\s*IPPAPI\s*\(.*', header[curLine] ) :
+    if re.match(r'^\s*IPPAPI\s*\(.*', header[curLine] ) :
       FunStr= header[curLine];
-      FunStr= re.sub('\n','',FunStr)   ## remove EOL symbols
+      FunStr= re.sub(r'\n','',FunStr)   ## remove EOL symbols
   
-      while not re.match('.*\)\s*\)\s*$', FunStr):   ## concatenate string if string is not completed
+      while not re.match(r'.*\)\s*\)\s*$', FunStr):   ## concatenate string if string is not completed
         curLine= curLine+1
         FunStr= FunStr+header[curLine]
-        FunStr= re.sub('\n','',FunStr)   ## remove EOL symbols
+        FunStr= re.sub(r'\n','',FunStr)   ## remove EOL symbols
     
-      FunStr= re.sub('\s+', ' ', FunStr)
+      FunStr= re.sub(r'\s+', ' ', FunStr)
     
       s= FunStr.split(',')
     
       ## Extract function name
       FunName= s[1]
-      FunName= re.sub('\s', '', FunName)
+      FunName= re.sub(r'\s', '', FunName)
     
       ## Extract function type
-      FunType= re.sub( '.*\(', '', s[0] )
-      #FunType= re.sub(' ', '', FunType )
+      FunType= re.sub(r'.*\(', '', s[0] )
+      #FunType= re.sub(r' ', '', FunType )
     
       ## Extract function arguments
-      FunArg= re.sub('.*\(.*,.+,\s*\(', '(', FunStr)
-      FunArg= re.sub('\)\s*\)', ')', FunArg)
+      FunArg= re.sub(r'.*\(.*,.+,\s*\(', '(', FunStr)
+      FunArg= re.sub(r'\)\s*\)', ')', FunArg)
       success = True
 
     curLine = curLine + 1
