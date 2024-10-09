@@ -31,42 +31,42 @@ def readNextFunction(header, curLine, headerID):    ## read next function with a
   FunArgCall = ''
   success = False
   while (curLine < len(header) and success == False):
-    if not headerID and re.match( '\s*#\s*if\s*!\s*defined\s*\(\s*__IPP', header[curLine]):
-      headerID= re.sub( '.*__IPP', '__IPP', header[curLine] )
-      headerID= re.sub( "\)", '', headerID)
-      headerID= re.sub( '[\n\s]', '', headerID )
+    if not headerID and re.match(r'\s*#\s*if\s*!\s*defined\s*\(\s*__IPP', header[curLine]):
+      headerID= re.sub(r'.*__IPP', '__IPP', header[curLine] )
+      headerID= re.sub(r"\)", '', headerID)
+      headerID= re.sub(r'[\n\s]', '', headerID )
     
-    if re.match( '^\s*MBXAPI\s*\(.*', header[curLine] ) :
+    if re.match(r'^\s*MBXAPI\s*\(.*', header[curLine] ) :
       FunStr= header[curLine]
-      FunStr= re.sub('\n','',FunStr)   ## remove EOL symbols
+      FunStr= re.sub(r'\n','',FunStr)   ## remove EOL symbols
   
-      while not re.match('.*\)\s*\)\s*$', FunStr):   ## concatenate string if string is not completed
+      while not re.match(r'.*\)\s*\)\s*$', FunStr):   ## concatenate string if string is not completed
         curLine= curLine+1
         FunStr= FunStr+header[curLine]
-        FunStr= re.sub('\n','',FunStr)   ## remove EOL symbols
+        FunStr= re.sub(r'\n','',FunStr)   ## remove EOL symbols
     
-      FunStr= re.sub('\s+', ' ', FunStr)
+      FunStr= re.sub(r'\s+', ' ', FunStr)
     
       s= FunStr.split(',')
     
       ## Extract function name
       FunName= s[1]
-      FunName= re.sub('\s', '', FunName)
+      FunName= re.sub(r'\s', '', FunName)
     
       ## Extract function type
-      FunType= re.sub( '.*\(', '', s[0] )
+      FunType= re.sub(r'.*\(', '', s[0] )
     
       ## Extract function arguments
-      FunArg= re.sub('.*\(.*,.+,\s*\(', '(', FunStr)
-      FunArg= re.sub('\)\s*\)', ')', FunArg)
+      FunArg= re.sub(r'.*\(.*,.+,\s*\(', '(', FunStr)
+      FunArg= re.sub(r'\)\s*\)', ')', FunArg)
 
       ## Extract function arguments for call
       s= FunArg.split(',')
       for i in s:
         l= i.split(' ')
         FunArgCall+= l[-1] + ', '
-        FunArgCall= re.sub('\[\w*\]', '', FunArgCall)
-        FunArgCall= re.sub('\*', '', FunArgCall)
+        FunArgCall= re.sub(r'\[\w*\]', '', FunArgCall)
+        FunArgCall= re.sub(r'\*', '', FunArgCall)
       FunArgCall= FunArgCall[:-2]
       FunArgCall= '(' + FunArgCall
 
