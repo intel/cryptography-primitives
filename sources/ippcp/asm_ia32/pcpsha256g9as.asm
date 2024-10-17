@@ -280,6 +280,11 @@ pByteSwp DB    3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12
 ;; UpdateSHA256(Ipp32u digest[], Ipp8u dataBlock[], int datalen, Ipp32u K_256[])
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Caller = ippsHashUpdate_rmf
+;; Caller = ippsHashFinal_rmf
+;; Caller = ippsHashMessage_rmf
+;;
 align IPP_ALIGN_FACTOR
 IPPASM UpdateSHA256,PUBLIC
   USES_GPR esi,edi,ebx,ebp

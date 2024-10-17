@@ -19,31 +19,37 @@ This library consists of highly-optimized kernels taking advantage of Intel’s 
 
 ## Software Requirements
 
-### Common
+### Common tools
 
-- CMake\* 3.10 or higher
-- The Netwide Assembler (NASM) 2.14\*
-- OpenSSL\* 3.0.8 or higher
+- CMake\* 3.18 or higher
+- The Netwide Assembler (NASM) 2.16.02\*
+- OpenSSL\* 3.0.8 or higher **OR** BoringSSL* [45cf810d](https://github.com/google/boringssl/archive/45cf810dbdbd767f09f8cb0b0fcccd342c39041f.tar.gz) **OR** Tongsuo* 8.3.3
 
 ### Linux* OS
-
-- Intel® C++ Compiler Classic 2021.9 for Linux\* OS
+- [Common tools](#common-tools)
+- Intel® oneAPI DPC++/C++ Compiler latest for Linux\* OS
 - GCC 8.5
 - GCC 11.4
+- GCC 14.1
 - Clang 9.0
 - Clang 12.0
 - Clang 16.0
 - GNU binutils 2.32
+> **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
+
+> **NOTE:** GNU binutils 2.40 are required to build Intel® AVX-IFMA RSA optimization with GCC compiler.
 
 ### Windows* OS
-
-- Intel® C++ Compiler Classic 2021.9 for Windows\* OS
-- Microsoft Visual C++ Compiler\* version 19.24 provided by Microsoft Visual Studio\* 2019 version 16.4
-- Microsoft Visual C++ Compiler\* version 19.30 provided by Microsoft Visual Studio\* 2022 version 17.0
+- [Common tools](#common-tools)
+- Intel® oneAPI DPC++/C++ Compiler latest for Windows\* OS
+- Microsoft Visual C++ Compiler\* version 19.29 provided by Microsoft Visual Studio\* 2019 version 16.11
+- Microsoft Visual C++ Compiler\* version 19.30 provided by Microsoft Visual Studio\* 2022 version 17.11
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.21 or higher is required to build using Microsoft Visual Studio\* 2022.
 
-### macOS*
+> **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
 
+### macOS*
+- [Common tools](#common-tools)
 - Intel® C++ Compiler Classic 2021.9 for macOS\*
 
 ## Installation
@@ -86,9 +92,9 @@ You can find the installed files in:
     │        ├── fips_cert.h
     │        ├── rsa.h
     │        ├── sm3.h
+    │        ├── sm4.h
     │        ├── sm4_ccm.h
     │        ├── sm4_gcm.h
-    │        ├── sm4.h
     │        ├── status.h
     |        ├── version.h
     │        └── x25519.h
@@ -114,20 +120,24 @@ You can find the installed files in:
    and navigate to the `sources/ippcp/crypto_mb` folder.
 2. Set the environment variables for one of the supported C/C++ compilers.
 
-   *Example for Intel® Compiler:*
+   *example for Intel® oneAPI DPC++/C++ Compiler:*
 
    ```bash
-   source /opt/intel/bin/compilervars.sh intel64
+   source /opt/intel/oneapi/setvars.sh intel64
    ```
 
-   For details, refer to the [Intel® C++ Compiler Developer Guide and Reference](https://www.intel.com/content/www/us/en/docs/cpp-compiler/developer-guide-reference/current/specifying-the-location-of-compiler-components.html)
+   For details, refer to the [Intel® oneAPI DPC++/C++ Compiler Developer Guide and Reference](https://www.intel.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/current/specifying-the-location-of-compiler-components.html).
 
 3. Run CMake on the command line. Use `-B` to specify path to the resulting project.
+
+    ``` bash
+    CC=icx CXX=icpx cmake CMakeLists.txt -B_build -DARCH=intel64
+    ```
 4. Go to the project folder that was specified with `-B` and run `make` to build the library  (`crypto_mb` target).
 
-### Building with Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+### Building with Intel® Cryptography Primitives Library
 
-The Crypto Multi-buffer library will be built automatically with Intel® IPP Cryptography if optimization for Intel® Microarchitecture Code Named Ice Lake is available. For more information see [Intel IPP Cryptography Build Instructions](../../../BUILD.md)
+The Crypto Multi-buffer library will be built automatically with Intel® Cryptography Primitives Library if optimization for Intel® Microarchitecture Code Named Ice Lake is available. For more information see [Intel Cryptography Primitives Library Build Instructions](../../../BUILD.md)
 
 ### CMake Build Options
 

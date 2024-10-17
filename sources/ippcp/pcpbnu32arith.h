@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Internal BNU32 arithmetic
-// 
-// 
+//
+//
 */
 
 #if !defined(_CP_BNU32_ARITH_H)

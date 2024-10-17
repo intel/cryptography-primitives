@@ -17,11 +17,11 @@
 #if !defined(_SM3_MB16_H)
 #define _SM3_MB16_H
 
+#include <internal/sm3/sm3_common.h>
+
 #include <crypto_mb/status.h>
 #include <crypto_mb/defs.h>
 #include <crypto_mb/sm3.h>
-
-#include <internal/sm3/sm3_common.h>
 
 #if (_MBX>=_MBX_K1)
 

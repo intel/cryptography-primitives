@@ -15,7 +15,7 @@
 *************************************************************************/
 
 /*
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //
 //     Context:
 //        cpMontMultiExpInitArray()
@@ -27,12 +27,6 @@
 #include "pcpbn.h"
 #include "pcpmontgomery.h"
 
-/*
-//               Intel(R) Integrated Performance Primitives
-//                   Cryptographic Primitives (ippcp)
-//
-//
-*/
 /*
 // Initialize multi-exponentiation computation
 //    y = x[0]^e[0] * x[1]^e[1] *...* x[numItems-1]^e[numItems-1] mod M

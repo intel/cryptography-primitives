@@ -19,7 +19,7 @@ set(DEFAULT_GNU_COMPILER_VER 8.2.0)
 set(DEFAULT_CLANG_COMPILER_VER 9.0.0)
 set(DEFAULT_Intel_COMPILER_VER 19.0.0)
 
-# Check compiler version
+# Check min compiler version
 if(("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU") AND (CMAKE_C_COMPILER_VERSION VERSION_LESS DEFAULT_GNU_COMPILER_VER))
     message(FATAL_ERROR "GNU C Compiler version must be 8.2 or higher")
 endif()
@@ -34,21 +34,21 @@ include("${CRYPTO_MB_SOURCES_DIR}/cmake/common.cmake")
 include(${COMPILER_OPTIONS_FILE}) # Get ${CMAKE_C_FLAGS}, ${CMAKE_CXX_FLAGS} and ${AVX512_CFLAGS}
 
 # Sources
-file(GLOB RSA_AVX512_SOURCES    "${CRYPTO_MB_SOURCES_DIR}/rsa/*.c"
+file(GLOB RSA_SOURCES           "${CRYPTO_MB_SOURCES_DIR}/rsa/*.c"
+                                "${CRYPTO_MB_SOURCES_DIR}/rsa/internal_avx2/*.c"
                                 "${CRYPTO_MB_SOURCES_DIR}/rsa/internal_avx512/*.c")
-
 file(GLOB COMMON_SOURCES        "${CRYPTO_MB_SOURCES_DIR}/common/*.c")
 
-file(GLOB X25519_SOURCES        "${CRYPTO_MB_SOURCES_DIR}/x25519/*.c" 
+file(GLOB X25519_SOURCES        "${CRYPTO_MB_SOURCES_DIR}/x25519/*.c"
                                 "${CRYPTO_MB_SOURCES_DIR}/x25519/internal_avx512/*.c")
 
-file(GLOB ECNIST_SOURCES        "${CRYPTO_MB_SOURCES_DIR}/ecnist/*.c" 
+file(GLOB ECNIST_SOURCES        "${CRYPTO_MB_SOURCES_DIR}/ecnist/*.c"
                                 "${CRYPTO_MB_SOURCES_DIR}/ecnist/internal_avx512/*.c")
 
-file(GLOB SM2_SOURCES           "${CRYPTO_MB_SOURCES_DIR}/sm2/*.c" 
+file(GLOB SM2_SOURCES           "${CRYPTO_MB_SOURCES_DIR}/sm2/*.c"
                                 "${CRYPTO_MB_SOURCES_DIR}/sm2/internal_avx512/*.c")
 
-file(GLOB SM3_SOURCES           "${CRYPTO_MB_SOURCES_DIR}/sm3/*.c" 
+file(GLOB SM3_SOURCES           "${CRYPTO_MB_SOURCES_DIR}/sm3/*.c"
                                 "${CRYPTO_MB_SOURCES_DIR}/sm3/internal_avx512/*.c")
 
 # SM4 Sources
@@ -78,7 +78,7 @@ file(GLOB MB_PRIVATE_HEADERS   "${CRYPTO_MB_INCLUDE_DIR}/internal/common/*.h"
                                "${CRYPTO_MB_INCLUDE_DIR}/internal/fips_cert/*.h")
 file(GLOB OPENSSL_HEADERS      "${OPENSSL_INCLUDE_DIR}/openssl/*.h")
 
-set(CRYPTO_MB_SOURCES_ORIGINAL ${RSA_AVX512_SOURCES} ${COMMON_SOURCES} ${X25519_SOURCES} ${ECNIST_SOURCES} ${SM2_SOURCES} ${SM3_SOURCES} ${SM4_SOURCES} ${ED25519_SOURCES} ${EXP_SOURCES})
+set(CRYPTO_MB_SOURCES_ORIGINAL ${RSA_SOURCES} ${COMMON_SOURCES} ${X25519_SOURCES} ${ECNIST_SOURCES} ${SM2_SOURCES} ${SM3_SOURCES} ${SM4_SOURCES} ${ED25519_SOURCES} ${EXP_SOURCES})
 set(CRYPTO_MB_HEADERS ${MB_PUBLIC_HEADERS} ${MB_PRIVATE_HEADERS} ${OPENSSL_HEADERS})
 
 set(WIN_RESOURCE_FILE ${CRYPTO_MB_SOURCES_DIR}/common/crypto_mb_ver.rc)
@@ -87,11 +87,11 @@ set(MBX_VERSION_FILE ${CRYPTO_MB_SOURCES_DIR}/common/ifma_version.c)
 
 # Disable compiler optimizations for this file, as compiler adds some ISA specific code
 # which is unwanted for functions that are aimed to work on any CPU
-list(REMOVE_ITEM CRYPTO_MB_SOURCES_ORIGINAL ${CPU_FEATURES_FILE} ${MBX_VERSION_FILE})
+list(REMOVE_ITEM CRYPTO_MB_SOURCES_ORIGINAL ${CPU_FEATURES_FILE})
 if("${OS_STRING}" STREQUAL "windows")
-    set_source_files_properties(${CPU_FEATURES_FILE} ${MBX_VERSION_FILE} PROPERTIES  COMPILE_FLAGS  "${CMAKE_C_FLAGS_SECURITY} /Od")
+    set_source_files_properties(${CPU_FEATURES_FILE} PROPERTIES  COMPILE_FLAGS  "${CMAKE_C_FLAGS_SECURITY} /Od")
 else()
-    set_source_files_properties(${CPU_FEATURES_FILE} ${MBX_VERSION_FILE} PROPERTIES  COMPILE_FLAGS  "${CMAKE_C_FLAGS_SECURITY} -O0")
+    set_source_files_properties(${CPU_FEATURES_FILE} PROPERTIES  COMPILE_FLAGS  "${CMAKE_C_FLAGS_SECURITY} -O0")
 endif()
 
 if(BN_OPENSSL_PATCH) # Off by default
@@ -101,8 +101,7 @@ endif()
 set(CRYPTO_MB_API ${MB_PUBLIC_HEADERS})
 list(REMOVE_ITEM CRYPTO_MB_API ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/cpu_features.h 
                                ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/defs.h 
-                               ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/status.h
-                               ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/version.h)
+                               ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/status.h)
 
 # Generate single-CPU headers
 set(MBX_ONE_CPU_FOLDER ${INTERNAL_INCLUDE_DIR}/single_cpu/crypto_mb)
@@ -123,6 +122,10 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
         DESTINATION "${CMAKE_OUTPUT_DIR}/${OUTPUTCONFIG}/include/single_cpu")
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
+if(MBX_CC_AVXIFMA_SUPPORT)
+   set(MBX_AVXIFMA_SUPPORT_DEFINE "_MBX_AVX_IFMA_SUPPORTED")
+endif()
+
 foreach(opt ${MBX_PLATFORM_LIST})
     # Populate C source files in to corresponding folders per library 'letter'
     set(mbx_c_cache_dir "${CMAKE_BINARY_DIR}/c_sources/crypto_mb/${opt}/c_${ARCH}")
@@ -136,8 +139,12 @@ foreach(opt ${MBX_PLATFORM_LIST})
         ${mbx_c_cache_dir}/*.c
     )
     set(OPT_FLAGS_${opt} ${${opt}_opt})
-    set_source_files_properties(${MBX_C_SOURCES_${opt}} PROPERTIES COMPILE_DEFINITIONS  "${${opt}_def}"
-                                                            COMPILE_FLAGS        "${OPT_FLAGS_${opt}} ${CMAKE_C_FLAGS_SECURITY}")
+
+    # Put a specific define into the library if Intel® AVX-IFMA instructions are supported by the compiler
+    set(MBX_LIBRARY_DEFINES "${MBX_AVXIFMA_SUPPORT_DEFINE}" "${${opt}_def}")
+
+    set_source_files_properties(${MBX_C_SOURCES_${opt}} PROPERTIES COMPILE_DEFINITIONS  "${MBX_LIBRARY_DEFINES}"
+                                                                   COMPILE_FLAGS        "${OPT_FLAGS_${opt}} ${CMAKE_C_FLAGS_SECURITY}")
 endforeach()
 
 # build object libraries
@@ -178,9 +185,9 @@ set_source_files_properties(${DISPATCHER_C_SOURCES} PROPERTIES COMPILE_FLAGS "${
 
 # Static library
 if(WIN32)
-    add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE} ${MBX_VERSION_FILE} ${WIN_RESOURCE_FILE})
+    add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE} ${WIN_RESOURCE_FILE})
 else()
-    add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE} ${MBX_VERSION_FILE})
+    add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE})
 endif()
 
 set_target_properties(${MB_STATIC_LIB_TARGET} PROPERTIES C_VISIBILITY_PRESET hidden
@@ -213,7 +220,7 @@ endif()
 # Create shared library
 if(DYNAMIC_LIB OR MB_STANDALONE)
 
-    add_library(${MB_DYN_LIB_TARGET} SHARED common/emptyfile.c) # emptyfile.c to suppress the cmake warning
+    add_library(${MB_DYN_LIB_TARGET} SHARED common/emptyfile.c common/crypto_mb_ver.rc) # emptyfile.c to suppress the cmake warning
 
     set_target_properties(${MB_DYN_LIB_TARGET} PROPERTIES C_VISIBILITY_PRESET hidden
                                                           VISIBILITY_INLINES_HIDDEN ON
@@ -227,7 +234,7 @@ if(DYNAMIC_LIB OR MB_STANDALONE)
                                                                SOVERSION ${MBX_INTERFACE_VERSION_MAJOR})
     endif()
 
-    target_link_libraries(${MB_DYN_LIB_TARGET} ${MB_STATIC_LIB_TARGET}) # link to the static merged    
+    target_link_libraries(${MB_DYN_LIB_TARGET} ${MB_STATIC_LIB_TARGET}) # link to the static merged
 
 endif(DYNAMIC_LIB OR MB_STANDALONE)
 

@@ -15,7 +15,7 @@
 #===============================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 # linker
@@ -34,6 +34,8 @@ set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /NXCOMPAT")
 set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /DYNAMICBASE")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /CETCOMPAT")
+# Linker option to mitigate DLL hijacking vulnerability - removes CWD from the DLL search order
+set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /DEPENDENTLOADFLAG:0x2000")
 
 if(${ARCH} MATCHES "ia32")
   # When /SAFESEH is specified, the linker will only produce an image if it can also produce a table of the image's safe exception handlers.
@@ -45,9 +47,6 @@ else()
   set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /HIGHENTROPYVA")
 endif(${ARCH} MATCHES "ia32")
 
-# Disables linking to Intel® libraries
-set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /Qno-intel-lib")
-
 # Link to universal C runtime and MSVC runtime. Used in dlls.
 set(LINK_LIB_STATIC_RELEASE libcmt libucrt libvcruntime)
 set(LINK_LIB_STATIC_DEBUG libcmtd libucrtd libvcruntime)
@@ -58,10 +57,10 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LIBRARY_DEFINES}")
 # Suppresses the display of the copyright banner when the compiler starts up and display of informational messages during compiling.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /nologo")
 # Warning level = 4
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4 -Wall -Wformat -Wformat-security -Werror=format-security")
 # Changes all warnings to errors.
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
-# Detects some buffer overruns that overwrite a function's return address, exception handler address, or certain types of parameters. 
+# Detects some buffer overruns that overwrite a function's return address, exception handler address, or certain types of parameters.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /GS")
 # Controls how the members of a structure are packed into memory and specifies the same packing for all structures in a module.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zp16")
@@ -72,7 +71,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qstd=c99")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcf-protection:full")
 # Suppress some warnings
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wno-missing-braces /Wno-null-pointer-arithmetic /Wno-unused-function /Wno-static-in-inline /Qno-intel-lib")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wno-null-pointer-arithmetic /Wno-unused-function /Wno-static-in-inline /Qno-intel-lib")
 
 # Causes the application to use the multithread, static version of the run-time library (debug version).
 set(CMAKE_C_FLAGS_DEBUG "/MTd")

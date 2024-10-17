@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptographic Primitives (ippcp)
+//     Intel(R) Cryptography Primitives Library
 //     Prime Number Primitives.
-// 
+//
 //  Contents:
 //        ippsPrimeGen_BN()
 //

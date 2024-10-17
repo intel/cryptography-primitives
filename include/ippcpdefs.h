@@ -16,7 +16,7 @@
 
 /*
 //
-//              Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+//              Intel® Cryptography Primitives Library
 //
 //              Purpose: Basic Types and Macro Definitions
 //
@@ -67,6 +67,9 @@ extern "C" {
 #if !(defined(COMPILER_SUPPORT_SHORT_FLOAT))
 #    define COMPILER_SUPPORT_SHORT_FLOAT _NO_FLOAT_16
 #endif
+
+#define OBSOLETE_API "is deprecated. This API is considered obsolete and will be removed in one of future Intel® Cryptography Primitives Library releases. \
+Use the following link for opening a ticket and providing feedback: https://supporttickets.intel.com/ if you have concerns."
 
 #if !defined(_NO_IPP_DEPRECATED)
    #if (defined( __ICL ) || defined( __ECL ) || defined(_MSC_VER)) && !defined( _PCS ) && !defined( _PCS_GENSTUBS )
@@ -194,6 +197,7 @@ extern "C" {
 
 #define IPP_ABS( a ) ( ((a) < 0) ? (-(a)) : (a) )
 
+/* IppLibraryVersion is deprecated, please use CryptoLibraryVersion instead */
 typedef struct {
     int          major;         /* e.g. 1                               */
     int          minor;         /* e.g. 2                               */
@@ -204,6 +208,16 @@ typedef struct {
     const char*  Version;       /* e.g. "v1.2 Beta"                     */
     const char*  BuildDate;     /* e.g. "Jul 20 99"                     */
 } IppLibraryVersion;
+
+typedef struct {
+    int          major;         /* e.g. 1                               */
+    int          minor;         /* e.g. 2                               */
+    int          patch;         /* e.g. 3                               */
+    char         targetCpu[4];  /* corresponding to Intel® processor    */
+    const char*  name;          /* e.g. "ippsw7"                        */
+    const char*  buildDate;     /* e.g. "Jul 20 99"                     */
+    const char*  strVersion;    /* e.g. "v1.2 Beta"                     */
+} CryptoLibraryVersion;
 
 typedef unsigned char  Ipp8u;
 typedef unsigned short Ipp16u;
@@ -361,7 +375,7 @@ typedef enum {
  #define   ippCPUID_AVX2SHA512  INT64_SUFFIX(0x40000000000)       /* Intel® Advanced Vector Extensions 256 Bit SHA512_NI instructions                     */
 #endif /* IPP_CPU_FEATURES__ */
 
-/* Macros are necessary to build custom Intel® IPP Cryptography static 1cpu library (enable specific features at compile-time) */
+/* Macros are necessary to build custom Intel® Cryptography Primitives Library static 1cpu library (enable specific features at compile-time) */
 #if (!defined(_MERGED_BLD) && defined(IPPCP_CUSTOM_BUILD))
 
 #ifndef IPP_CUSTOM_CPU_FEATURES__
@@ -393,7 +407,6 @@ extern "C" {
 #endif
 typedef signed int IppStatus;
 
-    /* start of common with ippCrypto part - any changes MUST be done in both repositories - IPP & ippCrypto                    */
 #define ippStsCpuNotSupportedErr         -9999 /* The target CPU is not supported.                                              */
 #define ippStsUnknownStatusCodeErr        -216 /* Unknown status code.                                                          */
 #define ippStsLoadDynErr                  -221 /* Error when loading the dynamic library.                                       */
@@ -417,7 +430,6 @@ typedef signed int IppStatus;
 #define ippStsDivByZero                      2 /* Zero value(s) for the divisor in the Div function. */
 #define ippStsWaterfall                     43 /* Cannot load required library, waterfall is used. */
 #define ippStsFeaturesCombination           51 /* Wrong combination of features. */
-    /* end of common with ippCrypto part */
 
 #ifdef __cplusplus
 }
@@ -425,13 +437,12 @@ typedef signed int IppStatus;
 
 #endif /* IPPSTATUS_H__ */
 
-     /* ippCrypto specific statuses - any changes MUST be done in both repositories - IPP & ippCrypto */
 #define ippStsInvalidPoint               -1017 /* ippStsInvalidPoint ECC: Invalid point (out of EC).*/
 #define ippStsQuadraticNonResidueErr     -1016 /* SQRT operation on quadratic non-residue value. */
 #define ippStsPointAtInfinity            -1015 /* Point at infinity is detected. */
-#define ippStsOFBSizeErr                 -1014 /* Incorrect value for crypto OFB block size. */
-#define ippStsIncompleteContextErr       -1013 /* Crypto: set up of context is not complete. */
-#define ippStsCTRSizeErr                 -1012 /* Incorrect value for crypto CTR block size. */
+#define ippStsOFBSizeErr                 -1014 /* Incorrect value for cryptography OFB block size. */
+#define ippStsIncompleteContextErr       -1013 /* Set up of context is not complete. */
+#define ippStsCTRSizeErr                 -1012 /* Incorrect value for cryptography CTR block size. */
 #define ippStsEphemeralKeyErr            -1011 /* ECC: Invalid ephemeral key. */
 #define ippStsMessageErr                 -1010 /* ECC: Invalid message digest. */
 #define ippStsShareKeyErr                -1009 /* ECC: Invalid share key. */
@@ -440,13 +451,12 @@ typedef signed int IppStatus;
 #define ippStsECCInvalidFlagErr          -1006 /* ECC: Invalid Flag. */
 #define ippStsUnderRunErr                -1005 /* Error in data under run. */
 #define ippStsPaddingErr                 -1004 /* Detected padding error indicates the possible data corruption. */
-#define ippStsCFBSizeErr                 -1003 /* Incorrect value for crypto CFB block size. */
+#define ippStsCFBSizeErr                 -1003 /* Incorrect value for cryptography CFB block size. */
 #define ippStsPaddingSchemeErr           -1002 /* Invalid padding scheme. */
 #define ippStsBadModulusErr              -1001 /* Bad modulus caused a failure in module inversion. */
 #define ippStsInsufficientEntropy           25 /* Generation of the prime/key failed due to insufficient entropy in the random seed and stimulus bit string. */
 #define ippStsNotSupportedCpu               36 /* The CPU is not supported. */
 #define ippStsMbWarning                     53 /* Error(s) in statuses array. */
-     /* end of ippCrypto specific statuses - any changes MUST be done in both repositories - IPP & ippCrypto */
 
 #if (!defined IPPCPDEFS_H__) || defined( _OWN_BLDPCS )
 #define IPPCPDEFS_H__
@@ -848,12 +858,18 @@ typedef struct _GFpECKeyExchangeSM2 IppsGFpECKeyExchangeSM2State;
 IPPAPI( IppStatus, ippcpGetCpuFeatures, ( Ipp64u* pFeaturesMask ))
 IPPAPI( IppStatus, ippcpSetCpuFeatures, ( Ipp64u features ))
 IPPAPI( Ipp64u, ippcpGetEnabledCpuFeatures, ( void ) )
-IPPAPI( IppStatus, ippcpSetNumThreads, ( int numThr ))
+
 IPPAPI( IppStatus, ippcpInit,( void ))
-IPPAPI( IppStatus, ippcpGetNumThreads, (int* pNumThr) )
 IPPAPI( const char*, ippcpGetStatusString, ( IppStatus StsCode ))
-IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
 IPPAPI( Ipp64u, ippcpGetCpuClocks, (void) )
+
+/* Threading functions are deprecated in the library */
+IPP_DEPRECATED(OBSOLETE_API) \
+IPPAPI( IppStatus, ippcpSetNumThreads, ( int numThr ))
+IPP_DEPRECATED(OBSOLETE_API) \
+IPPAPI( IppStatus, ippcpGetNumThreads, (int* pNumThr) )
+IPP_DEPRECATED(OBSOLETE_API) \
+IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
 
 /* Defines related to experimental features enabling */
 #ifdef IPPCP_PREVIEW_ALL

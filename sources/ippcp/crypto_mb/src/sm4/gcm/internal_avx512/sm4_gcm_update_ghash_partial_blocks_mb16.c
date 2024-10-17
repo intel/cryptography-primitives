@@ -149,10 +149,10 @@ void sm4_gcm_update_ghash_partial_blocks_mb16(__m128i ghash[SM4_LINES],
 
       read_first(data_blocks, pa_input, input_len, load_mask);
 
-      data_blocks_4_0 = xor(data_blocks_4_0, M512(ghash + 0));
-      data_blocks_4_1 = xor(data_blocks_4_1, M512(ghash + 4));
-      data_blocks_4_2 = xor(data_blocks_4_2, M512(ghash + 8));
-      data_blocks_4_3 = xor(data_blocks_4_3, M512(ghash + 12));
+      data_blocks_4_0 = xor(data_blocks_4_0, loadu(ghash + 0));
+      data_blocks_4_1 = xor(data_blocks_4_1, loadu(ghash + 4));
+      data_blocks_4_2 = xor(data_blocks_4_2, loadu(ghash + 8));
+      data_blocks_4_3 = xor(data_blocks_4_3, loadu(ghash + 12));
 
       sm4_gcm_ghash_mul_single_block_mb16(data_blocks, hashkeys);
 

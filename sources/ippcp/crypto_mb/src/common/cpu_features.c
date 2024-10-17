@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2019 Intel Corporation
+* Copyright (C) 2019-2024 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -165,7 +165,9 @@ static const cpu_feature_map cpu_feature_detector_7_0[] = {
 
    {edx_, BIT02, mbcpCPUID_AVX512_4VNNIW},
    {edx_, BIT03, mbcpCPUID_AVX512_4FMADDPS},
+};
 
+static const cpu_feature_map cpu_feature_detector_7_1[] = {
    {eax_, BIT23, mbcpCPUID_AVXIFMA},
 };
 
@@ -230,6 +232,12 @@ int64u mbx_get_cpu_features(void)
                                                 sizeof(cpu_feature_detector_7_0)/sizeof(cpu_feature_map));
          if((features & mbcpCPUID_AVX512F) && _mbcp_xsave_support(XSAVE_AVX512_SUPPORT))
             features |= mbcpAVX512_ENABLEDBYOS;
+
+         /* cpuid info: cpuid_7_1 */
+         _mbcp_cpuid(cpu_info, 7, 1);
+         features |= _mbcp_cpu_feature_detector(cpu_info,
+                                                cpu_feature_detector_7_1,
+                                                sizeof(cpu_feature_detector_7_1)/sizeof(cpu_feature_map));
       }
    }
 
@@ -251,6 +259,7 @@ int64u mbx_get_cpu_features(void)
                            mbcpCPUID_MOVBE \
                          | mbcpCPUID_AVX2 \
                          | mbcpCPUID_RDSEED \
+                         | mbcpCPUID_AVXIFMA \
                          | mbcpAVX_ENABLEDBYOS)
 
 int internal_is_k1_applicable(int64u cpu_features)
@@ -275,6 +284,19 @@ int mbx_is_crypto_mb_applicable(int64u cpu_features)
    return (internal_is_k1_applicable(cpu_features) || internal_is_l9_applicable(cpu_features));
 }
 
+static int mbx_own_lib_index = -1;
+
+/* choosing the code path */
+extern int* _mbx_own_get_index() {
+   if (0 > mbx_own_lib_index) {
+      if (internal_is_k1_applicable(mbx_get_cpu_features()))
+         mbx_own_lib_index = 0; // K1 code path
+      else 
+         mbx_own_lib_index = 1; // L9 code path
+   }
+   return &mbx_own_lib_index;
+}
+
 /* structure for determining the number of buffers(WIDTH) for the algorithm */
 typedef struct {
    enum MBX_ALGO algo;
@@ -282,54 +304,69 @@ typedef struct {
 } algo_width_map;
 
 /* clang-config off */
-static const algo_width_map arr_algo_width[] = {
-   { MBX_ALGO_RSA_1K,       MBX_WIDTH_MB8  },
-   { MBX_ALGO_RSA_2K,       MBX_WIDTH_MB8  },
-   { MBX_ALGO_RSA_3K,       MBX_WIDTH_MB8  },
-   { MBX_ALGO_RSA_4K,       MBX_WIDTH_MB8  },
-   { MBX_ALGO_X25519,       MBX_WIDTH_MB8  },
-   { MBX_ALGO_EC_NIST_P256, MBX_WIDTH_MB8  },
-   { MBX_ALGO_EC_NIST_P384, MBX_WIDTH_MB8  },
-   { MBX_ALGO_EC_NIST_P521, MBX_WIDTH_MB8  },
-   { MBX_ALGO_EC_SM2,       MBX_WIDTH_MB8  },
+static const algo_width_map arr_algo_width_k1[] = {
+   { MBX_ALGO_RSA_1K,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_RSA_2K,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_RSA_3K,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_RSA_4K,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_X25519,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_EC_NIST_P256, MBX_WIDTH_MB8 },
+   { MBX_ALGO_EC_NIST_P384, MBX_WIDTH_MB8 },
+   { MBX_ALGO_EC_NIST_P521, MBX_WIDTH_MB8 },
+   { MBX_ALGO_EC_SM2,       MBX_WIDTH_MB8 },
    { MBX_ALGO_SM3,          MBX_WIDTH_MB16 },
    { MBX_ALGO_SM4,          MBX_WIDTH_MB16 }
+};
+static const algo_width_map arr_algo_width_l9[] = {
+   { MBX_ALGO_RSA_1K,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_RSA_2K,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_RSA_3K,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_RSA_4K,       MBX_WIDTH_MB8 },
+   { MBX_ALGO_X25519,       0 },
+   { MBX_ALGO_EC_NIST_P256, 0 },
+   { MBX_ALGO_EC_NIST_P384, 0 },
+   { MBX_ALGO_EC_NIST_P521, 0 },
+   { MBX_ALGO_EC_SM2,       0 },
+   { MBX_ALGO_SM3,          0 },
+   { MBX_ALGO_SM4,          0 }
 };
 /* clang-config on */
 
 DLL_PUBLIC
 MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo)
 {
-   const int mbx_mb_applicable = mbx_is_crypto_mb_applicable(0);
-
+   const int k1_applicable = internal_is_k1_applicable(0);
+   const int l9_applicable = internal_is_l9_applicable(0);
+   const struct {
+           const algo_width_map *arr_algo_width;
+           unsigned num_tbl;
+   } map_tbl[] = {
+           {arr_algo_width_k1, (unsigned) sizeof(arr_algo_width_k1) / sizeof(algo_width_map) }, // K1 = index 0
+           {arr_algo_width_l9, (unsigned) sizeof(arr_algo_width_l9) / sizeof(algo_width_map) }, // L9 = index 1
+   };
    int num_width = 0;
-   /* check CPU feature */
-   if (0 == mbx_mb_applicable) {
-      return num_width;
-   }
-   const int num_tbl = sizeof(arr_algo_width) / sizeof(algo_width_map);
 
-   const algo_width_map *tbl = arr_algo_width;
+   /* check CPU feature */
+   if (0 == k1_applicable && 0 == l9_applicable)
+      return num_width;
+
+   /* get selected architecture */
+   const int map_idx = *_mbx_own_get_index();
+
+   if (map_idx < 0 || map_idx >= (int) (sizeof(map_tbl) / sizeof(map_tbl[0])))
+           return num_width;
+
+   const unsigned num_tbl = map_tbl[map_idx].num_tbl;
+   const algo_width_map *tbl = map_tbl[map_idx].arr_algo_width;
+
    /* loop determining the number of buffers to process */
-   for (int i = 0; i < num_tbl; ++i, ++tbl) {
-      if (algo == (*tbl).algo) {
-         num_width = (*tbl).width;
-         break;
-      }
+   for (unsigned i = 0; i < num_tbl; ++i) {
+      if (algo != tbl[i].algo)
+              continue;
+
+      num_width = tbl[i].width;
+      break;
    }
 
    return num_width;
-}
-
-static int mbx_own_lib_index = -1;
-
-/* choosing the code path */
-extern int* _mbx_own_get_index() {
-   if (0 > mbx_own_lib_index) {
-      if (internal_is_k1_applicable(mbx_get_cpu_features()))
-         mbx_own_lib_index = 1; // K1 code path
-      else 
-         mbx_own_lib_index = 0; // L9 code path
-   }
-   return &mbx_own_lib_index;
 }

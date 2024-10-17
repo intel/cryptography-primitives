@@ -16,7 +16,7 @@
 
 /*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Internal Unsigned internal arithmetic
 //
 //

@@ -29,7 +29,7 @@
 #include "owncp.h"
 #include "pcpbn.h"
 #include "pcpprng.h"
-#include "pcphash.h"
+#include "hash/pcphash.h"
 #include "pcptool.h"
 
 /*F*

@@ -25,8 +25,8 @@ mbx_status16 OWNAPI(mbx_sm4_gcm_init_mb16)(const sm4_key *const pa_key[SM4_LINES
 {
    int buf_no;
    mbx_status16 status          = 0;
-   __mmask16 mb_mask            = 0xFFFF;
-   __mmask16 mb_mask_rearranged = 0xFFFF;
+   int16u mb_mask            = 0xFFFF;
+   int16u mb_mask_rearranged = 0xFFFF;
 
    /* Test input pointers */
    if (NULL == pa_key || NULL == pa_iv || NULL == iv_len || NULL == p_context) {
@@ -52,7 +52,7 @@ mbx_status16 OWNAPI(mbx_sm4_gcm_init_mb16)(const sm4_key *const pa_key[SM4_LINES
 
 #if (_MBX>=_MBX_K1)
    if (MBX_IS_ANY_OK_STS16(status))
-      status |= internal_avx512_sm4_gcm_init_mb16(pa_key, pa_iv, iv_len, p_context, mb_mask_rearranged, mb_mask);
+      status |= internal_avx512_sm4_gcm_init_mb16(pa_key, pa_iv, iv_len, p_context, (__mmask16)mb_mask_rearranged, (__mmask16)mb_mask);
 #else
    MBX_UNREFERENCED_PARAMETER(mb_mask);
    MBX_UNREFERENCED_PARAMETER(mb_mask_rearranged);

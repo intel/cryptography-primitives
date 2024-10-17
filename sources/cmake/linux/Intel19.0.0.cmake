@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 # Linker flags
@@ -77,9 +77,6 @@ if ((${ARCH} MATCHES "ia32") OR (NOT NONPIC_LIB))
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector")
 endif()
 
-# Security flag that adds compile-time and run-time checks
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FORTIFY_SOURCE=2")
-
 # Format string vulnerabilities
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Wformat-security")
 
@@ -99,7 +96,10 @@ if(CODE_COVERAGE)
 endif()
 
 # Optimization level = 3, no-debug definition (turns off asserts), warning level = 3, treat warnings as errors
-set (CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG -w3 -Werror")
+set(CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG -w3 -Werror")
+# Security flag that adds compile-time and run-time checks
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
+
 # DEBUG flags Optimization level = 0, generation maximum GDB information (-g3)
 set (CMAKE_C_FLAGS_DEBUG " -O0 -g3")
 

@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 # linker
@@ -43,6 +43,8 @@ else()
   # This option modifies the header of an executable image, a .dll file or .exe file, to indicate whether ASLR with 64-bit addresses is supported.
   set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /HIGHENTROPYVA")
 endif(${ARCH} MATCHES "ia32")
+# Linker option to mitigate DLL hijacking vulnerability - removes CWD from the DLL search order
+set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /DEPENDENTLOADFLAG:0x2000")
 
 if (MSVC_VERSION LESS_EQUAL 1800) # VS2013
   # Link to C runtime, used in dlls
@@ -65,7 +67,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /X")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
 # Changes all warnings to errors.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
-# Detects some buffer overruns that overwrite a function's return address, exception handler address, or certain types of parameters. 
+# Detects some buffer overruns that overwrite a function's return address, exception handler address, or certain types of parameters.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /GS")
 # Controls how the members of a structure are packed into memory and specifies the same packing for all structures in a module.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zp16")

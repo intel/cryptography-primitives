@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
-//     Cryptography Primitive.
+//     Intel(R) Cryptography Primitives Library
 //     Modular Exponentiation (binary version)
-// 
+//
 //  Contents:
 //        cpMontExpBin_BNU_sscm()
 */
@@ -35,9 +35,7 @@
 // The reason was to mitigate "cache monitoring" attack on RSA
 //
 // This is improved version of modular exponentiation.
-// Current version provide both either mitigation and perrformance.
-// This version in comparison with previous (Intel(R) Integrated Performance Primitives (Intel(R) IPP) 4.1.3) one ~30-40% faster,
-// i.e the the performance stayed as was for pre-mitigated version
+// Current version provide both either mitigation and performance.
 //
 */
 
@@ -83,7 +81,7 @@ IPP_OWN_DEFN (cpSize, cpMontExpBin_BNU_sscm, (BNU_CHUNK_T* dataY, const BNU_CHUN
       BNU_CHUNK_T* dataT = gsModPoolAlloc(pMont, usedPoolLen);
       if(NULL == dataT)
          return -1;
-      
+
       BNU_CHUNK_T* sscmB = dataT + nsM;
 
       /* mont(1) */

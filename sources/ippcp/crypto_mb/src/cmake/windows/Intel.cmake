@@ -26,6 +26,8 @@ set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /HIGHENTROPYVA")
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /LARGEADDRESSAWARE")
 # Indicates that an executable is compatible with the Windows Data Execution Prevention (DEP) feature
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /NXCOMPAT")
+# Linker option to mitigate DLL hijacking vulnerability - removes CWD from the DLL search order
+set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /DEPENDENTLOADFLAG:0x2000")
 
 # Security Compiler flags
 

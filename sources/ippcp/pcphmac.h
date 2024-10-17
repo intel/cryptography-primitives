@@ -27,7 +27,7 @@
 #if !defined(_PCP_HMAC_H)
 #define _PCP_HMAC_H
 
-#include "pcphash.h"
+#include "hash/pcphash.h"
 
 /*
 // HMAC context

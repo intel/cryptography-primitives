@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 set(OS_DEFAULT_COMPILER Intel19.0.0)

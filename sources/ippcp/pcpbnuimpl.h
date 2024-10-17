@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     BNU data type definition
-// 
-// 
-// 
+//
+//
+//
 */
 
 #if !defined(_CP_BNU_IMPL_H)

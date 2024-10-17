@@ -198,7 +198,7 @@ align IPP_ALIGN_FACTOR
 
     SM3ROUNDS4      xmm6, xmm7, xmm5, xmm2, xmm1, 60
 
-    ;; update hash value
+    ;; update the hash value (xmm6, xmm7) and process the next message block
     vpxor           xmm6, xmm6, xmm10
     vpxor           xmm7, xmm7, xmm11
     add             mPtr, MBS_SM3

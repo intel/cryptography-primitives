@@ -15,7 +15,7 @@
 *************************************************************************/
 
 /*
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //
 //     Context:
 //        cpFastMontMultiExp()

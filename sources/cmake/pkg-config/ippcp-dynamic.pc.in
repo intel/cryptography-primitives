@@ -18,7 +18,7 @@ prefix=@PREFIX_FOR_PC_FILE@
 libdir=@LIBDIR_FOR_PC_FILE@
 includedir=@INCDIR_FOR_PC_FILE@
 
-Name: Intel® Integrated Performance Primitives (Intel® IPP) Cryptography Library
+Name: Intel® Cryptography Primitives Library
 Description: Secure, fast and lightweight library of building blocks for cryptography, highly-optimized for various Intel® CPUs.
 URL: https://github.com/intel/ipp-crypto
 Version: @IPPCP_VERSION@

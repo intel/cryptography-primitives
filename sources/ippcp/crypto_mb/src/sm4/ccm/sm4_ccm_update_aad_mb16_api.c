@@ -22,7 +22,7 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_update_aad_mb16)(const int8u *const pa_aad[SM4_L
 {
    int buf_no;
    mbx_status16 status = 0;
-   __mmask16 mb_mask   = 0xFFFF;
+   int16u mb_mask   = 0xFFFF;
 
    /* Test input pointers */
    if (NULL == pa_aad || NULL == aad_len || NULL == p_context) {
@@ -53,7 +53,7 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_update_aad_mb16)(const int8u *const pa_aad[SM4_L
 
 #if (_MBX>=_MBX_K1)
    if (MBX_IS_ANY_OK_STS16(status))
-      status |= sm4_ccm_update_aad_mb16(pa_aad, aad_len, mb_mask, p_context);
+      status |= sm4_ccm_update_aad_mb16(pa_aad, aad_len, (__mmask16)mb_mask, p_context);
 #else
    MBX_UNREFERENCED_PARAMETER(mb_mask);
    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

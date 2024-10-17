@@ -29,7 +29,6 @@
 #include "owncp.h"
 #include "pcpbn.h"
 #include "pcpprng.h"
-#include "pcphash.h"
 #include "pcptool.h"
 
 /*F*

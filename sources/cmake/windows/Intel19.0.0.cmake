@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 # linker
@@ -36,11 +36,13 @@ if(${ARCH} MATCHES "ia32")
   # When /SAFESEH is specified, the linker will only produce an image if it can also produce a table of the image's safe exception handlers.
   set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /SAFESEH")
 else()
-  # The /LARGEADDRESSAWARE option tells the linker that the application can handle addresses larger than 2 gigabytes. 
+  # The /LARGEADDRESSAWARE option tells the linker that the application can handle addresses larger than 2 gigabytes.
   set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /LARGEADDRESSAWARE")
   # This option modifies the header of an executable image, a .dll file or .exe file, to indicate whether ASLR with 64-bit addresses is supported.
   set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /HIGHENTROPYVA")
 endif(${ARCH} MATCHES "ia32")
+# Linker option to mitigate DLL hijacking vulnerability - removes CWD from the DLL search order
+set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /DEPENDENTLOADFLAG:0x2000")
 
 # suppress warning LNK4221:
 # "This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library"
@@ -93,8 +95,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qsox-")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Gy")
 # C std
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qstd=c99")
-# Security flag that adds compile-time and run-time checks
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_FORTIFY_SOURCE=2")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qcf-protection:full")
 
@@ -113,6 +113,8 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /DDEBUG")
 
 # Causes the application to use the multithread, static version of the run-time library.
 set(CMAKE_C_FLAGS_RELEASE "/MT")
+# Security flag that adds compile-time and run-time checks
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /D_FORTIFY_SOURCE=2")
 # Omits the default C runtime library name from the .obj file.
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zl")
 # "Maximize Speed". Selects a predefined set of options that affect the size and speed of generated code.
@@ -120,7 +122,7 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O3") # /Ob2 is included in 
 # No-debug macro
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /DNDEBUG")
 
-# suppress warning #10120: overriding '/O2' with '/O3' 
+# suppress warning #10120: overriding '/O2' with '/O3'
 # CMake bug: cmake cannot change the property "Optimization" to /O3 in MSVC project
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -wd10120")
 

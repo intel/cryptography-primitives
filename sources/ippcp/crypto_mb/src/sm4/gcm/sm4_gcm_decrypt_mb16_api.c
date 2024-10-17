@@ -23,7 +23,7 @@ OWNAPI(mbx_sm4_gcm_decrypt_mb16)(int8u *pa_out[SM4_LINES], const int8u *const pa
 {
    int buf_no;
    mbx_status16 status = 0;
-   __mmask16 mb_mask   = 0xFFFF;
+   int16u mb_mask   = 0xFFFF;
 
    /* Test input pointers */
    if (NULL == pa_out || NULL == pa_in || NULL == in_len || NULL == p_context) {
@@ -63,7 +63,7 @@ OWNAPI(mbx_sm4_gcm_decrypt_mb16)(int8u *pa_out[SM4_LINES], const int8u *const pa
 
 #if (_MBX>=_MBX_K1)
    if (MBX_IS_ANY_OK_STS16(status)) {
-      __mmask16 overflow_mask = sm4_gcm_decrypt_mb16(pa_out, pa_in, in_len, mb_mask, p_context);
+      __mmask16 overflow_mask = sm4_gcm_decrypt_mb16(pa_out, pa_in, in_len, (__mmask16)mb_mask, p_context);
 
       /* Set bad status for buffers with overflowed lengths */
       for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {

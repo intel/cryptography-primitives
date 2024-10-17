@@ -23,7 +23,7 @@ mbx_getlibversion("${CMAKE_CURRENT_SOURCE_DIR}/include/crypto_mb/version.h")
 
 if ((NOT DEFINED MBX_VER_MAJOR) OR
     (NOT DEFINED MBX_VER_MINOR) OR
-    (NOT DEFINED MBX_VER_REV)   OR
+    (NOT DEFINED MBX_VER_PATCH)   OR
     (NOT DEFINED MBX_INTERFACE_VERSION_MAJOR) OR
     (NOT DEFINED MBX_INTERFACE_VERSION_MINOR))
     message(WARNING "Cannot parse version from crypto_mb/version.h file. The project might be corrupted.")
@@ -60,7 +60,37 @@ endif()
 set(l9_def "_L9" "SIMD_LEN=256")
 set(k1_def "_K1" "USE_AMS_5x" "SIMD_LEN=512")
 
-set(MBX_PLATFORM_LIST l9 k1)
+# Proper dispatching requires several optimization paths
+set(MBX_PLATFORM_LIST k1 l9)
+
+# check if L9 is supported by the compiler
+set(MBX_CC_AVXIFMA_SUPPORT 0)
+
+set(DEFAULT_AVXIFMA_GNU_COMPILER_VER 13.0.0)
+set(DEFAULT_AVXIFMA_CLANG_COMPILER_VER 16.0.0)
+set(DEFAULT_AVXIFMA_MSVC_COMPILER_VER 19.37)
+if(WIN32)
+  set(DEFAULT_AVXIFMA_ICX_COMPILER_VER 2025.0.0)
+else()
+  set(DEFAULT_AVXIFMA_ICX_COMPILER_VER 2024.2.0)
+endif()
+
+if((("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")       AND (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL DEFAULT_AVXIFMA_GNU_COMPILER_VER))   OR
+   (("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")     AND (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL DEFAULT_AVXIFMA_CLANG_COMPILER_VER)) OR
+   (("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")      AND (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL DEFAULT_AVXIFMA_MSVC_COMPILER_VER))  OR
+   (("${CMAKE_C_COMPILER_ID}" STREQUAL "IntelLLVM") AND (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL DEFAULT_AVXIFMA_ICX_COMPILER_VER)))
+    set(MBX_CC_AVXIFMA_SUPPORT 1)
+endif()
+
+if(MBX_CC_AVXIFMA_SUPPORT)
+  message(STATUS "Intel® AVX-IFMA .............................. on")
+else()
+  if(WIN32)
+    message(STATUS "Intel® AVX-IFMA .............................. off, compiler version GCC >= 13.0.0, CLANG >= 16.0.0, Intel ICX >= 2025.0.0 or MSVC >= 17.7 is required")
+  else()
+    message(STATUS "Intel® AVX-IFMA .............................. off, compiler version GCC >= 13.0.0, CLANG >= 16.0.0, Intel ICX >= 2024.2.0 or MSVC >= 17.7 is required")
+  endif()
+endif()
 
 if(MB_STANDALONE)
     foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
@@ -93,13 +123,17 @@ if(MB_STANDALONE)
     endif()
 endif()
 
-if(BORINGSSL OR BABASSL) # off by default
+if(BORINGSSL OR BABASSL OR TONGSUO) # off by default
     # BoringSSL doesn't appear to have version information found
-    # BabaSSL hasn't been migrated to 3.0 version yet
+    # Tongsuo has own versioning
     # by find_package(OpenSSL)
     find_package(OpenSSL REQUIRED)
 else()
     find_package(OpenSSL 3.0.8 REQUIRED) # set -DOPENSSL_INCLUDE_DIR= -DOPENSSL_LIBRARIES= -DOPENSSL_ROOT_DIR= to use patched
+endif()
+
+if(BABASSL) # off by default
+    message(WARNING "-DBABASSL:BOOL=on flag is deprecated and targeted to be removed in the future releases. Please use -DTONGSUO:BOOL=on instead.")
 endif()
 
 if(BN_OPENSSL_PATCH)

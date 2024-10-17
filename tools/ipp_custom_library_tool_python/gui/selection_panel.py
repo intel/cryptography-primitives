@@ -3,10 +3,11 @@ Copyright (C) 2018 Intel Corporation
 
 SPDX-License-Identifier: MIT
 """
+
 import copy
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QWidget, QComboBox, QLineEdit, QListWidget, QPushButton, QVBoxLayout, QListWidgetItem
+from PyQt5.QtWidgets import QComboBox, QLineEdit, QListWidget, QListWidgetItem, QPushButton, QVBoxLayout, QWidget
 
 from tool import utils
 
@@ -19,14 +20,14 @@ class SelectionPanel(QWidget):
         self.settings = settings
 
         # Initializing GUI elements
-        self.domains_list      = QComboBox(self)
-        self.search            = QLineEdit(self)
-        self.functions_list    = QListWidget(self)
-        self.autobuild_button  = QPushButton('Autobuild')
+        self.domains_list = QComboBox(self)
+        self.search = QLineEdit(self)
+        self.functions_list = QListWidget(self)
+        self.autobuild_button = QPushButton("Autobuild")
 
         # Preparing elements by giving initial values, etc
         self.setMinimumHeight(500)
-        self.search.setPlaceholderText('Search...')
+        self.search.setPlaceholderText("Search...")
 
         # Setting all widgets in their places
         layout = QVBoxLayout()
@@ -52,8 +53,9 @@ class SelectionPanel(QWidget):
             self.reset()
 
     def refresh(self):
-        self.domains_type = (self.settings.package.type if not self.settings.tl_group.isChecked()
-                             else utils.THREADING_LAYER)
+        self.domains_type = (
+            self.settings.package.type if not self.settings.tl_group.isChecked() else utils.THREADING_LAYER
+        )
         domains_list = self.functions_dict[self.domains_type].keys()
         self.set_widget_items(self.domains_list, domains_list)
         self.on_select_domain()
@@ -63,9 +65,14 @@ class SelectionPanel(QWidget):
         self.on_search(self.search.text())
 
     def on_search(self, search_request):
-        self.set_widget_items(self.functions_list,
-                              [entry for entry in self.functions_dict[self.domains_type][self.current_domain]
-                               if search_request.upper() in entry.upper()])
+        self.set_widget_items(
+            self.functions_list,
+            [
+                entry
+                for entry in self.functions_dict[self.domains_type][self.current_domain]
+                if search_request.upper() in entry.upper()
+            ],
+        )
 
     def on_autobuild(self):
         self.autobuild.emit()
@@ -107,7 +114,7 @@ class SelectionPanel(QWidget):
                 self.functions_list.takeItem(self.functions_list.row(item[0]))
 
     def find_function(self, function_name):
-        previous_domain = ''
+        previous_domain = ""
         initial_functions_dict = self.settings.package.functions
 
         for domain_type, domain, function in utils.walk_dict(initial_functions_dict):

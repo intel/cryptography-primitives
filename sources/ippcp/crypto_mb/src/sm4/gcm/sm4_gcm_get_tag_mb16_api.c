@@ -22,7 +22,7 @@ mbx_status16 OWNAPI(mbx_sm4_gcm_get_tag_mb16)(int8u *pa_tag[SM4_LINES], const in
 {
    int buf_no;
    mbx_status16 status = 0;
-   __mmask16 mb_mask   = 0xFFFF;
+   int16u mb_mask   = 0xFFFF;
 
    /* Test input pointers */
    if (NULL == pa_tag || NULL == tag_len || NULL == p_context) {
@@ -52,7 +52,7 @@ mbx_status16 OWNAPI(mbx_sm4_gcm_get_tag_mb16)(int8u *pa_tag[SM4_LINES], const in
 
 #if (_MBX>=_MBX_K1)
    if (MBX_IS_ANY_OK_STS16(status))
-      status |= sm4_gcm_get_tag_mb16(pa_tag, tag_len, mb_mask, p_context);
+      status |= sm4_gcm_get_tag_mb16(pa_tag, tag_len, (__mmask16)mb_mask, p_context);
 #else
    MBX_UNREFERENCED_PARAMETER(mb_mask);
    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel(R) Integrated Performance Primitives Cryptography (Intel(R) IPP Cryptography)
+# Intel(R) Cryptography Primitives Library
 #
 
 import sys
@@ -47,9 +47,16 @@ if not os.path.exists(OutDir):
 Filename="ippcp"
 Filenames=["h9", "p8", "s8", "w7", "e9", "k0", "k1", "l9", "m7", "n8", "y8", "g9"]
 
+DeprecatedCodePaths= {
+  "n8" : "m7", # SSSE3 -> SSE3 64-bit
+  "e9" : "y8", # AVX -> SSE4.2 64-bit
+  "s8" : "w7", # SSSE3 -> SSE2 32-bit
+  "g9" : "p8" # AVX -> SSE4.2 32-bit
+}
+
 for name in Filenames:
   OutFile  = os.sep.join([OutDir, Filename + "_"+ name + ".h"])
-  
+
   OUT= open( OutFile, 'w' )
   OUT.write("""/*******************************************************************************
   * Copyright {year} Intel Corporation
@@ -69,6 +76,15 @@ for name in Filenames:
 
   """.format(year=datetime.datetime.today().year))
 
+  if name in DeprecatedCodePaths:
+    OUT.write(f"""
+#if !defined(_NO_IPP_DEPRECATED)
+#pragma message (\"code path {name} is deprecated, lower optimizations level {DeprecatedCodePaths[name]} is used\")
+#endif
+""")
+    name = DeprecatedCodePaths[name]
+
+
   curLine = 0
   isFunctionFound = True
 
@@ -81,5 +97,5 @@ for name in Filenames:
     isFunctionFound = result['success']
 
     if (isFunctionFound):
-      OUT.write("#define " + FunName + " " + name +"_" + FunName + "\n")
+      OUT.write(f"#define {FunName} {name}_{FunName}\n")
   OUT.close()

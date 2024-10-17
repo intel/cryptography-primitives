@@ -203,7 +203,13 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size, 
 
     /* Resize buffer */
     total_size = IPP_MAX(buffSize, buffSizePrivKey) + IPPCP_RSA_ALIGNMENT;
-    *pBufferSize = total_size;
+
+    /* Add an extra memory for the hash method*/
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+
+    *pBufferSize = total_size + hash_method_size;
 
     return IPPCP_ALGO_SELFTEST_OK;
 }
@@ -327,10 +333,25 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSASign_PKCS1v15_rmf, (Ipp8u *pBuffer
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
+    /* Get memory offset and set Hash Method */
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer);
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) { 
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
     /* RSA Signature Generation */
-    Ipp8u* pLocSignBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_RSA_ALIGNMENT));
+    Ipp8u* pLocSignBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
     sts = ippsRSASign_PKCS1v15_rmf(pMsg, msgByteLen, pOutSig, pPrvKey, pPubKey,
-                                    ippsHashMethod_SHA256(), pLocSignBuffer);
+                                    locMethod, pLocSignBuffer);
 
     int sigFlagErr = ippcp_is_mem_eq(pSig, sizeof(pSig), pOutSig, sizeof(pSig));
     if(1 != sigFlagErr || sts != ippStsNoErr) {
@@ -422,12 +443,27 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSAVerify_PKCS1v15_rmf,(Ipp8u *pBuffe
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
-    Ipp8u* pLocVerifBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_RSA_ALIGNMENT));
+    /* Get memory offset and set Hash Method */
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer);
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    Ipp8u* pLocVerifBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
 
     /* RSA Signature Verification */
     int isValid;
     sts = ippsRSAVerify_PKCS1v15_rmf(pMsg,msgByteLen, pSig, &isValid, pPubKey,
-                                     ippsHashMethod_SHA256(), pLocVerifBuffer);
+                                     locMethod, pLocVerifBuffer);
 
     if(!isValid || sts != ippStsNoErr)  {
         test_result = IPPCP_ALGO_SELFTEST_KAT_ERR;

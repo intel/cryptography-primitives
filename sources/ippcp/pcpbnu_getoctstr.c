@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Internal Unsigned BNU misc functionality
-// 
+//
 //  Contents:
 //     cpToOctStr_BNU()
-// 
+//
 */
 
 #include "owncp.h"
@@ -39,7 +39,7 @@
 //
 // Purpose: Convert BNU into HexString representation.
 //
-// Returns:  
+// Returns:
 //       length of the string or 0 if no success
 //
 // Parameters:

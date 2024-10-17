@@ -16,7 +16,7 @@
 
 # Security Linker flags
 
-set(LINK_FLAG_SECURITY "") 
+set(LINK_FLAG_SECURITY "")
 # Data relocation and protection (RELRO)
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,relro -Wl,-z,now")
 # Stack execution protection
@@ -27,13 +27,6 @@ set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,noexecstack")
 set(CMAKE_C_FLAGS_SECURITY "")
 # Format string vulnerabilities
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wformat -Wformat-security -Werror=format-security")
-
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    if(NOT DEFINED NO_FORTIFY_SOURCE)
-        # Security flag that adds compile-time and run-time checks. 
-        set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -D_FORTIFY_SOURCE=2")
-    endif()
-endif()
 
 # Stack-based Buffer Overrun Detection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fstack-protector")
@@ -75,8 +68,19 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-pointer-to-int-cast")
 
 # Optimization level = 3, no-debug definition (turns off asserts)
 set(CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG")
+if(NOT DEFINED NO_FORTIFY_SOURCE)
+  # Security flag that adds compile-time and run-time checks
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
+endif()
+
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
 # Optimisation dependent flags
-set(l9_opt "-march=haswell -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed")
+
+# Add Intel® AVX-IFMA specific compiler options only for compilers that support them
+if(MBX_CC_AVXIFMA_SUPPORT)
+    set(l9_opt "-march=sierraforest -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed -mgfni -mavxifma")
+else()
+    set(l9_opt "-mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed -mgfni")
+endif()
 set(k1_opt "-march=icelake-server -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mavx512ifma -mpclmul -msha -mrdrnd -mrdseed -madx -mgfni -mvaes -mvpclmulqdq -mavx512vbmi -mavx512vbmi2")

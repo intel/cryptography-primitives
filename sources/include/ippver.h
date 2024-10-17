@@ -15,30 +15,30 @@
 *************************************************************************/
 
 /*
-//              Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+//              Intel® Cryptography Primitives Library
 //
-//              Purpose: Describes the base Intel IPP Cryptography version
+//              Purpose: Describes the base Intel® Cryptography Primitives Library version
 //
 */
 
 
-#include "ippversion.h"
+#include "ippcpversion.h"
 #ifndef BASE_VERSION
-#define BASE_VERSION() IPP_VERSION_MAJOR,IPP_VERSION_MINOR,IPP_VERSION_UPDATE
+#define BASE_VERSION() CRYPTO_LIB_VERSION_MAJOR,CRYPTO_LIB_VERSION_MINOR,CRYPTO_LIB_VERSION_PATCH
 #endif
 
 #define STR2(x)           #x
 #define STR(x)       STR2(x)
 
 #ifndef STR_BASE_VERSION
-#define STR_BASE_VERSION() STR(IPP_VERSION_MAJOR) "," STR(IPP_VERSION_MINOR) ", " STR(IPP_VERSION_UPDATE)
+#define STR_BASE_VERSION() STR(CRYPTO_LIB_VERSION_MAJOR) "," STR(CRYPTO_LIB_VERSION_MINOR) ", " STR(CRYPTO_LIB_VERSION_PATCH)
 #endif
 
 #ifndef STR_VERSION
  #ifdef IPP_REVISION
-  #define STR_VERSION() IPP_VERSION_STR " (r" STR( IPP_REVISION ) ")"
+  #define STR_VERSION() CRYPTO_LIB_VERSION_STR " (r" STR( IPP_REVISION ) ")"
  #else
-  #define STR_VERSION() IPP_VERSION_STR " (-)"
+  #define STR_VERSION() CRYPTO_LIB_VERSION_STR
  #endif
 #endif
 

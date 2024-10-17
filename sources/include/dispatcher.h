@@ -15,7 +15,7 @@
 *************************************************************************/
 
 //
-// Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+// Intel® Cryptography Primitives Library
 //
 
 #ifndef __DISPATCHER_H__
@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 /*
-  Intel IPP Cryptography libraries and CPU features mask fitness. Implemented only for IA32 and Intel64 (emt)
+  Intel® Cryptography Primitives Library and CPU features mask fitness. Implemented only for IA32 and Intel64 (emt)
 */
 
 #if defined( _ARCH_IA32 )
@@ -79,23 +79,23 @@ extern "C" {
 
 #if defined( _ARCH_IA32 ) && !defined( OSX32 )
   enum lib_enum {
-     LIB_W7=0, LIB_S8=1, LIB_P8=2, LIB_G9=3, LIB_H9=4, LIB_NOMORE
+     LIB_W7=0, LIB_P8=1, LIB_H9=2, LIB_NOMORE
   };
   #define LIB_PX LIB_W7
 #elif defined( OSX32 )
   enum lib_enum {
-     LIB_S8=0, LIB_P8=1, LIB_G9=2, LIB_H9=3, LIB_NOMORE
+     LIB_P8=0, LIB_H9=1, LIB_NOMORE
   };
   #define LIB_PX LIB_S8
   #define LIB_W7 LIB_S8
 #elif defined( _ARCH_EM64T ) && !defined( OSXEM64T )
   enum lib_enum {
-     LIB_M7=0, LIB_N8=1, LIB_Y8=2, LIB_E9=3, LIB_L9=4, LIB_K0=5, LIB_K1=6, LIB_NOMORE
+     LIB_M7=0, LIB_Y8=1, LIB_L9=2, LIB_K0=3, LIB_K1=4, LIB_NOMORE
   };
   #define LIB_PX LIB_M7
 #elif defined( OSXEM64T )
   enum lib_enum {
-     LIB_Y8=0, LIB_E9=1, LIB_L9=2, LIB_K0=3, LIB_K1=4, LIB_NOMORE
+     LIB_Y8=0, LIB_L9=1, LIB_K0=2, LIB_K1=3, LIB_NOMORE
   };
   #define LIB_PX LIB_Y8
   #define LIB_M7 LIB_Y8
@@ -178,34 +178,30 @@ extern "C" {
 #if defined( _ARCH_IA32 )
 
 /* Describe Intel CPUs and libraries */
-typedef enum{CPU_W7=0, CPU_S8, CPU_P8, CPU_G9, CPU_H9, CPU_NOMORE} cpu_enum;
-typedef enum{DLL_W7=0, DLL_S8, DLL_P8, DLL_G9, DLL_H9, DLL_NOMORE} dll_enum;
+typedef enum{CPU_W7=0, CPU_P8, CPU_H9, CPU_NOMORE} cpu_enum;
+typedef enum{DLL_W7=0, DLL_P8, DLL_H9, DLL_NOMORE} dll_enum;
 
 /* New cpu can use some libraries for old cpu */
 static const dll_enum dllUsage[][DLL_NOMORE+1] = {
-         /*  DLL_H9, DLL_G9, DLL_P8, DLL_S8, DLL_W7, DLL_NOMORE */
-/*CPU_W7*/ {                                 DLL_W7, DLL_NOMORE },
-/*CPU_S8*/ {                         DLL_S8, DLL_W7, DLL_NOMORE },
-/*CPU_P8*/ {                 DLL_P8, DLL_S8, DLL_W7, DLL_NOMORE },
-/*CPU_G9*/ {         DLL_G9, DLL_P8, DLL_S8, DLL_W7, DLL_NOMORE },
-/*CPU_H9*/ { DLL_H9, DLL_G9, DLL_P8, DLL_S8, DLL_W7, DLL_NOMORE }
+         /*  DLL_H9, DLL_P8, DLL_W7, DLL_NOMORE */
+/*CPU_W7*/ {                 DLL_W7, DLL_NOMORE },
+/*CPU_P8*/ {         DLL_P8, DLL_W7, DLL_NOMORE },
+/*CPU_H9*/ { DLL_H9, DLL_P8, DLL_W7, DLL_NOMORE }
 };
 
 #elif defined (_ARCH_EM64T)
 /* Describe Intel CPUs and libraries */
-typedef enum{CPU_M7=0, CPU_N8, CPU_Y8, CPU_E9, CPU_L9, CPU_K0, CPU_K1, CPU_NOMORE} cpu_enum;
-typedef enum{DLL_M7=0, DLL_N8, DLL_Y8, DLL_E9, DLL_L9, DLL_K0, DLL_K1, DLL_NOMORE} dll_enum;
+typedef enum{CPU_M7=0, CPU_Y8, CPU_L9, CPU_K0, CPU_K1, CPU_NOMORE} cpu_enum;
+typedef enum{DLL_M7=0, DLL_Y8, DLL_L9, DLL_K0, DLL_K1, DLL_NOMORE} dll_enum;
 
 /* New cpu can use some libraries for old cpu */
 static const dll_enum dllUsage[][DLL_NOMORE+1] = {
-         /*  DLL_K1, DLL_K0, DLL_L9, DLL_E9, DLL_Y8, DLL_N8, DLL_M7, DLL_NOMORE */
-/*CPU_M7*/ {                                                  DLL_M7, DLL_NOMORE },
-/*CPU_N8*/ {                                          DLL_N8, DLL_M7, DLL_NOMORE },
-/*CPU_Y8*/ {                                  DLL_Y8, DLL_N8, DLL_M7, DLL_NOMORE },
-/*CPU_E9*/ {                          DLL_E9, DLL_Y8, DLL_N8, DLL_M7, DLL_NOMORE },
-/*CPU_L9*/ {                  DLL_L9, DLL_E9, DLL_Y8, DLL_N8, DLL_M7, DLL_NOMORE },
-/*CPU_K0*/ {         DLL_K0,  DLL_L9, DLL_E9, DLL_Y8, DLL_N8, DLL_M7, DLL_NOMORE },
-/*CPU_K1*/ { DLL_K1, DLL_K0,  DLL_L9, DLL_E9, DLL_Y8, DLL_N8, DLL_M7, DLL_NOMORE }
+/*           DLL_K1, DLL_K0, DLL_L9, DLL_Y8, DLL_M7, DLL_NOMORE */
+/*CPU_M7*/ {                                  DLL_M7, DLL_NOMORE },
+/*CPU_Y8*/ {                          DLL_Y8, DLL_M7, DLL_NOMORE },
+/*CPU_L9*/ {                  DLL_L9, DLL_Y8, DLL_M7, DLL_NOMORE },
+/*CPU_K0*/ {         DLL_K0,  DLL_L9, DLL_Y8, DLL_M7, DLL_NOMORE },
+/*CPU_K1*/ { DLL_K1, DLL_K0,  DLL_L9, DLL_Y8, DLL_M7, DLL_NOMORE }
 };
 
 #endif
@@ -216,41 +212,31 @@ static const dll_enum dllUsage[][DLL_NOMORE+1] = {
 #if defined ( WIN32 )
 static const _TCHAR* dllNames[DLL_NOMORE] = {
     _T(IPP_LIB_PREFIX()) _T("w7") _T(".dll"),
-    _T(IPP_LIB_PREFIX()) _T("s8") _T(".dll"),
     _T(IPP_LIB_PREFIX()) _T("p8") _T(".dll"),
-    _T(IPP_LIB_PREFIX()) _T("g9") _T(".dll"),
     _T(IPP_LIB_PREFIX()) _T("h9") _T(".dll")
 };
 #elif defined(LINUX32)
 static const _TCHAR* dllNames[DLL_NOMORE] = {
     _T("lib") _T(IPP_LIB_PREFIX()) _T("w7.so"),
-    _T("lib") _T(IPP_LIB_PREFIX()) _T("s8.so"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("p8.so"),
-    _T("lib") _T(IPP_LIB_PREFIX()) _T("g9.so"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("h9.so")
 };
 #elif defined( OSX32 )
 static const _TCHAR* dllNames[DLL_NOMORE] = {
-    _T("lib") _T(IPP_LIB_PREFIX()) _T("s8") _T(".dylib"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("p8") _T(".dylib"),
-    _T("lib") _T(IPP_LIB_PREFIX()) _T("g9") _T(".dylib"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("h9") _T(".dylib")
 };
 #elif defined( WIN32E )
 static const _TCHAR* dllNames[DLL_NOMORE] = {
     _T(IPP_LIB_PREFIX()) _T("m7") _T(".dll"),
-    _T(IPP_LIB_PREFIX()) _T("n8") _T(".dll"),
     _T(IPP_LIB_PREFIX()) _T("y8") _T(".dll"),
-    _T(IPP_LIB_PREFIX()) _T("e9") _T(".dll"),
     _T(IPP_LIB_PREFIX()) _T("l9") _T(".dll"),
     _T(IPP_LIB_PREFIX()) _T("k0") _T(".dll"),
     _T(IPP_LIB_PREFIX()) _T("k1") _T(".dll")
 };
 #elif defined( OSXEM64T )
 static const _TCHAR* dllNames[DLL_NOMORE] = {
-    _T("lib") _T(IPP_LIB_PREFIX()) _T("n8") _T(".dylib"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("y8") _T(".dylib"),
-    _T("lib") _T(IPP_LIB_PREFIX()) _T("e9") _T(".dylib"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("l9") _T(".dylib"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("k0") _T(".dylib"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("k1") _T(".dylib")
@@ -258,9 +244,7 @@ static const _TCHAR* dllNames[DLL_NOMORE] = {
 #elif defined( LINUX32E )
 static const _TCHAR* dllNames[DLL_NOMORE] = {
     _T("lib") _T(IPP_LIB_PREFIX()) _T("m7.so"),
-    _T("lib") _T(IPP_LIB_PREFIX()) _T("n8.so"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("y8.so"),
-    _T("lib") _T(IPP_LIB_PREFIX()) _T("e9.so"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("l9.so"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("k0.so"),
     _T("lib") _T(IPP_LIB_PREFIX()) _T("k1.so")

@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptographic Primitives (ippcp)
+//     Intel(R) Cryptography Primitives Library
 //     Prime Number Primitives.
-// 
+//
 //  Contents:
 //        ippsPrimeSet_BN()
 //
@@ -37,7 +37,7 @@
 //                               NULL == pPrime
 //    ippStsContextMatchErr      illegal pCtx->idCtx
 //                               illegal pPrime->idCtx
-//    ippStsOutOfRangeErr        BITSIZE_BNU(BN_NUMBER(pPrime), BN_SIZE(pPrime)) 
+//    ippStsOutOfRangeErr        BITSIZE_BNU(BN_NUMBER(pPrime), BN_SIZE(pPrime))
 //                                                  > PRIME_MAXBITSIZE(pCtx)
 //    ippStsNoErr                no error
 //

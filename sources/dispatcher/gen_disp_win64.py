@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 import re
@@ -25,7 +25,7 @@ import hashlib
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', '--header', action='store', required=True, help='Intel IPP Cryptography dispatcher will be generated for functions in Header')
+parser.add_argument('-i', '--header', action='store', required=True, help='Intel Cryptography Primitives Library dispatcher will be generated for functions in Header')
 parser.add_argument('-o', '--out-directory', action='store', required=True, help='Output folder for generated files')
 parser.add_argument('-l', '--cpu-list', action='store', required=True, help='Actual CPU list: semicolon separated string')
 parser.add_argument('-c', '--compiler', action='store', help='Compiler') # is not used
@@ -56,34 +56,34 @@ FunArg = ""
 while (isFunctionFound == True):
 
   result = readNextFunction(h, curLine, headerID)
-  
+
   curLine         = result['curLine']
   FunName         = result['FunName']
   FunArg          = result['FunArg']
   isFunctionFound = result['success']
-  
+
   if (isFunctionFound == True):
     ##################################################
     ## create dispatcher files: C file with inline asm
     ##################################################
     filename = "jmp_{}_{}".format(FunName, hashlib.sha512(FunName.encode('utf-8')).hexdigest()[:8])
-    
+
     DISP= open( os.sep.join([OutDir, filename + ".asm"]), 'w' )
-    
+
     for cpu in cpulist:
        DISP.write("extern "+cpu+"_"+FunName+"\n")
-    
+
     DISP.write("extern ippcpJumpIndexForMergedLibs\n")
     DISP.write("extern ippcpSafeInit\n\n")
-    
+
     DISP.write("segment data\n\n")
-    
+
     DISP.write("    DQ in_"+FunName+"\n")
     DISP.write(FunName+"_arraddr:\n")
-    
+
     for cpu in cpulist:
        DISP.write("    DQ "+cpu+"_"+FunName+"\n")
-    
+
     DISP.write("""
 
 segment text

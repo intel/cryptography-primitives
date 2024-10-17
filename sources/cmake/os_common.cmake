@@ -15,10 +15,10 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
-# The ability to build custom Intel® IPP Cryptography library - enable specific CPU features at compile time
+# The ability to build custom Intel® Cryptography Primitives Library - enable specific CPU features at compile time
 if((NOT MERGED_BLD) AND (NOT "${IPPCP_CUSTOM_BUILD}" STREQUAL ""))
   set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_CUSTOM_BUILD")
   foreach(feature ${IPPCP_CUSTOM_BUILD})

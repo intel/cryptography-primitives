@@ -28,6 +28,8 @@ set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /LARGEADDRESSAWARE")
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /NXCOMPAT")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /CETCOMPAT")
+# Linker option to mitigate DLL hijacking vulnerability - removes CWD from the DLL search order
+set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /DEPENDENTLOADFLAG:0x2000")
 
 # Security Compiler flags
 

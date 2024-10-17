@@ -25,7 +25,6 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpngrsa.h"
-#include "pcphash.h"
 #include "pcptool.h"
 
 #include "pcprsa_emsa_pkcs1v15.h"

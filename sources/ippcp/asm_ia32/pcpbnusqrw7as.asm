@@ -408,19 +408,19 @@ segment .text align=IPP_ALIGN_FACTOR
 ;; Caller = ippsMontMul
 ;; Caller = ippsMontExp
 ;;
-;; Caller = ippsECCPGetPoint
-;; Caller = ippsECCPCheckPoint
-;; Caller = ippsECCPAddPoint
-;; Caller = ippsECCPMulPointScalar
-;; Caller = ippsECCPGenKeyPair
-;; Caller = ippsECCPPublicKey
-;; Caller = ippsECCPValidateKey
-;; Caller = ippsECCPShareSecretKeyDH
-;; Caller = ippsECCPShareSecretKeyDHC
-;; Caller = ippsECCPSignDSA
-;; Caller = ippsECCPSignNR
-;; Caller = ippsECCPVerifyDSA
-;; Caller = ippsECCPVerifyNR
+;; Caller = ippsGFpECGetPointRegular
+;; Caller = ippsGFpECTstPoint
+;; Caller = ippsGFpECAddPoint
+;; Caller = ippsGFpECMulPoint
+;; Caller = ippsGFpECPrivateKey
+;; Caller = ippsGFpECPublicKey
+;; Caller = ippsGFpECTstKeyPair
+;; Caller = ippsGFpECSharedSecretDH
+;; Caller = ippsGFpECSharedSecretDHC
+;; Caller = ippsGFpECSignDSA
+;; Caller = ippsGFpECSignNR
+;; Caller = ippsGFpECVerifyDSA
+;; Caller = ippsGFpECVerifyNR
 ;;
 IPPASM cpSqrAdc_BNU_school,PUBLIC
   USES_GPR esi,edi,ebx

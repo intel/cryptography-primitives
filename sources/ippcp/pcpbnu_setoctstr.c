@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Internal Unsigned BNU misc functionality
-// 
+//
 //  Contents:
 //     cpFromOctStr_BNU()
-// 
+//
 */
 
 #include "owncp.h"
@@ -32,7 +32,7 @@
 //
 // Purpose: Convert Oct String into BNU representation.
 //
-// Returns:                 
+// Returns:
 //          size of BNU in BNU_CHUNK_T chunks
 //
 // Parameters:

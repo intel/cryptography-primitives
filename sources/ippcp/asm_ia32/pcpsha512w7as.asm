@@ -272,21 +272,12 @@ pByteSwp DB    7,6,5,4,3,2,1,0, 15,14,13,12,11,10,9,8
 ;;
 ;; Lib = W7, V8, P8
 ;;
-;; Caller = ippsSHA512Update
-;; Caller = ippsSHA512Final
-;; Caller = ippsSHA512MessageDigest
 ;;
-;; Caller = ippsSHA384Update
-;; Caller = ippsSHA384Final
-;; Caller = ippsSHA384MessageDigest
 ;;
-;; Caller = ippsHMACSHA512Update
-;; Caller = ippsHMACSHA512Final
-;; Caller = ippsHMACSHA512MessageDigest
+;; Caller = ippsHashUpdate_rmf
+;; Caller = ippsHashFinal_rmf
+;; Caller = ippsHashMessage_rmf
 ;;
-;; Caller = ippsHMACSHA384Update
-;; Caller = ippsHMACSHA384Final
-;; Caller = ippsHMACSHA384MessageDigest
 ;;
 align IPP_ALIGN_FACTOR
 IPPASM UpdateSHA512,PUBLIC

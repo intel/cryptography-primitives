@@ -86,9 +86,9 @@ static void sha512_update(void* uniHash, const int8u* mblk, int mlen)
     }
 }
 
-static void sha512_final(DigestSHA512 pHash, const int8u* inpBuffer, int inpLen, int64u lenLo, int64u lenHi)
+static void sha512_final(DigestSHA512 pHash, const int8u* inpBuffer, int inpLen, const int64u lenLo, const int64u lenHi)
 {
-    /* local buffer and it length */
+    /* local buffer and its length */
     int8u buffer[MBS_SHA512 * 2];
     int bufferLen = inpLen < (MBS_SHA512 - (int)MLR_SHA512) ? MBS_SHA512 : MBS_SHA512 * 2;
 
@@ -100,12 +100,12 @@ static void sha512_final(DigestSHA512 pHash, const int8u* inpBuffer, int inpLen,
     PadBlock(0, buffer + inpLen, (int)(bufferLen - inpLen - (int)MLR_SHA512));
 
     /* message length representation */
-    lenHi = LSL64(lenHi, 3) | LSR64(lenLo, 63 - 3);
-    lenLo = LSL64(lenLo, 3);
-    ((int64u*)(buffer + bufferLen))[-2] = ENDIANNESS64(lenHi);
-    ((int64u*)(buffer + bufferLen))[-1] = ENDIANNESS64(lenLo);
+    const int64u beLenHi = ENDIANNESS64(LSL64(lenHi, 3) | LSR64(lenLo, 63 - 3));
+    const int64u beLenLo = ENDIANNESS64(LSL64(lenLo, 3));
+    CopyBlock(&beLenHi, &buffer[bufferLen - 2 * sizeof(int64u)], sizeof(int64u));
+    CopyBlock(&beLenLo, &buffer[bufferLen - 1 * sizeof(int64u)], sizeof(int64u));
 
-    /* copmplete hash computation */
+    /* complete hash computation */
     sha512_update(pHash, buffer, bufferLen);
 }
 

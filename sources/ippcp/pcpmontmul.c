@@ -14,10 +14,9 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-//               Intel(R) Integrated Performance Primitives
-//                   Cryptographic Primitives (ippcp)
-// 
+/*
+//               Intel(R) Cryptography Primitives Library
+//
 //  Contents:
 //        ippsMontMul()
 //
@@ -76,7 +75,7 @@ IPPFUN(IppStatus, ippsMontMul, (const IppsBigNumState* pA, const IppsBigNumState
       BNU_CHUNK_T* pDataR  = BN_NUMBER(pR);
       BNU_CHUNK_T* pDataA  = gsModPoolAlloc(MNT_ENGINE(pCtx), usedPoolLen);
       IPP_BAD_PTR1_RET(pDataA); // pDataA can be NULL, stop processing
-      
+
       BNU_CHUNK_T* pDataB  = pDataA + nsM;
 
       ZEXPAND_COPY_BNU(pDataA, nsM, BN_NUMBER(pA), BN_SIZE(pA));

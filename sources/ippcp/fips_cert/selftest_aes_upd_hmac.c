@@ -19,6 +19,8 @@
 #include "owndefs.h"
 #include "dispatcher.h"
 
+#include "hash/pcphashmethod_rmf.h"
+
 // FIPS selftests are not processed by dispatcher.
 // Prevent several copies of the same functions.
 #ifdef _IPP_DATA
@@ -53,7 +55,12 @@ IPPFUN(fips_test_status, fips_selftest_ippsHMAC_rmf_get_size, (int *pBuffSize)) 
     if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
 
     ctx_size += IPPCP_HMAC_ALIGNMENT;
-    *pBuffSize = ctx_size;
+
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+    
+    *pBuffSize = ctx_size + hash_method_size;
 
     return IPPCP_ALGO_SELFTEST_OK;
 }
@@ -72,15 +79,30 @@ IPPFUN(fips_test_status, fips_selftest_ippsHMACUpdate_rmf, (Ipp8u *pBuffer))
     /* output hash */
     Ipp8u outTagBuff[IPPCP_TAG_BYTE_SIZE];
     Ipp8u outTagFinBuff[IPPCP_TAG_BYTE_SIZE];
+
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE(pBuffer, internalMemMgm)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer);
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE(pBuffer, internalMemMgm)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
     /* context */
-    IppsHMACState_rmf* pCtx = (IppsHMACState_rmf*)(IPP_ALIGNED_PTR(pBuffer, IPPCP_HMAC_ALIGNMENT));
+    IppsHMACState_rmf* pCtx = (IppsHMACState_rmf*)(IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_HMAC_ALIGNMENT));
     /* context initialization */
     sts = ippsHMACGetSize_rmf(&ctx_size);
     if (sts != ippStsNoErr) {
         MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
-    sts = ippsHMACInit_rmf(key, keyByteSize, pCtx, ippsHashMethod_SHA256());
+    sts = ippsHMACInit_rmf(key, keyByteSize, pCtx, locMethod);
     if (sts != ippStsNoErr) {
         MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
@@ -122,9 +144,16 @@ IPPFUN(fips_test_status, fips_selftest_ippsHMACMessage_rmf, (void))
     IppStatus sts = ippStsNoErr;
     /* output hash */
     Ipp8u outTagBuff[IPPCP_TAG_BYTE_SIZE];
+    Ipp8u hashMethodArr[sizeof(IppsHashMethod)];
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)hashMethodArr;
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) {
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
 
     /* function call */
-    sts = ippsHMACMessage_rmf(msg, msgByteLen, key, keyByteSize, outTagBuff, IPPCP_TAG_BYTE_SIZE, ippsHashMethod_SHA256());
+    sts = ippsHMACMessage_rmf(msg, msgByteLen, key, keyByteSize, outTagBuff, IPPCP_TAG_BYTE_SIZE, locMethod);
     if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
 
     if (!ippcp_is_mem_eq(outTagBuff, IPPCP_TAG_BYTE_SIZE, tag, IPPCP_TAG_BYTE_SIZE)) {

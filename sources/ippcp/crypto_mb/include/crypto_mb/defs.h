@@ -17,7 +17,34 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-#include "internal/common/internal_defs.h"
+/* externals */
+#undef EXTERN_C
+
+#ifdef __cplusplus
+   #define EXTERN_C extern "C"
+#else
+   #define EXTERN_C
+#endif
+
+#if !defined( MBXAPI )
+   #define MBXAPI( type,name,arg ) EXTERN_C type MBX_CALL name arg;
+#endif
+
+#if defined (_MSC_VER)
+  #define MBX_CDECL    __cdecl
+#elif (defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || defined (__GNUC__ ) || defined (__clang__)) && defined (_ARCH_IA32)
+  #define MBX_CDECL    __attribute((cdecl))
+#else
+  #define MBX_CDECL
+#endif
+
+#if defined( _WIN32 ) || defined( _WIN64 )
+  #define MBX_STDCALL  __stdcall
+  #define MBX_CALL     MBX_STDCALL
+#else
+  #define MBX_STDCALL
+  #define MBX_CALL     MBX_CDECL
+#endif
 
 /* data types */
 typedef unsigned char int8u;
@@ -36,7 +63,7 @@ typedef unsigned long long int64u;
    #endif
 
    #if !defined(__MBX_INLINE)
-      #define __MBX_INLINE static __inline__
+      #define __MBX_INLINE static __inline__ __attribute__((always_inline))
    #endif
 
    #if !defined(__NOINLINE)
@@ -55,6 +82,18 @@ typedef unsigned long long int64u;
       #define __NOINLINE __declspec(noinline)
    #endif
 #endif
+
+#if !defined(MBX_ZEROING_FUNC_ATTRIBUTES)
+#if defined(_MSC_VER) && !defined(__clang__)
+  #define MBX_ZEROING_FUNC_ATTRIBUTES __declspec(noinline)
+#elif defined(__GNUC__) && !defined(__clang__)
+  #define MBX_ZEROING_FUNC_ATTRIBUTES __attribute__((noinline))
+#elif defined(__clang__) || defined(__INTEL_LLVM_COMPILER)
+  #define MBX_ZEROING_FUNC_ATTRIBUTES __attribute__((noinline)) __attribute((optnone))
+#else
+  #define MBX_ZEROING_FUNC_ATTRIBUTES
+#endif
+#endif /* MBX_ZEROING_FUNC_ATTRIBUTES */
 
 #define MBX_UNREFERENCED_PARAMETER(p) (void)(p)
 

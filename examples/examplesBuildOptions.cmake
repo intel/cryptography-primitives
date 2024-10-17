@@ -39,7 +39,7 @@ if(WIN32)
 
   set(LINK_FLAG_S_ST_WINDOWS "/nologo /NODEFAULTLIB /VERBOSE:SAFESEH /INCREMENTAL:NO /NXCOMPAT /DYNAMICBASE /SUBSYSTEM:CONSOLE")
 
-  ippcp_extend_variable(CMAKE_CXX_FLAGS "/TP /nologo /W3 /EHa /Zm512 /GS")
+  ippcp_extend_variable(CMAKE_CXX_FLAGS "/nologo /W3 /EHa /Zm512 /GS")
   # Intel compiler-specific option
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "IntelLLVM")
     ippcp_extend_variable(CMAKE_CXX_FLAGS "-nologo -Qfp-speculation:safe -Qfreestanding")
@@ -65,7 +65,8 @@ if(UNIX)
       ippcp_extend_variable(LINK_FLAG_S_ST_LINUX "-no-pie")
     endif()
 
-    ippcp_extend_variable(CMAKE_CXX_FLAGS "-D_FORTIFY_SOURCE=2 -Wformat -Wformat-security")
+    ippcp_extend_variable(CMAKE_CXX_FLAGS "-Wformat -Wformat-security")
+    ippcp_extend_variable(CMAKE_CXX_FLAGS_RELEASE "-D_FORTIFY_SOURCE=2")
 
     if(${ARCH} MATCHES "ia32")
       ippcp_extend_variable(LINK_FLAG_S_ST_LINUX "-m32")

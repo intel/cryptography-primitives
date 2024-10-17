@@ -1,4 +1,4 @@
-# Building usage examples of Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) library
+# Building usage examples of Intel® Cryptography Primitives Library
 
 ## System requirements
 
@@ -20,9 +20,9 @@ Only merged library (cmake option `-DMERGED_BLD:BOOL=ON`) builds are supported f
    `cmake CMakeLists.txt -B_build -G<vs_generator> [-T"Intel® C++ Compiler <version>"] -DBUILD_EXAMPLES:BOOL=ON`
 
    For the Visual Studio\* generators options, please refer to the CMake help.
-   The toolchain switch is optional, specify it if you want to build the library and examples using Intel® C++ Compiler.
+   The toolchain switch is optional, specify it if you want to build the library and examples using Intel® oneAPI DPC++/C++ Compiler.
 
-   For the list of supported compiler versions or other cmake build options, please refer to the library root README.md file.
+   For the list of supported compiler versions or other cmake build options, please refer to the library root [BUILD.md](../BUILD.md) file.
 
 2. On Linux\*/macOS\*, build with `make -j8 <target>`. You can use the following targets:
 
@@ -50,17 +50,17 @@ Only merged library (cmake option `-DMERGED_BLD:BOOL=ON`) builds are supported f
    `cmake CMakeLists.txt -B_build`
 
    On Windows\* OS it is required to specify a generator (`-G` option) and optionally a toolchain (`-T` option)
-   to build with Intel® C++ Compiler. Example:
+   to build with Intel® oneAPI DPC++/C++ Compiler. Example:
 
    `cmake CMakeLists.txt -B_build -G<vs_generator> [-T"Intel C++ Compiler <version>"]`
 
    For the Visual Studio\* generators options, please refer to the CMake help.
 
-2. The build system will scan the system for the Intel IPP Cryptography library.
+2. The build system will scan the system for the Intel® Cryptography Primitives Library.
    If it is found, you’ll see the following message:
 
    ```
-   -- Found Intel IPP Cryptography at: /home/user/intel/ippcp
+   -- Found Intel® Cryptography Primitives Library at: /home/user/intel/ippcp
    -- Configuring done
    ```
 
@@ -70,7 +70,7 @@ Only merged library (cmake option `-DMERGED_BLD:BOOL=ON`) builds are supported f
 3. Run the build process as described in the [Build with library sources](#build-with-library-sources).
 
 
-# How to add a new example into Intel IPP Cryptography library:
+# How to add a new example into Intel® Cryptography Primitives Library:
 
 1. Choose a category (a folder), where to put the example, and a filename. Use
    existing folders where applicable.
@@ -89,7 +89,7 @@ Only merged library (cmake option `-DMERGED_BLD:BOOL=ON`) builds are supported f
 4. Add the example to the build: open *examples/CMakeLists.txt* file and add the
    new file to the *IPPCP_EXAMPLES* list.
 
-5. Make sure it can be built using Intel IPP Cryptography examples build procedure, and it
+5. Make sure it can be built using Intel® Cryptography Primitives Library examples build procedure, and it
    works correctly.
 
 You are ready to submit a pull request!

@@ -57,17 +57,29 @@ __MBX_INLINE mbx_status MBX_SET_STS_BY_MASK(mbx_status status, int8u mask, mbx_s
    return status;
 }
 
-__MBX_INLINE int MBX_IS_ANY_OK_STS(mbx_status status)
+__MBX_INLINE int MBX_IS_ANY_0_TO_3_OK_STS(const mbx_status status)
 {
-   int ret = MBX_STATUS_OK==MBX_GET_STS(status, 0)
+   const int ret = MBX_STATUS_OK==MBX_GET_STS(status, 0)
           || MBX_STATUS_OK==MBX_GET_STS(status, 1)
           || MBX_STATUS_OK==MBX_GET_STS(status, 2)
-          || MBX_STATUS_OK==MBX_GET_STS(status, 3)
-          || MBX_STATUS_OK==MBX_GET_STS(status, 4)
+          || MBX_STATUS_OK==MBX_GET_STS(status, 3);
+   return ret;
+}
+
+__MBX_INLINE int MBX_IS_ANY_4_TO_7_OK_STS(const mbx_status status)
+{
+   const int ret = MBX_STATUS_OK==MBX_GET_STS(status, 4)
           || MBX_STATUS_OK==MBX_GET_STS(status, 5)
           || MBX_STATUS_OK==MBX_GET_STS(status, 6)
           || MBX_STATUS_OK==MBX_GET_STS(status, 7);
    return ret;
+}
+
+__MBX_INLINE int MBX_IS_ANY_OK_STS(mbx_status status)
+{
+   const int ret = MBX_IS_ANY_0_TO_3_OK_STS(status) ||
+           MBX_IS_ANY_4_TO_7_OK_STS(status);
+   return (int) ret;
 }
 
 /*

@@ -29,7 +29,12 @@
 #include "owncp.h"
 #include "pcptool.h"
 #include "pcpngrsa.h"
-#include "pcphash.h"
+#include "hash/pcphash.h"
+
+// ICX compiler optimizations lead to incorrect execution on windows
+#if(_IPP32E>=_IPP32E_K0) && defined (__INTEL_LLVM_COMPILER) && defined( _WIN64 )
+#pragma optimize( "", off )
+#endif
 
 /*F*
 // Name: ippsRSADecrypt_OAEP
@@ -212,3 +217,7 @@ IPPFUN(IppStatus, ippsRSADecrypt_OAEP, (const Ipp8u* pSrc,
       }
    }
 }
+
+#if(_IPP32E>=_IPP32E_K0) && defined (__INTEL_LLVM_COMPILER) && defined( _WIN64 )
+#pragma optimize( "", on )
+#endif

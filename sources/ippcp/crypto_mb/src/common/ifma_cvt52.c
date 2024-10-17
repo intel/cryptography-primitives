@@ -19,7 +19,14 @@
 
 #include <assert.h>
 
-#if (_MBX>=_MBX_K1) 
+#define PROC_LEN (52)
+
+#define BYTES_REV (1)
+#define RADIX_CVT (2)
+
+#define MIN(a, b) ( ((a) < (b)) ? a : b )
+
+#if (_MBX >= _MBX_K1) 
 
 #if defined(_MSC_VER) && (_MSC_VER < 1920)
   // Disable optimization for VS2017 due to AVX512 masking bug
@@ -27,13 +34,6 @@
 #else
   #define DISABLE_OPTIMIZATION
 #endif
-
-#define PROC_LEN (52)
-
-#define BYTES_REV (1)
-#define RADIX_CVT (2)
-
-#define MIN(a, b) ( ((a) < (b)) ? a : b )
 
 __MBX_INLINE __mmask8 MB_MASK(int L) {
    return (L > 0) ? (__mmask8)0xFF : (__mmask8)0;
@@ -519,4 +519,661 @@ int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const bn[8], int
 }
 #endif /* BN_OPENSSL_DISABLE */
 
-#endif /* #if (_MBX>=_MBX_K1) */
+#elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
+
+#include <internal/common/mem_fns.h>
+
+#define PROC_LEN2 (PROC_LEN / 2)
+
+#ifndef BN_OPENSSL_DISABLE
+#include <openssl/bn.h>
+#if BN_OPENSSL_PATCH
+extern BN_ULONG* bn_get_words(const BIGNUM* bn);
+#endif
+#endif /* BN_OPENSSL_DISABLE */
+
+__MBX_INLINE void transpose_4x64bx4(__m256i *w0, __m256i *w1, __m256i *w2, __m256i *w3)
+{
+        const __m256i r0 = _mm256_permute2x128_si256(*w0, *w2, 0x20);
+        const __m256i r1 = _mm256_permute2x128_si256(*w1, *w3, 0x20);
+        const __m256i r2 = _mm256_permute2x128_si256(*w0, *w2, 0x31);
+        const __m256i r3 = _mm256_permute2x128_si256(*w1, *w3, 0x31);
+
+        /*
+         * Structure at this point:
+         * r0 = {c1 c0 a1 a0}
+         * r1 = {d1 d0 b1 b0}
+         * r2 = {c3 c2 a3 a2}
+         * r3 = {d3 d2 b3 b2}
+         */
+        
+        *w0 = _mm256_castps_si256(_mm256_shuffle_ps(_mm256_castsi256_ps(r0), _mm256_castsi256_ps(r1), 0x44));
+        *w1 = _mm256_castps_si256(_mm256_shuffle_ps(_mm256_castsi256_ps(r0), _mm256_castsi256_ps(r1), 0xee));
+        *w2 = _mm256_castps_si256(_mm256_shuffle_ps(_mm256_castsi256_ps(r2), _mm256_castsi256_ps(r3), 0x44));
+        *w3 = _mm256_castps_si256(_mm256_shuffle_ps(_mm256_castsi256_ps(r2), _mm256_castsi256_ps(r3), 0xee));
+
+        /*
+         * Output structure:
+         * w0 = {d0 c0 b0 a0}
+         * w1 = {d1 c1 b1 a1}
+         * w2 = {d2 c2 b2 a2}
+         * w3 = {d3 c3 b3 a3}
+         */
+}
+
+#if defined(_MSC_VER) && !defined(__clang__)
+    #pragma optimize( "", off )
+#endif
+
+MBX_ZEROING_FUNC_ATTRIBUTES
+void zero_u256(int8u *buffer)
+{
+#if defined(__GNUC__)
+   // Avoid dead code elimination for GNU compilers
+   ASM("");
+#endif
+
+   _mm256_storeu_si256((__m256i *)buffer, _mm256_setzero_si256());
+}
+
+#if defined(_MSC_VER) && !defined(__clang__)
+    #pragma optimize( "", on )
+#endif
+
+/*
+// transpose 4 SB into MB including (reverse bytes and) radix 2^64 => 2^52 conversion
+//
+// covers:
+//    - 4 BIGNUM     -> mb4
+//    - 4 BNU        -> mb4
+//    - 4 hex strings -> mb4
+*/
+__MBX_INLINE void
+transform_4sb_to_mb4(U64 out_mb4[], const int bitLen, const int8u *inp[4], int inpLen[4], const int flag)
+{
+        const int bytesRev = flag & BYTES_REV; /* reverse flag */
+        const int radixCvt = flag & RADIX_CVT; /* radix (64->52) conversion assumed*/
+
+        int inpBytes = NUMBER_OF_DIGITS(bitLen, 8); /* bytes */
+        int outDigits = NUMBER_OF_DIGITS(bitLen, DIGIT_SIZE); /* digits */
+        __m256i *out_mb4_simd = (__m256i *) out_mb4;
+        
+        for (int i = 0; inpBytes > 0; i += PROC_LEN2, inpBytes -= PROC_LEN2, out_mb4_simd += 4) {
+                __m256i X[4];
+
+                if (bytesRev) {
+                        // inverse bytes (reverse=1)
+                        const int sbidx = inpBytes;
+
+#define BUFFER_LEN ((PROC_LEN2 + 31) & (~31))
+                        int8u buffer[BUFFER_LEN];
+
+                        for (int k = 0; k < 4; k++) {
+                                if (i >= inpLen[k]) {
+                                        X[k] = _mm256_setzero_si256();
+                                        continue;
+                                }
+
+                                const int L1 = inpLen[k] - i;
+                                const int L2 = L1 > PROC_LEN2 ? PROC_LEN2 : L1;
+                                const int8u *ptr = &inp[k][sbidx - L2];
+                                const __m128i swap_mask = _mm_set_epi64x(0x0001020304050607, 0x08090a0b0c0d0e0f);
+
+                                /*
+                                 * load  [ 0..15 | xx xx xx xx xx xx A6 A7   A8 A9 AA AB AC AD AE AF]
+                                 *       [16..31 | B0 B1 B2 B3 B4 B5 B6 B7   B8 B9 BA BB BC BD BE BF]
+                                 */
+
+                                if (L2 != PROC_LEN2) {
+                                        PadBlock(0, buffer, PROC_LEN2 - L2);
+                                        CopyBlock(ptr, &buffer[PROC_LEN2 - L2], L2);
+                                        ptr = buffer;
+                                }
+
+                                __m128i t128a = _mm_loadu_si128((const __m128i *) &ptr[0]);
+                                __m128i t128b = _mm_loadu_si128((const __m128i *) &ptr[10]);
+
+                                t128a = _mm_bslli_si128(t128a, 6);
+                                t128a = _mm_shuffle_epi8(t128a, swap_mask);
+                                t128b = _mm_shuffle_epi8(t128b, swap_mask);
+
+                                /*
+                                 * store [ 0..15 | BF BE BD BC BB BA B9 B8   B7 B6 B5 B4 B3 B2 B1 B0]
+                                 *       [16..31 | AF AE AD AC AB AA A9 A8   A7 A6 xx xx xx xx xx xx]
+                                 */
+
+                                X[k] = _mm256_inserti128_si256(_mm256_castsi128_si256(t128b), t128a, 1);
+                        }
+
+                        zero_u256(buffer);
+
+                } else {
+                        const int sbidx = i;
+
+                        for (int k = 0; k < 4; k++) {
+                                if (i >= inpLen[k]) {
+                                        X[k] = _mm256_setzero_si256();
+                                        continue;
+                                }
+
+                                const int L1 = inpLen[k] - i;
+                                const int L2 = L1 > PROC_LEN2 ? PROC_LEN2 : L1;
+
+                                if (L2 == PROC_LEN2) {
+                                        const int8u *ptr = &inp[k][sbidx];
+                                        const __m128i t128a = _mm_loadu_si128((const __m128i *) &ptr[0]);
+                                        __m128i t128b = _mm_loadu_si128((const __m128i *) &ptr[10]);
+
+                                        t128b = _mm_bsrli_si128(t128b, 6);
+
+                                        X[k] = _mm256_inserti128_si256(_mm256_castsi128_si256(t128a), t128b, 1);
+                                } else {
+                                        __m256i buffer = _mm256_setzero_si256();
+
+                                        CopyBlock(&inp[k][sbidx], &buffer, L2);
+                                        X[k] = buffer;
+                                }
+                        }
+                }
+
+                if (radixCvt) {
+                        // convert consecutive 26 bytes spread across X[i] into
+                        // 4 x 64 bit words, each word consisting of:
+                        //   bits 63:52 - zero
+                        //   bits 51:0  - message
+
+                        // shift right
+                        const __m256i shiftRight = _mm256_set_epi64x(4, 0, 4, 0);
+                        // radix 2^52 mask of digits
+                        const __m256i mask52b = _mm256_set1_epi64x(DIGIT_MASK);
+                        // repeat one byte
+                        const __m128i cvt104b_2x52b =
+                                _mm_set_epi8(0xff, 0x0c, 0x0b, 0x0a, 0x09, 0x08, 0x07, 0x06,
+                                             0xff, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00);
+
+                        for (int k = 0; k < 4; k++) {
+                                // split 32 bytes into 2 x 16 bytes
+                                const __m128i l0 = _mm256_castsi256_si128(X[k]);
+                                const __m128i l1 = _mm256_extracti128_si256(X[k], 1);
+
+                                // use alignr to create 4 x (2 x 52 bits) data chunks
+                                const __m128i l0_13b = _mm_shuffle_epi8(l0, cvt104b_2x52b);
+                                const __m128i l1_13b = _mm_shuffle_epi8(_mm_alignr_epi8(l1, l0, 1*13), cvt104b_2x52b);
+
+                                // put back the chunks into 32 byte chunks
+                                const __m256i l01_26b = _mm256_inserti128_si256(_mm256_castsi128_si256(l0_13b), l1_13b, 1);
+
+                                // do the final shift right and & before storing into the buffer
+                                X[k] = _mm256_and_si256(_mm256_srlv_epi64(l01_26b, shiftRight), mask52b);
+                        }
+                }
+
+                /*
+                 * X[0] = A0 A1 A2 A3
+                 * X[1] = B0 B1 B2 B3
+                 * X[2] = C0 C1 C2 C3
+                 * X[3] = D0 D1 D2 D3
+                 */
+
+                transpose_4x64bx4(&X[0], &X[1], &X[2], &X[3]);
+
+                /*
+                 * X[0] = A0 B0 C0 D0
+                 * X[1] = A1 B1 C1 D1
+                 * X[2] = A2 B2 C2 D2
+                 * X[3] = A3 B3 C3 D3
+                 */
+
+                // store transposed digits
+                for (int k = 0; (k < 4) && (outDigits > 0); k++, outDigits--)
+                        _mm256_storeu_si256((__m256i *) &out_mb4_simd[k], X[k]);
+        }
+}
+
+#ifndef BN_OPENSSL_DISABLE
+// Convert BIGNUM into MB4(Radix=2^52) format
+// Returns bitmask of successfully converted values
+// Accepts NULLs as BIGNUM inputs
+//    Null or wrong length
+int8u ifma_BN_to_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], int bitLen)
+{
+        // check input input length
+        assert((0<bitLen) && (bitLen<=IFMA_MAX_BITSIZE));
+
+        int byteLen = NUMBER_OF_DIGITS(bitLen, 8);
+        int byteLens[4];
+
+        int8u *d[4];
+#ifndef BN_OPENSSL_PATCH
+        __ALIGN64 int8u buffer[4][NUMBER_OF_DIGITS(IFMA_MAX_BITSIZE,8)];
+#endif
+
+        int8u retVal = 0;
+        int i;
+
+        for (i = 0; i < 4; ++i) {
+                if(NULL != bn[i]) {
+                        byteLens[i] = BN_num_bytes(bn[i]);
+                        assert(byteLens[i] <= byteLen);
+
+#ifndef BN_OPENSSL_PATCH
+                        d[i] = buffer[i];
+                        BN_bn2lebinpad(bn[i], d[i], byteLen);
+#else
+                        d[i] = (int8u*)bn_get_words(bn[i]);
+#endif
+                        retVal |= (1 << i);
+                }
+                else {
+                        // no input in that bucket
+                        d[i] = NULL;
+                        byteLens[i] = 0;
+                }
+        }
+
+        transform_4sb_to_mb4((U64*)out_mb4, bitLen, (const int8u**)d, byteLens, RADIX_CVT);
+
+        return retVal;
+}
+#endif /* BN_OPENSSL_DISABLE */
+
+// Simlilar to ifma_BN_to_mb4(), but converts array of int64u instead of BIGNUM
+// Assumed that each converted values has bitLen length
+int8u ifma_BNU_to_mb4(int64u out_mb4[][4], const int64u* const bn[4], int bitLen)
+{
+        // Check input parameters
+        assert(bitLen > 0);
+
+        int byteLens[4];
+        int byteLen = NUMBER_OF_DIGITS(bitLen, 8);
+        int8u retVal = 0;
+        int i;
+
+        for (i = 0; i < 4; ++i) {
+                if (NULL != bn[i]) {
+                        byteLens[i] = byteLen;
+                        retVal |= (1 << i);
+                } else {
+                        byteLens[i] = 0;
+                }
+        }
+
+        transform_4sb_to_mb4((U64*)out_mb4, bitLen, (const int8u**)bn, byteLens, RADIX_CVT);
+
+        return retVal;
+}
+
+int8u ifma_HexStr4_to_mb4(int64u out_mb4[][4], const int8u* const pStr[4], int bitLen)
+{
+        // check input parameters
+        assert(bitLen > 0);
+
+        int byteLens[4];
+        int byteLen = NUMBER_OF_DIGITS(bitLen, 8);
+        int i;
+        int8u retVal = 0;
+
+        for (i = 0; i < 4; i++) {
+                if (NULL != pStr[i]) {
+                        byteLens[i] = byteLen;
+                        retVal |= (1 << i);
+                } else {
+                        byteLens[i] = 0;
+                }
+        }
+
+        transform_4sb_to_mb4((U64*)out_mb4, bitLen, (const int8u**)pStr, byteLens, RADIX_CVT | BYTES_REV);
+
+        return retVal;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+// transpose MB into 4 SB including (reverse bytes and) radix 2^52 => 2^64 conversion
+//
+// covers:
+//    - mb4 -> 4 BNU
+//    - mb4 -> 4 hex strings
+*/
+__MBX_INLINE void
+transform_mb4_to_4sb(int8u* out[4], int outLen[4], const U64 inp_mb4[], const int bitLen, const int flag)
+{
+        const int bytesRev = flag & BYTES_REV; /* reverse flag */
+        const int radixCvt = flag & RADIX_CVT; /* radix (52->64) conversion assumed */
+
+        int inpDigits = NUMBER_OF_DIGITS(bitLen, DIGIT_SIZE); /* digits */
+        int outBytes = NUMBER_OF_DIGITS(bitLen, 8); /* bytes */
+        const __m256i *inp_mb4_simd = (const __m256i *) inp_mb4;
+
+        for (int i = 0; outBytes > 0; i += PROC_LEN2, outBytes -= PROC_LEN2, inp_mb4_simd += 4) {
+                __m256i X[4] = {};
+                
+                /*
+                 * Load & transpose. Initial layout:
+                 *
+                 * A0 B0 C0 D0
+                 * A1 B1 C1 D1
+                 * A2 B2 C2 D2
+                 * A3 B3 C3 D3
+                 */
+
+                for (int n = 0; (n < 4) && (inpDigits > 0); n++, inpDigits--)
+                        X[n] = _mm256_loadu_si256((const __m256i *) &inp_mb4_simd[n]);
+
+                /*
+                 * X[0] = A0 B0 C0 D0
+                 * X[1] = A1 B1 C1 D1
+                 * X[2] = A2 B2 C2 D2
+                 * X[3] = A3 B3 C3 D3
+                 */
+
+                transpose_4x64bx4(&X[0], &X[1], &X[2], &X[3]);
+
+                /*
+                 * X[0] = A0 A1 A2 A3
+                 * X[1] = B0 B1 B2 B3
+                 * X[2] = C0 C1 C2 C3
+                 * X[3] = D0 D1 D2 D3
+                 */
+
+                if (radixCvt) {
+                        // convert 4 x 64 bit words spread across X[i] into
+                        // consecutive 4 x 52 bit words:
+
+                        // shift left
+                        const __m256i shiftLeft = _mm256_set_epi64x(4, 0, 4, 0);
+                        // radix 2^52 mask of digits
+                        const __m256i mask52b = _mm256_set_epi64x(0, DIGIT_MASK, 0, DIGIT_MASK);
+                        // repeat one byte
+                        const __m256i shift_2nd_52b =
+                                _mm256_set_epi8(0xff, 0xff, 0xff, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a,
+                                                0x09, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                                0xff, 0xff, 0xff, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a,
+                                                0x09, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+
+                        
+                        for (int n = 0; n < 4; n++) {
+                                const __m256i a0 = _mm256_sllv_epi64(X[n], shiftLeft);
+                                const __m256i b0 = _mm256_shuffle_epi8(a0, shift_2nd_52b);
+                                const __m256i c0 = _mm256_and_si256(a0, mask52b);
+                                const __m256i d0 = _mm256_or_si256(b0, c0);
+
+                                const __m128i l0 = _mm256_castsi256_si128(d0);
+                                const __m128i l1 = _mm256_extracti128_si256(d0, 1);
+
+                                /* m0 = l1[2..0] | l0 */
+                                const __m128i m0 = _mm_alignr_epi8(l1, _mm_bslli_si128(l0, 3), 3);
+                                /* m1 = ZERO | l1[12..3] */
+                                const __m128i m1 = _mm_alignr_epi8(_mm_setzero_si128(), _mm_bslli_si128(l1, 3), 6);
+
+                                X[n] = _mm256_inserti128_si256(_mm256_castsi128_si256(m0), m1, 1);
+                        }
+                }
+
+                // store transposed digits
+                if (bytesRev) {
+                        for (int n = 0; n < 4; n++) {
+                                const int L1 = outLen[n] - i;
+
+                                if (L1 <= 0)
+                                        continue;
+
+                                const int L2 = (L1 > PROC_LEN2) ? PROC_LEN2 : L1;
+                                const int sbidx = outBytes - L2;
+                                int8u *ptr = out[n] + sbidx;
+
+                                // inverse bytes (reverse=1)
+                                const __m256i swap_mask = _mm256_set_epi64x(0x0001020304050607, 0x08090a0b0c0d0e0f,
+                                                                            0x0001020304050607, 0x08090a0b0c0d0e0f);
+
+                                const __m256i t256ab = _mm256_shuffle_epi8(X[n], swap_mask);
+                                const __m256i t256ba = _mm256_permute4x64_epi64(t256ab, 0x4e);
+
+                                X[n] = t256ba;
+
+                                if (L2 == PROC_LEN) {
+                                        _mm_storeu_si128((__m128i *) &ptr[0],_mm256_castsi256_si128(X[n]));
+                                        *((int64u *) &ptr[16]) = _mm256_extract_epi64(X[n], 2);
+                                        *((int16u *) &ptr[24]) = _mm256_extract_epi16(X[n], 12);
+                                } else {
+                                        union {
+                                                int8u buffer[32];
+                                                __m256i x256;
+                                        } u;
+
+                                        u.x256 = X[n];
+                                        CopyBlock(&u.buffer[32 - L2], ptr, L2);
+                                }
+                        }
+                } else {
+                        const int sbidx = i;
+
+                        for (int n = 0; n < 4; n++) {
+                                const int L1 = outLen[n] - i;
+
+                                if (L1 <= 0)
+                                        continue;
+
+                                const int L2 = L1 > PROC_LEN2 ? PROC_LEN2 : L1;
+                                int8u *ptr = out[n] + sbidx;
+
+                                if (L2 == PROC_LEN2) {
+                                        _mm_storeu_si128((__m128i *) &ptr[0],_mm256_castsi256_si128(X[n]));
+                                        *((int64u *) &ptr[16]) = _mm256_extract_epi64(X[n], 2);
+                                        *((int16u *) &ptr[24]) = _mm256_extract_epi16(X[n], 12);
+                                } else {
+                                        union {
+                                                int8u buffer[32];
+                                                __m256i x256;
+                                        } u;
+
+                                        u.x256 = X[n];
+                                        CopyBlock(&u.buffer[0], ptr, L2);
+                                }
+                        }
+                } // bytesRev
+        }
+
+}
+
+int8u ifma_mb4_to_BNU(int64u* const out_bn[4], const int64u inp_mb4[][4], const int bitLen)
+{
+        // Check input parameters
+        assert(bitLen > 0);
+
+        const int bnu_bitlen = NUMBER_OF_DIGITS(bitLen, 64) * 64; // gres: output length is multiple 64
+        int byteLens[4];
+        int8u retVal = 0;
+        int i;
+
+        for (i = 0; i < 4; ++i) {
+                if (NULL != out_bn[i]) {
+                        byteLens[i] = NUMBER_OF_DIGITS(bnu_bitlen, 8);
+                        retVal |= (1 << i);
+                } else {
+                        byteLens[i] = 0;
+                }
+        }
+
+        transform_mb4_to_4sb((int8u**)out_bn, byteLens, (U64*)inp_mb4, bitLen, RADIX_CVT);
+        return retVal;
+}
+
+int8u ifma_mb4_to_HexStr4(int8u* const pStr[4], const int64u inp_mb4[][4], int bitLen)
+{
+        // check input parameters
+        assert(bitLen > 0);
+
+        int byteLens[4];
+        const int byteLen = NUMBER_OF_DIGITS(bitLen, 8);
+        int8u retVal = 0;
+        int i;
+
+        for (i = 0; i < 4; i++) {
+                if (NULL != pStr[i]) {
+                        byteLens[i] = byteLen;
+                        retVal |= (1 << i);
+                } else {
+                        byteLens[i] = 0;
+                }
+        }
+
+        transform_mb4_to_4sb((int8u**)pStr, byteLens, (U64*)inp_mb4, bitLen, RADIX_CVT | BYTES_REV);
+
+        return retVal;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+// transpose 4 SB into MB without radix conversion
+//
+// covers:
+//    - mb4 -> 8 BNU
+//    - mb4 -> 8 hex strings
+*/
+int8u ifma_BNU_transpose_copy_mb4(int64u out_mb4[][4], const int64u* const bn[4], const int bitLen)
+{
+        // Check input parameters
+        assert(bitLen > 0);
+
+        int8u ret = 0;
+
+        for (int i = 0; i < 4; ++i)
+                if (NULL != bn[i])
+                        ret |= (1 << i);
+
+        int len = NUMBER_OF_DIGITS(bitLen, 64);
+
+        for (int n = 0; len > 0; n += 4, out_mb4 += 4) {
+                __m256i X[4];
+                const int L1 = (len > 4) ? 4 : len;
+
+                for (int k = 0; k < 4; k++) {
+                        if (bn[k] == NULL) {
+                                X[k] = _mm256_setzero_si256();
+                                continue;
+                        }
+
+                        if (L1 == 4) {
+                                X[k] = _mm256_loadu_si256((const __m256i *) &bn[k][n]);
+                                continue;
+                        }
+
+                        const int64u mask[2 * 8] = {
+                                1ULL << 63, 1ULL << 63, 1ULL << 63, 1ULL << 63,
+                                1ULL << 63, 1ULL << 63, 1ULL << 63, 1ULL << 63,
+                                0ULL, 0ULL, 0ULL, 0ULL,
+                                0ULL, 0ULL, 0ULL, 0ULL
+                        };
+                        const __m256i m1 = _mm256_loadu_si256((const __m256i *) &mask[8 - L1]);
+
+                        X[k] = _mm256_maskload_epi64((const void *) &bn[k][n], m1);
+                }
+
+                /*
+                 * X[0] = A0 A1 A2 A3
+                 * X[1] = B0 B1 B2 B3
+                 * X[2] = C0 C1 C2 C3
+                 * X[3] = D0 D1 D2 D3
+                 */
+
+                transpose_4x64bx4(&X[0], &X[1], &X[2], &X[3]);
+
+                /*
+                 * X[0] = A0 B0 C0 D0
+                 * X[1] = A1 B1 C1 D1
+                 * X[2] = A2 B2 C2 D2
+                 * X[3] = A3 B3 C3 D4
+                 */
+
+                // store transposed digits
+                for (int k = 0; (k < 4) && (len > 0); k++, len--)
+                        _mm256_storeu_si256((__m256i *) &out_mb4[k], X[k]);
+        }
+
+        return ret;
+}
+
+#ifndef BN_OPENSSL_DISABLE
+int8u ifma_BN_transpose_copy_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], const int bitLen)
+{
+        // check input length
+        assert((0<bitLen) && (bitLen<=IFMA_MAX_BITSIZE));
+
+        int8u ret = 0;
+        int64u *inp[4];
+#ifndef BN_OPENSSL_PATCH
+        __ALIGN64 int64u buffer[4][NUMBER_OF_DIGITS(IFMA_MAX_BITSIZE,64)];
+#endif
+
+        for (int i = 0; i < 4; ++i) {
+                if (NULL == bn[i]) {
+                        inp[i] = NULL;
+                } else {
+                        ret |= (1 << i);
+
+#ifndef BN_OPENSSL_PATCH
+                        const int byteLen = NUMBER_OF_DIGITS(bitLen, 64) * 8;
+
+                        inp[i] = buffer[i];
+                        BN_bn2lebinpad(bn[i], (unsigned char *)inp[i], byteLen);
+#else
+                        inp[i] = (int64u*)bn_get_words(bn[i]);
+#endif
+                }
+        }
+
+        int len = NUMBER_OF_DIGITS(bitLen, 64);
+
+        for (int n = 0; len > 0; n += 4, out_mb4 += 4) {
+                __m256i X[4];
+                const int L1 = (len > 4) ? 4 : len;
+
+                for (int k = 0; k < 4; k++) {
+                        if (inp[k] == NULL) {
+                                X[k] = _mm256_setzero_si256();
+                                continue;
+                        }
+
+                        if (L1 == 4) {
+                                X[k] = _mm256_loadu_si256((const __m256i *) &inp[k][n]);
+                                continue;
+                        }
+
+                        const int64u mask[2 * 8] = {
+                                1ULL << 63, 1ULL << 63, 1ULL << 63, 1ULL << 63,
+                                1ULL << 63, 1ULL << 63, 1ULL << 63, 1ULL << 63,
+                                0ULL, 0ULL, 0ULL, 0ULL,
+                                0ULL, 0ULL, 0ULL, 0ULL
+                        };
+                        const __m256i m1 = _mm256_loadu_si256((const __m256i *) &mask[8 - L1]);
+
+                        X[k] = _mm256_maskload_epi64((const void *) &inp[k][n], m1);
+                }
+
+                /*
+                 * X[0] = A0 A1 A2 A3
+                 * X[1] = B0 B1 B2 B3
+                 * X[2] = C0 C1 C2 C3
+                 * X[3] = D0 D1 D2 D3
+                 */
+
+                transpose_4x64bx4(&X[0], &X[1], &X[2], &X[3]);
+
+                /*
+                 * X[0] = A0 B0 C0 D0
+                 * X[1] = A1 B1 C1 D1
+                 * X[2] = A2 B2 C2 D2
+                 * X[3] = A3 B3 C3 D4
+                 */
+
+                // store transposed digits
+                for (int k = 0; (k < 4) && (len > 0); k++, len--)
+                        _mm256_storeu_si256((__m256i *) &out_mb4[k], X[k]);
+        }
+
+        return ret;
+}
+#endif /* BN_OPENSSL_DISABLE */
+
+#endif /* #if (_MBX >= _MBX_K1) */

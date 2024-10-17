@@ -87,13 +87,10 @@ fips_test_status fips_selftest_mbx_nistp521_ecdh_mb8(void) {
     (int64u *)pub_y, (int64u *)pub_y, (int64u *)pub_y, (int64u *)pub_y};
 
   /* test function */
-  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
-
   mbx_status sts;
   sts = mbx_nistp521_ecdh_mb8(pa_shared_key, pa_prv_key, pa_pub_x, pa_pub_y, NULL, NULL);
-  if (expected_status_mb8 != sts) {
-    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
-  }
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
+
   // compare output shared key to known answer
   int output_status;
   for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
@@ -131,12 +128,6 @@ fips_test_status fips_selftest_mbx_nistp521_ecdh_ssl_mb8(void) {
     return test_result;
   }
 
-  /* function status and expected status */
-  mbx_status sts;
-  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
-  /* output validity status */
-  int output_status;
-
   /* set ssl keys */
   BN_lebin2bn(pub_x, MBX_NISTP521_DATA_BYTE_LEN, BN_pub_x);
   BN_lebin2bn(pub_y, MBX_NISTP521_DATA_BYTE_LEN, BN_pub_y);
@@ -160,11 +151,12 @@ fips_test_status fips_selftest_mbx_nistp521_ecdh_ssl_mb8(void) {
     BN_pub_y, BN_pub_y, BN_pub_y, BN_pub_y};
 
   /* test function */
+  mbx_status sts;
   sts = mbx_nistp521_ecdh_ssl_mb8(pa_shared_key, pa_prv_key, pa_pub_x, pa_pub_y, NULL, NULL);
-  if (expected_status_mb8 != sts) {
-    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
-  }
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
+
   // compare output shared key to known answer
+  int output_status;
   for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
     output_status = mbx_is_mem_eq(pa_shared_key[i], MBX_NISTP521_DATA_BYTE_LEN, sh_key, MBX_NISTP521_DATA_BYTE_LEN);
     if (!output_status) { // wrong output

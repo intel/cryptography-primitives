@@ -24,7 +24,7 @@
 #if !defined(_PCP_HMAC_RMF_H)
 #define _PCP_HMAC_RMF_H
 
-#include "pcphash_rmf.h"
+#include "hash/pcphash_rmf.h"
 
 /*
 // HMAC context

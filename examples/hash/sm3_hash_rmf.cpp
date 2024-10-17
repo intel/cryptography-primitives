@@ -33,15 +33,15 @@
 #include "examples_common.h"
 
 /*! Message text */
-static const Ipp8u msg[] = "abc";
+const Ipp8u msg[] = "abc";
 
 /*! Known digest to check the results */
-static const
+const
 Ipp8u sm3[] = "\x66\xc7\xf0\xf4\x62\xee\xed\xd9\xd1\xf2\xd4\x6b\xdc\x10\xe4\xe2"
               "\x41\x67\xc4\x87\x5c\xf2\xf7\xa2\x29\x7d\xa0\x2b\x8f\x4b\xa8\xe0";
 
 /*! Message size in bytes */
-static const int msg_byte_len = sizeof(msg)-1;
+const int msg_byte_len = sizeof(msg)-1;
 
 int main(void)
 {
@@ -49,7 +49,7 @@ int main(void)
     IppStatus status = ippStsNoErr;
 
     /*! 1. Get the hash methods which is used */
-    IppsHashMethod* hash_method = (IppsHashMethod*)ippsHashMethod_SM3();
+    const IppsHashMethod* hash_method = ippsHashMethod_SM3();
 
     /*! The digest size of the SM3 standard */
     Ipp32u hash_size = IPP_SM3_DIGEST_BYTESIZE;
@@ -68,7 +68,6 @@ int main(void)
 
     /*! 4. Buffers for the digest and the tag */
     Ipp8u output_hash_buffer[IPP_SM3_DIGEST_BYTESIZE];
-    Ipp8u output_tag_buffer[IPP_SM3_DIGEST_BYTESIZE];
 
     IppsHashState_rmf* hash_state = (IppsHashState_rmf*)(context_buffer.data());
 
@@ -79,25 +78,19 @@ int main(void)
     }
 
     /*! 6. Call HashUpdate function to digest the message of the given length */
-    /*! This function can be called consequently for a stream of messages */
+    /*! This function can be called multiple times for a stream of messages */
     status = ippsHashUpdate_rmf(msg, msg_byte_len, hash_state);
     if (!checkStatus("ippsHashUpdate", ippStsNoErr, status)) {
         return status;
     }
 
-    /*! 7. Compute the current digest value of the processed part of the message */
-    status = ippsHashGetTag_rmf(output_tag_buffer, hash_size, hash_state);
-    if (!checkStatus("ippsHashGetTag", ippStsNoErr, status)) {
-        return status;
-    }
-
-    /*! 8. Complete the computation of the digest value */
+    /*! 7. Complete the computation of the digest value */
     status = ippsHashFinal_rmf(output_hash_buffer, hash_state);
     if (!checkStatus("ippsHashFinal", ippStsNoErr, status)) {
         return status;
     }
 
-    /*! 9. Verify the resulted digest with the known one */
+    /*! 8. Verify the resulted digest with the known one */
     int check = memcmp(output_hash_buffer, sm3, hash_size);
     if(check != 0) {
         printf("ERROR: Hash and the reference do not match\n");

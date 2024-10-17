@@ -250,6 +250,13 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSASignVerify_PSS_rmf_get_size, (int 
 
     /* resize buffer */
     total_size = IPP_MAX(IPP_MAX(buffSizeSignVerify, buffSizePrivKey1), buffSizePrivKey2) + IPPCP_RSA_ALIGNMENT;
+
+    /* Add an extra memory for the hash method*/
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+    total_size += hash_method_size;
+
     *pBufferSize = total_size;
 
     return IPPCP_ALGO_SELFTEST_OK;
@@ -375,11 +382,26 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSASign_PSS_rmf,(Ipp8u *pBuffer, Ipp8
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
+    /* Get memory offset and set Hash Method */
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { 
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer);
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
     /* RSA Signature Generation */
-    Ipp8u* pLocSignBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_RSA_ALIGNMENT));
+    Ipp8u* pLocSignBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
 
     sts = ippsRSASign_PSS_rmf(pMsg, msgByteLen, pSalt, saltByteLen, pOutSig, pPrvKey,
-                              pPubKey, ippsHashMethod_SHA256(), pLocSignBuffer);
+                              pPubKey, locMethod, pLocSignBuffer);
 
     int sigFlagErr = ippcp_is_mem_eq(pSig, sizeof(pSig), pOutSig, sizeof(pSig));
     if(1 != sigFlagErr || sts != ippStsNoErr) {
@@ -469,12 +491,27 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSAVerify_PSS_rmf,(Ipp8u *pBuffer, Ip
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
-    Ipp8u* pLocVerifBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_RSA_ALIGNMENT));
+    /* Get memory offset and set Hash Method */
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { 
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer);
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    Ipp8u* pLocVerifBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
 
     /* RSA Signature Verification */
     int isValid;
     sts = ippsRSAVerify_PSS_rmf(pMsg,msgByteLen, pSig, &isValid, pPubKey,
-                                ippsHashMethod_SHA256(), pLocVerifBuffer);
+                                locMethod, pLocVerifBuffer);
 
     if(!isValid || sts != ippStsNoErr)  {
         test_result = IPPCP_ALGO_SELFTEST_KAT_ERR;
@@ -640,10 +677,25 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSA_GenerateKeys,(Ipp8u *pBuffer, Ipp
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
+    /* Get memory offset and set Hash Method */
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { 
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer);
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
     /* RSA Signature Generation */
-    Ipp8u* pLocSignBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_RSA_ALIGNMENT));
+    Ipp8u* pLocSignBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
     sts = ippsRSASign_PSS_rmf(pMsg, msgByteLen, pSalt, saltByteLen, pOutSig, pPrvKey2,
-                              pPubKey, ippsHashMethod_SHA256(), pLocSignBuffer);
+                              pPubKey, locMethod, pLocSignBuffer);
     if(sts != ippStsNoErr) {
         MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
@@ -651,9 +703,9 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSA_GenerateKeys,(Ipp8u *pBuffer, Ipp
 
     /* RSA Signature Verification */
     int isValid;
-    Ipp8u* pLocVerifBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_RSA_ALIGNMENT));
+    Ipp8u* pLocVerifBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
     sts = ippsRSAVerify_PSS_rmf(pMsg,msgByteLen, pOutSig, &isValid, pPubKey,
-                                ippsHashMethod_SHA256(), pLocVerifBuffer);
+                                locMethod, pLocVerifBuffer);
 
     if(!isValid || sts != ippStsNoErr) {
         test_result = IPPCP_ALGO_SELFTEST_KAT_ERR;

@@ -23,7 +23,7 @@ OWNAPI(mbx_sm4_ccm_encrypt_mb16)(int8u *pa_out[SM4_LINES], const int8u *const pa
 {
     int buf_no;
     mbx_status16 status = 0;
-    __mmask16 mb_mask   = 0xFFFF;
+    int16u mb_mask   = 0xFFFF;
     int64u *processed_len = SM4_CCM_CONTEXT_PROCESSED_LEN(p_context);
     int64u *msg_len = SM4_CCM_CONTEXT_MSG_LEN(p_context);
 
@@ -66,7 +66,7 @@ OWNAPI(mbx_sm4_ccm_encrypt_mb16)(int8u *pa_out[SM4_LINES], const int8u *const pa
 
 #if (_MBX>=_MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        status |= sm4_ccm_encrypt_mb16(pa_out, pa_in, in_len, mb_mask, p_context);
+        status |= sm4_ccm_encrypt_mb16(pa_out, pa_in, in_len, (__mmask16)mb_mask, p_context);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Unsigned internal BNU32 misc functionality
-// 
+//
 //  Contents:
 //     cpNLZ_BNU32()
-// 
+//
 */
 
 #include "owncp.h"

@@ -25,7 +25,7 @@ mbx_status16 OWNAPI(mbx_sm4_encrypt_cbc_mb16)(int8u* pa_out[SM4_LINES], const in
 {
     int buf_no;
     mbx_status16 status = 0;
-    __mmask16 mb_mask = 0xFFFF;
+    int16u mb_mask = 0xFFFF;
 
     /* Test input pointers */
     if (NULL == pa_out || NULL == pa_inp || NULL == len || NULL == key_sched || NULL == pa_iv) {
@@ -49,7 +49,7 @@ mbx_status16 OWNAPI(mbx_sm4_encrypt_cbc_mb16)(int8u* pa_out[SM4_LINES], const in
 
 #if (_MBX>=_MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        status |= sm4_cbc_enc_kernel_mb16(pa_out, pa_inp, len, (const int32u**)key_sched, mb_mask, pa_iv);
+        status |= sm4_cbc_enc_kernel_mb16(pa_out, pa_inp, len, (const int32u**)key_sched, (__mmask16)mb_mask, pa_iv);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

@@ -16,7 +16,7 @@
 
 /*
 //
-//   Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+//   Intel® Cryptography Primitives Library
 //
 */
 
@@ -48,16 +48,20 @@ extern "C" {
 #endif
 
 /* /////////////////////////////////////////////////////////////////////////////
-//  Name:       ippcpGetLibVersion
+//  Name:       ippcpGetLibVersion / CryptoLibraryVersion
 //  Purpose:    getting of the library version
-//  Returns:    the structure of information about version of ippCP library
+//  Returns:    the structure of information about version of Intel Cryptography Primitives Library
 //  Parameters:
 //
 //  Notes:      not necessary to release the returned structure
 */
+#define LIB_VERSION_DEPRECATED "ippcpGetLibVersion API is deprecated and will be removed in one of future Intel® Cryptography Primitives Library releases. \
+Please use cryptoGetLibVersion instead."
+
+IPP_DEPRECATED(LIB_VERSION_DEPRECATED) \
 IPPAPI( const IppLibraryVersion*, ippcpGetLibVersion, (void) )
 
-
+IPPAPI( const CryptoLibraryVersion*, cryptoGetLibVersion, (void) )
 /*
 // =========================================================
 // Symmetric Ciphers
@@ -370,7 +374,7 @@ IPPAPI(IppStatus, ippsAES_CMACGetTag,(Ipp8u* pMD, int mdLen, const IppsAES_CMACS
 */
 
 #define RC4_DEPRECATED "is deprecated. This algorithm is considered weak due to known attacks on it. \
-It is obsolete and will be removed in one of the future Intel IPP Cryptography releases."
+It is obsolete and will be removed in one of the future Intel Cryptography Primitives Library releases."
 
 IPP_DEPRECATED(RC4_DEPRECATED) \
 IPPAPI(IppStatus, ippsARCFourCheckKey, (const Ipp8u *pKey, int keyLen, IppBool* pIsWeak))
@@ -399,171 +403,13 @@ IPPAPI(IppStatus, ippsARCFourDecrypt, (const Ipp8u *pSrc, Ipp8u *pDst, int lengt
 // =========================================================
 */
 
-#define OBSOLETE_API "is deprecated. This API is considered obsolete and will be removed in one of future Intel IPP Cryptography releases. \
-Use the following link for opening a ticket and providing feedback: https://supporttickets.intel.com/ if you have concerns."
-
 #define SHA1_DEPRECATED "This algorithm is considered weak due to known attacks on it. \
 The functionality remains in the library, but the implementation will no be longer \
 optimized and no security patches will be applied. A more secure alternative is available: SHA-2"
 
-/* SHA1 Hash Primitives */
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1GetSize,(int* pSize))
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1Init,(IppsSHA1State* pState))
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1Duplicate,(const IppsSHA1State* pSrcState, IppsSHA1State* pDstState))
-
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1Pack,(const IppsSHA1State* pState, Ipp8u* pBuffer))
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1Unpack,(const Ipp8u* pBuffer, IppsSHA1State* pState))
-
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1Update,(const Ipp8u* pSrc, int len, IppsSHA1State* pState))
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1GetTag,(Ipp8u* pTag, Ipp32u tagLen, const IppsSHA1State* pState))
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1Final,(Ipp8u* pMD, IppsSHA1State* pState))
-IPP_DEPRECATED(SHA1_DEPRECATED) \
-IPPAPI(IppStatus, ippsSHA1MessageDigest,(const Ipp8u* pMsg, int len, Ipp8u* pMD))
-
-/* SHA224 Hash Primitives */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224GetSize,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224Init,(IppsSHA224State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224Duplicate,(const IppsSHA224State* pSrcState, IppsSHA224State* pDstState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224Pack,(const IppsSHA224State* pState, Ipp8u* pBuffer))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224Unpack,(const Ipp8u* pBuffer, IppsSHA224State* pState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224Update,(const Ipp8u* pSrc, int len, IppsSHA224State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224GetTag,(Ipp8u* pTag, Ipp32u tagLen, const IppsSHA224State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224Final,(Ipp8u* pMD, IppsSHA224State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA224MessageDigest,(const Ipp8u* pMsg, int len, Ipp8u* pMD))
-
-/* SHA256 Hash Primitives */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256GetSize,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256Init,(IppsSHA256State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256Duplicate,(const IppsSHA256State* pSrcState, IppsSHA256State* pDstState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256Pack,(const IppsSHA256State* pState, Ipp8u* pBuffer))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256Unpack,(const Ipp8u* pBuffer, IppsSHA256State* pState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256Update,(const Ipp8u* pSrc, int len, IppsSHA256State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256GetTag,(Ipp8u* pTag, Ipp32u tagLen, const IppsSHA256State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256Final,(Ipp8u* pMD, IppsSHA256State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA256MessageDigest,(const Ipp8u* pMsg, int len, Ipp8u* pMD))
-
-/* SHA384 Hash Primitives */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384GetSize,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384Init,(IppsSHA384State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384Duplicate,(const IppsSHA384State* pSrcState, IppsSHA384State* pDstState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384Pack,(const IppsSHA384State* pState, Ipp8u* pBuffer))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384Unpack,(const Ipp8u* pBuffer, IppsSHA384State* pState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384Update,(const Ipp8u* pSrc, int len, IppsSHA384State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384GetTag,(Ipp8u* pTag, Ipp32u tagLen, const IppsSHA384State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384Final,(Ipp8u* pMD, IppsSHA384State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA384MessageDigest,(const Ipp8u* pMsg, int len, Ipp8u* pMD))
-
-/* SHA512 Hash Primitives */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512GetSize,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512Init,(IppsSHA512State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512Duplicate,(const IppsSHA512State* pSrcState, IppsSHA512State* pDstState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512Pack,(const IppsSHA512State* pState, Ipp8u* pBuffer))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512Unpack,(const Ipp8u* pBuffer, IppsSHA512State* pState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512Update,(const Ipp8u* pSrc, int len, IppsSHA512State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512GetTag,(Ipp8u* pTag, Ipp32u tagLen, const IppsSHA512State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512Final,(Ipp8u* pMD, IppsSHA512State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSHA512MessageDigest,(const Ipp8u* pMsg, int len, Ipp8u* pMD))
-
-/* MD5 Hash Primitives */
-
 #define MD5_DEPRECATED "This algorithm is considered weak due to known attacks on it. \
 The functionality remains in the library, but the implementation will no be longer \
 optimized and no security patches will be applied. A more secure alternative is available: SHA-2"
-
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5GetSize,(int* pSize))
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5Init,(IppsMD5State* pState))
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5Duplicate,(const IppsMD5State* pSrcState, IppsMD5State* pDstState))
-
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5Pack,(const IppsMD5State* pState, Ipp8u* pBuffer))
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5Unpack,(const Ipp8u* pBuffer, IppsMD5State* pState))
-
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5Update,(const Ipp8u* pSrc, int len, IppsMD5State* pState))
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5GetTag,(Ipp8u* pTag, Ipp32u tagLen, const IppsMD5State* pState))
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5Final,(Ipp8u* pMD, IppsMD5State* pState))
-IPP_DEPRECATED(MD5_DEPRECATED) \
-IPPAPI(IppStatus, ippsMD5MessageDigest,(const Ipp8u* pMsg, int len, Ipp8u* pMD))
-
-/* SM3 Hash Primitives */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3GetSize,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3Init,(IppsSM3State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3Duplicate,(const IppsSM3State* pSrcState, IppsSM3State* pDstState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3Pack,(const IppsSM3State* pState, Ipp8u* pBuffer))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3Unpack,(const Ipp8u* pBuffer, IppsSM3State* pState))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3Update,(const Ipp8u* pSrc, int len, IppsSM3State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3GetTag,(Ipp8u* pTag, Ipp32u tagLen, const IppsSM3State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3Final,(Ipp8u* pMD, IppsSM3State* pState))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsSM3MessageDigest,(const Ipp8u* pMsg, int len, Ipp8u* pMD))
 
 /* generalized Hash Primitives */
 IPP_DEPRECATED(OBSOLETE_API) \
@@ -774,6 +620,10 @@ IPPAPI(IppStatus, ippsMontMul, (const IppsBigNumState* pA, const IppsBigNumState
 IPPAPI(IppStatus, ippsMontExp, (const IppsBigNumState* pA, const IppsBigNumState* pE, IppsMontState* m, IppsBigNumState* pR))
 
 /* Pseudo-Random Number Generation */
+#define PRNG_DEPRECATED "This algorithm is considered weak since it's based on the outdated FIPS standard(FIPS 186-2). \
+The functionality remains in the library, but its implementation is not recommended for use. \
+A more secure alternative is available: ippsPRNGenRDRAND and ippsTRNGenRDSEED."
+
 IPPAPI(IppStatus, ippsPRNGGetSize,(int* pSize))
 IPPAPI(IppStatus, ippsPRNGInit,   (int seedBits, IppsPRNGState* pCtx))
 
@@ -783,7 +633,9 @@ IPPAPI(IppStatus, ippsPRNGSetAugment,(const IppsBigNumState* pAug, IppsPRNGState
 IPPAPI(IppStatus, ippsPRNGSetSeed,   (const IppsBigNumState* pSeed,IppsPRNGState* pCtx))
 IPPAPI(IppStatus, ippsPRNGGetSeed,   (const IppsPRNGState* pCtx,IppsBigNumState* pSeed))
 
+IPP_DEPRECATED(PRNG_DEPRECATED) \
 IPPAPI(IppStatus, ippsPRNGen,     (Ipp32u* pRand, int nBits, void* pCtx))
+IPP_DEPRECATED(PRNG_DEPRECATED) \
 IPPAPI(IppStatus, ippsPRNGen_BN,  (IppsBigNumState* pRand, int nBits, void* pCtx))
 IPPAPI(IppStatus, ippsPRNGenRDRAND,   (Ipp32u* pRand, int nBits, void* pCtx))
 IPPAPI(IppStatus, ippsPRNGenRDRAND_BN,(IppsBigNumState* pRand, int nBits, void* pCtx))
@@ -1077,201 +929,6 @@ IPPAPI(IppStatus, ippsDLPValidateDH,(int nTrials, IppDLResult* pResult, IppsDLPS
 // =========================================================
 */
 IPPAPI( const char*, ippsECCGetResultString, (IppECResult code))
-
-/*
-// EC over Prime Fields
-*/
-/* general EC initialization */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSize,(int feBitSize, int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSizeStd128r1,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSizeStd128r2,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSizeStd192r1,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSizeStd224r1,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSizeStd256r1,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSizeStd384r1,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSizeStd521r1,(int* pSize))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetSizeStdSM2,  (int* pSize))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInit,(int feBitSize, IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInitStd128r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInitStd128r2,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInitStd192r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInitStd224r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInitStd256r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInitStd384r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInitStd521r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPInitStdSM2,  (IppsECCPState* pEC))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSet,(const IppsBigNumState* pPrime,
-                               const IppsBigNumState* pA, const IppsBigNumState* pB,
-                               const IppsBigNumState* pGX,const IppsBigNumState* pGY,const IppsBigNumState* pOrder,
-                               int cofactor,
-                               IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStd,(IppECCType flag, IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStd128r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStd128r2,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStd192r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStd224r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStd256r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStd384r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStd521r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetStdSM2,  (IppsECCPState* pEC))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPBindGxyTblStd192r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPBindGxyTblStd224r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPBindGxyTblStd256r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPBindGxyTblStd384r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPBindGxyTblStd521r1,(IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPBindGxyTblStdSM2,  (IppsECCPState* pEC))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGet,(IppsBigNumState* pPrime,
-                               IppsBigNumState* pA, IppsBigNumState* pB,
-                               IppsBigNumState* pGX,IppsBigNumState* pGY,IppsBigNumState* pOrder,
-                               int* cofactor,
-                               IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetOrderBitSize,(int* pBitSize, IppsECCPState* pEC))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPValidate,(int nTrials, IppECResult* pResult, IppsECCPState* pEC,
-                                    IppBitSupplier rndFunc, void* pRndParam))
-
-/* EC Point */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPPointGetSize,(int feBitSize, int* pSize))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPPointInit,(int feBitSize, IppsECCPPointState* pPoint))
-
-/* Setup/retrieve point's coordinates */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetPoint,(const IppsBigNumState* pX, const IppsBigNumState* pY,
-                                    IppsECCPPointState* pPoint, IppsECCPState* pEC))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetPointAtInfinity,(IppsECCPPointState* pPoint, IppsECCPState* pEC))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGetPoint,(IppsBigNumState* pX, IppsBigNumState* pY,
-                                    const IppsECCPPointState* pPoint, IppsECCPState* pEC))
-
-/* EC Point Operations */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPCheckPoint,(const IppsECCPPointState* pP,
-                                      IppECResult* pResult, IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPComparePoint,(const IppsECCPPointState* pP, const IppsECCPPointState* pQ,
-                                        IppECResult* pResult, IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPNegativePoint,(const IppsECCPPointState* pP,
-                                         IppsECCPPointState* pR, IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPAddPoint,(const IppsECCPPointState* pP, const IppsECCPPointState* pQ,
-                                    IppsECCPPointState* pR, IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPMulPointScalar,(const IppsECCPPointState* pP, const IppsBigNumState* pK,
-                                          IppsECCPPointState* pR, IppsECCPState* pEC))
-
-/* Key Generation, Setup and Validation */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPGenKeyPair,(IppsBigNumState* pPrivate, IppsECCPPointState* pPublic,
-                                      IppsECCPState* pEC,
-                                      IppBitSupplier rndFunc, void* pRndParam))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPPublicKey,(const IppsBigNumState* pPrivate,
-                                     IppsECCPPointState* pPublic,
-                                     IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPValidateKeyPair,(const IppsBigNumState* pPrivate, const IppsECCPPointState* pPublic,
-                                           IppECResult* pResult,
-                                           IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSetKeyPair,(const IppsBigNumState* pPrivate, const IppsECCPPointState* pPublic,
-                                      IppBool regular,
-                                      IppsECCPState* pEC))
-
-/* Shared Secret (DH scheme ) */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSharedSecretDH,(const IppsBigNumState* pPrivateA,
-                                          const IppsECCPPointState* pPublicB,
-                                          IppsBigNumState* pShare,
-                                          IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSharedSecretDHC,(const IppsBigNumState* pPrivateA,
-                                           const IppsECCPPointState* pPublicB,
-                                           IppsBigNumState* pShare,
-                                           IppsECCPState* pEC))
-
-/* Sign/Verify */
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSignDSA,(const IppsBigNumState* pMsgDigest,
-                        const IppsBigNumState* pPrivate,
-                        IppsBigNumState* pSignX, IppsBigNumState* pSignY,
-                        IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPVerifyDSA,(const IppsBigNumState* pMsgDigest,
-                        const IppsBigNumState* pSignX, const IppsBigNumState* pSignY,
-                        IppECResult* pResult,
-                        IppsECCPState* pEC))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSignNR,(const IppsBigNumState* pMsgDigest,
-                        const IppsBigNumState* pPrivate,
-                        IppsBigNumState* pSignX, IppsBigNumState* pSignY,
-                        IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPVerifyNR,(const IppsBigNumState* pMsgDigest,
-                        const IppsBigNumState* pSignX, const IppsBigNumState* pSignY,
-                        IppECResult* pResult,
-                        IppsECCPState* pEC))
-
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPSignSM2,(const IppsBigNumState* pMsgDigest,
-                        const IppsBigNumState* pRegPrivate,
-                        IppsBigNumState* pEphPrivate,
-                        IppsBigNumState* pSignR, IppsBigNumState* pSignS,
-                        IppsECCPState* pEC))
-IPP_DEPRECATED(OBSOLETE_API) \
-IPPAPI(IppStatus, ippsECCPVerifySM2,(const IppsBigNumState* pMsgDigest,
-                        const IppsECCPPointState* pRegPublic,
-                        const IppsBigNumState* pSignR, const IppsBigNumState* pSignS,
-                        IppECResult* pResult,
-                        IppsECCPState* pEC))
 
 /*
 // GF over prime and its extension

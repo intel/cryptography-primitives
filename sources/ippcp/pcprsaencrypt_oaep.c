@@ -29,7 +29,7 @@
 #include "owncp.h"
 #include "pcptool.h"
 #include "pcpngrsa.h"
-#include "pcphash.h"
+#include "hash/pcphash.h"
 
 /*F*
 // Name: ippsRSAEncrypt_OAEP

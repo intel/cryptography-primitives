@@ -40,7 +40,7 @@
 #include "pcpbnuimpl.h"
 #define SELECTION_BITS  ((sizeof(BNU_CHUNK_T)/sizeof(Ipp8u)) -1)
 
-#if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER)
+#if defined(__INTEL_COMPILER)
 __IPPCP_INLINE Ipp8u getInvSboxValue(Ipp8u x)
 {
    BNU_CHUNK_T selection = 0;

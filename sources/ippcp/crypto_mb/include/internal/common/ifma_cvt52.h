@@ -17,11 +17,15 @@
 #ifndef IFMA_CVT52_H
 #define IFMA_CVT52_H
 
+#include <internal/common/ifma_defs.h>
+
 #ifndef BN_OPENSSL_DISABLE
   #include <openssl/bn.h>
 #endif
 
 #include <crypto_mb/defs.h>
+
+#if (_MBX >= _MBX_K1) 
 
 // from 8 buffers regular (radix2^64) to mb8 redundant (radix 2^52) representation
 EXTERN_C int8u ifma_BNU_to_mb8(int64u out_mb8[][8], const int64u* const bn[8], int bitLen);
@@ -38,5 +42,25 @@ EXTERN_C int8u ifma_BNU_transpose_copy(int64u out_mb8[][8], const int64u* const 
 #ifndef BN_OPENSSL_DISABLE
 EXTERN_C int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const inp[8], int bitLen);
 #endif /* BN_OPENSSL_DISABLE */
+
+#elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
+
+// from 4 buffers regular (radix2^64) to mb4 redundant (radix 2^52) representation
+EXTERN_C int8u ifma_BNU_to_mb4(int64u out_mb4[][4], const int64u* const bn[4], int bitLen);
+EXTERN_C int8u ifma_HexStr4_to_mb4(int64u out_mb4[][4], const int8u* const pStr[4], int bitLen);
+#ifndef BN_OPENSSL_DISABLE
+EXTERN_C int8u ifma_BN_to_mb4(int64u res[][4], const BIGNUM* const bn[4], int bitLen);
+#endif
+
+// from 4 buffers mb8 redundant (radix 2^52) to regular (radix2^64) representation
+EXTERN_C int8u ifma_mb4_to_BNU(int64u* const out_bn[4], const int64u inp_mb4[][4], const int bitLen);
+EXTERN_C int8u ifma_mb4_to_HexStr4(int8u* const pStr[4], const int64u inp_mb4[][4], int bitLen);
+
+EXTERN_C int8u ifma_BNU_transpose_copy_mb4(int64u out_mb4[][4], const int64u* const inp[4], int bitLen);
+#ifndef BN_OPENSSL_DISABLE
+EXTERN_C int8u ifma_BN_transpose_copy_mb4(int64u out_mb4[][4], const BIGNUM* const inp[4], int bitLen);
+#endif /* BN_OPENSSL_DISABLE */
+
+#endif /* #if (_MBX >= _MBX_K1) */
 
 #endif /* IFMA_CVT52_H */

@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Internal Unsigned BNU misc functionality
-// 
+//
 //  Contents:
 //     cpLSL_BNU()
-// 
+//
 */
 
 #include "owncp.h"
@@ -40,7 +40,7 @@
 //    pA          BigNum A
 //    pR          result BigNum
 //    nsA         size of A
-//    nBits       size of shift in bits 
+//    nBits       size of shift in bits
 *F*/
 
 IPP_OWN_DEFN (cpSize, cpLSR_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA, cpSize nBits))

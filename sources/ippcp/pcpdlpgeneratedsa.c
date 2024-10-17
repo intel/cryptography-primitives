@@ -30,6 +30,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpdlp.h"
+#include "hash/pcphashmethod_rmf.h"
 
 /*F*
 //    Name: ippsDLPGenerateDSA
@@ -170,6 +171,15 @@ IPPFUN(IppStatus, ippsDLPGenerateDSA,(const IppsBigNumState* pSeedIn,
 
          Ipp8u shaDgst1[BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE)];
          Ipp8u shaDgst2[BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE)];
+         Ipp8u hashMethodArr[sizeof(IppsHashMethod)];
+         IppsHashMethod* hash_method = (IppsHashMethod*)hashMethodArr;
+         #if (_SHA_NI_ENABLING_==_FEATURE_ON_)
+            ippsHashMethodSet_SHA1_NI(hash_method);
+         #elif (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_)
+            ippsHashMethodSet_SHA1_TT(hash_method);
+         #else
+            ippsHashMethodSet_SHA1(hash_method);
+         #endif
 
          /*
          // generate prime R,
@@ -188,7 +198,7 @@ IPPFUN(IppStatus, ippsDLPGenerateDSA,(const IppsBigNumState* pSeedIn,
             /* SHA1[SEED] */
             octSize = BITS2WORD8_SIZE(seedBitSize);
             cpToOctStr_BNU32(pSeedOct,octSize, pSeedBNU32,seedSize32);
-            ippsSHA1MessageDigest(pSeedOct, octSize, shaDgst1);
+            ippsHashMessage_rmf(pSeedOct, octSize, shaDgst1, hash_method);
 
             /* SEED = (SEED+1) mod 2^seedBitSize */
             cpInc_BNU32(pSeedBNU32, pSeedBNU32, seedSize32, 1);
@@ -197,7 +207,7 @@ IPPFUN(IppStatus, ippsDLPGenerateDSA,(const IppsBigNumState* pSeedIn,
             /* SHA1[SEED] */
             //octSize = BNU_OS(pSeedOct, pSeedBNU,seedSize);
             cpToOctStr_BNU32(pSeedOct,octSize, pSeedBNU32,seedSize32);
-            ippsSHA1MessageDigest(pSeedOct, octSize, shaDgst2);
+            ippsHashMessage_rmf(pSeedOct, octSize, shaDgst2, hash_method);
 
             /* SHA1[] ^ SHA1[] */
             for(i=0; i<BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE); i++)
@@ -243,7 +253,7 @@ IPPFUN(IppStatus, ippsDLPGenerateDSA,(const IppsBigNumState* pSeedIn,
 
                octSize = BITS2WORD8_SIZE(seedBitSize);
                cpToOctStr_BNU32(pSeedOct,octSize, pSeedBNU32,seedSize32);
-               ippsSHA1MessageDigest(pSeedOct, octSize, shaDgst1);
+               ippsHashMessage_rmf(pSeedOct, octSize, shaDgst1, hash_method);
 
                if(n!=k) { /* convert back whole digest */
                   cpFromOctStr_BNU32((Ipp32u*)BN_NUMBER(pW)+k*BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),

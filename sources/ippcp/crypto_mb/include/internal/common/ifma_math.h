@@ -197,8 +197,23 @@
             X7_ = _mm512_mask_shuffle_i64x2(X67H, 0b00111111, X0123H, X45H, 0b10111101 ); \
         }
 
-    //#else
-    //    #error "Incorrect SIMD length"
+    #elif (SIMD_LEN == 256)
+        SIMD_TYPE(256)
+        #if (defined(__GNUC__) && !defined(__clang__))
+           #define _mm_cvtsd_si64(_x) _mm_cvtsd_si64x(_x)
+           #define _mm_cvtsi64_sd(_x, _y) _mm_cvtsi64x_sd((_x), (_y))
+        #elif defined(__clang__)
+            // nothing for now here
+        #elif defined(_MSC_VER)
+           #define _mm_madd52hi_epu64 _mm_madd52hi_avx_epu64
+           #define _mm_madd52lo_epu64 _mm_madd52lo_avx_epu64
+           #define _mm256_madd52hi_epu64 _mm256_madd52hi_avx_epu64
+           #define _mm256_madd52lo_epu64 _mm256_madd52lo_avx_epu64
+        #else
+           #error " wrappers need update for the compiler being used"
+        #endif
+#else
+        #error "Incorrect SIMD length"
     #endif  // SIMD_LEN
 
 #endif  // IFMA_MATH_H

@@ -28,7 +28,7 @@
 #include "owncp.h"
 #include "pcptool.h"
 #include "pcpngrsa.h"
-#include "pcphash_rmf.h"
+#include "hash/pcphash_rmf.h"
 
 /*F*
 // Name: ippsRSAEncrypt_OAEP_rmf

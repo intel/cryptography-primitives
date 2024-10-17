@@ -15,7 +15,7 @@
 *************************************************************************/
 
 /*
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //
 //     Context:
 //        ippsAES_CCMEncrypt()
@@ -177,7 +177,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt,(const Ipp8u* pSrc, Ipp8u* pDst, int len, I
 
          /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
          len = ( IPP_MIN(len, MBS_RIJ128-1) );
-         
+
          /* store partial data block */
          CopyBlock(pSrc, AESCCM_BLK(pState), len);
 

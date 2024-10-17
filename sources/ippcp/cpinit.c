@@ -15,7 +15,7 @@
 *************************************************************************/
 
 //
-//  Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+//  Intel® Cryptography Primitives Library
 //
 
 #include "owndefs.h"
@@ -61,7 +61,7 @@ IPPFUN( IppStatus, ippcpGetCpuFeatures, ( Ipp64u* pFeaturesMask ))
 
 int cpGetFeature( Ipp64u Feature )
 {
-   // We provide users the ability to build their own custom build of 1cpu Intel® IPP Cryptography library
+   // We provide users the ability to build their own custom build of 1cpu Intel® Cryptography Primitives Library
    // and turn CPU features on at compile-time if they are sure these features available on the target systems.
    #if (!defined(_MERGED_BLD) && defined(IPPCP_CUSTOM_BUILD))
       int if_feature_enabled = ((IPP_CUSTOM_ENABLED_FEATURES & Feature) == Feature);
@@ -280,46 +280,66 @@ IppStatus owncpFeaturesToIdx(  Ipp64u* cpuFeatures, int* index )
        mask = AVX2_MSK;
        *index = LIB_AVX2;
    } else
-   if(( ippCPUID_AVX   == ( *cpuFeatures & ippCPUID_AVX   ))&&
-      ( ippAVX_ENABLEDBYOS & cpFeatures )){                            /* Intel® architecture formerly codenamed Sandy Bridge ia32=G9, x64=E9 */
-       mask = AVX_MSK;
-       *index = LIB_AVX;
-   } else
-   if( ippCPUID_SSE42 == ( *cpuFeatures & ippCPUID_SSE42 )){           /* Intel® microarchitecture code name Nehalem or Intel® architecture formerly codenamed Westmer = Intel® architecture formerly codenamed Penryn + Intel® SSE4.2 + ?Intel® instruction PCLMULQDQ + ?(Intel® AES New Instructions) + ?(Intel® Secure Hash Algorithm Extensions) */
-       mask = SSE42_MSK;                                               /* or new Intel Atom® processor formerly codenamed Silvermont */
+   /* Note: AVX code path is removed, SSE42 code path is used instead
+   // Intel® architecture formerly codenamed Sandy Bridge ia32=G9, x64=E9
+    if(( ippCPUID_AVX   == ( *cpuFeatures & ippCPUID_AVX   ))&&
+       ( ippAVX_ENABLEDBYOS & cpFeatures )){
+        mask = AVX_MSK;
+        *index = LIB_AVX;
+   } else */
+   /* Intel® microarchitecture code name Nehalem or
+   Intel® architecture formerly codenamed Westmer = Intel® architecture formerly codenamed Penryn
+   + Intel® SSE4.2 + ?Intel® instruction PCLMULQDQ
+   + ?(Intel® AES New Instructions)
+   + ?(Intel® Secure Hash Algorithm Extensions)
+   or new Intel Atom® processor formerly codenamed Silvermont */
+   if( ippCPUID_SSE42 == ( *cpuFeatures & ippCPUID_SSE42 ) ||
+       ippCPUID_AVX   == ( *cpuFeatures & ippCPUID_AVX   )){
+       mask = SSE42_MSK;
        *index = LIB_SSE42;
    } else
-   if( ippCPUID_SSE41 == ( *cpuFeatures & ippCPUID_SSE41 )){           /* Intel® architecture formerly codenamed Penryn ia32=P8, x64=Y8 */
+   /* Note: SSSE3 code path is removed, SSE3 code path is used instead
+   // Intel Atom® processor formerly codenamed Silverthorne ia32=S8, x64=N8
+   if( ippCPUID_SSE41 == ( *cpuFeatures & ippCPUID_SSE41 )){
        mask = SSE41_MSK;
        *index = LIB_SSE41;
    } else
-   if( ippCPUID_MOVBE == ( *cpuFeatures & ippCPUID_MOVBE )) {          /* Intel Atom® processor formerly codenamed Silverthorne ia32=S8, x64=N8 */
+   // Intel Atom® processor formerly codenamed Silverthorne ia32=S8, x64=N8
+   if( ippCPUID_MOVBE == ( *cpuFeatures & ippCPUID_MOVBE )) {
        mask = ATOM_MSK;
        *index = LIB_ATOM;
    } else
-   if( ippCPUID_SSSE3 == ( *cpuFeatures & ippCPUID_SSSE3 )) {          /* Intel® architecture formerly codenamed Merom ia32=V8, x64=U8 (letters etymology is unknown) */
+   // Intel® architecture formerly codenamed Merom ia32=V8, x64=U8 (letters etymology is unknown)
+   if( ippCPUID_SSSE3 == ( *cpuFeatures & ippCPUID_SSSE3 )) {
        mask = SSSE3_MSK;
        *index = LIB_SSSE3;
    } else
-   if( ippCPUID_SSE3  == ( *cpuFeatures & ippCPUID_SSE3  )) {          /* Intel® architecture formerly codenamed Prescott ia32=W7, x64=M7 */
+   */
+   /* Intel® architecture formerly codenamed Prescott ia32=W7, x64=M7 */
+   if( (ippCPUID_SSE3  == ( *cpuFeatures & ippCPUID_SSE3  ))
+       || (ippCPUID_MOVBE == ( *cpuFeatures & ippCPUID_MOVBE ))
+       || (ippCPUID_SSSE3 == ( *cpuFeatures & ippCPUID_SSSE3 ))
+       || (ippCPUID_SSE41 == ( *cpuFeatures & ippCPUID_SSE41 ))) {
        mask = SSE3_MSK;
        *index = LIB_SSE3;
    } else
-   if( ippCPUID_SSE2  == ( *cpuFeatures & ippCPUID_SSE2  )) {          /* Intel® architecture formerly codenamed Willamette ia32=W7, x64=PX */
+   /* Intel® architecture formerly codenamed Willamette ia32=W7, x64=PX */
+   if( ippCPUID_SSE2  == ( *cpuFeatures & ippCPUID_SSE2  )) {
        mask = SSE2_MSK;
        *index = LIB_SSE2;
    } else
-   if( ippCPUID_SSE   == ( *cpuFeatures & ippCPUID_SSE   )) {          /* Intel® Pentium® processor III ia32=PX only */
+   /* Intel® Pentium® processor III ia32=PX only */
+   if( ippCPUID_SSE   == ( *cpuFeatures & ippCPUID_SSE   )) {
        mask = SSE_MSK;
        *index = LIB_SSE;
 #if (defined( WIN32E ) || defined( LINUX32E ) || defined( OSXEM64T )) && !(defined( _ARCH_LRB2 ))
-       ownStatus = ippStsNotSupportedCpu;                              /* the lowest CPU supported by Intel IPP Cryptography must at least support Intel® SSE2 for x64 */
+       ownStatus = ippStsNotSupportedCpu;                              /* the lowest CPU supported by Intel Cryptography Primitives Library must at least support Intel® SSE2 for x64 */
 #endif
    } else                                                              /* not supported, PX dispatched */
    {
        mask = MMX_MSK;
        *index = LIB_MMX;
-       ownStatus = ippStsNotSupportedCpu; /* the lowest CPU supported by Intel IPP Cryptography must at least support Intel® SSE for ia32 or Intel® SSE2 for x64 */
+       ownStatus = ippStsNotSupportedCpu; /* the lowest CPU supported by Intel Cryptography Primitives Library must at least support Intel® SSE for ia32 or Intel® SSE2 for x64 */
    }
 
     if(( mask != ( *cpuFeatures & mask ))&&( ownStatus == ippStsNoErr ))
@@ -398,57 +418,57 @@ static struct {
    const char *msg;
 } ippcpMsg[] = {
 /* ippStatus */
-/* -9999 */ ippStsCpuNotSupportedErr, "ippStsCpuNotSupportedErr: The target CPU is not supported",
-/* -9702 */ MSG_NO_SHARED, "No shared libraries were found in the Waterfall procedure",
-/* -9701 */ MSG_NO_DLL, "No DLLs were found in the Waterfall procedure",
-/* -9700 */ MSG_LOAD_DLL_ERR, "Error at loading of %s library",
-/* -1017 */ ippStsInvalidPoint, "ippStsInvalidPoint ECC: Invalid point (out of EC)",
-/* -1016 */ ippStsQuadraticNonResidueErr, "ippStsQuadraticNonResidueErr: SQRT operation on quadratic non-residue value",
-/* -1015 */ ippStsPointAtInfinity, "ippStsPointAtInfinity: Point at infinity is detected",
-/* -1014 */ ippStsOFBSizeErr, "ippStsOFBSizeErr: Incorrect value for crypto OFB block size",
-/* -1013 */ ippStsIncompleteContextErr, "ippStsIncompleteContextErr: Crypto: set up of context is not complete",
-/* -1012 */ ippStsCTRSizeErr, "ippStsCTRSizeErr: Incorrect value for crypto CTR block size",
-/* -1011 */ ippStsEphemeralKeyErr, "ippStsEphemeralKeyErr: ECC: Invalid ephemeral key",
-/* -1010 */ ippStsMessageErr, "ippStsMessageErr: ECC: Invalid message digest",
-/* -1009 */ ippStsShareKeyErr, "ippStsShareKeyErr: ECC: Invalid share key",
-/* -1008 */ ippStsInvalidPrivateKey, "ippStsInvalidPrivateKey ECC: Invalid private key",
-/* -1007 */ ippStsOutOfECErr, "ippStsOutOfECErr: ECC: Point out of EC",
-/* -1006 */ ippStsECCInvalidFlagErr, "ippStsECCInvalidFlagErr: ECC: Invalid Flag",
-/* -1005 */ ippStsUnderRunErr, "ippStsUnderRunErr: Error in data under run",
-/* -1004 */ ippStsPaddingErr, "ippStsPaddingErr: Detected padding error indicates the possible data corruption",
-/* -1003 */ ippStsCFBSizeErr, "ippStsCFBSizeErr: Incorrect value for crypto CFB block size",
-/* -1002 */ ippStsPaddingSchemeErr, "ippStsPaddingSchemeErr: Invalid padding scheme",
-/* -1001 */ ippStsBadModulusErr, "ippStsBadModulusErr: Bad modulus caused a failure in module inversion",
-/*  -216 */ ippStsUnknownStatusCodeErr, "ippStsUnknownStatusCodeErr: Unknown status code",
-/*  -221 */ ippStsLoadDynErr, "ippStsLoadDynErr: Error when loading the dynamic library",
-/*   -15 */ ippStsLengthErr, "ippStsLengthErr: Incorrect value for string length",
-/*   -14 */ ippStsNotSupportedModeErr, "ippStsNotSupportedModeErr: The requested mode is currently not supported",
-/*   -13 */ ippStsContextMatchErr, "ippStsContextMatchErr: Context parameter does not match the operation",
-/*   -12 */ ippStsScaleRangeErr, "ippStsScaleRangeErr: Scale bounds are out of range",
-/*   -11 */ ippStsOutOfRangeErr, "ippStsOutOfRangeErr: Argument is out of range, or point is outside the image",
-/*   -10 */ ippStsDivByZeroErr, "ippStsDivByZeroErr: An attempt to divide by zero",
-/*    -9 */ ippStsMemAllocErr, "ippStsMemAllocErr: Memory allocated for the operation is not enough",
-/*    -8 */ ippStsNullPtrErr, "ippStsNullPtrErr: Null pointer error",
-/*    -7 */ ippStsRangeErr, "ippStsRangeErr: Incorrect values for bounds: the lower bound is greater than the upper bound",
-/*    -6 */ ippStsSizeErr, "ippStsSizeErr: Incorrect value for data size",
-/*    -5 */ ippStsBadArgErr, "ippStsBadArgErr: Incorrect arg/param of the function",
-/*    -4 */ ippStsNoMemErr, "ippStsNoMemErr: Not enough memory for the operation",
-/*    -2 */ ippStsErr, "ippStsErr: Unknown/unspecified error, -2",
-/*     0 */ ippStsNoErr, "ippStsNoErr: No errors",
-/*     1 */ ippStsNoOperation, "ippStsNoOperation: No operation has been executed",
-/*     2 */ ippStsDivByZero, "ippStsDivByZero: Zero value(s) for the divisor in the Div function",
-/*    25 */ ippStsInsufficientEntropy, "ippStsInsufficientEntropy: Generation of the prime/key failed due to insufficient entropy in the random seed and stimulus bit string",
-/*    36 */ ippStsNotSupportedCpu, "The CPU is not supported",
-/*    51 */ ippStsFeaturesCombination, "Wrong combination of features",
-/*    53 */ ippStsMbWarning, "ippStsMbWarning: Error(s) in statuses array",
+/* -9999 */ {ippStsCpuNotSupportedErr, "ippStsCpuNotSupportedErr: The target CPU is not supported"},
+/* -9702 */ {MSG_NO_SHARED, "No shared libraries were found in the Waterfall procedure"},
+/* -9701 */ {MSG_NO_DLL, "No DLLs were found in the Waterfall procedure"},
+/* -9700 */ {MSG_LOAD_DLL_ERR, "Error at loading of %s library"},
+/* -1017 */ {ippStsInvalidPoint, "ippStsInvalidPoint ECC: Invalid point (out of EC)"},
+/* -1016 */ {ippStsQuadraticNonResidueErr, "ippStsQuadraticNonResidueErr: SQRT operation on quadratic non-residue value"},
+/* -1015 */ {ippStsPointAtInfinity, "ippStsPointAtInfinity: Point at infinity is detected"},
+/* -1014 */ {ippStsOFBSizeErr, "ippStsOFBSizeErr: Incorrect value for cryptography OFB block size"},
+/* -1013 */ {ippStsIncompleteContextErr, "ippStsIncompleteContextErr: Set up of context is not complete"},
+/* -1012 */ {ippStsCTRSizeErr, "ippStsCTRSizeErr: Incorrect value for cryptography CTR block size"},
+/* -1011 */ {ippStsEphemeralKeyErr, "ippStsEphemeralKeyErr: ECC: Invalid ephemeral key"},
+/* -1010 */ {ippStsMessageErr, "ippStsMessageErr: ECC: Invalid message digest"},
+/* -1009 */ {ippStsShareKeyErr, "ippStsShareKeyErr: ECC: Invalid share key"},
+/* -1008 */ {ippStsInvalidPrivateKey, "ippStsInvalidPrivateKey ECC: Invalid private key"},
+/* -1007 */ {ippStsOutOfECErr, "ippStsOutOfECErr: ECC: Point out of EC"},
+/* -1006 */ {ippStsECCInvalidFlagErr, "ippStsECCInvalidFlagErr: ECC: Invalid Flag"},
+/* -1005 */ {ippStsUnderRunErr, "ippStsUnderRunErr: Error in data under run"},
+/* -1004 */ {ippStsPaddingErr, "ippStsPaddingErr: Detected padding error indicates the possible data corruption"},
+/* -1003 */ {ippStsCFBSizeErr, "ippStsCFBSizeErr: Incorrect value for cryptography CFB block size"},
+/* -1002 */ {ippStsPaddingSchemeErr, "ippStsPaddingSchemeErr: Invalid padding scheme"},
+/* -1001 */ {ippStsBadModulusErr, "ippStsBadModulusErr: Bad modulus caused a failure in module inversion"},
+/*  -216 */ {ippStsUnknownStatusCodeErr, "ippStsUnknownStatusCodeErr: Unknown status code"},
+/*  -221 */ {ippStsLoadDynErr, "ippStsLoadDynErr: Error when loading the dynamic library"},
+/*   -15 */ {ippStsLengthErr, "ippStsLengthErr: Incorrect value for string length"},
+/*   -14 */ {ippStsNotSupportedModeErr, "ippStsNotSupportedModeErr: The requested mode is currently not supported"},
+/*   -13 */ {ippStsContextMatchErr, "ippStsContextMatchErr: Context parameter does not match the operation"},
+/*   -12 */ {ippStsScaleRangeErr, "ippStsScaleRangeErr: Scale bounds are out of range"},
+/*   -11 */ {ippStsOutOfRangeErr, "ippStsOutOfRangeErr: Argument is out of range, or point is outside the image"},
+/*   -10 */ {ippStsDivByZeroErr, "ippStsDivByZeroErr: An attempt to divide by zero"},
+/*    -9 */ {ippStsMemAllocErr, "ippStsMemAllocErr: Memory allocated for the operation is not enough"},
+/*    -8 */ {ippStsNullPtrErr, "ippStsNullPtrErr: Null pointer error"},
+/*    -7 */ {ippStsRangeErr, "ippStsRangeErr: Incorrect values for bounds: the lower bound is greater than the upper bound"},
+/*    -6 */ {ippStsSizeErr, "ippStsSizeErr: Incorrect value for data size"},
+/*    -5 */ {ippStsBadArgErr, "ippStsBadArgErr: Incorrect arg/param of the function"},
+/*    -4 */ {ippStsNoMemErr, "ippStsNoMemErr: Not enough memory for the operation"},
+/*    -2 */ {ippStsErr, "ippStsErr: Unknown/unspecified error, -2"},
+/*     0 */ {ippStsNoErr, "ippStsNoErr: No errors"},
+/*     1 */ {ippStsNoOperation, "ippStsNoOperation: No operation has been executed"},
+/*     2 */ {ippStsDivByZero, "ippStsDivByZero: Zero value(s) for the divisor in the Div function"},
+/*    25 */ {ippStsInsufficientEntropy, "ippStsInsufficientEntropy: Generation of the prime/key failed due to insufficient entropy in the random seed and stimulus bit string"},
+/*    36 */ {ippStsNotSupportedCpu, "The CPU is not supported"},
+/*    51 */ {ippStsFeaturesCombination, "Wrong combination of features"},
+/*    53 */ {ippStsMbWarning, "ippStsMbWarning: Error(s) in statuses array"},
 };
 
 /* /////////////////////////////////////////////////////////////////////////////
 //  Name:       ippcpGetStatusString
-//  Purpose:    transformation of a code of a status Intel IPP Cryptography to string
+//  Purpose:    transformation of a code of a status Intel Cryptography Primitives Library to string
 //  Returns:
 //  Parameters:
-//    StsCode   Intel IPP Cryptography status code
+//    StsCode   Intel Cryptography Primitives Library status code
 //
 //  Notes:      not necessary to release the returned string
 */

@@ -15,8 +15,7 @@
 *************************************************************************/
 
 /*
-//               Intel(R) Integrated Performance Primitives
-//                   Cryptographic Primitives (ippcp)
+//               Intel(R) Cryptography Primitives Library
 //
 //  Contents:
 //        cpMontSet()

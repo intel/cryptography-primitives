@@ -14,6 +14,7 @@
 * limitations under the License.
 *************************************************************************/
 
+#include <internal/common/internal_defs.h>
 
 #include <crypto_mb/status.h>
 #include <crypto_mb/exp.h>

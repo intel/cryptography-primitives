@@ -31,7 +31,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpngrsa.h"
-#include "pcphash_rmf.h"
+#include "hash/pcphash_rmf.h"
 #include "pcptool.h"
 
 #include "pcprsa_pss_preproc.h"

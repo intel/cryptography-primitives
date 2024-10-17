@@ -188,21 +188,10 @@ segment .text align=IPP_ALIGN_FACTOR
 ;;
 ;; Lib = M7
 ;;
-;; Caller = ippsSHA512Update
-;; Caller = ippsSHA512Final
-;; Caller = ippsSHA512MessageDigest
 ;;
-;; Caller = ippsSHA384Update
-;; Caller = ippsSHA384Final
-;; Caller = ippsSHA384MessageDigest
-;;
-;; Caller = ippsHMACSHA512Update
-;; Caller = ippsHMACSHA512Final
-;; Caller = ippsHMACSHA512MessageDigest
-;;
-;; Caller = ippsHMACSHA384Update
-;; Caller = ippsHMACSHA384Final
-;; Caller = ippsHMACSHA384MessageDigest
+;; Caller = ippsHashUpdate_rmf
+;; Caller = ippsHashFinal_rmf
+;; Caller = ippsHashMessage_rmf
 ;;
 
 %xdefine KK_SHA512  rbp

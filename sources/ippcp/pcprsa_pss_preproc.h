@@ -15,7 +15,7 @@
 *************************************************************************/
 
 #include "owncp.h"
-#include "pcphash_rmf.h"
+#include "hash/pcphash_rmf.h"
 
 // Check all the ippsRSASign_PSS_rmf parameters and align pPrvKey, pPubKey pointers
 __IPPCP_INLINE IppStatus SingleSignPssRmfPreproc(const Ipp8u* pMsg, int msgLen,

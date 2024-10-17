@@ -78,21 +78,19 @@ fips_test_status fips_selftest_mbx_ed25519_public_key_mb8(void) {
     (ed25519_sign_component *)out_s[6], (ed25519_sign_component *)out_s[7]};
 
   /* test functions */
-  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
-  mbx_status sts;
-
   // generate public key
+  mbx_status sts;
   sts = mbx_ed25519_public_key_mb8(pa_out_pub_key, pa_prv_key);
-  if (sts != expected_status_mb8) {
-    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
+  if(test_result != MBX_ALGO_SELFTEST_OK) {
     return test_result;
   }
 
   // sign and verify with the generated keypair
   sts = mbx_ed25519_sign_mb8(pa_sign_r, pa_sign_s, pa_msg, pa_msg_len, pa_prv_key,
                              (const ed25519_public_key* const*)pa_out_pub_key);
-  if (sts != expected_status_mb8) {
-    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
+  if(test_result != MBX_ALGO_SELFTEST_OK) {
     return test_result;
   }
 
@@ -102,9 +100,7 @@ fips_test_status fips_selftest_mbx_ed25519_public_key_mb8(void) {
                                (const ed25519_public_key* const*)pa_out_pub_key);
 
   // check the result of verification
-  if (expected_status_mb8 != sts) {
-    test_result = MBX_ALGO_SELFTEST_KAT_ERR;
-  }
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_KAT_ERR);
 
   return test_result;
 }

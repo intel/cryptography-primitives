@@ -17,37 +17,8 @@
 #ifndef INTERNAL_DEFS_H
 #define INTERNAL_DEFS_H
 
-/* externals */
-#undef EXTERN_C
-
-#ifdef __cplusplus
-   #define EXTERN_C extern "C"
-#else
-   #define EXTERN_C
-#endif
-
-#if !defined( MBXAPI )
-   #define MBXAPI( type,name,arg ) EXTERN_C type MBX_CALL name arg;
-#endif
-
-#if defined (_MSC_VER)
-  #define MBX_CDECL    __cdecl
-#elif (defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || defined (__GNUC__ ) || defined (__clang__)) && defined (_ARCH_IA32)
-  #define MBX_CDECL    __attribute((cdecl))
-#else
-  #define MBX_CDECL
-#endif
-
-#if defined( _WIN32 ) || defined( _WIN64 )
-  #define MBX_STDCALL  __stdcall
-  #define MBX_CALL     MBX_STDCALL
-#else
-  #define MBX_STDCALL
-  #define MBX_CALL     MBX_CDECL
-#endif
-
-#define _MBX_L9 512
-#define _MBX_K1 4096
+#define _MBX_L9 1
+#define _MBX_K1 2
 
 #if defined( _L9 ) || (_K1)
    #include "ec_nistp256_cpuspc.h"

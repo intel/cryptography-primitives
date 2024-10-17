@@ -15,8 +15,7 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
-# library detection routine.
+# Intel® Cryptography Primitives Library detection routine.
 #
 # To use it, add the lines below to your CMakeLists.txt:
 #    find_package(IPPCP REQUIRED)
@@ -50,7 +49,7 @@ endif()
 
 if (NOT IPPCP_FIND_COMPONENTS)
     set(IPPCP_FIND_COMPONENTS "ippcp")
-    
+
     # crypto_mb library is only for intel64
     if(${IPPCP_ARCH} MATCHES "intel64")
         set(IPPCP_BIN_REL_PATH    @IPPCP_BIN64_REL_PATH@)
@@ -99,14 +98,14 @@ macro(add_imported_library_target PATH_TO_LIBRARY PATH_TO_IMPORT_LIB LINKAGE_TYP
                     set_target_properties(IPPCP::${_component} PROPERTIES IMPORTED_IMPLIB "${PATH_TO_IMPORT_LIB}")
                 endif()
             else()
-                message(WARNING "IPPCP: Include directory does not exist: '${_include_dir}'. Intel IPP Cryptography installation might be broken.")
+                message(WARNING "Include directory does not exist: '${_include_dir}'. Intel Cryptography Primitives Library installation might be broken.")
             endif()
             unset(_include_dir)
         endif()
         list(APPEND IPPCP_LIBRARIES IPPCP::${_component})
         set(IPPCP_${_component}_FOUND 1)
     elseif (IPPCP_FIND_REQUIRED AND IPPCP_FIND_REQUIRED_${_component})
-        message(STATUS "Missed required Intel IPP Cryptography component: ${_component}")
+        message(STATUS "Missed required Intel Cryptography Primitives Library component: ${_component}")
         message(STATUS "  library not found:\n   ${PATH_TO_LIBRARY}")
         if (${LINKAGE_TYPE} MATCHES "SHARED")
             message(STATUS "You may try to search for static library by unsetting IPPCP_SHARED variable.")

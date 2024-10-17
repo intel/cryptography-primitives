@@ -209,7 +209,14 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSAEncryptDecrypt_OAEP_rmf_get_size, 
     if(sts != ippStsNoErr) return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
 
     total_size = IPP_MAX(decBufSize, encBufSize) + IPPCP_RSA_ALIGNMENT;
-    *pBufferSize = total_size;
+
+
+    /* Add an extra memory for the hash method*/
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+
+    *pBufferSize = total_size + hash_method_size;
 
     return IPPCP_ALGO_SELFTEST_OK;
 }
@@ -297,6 +304,21 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSAEncrypt_OAEP_rmf, (Ipp8u *pBuffer,
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
+    /* Get memory offset and set Hash Method */
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { 
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer);
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
     /* RSA encryption */
     int encBufSize;
     sts = ippsRSA_GetBufferSizePublicKey(&encBufSize, pPubKey);
@@ -304,10 +326,11 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSAEncrypt_OAEP_rmf, (Ipp8u *pBuffer,
         MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
-    Ipp8u* encScratchBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_RSA_ALIGNMENT));
+
+    Ipp8u* encScratchBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
 
     sts = ippsRSAEncrypt_OAEP_rmf(pMsg, IPPCP_MSG_BYTE_LEN, 0, 0, seed, pOutCtxt, pPubKey,
-                                  ippsHashMethod_SHA256(), encScratchBuffer);
+                                  locMethod, encScratchBuffer);
 
     int sigFlagErr = ippcp_is_mem_eq(ctext, IPPCP_CTEXT_BYTE_LEN, pOutCtxt, IPPCP_CTEXT_BYTE_LEN);
     if(1 != sigFlagErr || sts != ippStsNoErr) {
@@ -401,6 +424,21 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSADecrypt_OAEP_rmf, (Ipp8u *pBuffer,
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
+    /* Get memory offset and set Hash Method */
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { 
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer);
+    sts = ippsHashMethodSet_SHA256_TT(locMethod);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
     /* RSA decryption */
     int decBufSize;
     sts = ippsRSA_GetBufferSizePrivateKey(&decBufSize, pPrivKey);
@@ -408,12 +446,12 @@ IPPFUN(fips_test_status, fips_selftest_ippsRSADecrypt_OAEP_rmf, (Ipp8u *pBuffer,
         MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
-    Ipp8u* decScratchBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_RSA_ALIGNMENT));
+    Ipp8u* decScratchBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
 
     int ptxtLen;
 
     sts = ippsRSADecrypt_OAEP_rmf(ctext, 0, 0, pOutPtxt, &ptxtLen, pPrivKey,
-                                  ippsHashMethod_SHA256(), decScratchBuffer);
+                                  locMethod, decScratchBuffer);
 
     int sigFlagErr = ippcp_is_mem_eq(pMsg, IPPCP_MSG_BYTE_LEN, pOutPtxt, IPPCP_MSG_BYTE_LEN);
     if(1 != sigFlagErr || sts != ippStsNoErr) {

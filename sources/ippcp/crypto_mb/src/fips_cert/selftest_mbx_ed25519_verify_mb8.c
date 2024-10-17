@@ -73,13 +73,11 @@ fips_test_status fips_selftest_mbx_ed25519_verify_mb8(void) {
     (const ed25519_sign_component *const)s, (const ed25519_sign_component *const)s};
 
   /* test function */
-  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
-
   mbx_status sts;
   sts = mbx_ed25519_verify_mb8(pa_sign_r, pa_sign_s, pa_msg, pa_msg_len, pa_pub_key);
-  if (expected_status_mb8 != sts) {
-    test_result = MBX_ALGO_SELFTEST_KAT_ERR;
-  }
+
+  // check the result of verification
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_KAT_ERR);
 
   return test_result;
 }

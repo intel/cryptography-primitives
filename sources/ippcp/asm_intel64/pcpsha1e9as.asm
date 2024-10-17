@@ -316,13 +316,11 @@ segment .text align=IPP_ALIGN_FACTOR
 ;;
 ;; Lib = Y8
 ;;
-;; Caller = ippsSHA1Update
-;; Caller = ippsSHA1Final
-;; Caller = ippsSHA1MessageDigest
 ;;
-;; Caller = ippsHMACSHA1Update
-;; Caller = ippsHMACSHA1Final
-;; Caller = ippsHMACSHA1MessageDigest
+;; Caller = ippsHashUpdate_rmf
+;; Caller = ippsHashFinal_rmf
+;; Caller = ippsHashMessage_rmf
+;;
 ;;
 
 ;; assign hash values to GPU registers

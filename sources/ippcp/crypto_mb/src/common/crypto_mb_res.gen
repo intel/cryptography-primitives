@@ -39,11 +39,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Intel Corporation.\0"
             VALUE "FileVersion", STR_FILE_MBX_VERSION() "\0"
-            VALUE "ProductName", MBX_LIB_SHORTNAME() ". Intel(R) Integrated Performance Primitives. " MBX_LIB_LONGNAME() ".\0"
+            VALUE "ProductName", MBX_LIB_SHORTNAME() ". Intel(R) Cryptography Primitives Library. " MBX_LIB_LONGNAME() ".\0"
             VALUE "ProductVersion", CRYPTO_MB_STR_VERSION() "\0"
             VALUE "LegalCopyright", "Copyright (C) 1999-2021, Intel Corporation. All rights reserved.\0"
 
-            VALUE "Comments", "Intel(R) Integrated Performance Primitives. " MBX_LIB_LONGNAME() ".\0"
+            VALUE "Comments", "Intel(R) Cryptography Primitives Library. " MBX_LIB_LONGNAME() ".\0"
             VALUE "FileDescription", MBX_LIB_SHORTNAME() ".dll is the intel64 " MBX_LIB_SHORTNAME() " dynamic library\0"
             VALUE "InternalName",  MBX_LIB_SHORTNAME() ".dll\0"
             VALUE "OriginalFilename", MBX_LIB_SHORTNAME()  ".dll\0"

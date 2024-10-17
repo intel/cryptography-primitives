@@ -75,6 +75,7 @@ while (isFunctionFound == True):
         DISP= open( os.sep.join([OutDir, "jmp_"+FunName+"_" + hashlib.sha512(FunName.encode('utf-8')).hexdigest()[:8] + ".c"]), 'w' )
 
         DISP.write(f"#include <crypto_mb/{OrgH}>\n\n")
+        DISP.write(f"#include <internal/common/ifma_defs.h>\n\n")
 
         DISP.write(f"typedef {FunType} (*MBX_FUNC_PTR){FunArg};\n\n")
         DISP.write(f"static int {FunName}_index = -1;\n")
@@ -96,6 +97,7 @@ while (isFunctionFound == True):
 
         DISP.write(f"""
 
+DLL_PUBLIC
 {FunType} {FunName}{FunArg}
 {{
     return (arraddr[*p_{FunName}_index + 1]){FunArgCall};

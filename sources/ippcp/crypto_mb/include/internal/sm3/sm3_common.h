@@ -17,6 +17,8 @@
 #if !defined(_SM3_COMMON_H)
 #define _SM3_COMMON_H
 
+#include <internal/common/ifma_defs.h>
+
 #include <crypto_mb/defs.h>
 #include <crypto_mb/sm3.h>
 

@@ -26,7 +26,7 @@
 
 #include "owndefs.h"
 #include "owncp.h"
-#include "pcphash_rmf.h"
+#include "hash/pcphash_rmf.h"
 #include "pcptool.h"
 
 /*F*

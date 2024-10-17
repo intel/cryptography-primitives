@@ -18,6 +18,7 @@
 #include "ippcp.h"
 #include "owndefs.h"
 #include "dispatcher.h"
+#include "hash/pcphashmethod_rmf.h"
 
 // FIPS selftests are not processed by dispatcher.
 // Prevent several copies of the same functions.
@@ -57,33 +58,34 @@ static const int msgByteLen = sizeof(msg)-1;
  *	 CAST for SHA-512/224 and SHA-512/256 are covered by CAST for SHA-512;
  *	 CAST for SHA-384 is covered by CAST for SHA-512;
  */
-static IppsHashMethod* selftestGetTestingMethod(const IppHashAlgId hashAlgIdIn, Ipp32u* hashSize, Ipp8u** pMD) {
-    IppsHashMethod* locMethod = NULL;
 
+static IppStatus selftestSetTestingMethod(const IppHashAlgId hashAlgIdIn, IppsHashMethod* locMethod, 
+                                                Ipp32u* hashSize, Ipp8u** pMD) {
+    IppStatus sts = ippStsNoErr;
     switch (hashAlgIdIn)
     {
         case IPP_ALG_HASH_SHA224:
         case IPP_ALG_HASH_SHA256:
                     {
-                        locMethod = (IppsHashMethod*)ippsHashMethod_SHA256();
+                        sts = ippsHashMethodSet_SHA256_TT(locMethod);
                         *hashSize = IPP_SHA256_DIGEST_BYTESIZE;
                         *pMD = (Ipp8u*)sha256_md;
-                        break;
+                        return sts;
                     }
         case IPP_ALG_HASH_SHA384:
         case IPP_ALG_HASH_SHA512_224:
         case IPP_ALG_HASH_SHA512_256:
         case IPP_ALG_HASH_SHA512:
                     {
-                        locMethod = (IppsHashMethod*)ippsHashMethod_SHA512();
+                        sts = ippsHashMethodSet_SHA512(locMethod);
                         *hashSize = IPP_SHA512_DIGEST_BYTESIZE;
                         *pMD = (Ipp8u*)sha512_md;
-                        break;
+                        return sts;
                     }
         default: break;
     }
 
-    return locMethod;
+    return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
 }
 
 IPPFUN(fips_test_status, fips_selftest_ippsHash_rmf_get_size, (int *pBuffSize)) {
@@ -94,9 +96,13 @@ IPPFUN(fips_test_status, fips_selftest_ippsHash_rmf_get_size, (int *pBuffSize)) 
     int ctx_size = 0;
     sts = ippsHashGetSize_rmf(&ctx_size);
     if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
-
     ctx_size += IPPCP_HASH_ALIGNMENT;
-    *pBuffSize = ctx_size;
+
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+    
+    *pBuffSize = ctx_size + hash_method_size;
 
     return IPPCP_ALGO_SELFTEST_OK;
 }
@@ -105,19 +111,27 @@ IPPFUN(fips_test_status, fips_selftest_ippsHashUpdate_rmf, (IppHashAlgId hashAlg
 {
     IppStatus sts = ippStsNoErr;
 
-    Ipp32u locHashByteSize = 0;
-    Ipp8u* md = NULL;
-    IppsHashMethod* locMethod = selftestGetTestingMethod(hashAlgId, &locHashByteSize, &md);
-
-    /* Unsupported method was given */
-    IPP_BADARG_RET((NULL == locMethod), IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR);
-
     /* check input pointers and allocate memory in "use malloc" mode */
     int internalMemMgm = 0;
+
     int ctx_size = 0;
-    sts = fips_selftest_ippsHash_rmf_get_size(&ctx_size);
+    sts = ippsHashGetSize_rmf(&ctx_size);
     if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
-    BUF_CHECK_NULL_AND_ALLOC(pBuffer, internalMemMgm, (ctx_size + IPPCP_HASH_ALIGNMENT), IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR)
+    ctx_size += IPPCP_HASH_ALIGNMENT;
+
+    int hash_method_size = 0;
+    sts = ippsHashMethodGetSize(&hash_method_size);
+    if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
+
+    BUF_CHECK_NULL_AND_ALLOC(pBuffer, internalMemMgm, (ctx_size + hash_method_size + IPPCP_HASH_ALIGNMENT), IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR)
+
+
+    Ipp32u locHashByteSize = 0;
+    Ipp8u* md = NULL;
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer + ctx_size + IPPCP_HASH_ALIGNMENT);
+
+    sts = selftestSetTestingMethod(hashAlgId, locMethod, &locHashByteSize, &md);
+    if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
 
     /* output hash */
     Ipp8u outHashBuff[IPP_SHA512_DIGEST_BYTESIZE];
@@ -167,9 +181,11 @@ IPPFUN(fips_test_status, fips_selftest_ippsHashMessage_rmf, (IppHashAlgId hashAl
 
     Ipp32u locHashByteSize = 0;
     Ipp8u* md = NULL;
-    IppsHashMethod* locMethod = selftestGetTestingMethod(hashAlgId, &locHashByteSize, &md);
-    /* Unsupported method was given */
-    IPP_BADARG_RET((NULL == locMethod), IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR);
+    Ipp8u hashMethodArr[sizeof(IppsHashMethod)];
+
+    IppsHashMethod* locMethod = (IppsHashMethod*)hashMethodArr;
+    sts = selftestSetTestingMethod(hashAlgId, locMethod, &locHashByteSize, &md);
+    if (sts != ippStsNoErr) { return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR; }
 
     /* output hash */
     Ipp8u outHashArr[IPP_SHA512_DIGEST_BYTESIZE];

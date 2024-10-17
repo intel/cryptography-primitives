@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 include (GenerateExportHeader)
@@ -32,19 +32,24 @@ if (NOT MERGED_BLD)
 endif()
 if(WIN32)
   if(${ARCH} MATCHES "ia32")
-    set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} w7 s8 p8 g9 h9)
+    set(BASE_PLATFORM_LIST_1CPU ${BASE_PLATFORM_LIST} w7 s8 p8 g9 h9)
+    set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} w7 p8 h9)
   else()
-    set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} m7 n8 y8 e9 l9 k0 k1)
+    set(BASE_PLATFORM_LIST_1CPU ${BASE_PLATFORM_LIST} m7 n8 y8 e9 l9 k0 k1)
+    set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} m7 y8 l9 k0 k1)
   endif()
 endif(WIN32)
 if(UNIX)
   if(APPLE)
-    set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} y8 e9 l9 k0 k1)
+    set(BASE_PLATFORM_LIST_1CPU ${BASE_PLATFORM_LIST} y8 e9 l9 k0 k1)
+    set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} y8 l9 k0 k1)
   else()
     if (${ARCH} MATCHES "ia32")
-      set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} w7 s8 p8 g9 h9)
+      set(BASE_PLATFORM_LIST_1CPU ${BASE_PLATFORM_LIST} w7 s8 p8 g9 h9)
+      set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} w7 p8 h9)
     else()
-      set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} m7 n8 y8 e9 l9 k0 k1)
+      set(BASE_PLATFORM_LIST_1CPU ${BASE_PLATFORM_LIST} m7 n8 y8 e9 l9 k0 k1)
+      set(BASE_PLATFORM_LIST ${BASE_PLATFORM_LIST} m7 y8 l9 k0 k1)
     endif(${ARCH} MATCHES "ia32")
   endif(APPLE)
 endif(UNIX)
@@ -53,12 +58,12 @@ if(PLATFORM_LIST)
   if (NOT MERGED_BLD)
     foreach(opt ${PLATFORM_LIST})
       set(FOUND_PLATFORM false)
-      foreach(base_opt ${BASE_PLATFORM_LIST})
+      foreach(base_opt ${BASE_PLATFORM_LIST_1CPU})
         string(STRIP "${opt}" opt_strip)
         if(opt_strip STREQUAL base_opt)
           set(FOUND_PLATFORM true)
         endif()
-      endforeach(base_opt ${BASE_PLATFORM_LIST})
+      endforeach(base_opt ${BASE_PLATFORM_LIST_1CPU})
       if(NOT FOUND_PLATFORM)
         message (FATAL_ERROR "Incorrect platform: " ${opt})
       endif()
@@ -177,7 +182,7 @@ endif()
 message(STATUS "ASM compiler version .................. " ${CMAKE_ASM_NASM_COMPILER})
 message(STATUS "ASM object format ..................... " ${CMAKE_ASM_NASM_OBJECT_FORMAT})
 
-# set Intel IPP Cryptography revision, if required
+# set Intel Cryptography Primitives Library revision, if required
 if(IPP_REVISION)
   # IPP_REVISION - release revision id, added into LibraryVersion
   set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPP_REVISION=${IPP_REVISION}")
@@ -187,7 +192,7 @@ endif()
 set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_PREVIEW_XMSS -DIPPCP_PREVIEW_LMS")
 
 set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -D_NO_IPP_DEPRECATED") # do not warn about ippcp deprecated functions
-# set BN_OPENSSL_DISABLE for Intel IPP Cryptography
+# set BN_OPENSSL_DISABLE for Intel Cryptography Primitives Library
 # set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DBN_OPENSSL_DISABLE")
 
 if(IPPCP_FIPS_MODE)
@@ -219,9 +224,6 @@ file(GLOB IPPCP_PUBLIC_HEADERS
 
 file(GLOB LIBRARY_HEADERS
     ${IPP_CRYPTO_SOURCES_DIR}/*.h
-    ${IPP_CRYPTO_SOURCES_DIR}/ecnist/*.h
-    ${IPP_CRYPTO_SOURCES_DIR}/sm2/*.h
-    ${IPP_CRYPTO_SOURCES_DIR}/sm3/*.h
     ${IPP_CRYPTO_SOURCES_INCLUDE_DIR}/*.h
     ${IPP_CRYPTO_INCLUDE_DIR}/ippcp*.h
     # RSA_SB (ifma) uses crypto_mb headers
@@ -230,9 +232,10 @@ file(GLOB LIBRARY_HEADERS
 
 file(GLOB LIBRARY_C_SOURCES_ORIGINAL
     ${IPP_CRYPTO_SOURCES_DIR}/*.c
-    ${IPP_CRYPTO_SOURCES_DIR}/ecnist/*.c
-    ${IPP_CRYPTO_SOURCES_DIR}/sm2/*.c
-    ${IPP_CRYPTO_SOURCES_DIR}/sm3/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/hash/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/hash/*/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/gfpec/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/gfpec/*/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/xmss/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/lms/*.c
 )
@@ -245,9 +248,6 @@ set(INTERNAL_INCLUDE_DIR ${CMAKE_BINARY_DIR}/include/autogen_1cpu)
 
 set (C_INCLUDE_DIRECTORIES
     ${IPP_CRYPTO_SOURCES_DIR}
-    ${IPP_CRYPTO_SOURCES_DIR}/ecnist
-    ${IPP_CRYPTO_SOURCES_DIR}/sm2
-    ${IPP_CRYPTO_SOURCES_DIR}/sm3
     ${IPP_CRYPTO_SOURCES_INCLUDE_DIR}
     ${IPP_CRYPTO_INCLUDE_DIR}
     ${INTERNAL_INCLUDE_DIR}
@@ -356,6 +356,7 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
    string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
    file(COPY ${IPP_CRYPTO_INCLUDE_DIR}/ippcp.h
              ${IPP_CRYPTO_INCLUDE_DIR}/ippcpdefs.h
+             ${IPP_CRYPTO_INCLUDE_DIR}/ippcpversion.h
              ${IPP_CRYPTO_INCLUDE_DIR}/ippversion.h
              ${ONE_CPU_FOLDER}
         DESTINATION "${CMAKE_OUTPUT_DIR}/${OUTPUTCONFIG}/include")
@@ -550,14 +551,24 @@ if(MERGED_BLD)
           PUBLIC_HEADER DESTINATION "include"
           PRIVATE_HEADER DESTINATION "tools/${ARCH}/staticlib")
 
+  set_source_files_properties(${DISPATCHER_ASM_SOURCES} PROPERTIES INCLUDE_DIRECTORIES "${ASM_INCLUDE_DIRECTORIES}")
+
+  # Intel® C++ Compiler specific - the dispatcher also contains C source code
+  # that doesn't use build settings from CMAKE_C/CXX_FLAGS_DEBUG/RELEASE 
   set_source_files_properties(${DISPATCHER_C_SOURCES} pcpver.rc PROPERTIES INCLUDE_DIRECTORIES "${C_INCLUDE_DIRECTORIES}")
   # protection (_FORTIFY_SOURCE) and optimization flags for dispatcher
   if(UNIX)
-    if(${ARCH} MATCHES "ia32")
-      set_source_files_properties(${DISPATCHER_C_SOURCES} PROPERTIES COMPILE_FLAGS "${CC_FLAGS_INLINE_ASM_UNIX_IA32} -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -O2")
-    else()
-      set_source_files_properties(${DISPATCHER_C_SOURCES} PROPERTIES COMPILE_FLAGS "${CC_FLAGS_INLINE_ASM_UNIX_INTEL64} -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -O2")
+    set(DISPATCHER_C_SOURCES_COMPILE_FLAGS "-D_GNU_SOURCE -O2")
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+      set(DISPATCHER_C_SOURCES_COMPILE_FLAGS "${DISPATCHER_C_SOURCES_COMPILE_FLAGS} -D_FORTIFY_SOURCE=2")
     endif()
+
+    if(${ARCH} MATCHES "ia32")
+      set(DISPATCHER_C_SOURCES_COMPILE_FLAGS " ${CC_FLAGS_INLINE_ASM_UNIX_IA32} ${DISPATCHER_C_SOURCES_COMPILE_FLAGS}")
+    else()
+      set(DISPATCHER_C_SOURCES_COMPILE_FLAGS "${CC_FLAGS_INLINE_ASM_UNIX_INTEL64} ${DISPATCHER_C_SOURCES_COMPILE_FLAGS}")
+    endif()
+    set_source_files_properties(${DISPATCHER_C_SOURCES} PROPERTIES COMPILE_FLAGS "${DISPATCHER_C_SOURCES_COMPILE_FLAGS}")
   endif()
 
   # Single merged dynamic lib

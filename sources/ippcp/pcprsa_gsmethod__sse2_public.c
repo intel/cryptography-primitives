@@ -19,8 +19,8 @@
 */
 
 /*
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
-// 
+//     Intel(R) Cryptography Primitives Library
+//
 //     Context:
 //        gsMethod_RSA_sse2_public()
 //

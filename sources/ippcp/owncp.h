@@ -15,8 +15,7 @@
 *************************************************************************/
 
 /*
-//               Intel(R) Integrated Performance Primitives
-//                   Cryptographic Primitives (ippcp)
+//               Intel(R) Cryptography Primitives Library
 */
 
 #ifndef __OWNCP_H__
@@ -166,7 +165,7 @@ typedef int cpSize;
 
 /* test if library's feature is ON */
 int cpGetFeature( Ipp64u Feature );
-/* test CPU crypto features */
+/* test CPU cryptography features */
 __IPPCP_INLINE Ipp32u IsFeatureEnabled(Ipp64u niMmask)
 {
    return (Ipp32u)cpGetFeature(niMmask);

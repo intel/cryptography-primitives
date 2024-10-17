@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel(R) Integrated Performance Primitives Cryptography (Intel(R) IPP Cryptography)
+# Intel(R) Cryptography Primitives Library
 #
 
 import re
@@ -34,28 +34,28 @@ def readNextFunction(header, curLine, headerID):    ## read next function with a
       headerID= re.sub( '.*__IPP', '__IPP', header[curLine] )
       headerID= re.sub( "\)", '', headerID)
       headerID= re.sub( '[\n\s]', '', headerID )
-    
+
     if re.match( '^\s*IPPAPI\s*\(.*', header[curLine] ) :
       FunStr= header[curLine];
       FunStr= re.sub('\n','',FunStr)   ## remove EOL symbols
-  
+
       while not re.match('.*\)\s*\)\s*$', FunStr):   ## concatenate string if string is not completed
         curLine= curLine+1
         FunStr= FunStr+header[curLine]
         FunStr= re.sub('\n','',FunStr)   ## remove EOL symbols
-    
+
       FunStr= re.sub('\s+', ' ', FunStr)
-    
+
       s= FunStr.split(',')
-    
+
       ## Extract function name
       FunName= s[1]
       FunName= re.sub('\s', '', FunName)
-    
+
       ## Extract function type
       FunType= re.sub( '.*\(', '', s[0] )
       #FunType= re.sub(' ', '', FunType )
-    
+
       ## Extract function arguments
       FunArg= re.sub('.*\(.*,.+,\s*\(', '(', FunStr)
       FunArg= re.sub('\)\s*\)', ')', FunArg)

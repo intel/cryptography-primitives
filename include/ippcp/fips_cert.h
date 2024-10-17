@@ -105,6 +105,10 @@ IPPAPI(fips_test_status, fips_selftest_ippsGFpECPublicKey, (Ipp8u *pGFpBuff, Ipp
 IPPAPI(fips_test_status, fips_selftest_ippsGFpECPrivateKey, (Ipp8u *pGFpBuff, Ipp8u *pGFpECBuff, Ipp8u *pDataBuff))
 IPPAPI(fips_test_status, fips_selftest_ippsGFpECSharedSecretDH, (Ipp8u *pGFpBuff, Ipp8u *pGFpECBuff, Ipp8u *pDataBuff))
 
+/* LMS */
+IPPAPI(fips_test_status, fips_selftest_ippsLMSVerify_get_size, (int *pBufferSize))
+IPPAPI(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u *pDataBuff))
+
 /*
 // Enumerator that contains information about FIPS-approved
 // functions inside the ippcp cryptographic boundary
@@ -158,6 +162,7 @@ enum FIPS_IPPCP_FUNC {
     HMACMessage_rmf,
     RSAEncrypt_OAEP_rmf,
     RSADecrypt_OAEP_rmf,
+    LMSVerify,
 
   /* Not approved functions or
    * FIPS-mode is not yet implemented, < 0
@@ -222,8 +227,7 @@ enum FIPS_IPPCP_FUNC {
     GFpECESEncrypt_SM2,
     GFpECESDecrypt_SM2,
     GFpECESFinal_SM2,
-    XMSSVerify,
-    LMSVerify
+    XMSSVerify
 };
 
 /**

@@ -14,11 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
+#include <internal/sm4/sm4_mb.h>
+
 #include <crypto_mb/status.h>
 #include <crypto_mb/sm4.h>
 
 #include <internal/common/ifma_defs.h>
-#include <internal/sm4/sm4_mb.h>
 
 DLL_PUBLIC
 mbx_status16 OWNAPI(mbx_sm4_decrypt_ofb_mb16)(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const mbx_sm4_key_schedule* key_sched, int8u* pa_iv[SM4_LINES])

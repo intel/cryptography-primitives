@@ -16,7 +16,7 @@
 
 /*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Internal BNU32 arithmetic.
 //
 //  Contents:

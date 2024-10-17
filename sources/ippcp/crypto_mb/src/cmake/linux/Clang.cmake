@@ -30,13 +30,6 @@ set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wformat -Wformat-security
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fcf-protection=full")
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    if(NOT DEFINED NO_FORTIFY_SOURCE)
-        # Security flag that adds compile-time and run-time checks. 
-        set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -D_FORTIFY_SOURCE=2")
-    endif()
-endif()
-
 # Stack-based Buffer Overrun Detection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fstack-protector")
 # Position Independent Execution (PIE)
@@ -61,7 +54,7 @@ endif()
 # Tells the compiler to align functions and loops
 set(CMAKE_C_FLAGS " -falign-functions=32")
 
-# -ffreestanding flag removed for clang because it causes compilation eroor in combination with -D_FORTIFY_SOURCE=2
+# -ffreestanding flag removed for clang because it causes compilation error in combination with -D_FORTIFY_SOURCE=2
 # and limits.h and stdlib.h headers because of wrong value of MB_LEN_MAX defined in limits.h and checked in stdlib.h
 # This issue is reprodusable with clang9. Flag is not removed for other compilers to prevent other possible issues. 
 
@@ -75,10 +68,20 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-pointer-to-int-cast")
 
 # Optimization level = 3, no-debug definition (turns off asserts)
 set(CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG")
+if(NOT DEFINED NO_FORTIFY_SOURCE)
+  # Security flag that adds compile-time and run-time checks
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
+endif()
+
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
 # Optimisation dependent flags
-set(l9_opt "-march=haswell -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed")
+# Add Intel® AVX-IFMA specific compiler options only for compilers that support them
+if(MBX_CC_AVXIFMA_SUPPORT)
+    set(l9_opt "-march=sierraforest -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed -mgfni -mavxifma")
+else()
+    set(l9_opt "-mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed -mgfni")
+endif()
 set(k1_opt "-march=icelake-server -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mavx512ifma -mpclmul -msha -mrdrnd -mrdseed -madx -mgfni -mvaes -mvpclmulqdq -mavx512vbmi -mavx512vbmi2")
 
 # Build with sanitizers

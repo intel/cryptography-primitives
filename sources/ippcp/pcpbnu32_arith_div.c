@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Internal BNU32 arithmetic.
-// 
+//
 //  Contents:
 //     cpDiv_BNU32()
-// 
+//
 */
 
 #include "owncp.h"
@@ -36,7 +36,7 @@
 // Purpose: BNU32 division.
 //
 // Returns:
-//    size of result 
+//    size of result
 //
 // Parameters:
 //    pX     source X

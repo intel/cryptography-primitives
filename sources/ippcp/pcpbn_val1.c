@@ -14,13 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-//               Intel(R) Integrated Performance Primitives
-//                   Cryptographic Primitives (ippcp)
-// 
+/*
+//               Intel(R) Cryptography Primitives Library
+//
 //  Contents:
 //     cpBN_OneRef()
-// 
+//
 */
 
 #include "owndefs.h"
@@ -34,7 +33,7 @@
 //
 // Purpose: BN(1) and reference
 //
-//  Return: 
+//  Return:
 //      BigNum = 1
 *F*/
 

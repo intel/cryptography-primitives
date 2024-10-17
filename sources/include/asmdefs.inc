@@ -17,6 +17,8 @@
 %ifndef __ASMDEFS_INC__
 %define __ASMDEFS_INC__ 1
 
+%include "noexec_stack.inc"
+
 %assign _IPP_PX 0    ; pure C-code ia32
 %assign _IPP_M5 1    ; Intel(R) Quark(TM) processor - ia32
 %assign _IPP_W7 8    ; Intel(R) Streaming SIMD Extensions 2 - ia32
@@ -103,22 +105,6 @@
   %assign IPP_ALIGN_FACTOR 16
 %endif
 
-; noexec stack
-%ifdef LINUX32
-  %ifndef OSX32
-section .note.GNU-stack noalloc noexec nowrite progbits
-  %endif
-%endif
-
-; noexec stack
-%ifdef LINUX32E
-  %ifndef OSXEM64T
-    %ifndef _ARCH_KNC
-section .note.GNU-stack noalloc noexec nowrite progbits
-    %endif
-  %endif
-%endif
-
 
 %ifidn __OUTPUT_FORMAT__, elf32
   %assign IPP_BINARY_FORMAT 0
@@ -143,7 +129,7 @@ section .note.GNU-stack noalloc noexec nowrite progbits
 %ifndef _MERGED_BLD
   %assign _IPP_DATA 1
 %else
-  %if (_IPP == _IPP_G9) || (_IPP32E == _IPP32E_E9)
+  %if (_IPP == _IPP_P8) || (_IPP32E == _IPP32E_Y8)
     %assign _IPP_DATA 1
   %endif
 %endif ; _MERGED_BLD

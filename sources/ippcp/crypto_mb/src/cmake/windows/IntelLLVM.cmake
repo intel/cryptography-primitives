@@ -27,6 +27,8 @@ set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /HIGHENTROPYVA")
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /LARGEADDRESSAWARE")
 # Indicates that an executable is compatible with the Windows Data Execution Prevention (DEP) feature
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /NXCOMPAT")
+# Linker option to mitigate DLL hijacking vulnerability - removes CWD from the DLL search order
+set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} /DEPENDENTLOADFLAG:0x2000")
 
 # Security Compiler flags
 
@@ -34,13 +36,13 @@ set(CMAKE_C_FLAGS_SECURITY "")
 # Detect some buffer overruns.
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /GS")
 # Warning level = 3
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /W3")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /W4")
 # Changes all warnings to errors.
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /WX")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fcf-protection:full")
-# Changes all warnings to errors.
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /WX")
+# Recommended security flags
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wall -Wformat -Wformat-security -Werror=format-security")
 
 # Linker flags
 
@@ -50,9 +52,6 @@ if(MBX_FIPS_MODE)
 else()
   set(LINK_FLAGS_DYNAMIC "/DEF:${CRYPTO_MB_SOURCES_DIR}/cmake/dll_export/crypto_mb.defs")
 endif()
-
-# Disables linking to Intel® libraries
-set(LINK_FLAG_DYNAMIC_WINDOWS "${LINK_FLAG_DYNAMIC_WINDOWS} /Qno-intel-lib")
 
 # Compiler flags
 
@@ -91,4 +90,10 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /D_DEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
 
 # Optimisation dependent flags
-set(AVX512_CFLAGS "-march=icelake-server -mavx512dq -mavx512ifma -mavx512f -mavx512vbmi2 -mavx512cd -mavx512bw -mbmi2")
+# Add Intel® AVX-IFMA specific compiler options only for compilers that support them
+if(MBX_CC_AVXIFMA_SUPPORT)
+  set(l9_opt "/arch:CORE-AVX2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed -mgfni -mavxifma")
+else()
+  set(l9_opt "/arch:CORE-AVX2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed -mgfni")
+endif()
+set(k1_opt "/arch:ICELAKE-SERVER -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mavx512ifma -mpclmul -msha -mrdrnd -mrdseed -madx -mgfni -mvaes -mvpclmulqdq -mavx512vbmi -mavx512vbmi2 -mprefer-vector-width=512")

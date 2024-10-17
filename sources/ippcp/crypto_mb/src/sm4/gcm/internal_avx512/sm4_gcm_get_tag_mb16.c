@@ -57,10 +57,10 @@ mbx_status16 sm4_gcm_get_tag_mb16(int8u *pa_out[SM4_LINES], const int tag_len[SM
    /* XOR with accumulated GHASH value */
    __m128i *ghash = SM4_GCM_CONTEXT_GHASH(p_context);
 
-   data_len_blocks_4_0 = xor(data_len_blocks_4_0, M512(ghash + 0));
-   data_len_blocks_4_1 = xor(data_len_blocks_4_1, M512(ghash + 4));
-   data_len_blocks_4_2 = xor(data_len_blocks_4_2, M512(ghash + 8));
-   data_len_blocks_4_3 = xor(data_len_blocks_4_3, M512(ghash + 12));
+   data_len_blocks_4_0 = xor(data_len_blocks_4_0, loadu(ghash + 0));
+   data_len_blocks_4_1 = xor(data_len_blocks_4_1, loadu(ghash + 4));
+   data_len_blocks_4_2 = xor(data_len_blocks_4_2, loadu(ghash + 8));
+   data_len_blocks_4_3 = xor(data_len_blocks_4_3, loadu(ghash + 12));
 
    /* Update GHASH value */
    sm4_gcm_ghash_mul_single_block_mb16(data_blocks, hashkeys);

@@ -23,6 +23,7 @@
 #define MBX_ALGO_SELFTEST_OK (0)
 #define MBX_ALGO_SELFTEST_BAD_ARGS_ERR (1)
 #define MBX_ALGO_SELFTEST_KAT_ERR (2)
+#define MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR (4)
 
 typedef int fips_test_status;
 typedef int func_fips_approved;

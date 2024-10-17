@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel(R) Integrated Performance Primitives Cryptography (Intel(R) IPP Cryptography)
+# Intel(R) Cryptography Primitives Library
 #
 
 import re
@@ -25,7 +25,7 @@ import hashlib
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', '--header', action='store', required=True, help='Intel IPP Cryptography dispatcher will be generated for functions in Header')
+parser.add_argument('-i', '--header', action='store', required=True, help='Intel Cryptography Primitives Library dispatcher will be generated for functions in Header')
 parser.add_argument('-o', '--out-directory', action='store', required=True, help='Output folder for generated files')
 parser.add_argument('-l', '--cpu-list', action='store', required=True, help='Actual CPU list: semicolon separated string')
 parser.add_argument('-c', '--compiler', action='store', required=True, help='Compiler')
@@ -74,6 +74,8 @@ if(compiler == "GNU" or compiler == "Clang"  or compiler == "IntelLLVM"):
             ## create dispatcher files ASM
             ##################################################
             ASMDISP= open( os.sep.join([OutDir, "jmp_" + FunName+"_" + hashlib.sha512(FunName.encode('utf-8')).hexdigest()[:8] +".asm"]), 'w' )
+
+            ASMDISP.write('%include "noexec_stack.inc"\n\n');
 
             # Symbol type setting for extern functions initially appeared in version 2.15
             ASMDISP.write("%if ((__NASM_MAJOR__ > 2) || ((__NASM_MAJOR__ == 2) && (__NASM_MINOR__ > 14)))\n");

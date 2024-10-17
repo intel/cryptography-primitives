@@ -15,8 +15,8 @@
 *************************************************************************/
 
 /*
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
-// 
+//     Intel(R) Cryptography Primitives Library
+//
 //     Context:
 //        ippsSMS4_CCMEncrypt()
 //
@@ -55,8 +55,8 @@
 // We consider to not spend time for further optimizing of this algorithm because it is not widely using.
 // There is two ways for further optimization:
 // - Add parallel processing of CTR cipher. Performance advantages can be achieved by parallel processing of a big number of blocks.
-// - Try to decrease the memory reading/writing operation number, eg combine two calls of one block encryption 
-// function to single call that processes two blocks with the same key. Performance advantages can be achieved by 
+// - Try to decrease the memory reading/writing operation number, eg combine two calls of one block encryption
+// function to single call that processes two blocks with the same key. Performance advantages can be achieved by
 // reducing of reading/writing operations number, because we do not need to read the key twice in single loop.
 //
 */
@@ -95,9 +95,9 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt,(const Ipp8u* pSrc, Ipp8u* pDst, int len, 
       */
 
       Ipp32u*          MAC = TMP;
-      Ipp32u*          CTR = TMP + MBS_SMS4/sizeof(Ipp32u);          
-      Ipp32u*            S = TMP + 2*(MBS_SMS4/sizeof(Ipp32u));     
-      Ipp32u*         flag = TMP + 3*(MBS_SMS4/sizeof(Ipp32u));      
+      Ipp32u*          CTR = TMP + MBS_SMS4/sizeof(Ipp32u);
+      Ipp32u*            S = TMP + 2*(MBS_SMS4/sizeof(Ipp32u));
+      Ipp32u*         flag = TMP + 3*(MBS_SMS4/sizeof(Ipp32u));
       Ipp32u*         qLen = TMP + 3*(MBS_SMS4/sizeof(Ipp32u)) + 1;
       Ipp32u*       tmpLen = TMP + 3*(MBS_SMS4/sizeof(Ipp32u)) + 2;
       Ipp32u*   counterVal = TMP + 3*(MBS_SMS4/sizeof(Ipp32u)) + 3;
@@ -157,7 +157,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt,(const Ipp8u* pSrc, Ipp8u* pDst, int len, 
       if(len) {
          /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
          len = ( IPP_MIN(len, MBS_SMS4-1) );
-         
+
          /* store partial data block */
          CopyBlock(pSrc, SMS4CCM_BLK(pCtx), len);
 

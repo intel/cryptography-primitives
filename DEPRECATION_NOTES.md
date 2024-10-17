@@ -1,10 +1,25 @@
-# Deprecated API in Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Deprecated API in Intel® Cryptography Primitives Library
 
-This document describes deprecated API in different Intel IPP Cryptography versions and recommendations for transition.
+This document describes deprecated API in different Intel® Cryptography Primitives Library versions and recommendations for transition.
 
-The deprecated API means it is obsolete and will be removed in one of future Intel IPP Cryptography releases. If you have any concerns, please use the following link for opening a ticket and providing feedback:  <https://supporttickets.intel.com.>
+The deprecated API means it is obsolete and will be removed in one of future Intel® Cryptography Primitives Library releases. If you have any concerns, please use the following link for opening a ticket and providing feedback:  <https://supporttickets.intel.com.>
 
-## 2020 Update1 (branch [ipp-crypto_2020_update1](https://github.com/intel/ipp-crypto/tree/ipp-crypto_2020_update1))
+## Intel® Cryptography Primitives Library v1.0.0
+
+### Service Functions
+
+| Deprecated                                        |                    Recommended replacement                     |
+| :------------------------------------------------ | :------------------------------------------------------------: |
+| ippcpGetNumThreads                                |                      N/A                                       |
+| ippcpGetEnabledNumThreads                         |                      N/A                                       |
+| ippcpSetNumThreads                                |                      N/A                                       |
+| ippcpGetLibVersion                                |                      cryptoGetLibVersion                       |
+
+### Deprecated Optimizations
+
+The code paths n8/s8 (Intel® SSSE3) and g9/e9 (Intel® AVX) are deprecated and removed from the merged build of Intel® Cryptography Primitives Library, lower optimizations are used instead. 1cpu headers are still available for all code paths. These branches can also be built as 1cpu libraries if specified in the platform list, e.g. `-DMERGED_BLD:BOOL=off -DPLATFORM_LIST=s8;e9`.
+
+## Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2020 Update1 (branch [ipp-crypto_2020_update1](https://github.com/intel/ipp-crypto/tree/ipp-crypto_2020_update1))
 
 ### Hash Functionality
 

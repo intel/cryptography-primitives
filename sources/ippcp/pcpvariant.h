@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //
-//   Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
-// 
+//   Intel(R) Cryptography Primitives Library
+//
 //   Purpose:
 //     Define ippCP variant
-// 
-// 
+//
+//
 */
 
 #if !defined(_CP_VARIANT_H)
@@ -108,7 +108,7 @@
 #endif
 
 /*
-// Intel IPP Cryptography supports several hash algorithms by default:
+// Intel(R) Cryptography Primitives Library supports several hash algorithms by default:
 //    SHA-1
 //    SHA-256
 //    SHA-224  (or SHA256/224 by the FIPS180-4 classification)
@@ -117,7 +117,7 @@
 //    MD5
 //    SM3
 //
-// By default all hash algorithms are included in Intel IPP Cryptography.
+// By default all hash algorithms are included in Intel(R) Cryptography Primitives Library.
 //
 // If one need excludes code of particular hash, just define
 // suitable _DISABLE_ALG_XXX, where XXX name of the hash algorithm
@@ -178,8 +178,8 @@
 #endif
 
 /*
-// SHA1 plays especial role in Intel IPP Cryptography. 
-// Thus Intel IPP Cryptography random generator and
+// SHA1 plays especial role in Intel(R) Cryptography Primitives Library.
+// Thus Intel(R) Cryptography Primitives Library random generator and
 // therefore prime number generator are based on SHA1.
 // So, do no exclude SHA1 from the active list of hash algorithms
 */
@@ -190,7 +190,8 @@
 /*
 // Because of performance reason hash algorithms are implemented in form
 // of unroller cycle and therefore these implementations are big enough.
-// Intel IPP Cryptography supports "compact" implementation of some basic hash algorithms:
+// Intel(R) Cryptography Primitives Library supports "compact" implementation
+// of some basic hash algorithms:
 //    SHA-1
 //    SHA-256
 //    SHA-512
@@ -203,13 +204,13 @@
 //    _ALG_SM3_COMPACT_
 //
 // to select "compact" implementation of particular hash algorithm.
-// Intel IPP Cryptography does not define "compact" implementation by default.
+// Intel Intel(R) Cryptography Primitives Library does not define "compact" implementation by default.
 //
 // Don't know what performance degradation leads "compact"
-// in comparison with default Intel IPP Cryptography implementation.
+// in comparison with default Intel(R) Cryptography Primitives Library implementation.
 //
 // Note: the definition like _ALG_XXX_COMPACT_ has effect
-// if and only if Intel IPP Cryptography instance is _PX or _MX
+// if and only if Intel(R) Cryptography Primitives Library instance is _PX or _MX
 */
 //#define _ALG_SHA1_COMPACT_
 //#define _ALG_SHA256_COMPACT_
@@ -244,7 +245,7 @@
 
 
 /*
-// Intel IPP Cryptography supports different implementation of NIST's (standard) EC over GF(0):
+// Intel(R) Cryptography Primitives Library supports different implementation of NIST's (standard) EC over GF(0):
 //    P-128 (IppECCPStd128r1, IppECCPStd128r2)
 //    P-192 (IppECCPStd192r1)
 //    P-224 (IppECCPStd224r1)

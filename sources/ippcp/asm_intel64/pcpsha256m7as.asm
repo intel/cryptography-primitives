@@ -173,21 +173,9 @@
 ;;
 ;; Lib = M7
 ;;
-;; Caller = ippsSHA256Update
-;; Caller = ippsSHA256Final
-;; Caller = ippsSHA256MessageDigest
-;;
-;; Caller = ippsSHA224Update
-;; Caller = ippsSHA224Final
-;; Caller = ippsSHA224MessageDigest
-;;
-;; Caller = ippsHMACSHA256Update
-;; Caller = ippsHMACSHA256Final
-;; Caller = ippsHMACSHA256MessageDigest
-;;
-;; Caller = ippsHMACSHA224Update
-;; Caller = ippsHMACSHA224Final
-;; Caller = ippsHMACSHA224MessageDigest
+;; Caller = ippsHashUpdate_rmf
+;; Caller = ippsHashFinal_rmf
+;; Caller = ippsHashMessage_rmf
 ;;
 
 segment .data align=IPP_ALIGN_FACTOR

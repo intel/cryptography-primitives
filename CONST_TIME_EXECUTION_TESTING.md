@@ -1,12 +1,12 @@
-# Scope of the Constant-time execution testing of Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Scope of the Constant-time execution testing of Intel® Cryptography Primitives Library
 
 - [General information](#general)
 - [Scope for ippcp library](#ippcp)
 - [Scope for crypto_mb library](#cryptomb)
 
 ## General information <div id = 'general'>
-- Testing is conducted under Linux for 64-bit Intel® IPP Cryptography built with the compilers listed in [Build](./BUILD.md).
-- Tested platforms: w7, n8, y8, e9, l9, k0 (see the supported platforms list [here](./OVERVIEW.md#target-optimization-codes-in-function-names)).
+- Testing is conducted under Linux for 64-bit Intel® Cryptography Primitives Library built with the compilers listed in [Build](./BUILD.md).
+- Tested platforms: m7, y8, l9, k0, k1 (see the supported platforms list [here](./OVERVIEW.md#target-optimization-codes-in-function-names)).
 - Testing scope described below is guaranteed to pass for **`release`** branches. This is not guaranteed for the **`develop`** branch ([branches description](./OVERVIEW.md#branches-description))
 - Information about Pin-Based Constant Execution Checker can be found [here](https://github.com/intel/pin_based_cec)
 
@@ -69,6 +69,7 @@
 |      ippsGFpMul_PE       |                                             -                                              |
 |     ippsGFpMultiExp      |                                             -                                              |
 |        ippsGFpNeg        |                                             -                                              |
+|        ippsGFpSqr        |                                             -                                              |
 |        ippsGFpSub        |                                             -                                              |
 |      ippsGFpSub_PE       |                                             -                                              |
 |     ippsHMACInit_rmf     | Different hashes:<br>sha1, sha256, sha224, sha384, sha512, <br>sha512-256, sha512-224, sm3 |
@@ -150,5 +151,18 @@
 |         mbx_sm4_encrypt_ofb_mb16         |                           -                           |
 |       mbx_sm4_encrypt_cfb128_mb16        |                           -                           |
 |       mbx_sm4_decrypt_cfb128_mb16        |                           -                           |
+|       mbx_sm4_xts_encrypt_mb16           |                           -                           |
+|       mbx_sm4_xts_decrypt_mb16           |                           -                           |
+|       mbx_sm4_ccm_init_mb16              |                           -                           |
+|       mbx_sm4_ccm_update_aad_mb16        |                           -                           |
+|       mbx_sm4_ccm_encrypt_mb16           |                           -                           |
+|       mbx_sm4_ccm_decrypt_mb16           |                           -                           |
+|       mbx_sm4_ccm_get_tag_mb16           |                           -                           |
+|       mbx_sm4_gcm_init_mb16              |                           -                           |
+|       mbx_sm4_gcm_update_iv_mb16         |                           -                           |
+|       mbx_sm4_gcm_update_aad_mb16        |                           -                           |
+|       mbx_sm4_gcm_encrypt_mb16           |                           -                           |
+|       mbx_sm4_gcm_decrypt_mb16           |                           -                           |
+|       mbx_sm4_gcm_get_tag_mb16           |                           -                           |
 |        mbx_x25519_public_key_mb8         |                           -                           |
 |              mbx_x25519_mb8              |                           -                           |

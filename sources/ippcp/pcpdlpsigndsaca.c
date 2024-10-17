@@ -29,7 +29,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpdlp.h"
-#include "pcpeccp.h"
+#include "gfpec/pcpeccp.h"
 
 
 /*F*

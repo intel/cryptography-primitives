@@ -15,7 +15,7 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 # Linker flags
@@ -73,9 +73,6 @@ if ((${ARCH} MATCHES "ia32") OR (NOT NONPIC_LIB))
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector")
 endif()
 
-# Security flag that adds compile-time and run-time checks
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FORTIFY_SOURCE=2")
-
 # Format string vulnerabilities
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Wformat-security -Wunknown-pragmas")
 
@@ -95,7 +92,9 @@ if(CODE_COVERAGE)
 endif()
 
 # Optimization level = 3, no-debug definition (turns off asserts), warning level = 3, treat warnings as errors
-set (CMAKE_C_FLAGS_RELEASE " -Ofast -DNDEBUG -Wall -Wno-unused-function -Wno-missing-braces -Werror")
+set(CMAKE_C_FLAGS_RELEASE " -Ofast -DNDEBUG -Wall -Wno-unused-function -Werror")
+# Security flag that adds compile-time and run-time checks
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
 
 # Alignment for structures on byte boundaries (= 16)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Zp16")
@@ -104,13 +103,13 @@ if(${ARCH} MATCHES "ia32")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 endif(${ARCH} MATCHES "ia32")
 
-set(px_opt "${px_opt} -mia32")
-set(w7_opt "${w7_opt} -march=pentium4 -msse2")
+set(px_opt "${px_opt} ") # note: no flags for the default version
+set(w7_opt "${w7_opt} -msse2")
 set(s8_opt "${s8_opt} -march=core2 -mssse3")
 set(p8_opt "${p8_opt} -march=nehalem -msse4.2 -maes -mpclmul -msha")
 set(g9_opt "${g9_opt} -march=sandybridge -mavx -maes -mpclmul -msha -mrdrnd -mrdseed")
 set(h9_opt "${h9_opt} -march=haswell -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed")
-set(mx_opt "${mx_opt} -march=pentium")
+set(mx_opt "${mx_opt} ") # note: no flags for the default version
 set(m7_opt "${m7_opt} -march=nocona -msse3")
 set(n8_opt "${n8_opt} -march=core2 -mssse3")
 set(y8_opt "${y8_opt} -march=nehalem -msse4.2 -maes -mpclmul -msha")

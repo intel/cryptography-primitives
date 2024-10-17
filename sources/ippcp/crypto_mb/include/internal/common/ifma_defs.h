@@ -18,6 +18,7 @@
 #define IFMA_DEFS_H
 
 #include <crypto_mb/defs.h>
+#include <internal/common/internal_defs.h>
 
 /* define DLL_EXPORT */
 #if defined(__GNUC__) || defined(__CLANG__)
@@ -66,7 +67,9 @@
 #define DIGIT_MASK ((int64u)0xFFFFFFFFFFFFF)
 
 /* num of digit in "digsize" retresentation of "bitsize" value */
+#ifndef NUMBER_OF_DIGITS
 #define NUMBER_OF_DIGITS(bitsize, digsize)   (((bitsize) + (digsize)-1)/(digsize))
+#endif
 /* mask of most significant digit wrt "digsize" retresentation */
 #define MS_DIGIT_MASK(bitsize, digsize)      (((int64u)1 <<((bitsize) %digsize)) -1)
 
@@ -79,5 +82,12 @@
 #define  REP2_DECL(a)   a, a
 #define  REP4_DECL(a)   REP2_DECL(a), REP2_DECL(a)
 #define  REP8_DECL(a)   REP4_DECL(a), REP4_DECL(a)
+
+/* define directive for inline assembly */
+#ifdef __GNUC__
+#define ASM(a) __asm__(a);
+#else
+#define ASM(a)
+#endif
 
 #endif /* IFMA_DEFS_H */

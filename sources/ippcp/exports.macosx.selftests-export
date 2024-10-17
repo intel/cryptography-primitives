@@ -65,4 +65,5 @@ _fips_selftest_ippsGFpECVerifyDSA
 _fips_selftest_ippsGFpECPublicKey
 _fips_selftest_ippsGFpECPrivateKey
 _fips_selftest_ippsGFpECSharedSecretDH
-
+_fips_selftest_ippsLMSVerify_get_size
+_fips_selftest_ippsLMSVerify

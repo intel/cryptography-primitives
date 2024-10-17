@@ -25,7 +25,6 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpngrsa.h"
-#include "pcphash.h"
 #include "pcptool.h"
 
 static int EMSA_PKCSv15(const Ipp8u* msgDg, int lenMsgDg,

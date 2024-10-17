@@ -1,11 +1,17 @@
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 
-This is a list of notable changes to Intel(R) IPP Cryptography, in reverse chronological order.
+This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
-## Intel(R) IPP Cryptography 2025.0
-- IPPCP SM3 hash algorithm optimization with the new instruction set (SM3-NI) for Lunar Lake and Arrow Lake CPUs.
-- Added example for SM3 Hash.
-- Added example of LMS post-quantum verification usage.
+## Intel(R) Cryptography Primitives Library 1.0.0
+- Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) was renamed to Intel(R) Cryptography Primitives Library.
+- Added IPPCP SM3 hash algorithm optimization with the new instruction set (SM3-NI) for Lunar Lake and Arrow Lake CPUs.
+- Added Intel® AVX-IFMA RSA implementation to Crypto Multi buffer library.
+- Fixed bug in IceLake optimization (`k1` branch) of ECDSA signature function caused by incorrect processing of R and S component's size and sign.
+- Added FIPS selftest for Leighton-Micali Hash-Based Signatures(LMS) verification algorithm.
+- Added examples for SM3 Hash / LMS post-quantum verification / NIST Curve P-256 ECDSA signature generation algorithms.
+- Changed `-DBABASSL:BOOL=on` CMake build option to `-DTONGSUO:BOOL=on` for Tongsuo library.
+- Removed API that were deprecated in Intel® Integrated Performance Primitives Cryptography 2020 Update1. More details can be found in [DEPRECATION_NOTES.md](./DEPRECATION_NOTES.md). Please note that `ippsHash<GetSize/Init/Duplicate/Pack/Unpack/Update/GetTag/Final/HashMessage>` API still remain in the library.
+- Removed support for SSSE3(`s8` for ia32 and `n8` for intel64) and AVX(`g9` for ia32 and `e9` for intel64) code-paths. Execution was moved to SSE3(`w7` for ia32 and `m7` for intel64) and SSE4.2(`p8` for ia32 and `y8` for intel64) respectively. There is still the possibility to use 1cpu headers and 1cpu libraries without breaking change for 1 year but some performance drops are expected.
 
 ## Intel(R) IPP Cryptography 2021.12.1
 - Added `FIPS_CUSTOM_IPPCP_API_HEADER` build flag to support FIPS self-tests for a specific use case when Custom Library Tool is used with custom prefix for IPPCP API.

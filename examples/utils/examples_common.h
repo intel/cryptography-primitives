@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) */
+/* Intel® Cryptography Primitives Library */
 
 /*!
   *
   * \file
-  * \brief Common header for Intel IPP Cryptography examples
+  * \brief Common header for Intel Cryptography Primitives Library examples
   *
   */
 

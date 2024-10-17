@@ -18,7 +18,7 @@ prefix=@PREFIX_FOR_PC_FILE@
 libdir=@LIBDIR_FOR_PC_FILE@
 includedir=@INCDIR_FOR_PC_FILE@
 
-Name: Intel® Integrated Performance Primitives (Intel® IPP) Cryptography Crypto Multi-Buffer Library
+Name: Intel® Cryptography Primitives Library Crypto Multi-Buffer Library
 Description: This library consists of highly-optimized kernels taking advantage of Intel’s multi-buffer processing and Intel® AVX-512 instruction set.
 URL: https://github.com/intel/ipp-crypto
 Version: @IPPCP_VERSION@

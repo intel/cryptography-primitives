@@ -80,13 +80,10 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_mb8(void) {
                                  out_s[4], out_s[5], out_s[6], out_s[7]};
 
   /* test function */
-  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
-
   mbx_status sts;
   sts = mbx_nistp256_ecdsa_sign_mb8(pa_sign_r, pa_sign_s, pa_pub_msg_digest, pa_prv_k, pa_prv_d, NULL);
-  if (expected_status_mb8 != sts) {
-    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
-  }
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
+
   // compare output signature to known answer
   int r_output_status;
   int s_output_status;
@@ -120,16 +117,10 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_ssl_mb8(void) {
     MEM_FREE(BN_d, BN_k)
     return test_result;
   }
-
+  
   /* output signature */
   int8u out_r[MBX_LANES][MBX_NISTP256_DATA_BYTE_LEN];
   int8u out_s[MBX_LANES][MBX_NISTP256_DATA_BYTE_LEN];
-  /* function status and expected status */
-  mbx_status sts;
-  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
-  /* output validity statuses */
-  int r_output_status;
-  int s_output_status;
 
   // set ssl key pair
   BN_lebin2bn(d, MBX_NISTP256_DATA_BYTE_LEN, BN_d);
@@ -152,11 +143,13 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_ssl_mb8(void) {
                                  out_s[4], out_s[5], out_s[6], out_s[7]};
 
   /* test function */
+  mbx_status sts;
   sts = mbx_nistp256_ecdsa_sign_ssl_mb8(pa_sign_r, pa_sign_s, pa_pub_msg_digest, pa_prv_k, pa_prv_d, NULL);
-  if (expected_status_mb8 != sts) {
-    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
-  }
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
+
   // compare output signature to known answer
+  int r_output_status;
+  int s_output_status;
   for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
     r_output_status = mbx_is_mem_eq(pa_sign_r[i], MBX_NISTP256_DATA_BYTE_LEN, r, MBX_NISTP256_DATA_BYTE_LEN);
     s_output_status = mbx_is_mem_eq(pa_sign_s[i], MBX_NISTP256_DATA_BYTE_LEN, s, MBX_NISTP256_DATA_BYTE_LEN);

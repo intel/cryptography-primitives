@@ -15,23 +15,22 @@
 #=========================================================================
 
 #
-# Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+# Intel® Cryptography Primitives Library
 #
 
 cmake_minimum_required(VERSION 3.12)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/sources/cmake/ippcp-utils.cmake")
-ippcp_getlibversion("${CMAKE_CURRENT_SOURCE_DIR}/include/ippversion.h")
+ippcp_getlibversion("${CMAKE_CURRENT_SOURCE_DIR}/include/ippcpversion.h")
 if ((NOT DEFINED IPPCP_VERSION_MAJOR) OR
     (NOT DEFINED IPPCP_VERSION_MINOR) OR
     (NOT DEFINED IPPCP_VERSION_UPDATE) OR
     (NOT DEFINED IPPCP_INTERFACE_VERSION_MAJOR) OR
     (NOT DEFINED IPPCP_INTERFACE_VERSION_MINOR))
-    message(WARNING "Cannot parse version from ippversion.h file. The project might be corrupted.")
+    message(WARNING "Cannot parse version from ippcpversion.h file. The project might be corrupted.")
 endif()
 
-set(PROJECT_FULL_NAME "Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)")
-set(PROJECT_NAME "Intel(R) IPP Crypto")
+set(PROJECT_FULL_NAME "Intel® Cryptography Primitives Library")
 set(PROJECT_VERSION ${IPPCP_VERSION})
 
 set(LIB_NAME ippcp)
@@ -51,14 +50,15 @@ if("${CMAKE_GENERATOR}" STREQUAL "NMake Makefiles")
   endif()
 endif()
 
-project(${PROJECT_NAME}
-        VERSION ${PROJECT_VERSION}
-        LANGUAGES C CXX)
-
+# on ninja/WIN32 the build type fallback mechanism needs to be placed before the `project` call
 if("${CMAKE_BUILD_TYPE}" STREQUAL "")
   message(STATUS "CMAKE_BUILD_TYPE is unset, defaulting to Release")
   set(CMAKE_BUILD_TYPE "Release")
 endif()
+
+project(${PROJECT_FULL_NAME}
+        VERSION ${PROJECT_VERSION}
+        LANGUAGES C CXX)
 
 find_package(Python REQUIRED)
 
@@ -148,6 +148,12 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}")
 endif()
 
+if (CRYPTO_USE_CLANG_TIDY AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "12.0.0")
+    find_program(DO_CLANG_TIDY NAMES clang-tidy)
+    set(CMAKE_CXX_CLANG_TIDY ${DO_CLANG_TIDY})
+    set(CMAKE_C_CLANG_TIDY ${DO_CLANG_TIDY})
+endif ()
+
 message (STATUS "PROJECT ............................... " ${PROJECT_FULL_NAME})
 message (STATUS "CMAKE_BINARY_DIR ...................... " ${CMAKE_BINARY_DIR})
 message (STATUS "CMAKE_OUTPUT_DIR ...................... " ${CMAKE_OUTPUT_DIR})
@@ -162,6 +168,12 @@ message (STATUS "IPP_CRYPTO_SOURCES_DIR ................ " ${IPP_CRYPTO_SOURCES_
 message (STATUS "ARCH .................................. " ${ARCH})
 message (STATUS "DYNAMIC_LIB ........................... " ${DYNAMIC_LIB})
 message (STATUS "CMAKE_INSTALL_PREFIX .................. " ${CMAKE_INSTALL_PREFIX})
+
+if(CRYPTO_USE_CLANG_TIDY)
+  message (STATUS "CLANG_TIDY ............................ on")
+else()
+  message (STATUS "CLANG_TIDY ............................ off")
+endif()
 
 if(Python_Interpreter_FOUND)
   message (STATUS "PYTHON_VERSION_STRING ................. " ${Python_VERSION})
@@ -221,12 +233,17 @@ else()
 endif()
 
 add_subdirectory(sources/ippcp)
-if(EXISTS "${IPP_CRYPTO_DIR}/tests/")
-  add_subdirectory(tests)
+
+if (NOT (CRYPTO_USE_CLANG_TIDY))
+
+  if(EXISTS "${IPP_CRYPTO_DIR}/tests/")
+    add_subdirectory(tests)
+  endif()
+  if(EXISTS "${IPP_CRYPTO_DIR}/perf_tests/")
+    add_subdirectory(perf_tests)
+  endif()
 endif()
-if(EXISTS "${IPP_CRYPTO_DIR}/perf_tests/")
-  add_subdirectory(perf_tests)
-endif()
+
 
 if(BUILD_EXAMPLES)
   # This helps to organize examples projects structure in IDE by folders

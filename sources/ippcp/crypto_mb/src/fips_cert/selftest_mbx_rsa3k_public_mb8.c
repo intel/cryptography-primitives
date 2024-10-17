@@ -125,13 +125,10 @@ fips_test_status fips_selftest_mbx_rsa3k_public_mb8(void) {
     (int64u *)moduli, (int64u *)moduli, (int64u *)moduli, (int64u *)moduli};
 
   /* test function */
-  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
-
   mbx_status sts;
   sts = mbx_rsa_public_mb8(pa_plaintext, pa_ciphertext, pa_moduli, MBX_RSA3K_DATA_BIT_LEN, method, NULL);
-  if (expected_status_mb8 != sts) {
-    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
-  }
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
+
   // compare output ciphertext to known answer
   int output_status;
   for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
@@ -171,12 +168,6 @@ fips_test_status fips_selftest_mbx_rsa3k_public_ssl_mb8(void) {
     return test_result;
   }
 
-  /* function status and expected status */
-  mbx_status sts;
-  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
-  /* output validity status */
-  int output_status;
-
   /* set ssl parameters */
   BN_lebin2bn(exponent, MBX_RSA_PUB_EXP_BYTE_LEN, BN_e);
   BN_lebin2bn(moduli, MBX_RSA3K_DATA_BYTE_LEN, BN_moduli);
@@ -199,11 +190,12 @@ fips_test_status fips_selftest_mbx_rsa3k_public_ssl_mb8(void) {
     (const BIGNUM *)BN_e, (const BIGNUM *)BN_e, (const BIGNUM *)BN_e, (const BIGNUM *)BN_e};
 
   /* test function */
+  mbx_status sts;
   sts = mbx_rsa_public_ssl_mb8(pa_plaintext, pa_ciphertext, pa_e, pa_moduli, MBX_RSA3K_DATA_BIT_LEN);
-  if (expected_status_mb8 != sts) {
-    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
-  }
+  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
+
   // compare output signature to known answer
+  int output_status;
   for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
     output_status = mbx_is_mem_eq(pa_ciphertext[i], MBX_RSA3K_DATA_BYTE_LEN, ciphertext, MBX_RSA3K_DATA_BYTE_LEN);
     if (!output_status) { // wrong output

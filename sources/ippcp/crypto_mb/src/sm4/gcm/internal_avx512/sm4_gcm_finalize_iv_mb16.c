@@ -119,10 +119,10 @@ void sm4_gcm_finalize_iv_mb16(const int8u *const pa_iv[SM4_LINES], __mmask16 mb_
 
       /* End of explicitly unrolled loop */
 
-      iv_blocks_4_0 = xor(iv_blocks_4_0, M512(j0 + 0));
-      iv_blocks_4_1 = xor(iv_blocks_4_1, M512(j0 + 4));
-      iv_blocks_4_2 = xor(iv_blocks_4_2, M512(j0 + 8));
-      iv_blocks_4_3 = xor(iv_blocks_4_3, M512(j0 + 12));
+      iv_blocks_4_0 = xor(iv_blocks_4_0, loadu(j0 + 0));
+      iv_blocks_4_1 = xor(iv_blocks_4_1, loadu(j0 + 4));
+      iv_blocks_4_2 = xor(iv_blocks_4_2, loadu(j0 + 8));
+      iv_blocks_4_3 = xor(iv_blocks_4_3, loadu(j0 + 12));
 
       sm4_gcm_ghash_mul_single_block_mb16(data_blocks, hashkeys);
 

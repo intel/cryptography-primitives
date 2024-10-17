@@ -28,7 +28,7 @@ mbx_status16 OWNAPI(mbx_sm4_xts_decrypt_mb16)(int8u* pa_out[SM4_LINES], const in
 {
     unsigned buf_no;
     mbx_status16 status = 0;
-    __mmask16 mb_mask = 0xFFFF;
+    int16u mb_mask = 0xFFFF;
 
     /* Test input pointers */
     if (NULL == pa_out || NULL == pa_inp || NULL == len ||
@@ -58,7 +58,7 @@ mbx_status16 OWNAPI(mbx_sm4_xts_decrypt_mb16)(int8u* pa_out[SM4_LINES], const in
     if (MBX_IS_ANY_OK_STS16(status))
         status |= sm4_xts_kernel_mb16(pa_out, (const int8u**)pa_inp, (const int*)len,
                             (const int32u**)key_sched1, (const int32u**)key_sched2,
-                            pa_tweak, mb_mask, SM4_DEC);
+                            pa_tweak, (__mmask16)mb_mask, SM4_DEC);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

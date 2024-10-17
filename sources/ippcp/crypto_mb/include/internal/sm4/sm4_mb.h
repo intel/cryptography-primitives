@@ -17,6 +17,8 @@
 #if !defined(_SM4_GFNI_MB_H)
 #define _SM4_GFNI_MB_H
 
+#include <internal/common/ifma_defs.h>
+
 #include <crypto_mb/defs.h>
 #include <crypto_mb/sm4.h>
 

@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptography Primitives.
+//     Intel(R) Cryptography Primitives Library
 //     Internal Unsigned arithmetic
-// 
+//
 //  Contents:
 //     cpMulAdc_BNU_school()
-// 
+//
 */
 
 #include "owncp.h"

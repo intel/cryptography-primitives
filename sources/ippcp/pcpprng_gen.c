@@ -28,7 +28,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpbn.h"
-#include "pcphash.h"
+#include "hash/pcphash.h"
 #include "pcpprng.h"
 #include "pcptool.h"
 

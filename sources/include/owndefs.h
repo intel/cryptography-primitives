@@ -15,7 +15,7 @@
 *************************************************************************/
 
 //
-//  Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography)
+//  Intel® Cryptography Primitives Library
 //
 //  Purpose:
 //     Internal definitions
@@ -332,7 +332,7 @@ extern "C" {
 
 /* /////////////////////////////////////////////////////////////////////////////
 
-           Intel IPP Cryptography Context Identification
+           Intel® Cryptography Primitives Library Context Identification
 
   /////////////////////////////////////////////////////////////////////////// */
 

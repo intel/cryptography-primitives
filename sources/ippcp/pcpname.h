@@ -15,8 +15,7 @@
 *************************************************************************/
 
 /*
-//               Intel(R) Integrated Performance Primitives
-//                   Cryptographic Primitives (ippcp)
+//               Intel(R) Cryptography Primitives Library
 //
 */
 
@@ -34,8 +33,7 @@
    Names of library. It is used in the resource file and is used to generate the names
    in the dispatcher code.
 */
-#define IPP_LIB_LONGNAME()     "Cryptography"
-#define IPP_LIB_SHORTNAME()    "ippCP"
+#define CRYPTO_LIB_NAME()    "Intel® Cryptography Primitives Library"
 
 
 #define GET_STR2(x)      #x

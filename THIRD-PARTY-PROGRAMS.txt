@@ -1,4 +1,4 @@
-Intel(R) Integrated Performance Primitives Cryptography Third Party Programs File
+Intel(R) Cryptography Primitives Library Third Party Programs File
 
 This file contains the list of third party software (“third party programs”) contained in the Intel software and their required notices and/or license terms.
 This third party software, even if included with the distribution of the Intel software, may be governed by separate license terms, including without limitation, third party license terms, other Intel software license terms, and open source software license terms.

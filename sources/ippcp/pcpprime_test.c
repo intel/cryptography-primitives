@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
+/*
 //  Purpose:
-//     Intel(R) Integrated Performance Primitives. Cryptographic Primitives (ippcp)
+//     Intel(R) Cryptography Primitives Library
 //     Prime Number Primitives.
-// 
+//
 //  Contents:
 //        cpPrimeTest()
 //
@@ -175,7 +175,7 @@ IPP_OWN_DEFN (int, cpPrimeTest, (const BNU_CHUNK_T* pPrime, cpSize primeLen, cpS
             /* Rabin-Miller test */
             int result = RabinMiller(a, pZdata, pRdata,primeLen, pMdata,lenM, pModEngine);
             if(-1 == result) //internal error
-               return -1; 
+               return -1;
             if(0 == result)
                return 0;
          }

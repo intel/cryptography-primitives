@@ -14,14 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-//               Intel(R) Integrated Performance Primitives
-//                   Cryptographic Primitives (ippcp)
-// 
+/*
+//               Intel(R) Cryptography Primitives Library
+//
 //  Contents:
 //     ippsBigNumGetSize()
 //     ippsBigNumInit()
-// 
+//
 */
 
 #include "owndefs.h"

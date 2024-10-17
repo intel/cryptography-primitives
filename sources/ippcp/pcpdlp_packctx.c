@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     DL over Prime Field (initialization)
-// 
+//
 //  Contents:
 //        cpPackDLPCtx()
 //
