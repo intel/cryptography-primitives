@@ -50,15 +50,14 @@ if("${CMAKE_GENERATOR}" STREQUAL "NMake Makefiles")
   endif()
 endif()
 
-# on ninja/WIN32 the build type fallback mechanism needs to be placed before the `project` call
+project(${PROJECT_FULL_NAME}
+        VERSION ${PROJECT_VERSION}
+        LANGUAGES C CXX)
+
 if("${CMAKE_BUILD_TYPE}" STREQUAL "")
   message(STATUS "CMAKE_BUILD_TYPE is unset, defaulting to Release")
   set(CMAKE_BUILD_TYPE "Release")
 endif()
-
-project(${PROJECT_FULL_NAME}
-        VERSION ${PROJECT_VERSION}
-        LANGUAGES C CXX)
 
 find_package(Python REQUIRED)
 

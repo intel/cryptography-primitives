@@ -82,9 +82,18 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_verify_mb8(void) {
   const int8u *const pa_sign_s[MBX_LANES] = {s, s, s, s, s, s, s, s};
 
   /* test function */
+  mbx_status expected_sts_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
+
   mbx_status sts;
   sts = mbx_nistp256_ecdsa_verify_mb8(pa_sign_r, pa_sign_s, pa_pub_msg_digest, pa_pub_Qx, pa_pub_Qy, NULL, NULL);
-  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_KAT_ERR);
+  if (expected_sts_mb8 != sts) {
+    if (sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
+      test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
+    }
+    else {
+      test_result = MBX_ALGO_SELFTEST_KAT_ERR;
+    }
+  }
 
   return test_result;
 }
@@ -140,9 +149,18 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_verify_ssl_mb8(void) {
                                               sig, sig, sig, sig};
 
   /* test function */
+  mbx_status expected_sts_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
+
   mbx_status sts;
   sts = mbx_nistp256_ecdsa_verify_ssl_mb8(pa_sig, pa_pub_msg_digest, pa_pub_Qx, pa_pub_Qy, NULL, NULL);
-  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_KAT_ERR);
+  if (expected_sts_mb8 != sts) {
+    if (sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
+      test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
+    }
+    else {
+      test_result = MBX_ALGO_SELFTEST_KAT_ERR;
+    }
+  }
 
   // memory free
   MEM_FREE(BN_Qx, BN_Qy, sig)

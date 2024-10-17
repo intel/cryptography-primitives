@@ -155,10 +155,18 @@ fips_test_status fips_selftest_mbx_rsa3k_private_mb8(void) {
     (int64u *)moduli, (int64u *)moduli, (int64u *)moduli, (int64u *)moduli};
 
   /* test function */
+  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
+
   mbx_status sts;
   sts = mbx_rsa_private_mb8(pa_ciphertext, pa_plaintext, pa_d, pa_moduli, MBX_RSA3K_DATA_BIT_LEN, method, NULL);
-  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
-
+  if (expected_status_mb8 != sts) {
+    if (sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
+      test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
+    }
+    else {
+      test_result = MBX_ALGO_SELFTEST_KAT_ERR;
+    }
+  }
   // compare output plaintext to known answer
   int output_status;
   for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
@@ -196,6 +204,11 @@ fips_test_status fips_selftest_mbx_rsa3k_private_ssl_mb8(void) {
     MEM_FREE(BN_d, BN_moduli)
     return test_result;
   }
+  /* function status and expected status */
+  mbx_status sts;
+  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
+  /* output validity status */
+  int output_status;
 
   /* set ssl parameters */
   BN_lebin2bn(d, MBX_RSA3K_DATA_BYTE_LEN, BN_d);
@@ -220,12 +233,16 @@ fips_test_status fips_selftest_mbx_rsa3k_private_ssl_mb8(void) {
     (const BIGNUM *)BN_d, (const BIGNUM *)BN_d, (const BIGNUM *)BN_d, (const BIGNUM *)BN_d};
 
   /* test function */
-  mbx_status sts;
   sts = mbx_rsa_private_ssl_mb8(pa_ciphertext, pa_plaintext, pa_d, pa_moduli, MBX_RSA3K_DATA_BIT_LEN);
-  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
-
+  if (expected_status_mb8 != sts) {
+    if (sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
+      test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
+    }
+    else {
+      test_result = MBX_ALGO_SELFTEST_KAT_ERR;
+    }
+  }
   // compare output signature to known answer
-  int output_status;
   for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
     output_status = mbx_is_mem_eq(pa_plaintext[i], MBX_RSA3K_DATA_BYTE_LEN, plaintext, MBX_RSA3K_DATA_BYTE_LEN);
     if (!output_status) { // wrong output
