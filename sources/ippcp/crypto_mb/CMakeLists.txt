@@ -83,12 +83,12 @@ if((("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")       AND (CMAKE_C_COMPILER_VERSIO
 endif()
 
 if(MBX_CC_AVXIFMA_SUPPORT)
-  message(STATUS "Intel® AVX-IFMA .............................. on")
+  message(STATUS "Intel® AVX-IFMA ....................... on")
 else()
   if(WIN32)
-    message(STATUS "Intel® AVX-IFMA .............................. off, compiler version GCC >= 13.0.0, CLANG >= 16.0.0, Intel ICX >= 2025.0.0 or MSVC >= 17.7 is required")
+    message(STATUS "Intel® AVX-IFMA ....................... off, compiler version GCC >= 13.0.0, CLANG >= 16.0.0, Intel ICX >= 2025.0.0 or MSVC >= 17.7 is required")
   else()
-    message(STATUS "Intel® AVX-IFMA .............................. off, compiler version GCC >= 13.0.0, CLANG >= 16.0.0, Intel ICX >= 2024.2.0 or MSVC >= 17.7 is required")
+    message(STATUS "Intel® AVX-IFMA ....................... off, compiler version GCC >= 13.0.0, CLANG >= 16.0.0, Intel ICX >= 2024.2.0 or MSVC >= 17.7 is required")
   endif()
 endif()
 

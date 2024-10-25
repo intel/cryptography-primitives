@@ -4,7 +4,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 
 ## Intel(R) Cryptography Primitives Library 1.0.0
 - Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) was renamed to Intel(R) Cryptography Primitives Library.
-- Added IPPCP SM3 hash algorithm optimization with the new instruction set (SM3-NI) for Lunar Lake and Arrow Lake CPUs.
+- Added IPPCP SM3 hash algorithm optimization with the new SM3 instructions for Lunar Lake and Arrow Lake CPUs.
 - Added Intel® AVX-IFMA RSA implementation to Crypto Multi buffer library.
 - Fixed bug in IceLake optimization (`k1` branch) of ECDSA signature function caused by incorrect processing of R and S component's size and sign.
 - Added FIPS selftest for Leighton-Micali Hash-Based Signatures(LMS) verification algorithm.

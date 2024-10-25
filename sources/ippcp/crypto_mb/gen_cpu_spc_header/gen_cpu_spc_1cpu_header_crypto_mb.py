@@ -45,7 +45,7 @@ HDR.close()
 headerID= False
 FunName = ""
 
-Filename = re.sub('.h','',path_leaf(Header))
+Filename = re.sub(r'.h','',path_leaf(Header))
 
 if not os.path.exists(OutDir):
   os.makedirs(OutDir)

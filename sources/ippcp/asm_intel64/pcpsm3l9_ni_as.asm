@@ -17,7 +17,7 @@
 ;
 ;
 ;     Purpose:  Cryptography Primitive.
-;               Message block processing according to SM3 with SM3_NI instructions
+;               Message block processing according to SM3 with SM3 instructions
 ;
 ;     Content:
 ;        UpdateSM3ni
@@ -43,7 +43,7 @@ SHUFF_MASK:
 segment .text
 
 ; ***************************************************************************
-; Create 4 x 32-bit new words of message schedule W[] using SM3-NI ISA
+; Create 4 x 32-bit new words of message schedule W[] using SM3 instructions
 ; ***************************************************************************
 %macro SM3MSG 7
 %define %%W03_00        %1      ;; [in] XMM register with W[0..3]

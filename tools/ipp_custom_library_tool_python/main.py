@@ -71,9 +71,9 @@ if __name__ == "__main__":
         help=rf"""Build dynamic library with custom dispatcher.
 Set of CPUs can be any combination of the following:
 {ipp_package_name}:
-    Intel 64 architecture - {ipp_supported_cpus}
+    Intel(R) 64 architecture - {ipp_supported_cpus}
 {ippcp_package_name}:
-    Intel 64 architecture - {ippcp_supported_cpus}""",
+    Intel(R) 64 architecture - {ippcp_supported_cpus}""",
         nargs="+",
         metavar="CPU",
     )
