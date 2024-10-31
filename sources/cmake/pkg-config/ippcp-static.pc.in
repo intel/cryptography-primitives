@@ -20,7 +20,7 @@ includedir=@INCDIR_FOR_PC_FILE@
 
 Name: Intel® Cryptography Primitives Library
 Description: Secure, fast and lightweight library of building blocks for cryptography, highly-optimized for various Intel® CPUs.
-URL: https://github.com/intel/ipp-crypto
+URL: https://github.com/intel/cryptography-primitives
 Version: @IPPCP_VERSION@
 Libs: ${libdir}/@STATIC_LIBRARY_PREFIX@@IPPCP_PC_LIB_NAME@@STATIC_LIBRARY_SUFFIX@
 Cflags: -I${includedir}

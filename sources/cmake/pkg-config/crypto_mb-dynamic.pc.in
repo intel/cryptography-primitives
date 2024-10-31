@@ -20,7 +20,7 @@ includedir=@INCDIR_FOR_PC_FILE@
 
 Name: Intel® Cryptography Primitives Library Crypto Multi-Buffer Library
 Description: This library consists of highly-optimized kernels taking advantage of Intel’s multi-buffer processing and Intel® AVX-512 instruction set.
-URL: https://github.com/intel/ipp-crypto
+URL: https://github.com/intel/cryptography-primitives
 Version: @IPPCP_VERSION@
 Libs: -L${libdir} -l@CRYPTO_MB_PC_LIB_NAME@
 Cflags: -I${includedir}

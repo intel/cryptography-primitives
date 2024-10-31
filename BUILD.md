@@ -62,7 +62,7 @@ To build the Intel® Cryptography Primitives Library on Linux\* OS, complete the
 1. Clone the source code from GitHub\* as follows:
 
     ``` bash
-    git clone --recursive https://github.com/intel/ipp-crypto
+    git clone --recursive https://github.com/intel/cryptography-primitives
     ```
 
 2. Set the environment for one of the supported C/C++ compilers.
@@ -113,7 +113,7 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
 1. Clone the source code from GitHub\* as follows:
 
     ``` bash
-    git clone --recursive https://github.com/intel/ipp-crypto
+    git clone --recursive https://github.com/intel/cryptography-primitives
     ```
 
 2. Set the environment variables for one of the supported C/C++ compilers.
@@ -161,7 +161,7 @@ To build the Intel® Cryptography Primitives Library on macOS\*, complete the fo
 1. Clone the source code from GitHub\* as follows:
 
     ``` bash
-    git clone --recursive https://github.com/intel/ipp-crypto
+    git clone --recursive https://github.com/intel/cryptography-primitives
     ```
 
 2. Set the environment variables for one of the supported C/C++ compilers.

@@ -19,7 +19,7 @@ The deprecated API means it is obsolete and will be removed in one of future Int
 
 The code paths n8/s8 (Intel® SSSE3) and g9/e9 (Intel® AVX) are deprecated and removed from the merged build of Intel® Cryptography Primitives Library, lower optimizations are used instead. 1cpu headers are still available for all code paths. These branches can also be built as 1cpu libraries if specified in the platform list, e.g. `-DMERGED_BLD:BOOL=off -DPLATFORM_LIST=s8;e9`.
 
-## Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2020 Update1 (branch [ipp-crypto_2020_update1](https://github.com/intel/ipp-crypto/tree/ipp-crypto_2020_update1))
+## Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2020 Update1 (branch [ipp-crypto_2020_update1](https://github.com/intel/cryptography-primitives/tree/ipp-crypto_2020_update1))
 
 ### Hash Functionality
 

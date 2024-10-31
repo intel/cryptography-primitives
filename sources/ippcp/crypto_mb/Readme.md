@@ -115,7 +115,7 @@ You can find the installed files in:
 1. Clone the repository from GitHub\* as follows:
 
    ``` bash
-   git clone --recursive https://github.com/intel/ipp-crypto
+   git clone --recursive https://github.com/intel/cryptography-primitives
    ```
    and navigate to the `sources/ippcp/crypto_mb` folder.
 2. Set the environment variables for one of the supported C/C++ compilers.
