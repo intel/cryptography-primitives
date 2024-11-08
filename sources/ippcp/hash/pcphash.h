@@ -211,19 +211,26 @@ __IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
    IPP_OWN_DECL (void, UpdateSHA1, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #define UpdateSHA256 OWNAPI(UpdateSHA256)
    IPP_OWN_DECL (void, UpdateSHA256, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+
 #define UpdateSHA512 OWNAPI(UpdateSHA512)
    IPP_OWN_DECL (void, UpdateSHA512, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#if (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_) || (_SHA512_ENABLING_ == _FEATURE_ON_)
+   #define UpdateSHA512ni OWNAPI(UpdateSHA512ni)
+      IPP_OWN_DECL (void, UpdateSHA512ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#endif
+
 #define UpdateMD5    OWNAPI(UpdateMD5)
    IPP_OWN_DECL (void, UpdateMD5, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #define UpdateSM3    OWNAPI(UpdateSM3)
    IPP_OWN_DECL (void, UpdateSM3, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 
 #if (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_) || (_SHA_NI_ENABLING_ == _FEATURE_ON_)
-#define UpdateSHA1ni   OWNAPI(UpdateSHA1ni)
-   IPP_OWN_DECL (void, UpdateSHA1ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
-#define UpdateSHA256ni OWNAPI(UpdateSHA256ni)
-   IPP_OWN_DECL (void, UpdateSHA256ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+   #define UpdateSHA1ni   OWNAPI(UpdateSHA1ni)
+      IPP_OWN_DECL (void, UpdateSHA1ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+   #define UpdateSHA256ni OWNAPI(UpdateSHA256ni)
+      IPP_OWN_DECL (void, UpdateSHA256ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #endif
+
 #define UpdateSM3ni    OWNAPI(UpdateSM3ni)
    IPP_OWN_DECL (void, UpdateSM3ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 

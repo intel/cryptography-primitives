@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2002 Intel Corporation
+* Copyright (C) 2024 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@
 //
 //  Purpose:
 //     Cryptography Primitive.
-//     Digesting message according to SHA256
+//     SHA512 message digest
 //
 //  Contents:
-//        ippsHashMethod_SHA256_TT()
+//        ippsHashMethod_SHA512_NI()
 //
 */
 
@@ -30,44 +30,39 @@
 #include "hash/pcphash.h"
 #include "hash/pcphash_rmf.h"
 #include "pcptool.h"
-#include "hash/sha256/pcpsha256stuff.h"
+#include "hash/sha512/pcpsha512stuff.h"
 
 /*F*
-//    Name: ippsHashMethod_SHA256_TT
+//    Name: ippsHashMethod_SHA512_NI
 //
-// Purpose: Return SHA256 method
-//          (using the Intel® Secure Hash Algorithm - New Instructions (Intel® SHA-NI) instructions set
-//             if it is available at run time)
+// Purpose: Return SHA512 method.
 //
 // Returns:
-//          Pointer to SHA256 hash-method
-//          (using the Intel® SHA-NI instructions set
-//             if it is available at run time)
+//          Pointer to SHA512 hash-method.
 //
 *F*/
 
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA256_TT, (void) )
+IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA512_NI, (void) )
 {
+#if (_SHA512_ENABLING_==_FEATURE_TICKTOCK_ || _SHA512_ENABLING_==_FEATURE_ON_)
    static IppsHashMethod method = {
-      ippHashAlg_SHA256,
-      IPP_SHA256_DIGEST_BITSIZE/8,
-      MBS_SHA256,
-      MLR_SHA256,
+      ippHashAlg_SHA512,
+      IPP_SHA512_DIGEST_BITSIZE/8,
+      MBS_SHA512,
+      MLR_SHA512,
       0,
       0,
       0,
       0
    };
 
-   method.hashInit   = sha256_hashInit;
-   method.hashUpdate = sha256_hashUpdate;
-   method.hashOctStr = sha256_hashOctString;
-   method.msgLenRep  = sha256_msgRep;
-
-#if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
-   if(IsFeatureEnabled(ippCPUID_SHA))
-      method.hashUpdate = sha256_ni_hashUpdate;
-#endif
+   method.hashInit   = sha512_hashInit;
+   method.hashUpdate = sha512_hashUpdate_ni;
+   method.hashOctStr = sha512_hashOctString;
+   method.msgLenRep  = sha512_msgRep;
 
    return &method;
+#else
+   return NULL;
+#endif
 }

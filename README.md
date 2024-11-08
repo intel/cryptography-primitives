@@ -1,6 +1,6 @@
 # Intel® Cryptography Primitives Library
 
-[Build Instructions](./BUILD.md) | [Contributing Guide](#how-to-contribute) | [Documentation](#documentation) | [Get Help](#get-help) | [Intel IPP Product Page](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ipp.html)
+[Build Instructions](./BUILD.md) | [Contributing Guide](#how-to-contribute) | [Documentation](#documentation) | [Get Help](./SUPPORT.md) | [Intel IPP Product Page](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ipp.html)
 
 Intel® Cryptography Primitives Library is a secure, fast and lightweight library of building blocks for cryptography, highly-optimized for various Intel® CPUs.
 
@@ -73,10 +73,11 @@ See [Contributing](./CONTRIBUTING.md) document for details about contribution pr
 ### License
 Intel® Cryptography Primitives Library is licensed under Apache License, Version 2.0. By contributing to the project, you agree to the license and copyright terms therein and release your contribution under these terms.
 
-## Certification
+## Latest Certification
 
-Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.10 release is validated for FIPS-140-3 (Security Requirements for Cryptographic Modules) compliance and has the following CAVP (Cryptographic Algorithm Validation Program) certificates:
+Intel® Cryptography Primitives Library 1.0.0 release is validated for FIPS-140-3 (Security Requirements for Cryptographic Modules) compliance and has the following CAVP (Cryptographic Algorithm Validation Program) certificates:
 
-- [Intel® Crypto Multi-buffer Library](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=17987)
-- [Intel® Cryptography Primitives Library optimized for Intel® AVX2 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=17988)
-- [Intel® Cryptography Primitives Library optimized for Intel® AVX512 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=17989)
+- [Intel® Cryptography Primitives Library optimized for Intel® AVX512 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38661)
+- [Intel® Cryptography Primitives Library optimized for Intel® AVX2 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38659)
+- [Intel® Crypto Multi-buffer Library optimized for Intel® AVX512 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38660)
+- [Intel® Crypto Multi-buffer Library optimized for Intel® AVX2 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38658)

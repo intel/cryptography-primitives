@@ -96,6 +96,18 @@
 #endif
 
 /*
+// if there is no outside assignment
+// set _SHA512_ENABLING_ based on CPU specification
+*/
+#if !defined(_SHA512_ENABLING_)
+   #if (_IPP32E >= _IPP32E_L9)
+      #define _SHA512_ENABLING_  _FEATURE_TICKTOCK_
+   #else
+      #define _SHA512_ENABLING_  _FEATURE_OFF_
+   #endif
+#endif
+
+/*
 // set/reset _ADCOX_NI_ENABLING_
 */
 #if (_IPP32E>=_IPP32E_L9)

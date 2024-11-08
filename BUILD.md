@@ -10,13 +10,14 @@
 - [Building Intel® Cryptography Primitives Library on macOS\*](#building-intel-cryptography-primitives-library-on-macos)
 - [CMake Build Options](#cmake-build-options)
     - [Common for all operating systems](#common-for-all-operating-systems)
-    - [Windows\* OS](#windows-os)
-    - [Linux\* OS](#linux-os)
+    - [Windows\* OS](#windows-os-1)
+    - [Linux\* OS](#linux-os-1)
 - [CMake Commands FAQ](#cmake-commands-faq)
-    - [How to build a 32-bit library?](#how-to-build-a-32-bit-library)
     - [How to build a 64-bit generic library without any CPU-specific optimizations?](#how-to-build-a-64-bit-generic-library-without-any-cpu-specific-optimizations)
     - [How to build two libraries with optimizations for Intel® Advanced Vector Extensions 2 and Intel® Advanced Vector Extensions 512 instruction sets?](#how-to-build-two-libraries-with-optimizations-for-intel-advanced-vector-extensions-2-and-intel-advanced-vector-extensions-512-instruction-sets)
     - [How to build a library to work in a kernel space?](#how-to-build-a-library-to-work-in-a-kernel-space)
+    - [How to specify path to OpenSSL*](#how-to-specify-path-to-openssl)
+    - [How to run Intel® Cryptography Primitives Library with clang-tidy?](#how-to-run-intel-cryptography-primitives-library-with-clang-tidy)
 - [Incorporating Intel® Cryptography Primitives Library sources into custom build system](#incorporating-intel-cryptography-primitives-library-sources-into-custom-build-system)
 
 
@@ -283,7 +284,12 @@ To build the Intel® Cryptography Primitives Library on macOS\*, complete the fo
 `cmake CMakeLists.txt -B_build -DARCH=intel64 -DNONPIC_LIB:BOOL=on`
 
 ### How to specify path to OpenSSL\*
+
 `cmake CMakeLists.txt -B_build -DARCH=intel64 -DOPENSSL_INCLUDE_DIR=/path/to/openssl/include -DOPENSSL_LIBRARIES=/path/to/openssl/lib -DOPENSSL_ROOT_DIR=/path/to/openssl`
+
+### How to run Intel® Cryptography Primitives Library with clang-tidy?
+
+`CC=clang CXX=clang++ cmake CMakeLists.txt -B_build -DARCH=intel64 -DCRYPTO_USE_CLANG_TIDY:BOOL=on`
 
 ## Incorporating Intel® Cryptography Primitives Library sources into custom build system
 
@@ -321,7 +327,3 @@ endif()
 #     `IPPCRYPTO_INCLUDE_DIRS` - path to Intel® Cryptography Primitives Library headers
 #     `IPPCRYPTO_ROOT_DIR` - library root dir (a folder with 'include' and 'lib' directories)
 ```
-
-### How to run Intel® IPP Cryptography with clang-tidy?
-
-`CC=clang CXX=clang++ cmake CMakeLists.txt -B_build -DARCH=intel64 -DCRYPTO_USE_CLANG_TIDY:BOOL=on`

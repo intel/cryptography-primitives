@@ -29,7 +29,7 @@ Existing automation guarantees regular synchronization of repositories.
 </pre>
 
 ## License
-Intel® Cryptography Primitives Library is licensed under the terms in LICENSE <https://github.com/intel/cryptography-primitives/blob/develop/LICENSE>. By contributing to the project, you agree to the license and copyright terms therein and release your contribution under these terms.
+Intel® Cryptography Primitives Library is licensed under the terms in [LICENSE](./LICENSE). By contributing to the project, you agree to the license and copyright terms therein and release your contribution under these terms.
 
 ## Developer Certification of Origin (DCO)
 We encourage you to use Signed-off-by feature to comply with [Developer Certification of Origin (DCO)](https://developercertificate.org/).  

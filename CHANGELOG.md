@@ -2,6 +2,9 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 1.1.0
+- Added IPPCP SHA384, SHA512, SHA512/224, SHA512/256 hash algorithm optimizations with the new SHA512 instructions for Lunar Lake and Arrow Lake CPUs.
+
 ## Intel(R) Cryptography Primitives Library 1.0.0
 - Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) was renamed to Intel(R) Cryptography Primitives Library.
 - Added IPPCP SM3 hash algorithm optimization with the new SM3 instructions for Lunar Lake and Arrow Lake CPUs.

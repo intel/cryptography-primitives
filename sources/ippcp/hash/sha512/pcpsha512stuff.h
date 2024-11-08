@@ -113,6 +113,12 @@ IPP_OWN_DEFN (static void, sha512_hashUpdate, (void* pHash, const Ipp8u* pMsg, i
 {
    UpdateSHA512(pHash, pMsg, msgLen, sha512_cnt);
 }
+#if (_IPP32E >= _IPP32E_L9)
+   IPP_OWN_DEFN (static void, sha512_hashUpdate_ni, (void* pHash, const Ipp8u* pMsg, int msgLen))
+   {
+      UpdateSHA512ni(pHash, pMsg, msgLen, sha512_cnt);
+   }
+#endif
 
 /* convert hash into big endian */
 IPP_OWN_DEFN (static void, sha512_hashOctString, (Ipp8u* pMD, void* pHashVal))
@@ -192,7 +198,7 @@ IPP_OWN_DEFN (static void, cpFinalizeSHA512, (DigestSHA512 pHash, const Ipp8u* i
    ((Ipp64u*)(buffer+bufferLen))[-2] = ENDIANNESS64(lenHi);
    ((Ipp64u*)(buffer+bufferLen))[-1] = ENDIANNESS64(lenLo);
 
-   /* copmplete hash computation */
+   /* complete hash computation */
    UpdateSHA512(pHash, buffer, bufferLen, sha512_cnt);
 }
 

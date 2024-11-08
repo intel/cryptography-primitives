@@ -35,7 +35,7 @@
 ;;
 ;; assignments
 ;;
-%xdefine hA  eax        ;; hash values into GPU registers
+%xdefine hA  eax        ;; hash values into GPR registers
 %xdefine F  ebp
 %xdefine hB  ebx
 %xdefine hC  ecx

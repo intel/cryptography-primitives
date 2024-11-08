@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2022 Intel Corporation
+* Copyright (C) 2024 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 //     SHA512/224 message digest
 //
 //  Contents:
-//        ippsHashStateMethodSet_SHA512_224()
+//        ippsHashMethod_SHA512_224_NI()
 //
 */
 
@@ -33,31 +33,36 @@
 #include "hash/sha512/pcpsha512stuff.h"
 
 /*F*
-//    Name: ippsHashStateMethodSet_SHA512_224
+//    Name: ippsHashMethod_SHA512_224_NI
 //
-// Purpose: Return SHA512/224 method inside the hash state.
+// Purpose: Return SHA512/224 method.
 //
-// Returns:                Reason:
-//    ippStsNullPtrErr        pMethod == NULL or pState == NULL
-//    ippStsNoErr             no errors
+// Returns:
+//          Pointer to SHA512/224 hash-method.
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashStateMethodSet_SHA512_224, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA512_224_NI, (void) )
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pMethod);
+#if (_SHA512_ENABLING_==_FEATURE_TICKTOCK_ || _SHA512_ENABLING_==_FEATURE_ON_)
+   static IppsHashMethod method = {
+      ippHashAlg_SHA512_224,
+      IPP_SHA224_DIGEST_BITSIZE/8,
+      MBS_SHA512,
+      MLR_SHA512,
+      0,
+      0,
+      0,
+      0
+   };
 
-   HASH_METHOD(pState) = pMethod;
+   method.hashInit   = sha512_224_hashInit;
+   method.hashUpdate = sha512_hashUpdate_ni;
+   method.hashOctStr = sha512_224_hashOctString;
+   method.msgLenRep  = sha512_msgRep;
 
-   pMethod->hashAlgId     = ippHashAlg_SHA512_224;
-   pMethod->hashLen       = IPP_SHA224_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA512;
-   pMethod->msgLenRepSize = MLR_SHA512;
-   pMethod->hashInit      = sha512_224_hashInit;
-   pMethod->hashUpdate    = sha512_hashUpdate;
-   pMethod->hashOctStr    = sha512_224_hashOctString;
-   pMethod->msgLenRep     = sha512_msgRep;
-
-   return ippStsNoErr;
+   return &method;
+#else
+   return NULL;
+#endif
 }

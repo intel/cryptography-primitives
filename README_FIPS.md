@@ -35,7 +35,7 @@ Validation Program (CAVP) testing and certification done but don't have full
 Cryptographic Module Validation Program certificate as the context of the usage
 of Intel® Cryptography Primitives Library's high-performant primitives depends on a more high-level application.
 
-For the results of CAVP testing please refer to [Certification](./README.md#Certification) chapter.
+For the results of CAVP testing please refer to [Latest Certification](./README.md#latest-certification) chapter.
 
 Intel® Cryptography Primitives Library may be built in FIPS-mode with IPPCP_FIPS_MODE=on
 configuration for ippcp and MBX_FIPS_MODE=on for crypto_MB (see details in [Build section](#build)).

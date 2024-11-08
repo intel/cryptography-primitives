@@ -18,7 +18,7 @@
 // 
 //  Purpose:
 //     Cryptography Primitive.
-//     SHA512 message digest
+//     SHA384 message digest
 // 
 //  Contents:
 //        ippsHashMethod_SHA384()

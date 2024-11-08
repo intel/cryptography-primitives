@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2022 Intel Corporation
+* Copyright (C) 2024 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 //     SHA512/256 message digest
 //
 //  Contents:
-//        ippsHashStateMethodSet_SHA512_256()
+//        ippsHashMethodSet_SHA512_256_NI()
 //
 */
 
@@ -33,31 +33,44 @@
 #include "hash/sha512/pcpsha512stuff.h"
 
 /*F*
-//    Name: ippsHashStateMethodSet_SHA512_256
+//    Name: ippsHashMethodSet_SHA512_256_NI
 //
-// Purpose: Setup SHA512/256 method inside the hash state.
+// Purpose: Setup SHA512/256 method
+// (using the Intel® SHA512 instruction set).
 //
 // Returns:                Reason:
-//    ippStsNullPtrErr        pMethod == NULL or pState == NULL
-//    ippStsNoErr             no errors
+//    ippStsNullPtrErr           pMethod == NULL
+//    ippStsNotSupportedModeErr  mode disabled by configuration
+//    ippStsNoErr                no errors
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashStateMethodSet_SHA512_256, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPFUN( IppStatus, ippsHashMethodSet_SHA512_256_NI, (IppsHashMethod* pMethod) )
 {
    /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pMethod);
+   IPP_BAD_PTR1_RET(pMethod);
 
-   HASH_METHOD(pState) = pMethod;
-
+#if (_SHA512_ENABLING_==_FEATURE_TICKTOCK_ || _SHA512_ENABLING_==_FEATURE_ON_)
    pMethod->hashAlgId     = ippHashAlg_SHA512_256;
    pMethod->hashLen       = IPP_SHA256_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_SHA512;
    pMethod->msgLenRepSize = MLR_SHA512;
    pMethod->hashInit      = sha512_256_hashInit;
-   pMethod->hashUpdate    = sha512_hashUpdate;
+   pMethod->hashUpdate    = sha512_hashUpdate_ni;
    pMethod->hashOctStr    = sha512_256_hashOctString;
    pMethod->msgLenRep     = sha512_msgRep;
 
    return ippStsNoErr;
+#else
+   pMethod->hashAlgId     = ippHashAlg_Unknown;
+   pMethod->hashLen       = 0;
+   pMethod->msgBlkSize    = 0;
+   pMethod->msgLenRepSize = 0;
+   pMethod->hashInit      = 0;
+   pMethod->hashUpdate    = 0;
+   pMethod->hashOctStr    = 0;
+   pMethod->msgLenRep     = 0;
+
+   return ippStsNotSupportedModeErr;
+#endif
 }

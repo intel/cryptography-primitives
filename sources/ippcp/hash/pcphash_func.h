@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Internal Definitions and Internal Functions Prototypes
-// 
-// 
+//
+//
 */
 
 #if !defined(_PCP_HASH_FUNC_H)
@@ -39,68 +39,84 @@ static cpHashProc cpHashProcFunc[] = {
 
    #if defined(_ENABLE_ALG_SHA1_)
       #if(_SHA_NI_ENABLING_==_FEATURE_ON_)
-      UpdateSHA1ni,
+         UpdateSHA1ni,
       #else
-      UpdateSHA1,
+         UpdateSHA1,
       #endif
    #else
-   NULL,
+      NULL,
    #endif
 
    #if defined(_ENABLE_ALG_SHA256_)
       #if(_SHA_NI_ENABLING_==_FEATURE_ON_)
-      UpdateSHA256ni,
+         UpdateSHA256ni,
       #else
-      UpdateSHA256,
+         UpdateSHA256,
       #endif
    #else
-   NULL,
+      NULL,
    #endif
 
    #if defined(_ENABLE_ALG_SHA224_)
       #if(_SHA_NI_ENABLING_==_FEATURE_ON_)
-      UpdateSHA256ni,
+         UpdateSHA256ni,
       #else
-      UpdateSHA256,
+         UpdateSHA256,
       #endif
    #else
-   NULL,
+      NULL,
    #endif
 
    #if defined(_ENABLE_ALG_SHA512_)
-   UpdateSHA512,
+      #if(_SHA512_ENABLING_==_FEATURE_ON_)
+         UpdateSHA512ni,
+      #else
+         UpdateSHA512,
+      #endif
    #else
-   NULL,
+      NULL,
    #endif
 
    #if defined(_ENABLE_ALG_SHA384_)
-   UpdateSHA512,
+      #if(_SHA512_ENABLING_==_FEATURE_ON_)
+         UpdateSHA512ni,
+      #else
+         UpdateSHA512,
+      #endif
    #else
-   NULL,
+      NULL,
    #endif
 
    #if defined(_ENABLE_ALG_MD5_)
-   UpdateMD5,
+      UpdateMD5,
    #else
-   NULL,
+      NULL,
    #endif
 
    #if defined(_ENABLE_ALG_SM3_)
-   UpdateSM3,
+      UpdateSM3,
    #else
-   NULL,
+      NULL,
    #endif
 
    #if defined(_ENABLE_ALG_SHA512_224_)
-   UpdateSHA512,
+      #if(_SHA512_ENABLING_==_FEATURE_ON_)
+         UpdateSHA512ni,
+      #else
+         UpdateSHA512,
+      #endif
    #else
-   NULL,
+      NULL,
    #endif
 
    #if defined(_ENABLE_ALG_SHA512_256_)
-   UpdateSHA512,
+      #if(_SHA512_ENABLING_==_FEATURE_ON_)
+         UpdateSHA512ni,
+      #else
+         UpdateSHA512,
+      #endif
    #else
-   NULL,
+      NULL,
    #endif
 };
 

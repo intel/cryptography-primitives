@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2002 Intel Corporation
+* Copyright (C) 2024 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
-//     SHA512/224 message digest
-//
+//     SHA384 message digest
+// 
 //  Contents:
-//        ippsHashMethodSet_SHA512_224()
+//        ippsHashMethod_SHA384_NI()
 //
 */
 
@@ -33,29 +33,36 @@
 #include "hash/sha512/pcpsha512stuff.h"
 
 /*F*
-//    Name: ippsHashMethodSet_SHA512_224
+//    Name: ippsHashMethod_SHA384_NI
 //
-// Purpose: Return SHA512/224 method.
+// Purpose: Return SHA384 method (using the Intel® SHA512 instruction set).
 //
-// Returns:                Reason:
-//    ippStsNullPtrErr        pMethod == NULL
-//    ippStsNoErr             no errors
+// Returns:
+//          Pointer to SHA384 hash-method.
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashMethodSet_SHA512_224, (IppsHashMethod* pMethod) )
+IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA384_NI, (void) )
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+#if (_SHA512_ENABLING_==_FEATURE_TICKTOCK_ || _SHA512_ENABLING_==_FEATURE_ON_)
+   static IppsHashMethod method = {
+      ippHashAlg_SHA384,
+      IPP_SHA384_DIGEST_BITSIZE/8,
+      MBS_SHA512,
+      MLR_SHA512,
+      0,
+      0,
+      0,
+      0
+   };
 
-   pMethod->hashAlgId     = ippHashAlg_SHA512_224;
-   pMethod->hashLen       = IPP_SHA224_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA512;
-   pMethod->msgLenRepSize = MLR_SHA512;
-   pMethod->hashInit      = sha512_224_hashInit;
-   pMethod->hashUpdate    = sha512_hashUpdate;
-   pMethod->hashOctStr    = sha512_224_hashOctString;
-   pMethod->msgLenRep     = sha512_msgRep;
+   method.hashInit   = sha512_384_hashInit;
+   method.hashUpdate = sha512_hashUpdate_ni;
+   method.hashOctStr = sha512_384_hashOctString;
+   method.msgLenRep  = sha512_msgRep;
 
-   return ippStsNoErr;
+   return &method;
+#else
+   return NULL;
+#endif
 }

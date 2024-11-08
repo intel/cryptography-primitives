@@ -34,7 +34,7 @@
 ;;
 ;; assignments
 ;;
-%xdefine hA  rax  ;; hash values into GPU registers
+%xdefine hA  rax  ;; hash values into GPR registers
 %xdefine hB  rbx
 %xdefine hC  rcx
 %xdefine hD  rdx
@@ -413,7 +413,7 @@ segment .text align=IPP_ALIGN_FACTOR
 align IPP_ALIGN_FACTOR
 IPPASM UpdateSHA512,PUBLIC
 %assign LOCAL_FRAME (sizeof(qword)*4 + sizeof(qword)*80*2)
-        USES_GPR rbx,rsi,rdi,rbp,rbx,r12,r13,r14,r15
+        USES_GPR rbx,rsi,rdi,rbp,r12,r13,r14,r15
         USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12
         COMP_ABI 4
 ;;
@@ -434,7 +434,7 @@ IPPASM UpdateSHA512,PUBLIC
 %assign _frame   _len+sizeof(qword)          ;; rsp before alignment
 %assign _dataW   _frame+sizeof(qword)        ;; W[t] values
 
-   mov      r15, rsp                ; store orifinal rsp
+   mov      r15, rsp                ; store original rsp
    and      rsp, -IPP_ALIGN_FACTOR  ; 32-byte aligned stack
 
    movsxd   r14, edx                ; input length in bytes

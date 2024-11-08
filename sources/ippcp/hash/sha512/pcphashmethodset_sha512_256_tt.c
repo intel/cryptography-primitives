@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2022 Intel Corporation
+* Copyright (C) 2024 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 //     SHA512/256 message digest
 //
 //  Contents:
-//        ippsHashStateMethodSet_SHA512_256()
+//        ippsHashMethodSet_SHA512_256_TT()
 //
 */
 
@@ -33,22 +33,21 @@
 #include "hash/sha512/pcpsha512stuff.h"
 
 /*F*
-//    Name: ippsHashStateMethodSet_SHA512_256
+//    Name: ippsHashMethodSet_SHA512_256_TT
 //
-// Purpose: Setup SHA512/256 method inside the hash state.
+// Purpose: Setup SHA512/256 method
+// (using the Intel® SHA512 instruction set if it is available at run time)
 //
 // Returns:                Reason:
-//    ippStsNullPtrErr        pMethod == NULL or pState == NULL
+//    ippStsNullPtrErr        pMethod == NULL
 //    ippStsNoErr             no errors
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashStateMethodSet_SHA512_256, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPFUN( IppStatus, ippsHashMethodSet_SHA512_256_TT, (IppsHashMethod* pMethod) )
 {
    /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pMethod);
-
-   HASH_METHOD(pState) = pMethod;
+   IPP_BAD_PTR1_RET(pMethod);
 
    pMethod->hashAlgId     = ippHashAlg_SHA512_256;
    pMethod->hashLen       = IPP_SHA256_DIGEST_BITSIZE/8;
@@ -58,6 +57,11 @@ IPPFUN( IppStatus, ippsHashStateMethodSet_SHA512_256, (IppsHashState_rmf* pState
    pMethod->hashUpdate    = sha512_hashUpdate;
    pMethod->hashOctStr    = sha512_256_hashOctString;
    pMethod->msgLenRep     = sha512_msgRep;
+
+#if (_SHA512_ENABLING_==_FEATURE_TICKTOCK_ || _SHA512_ENABLING_==_FEATURE_ON_)
+   if(IsFeatureEnabled(ippCPUID_AVX2SHA512))
+      pMethod->hashUpdate = sha512_hashUpdate_ni;
+#endif
 
    return ippStsNoErr;
 }
