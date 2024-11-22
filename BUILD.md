@@ -153,7 +153,7 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
 
 ## Building Intel® Cryptography Primitives Library on macOS\*
 
-> **NOTE:** Intel® Cryptography Primitives Library stopped macOS\* validation and maintenance based on the announcement in the [Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.9 release notes](https://www.intel.com/content/www/us/en/developer/articles/release-notes/release-notes-for-oneapi-integrated-performance-primitives.html#inpage-nav-3-1).\
+> **NOTE:** Intel® Cryptography Primitives Library stopped macOS\* validation and maintenance based on the announcement in the [Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.9 release notes](https://www.intel.com/content/www/us/en/developer/articles/release-notes/intel-ipp-previous-release-notes.html#inpage-nav-1-1).\
 The Intel® IPP Cryptography 2021.10 release is the last release validated on macOS\* 12.0.\
 For further macOS\* testing and maintenance we are relying on contributions from the community. For more details, see [Contributing Rules](./CONTRIBUTING.md).
 

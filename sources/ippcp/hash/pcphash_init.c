@@ -53,7 +53,7 @@ IPP_OWN_DEFN (int, cpInitHash, (IppsHashState* pCtx, IppHashAlgId algID))
       }
    #endif
 
-   #if (_IPP32E >= _IPP32E_L9)
+   #if (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
       /* update processing function if Intel® SHA512 instructions enabled */
       #if defined(_ENABLE_ALG_SHA512_) || defined(_ENABLE_ALG_SHA384_) || defined(_ENABLE_ALG_SHA512_224_) || defined(_ENABLE_ALG_SHA512_256_)
          if (((ippHashAlg_SHA512==algID) || (ippHashAlg_SHA384==algID) || (ippHashAlg_SHA512_224==algID) || (ippHashAlg_SHA512_256==algID)) && IsFeatureEnabled(ippCPUID_AVX2SHA512)) {

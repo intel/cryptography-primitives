@@ -117,9 +117,9 @@ flowchart LR
 
 The prefix before the function name ("m7_", "y8_", etc) is a naming convention for the function implementations that are included in the [library with dispatcher](#all-cpus-library). It refers to the CPU instruction set for which the function is optimized (for all available prefixes see the [table](#target-optimization-codes-in-function-names) below).
 
-The dispatcher is designed to add no performance overhead when the library is initialized, in other words, when CPU features are detected. You can initialize the library either explicitly in advance by calling the dedicated function [ippcpInit()](https://www.intel.com/content/www/us/en/docs/ipp-crypto/developer-reference/current/init.html) or it will be done implicitly during the first call of any function of the library.
+The dispatcher is designed to add no performance overhead when the library is initialized, in other words, when CPU features are detected. You can initialize the library either explicitly in advance by calling the dedicated function [ippcpInit()](https://www.intel.com/content/www/us/en/docs/crypto-primitives-library/developer-guide-reference/current/init.html) or it will be done implicitly during the first call of any function of the library.
 
-By default, the dispatcher chooses the most appropriate optimization for the current hardware, but it is possible to apply the user-chosen one using the [ippcpSetCpuFeatures()](https://www.intel.com/content/www/us/en/docs/ipp-crypto/developer-guide-oneapi/current/support-functions.html) function.
+By default, the dispatcher chooses the most appropriate optimization for the current hardware, but it is possible to apply the user-chosen one using the [ippcpSetCpuFeatures()](https://www.intel.com/content/www/us/en/docs/crypto-primitives-library/developer-guide-reference/current/support-functions.html) function.
 
 #### Target Optimization Codes in Function Names
 

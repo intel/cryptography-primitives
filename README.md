@@ -56,9 +56,8 @@ See [FIPS](./README_FIPS.md) document for details.
 - [Introduction to Intel® Cryptography Primitives Library](./OVERVIEW.md)
 - [Introduction to Crypto Multi-buffer Library](./sources/ippcp/crypto_mb/Readme.md)
 - [Intel® Cryptography Primitives Library Build Instructions](./BUILD.md)
-- [Intel® Integrated Performance Primitives Release Notes](https://www.intel.com/content/www/us/en/developer/articles/release-notes/release-notes-for-oneapi-integrated-performance-primitives.html)
-- [Developer Guide and Reference for Intel® Cryptography Primitives Library](https://www.intel.com/content/www/us/en/docs/ipp-crypto/developer-guide-reference/current/overview.htmll)
-- [Intel® Integrated Performance Primitives Documentation](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ipp-documentation.html)
+- [Intel® Cryptography Primitives Library Release Notes](https://www.intel.com/content/www/us/en/developer/articles/release-notes/cryptography-primitives-library.html)
+- [Developer Guide and Reference for Intel® Cryptography Primitives Library](https://www.intel.com/content/www/us/en/docs/crypto-primitives-library/developer-guide-reference/current/overview.html)
 
 ## Branches Description
 

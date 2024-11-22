@@ -113,7 +113,7 @@ IPP_OWN_DEFN (static void, sha512_hashUpdate, (void* pHash, const Ipp8u* pMsg, i
 {
    UpdateSHA512(pHash, pMsg, msgLen, sha512_cnt);
 }
-#if (_IPP32E >= _IPP32E_L9)
+#if (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
    IPP_OWN_DEFN (static void, sha512_hashUpdate_ni, (void* pHash, const Ipp8u* pMsg, int msgLen))
    {
       UpdateSHA512ni(pHash, pMsg, msgLen, sha512_cnt);

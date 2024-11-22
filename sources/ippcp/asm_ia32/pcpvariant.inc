@@ -87,6 +87,18 @@
 %endif
 
 ;;
+;; if there is no outside assignment
+;; set _SHA512_ENABLING_  based on CPU specification
+;;
+%ifndef _SHA512_ENABLING_
+   %if (_IPP >= _IPP_H9 )
+      %assign _SHA512_ENABLING_ _FEATURE_TICKTOCK_
+   %else
+      %assign _SHA512_ENABLING_ _FEATURE_OFF_
+   %endif
+%endif
+
+;;
 ;; select Hash algorithm
 ;;
 %ifndef _DISABLE_ALG_SHA1_
