@@ -22,7 +22,7 @@ include (GenerateExportHeader)
 
 set(TARGET_NAME ${LIB_NAME})
 
-#Set platform list
+# Set platform list (order is important for dispatcher generation!!!)
 if (NOT MERGED_BLD)
   if(${ARCH} MATCHES "ia32")
     set(BASE_PLATFORM_LIST px)
@@ -671,4 +671,9 @@ if ((NOT NO_CRYPTO_MB) AND ("${ARCH}" STREQUAL "intel64"))
     if(NOT "${IPPCP_INTERFACE_VERSION}" MATCHES "${MBX_INTERFACE_VERSION}")
       message(SEND_ERROR  "IPPCP_INTERFACE_VERSION and MBX_INTERFACE_VERSION don't match")
     endif()
+endif()
+
+# Forward crypto_mb's list of platforms to the parent scope
+if(NOT MBX_MERGED_BLD)
+  set(MBX_PLATFORM_LIST ${MBX_PLATFORM_LIST} PARENT_SCOPE)
 endif()

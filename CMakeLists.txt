@@ -91,6 +91,10 @@ endif()
 if("${MERGED_BLD}" STREQUAL "")
   set(MERGED_BLD ON)
 endif()
+# Crypto_mb merged build flag is set same as IPPCP by default
+if(MERGED_BLD)
+  set(MBX_MERGED_BLD ON)
+endif()
 
 # Set default installation directories
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -243,7 +247,6 @@ if (NOT (CRYPTO_USE_CLANG_TIDY))
     add_subdirectory(perf_tests)
   endif()
 endif()
-
 
 if(BUILD_EXAMPLES)
   # This helps to organize examples projects structure in IDE by folders

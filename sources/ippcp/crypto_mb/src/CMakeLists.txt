@@ -87,7 +87,10 @@ set(MBX_VERSION_FILE ${CRYPTO_MB_SOURCES_DIR}/common/ifma_version.c)
 
 # Disable compiler optimizations for this file, as compiler adds some ISA specific code
 # which is unwanted for functions that are aimed to work on any CPU
-list(REMOVE_ITEM CRYPTO_MB_SOURCES_ORIGINAL ${CPU_FEATURES_FILE})
+if (MBX_MERGED_BLD)
+    list(REMOVE_ITEM CRYPTO_MB_SOURCES_ORIGINAL ${CPU_FEATURES_FILE})
+endif()
+
 if("${OS_STRING}" STREQUAL "windows")
     set_source_files_properties(${CPU_FEATURES_FILE} PROPERTIES  COMPILE_FLAGS  "${CMAKE_C_FLAGS_SECURITY} /Od")
 else()
@@ -96,6 +99,14 @@ endif()
 
 if(BN_OPENSSL_PATCH) # Off by default
     list(APPEND AVX512_LIBRARY_DEFINES "BN_OPENSSL_PATCH")
+endif()
+
+if(MBX_FIPS_MODE)
+    set(FIPS_SELFTESTS ${FIPS_CERT_SOURCES})
+    set_source_files_properties(${FIPS_CERT_SOURCES} PROPERTIES COMPILE_DEFINITIONS "MBX_FIPS_MODE")
+    set_source_files_properties(${FIPS_CERT_SOURCES} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS_SECURITY}")
+else()
+    set(FIPS_SELFTESTS "")
 endif()
 
 set(CRYPTO_MB_API ${MB_PUBLIC_HEADERS})
@@ -141,114 +152,146 @@ foreach(opt ${MBX_PLATFORM_LIST})
     set(OPT_FLAGS_${opt} ${${opt}_opt})
 
     # Put a specific define into the library if Intel® AVX-IFMA instructions are supported by the compiler
-    set(MBX_LIBRARY_DEFINES "${MBX_AVXIFMA_SUPPORT_DEFINE}" "${${opt}_def}")
-
+    set(MBX_LIBRARY_DEFINES "${MBX_AVXIFMA_SUPPORT_DEFINE}" "${${opt}_def}" "$<$<BOOL:${MBX_MERGED_BLD}>:_MBX_MERGED_BLD>")
     set_source_files_properties(${MBX_C_SOURCES_${opt}} PROPERTIES COMPILE_DEFINITIONS  "${MBX_LIBRARY_DEFINES}"
                                                                    COMPILE_FLAGS        "${OPT_FLAGS_${opt}} ${CMAKE_C_FLAGS_SECURITY}")
 endforeach()
 
 # build object libraries
 set(MBX_TARGET_NAME ${MB_STATIC_LIB_TARGET})
+if(NOT MBX_MERGED_BLD)
+  set(MBX_LIB_STATIC "")
+  set(MBX_LIB_DYNAMIC "")
+endif(NOT MBX_MERGED_BLD)
 
 foreach(opt ${MBX_PLATFORM_LIST})
     set(MBX_ST_ITER ${MBX_TARGET_NAME}_${opt})
-    add_library(${MBX_ST_ITER} OBJECT ${CRYPTO_MB_HEADERS} ${MBX_C_SOURCES_${opt}})
-    set(MBX_MERGED_DEPENDENCY ${MBX_MERGED_DEPENDENCY} $<TARGET_OBJECTS:${MBX_ST_ITER}>)
+    if(MBX_MERGED_BLD)
+        add_library(${MBX_ST_ITER} OBJECT ${CRYPTO_MB_HEADERS} ${MBX_C_SOURCES_${opt}})
+        set(MBX_MERGED_DEPENDENCY ${MBX_MERGED_DEPENDENCY} $<TARGET_OBJECTS:${MBX_ST_ITER}>)
+    else()
+        add_library(${MBX_ST_ITER} STATIC ${CRYPTO_MB_HEADERS} ${MBX_C_SOURCES_${opt}} ${FIPS_SELFTESTS})
+    endif()
     list(APPEND MBX_LIB_STATIC ${MBX_ST_ITER})
 endforeach()
 
-set(DISPATCHER ${CMAKE_BINARY_DIR}/dispatcher/crypto_mb)
-file(MAKE_DIRECTORY ${DISPATCHER})
-set(DISPATCHER_GENERATOR ${CRYPTO_MB_DISPATCHER_DIR}/gen_disp_crypto_mb.py)
-foreach(incl ${CRYPTO_MB_API})
-    execute_process(COMMAND ${Python_EXECUTABLE} ${DISPATCHER_GENERATOR} -i ${incl} -o ${DISPATCHER} -l "${MBX_PLATFORM_LIST}" -c ${CMAKE_C_COMPILER_ID}
-        RESULT_VARIABLE result
+if (MBX_MERGED_BLD)
+    set(DISPATCHER ${CMAKE_BINARY_DIR}/dispatcher/crypto_mb)
+    file(MAKE_DIRECTORY ${DISPATCHER})
+    set(DISPATCHER_GENERATOR ${CRYPTO_MB_DISPATCHER_DIR}/gen_disp_crypto_mb.py)
+    foreach(incl ${CRYPTO_MB_API})
+        execute_process(COMMAND ${Python_EXECUTABLE} ${DISPATCHER_GENERATOR} -i ${incl} -o ${DISPATCHER} -l "${MBX_PLATFORM_LIST}" -c ${CMAKE_C_COMPILER_ID}
+            RESULT_VARIABLE result
+            )
+    endforeach()
+
+    file(GLOB DISPATCHER_HEADERS
+        ${CMAKE_BINARY_DIR}/dispatcher/crypto_mb/*.h
         )
-endforeach()
 
-file(GLOB DISPATCHER_HEADERS
-${CMAKE_BINARY_DIR}/dispatcher/crypto_mb/*.h
-)
+    file(GLOB DISPATCHER_C_SOURCES
+        ${CMAKE_BINARY_DIR}/dispatcher/crypto_mb/*.c
+        )
 
-file(GLOB DISPATCHER_C_SOURCES
-${CMAKE_BINARY_DIR}/dispatcher/crypto_mb/*.c
-)
-
-if(MBX_FIPS_MODE)
-    set_source_files_properties(${FIPS_CERT_SOURCES} PROPERTIES COMPILE_DEFINITIONS "MBX_FIPS_MODE")
-    set(DISPATCHER_C_SOURCES ${DISPATCHER_C_SOURCES} ${FIPS_CERT_SOURCES})
+    set_source_files_properties(${DISPATCHER_C_SOURCES} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS_SECURITY}")
 endif()
 
 set(MB_LIB_TARGET ${MB_DYN_LIB_TARGET})
 
-set_source_files_properties(${DISPATCHER_C_SOURCES} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS_SECURITY}")
+# Install destination
+if (MB_STANDALONE)
+    set(MBX_LIB_INSTALL_DIR "lib")
+    set(MBX_PRIVATE_HEADERS_DIR "tools/staticlib/crypto_mb")
+else()
+    set(MBX_LIB_INSTALL_DIR "lib/intel64")
+    set(MBX_PRIVATE_HEADERS_DIR "tools/intel64/staticlib/crypto_mb")
+endif()
 
 # Static library
-if(WIN32)
-    add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE} ${WIN_RESOURCE_FILE})
-else()
-    add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE})
-endif()
+if (MBX_MERGED_BLD)
+    if(WIN32)
+        add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${FIPS_SELFTESTS} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE} ${WIN_RESOURCE_FILE})
+    else()
+        add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${FIPS_SELFTESTS} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE})
+    endif()
 
-set_target_properties(${MB_STATIC_LIB_TARGET} PROPERTIES C_VISIBILITY_PRESET hidden
-                                                        VISIBILITY_INLINES_HIDDEN ON
-                                                        PUBLIC_HEADER "${MB_PUBLIC_HEADERS}"
-                                                        PRIVATE_HEADER "${MBX_ONE_CPU_HEADERS}")
+    set_target_properties(${MB_STATIC_LIB_TARGET} PROPERTIES C_VISIBILITY_PRESET hidden
+                                                            VISIBILITY_INLINES_HIDDEN ON
+                                                            PUBLIC_HEADER "${MB_PUBLIC_HEADERS}"
+                                                            PRIVATE_HEADER "${MBX_ONE_CPU_HEADERS}")
 
-if(WIN32)
-    set_target_properties(${MB_STATIC_LIB_TARGET} PROPERTIES OUTPUT_NAME "${MB_LIB_TARGET}mt")
-else()
-    set_target_properties(${MB_STATIC_LIB_TARGET} PROPERTIES OUTPUT_NAME "${MB_LIB_TARGET}")
-endif()
+    if(WIN32)
+        set_target_properties(${MB_STATIC_LIB_TARGET} PROPERTIES OUTPUT_NAME "${MB_LIB_TARGET}mt")
+    else()
+        set_target_properties(${MB_STATIC_LIB_TARGET} PROPERTIES OUTPUT_NAME "${MB_LIB_TARGET}")
+    endif()
 
-target_link_libraries(${MB_STATIC_LIB_TARGET} OpenSSL::Crypto)
+    target_link_libraries(${MB_STATIC_LIB_TARGET} OpenSSL::Crypto)
 
-# Static lib installation
-if(MB_STANDALONE)
+    # Static lib installation
     install(TARGETS ${MB_STATIC_LIB_TARGET}
-            ARCHIVE DESTINATION "lib"
+            ARCHIVE DESTINATION ${MBX_LIB_INSTALL_DIR}
             PUBLIC_HEADER DESTINATION "include/crypto_mb"
-            PRIVATE_HEADER DESTINATION "tools/staticlib/crypto_mb")
-else()
-    install(TARGETS ${MB_STATIC_LIB_TARGET}
-            ARCHIVE DESTINATION "lib/intel64"
-            PUBLIC_HEADER DESTINATION "include/crypto_mb"
-            PRIVATE_HEADER DESTINATION "tools/intel64/staticlib/crypto_mb")
-endif()
+            PRIVATE_HEADER DESTINATION ${MBX_PRIVATE_HEADERS_DIR})
 
+else() # 1CPU build
+    foreach(opt ${MBX_PLATFORM_LIST})
+        set(MBX_ST_ITER ${MBX_TARGET_NAME}_${opt})
+        set_target_properties(${MBX_ST_ITER} PROPERTIES PUBLIC_HEADER "${MBX_PUBLIC_HEADERS}")
+        target_link_libraries(${MBX_ST_ITER} OpenSSL::Crypto)
+        install(TARGETS ${MBX_ST_ITER}
+                        ARCHIVE DESTINATION ${MBX_LIB_INSTALL_DIR}
+                        PUBLIC_HEADER DESTINATION "include/crypto_mb"
+                        PRIVATE_HEADER DESTINATION ${MBX_PRIVATE_HEADERS_DIR})
+        list(APPEND MBX_LIB_STATIC ${MBX_ST_ITER})
+    endforeach()
+endif()
 
 # Create shared library
 if(DYNAMIC_LIB OR MB_STANDALONE)
+    if (MBX_MERGED_BLD)
+        add_library(${MB_DYN_LIB_TARGET} SHARED common/emptyfile.c common/crypto_mb_ver.rc) # emptyfile.c to suppress the cmake warning
 
-    add_library(${MB_DYN_LIB_TARGET} SHARED common/emptyfile.c common/crypto_mb_ver.rc) # emptyfile.c to suppress the cmake warning
+        set_target_properties(${MB_DYN_LIB_TARGET} PROPERTIES C_VISIBILITY_PRESET hidden
+                                                            VISIBILITY_INLINES_HIDDEN ON
+                                                            LINK_FLAGS "${LINK_FLAGS_DYNAMIC} ${LINK_FLAG_SECURITY}"
+                                                            PUBLIC_HEADER "${MB_PUBLIC_HEADERS}"
+                                                            PRIVATE_HEADER "${MBX_ONE_CPU_HEADERS}"
+                                                            )
 
-    set_target_properties(${MB_DYN_LIB_TARGET} PROPERTIES C_VISIBILITY_PRESET hidden
-                                                          VISIBILITY_INLINES_HIDDEN ON
-                                                          LINK_FLAGS "${LINK_FLAGS_DYNAMIC} ${LINK_FLAG_SECURITY}"
-                                                          PUBLIC_HEADER "${MB_PUBLIC_HEADERS}"
-                                                          PRIVATE_HEADER "${MBX_ONE_CPU_HEADERS}"
-                                                          )
+        if(UNIX)
+            set_target_properties(${MB_DYN_LIB_TARGET} PROPERTIES  VERSION   ${MBX_INTERFACE_VERSION}
+                                                                SOVERSION ${MBX_INTERFACE_VERSION_MAJOR})
+        endif()
 
-    if(UNIX)
-        set_target_properties(${MB_DYN_LIB_TARGET} PROPERTIES  VERSION   ${MBX_INTERFACE_VERSION}
-                                                               SOVERSION ${MBX_INTERFACE_VERSION_MAJOR})
+        target_link_libraries(${MB_DYN_LIB_TARGET} ${MB_STATIC_LIB_TARGET}) # link to the static merged
+
+        # Installation of the shared library
+        install(TARGETS ${MB_DYN_LIB_TARGET}
+                LIBRARY DESTINATION "lib/intel64"
+                RUNTIME DESTINATION "lib/intel64"
+                PUBLIC_HEADER DESTINATION "include/crypto_mb"
+                PRIVATE_HEADER DESTINATION "tools/intel64/staticlib/crypto_mb")
+    else()
+        foreach(opt ${MBX_PLATFORM_LIST})
+            set(MBX_DYN_ITER ${MB_DYN_LIB_TARGET}_${opt})
+            add_library(${MBX_DYN_ITER} SHARED common/emptyfile.c common/crypto_mb_ver.rc) # emptyfile.c to suppress the cmake warning
+
+            set_target_properties(${MBX_DYN_ITER} PROPERTIES C_VISIBILITY_PRESET hidden
+                                                                VISIBILITY_INLINES_HIDDEN ON
+                                                                LINK_FLAGS "${LINK_FLAGS_DYNAMIC} ${LINK_FLAG_SECURITY}"
+                                                                PUBLIC_HEADER "${MB_PUBLIC_HEADERS}"
+                                                                )
+            if(UNIX)
+                set_target_properties(${MBX_DYN_ITER} PROPERTIES  VERSION   ${MBX_INTERFACE_VERSION}
+                                                                    SOVERSION ${MBX_INTERFACE_VERSION_MAJOR})
+            endif()
+            target_link_libraries(${MBX_DYN_ITER} ${MBX_TARGET_NAME}_${opt}) # link to the static 1CPU
+            install(TARGETS ${MBX_DYN_ITER}
+                            ARCHIVE DESTINATION ${MBX_LIB_INSTALL_DIR}
+                            PUBLIC_HEADER DESTINATION "include/crypto_mb"
+                            PRIVATE_HEADER DESTINATION ${MBX_PRIVATE_HEADERS_DIR})
+            list(APPEND MBX_LIB_DYNAMIC ${MBX_DYN_ITER})
+        endforeach()
     endif()
-
-    target_link_libraries(${MB_DYN_LIB_TARGET} ${MB_STATIC_LIB_TARGET}) # link to the static merged
-
 endif(DYNAMIC_LIB OR MB_STANDALONE)
-
-# Installation of the shared library
-if (MB_STANDALONE) # standalone crypto_mb's cmake run
-    install(TARGETS ${MB_DYN_LIB_TARGET}
-            LIBRARY DESTINATION "lib"
-            RUNTIME DESTINATION "lib"
-            PUBLIC_HEADER DESTINATION "include/crypto_mb"
-            PRIVATE_HEADER DESTINATION "tools/staticlib/crypto_mb")
-elseif (DYNAMIC_LIB) # build from ippcp's cmake
-    install(TARGETS ${MB_DYN_LIB_TARGET}
-            LIBRARY DESTINATION "lib/intel64"
-            RUNTIME DESTINATION "lib/intel64"
-            PUBLIC_HEADER DESTINATION "include/crypto_mb"
-            PRIVATE_HEADER DESTINATION "tools/intel64/staticlib/crypto_mb")
-endif()

@@ -132,12 +132,14 @@ IPP_OWN_DEFN(IppStatus, gfec_Sign_sm2_avx512,
     t       = n_to_mont(one);
     reg_key = n_to_mont(reg_key);
 
-    sign_s  = n_mul(sign_r, reg_key);  /* sign_s  = r * d */
-    reg_key = n_add(reg_key, t);       /* reg_key = 1 + d */
-    reg_key = n_inv(reg_key);          /* reg_key = (1 + d)^(-1) */
-    sign_s  = n_sub(eph_key, sign_s);  /* sign_s  = (k - r * d) */
-    sign_s  = n_mul(sign_s, reg_key);  /* sign_s  = (1 + d)^(-1) * (k - r * d) */
-
+    sign_s  = n_mul(sign_r, reg_key);  /* sign_s  = r * d                      (result not normalized) */
+    reg_key = n_add(reg_key, t);       /* reg_key = 1 + d                          (result normalized) */
+    reg_key = n_inv(reg_key);          /* reg_key = (1 + d)^(-1)               (result not normalized) */
+    sign_s  = n_sub(eph_key, sign_s);  /* sign_s  = (k - r * d)                    (result normalized) */
+    sign_s  = n_mul(sign_s, reg_key);  /* sign_s  = (1 + d)^(-1) * (k - r * d) (result not normalized) */
+    
+    // result shall be normalized before the final multiplication inside `n_from_mont` function
+    sign_s  = ifma_lnorm52(sign_s);
     sign_s = n_from_mont(sign_s);
     sign_r = n_from_mont(sign_r);
 
@@ -147,10 +149,14 @@ IPP_OWN_DEFN(IppStatus, gfec_Sign_sm2_avx512,
 
     // return sign_s
     from_radix52((Ipp64u*)pTmp, sign_s);
-    ZEXPAND_COPY_BNU(BN_NUMBER(pSignS), BN_SIZE(pSignS), pTmp, orderLen);
+    BN_SIGN(pSignS) = ippBigNumPOS;
+    BN_SIZE(pSignS) = orderLen;
+    ZEXPAND_COPY_BNU(BN_NUMBER(pSignS), BN_ROOM(pSignS), pTmp, orderLen);
     // return sign_r
     from_radix52((Ipp64u*)pTmp, sign_r);
-    ZEXPAND_COPY_BNU(BN_NUMBER(pSignR), BN_SIZE(pSignR), pTmp, orderLen);
+    BN_SIGN(pSignR) = ippBigNumPOS;
+    BN_SIZE(pSignR) = orderLen;
+    ZEXPAND_COPY_BNU(BN_NUMBER(pSignR), BN_ROOM(pSignR), pTmp, orderLen);
 
     /* clear secret data */
     clear_secrets(&eph_key, &(P.x), &t);

@@ -223,6 +223,9 @@ To build the Intel® Cryptography Primitives Library on macOS\*, complete the fo
 
     - Example for Linux\* OS and the Intel® 64 architecture:
         `-DPLATFORM_LIST="m7;n8;y8;e9;l9;k0;k1"`
+- `-DMBX_PLATFORM_LIST="<platform list>"` - optional, works only if `-DMERGED_BLD:BOOL=off` is set. Sets target platforms for the code to be compiled for [Crypto Multi Buffer library](./sources/ippcp/crypto_mb/Readme.md). Please, refer to [Crypto Multi Buffer library target platforms list](./sources/ippcp/crypto_mb/Readme.md/#target-optimization-codes-in-function-names) to check the supported platforms.
+    - Example:
+        `-DMBX_PLATFORM_LIST="k1;l9"`
 - `-DNO_CRYPTO_MB:BOOL=TRUE` - optional, turns off the build of [Crypto Multi Buffer library](./sources/ippcp/crypto_mb/Readme.md) and, as a consequence, removes all dependencies on OpenSSL library.
 - `-DTONGSUO:BOOL=on`, `-DBORINGSSL:BOOL=on` - required only if forks of OpenSSL library are used to resolve OpenSSL dependencies - Tongsuo and BoringSSL respectively. These flags make sense when [Crypto Multi Buffer library](./sources/ippcp/crypto_mb/Readme.md) is built.
 > **NOTE:** -DBABASSL:BOOL=on flag is deprecated and targeted to be removed in the future releases. Please use -DTONGSUO:BOOL=on instead.\*.

@@ -109,6 +109,18 @@ You can find the installed files in:
 > In this case to resolve the Crypto Multi-buffer Library dependency on OpenSSL it is
 > necessary to update `LD_LIBRARY_PATH` with the path to the target OpenSSL library.
 
+## Supported Platforms
+
+Crypto multi-buffer library uses multiple implementations of each function, optimized
+for various CPUs. Please, refer to [OVERVIEW.md](../../../OVERVIEW.md#cpu-dispatching)
+for the detailed information about code dispatching.
+
+### Target Optimization Codes in Function Names
+
+| Intel® 64 architecture | Meaning                                                                                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| l9                     | Optimized for processors with Intel® Advanced Vector Extensions 2 (Intel® AVX2) with Intel® AVX-IFMA (formerly codenamed Sierra Forest) |
+| k1                     | Optimized for processors with Intel® Advanced Vector Extensions 512 (Intel® AVX-512) (formerly codenamed IceLake)                        |
 
 ## How to Build
 
@@ -137,7 +149,9 @@ You can find the installed files in:
 
 ### Building with Intel® Cryptography Primitives Library
 
-The Crypto Multi-buffer library will be built automatically with Intel® Cryptography Primitives Library if optimization for Intel® Microarchitecture Code Named Ice Lake is available. For more information see [Intel Cryptography Primitives Library Build Instructions](../../../BUILD.md)
+The Crypto Multi-buffer library will be built automatically with Intel® Cryptography Primitives Library if
+optimization for Intel® Microarchitecture Code Named Ice Lake/Code Named Sierra Forest are available.
+For more information see [Intel Cryptography Primitives Library Build Instructions](../../../BUILD.md)
 
 ### CMake Build Options
 
@@ -151,3 +165,11 @@ The Crypto Multi-buffer library will be built automatically with Intel® Cryptog
    ```
 
 - Set `-DOPENSSL_USE_STATIC_LIBS=TRUE` if static OpenSSL libraries are preferred.
+
+- Use `-DMERGED_BLD:BOOL=off` to build of one static/dynamic library per optimization;
+See [specific ISA library](../../../OVERVIEW.md#specific-isa-library) for the details about 1CPU libraries build.
+
+- Use `-DMBX_PLATFORM_LIST="<platform list>"` to set target platforms for the code to be compiled.
+The flag works only if `-DMERGED_BLD:BOOL=off` is set. Please, refer to [Target Optimization Codes in Function Names](#target-optimization-codes-in-function-names) for the supported platforms list.
+    - Example:
+        `-DMBX_PLATFORM_LIST="k1;l9"`
