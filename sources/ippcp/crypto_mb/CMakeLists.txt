@@ -94,7 +94,7 @@ if(MBX_PLATFORM_LIST) # MBX_PLATFORM_LIST may be set by user
     if (MBX_PLATFORM_LIST STREQUAL "")
       message (FATAL_ERROR "MBX_PLATFORM_LIST cannot be empty")
     endif(MBX_PLATFORM_LIST STREQUAL "")
-    message (STATUS "MBX Platform list ......................... " ${MBX_PLATFORM_LIST})
+    message (STATUS "MBX Platform list ..................... " ${MBX_PLATFORM_LIST})
   else()
     message (FATAL_ERROR "MBX_PLATFORM_LIST cannot be set, when MERGED_BLD is on")
   endif(NOT MBX_MERGED_BLD)

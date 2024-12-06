@@ -1,6 +1,6 @@
 # Intel® Cryptography Primitives Library
 
-[Build Instructions](./BUILD.md) | [Contributing Guide](#how-to-contribute) | [Documentation](#documentation) | [Get Help](./SUPPORT.md) | [Intel IPP Product Page](https://www.intel.com/content/www/us/en/developer/tools/oneapi/ipp.html)
+[Build Instructions](./BUILD.md) | [Contributing Guide](#how-to-contribute) | [Documentation](#documentation) | [Get Help](./SUPPORT.md) | [Homepage](https://www.intel.com/content/www/us/en/developer/tools/oneapi/crypto-library/overview.html)
 
 Intel® Cryptography Primitives Library is a secure, fast and lightweight library of building blocks for cryptography, highly-optimized for various Intel® CPUs.
 
