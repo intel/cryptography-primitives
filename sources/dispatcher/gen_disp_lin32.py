@@ -72,8 +72,6 @@ if(compiler == "GNU" or compiler == "Clang" or compiler == "IntelLLVM"):
                   ##################################################
                   ASMDISP= open( os.sep.join([OutDir, "jmp_" + FunName+"_" + hashlib.sha512(FunName.encode('utf-8')).hexdigest()[:8] +".asm"]), 'w' )
 
-                  ASMDISP.write('%include "noexec_stack.inc"\n\n');
-
                   # Symbol type setting for extern functions initially appeared in version 2.15
                   ASMDISP.write("%if ((__NASM_MAJOR__ > 2) || ((__NASM_MAJOR__ == 2) && (__NASM_MINOR__ > 14)))\n");
                   ASMDISP.write("  %xdefine elf_symbol_type :function\n");

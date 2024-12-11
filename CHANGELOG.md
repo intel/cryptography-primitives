@@ -2,17 +2,12 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
-## Intel(R) Cryptography Primitives Library 1.1.0
-
-- Added single buffer SHA384, SHA512, SHA512/224, SHA512/256 hash algorithm optimizations with the new SHA512 instructions for Lunar Lake and Arrow Lake S CPUs.
-- Enabled support of [specific ISA library](./OVERVIEW.md#specific-isa-library) build for Crypto Multi buffer library.
-Cmake build options `-DMERGED_BLD:BOOL=off -DMBX_PLATFORM_LIST="k1;l9"` may be used. Please refer to
-[BUILD.md](./BUILD.md) for the details.
-- Fixed AVX512 IFMA implementation (k1 branch) of SM2 signature and verification single-buffer algorithm. The optimized path is re-enabled.
+## Intel(R) Cryptography Primitives Library 1.0.1
+- Fixed an issue with invalid memory access for AES-GCM algorithm with Intel® Advanced Vector Extensions 2 (Intel® AVX2) vector extensions of Intel® AES New Instructions (Intel® AES-NI) in case of corner sizes.
 
 ## Intel(R) Cryptography Primitives Library 1.0.0
 - Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) was renamed to Intel(R) Cryptography Primitives Library.
-- Added single buffer SM3 hash algorithm optimization with the new SM3 instructions for Lunar Lake and Arrow Lake S CPUs.
+- Added IPPCP SM3 hash algorithm optimization with the new instruction set (SM3-NI) for Lunar Lake and Arrow Lake CPUs.
 - Added Intel® AVX-IFMA RSA implementation to Crypto Multi buffer library.
 - Fixed bug in IceLake optimization (`k1` branch) of ECDSA signature function caused by incorrect processing of R and S component's size and sign.
 - Added FIPS selftest for Leighton-Micali Hash-Based Signatures(LMS) verification algorithm.

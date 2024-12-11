@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     SHA384 message digest
-//
+// 
 //  Contents:
 //        ippsHashStateMethodSet_SHA384()
 //

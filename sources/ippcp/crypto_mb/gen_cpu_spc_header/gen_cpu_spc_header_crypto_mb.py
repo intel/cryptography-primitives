@@ -50,7 +50,7 @@ if not os.path.exists(OutDir):
   os.makedirs(OutDir)
 
 
-Filename = re.sub(r'.h','',path_leaf(Header))
+Filename = re.sub('.h','',path_leaf(Header))
 
 OutFile  = os.sep.join([OutDir, Filename + "_cpuspc" + ".h"])
 

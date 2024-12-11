@@ -116,7 +116,7 @@ __IPPCP_INLINE IppStatus setXMSSParams(IppsXMSSAlgo OIDAlgo, Ipp32s* h, cpWOTSPa
         params->n = 64;
         params->len = 131;
         params->len_1 = 128;
-        params->hash_method = (IppsHashMethod*) ippsHashMethod_SHA512_TT();
+        params->hash_method = (IppsHashMethod*) ippsHashMethod_SHA512();
     }
     else {
         return ippStsBadArgErr;

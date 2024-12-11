@@ -87,18 +87,6 @@
 %endif
 
 ;;
-;; if there is no outside assignment
-;; set _SHA512_ENABLING_  based on CPU specification
-;;
-%ifndef _SHA512_ENABLING_
-   %if (_IPP >= _IPP_H9 )
-      %assign _SHA512_ENABLING_ _FEATURE_TICKTOCK_
-   %else
-      %assign _SHA512_ENABLING_ _FEATURE_OFF_
-   %endif
-%endif
-
-;;
 ;; select Hash algorithm
 ;;
 %ifndef _DISABLE_ALG_SHA1_
@@ -113,7 +101,7 @@
   %assign _ENABLE_ALG_SHA256_ _FEATURE_OFF_ ;; SHA256 off
 %endif
 
-%ifndef _DISABLE_ALG_SHA512_
+%ifndef _DISABLE_ALG_SHA521_
   %assign _ENABLE_ALG_SHA512_ _FEATURE_ON_  ;; SHA512 on
 %else
   %assign _ENABLE_ALG_SHA512_ _FEATURE_OFF_ ;; SHA512 off

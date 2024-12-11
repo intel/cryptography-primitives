@@ -18,7 +18,7 @@
 //
 //  Purpose:
 //     Cryptography Primitive.
-//     SHA512/224 message digest
+//     SHA512 message digest
 //
 //  Contents:
 //        ippsHashStateMethodSet_SHA512_224()
@@ -35,7 +35,7 @@
 /*F*
 //    Name: ippsHashStateMethodSet_SHA512_224
 //
-// Purpose: Return SHA512/224 method inside the hash state.
+// Purpose: Return SHA512_224 method inside the hash state.
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pMethod == NULL or pState == NULL

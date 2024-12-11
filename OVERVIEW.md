@@ -117,9 +117,9 @@ flowchart LR
 
 The prefix before the function name ("m7_", "y8_", etc) is a naming convention for the function implementations that are included in the [library with dispatcher](#all-cpus-library). It refers to the CPU instruction set for which the function is optimized (for all available prefixes see the [table](#target-optimization-codes-in-function-names) below).
 
-The dispatcher is designed to add no performance overhead when the library is initialized, in other words, when CPU features are detected. You can initialize the library either explicitly in advance by calling the dedicated function [ippcpInit()](https://www.intel.com/content/www/us/en/docs/crypto-primitives-library/developer-guide-reference/current/init.html) or it will be done implicitly during the first call of any function of the library.
+The dispatcher is designed to add no performance overhead when the library is initialized, in other words, when CPU features are detected. You can initialize the library either explicitly in advance by calling the dedicated function [ippcpInit()](https://www.intel.com/content/www/us/en/docs/ipp-crypto/developer-reference/current/init.html) or it will be done implicitly during the first call of any function of the library.
 
-By default, the dispatcher chooses the most appropriate optimization for the current hardware, but it is possible to apply the user-chosen one using the [ippcpSetCpuFeatures()](https://www.intel.com/content/www/us/en/docs/crypto-primitives-library/developer-guide-reference/current/support-functions.html) function.
+By default, the dispatcher chooses the most appropriate optimization for the current hardware, but it is possible to apply the user-chosen one using the [ippcpSetCpuFeatures()](https://www.intel.com/content/www/us/en/docs/ipp-crypto/developer-guide-oneapi/current/support-functions.html) function.
 
 #### Target Optimization Codes in Function Names
 
@@ -150,8 +150,7 @@ List of CPU feature subsets that the library has special optimizations for:
 - Intel AVX-512/AVX2 VAES
 - Intel AVX-512 IFMA
 - Intel AVX-512 GFNI
-- SM3
-- SHA512
+- SM3-NI
 
  > **NOTE:** For some features there is also an opportunity to force their dispatching inside the 1CPU libraries manually during the compile time. For more information please, refer to [common for all operating systems CMake build options](./BUILD.md/#common-for-all-operating-systems).
 
@@ -247,7 +246,7 @@ The corresponding build target names for the libraries are shown at the picture 
 
 Be default, the Intel® Cryptography Primitives Library is built with the [Position Independent Code (PIC)](https://en.wikipedia.org/wiki/Position-independent_code) option.
 
-But on Linux* OS, when the library is supposed to work in kernel space, it is possible to compile the static library in a non-PIC mode. For more information about build options, refer to the [Linux* OS build options](./BUILD.md#linux-os-1).
+But on Linux* OS, when the library is supposed to work in kernel space, it is possible to compile the static library in a non-PIC mode. For more information about build options, refer to the [Linux* OS build options](./BUILD.md).
 
 ### Target Instruction Set Architecture (ISA)
 

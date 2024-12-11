@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
-//     SHA512/224 message digest
-//
+//     SHA512 message digest
+// 
 //  Contents:
 //        ippsHashMethod_SHA512_224()
 //
@@ -35,10 +35,10 @@
 /*F*
 //    Name: ippsHashMethod_SHA512_224
 //
-// Purpose: Return SHA512/224 method.
+// Purpose: Return SHA512_224 method.
 //
 // Returns:
-//          Pointer to SHA512/224 hash-method.
+//          Pointer to SHA512_224 hash-method.
 //
 *F*/
 

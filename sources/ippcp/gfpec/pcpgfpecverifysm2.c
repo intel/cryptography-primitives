@@ -120,12 +120,13 @@ IPPFUN(IppStatus, ippsGFpECVerifySM2,(const IppsBigNumState* pMsgDigest,
          0>cpCmp_BNU(BN_NUMBER(pSignR), BN_SIZE(pSignR), pOrder, orderLen) &&
          0>cpCmp_BNU(BN_NUMBER(pSignS), BN_SIZE(pSignS), pOrder, orderLen)) {
 
-#if (_IPP32E >= _IPP32E_K1)
-          if (IsFeatureEnabled(ippCPUID_AVX512IFMA) && ECP_MODULUS_ID(pEC) == cpID_PrimeTPM_SM2) {
-            vResult = gfec_Verify_sm2_avx512(pMsgDigest, pRegPublic, pSignR, pSignS, pEC, pScratchBuffer);
-            goto exit;
-          } /* no else */
-#endif      // (_IPP32E >= _IPP32E_K1)
+// Optimization is disabled due to a bug
+// #if (_IPP32E >= _IPP32E_K1)
+//           if (IsFeatureEnabled(ippCPUID_AVX512IFMA) && ECP_MODULUS_ID(pEC) == cpID_PrimeTPM_SM2) {
+//             vResult = gfec_Verify_sm2_avx512(pMsgDigest, pRegPublic, pSignR, pSignS, pEC, pScratchBuffer);
+//             goto exit;
+//           } /* no else */
+// #endif      // (_IPP32E >= _IPP32E_K1)
          {
             int elmLen = GFP_FELEN(pGFE);
             int ns;
@@ -174,9 +175,10 @@ IPPFUN(IppStatus, ippsGFpECVerifySM2,(const IppsBigNumState* pMsgDigest,
          }
       }
 
-#if (_IPP32E >= _IPP32E_K1)
-exit:
-#endif
+// Optimization is disabled due to a bug
+// #if (_IPP32E >= _IPP32E_K1)
+// exit:
+// #endif
       *pResult = vResult;
       return ippStsNoErr;
    }

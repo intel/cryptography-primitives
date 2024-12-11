@@ -370,9 +370,9 @@ typedef enum {
 
  #define   ippCPUID_AVX2VAES    INT64_SUFFIX(0x4000000000)        /* Intel® Advanced Vector Extensions 256 Bit Vector AES instructions                    */
  #define   ippCPUID_AVX2VCLMUL  INT64_SUFFIX(0x8000000000)        /* Intel® instruction VPCLMULQDQ                                                        */
- #define   ippCPUID_AVX2SM3     INT64_SUFFIX(0x10000000000)       /* Intel® Advanced Vector Extensions 256 Bit SM3 instructions                           */
- #define   ippCPUID_AVX2SM4     INT64_SUFFIX(0x20000000000)       /* Intel® Advanced Vector Extensions 256 Bit SM4 instructions                           */
- #define   ippCPUID_AVX2SHA512  INT64_SUFFIX(0x40000000000)       /* Intel® Advanced Vector Extensions 256 Bit SHA512 instructions                        */
+ #define   ippCPUID_AVX2SM3     INT64_SUFFIX(0x10000000000)       /* Intel® Advanced Vector Extensions 256 Bit SM3_NI instructions                        */
+ #define   ippCPUID_AVX2SM4     INT64_SUFFIX(0x20000000000)       /* Intel® Advanced Vector Extensions 256 Bit SM4_NI instructions                        */
+ #define   ippCPUID_AVX2SHA512  INT64_SUFFIX(0x40000000000)       /* Intel® Advanced Vector Extensions 256 Bit SHA512_NI instructions                     */
 #endif /* IPP_CPU_FEATURES__ */
 
 /* Macros are necessary to build custom Intel® Cryptography Primitives Library static 1cpu library (enable specific features at compile-time) */

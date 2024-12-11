@@ -41,7 +41,7 @@
 //
 // Returns:
 //          Pointer to SHA256 hash-method
-//          (using the Intel® SHA-NI instructions set
+//          (using the Intel SHA-NI instructions set
 //             if it is available at run time)
 //
 *F*/
@@ -64,10 +64,9 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA256_TT, (void) )
    method.hashOctStr = sha256_hashOctString;
    method.msgLenRep  = sha256_msgRep;
 
-#if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
+   #if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
    if(IsFeatureEnabled(ippCPUID_SHA))
       method.hashUpdate = sha256_ni_hashUpdate;
-#endif
-
+   #endif
    return &method;
 }

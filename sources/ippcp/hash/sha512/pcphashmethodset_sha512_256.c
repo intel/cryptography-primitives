@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
-//     SHA512/256 message digest
-//
+//     SHA512 message digest
+// 
 //  Contents:
 //        ippsHashMethodSet_SHA512_256()
 //
@@ -35,7 +35,7 @@
 /*F*
 //    Name: ippsHashMethodSet_SHA512_256
 //
-// Purpose: Setup SHA512/256 method.
+// Purpose: Setup SHA512_256 method.
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pMethod == NULL

@@ -36,24 +36,4 @@ int mbx_is_mem_eq(const int8u *p1, int32u p1_byte_len, const int8u *p2, int32u p
   return 1;
 }
 
-fips_test_status mbx_selftest_map_test_status(const mbx_status returned_sts, const mbx_status expected_sts, const fips_test_status error_type) {
-    fips_test_status test_result;
-
-    if(returned_sts == expected_sts) {
-        test_result = MBX_ALGO_SELFTEST_OK;
-    }
-    else if(returned_sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
-        test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
-    }
-    else {
-        test_result = error_type;
-    }
-
-    return test_result;
-}
-
-fips_test_status mbx_selftest_check_if_success(const mbx_status returned_sts, const fips_test_status error_type) {
-    return mbx_selftest_map_test_status(returned_sts, MBX_SET_STS_ALL(MBX_STATUS_OK), error_type);
-}
-
 #endif // MBX_FIPS_MODE

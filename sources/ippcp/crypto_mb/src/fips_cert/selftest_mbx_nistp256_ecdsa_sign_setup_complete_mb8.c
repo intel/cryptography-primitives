@@ -94,22 +94,29 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_setup_complete_mb8(void) 
                                  out_s[4], out_s[5], out_s[6], out_s[7]};
 
   /* test function */
-  // sign setup
+  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
   mbx_status sts;
+  // sign setup
   sts = mbx_nistp256_ecdsa_sign_setup_mb8(pa_inv_k, pa_precomp_r, pa_prv_k, NULL);
-  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
-  if(test_result != MBX_ALGO_SELFTEST_OK) {
+  if(sts != expected_status_mb8) {
+    if (sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
+      test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
+      return test_result;
+    }
+    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
     return test_result;
   }
-
   // sign complete
   sts = mbx_nistp256_ecdsa_sign_complete_mb8(pa_sign_r, pa_sign_s, pa_pub_msg_digest,
     (const int64u *const *)pa_precomp_r, (const int64u *const *)pa_inv_k, pa_prv_d, NULL);
-  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
-  if(test_result != MBX_ALGO_SELFTEST_OK) {
+  if(sts != expected_status_mb8) {
+    if (sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
+      test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
+      return test_result;
+    }
+    test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
     return test_result;
   }
-
   // compare output signature to known answer
   int r_output_status;
   int s_output_status;
@@ -166,6 +173,12 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_setup_complete_ssl_mb8(vo
   /* output signature */
   int8u out_r[MBX_LANES][MBX_NISTP256_DATA_BYTE_LEN];
   int8u out_s[MBX_LANES][MBX_NISTP256_DATA_BYTE_LEN];
+  /* function status and expected status */
+  mbx_status sts;
+  mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
+  /* output validity statuses */
+  int r_output_status;
+  int s_output_status;
 
   // set ssl key pair
   BN_lebin2bn(d, MBX_NISTP256_DATA_BYTE_LEN, BN_d);
@@ -189,26 +202,31 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_setup_complete_ssl_mb8(vo
 
   /* test function */
   // sign setup
-  mbx_status sts;
   sts = mbx_nistp256_ecdsa_sign_setup_ssl_mb8(pa_inv_k, pa_precomp_r, pa_prv_k, NULL);
-  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
-  if(test_result != MBX_ALGO_SELFTEST_OK) {
+  if (sts != expected_status_mb8) {
+    if (sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
+      test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
+    }
+    else {
+      test_result = MBX_ALGO_SELFTEST_KAT_ERR;
+    }
     MEM_FREE(pa_inv_k, pa_precomp_r, BN_d, BN_k)
     return test_result;
   }
-
   // sign complete
   sts = mbx_nistp256_ecdsa_sign_complete_ssl_mb8(pa_sign_r, pa_sign_s, pa_pub_msg_digest,
     (const BIGNUM *const *)pa_precomp_r, (const BIGNUM *const *)pa_inv_k, pa_prv_d, NULL);
-  test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
-  if(test_result != MBX_ALGO_SELFTEST_OK) {
+  if (sts != expected_status_mb8) {
+    if (sts == MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR)) {
+      test_result = MBX_ALGO_SELFTEST_UNSUPPORTED_ISA_ERR;
+    }
+    else {
+      test_result = MBX_ALGO_SELFTEST_KAT_ERR;
+    }
     MEM_FREE(pa_inv_k, pa_precomp_r, BN_d, BN_k)
     return test_result;
   }
-
   // compare output signature to known answer
-  int r_output_status;
-  int s_output_status;
   for (int i = 0; i < MBX_LANES; ++i) {
     r_output_status = mbx_is_mem_eq(pa_sign_r[i], MBX_NISTP256_DATA_BYTE_LEN, r, MBX_NISTP256_DATA_BYTE_LEN);
     s_output_status = mbx_is_mem_eq(pa_sign_s[i], MBX_NISTP256_DATA_BYTE_LEN, s, MBX_NISTP256_DATA_BYTE_LEN);

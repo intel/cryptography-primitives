@@ -50,15 +50,14 @@ if("${CMAKE_GENERATOR}" STREQUAL "NMake Makefiles")
   endif()
 endif()
 
-# on ninja/WIN32 the build type fallback mechanism needs to be placed before the `project` call
+project(${PROJECT_FULL_NAME}
+        VERSION ${PROJECT_VERSION}
+        LANGUAGES C CXX)
+
 if("${CMAKE_BUILD_TYPE}" STREQUAL "")
   message(STATUS "CMAKE_BUILD_TYPE is unset, defaulting to Release")
   set(CMAKE_BUILD_TYPE "Release")
 endif()
-
-project(${PROJECT_FULL_NAME}
-        VERSION ${PROJECT_VERSION}
-        LANGUAGES C CXX)
 
 find_package(Python REQUIRED)
 
@@ -90,10 +89,6 @@ endif()
 
 if("${MERGED_BLD}" STREQUAL "")
   set(MERGED_BLD ON)
-endif()
-# Crypto_mb merged build flag is set same as IPPCP by default
-if(MERGED_BLD)
-  set(MBX_MERGED_BLD ON)
 endif()
 
 # Set default installation directories
@@ -247,6 +242,7 @@ if (NOT (CRYPTO_USE_CLANG_TIDY))
     add_subdirectory(perf_tests)
   endif()
 endif()
+
 
 if(BUILD_EXAMPLES)
   # This helps to organize examples projects structure in IDE by folders

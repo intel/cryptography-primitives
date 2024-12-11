@@ -10,14 +10,13 @@
 - [Building Intel® Cryptography Primitives Library on macOS\*](#building-intel-cryptography-primitives-library-on-macos)
 - [CMake Build Options](#cmake-build-options)
     - [Common for all operating systems](#common-for-all-operating-systems)
-    - [Windows\* OS](#windows-os-1)
-    - [Linux\* OS](#linux-os-1)
+    - [Windows\* OS](#windows-os)
+    - [Linux\* OS](#linux-os)
 - [CMake Commands FAQ](#cmake-commands-faq)
+    - [How to build a 32-bit library?](#how-to-build-a-32-bit-library)
     - [How to build a 64-bit generic library without any CPU-specific optimizations?](#how-to-build-a-64-bit-generic-library-without-any-cpu-specific-optimizations)
     - [How to build two libraries with optimizations for Intel® Advanced Vector Extensions 2 and Intel® Advanced Vector Extensions 512 instruction sets?](#how-to-build-two-libraries-with-optimizations-for-intel-advanced-vector-extensions-2-and-intel-advanced-vector-extensions-512-instruction-sets)
     - [How to build a library to work in a kernel space?](#how-to-build-a-library-to-work-in-a-kernel-space)
-    - [How to specify path to OpenSSL*](#how-to-specify-path-to-openssl)
-    - [How to run Intel® Cryptography Primitives Library with clang-tidy?](#how-to-run-intel-cryptography-primitives-library-with-clang-tidy)
 - [Incorporating Intel® Cryptography Primitives Library sources into custom build system](#incorporating-intel-cryptography-primitives-library-sources-into-custom-build-system)
 
 
@@ -63,7 +62,7 @@ To build the Intel® Cryptography Primitives Library on Linux\* OS, complete the
 1. Clone the source code from GitHub\* as follows:
 
     ``` bash
-    git clone --recursive https://github.com/intel/cryptography-primitives
+    git clone --recursive https://github.com/intel/ipp-crypto
     ```
 
 2. Set the environment for one of the supported C/C++ compilers.
@@ -114,7 +113,7 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
 1. Clone the source code from GitHub\* as follows:
 
     ``` bash
-    git clone --recursive https://github.com/intel/cryptography-primitives
+    git clone --recursive https://github.com/intel/ipp-crypto
     ```
 
 2. Set the environment variables for one of the supported C/C++ compilers.
@@ -153,7 +152,7 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
 
 ## Building Intel® Cryptography Primitives Library on macOS\*
 
-> **NOTE:** Intel® Cryptography Primitives Library stopped macOS\* validation and maintenance based on the announcement in the [Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.9 release notes](https://www.intel.com/content/www/us/en/developer/articles/release-notes/intel-ipp-previous-release-notes.html#inpage-nav-1-1).\
+> **NOTE:** Intel® Cryptography Primitives Library stopped macOS\* validation and maintenance based on the announcement in the [Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.9 release notes](https://www.intel.com/content/www/us/en/developer/articles/release-notes/release-notes-for-oneapi-integrated-performance-primitives.html#inpage-nav-3-1).\
 The Intel® IPP Cryptography 2021.10 release is the last release validated on macOS\* 12.0.\
 For further macOS\* testing and maintenance we are relying on contributions from the community. For more details, see [Contributing Rules](./CONTRIBUTING.md).
 
@@ -162,7 +161,7 @@ To build the Intel® Cryptography Primitives Library on macOS\*, complete the fo
 1. Clone the source code from GitHub\* as follows:
 
     ``` bash
-    git clone --recursive https://github.com/intel/cryptography-primitives
+    git clone --recursive https://github.com/intel/ipp-crypto
     ```
 
 2. Set the environment variables for one of the supported C/C++ compilers.
@@ -223,9 +222,6 @@ To build the Intel® Cryptography Primitives Library on macOS\*, complete the fo
 
     - Example for Linux\* OS and the Intel® 64 architecture:
         `-DPLATFORM_LIST="m7;n8;y8;e9;l9;k0;k1"`
-- `-DMBX_PLATFORM_LIST="<platform list>"` - optional, works only if `-DMERGED_BLD:BOOL=off` is set. Sets target platforms for the code to be compiled for [Crypto Multi Buffer library](./sources/ippcp/crypto_mb/Readme.md). Please, refer to [Crypto Multi Buffer library target platforms list](./sources/ippcp/crypto_mb/Readme.md/#target-optimization-codes-in-function-names) to check the supported platforms.
-    - Example:
-        `-DMBX_PLATFORM_LIST="k1;l9"`
 - `-DNO_CRYPTO_MB:BOOL=TRUE` - optional, turns off the build of [Crypto Multi Buffer library](./sources/ippcp/crypto_mb/Readme.md) and, as a consequence, removes all dependencies on OpenSSL library.
 - `-DTONGSUO:BOOL=on`, `-DBORINGSSL:BOOL=on` - required only if forks of OpenSSL library are used to resolve OpenSSL dependencies - Tongsuo and BoringSSL respectively. These flags make sense when [Crypto Multi Buffer library](./sources/ippcp/crypto_mb/Readme.md) is built.
 > **NOTE:** -DBABASSL:BOOL=on flag is deprecated and targeted to be removed in the future releases. Please use -DTONGSUO:BOOL=on instead.\*.
@@ -287,12 +283,7 @@ To build the Intel® Cryptography Primitives Library on macOS\*, complete the fo
 `cmake CMakeLists.txt -B_build -DARCH=intel64 -DNONPIC_LIB:BOOL=on`
 
 ### How to specify path to OpenSSL\*
-
 `cmake CMakeLists.txt -B_build -DARCH=intel64 -DOPENSSL_INCLUDE_DIR=/path/to/openssl/include -DOPENSSL_LIBRARIES=/path/to/openssl/lib -DOPENSSL_ROOT_DIR=/path/to/openssl`
-
-### How to run Intel® Cryptography Primitives Library with clang-tidy?
-
-`CC=clang CXX=clang++ cmake CMakeLists.txt -B_build -DARCH=intel64 -DCRYPTO_USE_CLANG_TIDY:BOOL=on`
 
 ## Incorporating Intel® Cryptography Primitives Library sources into custom build system
 
@@ -330,3 +321,7 @@ endif()
 #     `IPPCRYPTO_INCLUDE_DIRS` - path to Intel® Cryptography Primitives Library headers
 #     `IPPCRYPTO_ROOT_DIR` - library root dir (a folder with 'include' and 'lib' directories)
 ```
+
+### How to run Intel® IPP Cryptography with clang-tidy?
+
+`CC=clang CXX=clang++ cmake CMakeLists.txt -B_build -DARCH=intel64 -DCRYPTO_USE_CLANG_TIDY:BOOL=on`

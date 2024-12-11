@@ -145,17 +145,9 @@ EXTERN (ippsHashMethodSet_SHA224)
 EXTERN (ippsHashMethodSet_SHA224_NI)
 EXTERN (ippsHashMethodSet_SHA224_TT)
 EXTERN (ippsHashMethodSet_SHA512)
-EXTERN (ippsHashMethodSet_SHA512_NI)
-EXTERN (ippsHashMethodSet_SHA512_TT)
 EXTERN (ippsHashMethodSet_SHA384)
-EXTERN (ippsHashMethodSet_SHA384_NI)
-EXTERN (ippsHashMethodSet_SHA384_TT)
 EXTERN (ippsHashMethodSet_SHA512_256)
-EXTERN (ippsHashMethodSet_SHA512_256_NI)
-EXTERN (ippsHashMethodSet_SHA512_256_TT)
 EXTERN (ippsHashMethodSet_SHA512_224)
-EXTERN (ippsHashMethodSet_SHA512_224_NI)
-EXTERN (ippsHashMethodSet_SHA512_224_TT)
 EXTERN (ippsHashStateMethodSet_SM3)
 EXTERN (ippsHashStateMethodSet_SHA256)
 EXTERN (ippsHashStateMethodSet_SHA256_NI)
@@ -164,17 +156,9 @@ EXTERN (ippsHashStateMethodSet_SHA224)
 EXTERN (ippsHashStateMethodSet_SHA224_NI)
 EXTERN (ippsHashStateMethodSet_SHA224_TT)
 EXTERN (ippsHashStateMethodSet_SHA512)
-EXTERN (ippsHashStateMethodSet_SHA512_NI)
-EXTERN (ippsHashStateMethodSet_SHA512_TT)
 EXTERN (ippsHashStateMethodSet_SHA384)
-EXTERN (ippsHashStateMethodSet_SHA384_NI)
-EXTERN (ippsHashStateMethodSet_SHA384_TT)
 EXTERN (ippsHashStateMethodSet_SHA512_256)
-EXTERN (ippsHashStateMethodSet_SHA512_256_NI)
-EXTERN (ippsHashStateMethodSet_SHA512_256_TT)
 EXTERN (ippsHashStateMethodSet_SHA512_224)
-EXTERN (ippsHashStateMethodSet_SHA512_224_NI)
-EXTERN (ippsHashStateMethodSet_SHA512_224_TT)
 EXTERN (ippsHashMethod_MD5)
 EXTERN (ippsHashMethod_SM3)
 EXTERN (ippsHashMethod_SHA1)
@@ -187,17 +171,9 @@ EXTERN (ippsHashMethod_SHA224)
 EXTERN (ippsHashMethod_SHA224_NI)
 EXTERN (ippsHashMethod_SHA224_TT)
 EXTERN (ippsHashMethod_SHA512)
-EXTERN (ippsHashMethod_SHA512_NI)
-EXTERN (ippsHashMethod_SHA512_TT)
 EXTERN (ippsHashMethod_SHA384)
-EXTERN (ippsHashMethod_SHA384_NI)
-EXTERN (ippsHashMethod_SHA384_TT)
 EXTERN (ippsHashMethod_SHA512_256)
-EXTERN (ippsHashMethod_SHA512_256_NI)
-EXTERN (ippsHashMethod_SHA512_256_TT)
 EXTERN (ippsHashMethod_SHA512_224)
-EXTERN (ippsHashMethod_SHA512_224_NI)
-EXTERN (ippsHashMethod_SHA512_224_TT)
 EXTERN (ippsHashMethodGetInfo)
 EXTERN (ippsHashGetSize_rmf)
 EXTERN (ippsHashInit_rmf)
@@ -622,17 +598,9 @@ VERSION {
    ippsHashMethodSet_SHA224_NI;
    ippsHashMethodSet_SHA224_TT;
    ippsHashMethodSet_SHA512;
-   ippsHashMethodSet_SHA512_NI;
-   ippsHashMethodSet_SHA512_TT;
    ippsHashMethodSet_SHA384;
-   ippsHashMethodSet_SHA384_NI;
-   ippsHashMethodSet_SHA384_TT;
    ippsHashMethodSet_SHA512_256;
-   ippsHashMethodSet_SHA512_256_NI;
-   ippsHashMethodSet_SHA512_256_TT;
    ippsHashMethodSet_SHA512_224;
-   ippsHashMethodSet_SHA512_224_NI;
-   ippsHashMethodSet_SHA512_224_TT;
    ippsHashStateMethodSet_SM3;
    ippsHashStateMethodSet_SHA256;
    ippsHashStateMethodSet_SHA256_NI;
@@ -641,17 +609,9 @@ VERSION {
    ippsHashStateMethodSet_SHA224_NI;
    ippsHashStateMethodSet_SHA224_TT;
    ippsHashStateMethodSet_SHA512;
-   ippsHashStateMethodSet_SHA512_NI;
-   ippsHashStateMethodSet_SHA512_TT;
    ippsHashStateMethodSet_SHA384;
-   ippsHashStateMethodSet_SHA384_NI;
-   ippsHashStateMethodSet_SHA384_TT;
    ippsHashStateMethodSet_SHA512_256;
-   ippsHashStateMethodSet_SHA512_256_NI;
-   ippsHashStateMethodSet_SHA512_256_TT;
    ippsHashStateMethodSet_SHA512_224;
-   ippsHashStateMethodSet_SHA512_224_NI;
-   ippsHashStateMethodSet_SHA512_224_TT;
    ippsHashMethod_MD5;
    ippsHashMethod_SM3;
    ippsHashMethod_SHA1;
@@ -664,17 +624,9 @@ VERSION {
    ippsHashMethod_SHA224_NI;
    ippsHashMethod_SHA224_TT;
    ippsHashMethod_SHA512;
-   ippsHashMethod_SHA512_NI;
-   ippsHashMethod_SHA512_TT;
    ippsHashMethod_SHA384;
-   ippsHashMethod_SHA384_NI;
-   ippsHashMethod_SHA384_TT;
    ippsHashMethod_SHA512_256;
-   ippsHashMethod_SHA512_256_NI;
-   ippsHashMethod_SHA512_256_TT;
    ippsHashMethod_SHA512_224;
-   ippsHashMethod_SHA512_224_NI;
-   ippsHashMethod_SHA512_224_TT;
    ippsHashMethodGetInfo;
    ippsHashGetSize_rmf;
    ippsHashInit_rmf;

@@ -35,19 +35,11 @@
    #include "x25519_cpuspc.h"
 #endif
 
-#if defined(_MBX_MERGED_BLD)
 #if defined( _L9 ) /* Intel® AVX2 */
    #define OWNAPI(name) l9_##name
-#elif defined( _K1 )
-   #define OWNAPI(name) k1_##name
-#endif
-#else /* 1CPU build */
-  #define OWNAPI(name) name
-#endif
-
-#if defined( _L9 ) /* Intel® AVX2 */
    #define _MBX _MBX_L9
 #elif defined( _K1 )
+   #define OWNAPI(name) k1_##name
    #define _MBX _MBX_K1
 #endif
 

@@ -38,13 +38,13 @@
 // Purpose: Return SHA256 method (using the Intel® Secure Hash Algorithm - New Instructions (Intel® SHA-NI) instruction set).
 //
 // Returns:
-//          Pointer to SHA256 hash-method (using the Intel® SHA-NI instruction set).
+//          Pointer to SHA256 hash-method (using the Intel SHA-NI instruction set).
 //
 *F*/
 
 IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA256_NI, (void) )
 {
-#if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
+   #if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
    static IppsHashMethod method = {
       ippHashAlg_SHA256,
       IPP_SHA256_DIGEST_BITSIZE/8,
@@ -62,7 +62,7 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA256_NI, (void) )
    method.msgLenRep  = sha256_msgRep;
 
    return &method;
-#else
+   #else
    return NULL;
-#endif
+   #endif
 }

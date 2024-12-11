@@ -140,7 +140,7 @@
   %assign _ENABLE_ALG_SHA256_ _FEATURE_OFF_ ;; SHA256 off
 %endif
 
-%ifndef _DISABLE_ALG_SHA512_
+%ifndef _DISABLE_ALG_SHA521_
   %assign _ENABLE_ALG_SHA512_ _FEATURE_ON_  ;; SHA512 on
 %else
   %assign _ENABLE_ALG_SHA512_ _FEATURE_OFF_ ;; SHA512 off
