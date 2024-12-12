@@ -21,8 +21,8 @@
 
 #include <immintrin.h>
 
-#define MIN_CCM_IV_LENGTH 7
-#define MAX_CCM_IV_LENGTH 13
+#define MIN_CCM_IV_LENGTH  7
+#define MAX_CCM_IV_LENGTH  13
 #define MIN_CCM_TAG_LENGTH 4
 #define MAX_CCM_TAG_LENGTH 16
 #define MAX_CCM_AAD_LENGTH 65280 /* 2^16 - 2^8 */
@@ -30,7 +30,8 @@
 #define SM4_CCM_CONTEXT_BUFFER_SLOT_TYPE int64u
 
 #define SM4_CCM_CONTEXT_BUFFER_SLOT_SIZE_BYTES (sizeof(SM4_CCM_CONTEXT_BUFFER_SLOT_TYPE))
-#define SM4_CCM_CONTEXT_BUFFER_SIZE_BYTES ((SM4_LINES * SM4_BLOCK_SIZE) / SM4_CCM_CONTEXT_BUFFER_SLOT_SIZE_BYTES)
+#define SM4_CCM_CONTEXT_BUFFER_SIZE_BYTES \
+    ((SM4_LINES * SM4_BLOCK_SIZE) / SM4_CCM_CONTEXT_BUFFER_SLOT_SIZE_BYTES)
 
 /*
 // Enum to control call sequence
@@ -52,19 +53,26 @@
 // * if mbx_sm4_ccm_encrypt_mb16 was called, mbx_sm4_ccm_decrypt_mb16 can’t be called.
 // * if mbx_sm4_ccm_decrypt_mb16 was called, mbx_sm4_ccm_encrypt_mb16 can’t be called.
 */
-typedef enum { sm4_ccm_update_aad = 0xF0A1, sm4_ccm_start_encdec, sm4_ccm_enc, sm4_ccm_dec, sm4_ccm_get_tag } sm4_ccm_state;
+typedef enum {
+    sm4_ccm_update_aad = 0xF0A1,
+    sm4_ccm_start_encdec,
+    sm4_ccm_enc,
+    sm4_ccm_dec,
+    sm4_ccm_get_tag
+} sm4_ccm_state;
 
 struct _sm4_ccm_context_mb16 {
-   int64u msg_len[SM4_LINES]; /* Message length (in bytes) of all lines */
-   int64u total_processed_len[SM4_LINES]; /* Total processed plaintext/ciphertext length (in bytes) of all lines */
-   int tag_len[SM4_LINES]; /* Tag length (in bytes) of all lines */
-   int iv_len[SM4_LINES]; /* Total IV length (in bytes) of all lines */
-   __m128i ctr0[SM4_LINES]; /* CTR0 content */
-   __m128i ctr[SM4_LINES]; /* CTR content */
-   __m128i hash[SM4_LINES]; /* hash value accumulator for AAD and TXT processing */
+    int64u msg_len[SM4_LINES]; /* Message length (in bytes) of all lines */
+    int64u total_processed_len
+        [SM4_LINES]; /* Total processed plaintext/ciphertext length (in bytes) of all lines */
+    int tag_len[SM4_LINES];         /* Tag length (in bytes) of all lines */
+    int iv_len[SM4_LINES];          /* Total IV length (in bytes) of all lines */
+    __m128i ctr0[SM4_LINES];        /* CTR0 content */
+    __m128i ctr[SM4_LINES];         /* CTR content */
+    __m128i hash[SM4_LINES];        /* hash value accumulator for AAD and TXT processing */
 
-   mbx_sm4_key_schedule key_sched; /* SM4 key schedule     */
-   sm4_ccm_state state;            /* call sequence state  */
+    mbx_sm4_key_schedule key_sched; /* SM4 key schedule     */
+    sm4_ccm_state state;            /* call sequence state  */
 };
 
 typedef struct _sm4_ccm_context_mb16 SM4_CCM_CTX_mb16;
@@ -82,12 +90,14 @@ typedef struct _sm4_ccm_context_mb16 SM4_CCM_CTX_mb16;
  * @return Bitmask of operation status
  */
 
-MBXAPI(mbx_status16, mbx_sm4_ccm_init_mb16,(const sm4_key *const pa_key[SM4_LINES],
-                                            const int8u *const pa_iv[SM4_LINES],
-                                            const int iv_len[SM4_LINES],
-                                            const int tag_len[SM4_LINES],
-                                            const int64u msg_len[SM4_LINES],
-                                            SM4_CCM_CTX_mb16 *p_context))
+MBXAPI(mbx_status16,
+       mbx_sm4_ccm_init_mb16,
+       (const sm4_key* const pa_key[SM4_LINES],
+        const int8u* const pa_iv[SM4_LINES],
+        const int iv_len[SM4_LINES],
+        const int tag_len[SM4_LINES],
+        const int64u msg_len[SM4_LINES],
+        SM4_CCM_CTX_mb16* p_context))
 /*
  * Digests additional authenticated data (AAD) for 16 buffers
  *
@@ -97,9 +107,11 @@ MBXAPI(mbx_status16, mbx_sm4_ccm_init_mb16,(const sm4_key *const pa_key[SM4_LINE
  *
  * @return Bitmask of operation status
  */
-MBXAPI(mbx_status16, mbx_sm4_ccm_update_aad_mb16,(const int8u *const pa_aad[SM4_LINES],
-                                                  const int aad_len[SM4_LINES],
-                                                  SM4_CCM_CTX_mb16 *p_context))
+MBXAPI(mbx_status16,
+       mbx_sm4_ccm_update_aad_mb16,
+       (const int8u* const pa_aad[SM4_LINES],
+        const int aad_len[SM4_LINES],
+        SM4_CCM_CTX_mb16* p_context))
 /*
  * Retrieves authentication tag for 16 buffers
  *
@@ -109,9 +121,9 @@ MBXAPI(mbx_status16, mbx_sm4_ccm_update_aad_mb16,(const int8u *const pa_aad[SM4_
  *
  * @return Bitmask of operation status
  */
-MBXAPI(mbx_status16, mbx_sm4_ccm_get_tag_mb16,(int8u *pa_tag[SM4_LINES],
-                                               const int tag_len[SM4_LINES],
-                                               SM4_CCM_CTX_mb16 *p_context))
+MBXAPI(mbx_status16,
+       mbx_sm4_ccm_get_tag_mb16,
+       (int8u * pa_tag[SM4_LINES], const int tag_len[SM4_LINES], SM4_CCM_CTX_mb16* p_context))
 /*
  * Encrypts 16 buffers with SM4-CCM.
  *
@@ -122,10 +134,12 @@ MBXAPI(mbx_status16, mbx_sm4_ccm_get_tag_mb16,(int8u *pa_tag[SM4_LINES],
  *
  * @return Bitmask of operation status
  */
-MBXAPI(mbx_status16, mbx_sm4_ccm_encrypt_mb16,(int8u *pa_out[SM4_LINES],
-                                               const int8u *const pa_in[SM4_LINES],
-                                               const int in_len[SM4_LINES],
-                                               SM4_CCM_CTX_mb16 *p_context))
+MBXAPI(mbx_status16,
+       mbx_sm4_ccm_encrypt_mb16,
+       (int8u * pa_out[SM4_LINES],
+        const int8u* const pa_in[SM4_LINES],
+        const int in_len[SM4_LINES],
+        SM4_CCM_CTX_mb16* p_context))
 /*
  * Decrypts 16 buffers with SM4-CCM.
  *
@@ -136,9 +150,11 @@ MBXAPI(mbx_status16, mbx_sm4_ccm_encrypt_mb16,(int8u *pa_out[SM4_LINES],
  *
  * @return Bitmask of operation status
  */
-MBXAPI(mbx_status16, mbx_sm4_ccm_decrypt_mb16,(int8u *pa_out[SM4_LINES],
-                                               const int8u *const pa_in[SM4_LINES],
-                                               const int in_len[SM4_LINES],
-                                               SM4_CCM_CTX_mb16 *p_context))
+MBXAPI(mbx_status16,
+       mbx_sm4_ccm_decrypt_mb16,
+       (int8u * pa_out[SM4_LINES],
+        const int8u* const pa_in[SM4_LINES],
+        const int in_len[SM4_LINES],
+        SM4_CCM_CTX_mb16* p_context))
 
 #endif /* SM4_CCM_H */

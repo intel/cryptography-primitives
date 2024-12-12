@@ -18,26 +18,28 @@
 #include <internal/sm4/sm4_ccm_mb.h>
 #include <internal/rsa/ifma_rsa_arith.h> /* for zero_mb8 */
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
-static void sm4_encrypt_ctr0_mb16(SM4_CCM_CTX_mb16 *p_context, __m512i *s0_blocks)
+static void sm4_encrypt_ctr0_mb16(SM4_CCM_CTX_mb16* p_context, __m512i* s0_blocks)
 {
-    const mbx_sm4_key_schedule *key_sched = (const mbx_sm4_key_schedule *)SM4_CCM_CONTEXT_KEY(p_context);
+    const mbx_sm4_key_schedule* key_sched =
+        (const mbx_sm4_key_schedule*)SM4_CCM_CONTEXT_KEY(p_context);
 
-    __m128i *ctr0        = SM4_CCM_CONTEXT_CTR0(p_context);
+    __m128i* ctr0 = SM4_CCM_CONTEXT_CTR0(p_context);
 
-    const int8u *pa_inp[SM4_LINES];
+    const int8u* pa_inp[SM4_LINES];
 
     for (int i = 0; i < SM4_LINES; i++)
-        pa_inp[i] = (unsigned char *)(ctr0 + i);
+        pa_inp[i] = (unsigned char*)(ctr0 + i);
 
-    TRANSPOSE_16x4_I32_EPI32(&s0_blocks[0], &s0_blocks[1], &s0_blocks[2], &s0_blocks[3], pa_inp, 0xFFFF);
+    TRANSPOSE_16x4_I32_EPI32(
+        &s0_blocks[0], &s0_blocks[1], &s0_blocks[2], &s0_blocks[3], pa_inp, 0xFFFF);
 
-    const __m512i *p_rk = (const __m512i *)key_sched;
+    const __m512i* p_rk = (const __m512i*)key_sched;
 
     __m512i tmp;
     for (int itr = 0; itr < SM4_ROUNDS; itr += 4, p_rk += 4)
-       SM4_FOUR_ROUNDS(s0_blocks[0], s0_blocks[1], s0_blocks[2], s0_blocks[3], tmp, p_rk, 1);
+        SM4_FOUR_ROUNDS(s0_blocks[0], s0_blocks[1], s0_blocks[2], s0_blocks[3], tmp, p_rk, 1);
 
     __m512i T1_0 = unpacklo_epi32(s0_blocks[0], s0_blocks[1]);
     __m512i T1_1 = unpackhi_epi32(s0_blocks[0], s0_blocks[1]);
@@ -65,21 +67,24 @@ static void sm4_encrypt_ctr0_mb16(SM4_CCM_CTX_mb16 *p_context, __m512i *s0_block
     s0_blocks[3] = _mm512_shuffle_i64x2(T1_1, T1_3, 0xDD);
 }
 
-mbx_status16 sm4_ccm_get_tag_mb16(int8u *pa_out[SM4_LINES], const int tag_len[SM4_LINES], __mmask16 mb_mask, SM4_CCM_CTX_mb16 *p_context)
+mbx_status16 sm4_ccm_get_tag_mb16(int8u* pa_out[SM4_LINES],
+                                  const int tag_len[SM4_LINES],
+                                  __mmask16 mb_mask,
+                                  SM4_CCM_CTX_mb16* p_context)
 {
     mbx_status16 status = 0;
     __m512i s0_blocks[4];
     __m512i hash_blocks[4];
 
-    __m128i *hash = SM4_CCM_CONTEXT_HASH(p_context);
+    __m128i* hash = SM4_CCM_CONTEXT_HASH(p_context);
 
     /* Calculate S0 */
     sm4_encrypt_ctr0_mb16(p_context, s0_blocks);
 
     hash_blocks[0] = loadu(hash);
     hash_blocks[1] = loadu(hash + 4);
-    hash_blocks[2] = loadu(hash + 4*2);
-    hash_blocks[3] = loadu(hash + 4*3);
+    hash_blocks[2] = loadu(hash + 4 * 2);
+    hash_blocks[3] = loadu(hash + 4 * 3);
 
     __m512i tag_blocks[4];
 
@@ -91,10 +96,10 @@ mbx_status16 sm4_ccm_get_tag_mb16(int8u *pa_out[SM4_LINES], const int tag_len[SM
 
     /* Store result */
     for (int i = 0; i < SM4_LINES; i++) {
-        __m128i one_block = M128((__m128i *)tag_blocks + i);
+        __m128i one_block = M128((__m128i*)tag_blocks + i);
 
         __mmask16 tagMask = ~(0xFFFF << (tag_len[i])) * ((mb_mask >> i) & 0x1);
-         _mm_mask_storeu_epi8((void *)(pa_out[i]), tagMask, one_block);
+        _mm_mask_storeu_epi8((void*)(pa_out[i]), tagMask, one_block);
     }
 
     /* Clear local copy of sensitive data */

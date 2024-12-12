@@ -17,7 +17,7 @@
 #include <internal/ed25519/sha512.h>
 #include <internal/common/mem_fns.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
 /* setup init hash value */
 static void sha512_init(int64u* pHash)
@@ -36,7 +36,7 @@ static void sha512_update(void* uniHash, const int8u* mblk, int mlen)
 {
     int32u* data = (int32u*)mblk;
 
-    int64u* digest = (int64u*)uniHash;
+    int64u* digest         = (int64u*)uniHash;
     int64u* SHA512_cnt_loc = (int64u*)sha512_cnt;
 
     for (; mlen >= MBS_SHA512; data += MBS_SHA512 / sizeof(int32u), mlen -= MBS_SHA512) {
@@ -49,7 +49,7 @@ static void sha512_update(void* uniHash, const int8u* mblk, int mlen)
         for (j = 0; j < 16; j++) {
             int32u hiX = data[2 * j];
             int32u loX = data[2 * j + 1];
-            wdat[j] = MAKEDWORD(ENDIANNESS(loX), ENDIANNESS(hiX));
+            wdat[j]    = MAKEDWORD(ENDIANNESS(loX), ENDIANNESS(hiX));
         }
 
         /* copy digest */
@@ -86,7 +86,11 @@ static void sha512_update(void* uniHash, const int8u* mblk, int mlen)
     }
 }
 
-static void sha512_final(DigestSHA512 pHash, const int8u* inpBuffer, int inpLen, const int64u lenLo, const int64u lenHi)
+static void sha512_final(DigestSHA512 pHash,
+                         const int8u* inpBuffer,
+                         int inpLen,
+                         const int64u lenLo,
+                         const int64u lenHi)
 {
     /* local buffer and its length */
     int8u buffer[MBS_SHA512 * 2];
@@ -127,62 +131,65 @@ void SHA512Init(SHA512State* pState)
 void SHA512Update(const int8u* pSrc, int len, SHA512State* pState)
 {
 
-/*
+    /*
 // handle non empty message
 */
-if (len) {
-    int procLen;
-
-    int idx = HASH_BUFFIDX(pState);
-    int8u* pBuffer = HASH_BUFF(pState);
-    int64u lenLo = HASH_LENLO(pState) + (int64u)len;
-    int64u lenHi = HASH_LENHI(pState);
-    if (lenLo < HASH_LENLO(pState)) lenHi++;
-
-    /* if non empty internal buffer filling */
-    if (idx) {
-        /* copy from input stream to the internal buffer as match as possible */
-        procLen = MIN(len, (MBS_SHA512 - idx));
-        CopyBlock(pSrc, pBuffer + idx, procLen);
-
-        /* update message pointer and length */
-        pSrc += procLen;
-        len -= procLen;
-        idx += procLen;
-
-        /* update digest if buffer full */
-        if (MBS_SHA512 == idx) {
-            sha512_update(HASH_VALUE(pState), pBuffer, MBS_SHA512);
-            idx = 0;
-        }
-    }
-
-    /* main message part processing */
-    procLen = len & ~(MBS_SHA512 - 1);
-    if (procLen) {
-        sha512_update(HASH_VALUE(pState), pSrc, procLen);
-        pSrc += procLen;
-        len -= procLen;
-    }
-
-    /* store rest of message into the internal buffer */
     if (len) {
-        CopyBlock(pSrc, pBuffer, len);
-        idx += len;
-    }
+        int procLen;
 
-    /* update length of processed message */
-    HASH_LENLO(pState) = lenLo;
-    HASH_LENHI(pState) = lenHi;
-    HASH_BUFFIDX(pState) = idx;
-}
+        int idx        = HASH_BUFFIDX(pState);
+        int8u* pBuffer = HASH_BUFF(pState);
+        int64u lenLo   = HASH_LENLO(pState) + (int64u)len;
+        int64u lenHi   = HASH_LENHI(pState);
+        if (lenLo < HASH_LENLO(pState))
+            lenHi++;
+
+        /* if non empty internal buffer filling */
+        if (idx) {
+            /* copy from input stream to the internal buffer as match as possible */
+            procLen = MIN(len, (MBS_SHA512 - idx));
+            CopyBlock(pSrc, pBuffer + idx, procLen);
+
+            /* update message pointer and length */
+            pSrc += procLen;
+            len -= procLen;
+            idx += procLen;
+
+            /* update digest if buffer full */
+            if (MBS_SHA512 == idx) {
+                sha512_update(HASH_VALUE(pState), pBuffer, MBS_SHA512);
+                idx = 0;
+            }
+        }
+
+        /* main message part processing */
+        procLen = len & ~(MBS_SHA512 - 1);
+        if (procLen) {
+            sha512_update(HASH_VALUE(pState), pSrc, procLen);
+            pSrc += procLen;
+            len -= procLen;
+        }
+
+        /* store rest of message into the internal buffer */
+        if (len) {
+            CopyBlock(pSrc, pBuffer, len);
+            idx += len;
+        }
+
+        /* update length of processed message */
+        HASH_LENLO(pState)   = lenLo;
+        HASH_LENHI(pState)   = lenHi;
+        HASH_BUFFIDX(pState) = idx;
+    }
 }
 
 void SHA512Final(int8u* pMD, SHA512State* pState)
 {
     sha512_final(HASH_VALUE(pState),
-        HASH_BUFF(pState), HASH_BUFFIDX(pState),
-        HASH_LENLO(pState), HASH_LENHI(pState));
+                 HASH_BUFF(pState),
+                 HASH_BUFFIDX(pState),
+                 HASH_LENLO(pState),
+                 HASH_LENHI(pState));
     /* convert hash into big endian */
     ((int64u*)pMD)[0] = ENDIANNESS64(HASH_VALUE(pState)[0]);
     ((int64u*)pMD)[1] = ENDIANNESS64(HASH_VALUE(pState)[1]);

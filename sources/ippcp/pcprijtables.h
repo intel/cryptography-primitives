@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Rijndael Tables Declarations
-// 
-// 
+//
+//
 */
 
 #if !defined(_PCP_RIJTBLES_H)
@@ -33,15 +33,15 @@
 /*
 // GF(256) multiplication operations
 */
-#define gf_m2(x)   ((x<<1) ^ (((x>>7) & 1) * WPOLY))
-#define gf_m4(x)   ((x<<2) ^ (((x>>6) & 1) * WPOLY) ^ (((x>>6) & 2) * WPOLY))
-#define gf_m8(x)   ((x<<3) ^ (((x>>5) & 1) * WPOLY) ^ (((x>>5) & 2) * WPOLY) \
-                           ^ (((x>>5) & 4) * WPOLY))
+#define gf_m2(x)   (((x)<<1) ^ ((((x)>>7) & 1) * WPOLY))
+#define gf_m4(x)   ((((x))<<2) ^ ((((x)>>6) & 1) * WPOLY) ^ ((((x)>>6) & 2) * WPOLY))
+#define gf_m8(x)   ((((x))<<3) ^ ((((x)>>5) & 1) * WPOLY) ^ ((((x)>>5) & 2) * WPOLY) \
+                               ^ ((((x)>>5) & 4) * WPOLY))
 #define gf_m1(x)   ((x))
-#define gf_m3(x)   (gf_m2(x) ^ x)
-#define gf_m9(x)   (gf_m8(x) ^ x)
-#define gf_mB(x)   (gf_m8(x) ^ gf_m2(x) ^ x)
-#define gf_mD(x)   (gf_m8(x) ^ gf_m4(x) ^ x)
+#define gf_m3(x)   (gf_m2(x) ^ (x))
+#define gf_m9(x)   (gf_m8(x) ^ (x))
+#define gf_mB(x)   (gf_m8(x) ^ gf_m2(x) ^(x))
+#define gf_mD(x)   (gf_m8(x) ^ gf_m4(x) ^ (x))
 #define gf_mE(x)   (gf_m8(x) ^ gf_m4(x) ^ gf_m2(x))
 
 /*

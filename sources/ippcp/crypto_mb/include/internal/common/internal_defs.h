@@ -20,35 +20,37 @@
 #define _MBX_L9 1
 #define _MBX_K1 2
 
-#if defined( _L9 ) || (_K1)
-   #include "ec_nistp256_cpuspc.h"
-   #include "ec_nistp384_cpuspc.h"
-   #include "ec_nistp521_cpuspc.h"
-   #include "ec_sm2_cpuspc.h"
-   #include "ed25519_cpuspc.h"
-   #include "exp_cpuspc.h"
-   #include "rsa_cpuspc.h"
-   #include "sm3_cpuspc.h"
-   #include "sm4_ccm_cpuspc.h"
-   #include "sm4_cpuspc.h"
-   #include "sm4_gcm_cpuspc.h"
-   #include "x25519_cpuspc.h"
+#if defined(_L9) || (_K1)
+#include "ec_nistp256_cpuspc.h"
+#include "ec_nistp384_cpuspc.h"
+#include "ec_nistp521_cpuspc.h"
+#include "ec_sm2_cpuspc.h"
+#include "ed25519_cpuspc.h"
+#include "exp_cpuspc.h"
+#include "rsa_cpuspc.h"
+#include "sm3_cpuspc.h"
+#include "sm4_ccm_cpuspc.h"
+#include "sm4_cpuspc.h"
+#include "sm4_gcm_cpuspc.h"
+#include "x25519_cpuspc.h"
 #endif
 
+/* clang-format off */
 #if defined(_MBX_MERGED_BLD)
-#if defined( _L9 ) /* Intel® AVX2 */
-   #define OWNAPI(name) l9_##name
-#elif defined( _K1 )
-   #define OWNAPI(name) k1_##name
-#endif
+    #if defined(_L9) /* Intel® AVX2 */
+        #define OWNAPI(name) l9_##name
+    #elif defined(_K1)
+        #define OWNAPI(name) k1_##name
+    #endif
 #else /* 1CPU build */
-  #define OWNAPI(name) name
+    #define OWNAPI(name) name
 #endif
 
-#if defined( _L9 ) /* Intel® AVX2 */
-   #define _MBX _MBX_L9
-#elif defined( _K1 )
-   #define _MBX _MBX_K1
+#if defined(_L9) /* Intel® AVX2 */
+    #define _MBX _MBX_L9
+#elif defined(_K1)
+    #define _MBX _MBX_K1
 #endif
+/* clang-format on */
 
 #endif /* INTERNAL_DEFS_H */

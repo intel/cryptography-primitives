@@ -31,7 +31,7 @@
 /* Number of digit in "digsize" representation of "bitsize" value */
 #define NUMBER_OF_DIGITS(bitsize, digsize) (((bitsize) + (digsize)-1) / (digsize))
 /* Mask of most significant digit wrt "digsize" representation */
-#define MS_DIGIT_MASK(bitsize, digsize) (((int64u)1 << ((bitsize) % digsize)) - 1)
+#define MS_DIGIT_MASK(bitsize, digsize) (((int64u)1 << ((bitsize) % (digsize))) - 1)
 
 
 #define REPL8(e) e, e, e, e, e, e, e, e

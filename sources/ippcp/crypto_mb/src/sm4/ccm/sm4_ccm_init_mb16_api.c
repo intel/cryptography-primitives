@@ -19,25 +19,25 @@
 #include <internal/common/mem_fns.h>
 
 DLL_PUBLIC
-mbx_status16 OWNAPI(mbx_sm4_ccm_init_mb16)(const sm4_key *const pa_key[SM4_LINES],
-                                   const int8u *const pa_iv[SM4_LINES],
-                                   const int iv_len[SM4_LINES],
-                                   const int tag_len[SM4_LINES],
-                                   const int64u msg_len[SM4_LINES],
-                                   SM4_CCM_CTX_mb16 *p_context)
+mbx_status16 OWNAPI(mbx_sm4_ccm_init_mb16)(const sm4_key* const pa_key[SM4_LINES],
+                                           const int8u* const pa_iv[SM4_LINES],
+                                           const int iv_len[SM4_LINES],
+                                           const int tag_len[SM4_LINES],
+                                           const int64u msg_len[SM4_LINES],
+                                           SM4_CCM_CTX_mb16* p_context)
 {
     int buf_no;
     mbx_status16 status = 0;
-    int16u mb_mask = 0xFFFF;
+    int16u mb_mask      = 0xFFFF;
 
     /* Test input pointers */
-    if (NULL == pa_key || NULL == pa_iv || NULL == iv_len ||
-        NULL == tag_len || NULL == msg_len || NULL == p_context) {
+    if (NULL == pa_key || NULL == pa_iv || NULL == iv_len || NULL == tag_len || NULL == msg_len ||
+        NULL == p_context) {
         status = MBX_SET_STS16_ALL(MBX_STATUS_NULL_PARAM_ERR);
         return status;
-   }
+    }
 
-   /* Don't process buffers with input pointers equal to zero and set bad status for IV with zero length */
+    /* Don't process buffers with input pointers equal to zero and set bad status for IV with zero length */
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_key[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
@@ -63,7 +63,8 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_init_mb16)(const sm4_key *const pa_key[SM4_LINES
 
         /* Check maximum message length allowed, given the number of bytes to encode message length */
         int q = 15 - iv_len[buf_no];
-        int64u max_len = (q == 8) ? 0xFFFFFFFFFFFFFFFF : ((1ULL << (q << 3)) - 1); /* (2^(q * 8) - 1 */
+        int64u max_len =
+            (q == 8) ? 0xFFFFFFFFFFFFFFFF : ((1ULL << (q << 3)) - 1); /* (2^(q * 8) - 1 */
 
         if (msg_len[buf_no] > max_len) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
@@ -71,9 +72,10 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_init_mb16)(const sm4_key *const pa_key[SM4_LINES
         }
     }
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        status |= internal_avx512_sm4_ccm_init_mb16(pa_key, pa_iv, iv_len, tag_len, msg_len, p_context, (__mmask16)mb_mask);
+        status |= internal_avx512_sm4_ccm_init_mb16(
+            pa_key, pa_iv, iv_len, tag_len, msg_len, p_context, (__mmask16)mb_mask);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

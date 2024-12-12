@@ -18,45 +18,47 @@
 #include <internal/sm4/sm4_ccm_mb.h>
 
 DLL_PUBLIC
-mbx_status16 OWNAPI(mbx_sm4_ccm_update_aad_mb16)(const int8u *const pa_aad[SM4_LINES], const int aad_len[SM4_LINES], SM4_CCM_CTX_mb16 *p_context)
+mbx_status16 OWNAPI(mbx_sm4_ccm_update_aad_mb16)(const int8u* const pa_aad[SM4_LINES],
+                                                 const int aad_len[SM4_LINES],
+                                                 SM4_CCM_CTX_mb16* p_context)
 {
-   int buf_no;
-   mbx_status16 status = 0;
-   int16u mb_mask   = 0xFFFF;
+    int buf_no;
+    mbx_status16 status = 0;
+    int16u mb_mask      = 0xFFFF;
 
-   /* Test input pointers */
-   if (NULL == pa_aad || NULL == aad_len || NULL == p_context) {
-      status = MBX_SET_STS16_ALL(MBX_STATUS_NULL_PARAM_ERR);
-      return status;
-   }
+    /* Test input pointers */
+    if (NULL == pa_aad || NULL == aad_len || NULL == p_context) {
+        status = MBX_SET_STS16_ALL(MBX_STATUS_NULL_PARAM_ERR);
+        return status;
+    }
 
-   /* Check state */
-   if (sm4_ccm_update_aad != SM4_CCM_CONTEXT_STATE(p_context)) {
-      status = MBX_SET_STS16_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
-      return status;
-   }
+    /* Check state */
+    if (sm4_ccm_update_aad != SM4_CCM_CONTEXT_STATE(p_context)) {
+        status = MBX_SET_STS16_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
+        return status;
+    }
 
-   /* Don't process buffers with input pointers equal to zero */
-   for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
-      if (pa_aad[buf_no] == NULL) {
-         if (aad_len[buf_no] != 0) {
-             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-             mb_mask &= ~(0x1 << buf_no);
-             continue;
-         }
-      }
-      if (aad_len[buf_no] < 0 || aad_len[buf_no] > MAX_CCM_AAD_LENGTH) {
-         status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-         mb_mask &= ~(0x1 << buf_no);
-      }
-   }
+    /* Don't process buffers with input pointers equal to zero */
+    for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
+        if (pa_aad[buf_no] == NULL) {
+            if (aad_len[buf_no] != 0) {
+                status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+                mb_mask &= ~(0x1 << buf_no);
+                continue;
+            }
+        }
+        if (aad_len[buf_no] < 0 || aad_len[buf_no] > MAX_CCM_AAD_LENGTH) {
+            status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
+            mb_mask &= ~(0x1 << buf_no);
+        }
+    }
 
-#if (_MBX>=_MBX_K1)
-   if (MBX_IS_ANY_OK_STS16(status))
-      status |= sm4_ccm_update_aad_mb16(pa_aad, aad_len, (__mmask16)mb_mask, p_context);
+#if (_MBX >= _MBX_K1)
+    if (MBX_IS_ANY_OK_STS16(status))
+        status |= sm4_ccm_update_aad_mb16(pa_aad, aad_len, (__mmask16)mb_mask, p_context);
 #else
-   MBX_UNREFERENCED_PARAMETER(mb_mask);
-   status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+    MBX_UNREFERENCED_PARAMETER(mb_mask);
+    status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
-   return status;
+    return status;
 }

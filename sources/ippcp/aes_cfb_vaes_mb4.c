@@ -23,26 +23,26 @@
 #if(_IPP32E>=_IPP32E_K1)
 
 #define AES_ENCRYPT_VAES_MB16(b0, pRkey, num_rounds) { \
-   __m512i (*tkeys) =  &pRkey[num_rounds-9]; \
-   b0 = _mm512_xor_si512(b0, pRkey[0]); \
+   __m512i (*tkeys) =  &(pRkey)[(num_rounds)-9]; \
+   (b0) = _mm512_xor_si512((b0), (pRkey)[0]); \
    switch(num_rounds) { \
    case 14: \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[-4]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[-3]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[-4]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[-3]); \
    case 12: \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[-2]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[-1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[-2]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[-1]); \
    default: \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[0]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[1]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[2]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[3]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[4]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[5]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[6]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[7]); \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[8]); \
-      b0 = _mm512_aesenclast_epi128(b0, tkeys[9]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[0]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[2]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[3]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[4]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[5]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[6]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[7]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[8]); \
+      (b0) = _mm512_aesenclast_epi128((b0), tkeys[9]); \
    } \
 }
 

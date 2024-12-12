@@ -33,7 +33,7 @@ Intel® Cryptography Primitives Library is licensed under the terms in [LICENSE]
 
 ## Developer Certification of Origin (DCO)
 We encourage you to use Signed-off-by feature to comply with [Developer Certification of Origin (DCO)](https://developercertificate.org/).  
-The name in the commit message Signed-off-by line and your email must match the change authorship information.  Make sure your .gitconfig is set up correctly so you can use `git commit -s` for signing your commits: 
+The name in the commit message Signed-off-by line and your email must match the change authorship information.  Make sure your `.gitconfig` is set up correctly so you can use `git commit -s` for signing your commits: 
 
 `git config --global user.name "Kris Smith"`
 
@@ -75,7 +75,8 @@ The name in the commit message Signed-off-by line and your email must match the 
 ## Pull Request Checklist
 Before sending your pull requests, ensure that:
  - Intel® Cryptography Primitives Library builds successfully with proposed changes using one of the compilers listed in [Build](./BUILD.md). Please specify which exact compiler was used.
- - Relevant documentation are added (for example CHANDELOG.md, README.md etc)
+ - Formatting to the source files is applied according to the [.clang-format](.clang-format) rules.
+ - Relevant documentation are added (for example [`CHANGELOG.md`](CHANGELOG.md), [`README.md`](README.md) etc)
  - For new features make sure that
     - All new files are covered by copyrights.
     - All new internal functions are documented in comments.

@@ -18,14 +18,16 @@
 #include <internal/sm4/sm4_ccm_mb.h>
 
 DLL_PUBLIC
-mbx_status16
-OWNAPI(mbx_sm4_ccm_decrypt_mb16)(int8u *pa_out[SM4_LINES], const int8u *const pa_in[SM4_LINES], const int in_len[SM4_LINES], SM4_CCM_CTX_mb16 *p_context)
+mbx_status16 OWNAPI(mbx_sm4_ccm_decrypt_mb16)(int8u* pa_out[SM4_LINES],
+                                              const int8u* const pa_in[SM4_LINES],
+                                              const int in_len[SM4_LINES],
+                                              SM4_CCM_CTX_mb16* p_context)
 {
     int buf_no;
-    mbx_status16 status = 0;
-    int16u mb_mask   = 0xFFFF;
-    int64u *processed_len = SM4_CCM_CONTEXT_PROCESSED_LEN(p_context);
-    int64u *msg_len = SM4_CCM_CONTEXT_MSG_LEN(p_context);
+    mbx_status16 status   = 0;
+    int16u mb_mask        = 0xFFFF;
+    int64u* processed_len = SM4_CCM_CONTEXT_PROCESSED_LEN(p_context);
+    int64u* msg_len       = SM4_CCM_CONTEXT_MSG_LEN(p_context);
 
     /* Test input pointers */
     if (NULL == pa_out || NULL == pa_in || NULL == in_len || NULL == p_context) {
@@ -33,14 +35,14 @@ OWNAPI(mbx_sm4_ccm_decrypt_mb16)(int8u *pa_out[SM4_LINES], const int8u *const pa
         return status;
     }
 
-   /* Check state */
-   if (sm4_ccm_update_aad != SM4_CCM_CONTEXT_STATE(p_context) &&
-       sm4_ccm_start_encdec != SM4_CCM_CONTEXT_STATE(p_context) &&
-       sm4_ccm_dec != SM4_CCM_CONTEXT_STATE(p_context)) {
+    /* Check state */
+    if (sm4_ccm_update_aad != SM4_CCM_CONTEXT_STATE(p_context) &&
+        sm4_ccm_start_encdec != SM4_CCM_CONTEXT_STATE(p_context) &&
+        sm4_ccm_dec != SM4_CCM_CONTEXT_STATE(p_context)) {
 
-      status = MBX_SET_STS16_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
-      return status;
-   }
+        status = MBX_SET_STS16_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
+        return status;
+    }
     /* Don't process buffers with NULL pointers or wrong input length */
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_out[buf_no] == NULL || pa_in[buf_no] == NULL) {
@@ -62,7 +64,7 @@ OWNAPI(mbx_sm4_ccm_decrypt_mb16)(int8u *pa_out[SM4_LINES], const int8u *const pa
         }
     }
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
         status |= sm4_ccm_decrypt_mb16(pa_out, pa_in, in_len, (__mmask16)mb_mask, p_context);
 #else

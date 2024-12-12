@@ -16,11 +16,13 @@
 
 #include <internal/sm4/sm4_ccm_mb.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
-void sm4_ccm_set_msg_len_mb16(const int64u msg_len[SM4_LINES], __mmask16 mb_mask, SM4_CCM_CTX_mb16 *p_context)
+void sm4_ccm_set_msg_len_mb16(const int64u msg_len[SM4_LINES],
+                              __mmask16 mb_mask,
+                              SM4_CCM_CTX_mb16* p_context)
 {
-    int64u *msg_len_ctx = SM4_CCM_CONTEXT_MSG_LEN(p_context);
+    int64u* msg_len_ctx = SM4_CCM_CONTEXT_MSG_LEN(p_context);
     unsigned i;
 
     for (i = 0; i < SM4_LINES; i++)

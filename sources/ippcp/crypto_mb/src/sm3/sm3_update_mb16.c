@@ -22,13 +22,13 @@
 
 // Disable optimization for VS17
 #if defined(_MSC_VER) && (_MSC_VER < 1920) && !defined(__INTEL_COMPILER)
-    #pragma optimize( "", off )
+#pragma optimize("", off)
 #endif
 
 DLL_PUBLIC
 mbx_status16 OWNAPI(mbx_sm3_update_mb16)(const int8u* const msg_pa[16],
-                                          int len[16],
-                                SM3_CTX_mb16* p_state)
+                                         int len[16],
+                                         SM3_CTX_mb16* p_state)
 {
     mbx_status16 status = 0;
 
@@ -38,7 +38,7 @@ mbx_status16 OWNAPI(mbx_sm3_update_mb16)(const int8u* const msg_pa[16],
         return status;
     }
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
     status |= internal_avx512_sm3_update_mb16(msg_pa, len, p_state);
 #else
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

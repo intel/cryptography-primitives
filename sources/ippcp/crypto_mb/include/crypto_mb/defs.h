@@ -20,40 +20,42 @@
 /* externals */
 #undef EXTERN_C
 
+/* clang-format off */
 #ifdef __cplusplus
-   #define EXTERN_C extern "C"
+    #define EXTERN_C extern "C"
 #else
-   #define EXTERN_C
+    #define EXTERN_C
 #endif
 
-#if !defined( MBXAPI )
-   #define MBXAPI( type,name,arg ) EXTERN_C type MBX_CALL name arg;
+#if !defined(MBXAPI)
+    #define MBXAPI(type, name, arg) EXTERN_C type MBX_CALL name arg;
 #endif
 
-#if defined (_MSC_VER)
-  #define MBX_CDECL    __cdecl
-#elif (defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || defined (__GNUC__ ) || defined (__clang__)) && defined (_ARCH_IA32)
-  #define MBX_CDECL    __attribute((cdecl))
+#if defined(_MSC_VER)
+    #define MBX_CDECL __cdecl
+#elif ((defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__GNUC__) || \
+       defined(__clang__)) && defined(_ARCH_IA32))
+    #define MBX_CDECL __attribute((cdecl))
 #else
-  #define MBX_CDECL
+    #define MBX_CDECL
 #endif
 
-#if defined( _WIN32 ) || defined( _WIN64 )
-  #define MBX_STDCALL  __stdcall
-  #define MBX_CALL     MBX_STDCALL
+#if defined(_WIN32) || defined(_WIN64)
+    #define MBX_STDCALL __stdcall
+    #define MBX_CALL    MBX_STDCALL
 #else
-  #define MBX_STDCALL
-  #define MBX_CALL     MBX_CDECL
+    #define MBX_STDCALL
+    #define MBX_CALL MBX_CDECL
 #endif
 
 /* data types */
 typedef unsigned char int8u;
 typedef unsigned short int16u;
-typedef unsigned int  int32u;
+typedef unsigned int int32u;
 typedef unsigned long long int64u;
 
 #ifndef NULL
-   #define NULL ((void *)0)
+    #define NULL ((void*)0)
 #endif
 
 /* alignment & inline */
@@ -69,7 +71,7 @@ typedef unsigned long long int64u;
    #if !defined(__NOINLINE)
       #define __NOINLINE __attribute__((noinline))
    #endif
-#else
+#else /* __GNUC__ */
    #if !defined(__ALIGN64)
       #define __ALIGN64 __declspec(align(64))
    #endif
@@ -81,19 +83,20 @@ typedef unsigned long long int64u;
    #if !defined(__NOINLINE)
       #define __NOINLINE __declspec(noinline)
    #endif
-#endif
+#endif /* __GNUC__ */
 
 #if !defined(MBX_ZEROING_FUNC_ATTRIBUTES)
-#if defined(_MSC_VER) && !defined(__clang__)
-  #define MBX_ZEROING_FUNC_ATTRIBUTES __declspec(noinline)
-#elif defined(__GNUC__) && !defined(__clang__)
-  #define MBX_ZEROING_FUNC_ATTRIBUTES __attribute__((noinline))
-#elif defined(__clang__) || defined(__INTEL_LLVM_COMPILER)
-  #define MBX_ZEROING_FUNC_ATTRIBUTES __attribute__((noinline)) __attribute((optnone))
-#else
-  #define MBX_ZEROING_FUNC_ATTRIBUTES
-#endif
+    #if defined(_MSC_VER) && !defined(__clang__)
+        #define MBX_ZEROING_FUNC_ATTRIBUTES __declspec(noinline)
+    #elif defined(__GNUC__) && !defined(__clang__)
+        #define MBX_ZEROING_FUNC_ATTRIBUTES __attribute__((noinline))
+    #elif defined(__clang__) || defined(__INTEL_LLVM_COMPILER)
+        #define MBX_ZEROING_FUNC_ATTRIBUTES __attribute__((noinline)) __attribute((optnone))
+    #else
+        #define MBX_ZEROING_FUNC_ATTRIBUTES
+    #endif
 #endif /* MBX_ZEROING_FUNC_ATTRIBUTES */
+/* clang-format on */
 
 #define MBX_UNREFERENCED_PARAMETER(p) (void)(p)
 

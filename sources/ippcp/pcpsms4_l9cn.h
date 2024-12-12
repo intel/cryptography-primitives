@@ -14,19 +14,19 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //     affine()
 //     sBox()
 //     L()
 //     TRANSPOSE_INP()
 //     TRANSPOSE_OUT()
-// 
+//
 */
 
 #if (_IPP>=_IPP_H9) || (_IPP32E>=_IPP32E_L9)
@@ -71,7 +71,7 @@ static __ALIGN32 Ipp8u affineOut[] = { 0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7, 
 /*
 //
 // AES and SMS4 ciphers both based on composite field GF(2^8).
-// This affine transformation transforms 16 bytes 
+// This affine transformation transforms 16 bytes
 // from SMS4 representation to AES representation or vice versa
 // depending on passed masks.
 //
@@ -105,11 +105,11 @@ __FORCEINLINE __m256i AES_ENC_LAST(__m256i x, __m128i key)
 // (It happened due to using different generating polynomials in SM4 and AES representations).
 // Doing data conversion from SM4 to AES domain
 // lets use AES specific intrinsics to perform less expensive SMS4 S-box computation.
-// 
+//
 // Original SMS4 S-box algorithm is converted to the following:
 //
 // - transform  data  from  SMS4  representation  to AES representation
-// - compute S-box  value using  _mm_aesenclast_si128  with special key 
+// - compute S-box  value using  _mm_aesenclast_si128  with special key
 // - re-shuffle data  after _mm_aesenclast_si128 that shuffle it inside
 // - transform data back from AES representation to SMS4 representation
 //
@@ -145,40 +145,40 @@ __FORCEINLINE __m256i L(__m256i x)
 // out: K0, K1, K2, K3
 */
 #define TRANSPOSE_INP(K0,K1,K2,K3, T0,T1,T2,T3) \
-   K0 = _mm256_unpacklo_epi32(T0, T1); \
-   K1 = _mm256_unpacklo_epi32(T2, T3); \
-   K2 = _mm256_unpackhi_epi32(T0, T1); \
-   K3 = _mm256_unpackhi_epi32(T2, T3); \
+   (K0) = _mm256_unpacklo_epi32(T0, T1); \
+   (K1) = _mm256_unpacklo_epi32(T2, T3); \
+   (K2) = _mm256_unpackhi_epi32(T0, T1); \
+   (K3) = _mm256_unpackhi_epi32(T2, T3); \
    \
-   T0 = _mm256_unpacklo_epi64(K0, K1); \
-   T1 = _mm256_unpacklo_epi64(K2, K3); \
-   T2 = _mm256_unpackhi_epi64(K0, K1); \
-   T3 = _mm256_unpackhi_epi64(K2, K3); \
+   (T0) = _mm256_unpacklo_epi64(K0, K1); \
+   (T1) = _mm256_unpacklo_epi64(K2, K3); \
+   (T2) = _mm256_unpackhi_epi64(K0, K1); \
+   (T3) = _mm256_unpackhi_epi64(K2, K3); \
    \
-   K2 = _mm256_permutevar8x32_epi32(T1, M256(permMask)); \
-   K1 = _mm256_permutevar8x32_epi32(T2, M256(permMask)); \
-   K3 = _mm256_permutevar8x32_epi32(T3, M256(permMask)); \
-   K0 = _mm256_permutevar8x32_epi32(T0, M256(permMask))
+   (K2) = _mm256_permutevar8x32_epi32(T1, M256(permMask)); \
+   (K1) = _mm256_permutevar8x32_epi32(T2, M256(permMask)); \
+   (K3) = _mm256_permutevar8x32_epi32(T3, M256(permMask)); \
+   (K0) = _mm256_permutevar8x32_epi32(T0, M256(permMask))
 
 /*
 // inp: K0, K1, K2, K3
 // out: T0, T1, T2, T3
 */
 #define TRANSPOSE_OUT(T0,T1,T2,T3, K0,K1,K2,K3) \
-   T0 = _mm256_unpacklo_epi32(K1, K0); \
-   T1 = _mm256_unpacklo_epi32(K3, K2); \
-   T2 = _mm256_unpackhi_epi32(K1, K0); \
-   T3 = _mm256_unpackhi_epi32(K3, K2); \
+   (T0) = _mm256_unpacklo_epi32(K1, K0); \
+   (T1) = _mm256_unpacklo_epi32(K3, K2); \
+   (T2) = _mm256_unpackhi_epi32(K1, K0); \
+   (T3) = _mm256_unpackhi_epi32(K3, K2); \
    \
-   K0 = _mm256_unpacklo_epi64(T1, T0); \
-   K1 = _mm256_unpacklo_epi64(T3, T2); \
-   K2 = _mm256_unpackhi_epi64(T1, T0); \
-   K3 = _mm256_unpackhi_epi64(T3, T2); \
+   (K0) = _mm256_unpacklo_epi64(T1, T0); \
+   (K1) = _mm256_unpacklo_epi64(T3, T2); \
+   (K2) = _mm256_unpackhi_epi64(T1, T0); \
+   (K3) = _mm256_unpackhi_epi64(T3, T2); \
    \
-   T0 = _mm256_permute2x128_si256(K0, K2, 0x20); \
-   T1 = _mm256_permute2x128_si256(K1, K3, 0x20); \
-   T2 = _mm256_permute2x128_si256(K0, K2, 0x31); \
-   T3 = _mm256_permute2x128_si256(K1, K3, 0x31)
+   (T0) = _mm256_permute2x128_si256(K0, K2, 0x20); \
+   (T1) = _mm256_permute2x128_si256(K1, K3, 0x20); \
+   (T2) = _mm256_permute2x128_si256(K0, K2, 0x31); \
+   (T3) = _mm256_permute2x128_si256(K1, K3, 0x31)
 
 #endif /* __SMS4_SBOX_L9_H_ */
 

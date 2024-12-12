@@ -42,95 +42,89 @@
 */
 DLL_PUBLIC
 mbx_status OWNAPI(mbx_nistp256_ecpublic_key_ssl_mb8)(BIGNUM* pa_pubx[8],
-                                             BIGNUM* pa_puby[8],
-                                             BIGNUM* pa_pubz[8],
-                                       const BIGNUM* const pa_skey[8],
-                                              int8u* pBuffer)
+                                                     BIGNUM* pa_puby[8],
+                                                     BIGNUM* pa_pubz[8],
+                                                     const BIGNUM* const pa_skey[8],
+                                                     int8u* pBuffer)
 {
-   mbx_status status = 0;
-   int buf_no;
+    mbx_status status = 0;
+    int buf_no;
 
-   /* pa_bubz!=0 means the output is in Jacobian projective coordinates */
-   int use_jproj_coords = NULL!=pa_pubz;
+    /* pa_bubz!=0 means the output is in Jacobian projective coordinates */
+    int use_jproj_coords = NULL != pa_pubz;
 
-   /* test input pointers */
-   if(NULL==pa_pubx || NULL==pa_puby || NULL==pa_skey) {
-      status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
-      return status;
-   }
+    /* test input pointers */
+    if (NULL == pa_pubx || NULL == pa_puby || NULL == pa_skey) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
+        return status;
+    }
 
-   /* check pointers and values */
-   for(buf_no=0; buf_no<8; buf_no++) {
-            BIGNUM* out_x = pa_pubx[buf_no];
-            BIGNUM* out_y = pa_puby[buf_no];
-            BIGNUM* out_z = use_jproj_coords? pa_pubz[buf_no] : NULL;
-      const BIGNUM* key = pa_skey[buf_no];
+    /* check pointers and values */
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        BIGNUM* out_x     = pa_pubx[buf_no];
+        BIGNUM* out_y     = pa_puby[buf_no];
+        BIGNUM* out_z     = use_jproj_coords ? pa_pubz[buf_no] : NULL;
+        const BIGNUM* key = pa_skey[buf_no];
 
-      /* if any of pointer NULL set error status */
-      if(NULL==out_x || NULL==out_y || (use_jproj_coords && NULL==out_z) || NULL==key) {
-         status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-      }
-   }
+        /* if any of pointer NULL set error status */
+        if (NULL == out_x || NULL == out_y || (use_jproj_coords && NULL == out_z) || NULL == key) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
+    }
 
-   if(!MBX_IS_ANY_OK_STS(status))
-      return status;
+    if (!MBX_IS_ANY_OK_STS(status))
+        return status;
 
-   /*
-   // processing
-   */
-
-#if (_MBX>=_MBX_K1)
-   status |= internal_avx512_nistp256_ecpublic_key_ssl_mb8(pa_pubx,pa_puby, pa_pubz, pa_skey, pBuffer, use_jproj_coords);
+#if (_MBX >= _MBX_K1)
+    status |= internal_avx512_nistp256_ecpublic_key_ssl_mb8(
+        pa_pubx, pa_puby, pa_pubz, pa_skey, pBuffer, use_jproj_coords);
 #else
-   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
-   return status;
+    return status;
 }
 #endif // BN_OPENSSL_DISABLE
 
 DLL_PUBLIC
 mbx_status OWNAPI(mbx_nistp256_ecpublic_key_mb8)(int64u* pa_pubx[8],
-                                         int64u* pa_puby[8],
-                                         int64u* pa_pubz[8],
-                                   const int64u* const pa_skey[8],
-                                          int8u* pBuffer)
+                                                 int64u* pa_puby[8],
+                                                 int64u* pa_pubz[8],
+                                                 const int64u* const pa_skey[8],
+                                                 int8u* pBuffer)
 {
-   mbx_status status = 0;
-   int buf_no;
+    mbx_status status = 0;
+    int buf_no;
 
-   /* pa_bubz!=0 means the output is in Jacobian projective coordinates */
-   int use_jproj_coords = NULL!=pa_pubz;
+    /* pa_bubz!=0 means the output is in Jacobian projective coordinates */
+    int use_jproj_coords = NULL != pa_pubz;
 
-   /* test input pointers */
-   if(NULL==pa_pubx || NULL==pa_puby || NULL==pa_skey) {
-      status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
-      return status;
-   }
+    /* test input pointers */
+    if (NULL == pa_pubx || NULL == pa_puby || NULL == pa_skey) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
+        return status;
+    }
 
-   /* check pointers and values */
-   for(buf_no=0; buf_no<8; buf_no++) {
-            int64u* out_x = pa_pubx[buf_no];
-            int64u* out_y = pa_puby[buf_no];
-            int64u* out_z = use_jproj_coords? pa_pubz[buf_no] : NULL;
-      const int64u* key = pa_skey[buf_no];
+    /* check pointers and values */
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        int64u* out_x     = pa_pubx[buf_no];
+        int64u* out_y     = pa_puby[buf_no];
+        int64u* out_z     = use_jproj_coords ? pa_pubz[buf_no] : NULL;
+        const int64u* key = pa_skey[buf_no];
 
-      /* if any of pointer NULL set error status */
-      if(NULL==out_x || NULL==out_y || (use_jproj_coords && NULL==out_z) || NULL==key) {
-         status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-      }
-   }
+        /* if any of pointer NULL set error status */
+        if (NULL == out_x || NULL == out_y || (use_jproj_coords && NULL == out_z) || NULL == key) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
+    }
 
-   if(!MBX_IS_ANY_OK_STS(status))
-      return status;
+    if (!MBX_IS_ANY_OK_STS(status))
+        return status;
 
-   /*
-   // processing
-   */
-
-#if (_MBX>=_MBX_K1)
-   status |= internal_avx512_nistp256_ecpublic_key_mb8(pa_pubx, pa_puby, pa_pubz, pa_skey, pBuffer, use_jproj_coords);
+#if (_MBX >= _MBX_K1)
+    status |= internal_avx512_nistp256_ecpublic_key_mb8(
+        pa_pubx, pa_puby, pa_pubz, pa_skey, pBuffer, use_jproj_coords);
 #else
-   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
-   return status;
+    return status;
 }

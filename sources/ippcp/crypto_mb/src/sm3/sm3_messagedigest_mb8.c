@@ -20,7 +20,7 @@
 #include <internal/sm3/sm3_mb8.h>
 #include <internal/common/ifma_defs.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
 mbx_status sm3_msg_digest_mb8(const int8u* const msg_pa[8], int len[8], int8u* hash_pa[8])
 {
@@ -28,7 +28,7 @@ mbx_status sm3_msg_digest_mb8(const int8u* const msg_pa[8], int len[8], int8u* h
     mbx_status status = 0;
 
     /* test input pointers */
-    if(NULL==msg_pa || NULL==len || NULL==hash_pa) {
+    if (NULL == msg_pa || NULL == len || NULL == hash_pa) {
         status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
         return status;
     }
@@ -37,17 +37,17 @@ mbx_status sm3_msg_digest_mb8(const int8u* const msg_pa[8], int len[8], int8u* h
         if ((len[buf_no] && !hash_pa[buf_no]) || (len[buf_no] && !msg_pa[buf_no])) {
             status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
             return status;
-        }    
+        }
     }
 
     /* initialize the context of SM3 hash */
-    SM3_CTX_mb8  p_state;
+    SM3_CTX_mb8 p_state;
     sm3_init_mb8(&p_state);
 
     /* process main part of the message */
     status = sm3_update_mb8(msg_pa, len, &p_state);
 
-    if(MBX_IS_ANY_OK_STS(status)) {
+    if (MBX_IS_ANY_OK_STS(status)) {
         /* finalize message processing */
         status = sm3_final_mb8(hash_pa, &p_state);
     }

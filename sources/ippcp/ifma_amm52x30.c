@@ -27,12 +27,12 @@
 #include "ifma_rsa_arith.h"
 
 #define ADD104(rh, rl, ih, il) { \
-   rl += il;                     \
-   rh += ih;                     \
-   rh += (rl<il)? 1 : 0;         \
+   (rl) += (il);                 \
+   (rh) += (ih);                 \
+   (rh) += ((rl)<(il))? 1 : 0;   \
 }
 
-#define SHRD52(rh, rl)  ((rl>>52U) | rh<<(64U-52U))
+#define SHRD52(rh, rl)  (((rl)>>52U) | (rh)<<(64U-52U))
 
 /*
  * Almost Montgomery Multiplication in 2^52-radix

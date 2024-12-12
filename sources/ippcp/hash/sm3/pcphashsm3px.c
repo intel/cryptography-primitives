@@ -58,72 +58,72 @@
 #define P1(x)  ((x) ^ ROL32((x),15) ^ ROL32((x),23))
 
 // update W
-#define WUPDATE(nr, W) (P1(W[((nr)-16)&15] ^ W[((nr)-9)&15] ^ ROL32(W[((nr)-3)&15],15)) ^ ROL32(W[((nr)-13)&15],7) ^ W[((nr)-6)&15])
+#define WUPDATE(nr, W) (P1((W)[((nr)-16)&15] ^ (W)[((nr)-9)&15] ^ ROL32((W)[((nr)-3)&15],15)) ^ ROL32((W)[((nr)-13)&15],7) ^ (W)[((nr)-6)&15])
 
 // SM3 steps
 #define SM3_STEP1(nr, A,B,C,D,E,F,G,H, Tj, W)  { \
-   TT1 = FF1(A,B,C) + D + (W[nr&15] ^ W[(nr+4)&15]); \
-   TT2 = GG1(E,F,G) + H + W[nr&15]; \
-   H = ROL32(A,12); \
-   D = ROL32(H + E +Tj, 7); \
-   H ^= D; \
-   D += TT2; \
-   H += TT1; \
-   B = ROL32(B, 9); \
-   D = P0(D); \
-   F = ROL32(F, 19); \
+   TT1 = FF1(A,B,C) + (D) + ((W)[(nr)&15] ^ (W)[((nr)+4)&15]); \
+   TT2 = GG1(E,F,G) + (H) + (W)[(nr)&15]; \
+   (H) = ROL32(A,12); \
+   (D) = ROL32((H) + (E) + (Tj), 7); \
+   (H) ^= (D); \
+   (D) += TT2; \
+   (H) += TT1; \
+   (B) = ROL32(B, 9); \
+   (D) = P0(D); \
+   (F) = ROL32(F, 19); \
    /*Tj = ROL32(Tj, 1);*/ \
-   W[(nr)&15] = WUPDATE(nr, W); \
+   (W)[(nr)&15] = WUPDATE(nr, W); \
 }
 
 #define SM3_STEP2(nr, A,B,C,D,E,F,G,H, Tj, W)  { \
-   TT1 = FF2(A,B,C) + D + (W[nr&15] ^ W[(nr+4)&15]); \
-   TT2 = GG2(E,F,G) + H + W[nr&15]; \
-   H = ROL32(A,12); \
-   D = ROL32(H + E +Tj, 7); \
-   H ^= D; \
-   D += TT2; \
-   H += TT1; \
-   B = ROL32(B, 9); \
-   D = P0(D); \
-   F = ROL32(F, 19); \
+   TT1 = FF2(A,B,C) + (D) + ((W)[(nr)&15] ^ (W)[((nr)+4)&15]); \
+   TT2 = GG2(E,F,G) + (H) + (W)[(nr)&15]; \
+   (H) = ROL32(A,12); \
+   (D) = ROL32((H) + (E) + (Tj), 7); \
+   (H) ^= (D); \
+   (D) += TT2; \
+   (H) += TT1; \
+   (B) = ROL32(B, 9); \
+   (D) = P0(D); \
+   (F) = ROL32(F, 19); \
    /*Tj = ROL32(Tj, 1);*/ \
-   W[(nr)&15] = WUPDATE(nr, W); \
+   (W)[(nr)&15] = WUPDATE(nr, W); \
 }
 
 #define SM3_STEP3(nr, A,B,C,D,E,F,G,H, Tj, W)  { \
-   TT1 = FF2(A,B,C) + D + (W[nr&15] ^ W[(nr+4)&15]); \
-   TT2 = GG2(E,F,G) + H + W[nr&15]; \
-   H = ROL32(A,12); \
-   D = ROL32(H + E +Tj, 7); \
-   H ^= D; \
-   D += TT2; \
-   H += TT1; \
-   B = ROL32(B, 9); \
-   D = P0(D); \
-   F = ROL32(F, 19); \
+   TT1 = FF2(A,B,C) + (D) + ((W)[(nr)&15] ^ (W)[((nr)+4)&15]); \
+   TT2 = GG2(E,F,G) + (H) + (W)[(nr)&15]; \
+   (H) = ROL32(A,12); \
+   (D) = ROL32((H) + (E) + (Tj), 7); \
+   (H) ^= (D); \
+   (D) += TT2; \
+   (H) += TT1; \
+   (B) = ROL32(B, 9); \
+   (D) = P0(D); \
+   (F) = ROL32(F, 19); \
    /*Tj = ROL32(Tj, 1);*/ \
 }
 
 #define COMPACT_SM3_STEP(A,B,C,D,E,F,G,H, FF, GG, W,Tj, r)  { \
-   TT1 = FF((r)&0x30, A,B,C) + D + (W[(r)] ^ W[(r)+4]); \
-   TT2 = GG((r)&0x30, E,F,G) + H + W[(r)]; \
+   TT1 = FF((r)&0x30, A,B,C) + (D) + ((W)[(r)] ^ (W)[(r)+4]); \
+   TT2 = GG((r)&0x30, E,F,G) + (H) + (W)[(r)]; \
    \
    _H = ROL32(A,12); \
-   _D = ROL32(_H + E +Tj[(r)], 7); \
+   _D = ROL32(_H + (E) +(Tj)[(r)], 7); \
    _H ^= _D;   \
    _D += TT2;  \
    _H += TT1;  \
    _D = P0(_D);\
    \
-   H = G; \
-   G = ROL32(F,19); \
-   F = E; \
-   E =_D; \
-   D = C; \
-   C = ROL32(B, 9); \
-   B = A; \
-   A =_H; \
+   (H) = (G); \
+   (G) = ROL32(F,19); \
+   (F) = (E); \
+   (E) =_D; \
+   (D) = (C); \
+   (C) = ROL32(B, 9); \
+   (B) = (A); \
+   (A) =_H; \
 }
 
 

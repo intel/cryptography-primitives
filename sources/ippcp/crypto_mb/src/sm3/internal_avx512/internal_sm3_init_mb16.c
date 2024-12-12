@@ -20,9 +20,9 @@
 #include <internal/sm3/sm3_mb16.h>
 #include <internal/common/ifma_defs.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
-mbx_status16 internal_avx512_sm3_mask_init_mb16(SM3_CTX_mb16 * p_state, __mmask16 mb_mask)
+mbx_status16 internal_avx512_sm3_mask_init_mb16(SM3_CTX_mb16* p_state, __mmask16 mb_mask)
 {
     mbx_status16 status = 0;
     __mmask8 mb_mask8[2];
@@ -30,12 +30,15 @@ mbx_status16 internal_avx512_sm3_mask_init_mb16(SM3_CTX_mb16 * p_state, __mmask1
     mb_mask8[1] = *((__mmask8*)&mb_mask + 1);
 
     /* clear buffer index */
-    _mm512_storeu_si512(HASH_BUFFIDX(p_state), _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_BUFFIDX(p_state)), mb_mask, 0));
+    _mm512_storeu_si512(
+        HASH_BUFFIDX(p_state),
+        _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_BUFFIDX(p_state)), mb_mask, 0));
 
     /* clear summary message length */
     _mm512_storeu_si512(MSG_LEN(p_state), _mm512_maskz_loadu_epi64(~mb_mask8[0], MSG_LEN(p_state)));
-    _mm512_storeu_si512(MSG_LEN(p_state) + 8, _mm512_maskz_loadu_epi64(~mb_mask8[1], MSG_LEN(p_state) + 8));
-    
+    _mm512_storeu_si512(MSG_LEN(p_state) + 8,
+                        _mm512_maskz_loadu_epi64(~mb_mask8[1], MSG_LEN(p_state) + 8));
+
 
     /* clear buffer */
     for (int i = 0; i < SM3_NUM_BUFFERS; i++) {
@@ -44,14 +47,30 @@ mbx_status16 internal_avx512_sm3_mask_init_mb16(SM3_CTX_mb16 * p_state, __mmask1
     }
 
     /* setup initial digest in multi-buffer format */
-    _mm512_storeu_si512(HASH_VALUE(p_state)[0], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[0]), mb_mask, (int)sm3_iv[0]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[1], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[1]), mb_mask, (int)sm3_iv[1]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[2], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[2]), mb_mask, (int)sm3_iv[2]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[3], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[3]), mb_mask, (int)sm3_iv[3]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[4], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[4]), mb_mask, (int)sm3_iv[4]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[5], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[5]), mb_mask, (int)sm3_iv[5]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[6], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[6]), mb_mask, (int)sm3_iv[6]));
-    _mm512_storeu_si512(HASH_VALUE(p_state)[7], _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_VALUE(p_state)[7]), mb_mask, (int)sm3_iv[7]));
+    _mm512_storeu_si512(HASH_VALUE(p_state)[0],
+                        _mm512_mask_set1_epi32(
+                            _mm512_loadu_si512(HASH_VALUE(p_state)[0]), mb_mask, (int)sm3_iv[0]));
+    _mm512_storeu_si512(HASH_VALUE(p_state)[1],
+                        _mm512_mask_set1_epi32(
+                            _mm512_loadu_si512(HASH_VALUE(p_state)[1]), mb_mask, (int)sm3_iv[1]));
+    _mm512_storeu_si512(HASH_VALUE(p_state)[2],
+                        _mm512_mask_set1_epi32(
+                            _mm512_loadu_si512(HASH_VALUE(p_state)[2]), mb_mask, (int)sm3_iv[2]));
+    _mm512_storeu_si512(HASH_VALUE(p_state)[3],
+                        _mm512_mask_set1_epi32(
+                            _mm512_loadu_si512(HASH_VALUE(p_state)[3]), mb_mask, (int)sm3_iv[3]));
+    _mm512_storeu_si512(HASH_VALUE(p_state)[4],
+                        _mm512_mask_set1_epi32(
+                            _mm512_loadu_si512(HASH_VALUE(p_state)[4]), mb_mask, (int)sm3_iv[4]));
+    _mm512_storeu_si512(HASH_VALUE(p_state)[5],
+                        _mm512_mask_set1_epi32(
+                            _mm512_loadu_si512(HASH_VALUE(p_state)[5]), mb_mask, (int)sm3_iv[5]));
+    _mm512_storeu_si512(HASH_VALUE(p_state)[6],
+                        _mm512_mask_set1_epi32(
+                            _mm512_loadu_si512(HASH_VALUE(p_state)[6]), mb_mask, (int)sm3_iv[6]));
+    _mm512_storeu_si512(HASH_VALUE(p_state)[7],
+                        _mm512_mask_set1_epi32(
+                            _mm512_loadu_si512(HASH_VALUE(p_state)[7]), mb_mask, (int)sm3_iv[7]));
 
     return status;
 }

@@ -14,7 +14,7 @@
 * limitations under the License.
 *************************************************************************/
 
-#if defined( _WIN32 ) || defined( _WIN64 )
+#if defined(_WIN32) || defined(_WIN64)
 #include <intrin.h>
 #endif
 #include <crypto_mb/cpu_features.h>
@@ -55,26 +55,28 @@
 #define BIT31 0x80000000
 
 /* index inside cpu_info[4] */
-#define eax_   (0)
-#define ebx_   (1)
-#define ecx_   (2)
-#define edx_   (3)
+#define eax_ (0)
+#define ebx_ (1)
+#define ecx_ (2)
+#define edx_ (3)
 
 
 __MBX_INLINE void _mbcp_cpuid(int32u buf[4], int32u leaf, int32u subleaf)
 {
-   #ifdef __GNUC__
-   __asm__ ("cpuid" : "=a" (buf[0]), "=b" (buf[1]), "=c" (buf[2]), "=d" (buf[3]) : "a" (leaf), "c" (subleaf));
-   #else
-   __cpuidex(buf,leaf, subleaf);
-   #endif
+    /* clang-format off */
+    #ifdef __GNUC__
+    __asm__ ("cpuid" : "=a" (buf[0]), "=b" (buf[1]), "=c" (buf[2]), "=d" (buf[3]) : "a" (leaf), "c" (subleaf));
+    #else
+    __cpuidex(buf,leaf, subleaf);
+    #endif
+    /* clang-format on */
 }
 
 static int32u _mbcp_max_cpuid_main_leaf_number(void)
 {
-   int32u buf[4];
-   _mbcp_cpuid(buf, 0, 0);
-   return buf[0];
+    int32u buf[4];
+    _mbcp_cpuid(buf, 0, 0);
+    return buf[0];
 }
 
 #if 0
@@ -86,31 +88,31 @@ static int32u _mbcp_max_cpuid_extd_leaf_number(void)
 }
 #endif
 
-#define XSAVE_OSXSAVE   (BIT26|BIT27)
+#define XSAVE_OSXSAVE (BIT26 | BIT27)
 static int32u _mbcp_xsave_support(int32u bits)
 {
-   int32u buf[4];
-   _mbcp_cpuid(buf, 1, 0);
+    int32u buf[4];
+    _mbcp_cpuid(buf, 1, 0);
 
-   if(XSAVE_OSXSAVE != (buf[ecx_] & XSAVE_OSXSAVE))
-      return 0;
+    if (XSAVE_OSXSAVE != (buf[ecx_] & XSAVE_OSXSAVE))
+        return 0;
 
-   int32u xcr0;
+    int32u xcr0;
 
-   #ifdef __GNUC__
-   //asm volatile("xgetbv" : "=a" (xcr0) : "c" (0) : "%edx");
-   __asm__ ("xgetbv" : "=a" (xcr0) : "c" (0) : "%edx");
-   #else
-   xcr0 = (int32u)_xgetbv(0);
-   #endif
+#ifdef __GNUC__
+    //asm volatile("xgetbv" : "=a" (xcr0) : "c" (0) : "%edx");
+    __asm__("xgetbv" : "=a"(xcr0) : "c"(0) : "%edx");
+#else
+    xcr0 = (int32u)_xgetbv(0);
+#endif
 
-   return (xcr0 & bits) == bits;
+    return (xcr0 & bits) == bits;
 }
 
 typedef struct {
-   int32u  info_idx;
-   int32u  info_idx_bit;
-   int64u  cpu_feature;
+    int32u info_idx;
+    int32u info_idx_bit;
+    int64u cpu_feature;
 } cpu_feature_map;
 
 /*
@@ -118,58 +120,60 @@ typedef struct {
 // Programming Reference. 319433-038, March 2020
 // see Table 1-5, Table 1-6
 */
+/* clang-format off */
 static const cpu_feature_map cpu_feature_detector_1_0[] = {
-   {ecx_, BIT00,  mbcpCPUID_SSE3},
-   {ecx_, BIT01,  mbcpCPUID_CLMUL},
-   {ecx_, BIT09,  mbcpCPUID_SSSE3},
- //{ecx_, BIT12,  mbcpCPUID_FMA},          /* supported FMA extensions using YMM*/
- //{ecx_, BIT13,  mbcpCPUID_CMPXCHG16B},
-   {ecx_, BIT19,  mbcpCPUID_SSE41},
-   {ecx_, BIT20,  mbcpCPUID_SSE42},
-   {ecx_, BIT22,  mbcpCPUID_MOVBE},
- //{ecx_, BIT23,  mbcpCPUID_POPCNT},
-   {ecx_, BIT25,  mbcpCPUID_AES},
-   {ecx_, BIT28,  mbcpCPUID_AVX},
-   {ecx_, BIT29,  mbcpCPUID_F16C},
-   {ecx_, BIT30,  mbcpCPUID_RDRAND},
+    { ecx_, BIT00,   mbcpCPUID_SSE3 },
+    { ecx_, BIT01,  mbcpCPUID_CLMUL },
+    { ecx_, BIT09,  mbcpCPUID_SSSE3 },
+    //{ecx_, BIT12,  mbcpCPUID_FMA},          /* supported FMA extensions using YMM*/
+    //{ecx_, BIT13,  mbcpCPUID_CMPXCHG16B},
+    { ecx_, BIT19,  mbcpCPUID_SSE41 },
+    { ecx_, BIT20,  mbcpCPUID_SSE42 },
+    { ecx_, BIT22,  mbcpCPUID_MOVBE },
+    //{ecx_, BIT23,  mbcpCPUID_POPCNT},
+    { ecx_, BIT25,    mbcpCPUID_AES },
+    { ecx_, BIT28,    mbcpCPUID_AVX },
+    { ecx_, BIT29,   mbcpCPUID_F16C },
+    { ecx_, BIT30, mbcpCPUID_RDRAND },
 
-   {edx_, BIT23,  mbcpCPUID_MMX},
-   {edx_, BIT25,  mbcpCPUID_SSE},
-   {edx_, BIT26,  mbcpCPUID_SSE2},
+    { edx_, BIT23,    mbcpCPUID_MMX },
+    { edx_, BIT25,    mbcpCPUID_SSE },
+    { edx_, BIT26,   mbcpCPUID_SSE2 },
 };
 
 static const cpu_feature_map cpu_feature_detector_7_0[] = {
-   {ebx_, BIT03, mbcpCPUID_BMI1},
-   {ebx_, BIT05, mbcpCPUID_AVX2},
-   {ebx_, BIT08, mbcpCPUID_BMI2},
-   {ebx_, BIT14, mbcpCPUID_MPX},
-   {ebx_, BIT16, mbcpCPUID_AVX512F},
-   {ebx_, BIT17, mbcpCPUID_AVX512DQ},
-   {ebx_, BIT18, mbcpCPUID_RDSEED},
-   {ebx_, BIT19, mbcpCPUID_ADX},
-   {ebx_, BIT21, mbcpCPUID_AVX512IFMA},
-   {ebx_, BIT26, mbcpCPUID_AVX512PF},
-   {ebx_, BIT27, mbcpCPUID_AVX512ER},
-   {ebx_, BIT28, mbcpCPUID_AVX512CD},
-   {ebx_, BIT29, mbcpCPUID_SHA},
-   {ebx_, BIT30, mbcpCPUID_AVX512BW},
-   {ebx_, BIT31, mbcpCPUID_AVX512VL},
+    { ebx_, BIT03,            mbcpCPUID_BMI1 },
+    { ebx_, BIT05,            mbcpCPUID_AVX2 },
+    { ebx_, BIT08,            mbcpCPUID_BMI2 },
+    { ebx_, BIT14,             mbcpCPUID_MPX },
+    { ebx_, BIT16,         mbcpCPUID_AVX512F },
+    { ebx_, BIT17,        mbcpCPUID_AVX512DQ },
+    { ebx_, BIT18,          mbcpCPUID_RDSEED },
+    { ebx_, BIT19,             mbcpCPUID_ADX },
+    { ebx_, BIT21,      mbcpCPUID_AVX512IFMA },
+    { ebx_, BIT26,        mbcpCPUID_AVX512PF },
+    { ebx_, BIT27,        mbcpCPUID_AVX512ER },
+    { ebx_, BIT28,        mbcpCPUID_AVX512CD },
+    { ebx_, BIT29,             mbcpCPUID_SHA },
+    { ebx_, BIT30,        mbcpCPUID_AVX512BW },
+    { ebx_, BIT31,        mbcpCPUID_AVX512VL },
 
-   {ecx_, BIT01, mbcpCPUID_AVX512VBMI},
-   {ecx_, BIT06, mbcpCPUID_AVX512VBMI2},
-   {ecx_, BIT08, mbcpCPUID_AVX512GFNI},
-   {ecx_, BIT09, mbcpCPUID_AVX512VAES},
-   {ecx_, BIT10, mbcpCPUID_AVX512VCLMUL},
- //{ecx_, BIT11, mbcpCPUID_AVX512VNNI},
- //{ecx_, BIT12, mbcpCPUID_AVX512BITALG},
+    { ecx_, BIT01,      mbcpCPUID_AVX512VBMI },
+    { ecx_, BIT06,     mbcpCPUID_AVX512VBMI2 },
+    { ecx_, BIT08,      mbcpCPUID_AVX512GFNI },
+    { ecx_, BIT09,      mbcpCPUID_AVX512VAES },
+    { ecx_, BIT10,    mbcpCPUID_AVX512VCLMUL },
+    //{ecx_, BIT11, mbcpCPUID_AVX512VNNI},
+    //{ecx_, BIT12, mbcpCPUID_AVX512BITALG},
 
-   {edx_, BIT02, mbcpCPUID_AVX512_4VNNIW},
-   {edx_, BIT03, mbcpCPUID_AVX512_4FMADDPS},
+    { edx_, BIT02,   mbcpCPUID_AVX512_4VNNIW },
+    { edx_, BIT03, mbcpCPUID_AVX512_4FMADDPS },
 };
 
 static const cpu_feature_map cpu_feature_detector_7_1[] = {
-   {eax_, BIT23, mbcpCPUID_AVXIFMA},
+    { eax_, BIT23, mbcpCPUID_AVXIFMA },
 };
+/* clang-format on */
 
 #undef eax_
 #undef ebx_
@@ -177,196 +181,193 @@ static const cpu_feature_map cpu_feature_detector_7_1[] = {
 #undef edx_
 
 
-static int64u _mbcp_cpu_feature_detector(const int32u cpuinfo[4], const cpu_feature_map* tbl, int32u tbl_len)
+static int64u _mbcp_cpu_feature_detector(const int32u cpuinfo[4],
+                                         const cpu_feature_map* tbl,
+                                         int32u tbl_len)
 {
-   int64u features = 0;
-   int32u n;
-   for(n=0; n<tbl_len; n++) {
-      int32u idx = tbl[n].info_idx;
-      int32u bit = tbl[n].info_idx_bit;
-      int64u f = tbl[n].cpu_feature;
+    int64u features = 0;
+    int32u n;
+    for (n = 0; n < tbl_len; n++) {
+        int32u idx = tbl[n].info_idx;
+        int32u bit = tbl[n].info_idx_bit;
+        int64u f   = tbl[n].cpu_feature;
 
-      features |= (bit == (cpuinfo[idx] & bit))? f : 0;
-   }
-   return features;
+        features |= (bit == (cpuinfo[idx] & bit)) ? f : 0;
+    }
+    return features;
 }
 
-#define  XSAVE_SSE_SUPPORT    (BIT01)
-#define  XSAVE_AVX_SUPPORT    (BIT02)
-#define  XSAVE_AVX512_SUPPORT (BIT05|BIT06|BIT07)
+#define XSAVE_SSE_SUPPORT    (BIT01)
+#define XSAVE_AVX_SUPPORT    (BIT02)
+#define XSAVE_AVX512_SUPPORT (BIT05 | BIT06 | BIT07)
 
 static int64u mbx_features = 0;
 
 DLL_PUBLIC
-void mbx_set_cpu_features(int64u features) {
-   mbx_features = features;
-}
+void mbx_set_cpu_features(int64u features) { mbx_features = features; }
 
 DLL_PUBLIC
 int64u mbx_get_cpu_features(void)
 {
-   if (mbx_features)
-      return mbx_features;
-   /* detected cpu features */
-   int64u features = 0;
+    if (mbx_features)
+        return mbx_features;
+    /* detected cpu features */
+    int64u features = 0;
 
-   /* get basic highest supported CPUID leaf number */
-   int32u max_cpuid_leaf = _mbcp_max_cpuid_main_leaf_number();
+    /* get basic highest supported CPUID leaf number */
+    int32u max_cpuid_leaf = _mbcp_max_cpuid_main_leaf_number();
 
-   if(max_cpuid_leaf) {
-      int32u cpu_info[4] = {0, 0, 0, 0};
+    if (max_cpuid_leaf) {
+        int32u cpu_info[4] = { 0, 0, 0, 0 };
 
-      /* cpuid info: cpuid_1_0 */
-      _mbcp_cpuid(cpu_info, 1, 0);
-      features = _mbcp_cpu_feature_detector(cpu_info,
-                                            cpu_feature_detector_1_0,
-                                            sizeof(cpu_feature_detector_1_0)/sizeof(cpu_feature_map));
-      if(_mbcp_xsave_support(XSAVE_SSE_SUPPORT|XSAVE_AVX_SUPPORT))
-         features |= mbcpAVX_ENABLEDBYOS;
+        /* cpuid info: cpuid_1_0 */
+        _mbcp_cpuid(cpu_info, 1, 0);
+        features =
+            _mbcp_cpu_feature_detector(cpu_info,
+                                       cpu_feature_detector_1_0,
+                                       sizeof(cpu_feature_detector_1_0) / sizeof(cpu_feature_map));
+        if (_mbcp_xsave_support(XSAVE_SSE_SUPPORT | XSAVE_AVX_SUPPORT))
+            features |= mbcpAVX_ENABLEDBYOS;
 
-      if(max_cpuid_leaf>=7) {
-         /* cpuid info: cpuid_7_0 */
-         _mbcp_cpuid(cpu_info, 7, 0);
-         features |= _mbcp_cpu_feature_detector(cpu_info,
-                                                cpu_feature_detector_7_0,
-                                                sizeof(cpu_feature_detector_7_0)/sizeof(cpu_feature_map));
-         if((features & mbcpCPUID_AVX512F) && _mbcp_xsave_support(XSAVE_AVX512_SUPPORT))
-            features |= mbcpAVX512_ENABLEDBYOS;
+        if (max_cpuid_leaf >= 7) {
+            /* cpuid info: cpuid_7_0 */
+            _mbcp_cpuid(cpu_info, 7, 0);
+            features |= _mbcp_cpu_feature_detector(cpu_info,
+                                                   cpu_feature_detector_7_0,
+                                                   sizeof(cpu_feature_detector_7_0) /
+                                                       sizeof(cpu_feature_map));
+            if ((features & mbcpCPUID_AVX512F) && _mbcp_xsave_support(XSAVE_AVX512_SUPPORT))
+                features |= mbcpAVX512_ENABLEDBYOS;
 
-         /* cpuid info: cpuid_7_1 */
-         _mbcp_cpuid(cpu_info, 7, 1);
-         features |= _mbcp_cpu_feature_detector(cpu_info,
-                                                cpu_feature_detector_7_1,
-                                                sizeof(cpu_feature_detector_7_1)/sizeof(cpu_feature_map));
-      }
-   }
+            /* cpuid info: cpuid_7_1 */
+            _mbcp_cpuid(cpu_info, 7, 1);
+            features |= _mbcp_cpu_feature_detector(cpu_info,
+                                                   cpu_feature_detector_7_1,
+                                                   sizeof(cpu_feature_detector_7_1) /
+                                                       sizeof(cpu_feature_map));
+        }
+    }
 
-   return features;
+    return features;
 }
 
 
 // based on c-flags: -mavx512dq -mavx512ifma -mavx512f -mavx512vbmi2 -mavx512cd -mavx512bw -mbmi2
-#define CRYPTO_MB_REQUIRED_CPU_FEATURES_K1 ( \
-                           mbcpCPUID_BMI2 \
-                         | mbcpCPUID_AVX512F \
-                         | mbcpCPUID_AVX512DQ \
-                         | mbcpCPUID_AVX512BW \
-                         | mbcpCPUID_AVX512IFMA \
-                         | mbcpCPUID_AVX512VBMI2 \
-                         | mbcpAVX512_ENABLEDBYOS)
+#define CRYPTO_MB_REQUIRED_CPU_FEATURES_K1                                          \
+    (mbcpCPUID_BMI2 | mbcpCPUID_AVX512F | mbcpCPUID_AVX512DQ | mbcpCPUID_AVX512BW | \
+     mbcpCPUID_AVX512IFMA | mbcpCPUID_AVX512VBMI2 | mbcpAVX512_ENABLEDBYOS)
 
-#define CRYPTO_MB_REQUIRED_CPU_FEATURES_L9 ( \
-                           mbcpCPUID_MOVBE \
-                         | mbcpCPUID_AVX2 \
-                         | mbcpCPUID_RDSEED \
-                         | mbcpCPUID_AVXIFMA \
-                         | mbcpAVX_ENABLEDBYOS)
+#define CRYPTO_MB_REQUIRED_CPU_FEATURES_L9 \
+    (mbcpCPUID_MOVBE | mbcpCPUID_AVX2 | mbcpCPUID_RDSEED | mbcpCPUID_AVXIFMA | mbcpAVX_ENABLEDBYOS)
 
 int internal_is_k1_applicable(int64u cpu_features)
 {
-   int64u features = cpu_features;
-   if(0 == features)
-      features = mbx_get_cpu_features();
-   return (CRYPTO_MB_REQUIRED_CPU_FEATURES_K1 == (features & CRYPTO_MB_REQUIRED_CPU_FEATURES_K1));
+    int64u features = cpu_features;
+    if (0 == features)
+        features = mbx_get_cpu_features();
+    return (CRYPTO_MB_REQUIRED_CPU_FEATURES_K1 == (features & CRYPTO_MB_REQUIRED_CPU_FEATURES_K1));
 }
 
 int internal_is_l9_applicable(int64u cpu_features)
 {
-   int64u features = cpu_features;
-   if(0 == features)
-      features = mbx_get_cpu_features();
-   return (CRYPTO_MB_REQUIRED_CPU_FEATURES_L9 == (features & CRYPTO_MB_REQUIRED_CPU_FEATURES_L9));
+    int64u features = cpu_features;
+    if (0 == features)
+        features = mbx_get_cpu_features();
+    return (CRYPTO_MB_REQUIRED_CPU_FEATURES_L9 == (features & CRYPTO_MB_REQUIRED_CPU_FEATURES_L9));
 }
 
 DLL_PUBLIC
 int mbx_is_crypto_mb_applicable(int64u cpu_features)
 {
-   return (internal_is_k1_applicable(cpu_features) || internal_is_l9_applicable(cpu_features));
+    return (internal_is_k1_applicable(cpu_features) || internal_is_l9_applicable(cpu_features));
 }
 
 static int mbx_own_lib_index = -1;
 
 /* choosing the code path */
-extern int* _mbx_own_get_index() {
-   if (0 > mbx_own_lib_index) {
-      if (internal_is_k1_applicable(mbx_get_cpu_features()))
-         mbx_own_lib_index = 0; // K1 code path
-      else 
-         mbx_own_lib_index = 1; // L9 code path
-   }
-   return &mbx_own_lib_index;
+extern int* _mbx_own_get_index()
+{
+    if (0 > mbx_own_lib_index) {
+        if (internal_is_k1_applicable(mbx_get_cpu_features()))
+            mbx_own_lib_index = 0; // K1 code path
+        else
+            mbx_own_lib_index = 1; // L9 code path
+    }
+    return &mbx_own_lib_index;
 }
 
 /* structure for determining the number of buffers(WIDTH) for the algorithm */
 typedef struct {
-   enum MBX_ALGO algo;
-   enum MBX_WIDTH width;
+    enum MBX_ALGO algo;
+    enum MBX_WIDTH width;
 } algo_width_map;
 
-/* clang-config off */
+/* clang-format off */
 static const algo_width_map arr_algo_width_k1[] = {
-   { MBX_ALGO_RSA_1K,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_RSA_2K,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_RSA_3K,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_RSA_4K,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_X25519,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_EC_NIST_P256, MBX_WIDTH_MB8 },
-   { MBX_ALGO_EC_NIST_P384, MBX_WIDTH_MB8 },
-   { MBX_ALGO_EC_NIST_P521, MBX_WIDTH_MB8 },
-   { MBX_ALGO_EC_SM2,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_SM3,          MBX_WIDTH_MB16 },
-   { MBX_ALGO_SM4,          MBX_WIDTH_MB16 }
+    {       MBX_ALGO_RSA_1K,  MBX_WIDTH_MB8 },
+    {       MBX_ALGO_RSA_2K,  MBX_WIDTH_MB8 },
+    {       MBX_ALGO_RSA_3K,  MBX_WIDTH_MB8 },
+    {       MBX_ALGO_RSA_4K,  MBX_WIDTH_MB8 },
+    {       MBX_ALGO_X25519,  MBX_WIDTH_MB8 },
+    { MBX_ALGO_EC_NIST_P256,  MBX_WIDTH_MB8 },
+    { MBX_ALGO_EC_NIST_P384,  MBX_WIDTH_MB8 },
+    { MBX_ALGO_EC_NIST_P521,  MBX_WIDTH_MB8 },
+    {       MBX_ALGO_EC_SM2,  MBX_WIDTH_MB8 },
+    {          MBX_ALGO_SM3, MBX_WIDTH_MB16 },
+    {          MBX_ALGO_SM4, MBX_WIDTH_MB16 }
 };
 static const algo_width_map arr_algo_width_l9[] = {
-   { MBX_ALGO_RSA_1K,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_RSA_2K,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_RSA_3K,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_RSA_4K,       MBX_WIDTH_MB8 },
-   { MBX_ALGO_X25519,       0 },
-   { MBX_ALGO_EC_NIST_P256, 0 },
-   { MBX_ALGO_EC_NIST_P384, 0 },
-   { MBX_ALGO_EC_NIST_P521, 0 },
-   { MBX_ALGO_EC_SM2,       0 },
-   { MBX_ALGO_SM3,          0 },
-   { MBX_ALGO_SM4,          0 }
+    {       MBX_ALGO_RSA_1K, MBX_WIDTH_MB8 },
+    {       MBX_ALGO_RSA_2K, MBX_WIDTH_MB8 },
+    {       MBX_ALGO_RSA_3K, MBX_WIDTH_MB8 },
+    {       MBX_ALGO_RSA_4K, MBX_WIDTH_MB8 },
+    {       MBX_ALGO_X25519,             0 },
+    { MBX_ALGO_EC_NIST_P256,             0 },
+    { MBX_ALGO_EC_NIST_P384,             0 },
+    { MBX_ALGO_EC_NIST_P521,             0 },
+    {       MBX_ALGO_EC_SM2,             0 },
+    {          MBX_ALGO_SM3,             0 },
+    {          MBX_ALGO_SM4,             0 }
 };
-/* clang-config on */
+/* clang-format on */
 
 DLL_PUBLIC
 MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo)
 {
-   const int k1_applicable = internal_is_k1_applicable(0);
-   const int l9_applicable = internal_is_l9_applicable(0);
-   const struct {
-           const algo_width_map *arr_algo_width;
-           unsigned num_tbl;
-   } map_tbl[] = {
-           {arr_algo_width_k1, (unsigned) sizeof(arr_algo_width_k1) / sizeof(algo_width_map) }, // K1 = index 0
-           {arr_algo_width_l9, (unsigned) sizeof(arr_algo_width_l9) / sizeof(algo_width_map) }, // L9 = index 1
-   };
-   int num_width = 0;
+    const int k1_applicable = internal_is_k1_applicable(0);
+    const int l9_applicable = internal_is_l9_applicable(0);
+    const struct {
+        const algo_width_map* arr_algo_width;
+        unsigned num_tbl;
+    } map_tbl[] = {
+        { arr_algo_width_k1,
+         (unsigned)sizeof(arr_algo_width_k1) / sizeof(algo_width_map) }, // K1 = index 0
+        { arr_algo_width_l9,
+         (unsigned)sizeof(arr_algo_width_l9) / sizeof(algo_width_map) }, // L9 = index 1
+    };
+    int num_width = 0;
 
-   /* check CPU feature */
-   if (0 == k1_applicable && 0 == l9_applicable)
-      return num_width;
+    /* check CPU feature */
+    if (0 == k1_applicable && 0 == l9_applicable)
+        return num_width;
 
-   /* get selected architecture */
-   const int map_idx = *_mbx_own_get_index();
+    /* get selected architecture */
+    const int map_idx = *_mbx_own_get_index();
 
-   if (map_idx < 0 || map_idx >= (int) (sizeof(map_tbl) / sizeof(map_tbl[0])))
-           return num_width;
+    if (map_idx < 0 || map_idx >= (int)(sizeof(map_tbl) / sizeof(map_tbl[0])))
+        return num_width;
 
-   const unsigned num_tbl = map_tbl[map_idx].num_tbl;
-   const algo_width_map *tbl = map_tbl[map_idx].arr_algo_width;
+    const unsigned num_tbl    = map_tbl[map_idx].num_tbl;
+    const algo_width_map* tbl = map_tbl[map_idx].arr_algo_width;
 
-   /* loop determining the number of buffers to process */
-   for (unsigned i = 0; i < num_tbl; ++i) {
-      if (algo != tbl[i].algo)
-              continue;
+    /* loop determining the number of buffers to process */
+    for (unsigned i = 0; i < num_tbl; ++i) {
+        if (algo != tbl[i].algo)
+            continue;
 
-      num_width = tbl[i].width;
-      break;
-   }
+        num_width = tbl[i].width;
+        break;
+    }
 
-   return num_width;
+    return num_width;
 }

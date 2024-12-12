@@ -23,52 +23,52 @@
 #if(_IPP32E>=_IPP32E_K1)
 
 #define AES_ENCRYPT_VAES_MB16(b0, b1, pRkey, num_rounds) { \
-   __m512i (*tkeys)[2] =  &pRkey[num_rounds-9]; \
-   b0 = _mm512_xor_si512(b0, pRkey[0][0]); \
-   b1 = _mm512_xor_si512(b1, pRkey[0][1]); \
+   __m512i (*tkeys)[2] =  &(pRkey)[(num_rounds)-9]; \
+   (b0) = _mm512_xor_si512(b0, (pRkey)[0][0]); \
+   (b1) = _mm512_xor_si512(b1, (pRkey)[0][1]); \
    switch(num_rounds) { \
    case 14: \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[-4][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[-4][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[-4][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[-4][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[-3][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[-3][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[-3][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[-3][1]); \
    case 12: \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[-2][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[-2][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[-2][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[-2][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[-1][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[-1][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[-1][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[-1][1]); \
    default: \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[0][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[0][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[0][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[0][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[1][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[1][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[1][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[1][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[2][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[2][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[2][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[2][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[3][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[3][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[3][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[3][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[4][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[4][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[4][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[4][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[5][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[5][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[5][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[5][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[6][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[6][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[6][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[6][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[7][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[7][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[7][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[7][1]); \
      \
-      b0 = _mm512_aesenc_epi128(b0, tkeys[8][0]); \
-      b1 = _mm512_aesenc_epi128(b1, tkeys[8][1]); \
+      (b0) = _mm512_aesenc_epi128((b0), tkeys[8][0]); \
+      (b1) = _mm512_aesenc_epi128((b1), tkeys[8][1]); \
      \
-      b0 = _mm512_aesenclast_epi128(b0, tkeys[9][0]); \
-      b1 = _mm512_aesenclast_epi128(b1, tkeys[9][1]); \
+      (b0) = _mm512_aesenclast_epi128((b0), tkeys[9][0]); \
+      (b1) = _mm512_aesenclast_epi128((b1), tkeys[9][1]); \
    } \
 }
 

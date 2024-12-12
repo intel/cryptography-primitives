@@ -22,23 +22,23 @@
 
 #if (_IPP32E>=_IPP32E_K1)
 
-#define TRANSPOSE_4x4_I128(X0_, X1_ ,X2_ ,X3_) {\
-    __m512i T0_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, X0_, X1_, 0b01000100); \
-    __m512i T1_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, X2_, X3_, 0b01000100); \
-    __m512i T2_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, X0_, X1_, 0b11101110); \
-    __m512i T3_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, X2_, X3_, 0b11101110); \
-    \
-    X0_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, T0_, T1_, 0b10001000); \
-    X1_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, T0_, T1_, 0b11011101); \
-    X2_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, T2_, T3_, 0b10001000); \
-    X3_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, T2_, T3_, 0b11011101); \
+#define TRANSPOSE_4x4_I128(X0_, X1_ ,X2_ ,X3_) {                                        \
+    __m512i T0_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, (X0_), (X1_), 0b01000100); \
+    __m512i T1_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, (X2_), (X3_), 0b01000100); \
+    __m512i T2_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, (X0_), (X1_), 0b11101110); \
+    __m512i T3_ = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, (X2_), (X3_), 0b11101110); \
+                                                                                        \
+    (X0_) = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, T0_, T1_, 0b10001000);           \
+    (X1_) = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, T0_, T1_, 0b11011101);           \
+    (X2_) = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, T2_, T3_, 0b10001000);           \
+    (X3_) = _mm512_maskz_shuffle_i64x2((__mmask8)0xFF, T2_, T3_, 0b11011101);           \
 }
 
-#define UPDATE_MASK(len64, mask) {\
-    if (len64 < 2 * 4 && len64 >= 0) \
-        mask = (__mmask8)(((1 << len64) - 1) & 0xFF); \
-    else if (len64 < 0) \
-        mask = 0; \
+#define UPDATE_MASK(len64, mask) {                        \
+    if ((len64) < 2 * 4 && (len64) >= 0)                  \
+        (mask) = (__mmask8)(((1 << (len64)) - 1) & 0xFF); \
+    else if ((len64) < 0)                                 \
+        (mask) = 0;                                       \
 }
 
 #define aes_cfb16_enc_vaes_mb4 OWNAPI(aes_cfb16_enc_vaes_mb4)

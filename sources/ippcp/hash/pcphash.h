@@ -139,8 +139,8 @@ struct _cpHashCtx {
 };
 
 /* accessors */
-#define HASH_SET_ID(stt,ctxid)      ((stt)->idCtx = (Ipp32u)ctxid ^ (Ipp32u)IPP_UINT_PTR(stt))
-#define HASH_RESET_ID(stt,ctxid)    ((stt)->idCtx = (Ipp32u)ctxid)
+#define HASH_SET_ID(stt,ctxid)      ((stt)->idCtx = (Ipp32u)(ctxid) ^ (Ipp32u)IPP_UINT_PTR(stt))
+#define HASH_RESET_ID(stt,ctxid)    ((stt)->idCtx = (Ipp32u)(ctxid))
 #define HASH_ALG_ID(stt)            ((stt)->algID)
 #define HASH_LENLO(stt)             ((stt)->msgLenLo)
 #define HASH_LENHI(stt)             ((stt)->msgLenHi)
@@ -149,7 +149,7 @@ struct _cpHashCtx {
 #define HASH_VALUE(stt)             ((stt)->msgHash)
 #define HASH_BUFFIDX(stt)           ((stt)->msgBuffIdx)
 #define HASH_BUFF(stt)              ((stt)->msgBuffer)
-#define HASH_VALID_ID(stt,ctxId)    ((((stt)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((stt))) == (Ipp32u)ctxId)
+#define HASH_VALID_ID(stt,ctxId)    ((((stt)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((stt))) == (Ipp32u)(ctxId))
 
 
 /* initial hash values */

@@ -21,9 +21,12 @@
 
 #include <internal/rsa/avxifma_ahmr.h>
 
-void ifma_ahmr52x40_mb4(int64u *out_mb, const int64u *inpA_mb, const int64u *inpM_mb, const int64u *k0_mb)
+void ifma_ahmr52x40_mb4(int64u* out_mb,
+                        const int64u* inpA_mb,
+                        const int64u* inpM_mb,
+                        const int64u* k0_mb)
 {
-   ifma_ahmr52xN_mb4(out_mb, inpA_mb, inpM_mb, k0_mb, 40);
+    ifma_ahmr52xN_mb4(out_mb, inpA_mb, inpM_mb, k0_mb, 40);
 }
 
 #endif // #if ((_MBX == _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)

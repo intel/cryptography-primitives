@@ -21,18 +21,20 @@
 #include <internal/sm4/sm4_mb.h>
 
 DLL_PUBLIC
-mbx_status16 OWNAPI(mbx_sm4_xts_decrypt_mb16)(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES],
-                                      const mbx_sm4_key_schedule* key_sched1,
-                                      const mbx_sm4_key_schedule* key_sched2,
-                                      const int8u* pa_tweak[SM4_LINES])
+mbx_status16 OWNAPI(mbx_sm4_xts_decrypt_mb16)(int8u* pa_out[SM4_LINES],
+                                              const int8u* pa_inp[SM4_LINES],
+                                              const int len[SM4_LINES],
+                                              const mbx_sm4_key_schedule* key_sched1,
+                                              const mbx_sm4_key_schedule* key_sched2,
+                                              const int8u* pa_tweak[SM4_LINES])
 {
     unsigned buf_no;
     mbx_status16 status = 0;
-    int16u mb_mask = 0xFFFF;
+    int16u mb_mask      = 0xFFFF;
 
     /* Test input pointers */
-    if (NULL == pa_out || NULL == pa_inp || NULL == len ||
-        NULL == key_sched1 || NULL == key_sched2 || NULL == pa_tweak)
+    if (NULL == pa_out || NULL == pa_inp || NULL == len || NULL == key_sched1 ||
+        NULL == key_sched2 || NULL == pa_tweak)
         return MBX_SET_STS16_ALL(MBX_STATUS_NULL_PARAM_ERR);
 
     /* Test input data length and input pointers */
@@ -54,11 +56,16 @@ mbx_status16 OWNAPI(mbx_sm4_xts_decrypt_mb16)(int8u* pa_out[SM4_LINES], const in
         }
     }
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        status |= sm4_xts_kernel_mb16(pa_out, (const int8u**)pa_inp, (const int*)len,
-                            (const int32u**)key_sched1, (const int32u**)key_sched2,
-                            pa_tweak, (__mmask16)mb_mask, SM4_DEC);
+        status |= sm4_xts_kernel_mb16(pa_out,
+                                      (const int8u**)pa_inp,
+                                      (const int*)len,
+                                      (const int32u**)key_sched1,
+                                      (const int32u**)key_sched2,
+                                      pa_tweak,
+                                      (__mmask16)mb_mask,
+                                      SM4_DEC);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

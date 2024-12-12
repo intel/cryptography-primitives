@@ -16,31 +16,34 @@
 
 #include <crypto_mb/version.h>
 
-#define STR2(x)           #x
-#define STR(x)       STR2(x)
+#define STR2(x) #x
+#define STR(x)  STR2(x)
 
-#define MBX_LIB_LONGNAME()     "Crypto multi-buffer"
-#define MBX_LIB_SHORTNAME()    "crypto_mb"
+#define MBX_LIB_LONGNAME()  "Crypto multi-buffer"
+#define MBX_LIB_SHORTNAME() "crypto_mb"
 
 #ifndef MBX_BASE_VERSION
-#define MBX_BASE_VERSION() MBX_VER_MAJOR,MBX_VER_MINOR,MBX_VER_PATCH
+#define MBX_BASE_VERSION() MBX_VER_MAJOR, MBX_VER_MINOR, MBX_VER_PATCH
 #endif
 
-#define MBX_BUILD() 1043
-#define MBX_VERSION() MBX_BASE_VERSION(),MBX_BUILD()
+#define MBX_BUILD()   1043
+#define MBX_VERSION() MBX_BASE_VERSION(), MBX_BUILD()
 
 #ifndef STR_MBX_BASE_VERSION
 #define STR_MBX_BASE_VERSION() STR(MBX_VER_MAJOR) "," STR(MBX_VER_MINOR) "," STR(MBX_VER_PATCH)
 #endif
 
-#define STR_FILE_MBX_VERSION() STR_MBX_BASE_VERSION()"," STR(MBX_BUILD())
+#define STR_FILE_MBX_VERSION() STR_MBX_BASE_VERSION() "," STR(MBX_BUILD())
 
 #ifndef MBX_STR_VERSION
-#define MBX_STR_VERSION() STR(MBX_VER_MAJOR) "." STR(MBX_VER_MINOR) "." STR(MBX_VER_PATCH) " (" STR(MBX_INTERFACE_VERSION_MAJOR) "." STR(MBX_INTERFACE_VERSION_MINOR) ")"
+#define MBX_STR_VERSION()                                                                        \
+    STR(MBX_VER_MAJOR)                                                                           \
+    "." STR(MBX_VER_MINOR) "." STR(MBX_VER_PATCH) " (" STR(MBX_INTERFACE_VERSION_MAJOR) "." STR( \
+        MBX_INTERFACE_VERSION_MINOR) ")"
 #endif
 
 #ifndef CRYPTO_MB_STR_VERSION
-  #define CRYPTO_MB_STR_VERSION() MBX_STR_VERSION()
+#define CRYPTO_MB_STR_VERSION() MBX_STR_VERSION()
 #endif
 
 /* ////////////////////////////// End of file /////////////////////////////// */

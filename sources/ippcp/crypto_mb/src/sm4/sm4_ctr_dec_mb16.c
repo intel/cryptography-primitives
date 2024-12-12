@@ -20,7 +20,11 @@
 #include <crypto_mb/sm4.h>
 
 DLL_PUBLIC
-mbx_status16 OWNAPI(mbx_sm4_decrypt_ctr128_mb16)(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const mbx_sm4_key_schedule* key_sched, int8u* pa_ctr[SM4_LINES])
+mbx_status16 OWNAPI(mbx_sm4_decrypt_ctr128_mb16)(int8u* pa_out[SM4_LINES],
+                                                 const int8u* pa_inp[SM4_LINES],
+                                                 const int len[SM4_LINES],
+                                                 const mbx_sm4_key_schedule* key_sched,
+                                                 int8u* pa_ctr[SM4_LINES])
 {
     return mbx_sm4_encrypt_ctr128_mb16(pa_out, pa_inp, len, key_sched, pa_ctr);
 }

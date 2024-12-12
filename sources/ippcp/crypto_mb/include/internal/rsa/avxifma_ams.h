@@ -77,99 +77,102 @@ Inputs:
         C=C>>52		// at each step of the for loop, divide the result by 2^52
     return C
 */
-__MBX_INLINE void ams_reduce_52xN_mb4(__m256i *res, const int64u *inpM_mb, const int64u *k0_mb, const int N)
+__MBX_INLINE void ams_reduce_52xN_mb4(__m256i* res,
+                                      const int64u* inpM_mb,
+                                      const int64u* k0_mb,
+                                      const int N)
 {
-   /* Generate u_i */
-   const __m256i K0    = _mm256_load_si256((const __m256i *)&k0_mb[0]);
-   const __m256i *inpM = (const __m256i *)inpM_mb;
-   int i;
+    /* Generate u_i */
+    const __m256i K0    = _mm256_load_si256((const __m256i*)&k0_mb[0]);
+    const __m256i* inpM = (const __m256i*)inpM_mb;
+    int i;
 
-   for (i = 0; i < N; i++) {
-      register __m256i r0, r1, r2, r3, r4, r5, r6, r7, r8;
-      int j = 0;
+    for (i = 0; i < N; i++) {
+        register __m256i r0, r1, r2, r3, r4, r5, r6, r7, r8;
+        int j = 0;
 
-      r0 = res[i]; /* res[i + j + 0] and j=0 here */
+        r0 = res[i]; /* res[i + j + 0] and j=0 here */
 
-      if (i != 0)
-         r0 = _mm256_add_epi64(r0, _mm256_srli_epi64(res[i - 1], DIGIT_SIZE));
+        if (i != 0)
+            r0 = _mm256_add_epi64(r0, _mm256_srli_epi64(res[i - 1], DIGIT_SIZE));
 
-      const __m256i u = _mm256_madd52lo_epu64(_mm256_setzero_si256(), r0, K0);
+        const __m256i u = _mm256_madd52lo_epu64(_mm256_setzero_si256(), r0, K0);
 
-      for (; (j + 8) < N; j += 8) {
-         // keep 8 independent IFMA operations in flight
-         r1 = res[i + j + 1];
-         r2 = res[i + j + 2];
-         r3 = res[i + j + 3];
-         r4 = res[i + j + 4];
-         r5 = res[i + j + 5];
-         r6 = res[i + j + 6];
-         r7 = res[i + j + 7];
-         r8 = res[i + j + 8];
+        for (; (j + 8) < N; j += 8) {
+            // keep 8 independent IFMA operations in flight
+            r1 = res[i + j + 1];
+            r2 = res[i + j + 2];
+            r3 = res[i + j + 3];
+            r4 = res[i + j + 4];
+            r5 = res[i + j + 5];
+            r6 = res[i + j + 6];
+            r7 = res[i + j + 7];
+            r8 = res[i + j + 8];
 
-         r0 = _mm256_madd52lo_epu64(r0, u, inpM[j + 0]);
-         r1 = _mm256_madd52lo_epu64(r1, u, inpM[j + 1]);
-         r2 = _mm256_madd52lo_epu64(r2, u, inpM[j + 2]);
-         r3 = _mm256_madd52lo_epu64(r3, u, inpM[j + 3]);
-         r4 = _mm256_madd52lo_epu64(r4, u, inpM[j + 4]);
-         r5 = _mm256_madd52lo_epu64(r5, u, inpM[j + 5]);
-         r6 = _mm256_madd52lo_epu64(r6, u, inpM[j + 6]);
-         r7 = _mm256_madd52lo_epu64(r7, u, inpM[j + 7]);
+            r0 = _mm256_madd52lo_epu64(r0, u, inpM[j + 0]);
+            r1 = _mm256_madd52lo_epu64(r1, u, inpM[j + 1]);
+            r2 = _mm256_madd52lo_epu64(r2, u, inpM[j + 2]);
+            r3 = _mm256_madd52lo_epu64(r3, u, inpM[j + 3]);
+            r4 = _mm256_madd52lo_epu64(r4, u, inpM[j + 4]);
+            r5 = _mm256_madd52lo_epu64(r5, u, inpM[j + 5]);
+            r6 = _mm256_madd52lo_epu64(r6, u, inpM[j + 6]);
+            r7 = _mm256_madd52lo_epu64(r7, u, inpM[j + 7]);
 
-         r1 = _mm256_madd52hi_epu64(r1, u, inpM[j + 0]);
-         r2 = _mm256_madd52hi_epu64(r2, u, inpM[j + 1]);
-         r3 = _mm256_madd52hi_epu64(r3, u, inpM[j + 2]);
-         r4 = _mm256_madd52hi_epu64(r4, u, inpM[j + 3]);
-         r5 = _mm256_madd52hi_epu64(r5, u, inpM[j + 4]);
-         r6 = _mm256_madd52hi_epu64(r6, u, inpM[j + 5]);
-         r7 = _mm256_madd52hi_epu64(r7, u, inpM[j + 6]);
-         r8 = _mm256_madd52hi_epu64(r8, u, inpM[j + 7]);
+            r1 = _mm256_madd52hi_epu64(r1, u, inpM[j + 0]);
+            r2 = _mm256_madd52hi_epu64(r2, u, inpM[j + 1]);
+            r3 = _mm256_madd52hi_epu64(r3, u, inpM[j + 2]);
+            r4 = _mm256_madd52hi_epu64(r4, u, inpM[j + 3]);
+            r5 = _mm256_madd52hi_epu64(r5, u, inpM[j + 4]);
+            r6 = _mm256_madd52hi_epu64(r6, u, inpM[j + 5]);
+            r7 = _mm256_madd52hi_epu64(r7, u, inpM[j + 6]);
+            r8 = _mm256_madd52hi_epu64(r8, u, inpM[j + 7]);
 
-         res[i + j + 0] = r0;
-         res[i + j + 1] = r1;
-         res[i + j + 2] = r2;
-         res[i + j + 3] = r3;
-         res[i + j + 4] = r4;
-         res[i + j + 5] = r5;
-         res[i + j + 6] = r6;
-         res[i + j + 7] = r7;
-         r0             = r8;
-      }
+            res[i + j + 0] = r0;
+            res[i + j + 1] = r1;
+            res[i + j + 2] = r2;
+            res[i + j + 3] = r3;
+            res[i + j + 4] = r4;
+            res[i + j + 5] = r5;
+            res[i + j + 6] = r6;
+            res[i + j + 7] = r7;
+            r0             = r8;
+        }
 
-      for (; (j + 4) < N; j += 4) {
-         // keep 4 independent IFMA operations in flight
-         r1 = res[i + j + 1];
-         r2 = res[i + j + 2];
-         r3 = res[i + j + 3];
-         r4 = res[i + j + 4];
+        for (; (j + 4) < N; j += 4) {
+            // keep 4 independent IFMA operations in flight
+            r1 = res[i + j + 1];
+            r2 = res[i + j + 2];
+            r3 = res[i + j + 3];
+            r4 = res[i + j + 4];
 
-         r0 = _mm256_madd52lo_epu64(r0, u, inpM[j + 0]);
-         r1 = _mm256_madd52lo_epu64(r1, u, inpM[j + 1]);
-         r2 = _mm256_madd52lo_epu64(r2, u, inpM[j + 2]);
-         r3 = _mm256_madd52lo_epu64(r3, u, inpM[j + 3]);
+            r0 = _mm256_madd52lo_epu64(r0, u, inpM[j + 0]);
+            r1 = _mm256_madd52lo_epu64(r1, u, inpM[j + 1]);
+            r2 = _mm256_madd52lo_epu64(r2, u, inpM[j + 2]);
+            r3 = _mm256_madd52lo_epu64(r3, u, inpM[j + 3]);
 
-         r1 = _mm256_madd52hi_epu64(r1, u, inpM[j + 0]);
-         r2 = _mm256_madd52hi_epu64(r2, u, inpM[j + 1]);
-         r3 = _mm256_madd52hi_epu64(r3, u, inpM[j + 2]);
-         r4 = _mm256_madd52hi_epu64(r4, u, inpM[j + 3]);
+            r1 = _mm256_madd52hi_epu64(r1, u, inpM[j + 0]);
+            r2 = _mm256_madd52hi_epu64(r2, u, inpM[j + 1]);
+            r3 = _mm256_madd52hi_epu64(r3, u, inpM[j + 2]);
+            r4 = _mm256_madd52hi_epu64(r4, u, inpM[j + 3]);
 
-         res[i + j + 0] = r0;
-         res[i + j + 1] = r1;
-         res[i + j + 2] = r2;
-         res[i + j + 3] = r3;
-         r0             = r4;
-      }
+            res[i + j + 0] = r0;
+            res[i + j + 1] = r1;
+            res[i + j + 2] = r2;
+            res[i + j + 3] = r3;
+            r0             = r4;
+        }
 
-      // finish up computation with reduction at a time
-      for (; j < N; j++) {
-         r1         = res[i + j + 1];
-         r0         = _mm256_madd52lo_epu64(r0, u, inpM[j]);
-         r1         = _mm256_madd52hi_epu64(r1, u, inpM[j]);
-         res[i + j] = r0;
-         r0         = r1;
-      }
+        // finish up computation with reduction at a time
+        for (; j < N; j++) {
+            r1         = res[i + j + 1];
+            r0         = _mm256_madd52lo_epu64(r0, u, inpM[j]);
+            r1         = _mm256_madd52hi_epu64(r1, u, inpM[j]);
+            res[i + j] = r0;
+            r0         = r1;
+        }
 
-      res[i + j] = r0;
-   }
+        res[i + j] = r0;
+    }
 }
 
 /*
@@ -200,35 +203,35 @@ Inputs:
 
     return C
 */
-__MBX_INLINE void ams52xN_square_diagonal_mb4(__m256i *res, const __m256i *inpA, const int N)
+__MBX_INLINE void ams52xN_square_diagonal_mb4(__m256i* res, const __m256i* inpA, const int N)
 {
-   /* Sum */
-   for (int i = 0; i < (N - 1); i++) {
-      const __m256i AL = inpA[i];
+    /* Sum */
+    for (int i = 0; i < (N - 1); i++) {
+        const __m256i AL = inpA[i];
 
-      for (int j = i + 1; j < N; j++) {
-         const __m256i AR = inpA[j];
-         const int iL     = i + j;
-         const int iH     = iL + 1;
+        for (int j = i + 1; j < N; j++) {
+            const __m256i AR = inpA[j];
+            const int iL     = i + j;
+            const int iH     = iL + 1;
 
-         res[iL] = _mm256_madd52lo_epu64(res[iL], AL, AR);
-         res[iH] = _mm256_madd52hi_epu64(res[iH], AL, AR);
-      }
-   }
+            res[iL] = _mm256_madd52lo_epu64(res[iL], AL, AR);
+            res[iH] = _mm256_madd52hi_epu64(res[iH], AL, AR);
+        }
+    }
 
-   /* Double */
-   for (int i = 0; i < (N * 2); i++)
-      res[i] = _mm256_add_epi64(res[i], res[i]);
+    /* Double */
+    for (int i = 0; i < (N * 2); i++)
+        res[i] = _mm256_add_epi64(res[i], res[i]);
 
-   /* Add square */
-   for (int i = 0; i < N; i++) {
-      const __m256i AL = inpA[i];
-      const int iL     = 2 * i;
-      const int iH     = iL + 1;
+    /* Add square */
+    for (int i = 0; i < N; i++) {
+        const __m256i AL = inpA[i];
+        const int iL     = 2 * i;
+        const int iH     = iL + 1;
 
-      res[iL] = _mm256_madd52lo_epu64(res[iL], AL, AL);
-      res[iH] = _mm256_madd52hi_epu64(res[iH], AL, AL);
-   }
+        res[iL] = _mm256_madd52lo_epu64(res[iL], AL, AL);
+        res[iH] = _mm256_madd52hi_epu64(res[iH], AL, AL);
+    }
 }
 
 /*
@@ -257,25 +260,29 @@ Inputs:
     // reduce
     res[N..2*N-1] = reduce(res[0..2*N-1])
 
-    // normalize and return     
+    // normalize and return
     normalize(res[N..2*N-1]
     return res[N..2*N-1]
 */
-__MBX_INLINE void AMS52xN_diagonal_mb4(int64u *out_mb, const int64u *inpA_mb, const int64u *inpM_mb, const int64u *k0_mb, const int N)
+__MBX_INLINE void AMS52xN_diagonal_mb4(int64u* out_mb,
+                                       const int64u* inpA_mb,
+                                       const int64u* inpM_mb,
+                                       const int64u* k0_mb,
+                                       const int N)
 {
-   __m256i res[79 * 2];
+    __m256i res[79 * 2];
 
-   assert(N <= 79);
-   zero_mb4(res, 2 * N);
+    assert(N <= 79);
+    zero_mb4(res, 2 * N);
 
-   /* generic square */
-   ams52xN_square_diagonal_mb4(res, (const __m256i *)inpA_mb, N);
+    /* generic square */
+    ams52xN_square_diagonal_mb4(res, (const __m256i*)inpA_mb, N);
 
-   /* Generate u_i and reduce */
-   ams_reduce_52xN_mb4(res, inpM_mb, k0_mb, N);
+    /* Generate u_i and reduce */
+    ams_reduce_52xN_mb4(res, inpM_mb, k0_mb, N);
 
-   /* Normalize */
-   ifma_normalize_ams_52xN_mb4(out_mb, res, N);
+    /* Normalize */
+    ifma_normalize_ams_52xN_mb4(out_mb, res, N);
 }
 
 #endif /* AVXIFMA_AMS_H */

@@ -20,7 +20,7 @@
 __MBX_INLINE void CopyBlock(const void* pSrc, void* pDst, int numBytes)
 {
     const int8u* s = (int8u*)pSrc;
-    int8u* d = (int8u*)pDst;
+    int8u* d       = (int8u*)pDst;
     int k;
     for (k = 0; k < numBytes; k++)
         d[k] = s[k];

@@ -22,55 +22,55 @@
 
 #if (_MBX >= _MBX_K1)
 
-EXTERN_C void ifma_cp_rsa_pub_layer_mb8(const int8u *const from_pa[8],
-                                        int8u *const to_pa[8],
-                                        const int64u *const n_pa[8],
+EXTERN_C void ifma_cp_rsa_pub_layer_mb8(const int8u* const from_pa[8],
+                                        int8u* const to_pa[8],
+                                        const int64u* const n_pa[8],
                                         int rsaBitlen,
-                                        const mbx_RSA_Method *m,
-                                        int8u *pBuffer);
-EXTERN_C void ifma_cp_rsa_prv2_layer_mb8(const int8u *const from_pa[8],
-                                         int8u *const to_pa[8],
-                                         const int64u *const d_pa[8],
-                                         const int64u *const n_pa[8],
+                                        const mbx_RSA_Method* m,
+                                        int8u* pBuffer);
+EXTERN_C void ifma_cp_rsa_prv2_layer_mb8(const int8u* const from_pa[8],
+                                         int8u* const to_pa[8],
+                                         const int64u* const d_pa[8],
+                                         const int64u* const n_pa[8],
                                          int rsaBitlen,
-                                         const mbx_RSA_Method *m,
-                                         int8u *pBuffer);
-EXTERN_C void ifma_cp_rsa_prv5_layer_mb8(const int8u *const from_pa[8],
-                                         int8u *const to_pa[8],
-                                         const int64u *const p_pa[8],
-                                         const int64u *const q_pa[8],
-                                         const int64u *const dp_pa[8],
-                                         const int64u *const dq_pa[8],
-                                         const int64u *const iq_pa[8],
+                                         const mbx_RSA_Method* m,
+                                         int8u* pBuffer);
+EXTERN_C void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
+                                         int8u* const to_pa[8],
+                                         const int64u* const p_pa[8],
+                                         const int64u* const q_pa[8],
+                                         const int64u* const dp_pa[8],
+                                         const int64u* const dq_pa[8],
+                                         const int64u* const iq_pa[8],
                                          int rsaBitlen,
-                                         const mbx_RSA_Method *m,
-                                         int8u *pBuffer);
+                                         const mbx_RSA_Method* m,
+                                         int8u* pBuffer);
 
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
 
-EXTERN_C void ifma_cp_rsa_pub_layer_mb4(const int8u *const from_pa[4],
-                                        int8u *const to_pa[4],
-                                        const int64u *const n_pa[4],
+EXTERN_C void ifma_cp_rsa_pub_layer_mb4(const int8u* const from_pa[4],
+                                        int8u* const to_pa[4],
+                                        const int64u* const n_pa[4],
                                         int rsaBitlen,
-                                        const mbx_RSA_Method *m,
-                                        int8u *pBuffer);
-EXTERN_C void ifma_cp_rsa_prv2_layer_mb4(const int8u *const from_pa[4],
-                                         int8u *const to_pa[4],
-                                         const int64u *const d_pa[4],
-                                         const int64u *const n_pa[4],
+                                        const mbx_RSA_Method* m,
+                                        int8u* pBuffer);
+EXTERN_C void ifma_cp_rsa_prv2_layer_mb4(const int8u* const from_pa[4],
+                                         int8u* const to_pa[4],
+                                         const int64u* const d_pa[4],
+                                         const int64u* const n_pa[4],
                                          int rsaBitlen,
-                                         const mbx_RSA_Method *m,
-                                         int8u *pBuffer);
-EXTERN_C void ifma_cp_rsa_prv5_layer_mb4(const int8u *const from_pa[4],
-                                         int8u *const to_pa[4],
-                                         const int64u *const p_pa[4],
-                                         const int64u *const q_pa[4],
-                                         const int64u *const dp_pa[4],
-                                         const int64u *const dq_pa[4],
-                                         const int64u *const iq_pa[4],
+                                         const mbx_RSA_Method* m,
+                                         int8u* pBuffer);
+EXTERN_C void ifma_cp_rsa_prv5_layer_mb4(const int8u* const from_pa[4],
+                                         int8u* const to_pa[4],
+                                         const int64u* const p_pa[4],
+                                         const int64u* const q_pa[4],
+                                         const int64u* const dp_pa[4],
+                                         const int64u* const dq_pa[4],
+                                         const int64u* const iq_pa[4],
                                          int rsaBitlen,
-                                         const mbx_RSA_Method *m,
-                                         int8u *pBuffer);
+                                         const mbx_RSA_Method* m,
+                                         int8u* pBuffer);
 
 #endif /* #if (_MBX >= _MBX_K1) */
 

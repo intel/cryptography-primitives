@@ -24,48 +24,64 @@
 #include <crypto_mb/defs.h>
 #include <openssl/bn.h>
 
-EXTERN_C void ifma_ssl_rsa1K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const n_pa[8]);
-EXTERN_C void ifma_ssl_rsa2K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const n_pa[8]);
-EXTERN_C void ifma_ssl_rsa3K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const n_pa[8]);
-EXTERN_C void ifma_ssl_rsa4K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const n_pa[8]);
+EXTERN_C void ifma_ssl_rsa1K_pub_layer_mb8(const int8u* const from_pa[8],
+                                           int8u* const to_pa[8],
+                                           const BIGNUM* const n_pa[8]);
+EXTERN_C void ifma_ssl_rsa2K_pub_layer_mb8(const int8u* const from_pa[8],
+                                           int8u* const to_pa[8],
+                                           const BIGNUM* const n_pa[8]);
+EXTERN_C void ifma_ssl_rsa3K_pub_layer_mb8(const int8u* const from_pa[8],
+                                           int8u* const to_pa[8],
+                                           const BIGNUM* const n_pa[8]);
+EXTERN_C void ifma_ssl_rsa4K_pub_layer_mb8(const int8u* const from_pa[8],
+                                           int8u* const to_pa[8],
+                                           const BIGNUM* const n_pa[8]);
 
-EXTERN_C void
-ifma_ssl_rsa1K_prv2_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const d_pa[8], const BIGNUM *const n_pa[8]);
-EXTERN_C void
-ifma_ssl_rsa2K_prv2_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const d_pa[8], const BIGNUM *const n_pa[8]);
-EXTERN_C void
-ifma_ssl_rsa3K_prv2_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const d_pa[8], const BIGNUM *const n_pa[8]);
-EXTERN_C void
-ifma_ssl_rsa4K_prv2_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const d_pa[8], const BIGNUM *const n_pa[8]);
+EXTERN_C void ifma_ssl_rsa1K_prv2_layer_mb8(const int8u* const from_pa[8],
+                                            int8u* const to_pa[8],
+                                            const BIGNUM* const d_pa[8],
+                                            const BIGNUM* const n_pa[8]);
+EXTERN_C void ifma_ssl_rsa2K_prv2_layer_mb8(const int8u* const from_pa[8],
+                                            int8u* const to_pa[8],
+                                            const BIGNUM* const d_pa[8],
+                                            const BIGNUM* const n_pa[8]);
+EXTERN_C void ifma_ssl_rsa3K_prv2_layer_mb8(const int8u* const from_pa[8],
+                                            int8u* const to_pa[8],
+                                            const BIGNUM* const d_pa[8],
+                                            const BIGNUM* const n_pa[8]);
+EXTERN_C void ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
+                                            int8u* const to_pa[8],
+                                            const BIGNUM* const d_pa[8],
+                                            const BIGNUM* const n_pa[8]);
 
-EXTERN_C void ifma_ssl_rsa1K_prv5_layer_mb8(const int8u *const from_pa[8],
-                                            int8u *const to_pa[8],
-                                            const BIGNUM *const p_pa[8],
-                                            const BIGNUM *const q_pa[8],
-                                            const BIGNUM *const dp_pa[8],
-                                            const BIGNUM *const dq_pa[8],
-                                            const BIGNUM *const iq_pa[8]);
-EXTERN_C void ifma_ssl_rsa2K_prv5_layer_mb8(const int8u *const from_pa[8],
-                                            int8u *const to_pa[8],
-                                            const BIGNUM *const p_pa[8],
-                                            const BIGNUM *const q_pa[8],
-                                            const BIGNUM *const dp_pa[8],
-                                            const BIGNUM *const dq_pa[8],
-                                            const BIGNUM *const iq_pa[8]);
-EXTERN_C void ifma_ssl_rsa3K_prv5_layer_mb8(const int8u *const from_pa[8],
-                                            int8u *const to_pa[8],
-                                            const BIGNUM *const p_pa[8],
-                                            const BIGNUM *const q_pa[8],
-                                            const BIGNUM *const dp_pa[8],
-                                            const BIGNUM *const dq_pa[8],
-                                            const BIGNUM *const iq_pa[8]);
-EXTERN_C void ifma_ssl_rsa4K_prv5_layer_mb8(const int8u *const from_pa[8],
-                                            int8u *const to_pa[8],
-                                            const BIGNUM *const p_pa[8],
-                                            const BIGNUM *const q_pa[8],
-                                            const BIGNUM *const dp_pa[8],
-                                            const BIGNUM *const dq_pa[8],
-                                            const BIGNUM *const iq_pa[8]);
+EXTERN_C void ifma_ssl_rsa1K_prv5_layer_mb8(const int8u* const from_pa[8],
+                                            int8u* const to_pa[8],
+                                            const BIGNUM* const p_pa[8],
+                                            const BIGNUM* const q_pa[8],
+                                            const BIGNUM* const dp_pa[8],
+                                            const BIGNUM* const dq_pa[8],
+                                            const BIGNUM* const iq_pa[8]);
+EXTERN_C void ifma_ssl_rsa2K_prv5_layer_mb8(const int8u* const from_pa[8],
+                                            int8u* const to_pa[8],
+                                            const BIGNUM* const p_pa[8],
+                                            const BIGNUM* const q_pa[8],
+                                            const BIGNUM* const dp_pa[8],
+                                            const BIGNUM* const dq_pa[8],
+                                            const BIGNUM* const iq_pa[8]);
+EXTERN_C void ifma_ssl_rsa3K_prv5_layer_mb8(const int8u* const from_pa[8],
+                                            int8u* const to_pa[8],
+                                            const BIGNUM* const p_pa[8],
+                                            const BIGNUM* const q_pa[8],
+                                            const BIGNUM* const dp_pa[8],
+                                            const BIGNUM* const dq_pa[8],
+                                            const BIGNUM* const iq_pa[8]);
+EXTERN_C void ifma_ssl_rsa4K_prv5_layer_mb8(const int8u* const from_pa[8],
+                                            int8u* const to_pa[8],
+                                            const BIGNUM* const p_pa[8],
+                                            const BIGNUM* const q_pa[8],
+                                            const BIGNUM* const dp_pa[8],
+                                            const BIGNUM* const dq_pa[8],
+                                            const BIGNUM* const iq_pa[8]);
 #endif /* _IFMA_INTERNAL_SSL_LAYER_H_ */
 
 #endif /* BN_OPENSSL_DISABLE */
@@ -80,48 +96,64 @@ EXTERN_C void ifma_ssl_rsa4K_prv5_layer_mb8(const int8u *const from_pa[8],
 #include <crypto_mb/defs.h>
 #include <openssl/bn.h>
 
-EXTERN_C void ifma_ssl_rsa1K_pub_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const n_pa[4]);
-EXTERN_C void ifma_ssl_rsa2K_pub_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const n_pa[4]);
-EXTERN_C void ifma_ssl_rsa3K_pub_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const n_pa[4]);
-EXTERN_C void ifma_ssl_rsa4K_pub_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const n_pa[4]);
+EXTERN_C void ifma_ssl_rsa1K_pub_layer_mb4(const int8u* const from_pa[4],
+                                           int8u* const to_pa[4],
+                                           const BIGNUM* const n_pa[4]);
+EXTERN_C void ifma_ssl_rsa2K_pub_layer_mb4(const int8u* const from_pa[4],
+                                           int8u* const to_pa[4],
+                                           const BIGNUM* const n_pa[4]);
+EXTERN_C void ifma_ssl_rsa3K_pub_layer_mb4(const int8u* const from_pa[4],
+                                           int8u* const to_pa[4],
+                                           const BIGNUM* const n_pa[4]);
+EXTERN_C void ifma_ssl_rsa4K_pub_layer_mb4(const int8u* const from_pa[4],
+                                           int8u* const to_pa[4],
+                                           const BIGNUM* const n_pa[4]);
 
-EXTERN_C void
-ifma_ssl_rsa1K_prv2_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const d_pa[4], const BIGNUM *const n_pa[4]);
-EXTERN_C void
-ifma_ssl_rsa2K_prv2_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const d_pa[4], const BIGNUM *const n_pa[4]);
-EXTERN_C void
-ifma_ssl_rsa3K_prv2_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const d_pa[4], const BIGNUM *const n_pa[4]);
-EXTERN_C void
-ifma_ssl_rsa4K_prv2_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const d_pa[4], const BIGNUM *const n_pa[4]);
+EXTERN_C void ifma_ssl_rsa1K_prv2_layer_mb4(const int8u* const from_pa[4],
+                                            int8u* const to_pa[4],
+                                            const BIGNUM* const d_pa[4],
+                                            const BIGNUM* const n_pa[4]);
+EXTERN_C void ifma_ssl_rsa2K_prv2_layer_mb4(const int8u* const from_pa[4],
+                                            int8u* const to_pa[4],
+                                            const BIGNUM* const d_pa[4],
+                                            const BIGNUM* const n_pa[4]);
+EXTERN_C void ifma_ssl_rsa3K_prv2_layer_mb4(const int8u* const from_pa[4],
+                                            int8u* const to_pa[4],
+                                            const BIGNUM* const d_pa[4],
+                                            const BIGNUM* const n_pa[4]);
+EXTERN_C void ifma_ssl_rsa4K_prv2_layer_mb4(const int8u* const from_pa[4],
+                                            int8u* const to_pa[4],
+                                            const BIGNUM* const d_pa[4],
+                                            const BIGNUM* const n_pa[4]);
 
-EXTERN_C void ifma_ssl_rsa1K_prv5_layer_mb4(const int8u *const from_pa[4],
-                                            int8u *const to_pa[4],
-                                            const BIGNUM *const p_pa[4],
-                                            const BIGNUM *const q_pa[4],
-                                            const BIGNUM *const dp_pa[4],
-                                            const BIGNUM *const dq_pa[4],
-                                            const BIGNUM *const iq_pa[4]);
-EXTERN_C void ifma_ssl_rsa2K_prv5_layer_mb4(const int8u *const from_pa[4],
-                                            int8u *const to_pa[4],
-                                            const BIGNUM *const p_pa[4],
-                                            const BIGNUM *const q_pa[4],
-                                            const BIGNUM *const dp_pa[4],
-                                            const BIGNUM *const dq_pa[4],
-                                            const BIGNUM *const iq_pa[4]);
-EXTERN_C void ifma_ssl_rsa3K_prv5_layer_mb4(const int8u *const from_pa[4],
-                                            int8u *const to_pa[4],
-                                            const BIGNUM *const p_pa[4],
-                                            const BIGNUM *const q_pa[4],
-                                            const BIGNUM *const dp_pa[4],
-                                            const BIGNUM *const dq_pa[4],
-                                            const BIGNUM *const iq_pa[4]);
-EXTERN_C void ifma_ssl_rsa4K_prv5_layer_mb4(const int8u *const from_pa[4],
-                                            int8u *const to_pa[4],
-                                            const BIGNUM *const p_pa[4],
-                                            const BIGNUM *const q_pa[4],
-                                            const BIGNUM *const dp_pa[4],
-                                            const BIGNUM *const dq_pa[4],
-                                            const BIGNUM *const iq_pa[4]);
+EXTERN_C void ifma_ssl_rsa1K_prv5_layer_mb4(const int8u* const from_pa[4],
+                                            int8u* const to_pa[4],
+                                            const BIGNUM* const p_pa[4],
+                                            const BIGNUM* const q_pa[4],
+                                            const BIGNUM* const dp_pa[4],
+                                            const BIGNUM* const dq_pa[4],
+                                            const BIGNUM* const iq_pa[4]);
+EXTERN_C void ifma_ssl_rsa2K_prv5_layer_mb4(const int8u* const from_pa[4],
+                                            int8u* const to_pa[4],
+                                            const BIGNUM* const p_pa[4],
+                                            const BIGNUM* const q_pa[4],
+                                            const BIGNUM* const dp_pa[4],
+                                            const BIGNUM* const dq_pa[4],
+                                            const BIGNUM* const iq_pa[4]);
+EXTERN_C void ifma_ssl_rsa3K_prv5_layer_mb4(const int8u* const from_pa[4],
+                                            int8u* const to_pa[4],
+                                            const BIGNUM* const p_pa[4],
+                                            const BIGNUM* const q_pa[4],
+                                            const BIGNUM* const dp_pa[4],
+                                            const BIGNUM* const dq_pa[4],
+                                            const BIGNUM* const iq_pa[4]);
+EXTERN_C void ifma_ssl_rsa4K_prv5_layer_mb4(const int8u* const from_pa[4],
+                                            int8u* const to_pa[4],
+                                            const BIGNUM* const p_pa[4],
+                                            const BIGNUM* const q_pa[4],
+                                            const BIGNUM* const dp_pa[4],
+                                            const BIGNUM* const dq_pa[4],
+                                            const BIGNUM* const iq_pa[4]);
 #endif /* _IFMA_INTERNAL_SSL_LAYER_H_ */
 
 #endif /* BN_OPENSSL_DISABLE */

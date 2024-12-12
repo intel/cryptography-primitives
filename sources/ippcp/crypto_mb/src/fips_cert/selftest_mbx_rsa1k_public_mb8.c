@@ -15,7 +15,7 @@
 *************************************************************************/
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-    #pragma warning(disable: 4206) // empty translation unit in MSVC
+#pragma warning(disable : 4206) // empty translation unit in MSVC
 #endif
 
 /* Selftests are disabled for now, since rsa 1k scheme is not FIPS-approved */
@@ -109,9 +109,11 @@ fips_test_status fips_selftest_mbx_rsa1k_public_mb8(void) {
 static const int8u exponent[MBX_RSA_PUB_EXP_BYTE_LEN] = {0x01,0x00,0x01};
 
 // memory free macro
-#define MEM_FREE(BN_PTR1, BN_PTR2) { \
-  BN_free(BN_PTR1);                  \
-  BN_free(BN_PTR2); }
+#define MEM_FREE(BN_PTR1, BN_PTR2) \
+    {                              \
+        BN_free(BN_PTR1);          \
+        BN_free(BN_PTR2);          \
+    }
 
 DLL_PUBLIC
 fips_test_status fips_selftest_mbx_rsa1k_public_ssl_mb8(void) {

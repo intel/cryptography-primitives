@@ -80,8 +80,8 @@ void zeroize_256(Ipp32u* out, int len)
 //is used to increment two 128-bit words in a 256-bit register
 #define IncrementRegister256(t_block, t_incr, t_shuffle_mask) \
    t_block = _mm256_shuffle_epi8(t_block, t_shuffle_mask); \
-   t_block = _mm256_add_epi32(t_block, t_incr);            \
-   t_block = _mm256_shuffle_epi8(t_block, t_shuffle_mask)
+   (t_block) = _mm256_add_epi32(t_block, t_incr);            \
+   (t_block) = _mm256_shuffle_epi8(t_block, t_shuffle_mask)
 
 // these constants are used to increment two 128-bit words in a 256-bit register
 __ALIGN32 static const Ipp32u _increment1[] = {0, 0, 0, 1, 0, 0, 0, 1};

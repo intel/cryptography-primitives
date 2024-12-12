@@ -18,14 +18,22 @@
 #include <internal/rsa/ifma_rsa_arith.h>
 #include <internal/common/ifma_defs.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
-static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES], int8u* loc_out[SM4_LINES],
-                                         __m512i num_blocks, const __m512i* p_rk, const int sign,
+static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES],
+                                         int8u* loc_out[SM4_LINES],
+                                         __m512i num_blocks,
+                                         const __m512i* p_rk,
+                                         const int sign,
                                          __mmask16 mb_mask,
                                          __m512i TMP[20]);
 
-mbx_status16 sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], __mmask16 mb_mask, int operation)
+mbx_status16 sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                 const int8u* pa_inp[SM4_LINES],
+                                 const int len[SM4_LINES],
+                                 const int32u* key_sched[SM4_ROUNDS],
+                                 __mmask16 mb_mask,
+                                 int operation)
 {
     mbx_status16 status = 0;
     __ALIGN64 const int8u* loc_inp[SM4_LINES];
@@ -43,12 +51,14 @@ mbx_status16 sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[S
     _mm512_storeu_si512(loc_out + 8, _mm512_loadu_si512(pa_out + 8));
 
     /* p_rk set to the beginning or to the end of the key schedule */
-    const __m512i* p_rk = (operation == SM4_ENC) ? (const __m512i*)key_sched : ((const __m512i*)key_sched + (SM4_ROUNDS - 1));
+    const __m512i* p_rk = (operation == SM4_ENC) ? (const __m512i*)key_sched
+                                                 : ((const __m512i*)key_sched + (SM4_ROUNDS - 1));
 
     __ALIGN64 __m512i TMP[20];
 
     /* Generate the mask to process 4 blocks from each buffer */
-    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
+    __mmask16 tmp_mask =
+        _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
 
     /* Go to this loop if all 16 buffers contain at least 4 blocks each */
     while (tmp_mask == 0xFFFF) {
@@ -93,7 +103,7 @@ mbx_status16 sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[S
         TRANSPOSE_INP_512(TMP[16], TMP[17], TMP[18], TMP[19], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         SM4_KERNEL(TMP, p_rk, operation);
-        p_rk -= operation*SM4_ROUNDS;
+        p_rk -= operation * SM4_ROUNDS;
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
@@ -136,22 +146,24 @@ mbx_status16 sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[S
         _mm512_storeu_si512((__m512i*)(loc_out[15]), TMP[3]);
 
         /* Update pointers to data */
-        M512(loc_inp) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
 
-        M512(loc_out) = _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_out) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
 
         /* Update number of blocks left and processing mask */
         num_blocks = _mm512_sub_epi32(num_blocks, _mm512_set1_epi32(4));
-        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
+        tmp_mask =
+            _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
     }
 
     /* compute incomplete buffer loading */
-    sm4_ecb_incomplete_buff_mb16(loc_inp, loc_out,
-                                 num_blocks, p_rk, operation,
-                                 mb_mask,
-                                 TMP);
+    sm4_ecb_incomplete_buff_mb16(loc_inp, loc_out, num_blocks, p_rk, operation, mb_mask, TMP);
     /* clear local copy of sensitive data */
     zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
 
@@ -161,27 +173,36 @@ mbx_status16 sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[S
 // Disable optimization for VS19 (>= 19.27)
 OPTIMIZE_OFF_VS19
 
-static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES], int8u* loc_out[SM4_LINES],
-                                         __m512i num_blocks, const __m512i* p_rk, const int sign,
+static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES],
+                                         int8u* loc_out[SM4_LINES],
+                                         __m512i num_blocks,
+                                         const __m512i* p_rk,
+                                         const int sign,
                                          __mmask16 mb_mask,
-                                         __m512i TMP[20]){
+                                         __m512i TMP[20])
+{
     /* Check if we have any data */
-    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_setzero_si512(), _MM_CMPINT_NLE);
+    __mmask16 tmp_mask =
+        _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_setzero_si512(), _MM_CMPINT_NLE);
 
     while (tmp_mask) {
         /* Generate the array of masks for data loading. 0 - 4 blocks will be can load from each buffer - depend on the amount of remaining data */
         __ALIGN64 __mmask8 block_mask[SM4_LINES];
 
-        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
+        tmp_mask =
+            _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
         /* Will be loaded 4 blocks of data */
         M128(block_mask) = _mm_maskz_set1_epi8(tmp_mask, 0xFF);
-        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(3), _MM_CMPINT_EQ);
+        tmp_mask =
+            _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(3), _MM_CMPINT_EQ);
         /* Will be loaded 3 blocks of data */
         M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, 0x3F);
-        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(2), _MM_CMPINT_EQ);
+        tmp_mask =
+            _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(2), _MM_CMPINT_EQ);
         /* Will be loaded 2 blocks of data */
         M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, 0xF);
-        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(1), _MM_CMPINT_EQ);
+        tmp_mask =
+            _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(1), _MM_CMPINT_EQ);
         /* Will be loaded 1 block of data */
         M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, 0x3);
 
@@ -226,7 +247,7 @@ static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES], int8u*
         TRANSPOSE_INP_512(TMP[16], TMP[17], TMP[18], TMP[19], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         SM4_KERNEL(TMP, p_rk, sign);
-        p_rk -= sign*SM4_ROUNDS;
+        p_rk -= sign * SM4_ROUNDS;
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
@@ -269,17 +290,22 @@ static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES], int8u*
         _mm512_mask_storeu_epi64(loc_out[15], block_mask[15], TMP[3]);
 
         /* Update pointers to data */
-        M512(loc_inp) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
 
-        M512(loc_out) = _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_out) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
 
         /* Update the number of blocks. For some buffers, the value can become zero or a negative number - these buffers will not be processed  */
         num_blocks = _mm512_sub_epi32(num_blocks, _mm512_set1_epi32(4));
 
         /* Check if we have any data */
-        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_setzero_si512(), _MM_CMPINT_NLE);
+        tmp_mask =
+            _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_setzero_si512(), _MM_CMPINT_NLE);
     }
     return;
 }

@@ -17,34 +17,35 @@
 #include <internal/common/ifma_defs.h>
 #include <crypto_mb/version.h>
 
-#define MBX_LIB_VERSION() MBX_VER_MAJOR,MBX_VER_MINOR,MBX_VER_PATCH
+#define MBX_LIB_VERSION() MBX_VER_MAJOR, MBX_VER_MINOR, MBX_VER_PATCH
 #define MBX_LIB_BUILD()   __DATE__
 
-#define STR2(x)   #x
-#define STR(x)    STR2(x)
+#define STR2(x) #x
+#define STR(x)  STR2(x)
 
-#if ( _MBX >= _MBX_K1 )             /* Intel® Advanced Vector Extensions 512 (Intel® AVX-512) (formerly Icelake) - intel64 */
-    #define MBX_LIB_CPU_TYPE() "k1"
-#else                               /* Intel® Advanced Vector Extensions 2 (Intel® AVX2) - intel64 */
-    #define MBX_LIB_CPU_TYPE() "l9"
+#if (_MBX >= _MBX_K1)
+/* Intel® Advanced Vector Extensions 512 (Intel® AVX-512) (formerly Icelake) - intel64 */
+#define MBX_LIB_CPU_TYPE() "k1"
+#else
+/* Intel® Advanced Vector Extensions 2 (Intel® AVX2) - intel64 */
+#define MBX_LIB_CPU_TYPE() "l9"
 #endif
 
-#define MBX_STR_VERSION()  MBX_LIB_NAME() " (" MBX_LIB_CPU_TYPE() ")" \
+/* clang-format off */
+#define MBX_STR_VERSION()  MBX_LIB_NAME() " (" MBX_LIB_CPU_TYPE() ")"                                      \
                            " (ver: " STR(MBX_VER_MAJOR) "." STR(MBX_VER_MINOR) "." STR(MBX_VER_PATCH) " (" \
-                           STR(MBX_INTERFACE_VERSION_MAJOR)"."STR(MBX_INTERFACE_VERSION_MINOR)")" \
+                           STR(MBX_INTERFACE_VERSION_MAJOR)"."STR(MBX_INTERFACE_VERSION_MINOR)")"          \
                            " build: " MBX_LIB_BUILD()")"
+/* clang-format on */
 
 /* version info */
 static const mbxVersion mbxLibVer = {
-   MBX_LIB_VERSION(),                                /* major, minor, patch */
-   MBX_LIB_CPU_TYPE(),                               /* target CPU          */
-   MBX_LIB_NAME() " (" MBX_LIB_CPU_TYPE() ")",       /* lib name            */
-   MBX_LIB_BUILD(),                                  /* build date          */
-   MBX_STR_VERSION()                                 /* version str         */
+    MBX_LIB_VERSION(),                          /* major, minor, patch */
+    MBX_LIB_CPU_TYPE(),                         /* target CPU          */
+    MBX_LIB_NAME() " (" MBX_LIB_CPU_TYPE() ")", /* lib name            */
+    MBX_LIB_BUILD(),                            /* build date          */
+    MBX_STR_VERSION()                           /* version str         */
 };
 
 DLL_PUBLIC
-const mbxVersion* OWNAPI(mbx_getversion)(void)
-{
-    return &mbxLibVer;
-}
+const mbxVersion* OWNAPI(mbx_getversion)(void) { return &mbxLibVer; }

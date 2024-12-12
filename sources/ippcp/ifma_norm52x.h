@@ -31,9 +31,9 @@
    Ipp32u kk0h, kk1h;                                                       \
    kk0 = kk1 = kk2 = kk0h = kk1h = 0;                                       \
                                                                             \
-   R0 = _mm256_and_si256(R0, MASK);                                         \
-   R1 = _mm256_and_si256(R1, MASK);                                         \
-   R2 = _mm256_and_si256(R2, MASK);                                         \
+   (R0) = _mm256_and_si256(R0, MASK);                                         \
+   (R1) = _mm256_and_si256(R1, MASK);                                         \
+   (R2) = _mm256_and_si256(R2, MASK);                                         \
    R0 ## h = _mm256_and_si256(R0 ## h, MASK);                               \
    R1 ## h = _mm256_and_si256(R1 ## h, MASK);                               \
                                                                             \
@@ -43,9 +43,9 @@
    T0h = _mm256_alignr_epi64(T0h, T0, 3);                                   \
    T0  = _mm256_alignr_epi64(T0, _mm256_setzero_si256(), 3);                \
                                                                             \
-   R0 = _mm256_add_epi64(R0, T0);                                           \
-   R1 = _mm256_add_epi64(R1, T1);                                           \
-   R2 = _mm256_add_epi64(R2, T2);                                           \
+   (R0) = _mm256_add_epi64(R0, T0);                                           \
+   (R1) = _mm256_add_epi64(R1, T1);                                           \
+   (R2) = _mm256_add_epi64(R2, T2);                                           \
    R0 ## h = _mm256_add_epi64(R0 ## h, T0h);                                \
    R1 ## h = _mm256_add_epi64(R1 ## h, T1h);                                \
    {                                                                        \
@@ -78,15 +78,15 @@
       kk2  = (k>>16);                                                       \
    }                                                                        \
                                                                             \
-   R0 = _mm256_mask_sub_epi64(R0, (__mmask8)kk0, R0, MASK);                 \
-   R1 = _mm256_mask_sub_epi64(R1, (__mmask8)kk1, R1, MASK);                 \
-   R2 = _mm256_mask_sub_epi64(R2, (__mmask8)kk2, R2, MASK);                 \
+   (R0) = _mm256_mask_sub_epi64(R0, (__mmask8)kk0, R0, MASK);                 \
+   (R1) = _mm256_mask_sub_epi64(R1, (__mmask8)kk1, R1, MASK);                 \
+   (R2) = _mm256_mask_sub_epi64(R2, (__mmask8)kk2, R2, MASK);                 \
    R0 ## h = _mm256_mask_sub_epi64(R0 ## h, (__mmask8)kk0h, R0 ## h, MASK); \
    R1 ## h = _mm256_mask_sub_epi64(R1 ## h, (__mmask8)kk1h, R1 ## h, MASK); \
                                                                             \
-   R0      = _mm256_and_si256(R0,      MASK);                               \
-   R1      = _mm256_and_si256(R1,      MASK);                               \
-   R2      = _mm256_and_si256(R2,      MASK);                               \
+   (R0)      = _mm256_and_si256(R0,      MASK);                               \
+   (R1)      = _mm256_and_si256(R1,      MASK);                               \
+   (R2)      = _mm256_and_si256(R2,      MASK);                               \
    R0 ## h = _mm256_and_si256(R0 ## h, MASK);                               \
    R1 ## h = _mm256_and_si256(R1 ## h, MASK);                               \
 }
@@ -106,10 +106,10 @@
    Ipp32u kk0h, kk1h, kk2h, kk3h;                                                      \
    kk0 = kk1 = kk2 = kk3 = kk0h = kk1h = kk2h = kk3h = 0;                              \
                                                                                        \
-   R0 = _mm256_and_si256(R0, MASK);                                                    \
-   R1 = _mm256_and_si256(R1, MASK);                                                    \
-   R2 = _mm256_and_si256(R2, MASK);                                                    \
-   R3 = _mm256_and_si256(R3, MASK);                                                    \
+   (R0) = _mm256_and_si256(R0, MASK);                                                    \
+   (R1) = _mm256_and_si256(R1, MASK);                                                    \
+   (R2) = _mm256_and_si256(R2, MASK);                                                    \
+   (R3) = _mm256_and_si256(R3, MASK);                                                    \
    R0 ## h = _mm256_and_si256(R0 ## h, MASK);                                          \
    R1 ## h = _mm256_and_si256(R1 ## h, MASK);                                          \
    R2 ## h = _mm256_and_si256(R2 ## h, MASK);                                          \
@@ -124,10 +124,10 @@
    T0h = _mm256_alignr_epi64(T0h, T0, 3);                                              \
    T0  = _mm256_alignr_epi64(T0, _mm256_setzero_si256(), 3);                           \
                                                                                        \
-   R0 = _mm256_add_epi64(R0, T0);                                                      \
-   R1 = _mm256_add_epi64(R1, T1);                                                      \
-   R2 = _mm256_add_epi64(R2, T2);                                                      \
-   R3 = _mm256_add_epi64(R3, T3);                                                      \
+   (R0) = _mm256_add_epi64(R0, T0);                                                      \
+   (R1) = _mm256_add_epi64(R1, T1);                                                      \
+   (R2) = _mm256_add_epi64(R2, T2);                                                      \
+   (R3) = _mm256_add_epi64(R3, T3);                                                      \
    R0 ## h = _mm256_add_epi64(R0 ## h, T0h);                                           \
    R1 ## h = _mm256_add_epi64(R1 ## h, T1h);                                           \
    R2 ## h = _mm256_add_epi64(R2 ## h, T2h);                                           \
@@ -172,19 +172,19 @@
       kk3h = (k>>28);                                                                  \
    }                                                                                   \
                                                                                        \
-   R0 = _mm256_mask_sub_epi64(R0, (__mmask8)kk0, R0, MASK);                            \
-   R1 = _mm256_mask_sub_epi64(R1, (__mmask8)kk1, R1, MASK);                            \
-   R2 = _mm256_mask_sub_epi64(R2, (__mmask8)kk2, R2, MASK);                            \
-   R3 = _mm256_mask_sub_epi64(R3, (__mmask8)kk3, R3, MASK);                            \
+   (R0) = _mm256_mask_sub_epi64(R0, (__mmask8)kk0, R0, MASK);                            \
+   (R1) = _mm256_mask_sub_epi64(R1, (__mmask8)kk1, R1, MASK);                            \
+   (R2) = _mm256_mask_sub_epi64(R2, (__mmask8)kk2, R2, MASK);                            \
+   (R3) = _mm256_mask_sub_epi64(R3, (__mmask8)kk3, R3, MASK);                            \
    R0 ## h = _mm256_mask_sub_epi64(R0 ## h, (__mmask8)kk0h, R0 ## h, MASK);            \
    R1 ## h = _mm256_mask_sub_epi64(R1 ## h, (__mmask8)kk1h, R1 ## h, MASK);            \
    R2 ## h = _mm256_mask_sub_epi64(R2 ## h, (__mmask8)kk2h, R2 ## h, MASK);            \
    R3 ## h = _mm256_mask_sub_epi64(R3 ## h, (__mmask8)kk3h, R3 ## h, MASK);            \
                                                                                        \
-   R0      = _mm256_and_si256(R0,      MASK);                                          \
-   R1      = _mm256_and_si256(R1,      MASK);                                          \
-   R2      = _mm256_and_si256(R2,      MASK);                                          \
-   R3      = _mm256_and_si256(R3,      MASK);                                          \
+   (R0)      = _mm256_and_si256(R0,      MASK);                                          \
+   (R1)      = _mm256_and_si256(R1,      MASK);                                          \
+   (R2)      = _mm256_and_si256(R2,      MASK);                                          \
+   (R3)      = _mm256_and_si256(R3,      MASK);                                          \
    R0 ## h = _mm256_and_si256(R0 ## h, MASK);                                          \
    R1 ## h = _mm256_and_si256(R1 ## h, MASK);                                          \
    R2 ## h = _mm256_and_si256(R2 ## h, MASK);                                          \
@@ -208,11 +208,11 @@
    Ipp64u kk0h, kk1h, kk2h, kk3h, kk4h;                                     \
    kk0 = kk1 = kk2 = kk3 = kk4 = kk0h = kk1h = kk2h = kk3h = kk4h = 0;      \
                                                                             \
-   R0 = _mm256_and_si256(R0, MASK);                                         \
-   R1 = _mm256_and_si256(R1, MASK);                                         \
-   R2 = _mm256_and_si256(R2, MASK);                                         \
-   R3 = _mm256_and_si256(R3, MASK);                                         \
-   R4 = _mm256_and_si256(R4, MASK);                                         \
+   (R0) = _mm256_and_si256(R0, MASK);                                         \
+   (R1) = _mm256_and_si256(R1, MASK);                                         \
+   (R2) = _mm256_and_si256(R2, MASK);                                         \
+   (R3) = _mm256_and_si256(R3, MASK);                                         \
+   (R4) = _mm256_and_si256(R4, MASK);                                         \
    R0 ## h = _mm256_and_si256(R0 ## h, MASK);                               \
    R1 ## h = _mm256_and_si256(R1 ## h, MASK);                               \
    R2 ## h = _mm256_and_si256(R2 ## h, MASK);                               \
@@ -230,11 +230,11 @@
    T0h = _mm256_alignr_epi64(T0h, T0, 3);                                   \
    T0  = _mm256_alignr_epi64(T0, _mm256_setzero_si256(), 3);                \
                                                                             \
-   R0 = _mm256_add_epi64(R0, T0);                                           \
-   R1 = _mm256_add_epi64(R1, T1);                                           \
-   R2 = _mm256_add_epi64(R2, T2);                                           \
-   R3 = _mm256_add_epi64(R3, T3);                                           \
-   R4 = _mm256_add_epi64(R4, T4);                                           \
+   (R0) = _mm256_add_epi64(R0, T0);                                           \
+   (R1) = _mm256_add_epi64(R1, T1);                                           \
+   (R2) = _mm256_add_epi64(R2, T2);                                           \
+   (R3) = _mm256_add_epi64(R3, T3);                                           \
+   (R4) = _mm256_add_epi64(R4, T4);                                           \
    R0 ## h = _mm256_add_epi64(R0 ## h, T0h);                                \
    R1 ## h = _mm256_add_epi64(R1 ## h, T1h);                                \
    R2 ## h = _mm256_add_epi64(R2 ## h, T2h);                                \
@@ -288,22 +288,22 @@
       kk4h = (k>>36);                                                       \
    }                                                                        \
                                                                             \
-   R0 = _mm256_mask_sub_epi64(R0, (__mmask8)kk0, R0, MASK);                 \
-   R1 = _mm256_mask_sub_epi64(R1, (__mmask8)kk1, R1, MASK);                 \
-   R2 = _mm256_mask_sub_epi64(R2, (__mmask8)kk2, R2, MASK);                 \
-   R3 = _mm256_mask_sub_epi64(R3, (__mmask8)kk3, R3, MASK);                 \
-   R4 = _mm256_mask_sub_epi64(R4, (__mmask8)kk4, R4, MASK);                 \
+   (R0) = _mm256_mask_sub_epi64(R0, (__mmask8)kk0, R0, MASK);                 \
+   (R1) = _mm256_mask_sub_epi64(R1, (__mmask8)kk1, R1, MASK);                 \
+   (R2) = _mm256_mask_sub_epi64(R2, (__mmask8)kk2, R2, MASK);                 \
+   (R3) = _mm256_mask_sub_epi64(R3, (__mmask8)kk3, R3, MASK);                 \
+   (R4) = _mm256_mask_sub_epi64(R4, (__mmask8)kk4, R4, MASK);                 \
    R0 ## h = _mm256_mask_sub_epi64(R0 ## h, (__mmask8)kk0h, R0 ## h, MASK); \
    R1 ## h = _mm256_mask_sub_epi64(R1 ## h, (__mmask8)kk1h, R1 ## h, MASK); \
    R2 ## h = _mm256_mask_sub_epi64(R2 ## h, (__mmask8)kk2h, R2 ## h, MASK); \
    R3 ## h = _mm256_mask_sub_epi64(R3 ## h, (__mmask8)kk3h, R3 ## h, MASK); \
    R4 ## h = _mm256_mask_sub_epi64(R4 ## h, (__mmask8)kk4h, R4 ## h, MASK); \
                                                                             \
-   R0      = _mm256_and_si256(R0,      MASK);                               \
-   R1      = _mm256_and_si256(R1,      MASK);                               \
-   R2      = _mm256_and_si256(R2,      MASK);                               \
-   R3      = _mm256_and_si256(R3,      MASK);                               \
-   R4      = _mm256_and_si256(R4,      MASK);                               \
+   (R0)      = _mm256_and_si256(R0,      MASK);                               \
+   (R1)      = _mm256_and_si256(R1,      MASK);                               \
+   (R2)      = _mm256_and_si256(R2,      MASK);                               \
+   (R3)      = _mm256_and_si256(R3,      MASK);                               \
+   (R4)      = _mm256_and_si256(R4,      MASK);                               \
    R0 ## h = _mm256_and_si256(R0 ## h, MASK);                               \
    R1 ## h = _mm256_and_si256(R1 ## h, MASK);                               \
    R2 ## h = _mm256_and_si256(R2 ## h, MASK);                               \

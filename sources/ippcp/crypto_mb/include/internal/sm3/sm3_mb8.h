@@ -22,31 +22,32 @@
 #include <crypto_mb/defs.h>
 #include <crypto_mb/sm3.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
 /*
 // change endian
 */
 
-static __ALIGN64 const int8u swapBytesCtx[] = { 3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12,
-                                                3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12 };
+static __ALIGN64 const int8u swapBytesCtx[] = { 3, 2,  1,  0,  7,  6, 5,  4,  11, 10, 9,
+                                                8, 15, 14, 13, 12, 3, 2,  1,  0,  7,  6,
+                                                5, 4,  11, 10, 9,  8, 15, 14, 13, 12 };
 
-#define SIMD_ENDIANNESS32(x)  _mm256_shuffle_epi8((x), _mm256_loadu_si256((__m256i*)swapBytesCtx));
-#define SM3_NUM_BUFFERS8                       (8)                        /*       max number of buffers in sm3 multi-buffer 8       */
+#define SIMD_ENDIANNESS32(x) _mm256_shuffle_epi8((x), _mm256_loadu_si256((__m256i*)swapBytesCtx));
+#define SM3_NUM_BUFFERS8     (8) /*       max number of buffers in sm3 multi-buffer 8       */
 
-typedef int32u sm3_hash_mb8[SM3_SIZE_IN_WORDS][SM3_NUM_BUFFERS8];         /*  sm3 hash value in multi-buffer 8 format  */
+/*  sm3 hash value in multi-buffer 8 format  */
+typedef int32u sm3_hash_mb8[SM3_SIZE_IN_WORDS][SM3_NUM_BUFFERS8];
 struct _sm3_context_mb8 {
-    int             msg_buff_idx[SM3_NUM_BUFFERS8];                       /*              buffer entry             */
-    int64u          msg_len[SM3_NUM_BUFFERS8];                            /*              message length           */
-    int8u           msg_buffer[SM3_NUM_BUFFERS8][SM3_MSG_BLOCK_SIZE];     /*                  buffer               */
-    __ALIGN64
-    sm3_hash_mb8    msg_hash;                                             /*             intermediate hash         */
+    int msg_buff_idx[SM3_NUM_BUFFERS8];                     /*   buffer entry    */
+    int64u msg_len[SM3_NUM_BUFFERS8];                       /*  message length   */
+    int8u msg_buffer[SM3_NUM_BUFFERS8][SM3_MSG_BLOCK_SIZE]; /*      buffer       */
+    __ALIGN64 sm3_hash_mb8 msg_hash;                        /* intermediate hash */
 };
 
-typedef struct _sm3_context_mb8  SM3_CTX_mb8;
+typedef struct _sm3_context_mb8 SM3_CTX_mb8;
 
 /*
-// internal functions 
+// internal functions
 */
 
 EXTERN_C mbx_status sm3_init_mb8(SM3_CTX_mb8* p_state);
@@ -55,7 +56,7 @@ EXTERN_C mbx_status sm3_final_mb8(int8u* hash_pa[8], SM3_CTX_mb8* p_state);
 EXTERN_C mbx_status sm3_msg_digest_mb8(const int8u* const msg_pa[8], int len[8], int8u* hash_pa[8]);
 
 EXTERN_C void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8]);
-EXTERN_C void sm3_mask_init_mb8(SM3_CTX_mb8 * p_state, __mmask8 mb_mask);
+EXTERN_C void sm3_mask_init_mb8(SM3_CTX_mb8* p_state, __mmask8 mb_mask);
 
 #endif /* #if (_MBX>=_MBX_K1) */
 

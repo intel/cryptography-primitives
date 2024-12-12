@@ -20,9 +20,13 @@
 
 #include <internal/rsa/avxifma_amm.h>
 
-void ifma_amm52x30_mb4(int64u *out_mb, const int64u *inpA_mb, const int64u *inpB_mb, const int64u *inpM_mb, const int64u *k0_mb)
+void ifma_amm52x30_mb4(int64u* out_mb,
+                       const int64u* inpA_mb,
+                       const int64u* inpB_mb,
+                       const int64u* inpM_mb,
+                       const int64u* k0_mb)
 {
-   ifma_amm52xN_mb4(out_mb, inpA_mb, inpB_mb, inpM_mb, k0_mb, 30);
+    ifma_amm52xN_mb4(out_mb, inpA_mb, inpB_mb, inpM_mb, k0_mb, 30);
 }
 
 #endif // #if ((_MBX == _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)

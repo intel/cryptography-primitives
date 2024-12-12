@@ -14,19 +14,19 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //     affine()
 //     sBox()
 //     L()
 //     TRANSPOSE_INP()
 //     TRANSPOSE_OUT()
-// 
+//
 */
 
 #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
@@ -57,7 +57,7 @@ static __ALIGN16 Ipp8u affineOut[] = { 0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7, 
 /*
 //
 // AES and SMS4 ciphers both based on composite field GF(2^8).
-// This affine transformation transforms 16 bytes 
+// This affine transformation transforms 16 bytes
 // from SMS4 representation to AES representation or vice versa
 // depending on passed masks.
 //
@@ -80,11 +80,11 @@ __FORCEINLINE __m128i affine(__m128i x, __m128i maskLO, __m128i maskHI)
 // (It happened due to using different generating polynomials in SM4 and AES representations).
 // Doing data conversion from SM4 to AES domain
 // lets use AES specific intrinsics to perform less expensive SMS4 S-box computation.
-// 
+//
 // Original SMS4 S-box algorithm is converted to the following:
 //
 // - transform  data  from  SMS4  representation  to AES representation
-// - compute S-box  value using  _mm_aesenclast_si128  with special key 
+// - compute S-box  value using  _mm_aesenclast_si128  with special key
 // - re-shuffle data  after _mm_aesenclast_si128 that shuffle it inside
 // - transform data back from AES representation to SMS4 representation
 //
@@ -96,7 +96,7 @@ __FORCEINLINE __m128i sBox(__m128i block)
    block = _mm_aesenclast_si128(block, M128(encKey));
    block = _mm_shuffle_epi8(block, M128(maskSrows));
    block = affine(block, M128(outMaskLO), M128(outMaskHI));
-   
+
    return block;
 }
 
@@ -133,27 +133,27 @@ __FORCEINLINE __m128i L(__m128i x)
 #endif
 
 #define TRANSPOSE_INP(K0,K1,K2,K3, T) \
-   T  = _mm_unpacklo_epi32(K0, K1); \
-   K1 = _mm_unpackhi_epi32(K0, K1); \
-   K0 = _mm_unpacklo_epi32(K2, K3); \
-   K3 = _mm_unpackhi_epi32(K2, K3); \
+   (T)  = _mm_unpacklo_epi32(K0, K1); \
+   (K1) = _mm_unpackhi_epi32(K0, K1); \
+   (K0) = _mm_unpacklo_epi32(K2, K3); \
+   (K3) = _mm_unpackhi_epi32(K2, K3); \
    \
-   K2 = _mm_unpacklo_epi64(K1, K3); \
-   K3 = _mm_unpackhi_epi64(K1, K3); \
-   K1 = _mm_unpackhi_epi64(T,  K0); \
-   K0 = _mm_unpacklo_epi64(T,  K0)
+   (K2) = _mm_unpacklo_epi64(K1, K3); \
+   (K3) = _mm_unpackhi_epi64(K1, K3); \
+   (K1) = _mm_unpackhi_epi64(T,  K0); \
+   (K0) = _mm_unpacklo_epi64(T,  K0)
 
 #define TRANSPOSE_OUT(K0,K1,K2,K3, T) \
-   T  = _mm_unpacklo_epi32(K1, K0); \
-   K0 = _mm_unpackhi_epi32(K1, K0); \
-   K1 = _mm_unpacklo_epi32(K3, K2); \
-   K3 = _mm_unpackhi_epi32(K3, K2); \
+   (T)  = _mm_unpacklo_epi32(K1, K0); \
+   (K0) = _mm_unpackhi_epi32(K1, K0); \
+   (K1) = _mm_unpacklo_epi32(K3, K2); \
+   (K3) = _mm_unpackhi_epi32(K3, K2); \
    \
-   K2 = _mm_unpackhi_epi64(K1,  T); \
-   T  = _mm_unpacklo_epi64(K1,  T); \
-   K1 = _mm_unpacklo_epi64(K3, K0); \
-   K0 = _mm_unpackhi_epi64(K3, K0); \
-   K3 = T
+   (K2) = _mm_unpackhi_epi64(K1,  T); \
+   (T)  = _mm_unpacklo_epi64(K1,  T); \
+   (K1) = _mm_unpacklo_epi64(K3, K0); \
+   (K0) = _mm_unpackhi_epi64(K3, K0); \
+   (K3) = (T)
 
 #endif /* __SMS4_SBOX_Y8_H_ */
 

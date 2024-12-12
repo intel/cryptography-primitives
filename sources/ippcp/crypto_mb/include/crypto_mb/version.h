@@ -20,7 +20,7 @@
 #include <crypto_mb/defs.h>
 
 /* crypto_mb name & version */
-#define MBX_LIB_NAME()    "crypto_mb"
+#define MBX_LIB_NAME() "crypto_mb"
 #define MBX_VER_MAJOR  1
 #define MBX_VER_MINOR  1
 #define MBX_VER_PATCH  0
@@ -31,15 +31,15 @@
 #define MBX_INTERFACE_VERSION_MINOR 1
 
 typedef struct {
-   int    major;          /* e.g. 1               */
-   int    minor;          /* e.g. 2               */
-   int    patch;          /* e.g. 3               */
-   char   targetCpu[4];   /* corresponding to Intel® processor        */
-   const char* name;      /* e,g. "crypto_mb"                         */
-   const char* buildDate; /* e.g. "Oct 28 2019"                       */
-   const char* strVersion;/* e.g. "crypto_mb (ver 1.2.3 Oct 28 2019)" */
+    int major;              /* e.g. 1               */
+    int minor;              /* e.g. 2               */
+    int patch;              /* e.g. 3               */
+    char targetCpu[4];      /* corresponding to Intel® processor        */
+    const char* name;       /* e,g. "crypto_mb"                         */
+    const char* buildDate;  /* e.g. "Oct 28 2019"                       */
+    const char* strVersion; /* e.g. "crypto_mb (ver 1.2.3 Oct 28 2019)" */
 } mbxVersion;
 
-MBXAPI(const mbxVersion*, mbx_getversion,(void))
+MBXAPI(const mbxVersion*, mbx_getversion, (void))
 
 #endif /* VERSION_H */

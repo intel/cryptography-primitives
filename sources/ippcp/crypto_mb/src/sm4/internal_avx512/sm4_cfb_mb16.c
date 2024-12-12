@@ -17,9 +17,14 @@
 #include <internal/sm4/sm4_mb.h>
 #include <internal/rsa/ifma_rsa_arith.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
-mbx_status16 sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], const int8u* pa_iv[SM4_LINES], __mmask16 mb_mask)
+mbx_status16 sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                        const int8u* pa_inp[SM4_LINES],
+                                        const int len[SM4_LINES],
+                                        const int32u* key_sched[SM4_ROUNDS],
+                                        const int8u* pa_iv[SM4_LINES],
+                                        __mmask16 mb_mask)
 {
     mbx_status16 status = 0;
     __ALIGN64 const int8u* loc_inp[SM4_LINES];
@@ -27,7 +32,7 @@ mbx_status16 sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
 
     /* Get the copy of input data lengths in bytes */
     __m512i loc_len = _mm512_loadu_si512(len);
-    int* p_loc_len = (int*)&loc_len;
+    int* p_loc_len  = (int*)&loc_len;
 
     /* Local copies of the pointers to input and output buffers */
     _mm512_storeu_si512((void*)loc_inp, _mm512_loadu_si512(pa_inp));
@@ -40,7 +45,8 @@ mbx_status16 sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
     const __m512i* p_rk = (const __m512i*)key_sched;
 
     /* Check if we have any data */
-    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, loc_len, _mm512_setzero_si512(), _MM_CMPINT_NLE);
+    __mmask16 tmp_mask =
+        _mm512_mask_cmp_epi32_mask(mb_mask, loc_len, _mm512_setzero_si512(), _MM_CMPINT_NLE);
 
     /* Load and transpose iv */
     __m512i iv0, iv1, iv2, iv3;
@@ -69,33 +75,43 @@ mbx_status16 sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
         TRANSPOSE_4x16_I32_EPI8(iv0, iv1, iv2, iv3, loc_out, p_loc_len, tmp_mask);
 
         /* Update pointers to data */
-        M512(loc_inp) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+        M512(loc_inp) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+        M512(loc_inp + 8) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
 
-        M512(loc_out) = _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(SM4_BLOCK_SIZE));
-        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+        M512(loc_out) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+        M512(loc_out + 8) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
 
         /* Update number of blocks left and processing mask */
         loc_len = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(SM4_BLOCK_SIZE));
-        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, loc_len, _mm512_setzero_si512(), _MM_CMPINT_NLE);
+        tmp_mask =
+            _mm512_mask_cmp_epi32_mask(mb_mask, loc_len, _mm512_setzero_si512(), _MM_CMPINT_NLE);
     }
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])&iv0, 1);
-    zero_mb8((int64u(*)[8])&iv1, 1);
-    zero_mb8((int64u(*)[8])&iv2, 1);
-    zero_mb8((int64u(*)[8])&iv3, 1);
+    zero_mb8((int64u(*)[8]) & iv0, 1);
+    zero_mb8((int64u(*)[8]) & iv1, 1);
+    zero_mb8((int64u(*)[8]) & iv2, 1);
+    zero_mb8((int64u(*)[8]) & iv3, 1);
 
-    zero_mb8((int64u(*)[8])&z0, 1);
-    zero_mb8((int64u(*)[8])&z1, 1);
-    zero_mb8((int64u(*)[8])&z2, 1);
-    zero_mb8((int64u(*)[8])&z3, 1);
-    zero_mb8((int64u(*)[8])&tmp, 1);
+    zero_mb8((int64u(*)[8]) & z0, 1);
+    zero_mb8((int64u(*)[8]) & z1, 1);
+    zero_mb8((int64u(*)[8]) & z2, 1);
+    zero_mb8((int64u(*)[8]) & z3, 1);
+    zero_mb8((int64u(*)[8]) & tmp, 1);
 
     return status;
 }
 
-static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp, int8u** loc_out, __m512i loc_len, const __m512i* p_rk, __mmask16 tmp_mask, __m512i STORED_CT[16])
+static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp,
+                                            int8u** loc_out,
+                                            __m512i loc_len,
+                                            const __m512i* p_rk,
+                                            __mmask16 tmp_mask,
+                                            __m512i STORED_CT[16])
 {
     __m512i TMP[20];
     while (tmp_mask) {
@@ -107,7 +123,10 @@ static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp, int8u** loc_o
         }
 
         for (int i = 0; i < SM4_LINES; i++)
-            STORED_CT[i] = _mm512_alignr_epi64(_mm512_maskz_loadu_epi8(stream_mask[i], (__m128i *const)loc_inp[i]), STORED_CT[i], 6);
+            STORED_CT[i] = _mm512_alignr_epi64(
+                _mm512_maskz_loadu_epi8(stream_mask[i], (__m128i* const)loc_inp[i]),
+                STORED_CT[i],
+                6);
 
         TMP[0] = _mm512_shuffle_epi8(STORED_CT[0], M512(swapBytes));
         TMP[1] = _mm512_shuffle_epi8(STORED_CT[1], M512(swapBytes));
@@ -148,8 +167,9 @@ static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp, int8u** loc_o
         TMP[7] = _mm512_xor_si512(TMP[3], _mm512_maskz_loadu_epi8(stream_mask[3], loc_inp[3]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 0; i < 4; i++) {
-            __mmask64 write_stream_mask = _kshiftri_mask64(stream_mask[i], 8*6);
-            __m128i data_block = _mm_maskz_loadu_epi8((__mmask16) write_stream_mask, (__m128i const*)loc_inp[i] + 3);
+            __mmask64 write_stream_mask = _kshiftri_mask64(stream_mask[i], 8 * 6);
+            __m128i data_block =
+                _mm_maskz_loadu_epi8((__mmask16)write_stream_mask, (__m128i const*)loc_inp[i] + 3);
             STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
         }
         _mm512_mask_storeu_epi8(loc_out[0], stream_mask[0], TMP[4]);
@@ -163,14 +183,15 @@ static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp, int8u** loc_o
         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
         /* xor with ciphertext */
-        TMP[8] = _mm512_xor_si512(TMP[0], _mm512_maskz_loadu_epi8(stream_mask[4], loc_inp[4]));
-        TMP[9] = _mm512_xor_si512(TMP[1], _mm512_maskz_loadu_epi8(stream_mask[5], loc_inp[5]));
+        TMP[8]  = _mm512_xor_si512(TMP[0], _mm512_maskz_loadu_epi8(stream_mask[4], loc_inp[4]));
+        TMP[9]  = _mm512_xor_si512(TMP[1], _mm512_maskz_loadu_epi8(stream_mask[5], loc_inp[5]));
         TMP[10] = _mm512_xor_si512(TMP[2], _mm512_maskz_loadu_epi8(stream_mask[6], loc_inp[6]));
         TMP[11] = _mm512_xor_si512(TMP[3], _mm512_maskz_loadu_epi8(stream_mask[7], loc_inp[7]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 4; i < 8; i++) {
-            __mmask64 write_stream_mask = _kshiftri_mask64(stream_mask[i], 8*6);
-            __m128i data_block = _mm_maskz_loadu_epi8((__mmask16) write_stream_mask, (__m128i const*)loc_inp[i] + 3);
+            __mmask64 write_stream_mask = _kshiftri_mask64(stream_mask[i], 8 * 6);
+            __m128i data_block =
+                _mm_maskz_loadu_epi8((__mmask16)write_stream_mask, (__m128i const*)loc_inp[i] + 3);
             STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
         }
         _mm512_mask_storeu_epi8(loc_out[4], stream_mask[4], TMP[8]);
@@ -190,8 +211,9 @@ static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp, int8u** loc_o
         TMP[15] = _mm512_xor_si512(TMP[3], _mm512_maskz_loadu_epi8(stream_mask[11], loc_inp[11]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 8; i < 12; i++) {
-            __mmask64 write_stream_mask = _kshiftri_mask64(stream_mask[i], 8*6);
-            __m128i data_block = _mm_maskz_loadu_epi8((__mmask16) write_stream_mask, (__m128i const*)loc_inp[i] + 3);
+            __mmask64 write_stream_mask = _kshiftri_mask64(stream_mask[i], 8 * 6);
+            __m128i data_block =
+                _mm_maskz_loadu_epi8((__mmask16)write_stream_mask, (__m128i const*)loc_inp[i] + 3);
             STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
         }
         _mm512_mask_storeu_epi8(loc_out[8], stream_mask[8], TMP[12]);
@@ -211,8 +233,9 @@ static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp, int8u** loc_o
         TMP[19] = _mm512_xor_si512(TMP[3], _mm512_maskz_loadu_epi8(stream_mask[15], loc_inp[15]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 12; i < SM4_LINES; i++) {
-            __mmask64 write_stream_mask = _kshiftri_mask64(stream_mask[i], 8*6);
-            __m128i data_block = _mm_maskz_loadu_epi8((__mmask16) write_stream_mask, (__m128i const*)loc_inp[i] + 3);
+            __mmask64 write_stream_mask = _kshiftri_mask64(stream_mask[i], 8 * 6);
+            __m128i data_block =
+                _mm_maskz_loadu_epi8((__mmask16)write_stream_mask, (__m128i const*)loc_inp[i] + 3);
             STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
         }
         _mm512_mask_storeu_epi8(loc_out[12], stream_mask[12], TMP[16]);
@@ -221,24 +244,35 @@ static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp, int8u** loc_o
         _mm512_mask_storeu_epi8(loc_out[15], stream_mask[15], TMP[19]);
 
         /* Update pointers to data */
-        M512(loc_inp) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
 
-        M512(loc_out) = _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_out) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
 
         /* Update the number of blocks. For some buffers, the value can become zero or a negative number - these buffers will not be processed  */
         loc_len = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE));
 
         /* Check if we have any data */
-        tmp_mask = _mm512_mask_cmp_epi32_mask(tmp_mask, loc_len, _mm512_setzero_si512(), _MM_CMPINT_NLE);
+        tmp_mask =
+            _mm512_mask_cmp_epi32_mask(tmp_mask, loc_len, _mm512_setzero_si512(), _MM_CMPINT_NLE);
     }
 
     /* clear local copy of sensitive data */
     zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
 }
 
-mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const int32u* key_sched[SM4_ROUNDS], const int8u* pa_iv[SM4_LINES], __mmask16 mb_mask) {
+mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                        const int8u* pa_inp[SM4_LINES],
+                                        const int len[SM4_LINES],
+                                        const int32u* key_sched[SM4_ROUNDS],
+                                        const int8u* pa_iv[SM4_LINES],
+                                        __mmask16 mb_mask)
+{
     mbx_status16 status = 0;
     __ALIGN64 const int8u* loc_inp[SM4_LINES];
     __ALIGN64 int8u* loc_out[SM4_LINES];
@@ -266,9 +300,9 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
 
     /* Store first ciphertext block for next round */
     for (int i = 0; i < SM4_LINES; i++) {
-        STORED_CT[i] = _mm512_setzero_epi32();
-        __m128i data_block = _mm_maskz_loadu_epi32(0x000F * (0x1&loc_mb_mask), loc_inp[i]);
-        STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
+        STORED_CT[i]       = _mm512_setzero_epi32();
+        __m128i data_block = _mm_maskz_loadu_epi32(0x000F * (0x1 & loc_mb_mask), loc_inp[i]);
+        STORED_CT[i]       = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
         loc_mb_mask >>= 1;
     }
 
@@ -280,7 +314,8 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
         SM4_FOUR_ROUNDS(TMP[4], TMP[5], TMP[6], TMP[7], TMP[8], p_rk, 1);
     p_rk = (const __m512i*)key_sched;
     /* Load and transpose ciphertext */
-    TRANSPOSE_16x4_I32_EPI32(&TMP[9], &TMP[10], &TMP[11], &TMP[12], (const int8u**)loc_inp, mb_mask);
+    TRANSPOSE_16x4_I32_EPI32(
+        &TMP[9], &TMP[10], &TMP[11], &TMP[12], (const int8u**)loc_inp, mb_mask);
 
     /* Change the order of blocks (Y0, Y1, Y2, Y3) = R(X32, X33, X34, X35) = (X35, X34, X33, X32) and xor with plain text */
     TMP[8] = TMP[4];
@@ -291,20 +326,25 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
     TMP[6] = _mm512_xor_epi32(TMP[8], TMP[11]);
 
     /* Transpose and store encrypted blocks by bytes */
-    int *p_loc_len = (int*)&loc_len;
+    int* p_loc_len = (int*)&loc_len;
     TRANSPOSE_4x16_I32_EPI8(TMP[4], TMP[5], TMP[6], TMP[7], loc_out, p_loc_len, mb_mask);
 
     /* Update pointers to data */
-    M512(loc_inp) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(SM4_BLOCK_SIZE));
-    M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+    M512(loc_inp) =
+        _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+    M512(loc_inp + 8) =
+        _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
 
-    M512(loc_out) = _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(SM4_BLOCK_SIZE));
-    M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+    M512(loc_out) =
+        _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+    M512(loc_out + 8) =
+        _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
 
     loc_len = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(SM4_BLOCK_SIZE));
 
     /* Generate the mask to process 4 blocks from each buffer */
-    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(
+        mb_mask, loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
 
     /* Go to this loop if all 16 buffers contain at least 4 blocks each */
     while (tmp_mask == 0xFFFF) {
@@ -350,7 +390,8 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
         TMP[7] = _mm512_xor_si512(TMP[3], _mm512_loadu_si512(loc_inp[3]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 0; i < 4; i++)
-            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(
+                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
         _mm512_storeu_si512((__m512i*)(loc_out[0]), TMP[4]);
         _mm512_storeu_si512((__m512i*)(loc_out[1]), TMP[5]);
         _mm512_storeu_si512((__m512i*)(loc_out[2]), TMP[6]);
@@ -362,13 +403,14 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
         /* xor with ciphertext */
-        TMP[8] = _mm512_xor_si512(TMP[0], _mm512_loadu_si512(loc_inp[4]));
-        TMP[9] = _mm512_xor_si512(TMP[1], _mm512_loadu_si512(loc_inp[5]));
+        TMP[8]  = _mm512_xor_si512(TMP[0], _mm512_loadu_si512(loc_inp[4]));
+        TMP[9]  = _mm512_xor_si512(TMP[1], _mm512_loadu_si512(loc_inp[5]));
         TMP[10] = _mm512_xor_si512(TMP[2], _mm512_loadu_si512(loc_inp[6]));
         TMP[11] = _mm512_xor_si512(TMP[3], _mm512_loadu_si512(loc_inp[7]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 4; i < 8; i++)
-            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(
+                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
         _mm512_storeu_si512((__m512i*)(loc_out[4]), TMP[8]);
         _mm512_storeu_si512((__m512i*)(loc_out[5]), TMP[9]);
         _mm512_storeu_si512((__m512i*)(loc_out[6]), TMP[10]);
@@ -386,7 +428,8 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
         TMP[15] = _mm512_xor_si512(TMP[3], _mm512_loadu_si512(loc_inp[11]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 8; i < 12; i++)
-            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(
+                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
         _mm512_storeu_si512((__m512i*)(loc_out[8]), TMP[12]);
         _mm512_storeu_si512((__m512i*)(loc_out[9]), TMP[13]);
         _mm512_storeu_si512((__m512i*)(loc_out[10]), TMP[14]);
@@ -403,22 +446,28 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES], const int8u* p
         TMP[18] = _mm512_xor_si512(TMP[2], _mm512_loadu_si512(loc_inp[14]));
         TMP[19] = _mm512_xor_si512(TMP[3], _mm512_loadu_si512(loc_inp[15]));
         for (int i = 12; i < SM4_LINES; i++)
-            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(
+                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
         _mm512_storeu_si512((__m512i*)(loc_out[12]), TMP[16]);
         _mm512_storeu_si512((__m512i*)(loc_out[13]), TMP[17]);
         _mm512_storeu_si512((__m512i*)(loc_out[14]), TMP[18]);
         _mm512_storeu_si512((__m512i*)(loc_out[15]), TMP[19]);
 
         /* Update pointers to data */
-        M512(loc_inp) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
 
-        M512(loc_out) = _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_out) =
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
 
         /* Update number of blocks left and processing mask */
-        loc_len = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE));
-        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask, loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+        loc_len  = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE));
+        tmp_mask = _mm512_mask_cmp_epi32_mask(
+            mb_mask, loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
     }
 
     /* Check if we have any data */

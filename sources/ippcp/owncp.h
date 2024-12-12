@@ -63,7 +63,7 @@ typedef int cpSize;
 #endif
 
 /* swap data & pointers */
-#define SWAP_PTR(ATYPE, pX,pY)   { ATYPE* aPtr=(pX); (pX)=(pY); (pY)=aPtr; }
+#define SWAP_PTR(ATYPE, pX,pY)   { ATYPE* aPtr=(pX); (pX)=(pY); (pY)=aPtr; } //NOLINT(bugprone-macro-parentheses)
 #define SWAP(x,y)                {(x)^=(y); (y)^=(x); (x)^=(y);}
 
 /* alignment value */
@@ -92,10 +92,10 @@ typedef int cpSize;
 
 /* hexString <-> Ipp32u conversion */
 #define HSTRING_TO_U32(ptrByte)  \
-         (Ipp32u)(((ptrByte)[0]) <<24)   \
-        +(Ipp32u)(((ptrByte)[1]) <<16)   \
-        +(Ipp32u)(((ptrByte)[2]) <<8)    \
-        +(Ipp32u)((ptrByte)[3])
+         ((Ipp32u)(((ptrByte)[0]) <<24) \
+        +(Ipp32u)(((ptrByte)[1]) <<16)  \
+        +(Ipp32u)(((ptrByte)[2]) <<8)   \
+        +(Ipp32u)((ptrByte)[3]))
 #define U32_TO_HSTRING(ptrByte, x)  \
    (ptrByte)[0] = (Ipp8u)((x)>>24); \
    (ptrByte)[1] = (Ipp8u)((x)>>16); \

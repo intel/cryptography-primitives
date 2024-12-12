@@ -63,7 +63,7 @@ typedef Ipp32u API_BNU_CHUNK_T;
 
 /* convert API_BNU_CHUNK_T (usual Ipp32u) length into the BNU_CHUNK_T length */
 #define INTERNAL_BNU_LENGTH(apiLen) \
-   ((apiLen) + (Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(API_BNU_CHUNK_T)) -1)/((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(API_BNU_CHUNK_T)))
+   (((apiLen) + (Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(API_BNU_CHUNK_T)) -1)/((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(API_BNU_CHUNK_T))))
 
 /* Low and High parts of BNU_CHUNK_T value */
 #define BNU_CHUNK_2H ((BNU_CHUNK_T)1 << (BNU_CHUNK_BITS/2))

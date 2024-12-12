@@ -16,57 +16,79 @@
 
 #include <internal/sm3/sm3_mb8.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
 /* Boolean functions (0<=nr<16) */
-#define FF1(X,Y,Z) (_mm256_xor_si256(_mm256_xor_si256(X,Y), Z))
-#define GG1(X,Y,Z) (_mm256_xor_si256(_mm256_xor_si256(X,Y), Z))
+#define FF1(X, Y, Z) (_mm256_xor_si256(_mm256_xor_si256(X, Y), Z))
+#define GG1(X, Y, Z) (_mm256_xor_si256(_mm256_xor_si256(X, Y), Z))
 /* Boolean functions (16<=nr<64)  */
-#define FF2(X,Y,Z) (_mm256_or_si256(_mm256_or_si256(_mm256_and_si256(X,Y),_mm256_and_si256(X,Z)),_mm256_and_si256(Y,Z)))
-#define GG2(X,Y,Z) (_mm256_or_si256(_mm256_and_si256(X,Y),_mm256_andnot_si256(X,Z)))
+#define FF2(X, Y, Z)                                                                  \
+    (_mm256_or_si256(_mm256_or_si256(_mm256_and_si256(X, Y), _mm256_and_si256(X, Z)), \
+                     _mm256_and_si256(Y, Z)))
+#define GG2(X, Y, Z) (_mm256_or_si256(_mm256_and_si256(X, Y), _mm256_andnot_si256(X, Z)))
 
 /* P0 permutation: */
-#define P0(X)  (_mm256_xor_si256(_mm256_xor_si256(X, _mm256_rol_epi32 (X, 9)), _mm256_rol_epi32 (X, 17)))
+#define P0(X) \
+    (_mm256_xor_si256(_mm256_xor_si256(X, _mm256_rol_epi32(X, 9)), _mm256_rol_epi32(X, 17)))
 /* P1 permutation: */
-#define P1(X)  (_mm256_xor_si256(_mm256_xor_si256(X, _mm256_rol_epi32 (X, 15)), _mm256_rol_epi32 (X, 23)))
+#define P1(X) \
+    (_mm256_xor_si256(_mm256_xor_si256(X, _mm256_rol_epi32(X, 15)), _mm256_rol_epi32(X, 23)))
 
 /* Update W */
-#define WUPDATE(nr, W) (_mm256_xor_si256(_mm256_xor_si256(P1(_mm256_xor_si256(_mm256_xor_si256(W[(nr-16)&15], W[(nr-9)&15]), _mm256_rol_epi32 (W[(nr-3)&15], 15))), _mm256_rol_epi32(W[(nr-13)&15],7)), W[(nr-6)&15]))
+#define WUPDATE(nr, W)                                                                         \
+    (_mm256_xor_si256(                                                                         \
+        _mm256_xor_si256(                                                                      \
+            P1(_mm256_xor_si256(_mm256_xor_si256((W)[((nr) - 16) & 15], (W)[((nr) - 9) & 15]), \
+                                _mm256_rol_epi32((W)[((nr) - 3) & 15], 15))),                  \
+            _mm256_rol_epi32((W)[((nr) - 13) & 15], 7)),                                       \
+        (W)[((nr) - 6) & 15]))
 
 // SM3 steps
 /* (0<=nr<16) */
-#define STEP1_SM3(nr, A,B,C,D,E,F,G,H, Tj, W) {\
-    __m256i SS1 = _mm256_rol_epi32(_mm256_add_epi32(_mm256_add_epi32(_mm256_rol_epi32(A, 12), E), _mm256_set1_epi32((int)Tj)),7);\
-    __m256i SS2 = _mm256_xor_si256(SS1, _mm256_rol_epi32(A, 12));\
-    __m256i TT1 = _mm256_add_epi32(_mm256_add_epi32(_mm256_add_epi32(FF1(A, B, C), D), SS2), _mm256_xor_si256(W[nr&15], W[(nr+4)&15]));\
-    __m256i TT2 = _mm256_add_epi32(_mm256_add_epi32(_mm256_add_epi32(GG1(E, F, G), H), SS1), W[nr&15]);\
-    D = _mm256_loadu_si256((void*)&C);  \
-    C = _mm256_rol_epi32(B, 9);        \
-    B = _mm256_loadu_si256((void*)&A);  \
-    A = _mm256_loadu_si256((void*)&TT1);\
-    H = _mm256_loadu_si256((void*)&G);  \
-    G = _mm256_rol_epi32(F, 19);       \
-    F = _mm256_loadu_si256((void*)&E);  \
-    E = P0(TT2);                       \
-    W[(nr)&15]=WUPDATE(nr, W);         \
-}
+#define STEP1_SM3(nr, A, B, C, D, E, F, G, H, Tj, W)                                                \
+    {                                                                                               \
+        __m256i SS1 =                                                                               \
+            _mm256_rol_epi32(_mm256_add_epi32(_mm256_add_epi32(_mm256_rol_epi32(A, 12), E),         \
+                                              _mm256_set1_epi32((int)(Tj))),                        \
+                             7);                                                                    \
+        __m256i SS2    = _mm256_xor_si256(SS1, _mm256_rol_epi32(A, 12));                            \
+        __m256i TT1    = _mm256_add_epi32(_mm256_add_epi32(_mm256_add_epi32(FF1(A, B, C), D), SS2), \
+                                       _mm256_xor_si256((W)[(nr) & 15], (W)[((nr) + 4) & 15]));  \
+        __m256i TT2    = _mm256_add_epi32(_mm256_add_epi32(_mm256_add_epi32(GG1(E, F, G), H), SS1), \
+                                       (W)[(nr) & 15]);                                          \
+        (D)            = _mm256_loadu_si256((void*)&(C));                                           \
+        (C)            = _mm256_rol_epi32((B), 9);                                                  \
+        (B)            = _mm256_loadu_si256((void*)&(A));                                           \
+        (A)            = _mm256_loadu_si256((void*)&TT1);                                           \
+        (H)            = _mm256_loadu_si256((void*)&(G));                                           \
+        (G)            = _mm256_rol_epi32(F, 19);                                                   \
+        (F)            = _mm256_loadu_si256((void*)&(E));                                           \
+        (E)            = P0(TT2);                                                                   \
+        (W)[(nr) & 15] = WUPDATE(nr, (W));                                                          \
+    }
 
 /* (16<=nr<64)  */
-#define STEP2_SM3(nr, A,B,C,D,E,F,G,H, Tj, W) {\
-    __m256i SS1 = _mm256_rol_epi32(_mm256_add_epi32(_mm256_add_epi32(_mm256_rol_epi32(A, 12), E), _mm256_set1_epi32((int)Tj)),7);\
-    __m256i SS2 = _mm256_xor_si256(SS1, _mm256_rol_epi32(A, 12));\
-    __m256i TT1 = _mm256_add_epi32(_mm256_add_epi32(_mm256_add_epi32(FF2(A, B, C), D), SS2), _mm256_xor_si256(W[nr&15], W[(nr+4)&15]));\
-    __m256i TT2 = _mm256_add_epi32(_mm256_add_epi32(_mm256_add_epi32(GG2(E, F, G), H), SS1), W[nr&15]);\
-    D = _mm256_loadu_si256((void*)&C);  \
-    C = _mm256_rol_epi32(B, 9);        \
-    B = _mm256_loadu_si256((void*)&A);  \
-    A = _mm256_loadu_si256((void*)&TT1);\
-    H = _mm256_loadu_si256((void*)&G);  \
-    G = _mm256_rol_epi32(F, 19);       \
-    F = _mm256_loadu_si256((void*)&E);  \
-    E = P0(TT2);                       \
-    W[(nr)&15]=WUPDATE(nr, W);         \
-}
+#define STEP2_SM3(nr, A, B, C, D, E, F, G, H, Tj, W)                                                \
+    {                                                                                               \
+        __m256i SS1 =                                                                               \
+            _mm256_rol_epi32(_mm256_add_epi32(_mm256_add_epi32(_mm256_rol_epi32(A, 12), E),         \
+                                              _mm256_set1_epi32((int)(Tj))),                        \
+                             7);                                                                    \
+        __m256i SS2    = _mm256_xor_si256(SS1, _mm256_rol_epi32(A, 12));                            \
+        __m256i TT1    = _mm256_add_epi32(_mm256_add_epi32(_mm256_add_epi32(FF2(A, B, C), D), SS2), \
+                                       _mm256_xor_si256((W)[(nr) & 15], (W)[((nr) + 4) & 15]));  \
+        __m256i TT2    = _mm256_add_epi32(_mm256_add_epi32(_mm256_add_epi32(GG2(E, F, G), H), SS1), \
+                                       (W)[(nr) & 15]);                                          \
+        (D)            = _mm256_loadu_si256((void*)&(C));                                           \
+        (C)            = _mm256_rol_epi32((B), 9);                                                  \
+        (B)            = _mm256_loadu_si256((void*)&(A));                                           \
+        (A)            = _mm256_loadu_si256((void*)&TT1);                                           \
+        (H)            = _mm256_loadu_si256((void*)&(G));                                           \
+        (G)            = _mm256_rol_epi32((F), 19);                                                 \
+        (F)            = _mm256_loadu_si256((void*)&(E));                                           \
+        (E)            = P0(TT2);                                                                   \
+        (W)[(nr) & 15] = WUPDATE(nr, (W));                                                          \
+    }
 
 
 void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8])
@@ -76,8 +98,10 @@ void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8
     __ALIGN64 int32u* loc_data[SM3_NUM_BUFFERS8];
 
     __m256i W[16];
-    int32u* p_W[16] = { (int32u*)&W[0], (int32u*)&W[1], (int32u*)&W[2],  (int32u*)&W[3],  (int32u*)&W[4],  (int32u*)&W[5],  (int32u*)&W[6],  (int32u*)&W[7],
-                        (int32u*)&W[8], (int32u*)&W[9], (int32u*)&W[10], (int32u*)&W[11], (int32u*)&W[12], (int32u*)&W[13], (int32u*)&W[14], (int32u*)&W[15] };
+    int32u* p_W[16] = { (int32u*)&W[0],  (int32u*)&W[1],  (int32u*)&W[2],  (int32u*)&W[3],
+                        (int32u*)&W[4],  (int32u*)&W[5],  (int32u*)&W[6],  (int32u*)&W[7],
+                        (int32u*)&W[8],  (int32u*)&W[9],  (int32u*)&W[10], (int32u*)&W[11],
+                        (int32u*)&W[12], (int32u*)&W[13], (int32u*)&W[14], (int32u*)&W[15] };
 
     __m256i Vi[8];
     __m256i A, B, C, D, E, F, G, H;
@@ -85,13 +109,16 @@ void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8
     /* Allocate memory to handle numBuffers < 16, set data in not valid buffers to zero */
     __m512i zero_buffer = _mm512_setzero_si512();
 
-     /* Load processing mask */
-    __mmask8 mb_mask = _mm256_cmp_epi32_mask(_mm256_loadu_si256((__m256i*)len), _mm256_setzero_si256(), _MM_CMPINT_NE);
+    /* Load processing mask */
+    __mmask8 mb_mask = _mm256_cmp_epi32_mask(
+        _mm256_loadu_si256((__m256i*)len), _mm256_setzero_si256(), _MM_CMPINT_NE);
 
     /* Load data and set the data to zero in not valid buffers */
     __m256i loc_len_m256 = _mm256_loadu_si256((__m256i*)len);
     /* We need the address of the zero_buffer to form the fully valid array of pointers loc_src */
-    _mm512_storeu_si512(loc_data, _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer), mb_mask, msg_pa));
+    _mm512_storeu_si512(
+        loc_data,
+        _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer), mb_mask, msg_pa));
 
     /* Load hash value */
     A = _mm256_loadu_si256((__m256i*)hash_pa);
@@ -104,7 +131,7 @@ void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8
     H = _mm256_loadu_si256((__m256i*)(hash_pa + 7));
 
     /* Loop over the message */
-    while (mb_mask){
+    while (mb_mask) {
         /* Transpose the message data */
         TRANSPOSE_8X16_I32(p_W, (const int32u**)loc_data, 0xFFFF);
 
@@ -215,10 +242,15 @@ void sm3_avx512_mb8(int32u hash_pa[][8], const int8u* const msg_pa[8], int len[8
         _mm256_storeu_si256((__m256i*)(hash_pa + 5), F);
         _mm256_storeu_si256((__m256i*)(hash_pa + 6), G);
         _mm256_storeu_si256((__m256i*)(hash_pa + 7), H);
- 
+
         /* Update pointers to data, local  lengths and mask */
-        _mm512_storeu_si512(loc_data, _mm512_mask_add_epi64(zero_buffer, (__mmask8)mb_mask, _mm512_loadu_si512(loc_data), _mm512_set1_epi64(SM3_MSG_BLOCK_SIZE)));
-        loc_len_m256 = _mm256_mask_sub_epi32(_mm256_setzero_si256(), mb_mask, loc_len_m256, _mm256_set1_epi32(SM3_MSG_BLOCK_SIZE));
+        _mm512_storeu_si512(loc_data,
+                            _mm512_mask_add_epi64(zero_buffer,
+                                                  (__mmask8)mb_mask,
+                                                  _mm512_loadu_si512(loc_data),
+                                                  _mm512_set1_epi64(SM3_MSG_BLOCK_SIZE)));
+        loc_len_m256 = _mm256_mask_sub_epi32(
+            _mm256_setzero_si256(), mb_mask, loc_len_m256, _mm256_set1_epi32(SM3_MSG_BLOCK_SIZE));
         mb_mask = _mm256_cmp_epi32_mask(loc_len_m256, _mm256_setzero_si256(), _MM_CMPINT_NE);
     }
 }

@@ -21,11 +21,14 @@
 #include <internal/sm4/sm4_mb.h>
 
 DLL_PUBLIC
-mbx_status16 OWNAPI(mbx_sm4_encrypt_ecb_mb16)(int8u* pa_out[SM4_LINES], const int8u* pa_inp[SM4_LINES], const int len[SM4_LINES], const mbx_sm4_key_schedule* key_sched)
+mbx_status16 OWNAPI(mbx_sm4_encrypt_ecb_mb16)(int8u* pa_out[SM4_LINES],
+                                              const int8u* pa_inp[SM4_LINES],
+                                              const int len[SM4_LINES],
+                                              const mbx_sm4_key_schedule* key_sched)
 {
     int buf_no;
     mbx_status16 status = 0;
-    int16u mb_mask = 0xFFFF;
+    int16u mb_mask      = 0xFFFF;
 
     /* Test input pointers */
     if (NULL == pa_out || NULL == pa_inp || NULL == len || NULL == key_sched) {
@@ -40,16 +43,21 @@ mbx_status16 OWNAPI(mbx_sm4_encrypt_ecb_mb16)(int8u* pa_out[SM4_LINES], const in
             /* Do not process empty buffers */
             mb_mask &= ~(0x1 << buf_no);
         }
-        if ((len[buf_no] < 0) || (len[buf_no]&(SM4_BLOCK_SIZE-1))) {
+        if ((len[buf_no] < 0) || (len[buf_no] & (SM4_BLOCK_SIZE - 1))) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
             /* Do not process non-valid buffers */
             mb_mask &= ~(0x1 << buf_no);
         }
     }
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        status |= sm4_ecb_kernel_mb16(pa_out, (const int8u**)pa_inp, (const int*)len, (const int32u**)key_sched, (__mmask16)mb_mask, SM4_ENC);
+        status |= sm4_ecb_kernel_mb16(pa_out,
+                                      (const int8u**)pa_inp,
+                                      (const int*)len,
+                                      (const int32u**)key_sched,
+                                      (__mmask16)mb_mask,
+                                      SM4_ENC);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

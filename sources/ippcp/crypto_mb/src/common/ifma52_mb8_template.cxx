@@ -17,12 +17,18 @@
 #include "ifma_math.h"
 #include "ifma_internal.h"
 
-{typedef}
-{functions}
-
-void {function_name} ({parameters})
 {
-  // Main code goes here
+    typedef
+}
+{
+    functions
+}
 
-{code}
+void { function_name }({ parameters })
+{
+    // Main code goes here
+
+    {
+        code
+    }
 }

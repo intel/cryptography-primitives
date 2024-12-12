@@ -20,14 +20,17 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_math.h>
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
 
 /* bitsize of base point order */
-#define N25519_BITSIZE  (253)
-#define NE_LEN52        NUMBER_OF_DIGITS(N25519_BITSIZE, DIGIT_SIZE)
-#define NE_LEN64        NUMBER_OF_DIGITS(N25519_BITSIZE, 64)
+#define N25519_BITSIZE (253)
+#define NE_LEN52       NUMBER_OF_DIGITS(N25519_BITSIZE, DIGIT_SIZE)
+#define NE_LEN64       NUMBER_OF_DIGITS(N25519_BITSIZE, 64)
 
-void ifma52_ed25519n_madd(U64 r[NE_LEN52], const U64 a[NE_LEN52], const U64 b[NE_LEN52], const U64 c[NE_LEN52]);
+void ifma52_ed25519n_madd(U64 r[NE_LEN52],
+                          const U64 a[NE_LEN52],
+                          const U64 b[NE_LEN52],
+                          const U64 c[NE_LEN52]);
 void ifma52_ed25519n_reduce(U64 r[NE_LEN52], const U64 x[NE_LEN52 * 2]);
 
 #endif /* #if (_MBX>=_MBX_K1) */

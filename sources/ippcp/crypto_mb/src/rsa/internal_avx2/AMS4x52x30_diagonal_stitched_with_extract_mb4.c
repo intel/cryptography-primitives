@@ -61,33 +61,33 @@ multiplication by 2 operations are realized with add64 instructions.
 
 #include <internal/rsa/avxifma_extract_multiplier.h>
 
-void AMS4x52x30_diagonal_stitched_with_extract_mb4(int64u *out_mb,
-                                                   U64 *mulb,
-                                                   U64 *mulbx,
-                                                   const int64u *inpA_mb,
-                                                   const int64u *inpM_mb,
-                                                   const int64u *k0_mb,
+void AMS4x52x30_diagonal_stitched_with_extract_mb4(int64u* out_mb,
+                                                   U64* mulb,
+                                                   U64* mulbx,
+                                                   const int64u* inpA_mb,
+                                                   const int64u* inpM_mb,
+                                                   const int64u* k0_mb,
                                                    int64u MulTbl[][redLen3K][4],
                                                    int64u MulTblx[][redLen3K][4],
                                                    const __m256i idx_target0)
 {
-   const int N             = 30;
-   const size_t N_x4_sz    = (N * 4 * sizeof(uint64_t));
-   const __m256i *pMulTbl  = (const __m256i *)&MulTbl[0][0];
-   const __m256i *pMulTblx = (const __m256i *)&MulTblx[0][0];
+    const int N             = 30;
+    const size_t N_x4_sz    = (N * 4 * sizeof(uint64_t));
+    const __m256i* pMulTbl  = (const __m256i*)&MulTbl[0][0];
+    const __m256i* pMulTblx = (const __m256i*)&MulTblx[0][0];
 
-   for (int iter = 0; iter < 4; ++iter) {
-      /* square */
-      AMS52x30_diagonal_mb4(out_mb, inpA_mb, inpM_mb, k0_mb);
-      inpA_mb = out_mb;
+    for (int iter = 0; iter < 4; ++iter) {
+        /* square */
+        AMS52x30_diagonal_mb4(out_mb, inpA_mb, inpM_mb, k0_mb);
+        inpA_mb = out_mb;
 
-      //*******BEGIN EXTRACTION CODE SEGMENT****************************//
-      extract_mb4((__m256i *)mulb, pMulTbl, iter, idx_target0, N);
-      extract_mb4((__m256i *)mulbx, pMulTblx, iter, idx_target0, N);
-      pMulTbl += ((4 * N_x4_sz) / sizeof(__m256i));
-      pMulTblx += ((4 * N_x4_sz) / sizeof(__m256i));
-      //*******END EXTRACTION CODE SEGMENT******************************//
-   }
+        //*******BEGIN EXTRACTION CODE SEGMENT****************************//
+        extract_mb4((__m256i*)mulb, pMulTbl, iter, idx_target0, N);
+        extract_mb4((__m256i*)mulbx, pMulTblx, iter, idx_target0, N);
+        pMulTbl += ((4 * N_x4_sz) / sizeof(__m256i));
+        pMulTblx += ((4 * N_x4_sz) / sizeof(__m256i));
+        //*******END EXTRACTION CODE SEGMENT******************************//
+    }
 }
 
 #endif //#if ((_MBX == _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)

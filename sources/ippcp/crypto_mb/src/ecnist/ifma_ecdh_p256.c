@@ -39,100 +39,96 @@
 */
 DLL_PUBLIC
 mbx_status OWNAPI(mbx_nistp256_ecdh_ssl_mb8)(int8u* pa_shared_key[8],
-                              const BIGNUM* const pa_skey[8],
-                              const BIGNUM* const pa_pubx[8],
-                              const BIGNUM* const pa_puby[8],
-                              const BIGNUM* const pa_pubz[8],
-                                     int8u* pBuffer)
+                                             const BIGNUM* const pa_skey[8],
+                                             const BIGNUM* const pa_pubx[8],
+                                             const BIGNUM* const pa_puby[8],
+                                             const BIGNUM* const pa_pubz[8],
+                                             int8u* pBuffer)
 {
-   mbx_status status = 0;
-   int buf_no;
+    mbx_status status = 0;
+    int buf_no;
 
-   /* pa_pubz!=0 means the output is in Jacobian projective coordinates */
-   int use_jproj_coords = NULL!=pa_pubz;
+    /* pa_pubz!=0 means the output is in Jacobian projective coordinates */
+    int use_jproj_coords = NULL != pa_pubz;
 
-   /* test input pointers */
-   if(NULL==pa_shared_key || NULL==pa_skey || NULL==pa_pubx || NULL==pa_puby) {
-      status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
-      return status;
-   }
+    /* test input pointers */
+    if (NULL == pa_shared_key || NULL == pa_skey || NULL == pa_pubx || NULL == pa_puby) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
+        return status;
+    }
 
-   /* check pointers and values */
-   for(buf_no=0; buf_no<8; buf_no++) {
-      int8u* shared = pa_shared_key[buf_no];
-      const BIGNUM* skey = pa_skey[buf_no];
-      const BIGNUM* pubx = pa_pubx[buf_no];
-      const BIGNUM* puby = pa_puby[buf_no];
-      const BIGNUM* pubz = use_jproj_coords? pa_pubz[buf_no] : NULL;
+    /* check pointers and values */
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        int8u* shared      = pa_shared_key[buf_no];
+        const BIGNUM* skey = pa_skey[buf_no];
+        const BIGNUM* pubx = pa_pubx[buf_no];
+        const BIGNUM* puby = pa_puby[buf_no];
+        const BIGNUM* pubz = use_jproj_coords ? pa_pubz[buf_no] : NULL;
 
-      /* if any of pointer NULL set error status */
-      if(NULL==shared || NULL==skey|| NULL==pubx || NULL==puby || (use_jproj_coords && NULL==pubz)) {
-         status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-      }
-   }
+        /* if any of pointer NULL set error status */
+        if (NULL == shared || NULL == skey || NULL == pubx || NULL == puby ||
+            (use_jproj_coords && NULL == pubz)) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
+    }
 
-   if(!MBX_IS_ANY_OK_STS(status))
-      return status;
+    if (!MBX_IS_ANY_OK_STS(status))
+        return status;
 
-   /*
-   // processing
-   */
-
-#if (_MBX>=_MBX_K1)
-   status |= internal_avx512_mbx_nistp256_ecdh_ssl_mb8(pa_shared_key, pa_skey, pa_pubx, pa_puby, pa_pubz, pBuffer, use_jproj_coords);
+#if (_MBX >= _MBX_K1)
+    status |= internal_avx512_mbx_nistp256_ecdh_ssl_mb8(
+        pa_shared_key, pa_skey, pa_pubx, pa_puby, pa_pubz, pBuffer, use_jproj_coords);
 #else
-   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
-   return status;
+    return status;
 }
 
 #endif // BN_OPENSSL_DISABLE
 
 DLL_PUBLIC
 mbx_status OWNAPI(mbx_nistp256_ecdh_mb8)(int8u* pa_shared_key[8],
-                          const int64u* const pa_skey[8],
-                          const int64u* const pa_pubx[8],
-                          const int64u* const pa_puby[8],
-                          const int64u* const pa_pubz[8],
-                                 int8u* pBuffer)
+                                         const int64u* const pa_skey[8],
+                                         const int64u* const pa_pubx[8],
+                                         const int64u* const pa_puby[8],
+                                         const int64u* const pa_pubz[8],
+                                         int8u* pBuffer)
 {
-   mbx_status status = 0;
-   int buf_no;
+    mbx_status status = 0;
+    int buf_no;
 
-   /* pa_pubz!=0 means the output is in Jacobian projective coordinates */
-   int use_jproj_coords = NULL!=pa_pubz;
+    /* pa_pubz!=0 means the output is in Jacobian projective coordinates */
+    int use_jproj_coords = NULL != pa_pubz;
 
-   /* test input pointers */
-   if(NULL==pa_shared_key || NULL==pa_skey || NULL==pa_pubx || NULL==pa_puby) {
-      status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
-      return status;
-   }
+    /* test input pointers */
+    if (NULL == pa_shared_key || NULL == pa_skey || NULL == pa_pubx || NULL == pa_puby) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
+        return status;
+    }
 
-   /* check pointers and values */
-   for(buf_no=0; buf_no<8; buf_no++) {
-      int8u* shared = pa_shared_key[buf_no];
-      const int64u* skey = pa_skey[buf_no];
-      const int64u* pubx = pa_pubx[buf_no];
-      const int64u* puby = pa_puby[buf_no];
-      const int64u* pubz = use_jproj_coords? pa_pubz[buf_no] : NULL;
+    /* check pointers and values */
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        int8u* shared      = pa_shared_key[buf_no];
+        const int64u* skey = pa_skey[buf_no];
+        const int64u* pubx = pa_pubx[buf_no];
+        const int64u* puby = pa_puby[buf_no];
+        const int64u* pubz = use_jproj_coords ? pa_pubz[buf_no] : NULL;
 
-      /* if any of pointer NULL set error status */
-      if(NULL==shared || NULL==skey || NULL==pubx || NULL==puby || (use_jproj_coords && NULL==pubz)) {
-         status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-      }
-   }
+        /* if any of pointer NULL set error status */
+        if (NULL == shared || NULL == skey || NULL == pubx || NULL == puby ||
+            (use_jproj_coords && NULL == pubz)) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
+    }
 
-   if(!MBX_IS_ANY_OK_STS(status))
-      return status;
+    if (!MBX_IS_ANY_OK_STS(status))
+        return status;
 
-   /*
-   // processing
-   */
-
-#if (_MBX>=_MBX_K1)
-   status |= internal_avx512_nistp256_ecdh_mb8(pa_shared_key, pa_skey, pa_pubx, pa_puby, pa_pubz, pBuffer, use_jproj_coords);
+#if (_MBX >= _MBX_K1)
+    status |= internal_avx512_nistp256_ecdh_mb8(
+        pa_shared_key, pa_skey, pa_pubx, pa_puby, pa_pubz, pBuffer, use_jproj_coords);
 #else
-   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
-   return status;
+    return status;
 }

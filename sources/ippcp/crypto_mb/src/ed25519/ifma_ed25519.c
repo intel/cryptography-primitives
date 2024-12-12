@@ -34,112 +34,112 @@
 */
 DLL_PUBLIC
 mbx_status OWNAPI(mbx_ed25519_public_key_mb8)(ed25519_public_key* pa_public_key[8],
-                                           const ed25519_private_key* const pa_private_key[8])
+                                              const ed25519_private_key* const pa_private_key[8])
 {
-   mbx_status status = MBX_STATUS_OK;
+    mbx_status status = MBX_STATUS_OK;
 
-   /* test input pointers */
-   if (NULL == pa_private_key || NULL == pa_public_key) {
-      status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
-      return status;
-   }
+    /* test input pointers */
+    if (NULL == pa_private_key || NULL == pa_public_key) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
+        return status;
+    }
 
-   /* check pointers and values */
-   int buf_no;
-   for (buf_no = 0; buf_no < 8; buf_no++) {
-      const ed25519_private_key* private_key = pa_private_key[buf_no];
-      ed25519_public_key* public_key = pa_public_key[buf_no];
+    /* check pointers and values */
+    int buf_no;
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        const ed25519_private_key* private_key = pa_private_key[buf_no];
+        ed25519_public_key* public_key         = pa_public_key[buf_no];
 
-      /* if any of pointer NULL set error status */
-      if (NULL == private_key || NULL == public_key) {
-         status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-      }
-   }
+        /* if any of pointer NULL set error status */
+        if (NULL == private_key || NULL == public_key) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
+    }
 
-#if (_MBX>=_MBX_K1)
-   status |= internal_avx512_ed25519_public_key_mb8(pa_public_key, pa_private_key);
+#if (_MBX >= _MBX_K1)
+    status |= internal_avx512_ed25519_public_key_mb8(pa_public_key, pa_private_key);
 #else
-   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
-   return status;
+    return status;
 }
 
 DLL_PUBLIC
 mbx_status OWNAPI(mbx_ed25519_sign_mb8)(ed25519_sign_component* pa_sign_r[8],
-                                           ed25519_sign_component* pa_sign_s[8],
-                                           const int8u* const pa_msg[8], const int32u msgLen[8],
-                                           const ed25519_private_key* const pa_private_key[8],
-                                           const ed25519_public_key* const pa_public_key[8])
+                                        ed25519_sign_component* pa_sign_s[8],
+                                        const int8u* const pa_msg[8],
+                                        const int32u msgLen[8],
+                                        const ed25519_private_key* const pa_private_key[8],
+                                        const ed25519_public_key* const pa_public_key[8])
 {
-   mbx_status status = MBX_STATUS_OK;
+    mbx_status status = MBX_STATUS_OK;
 
-   /* test input pointers */
-   if(NULL == pa_sign_r || NULL == pa_sign_s ||
-      NULL == pa_msg || NULL == msgLen ||
-      NULL == pa_private_key || NULL== pa_public_key) {
-      status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
-      return status;
-   }
+    /* test input pointers */
+    if (NULL == pa_sign_r || NULL == pa_sign_s || NULL == pa_msg || NULL == msgLen ||
+        NULL == pa_private_key || NULL == pa_public_key) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
+        return status;
+    }
 
-   /* check pointers and values */
-   int buf_no;
-   for (buf_no = 0; buf_no < 8; buf_no++) {
-      ed25519_sign_component* sign_r = pa_sign_r[buf_no];
-      ed25519_sign_component* sign_s = pa_sign_s[buf_no];
-      const int8u* msg = pa_msg[buf_no];
-      const ed25519_private_key* secret = pa_private_key[buf_no];
-      const ed25519_public_key* public = pa_public_key[buf_no];
+    /* check pointers and values */
+    int buf_no;
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        ed25519_sign_component* sign_r    = pa_sign_r[buf_no];
+        ed25519_sign_component* sign_s    = pa_sign_s[buf_no];
+        const int8u* msg                  = pa_msg[buf_no];
+        const ed25519_private_key* secret = pa_private_key[buf_no];
+        const ed25519_public_key* public  = pa_public_key[buf_no];
 
-      /* if any of pointer NULL set error status */
-      if(NULL == sign_r || NULL == sign_s || NULL== msg ||
-         NULL == secret || NULL == public) {
-         status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-      }
-   }
+        /* if any of pointer NULL set error status */
+        if (NULL == sign_r || NULL == sign_s || NULL == msg || NULL == secret || NULL == public) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
+    }
 
-#if (_MBX>=_MBX_K1)
-   status |= internal_avx512_ed25519_sign_mb8(pa_sign_r, pa_sign_s, pa_msg, msgLen, pa_private_key, pa_public_key);
+#if (_MBX >= _MBX_K1)
+    status |= internal_avx512_ed25519_sign_mb8(
+        pa_sign_r, pa_sign_s, pa_msg, msgLen, pa_private_key, pa_public_key);
 #else
-   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
-   return status;
+    return status;
 }
 
 DLL_PUBLIC
 mbx_status OWNAPI(mbx_ed25519_verify_mb8)(const ed25519_sign_component* const pa_sign_r[8],
-                                             const ed25519_sign_component* const pa_sign_s[8],
-                                             const int8u* const pa_msg[8], const int32u msgLen[8],
-                                             const ed25519_public_key* const pa_public_key[8])
+                                          const ed25519_sign_component* const pa_sign_s[8],
+                                          const int8u* const pa_msg[8],
+                                          const int32u msgLen[8],
+                                          const ed25519_public_key* const pa_public_key[8])
 {
-   mbx_status status = MBX_STATUS_OK;
+    mbx_status status = MBX_STATUS_OK;
 
-   /* test input pointers */
-   if (NULL == pa_sign_r || NULL == pa_sign_s ||
-      NULL == pa_msg || NULL == msgLen ||
-      NULL == pa_public_key) {
-      status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
-      return status;
-   }
+    /* test input pointers */
+    if (NULL == pa_sign_r || NULL == pa_sign_s || NULL == pa_msg || NULL == msgLen ||
+        NULL == pa_public_key) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
+        return status;
+    }
 
-   /* check pointers and values */
-   int buf_no;
-   for (buf_no = 0; buf_no < 8; buf_no++) {
-      const ed25519_sign_component* sign_r = pa_sign_r[buf_no];
-      const ed25519_sign_component* sign_s = pa_sign_s[buf_no];
-      const int8u* msg = pa_msg[buf_no];
-      const ed25519_public_key* public = pa_public_key[buf_no];
+    /* check pointers and values */
+    int buf_no;
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        const ed25519_sign_component* sign_r = pa_sign_r[buf_no];
+        const ed25519_sign_component* sign_s = pa_sign_s[buf_no];
+        const int8u* msg                     = pa_msg[buf_no];
+        const ed25519_public_key* public     = pa_public_key[buf_no];
 
-      /* if any of pointer NULL set error status */
-      if (NULL == sign_r || NULL == sign_s || NULL == msg ||
-         NULL == public) {
-         status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-      }
-   }
+        /* if any of pointer NULL set error status */
+        if (NULL == sign_r || NULL == sign_s || NULL == msg || NULL == public) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
+    }
 
-#if (_MBX>=_MBX_K1)
-   status |= internal_avx512_ed25519_verify_mb8(pa_sign_r, pa_sign_s, pa_msg, msgLen, pa_public_key);
+#if (_MBX >= _MBX_K1)
+    status |=
+        internal_avx512_ed25519_verify_mb8(pa_sign_r, pa_sign_s, pa_msg, msgLen, pa_public_key);
 #else
-   status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
-   return status;
+    return status;
 }

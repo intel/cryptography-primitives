@@ -21,17 +21,17 @@
 #include <internal/common/ifma_defs.h>
 
 DLL_PUBLIC
-mbx_status16 OWNAPI(mbx_sm3_init_mb16)(SM3_CTX_mb16 * p_state)
+mbx_status16 OWNAPI(mbx_sm3_init_mb16)(SM3_CTX_mb16* p_state)
 {
     mbx_status16 status = 0;
 
     /* test state pointer */
-    if(NULL==p_state) {
+    if (NULL == p_state) {
         status = MBX_SET_STS16_ALL(MBX_STATUS_NULL_PARAM_ERR);
         return status;
     }
 
-#if (_MBX>=_MBX_K1)
+#if (_MBX >= _MBX_K1)
     status |= internal_avx512_sm3_mask_init_mb16(p_state, 0xFFFF);
 #else
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

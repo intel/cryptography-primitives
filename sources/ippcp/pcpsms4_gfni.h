@@ -99,7 +99,7 @@ __FORCEINLINE __m512i sBox512(__m512i block)
    return block;
 }
 
-/* 
+/*
 // Not used in current pipeline
 __FORCEINLINE __m256i sBox256(__m256i block)
 {
@@ -172,20 +172,20 @@ __FORCEINLINE __m128i L128(__m128i x)
 // out: K0, K1, K2, K3
 */
 #define TRANSPOSE_INP_512(K0,K1,K2,K3, T0,T1,T2,T3) \
-   K0 = _mm512_unpacklo_epi32(T0, T1); \
-   K1 = _mm512_unpacklo_epi32(T2, T3); \
-   K2 = _mm512_unpackhi_epi32(T0, T1); \
-   K3 = _mm512_unpackhi_epi32(T2, T3); \
+   (K0) = _mm512_unpacklo_epi32(T0, T1); \
+   (K1) = _mm512_unpacklo_epi32(T2, T3); \
+   (K2) = _mm512_unpackhi_epi32(T0, T1); \
+   (K3) = _mm512_unpackhi_epi32(T2, T3); \
    \
-   T0 = _mm512_unpacklo_epi64(K0, K1); \
-   T1 = _mm512_unpacklo_epi64(K2, K3); \
-   T2 = _mm512_unpackhi_epi64(K0, K1); \
-   T3 = _mm512_unpackhi_epi64(K2, K3); \
+   (T0) = _mm512_unpacklo_epi64(K0, K1); \
+   (T1) = _mm512_unpacklo_epi64(K2, K3); \
+   (T2) = _mm512_unpackhi_epi64(K0, K1); \
+   (T3) = _mm512_unpackhi_epi64(K2, K3); \
    \
-   K2 = _mm512_permutexvar_epi32(M512(permMask_in), T1); \
-   K1 = _mm512_permutexvar_epi32(M512(permMask_in), T2); \
-   K3 = _mm512_permutexvar_epi32(M512(permMask_in), T3); \
-   K0 = _mm512_permutexvar_epi32(M512(permMask_in), T0)
+   (K2) = _mm512_permutexvar_epi32(M512(permMask_in), T1); \
+   (K1) = _mm512_permutexvar_epi32(M512(permMask_in), T2); \
+   (K3) = _mm512_permutexvar_epi32(M512(permMask_in), T3); \
+   (K0) = _mm512_permutexvar_epi32(M512(permMask_in), T0)
 
 /*
 // inp: T0, T1, T2, T3
@@ -212,15 +212,15 @@ __FORCEINLINE __m128i L128(__m128i x)
 */
 
 #define TRANSPOSE_INP_128(K0,K1,K2,K3, T) \
-   T  = _mm_unpacklo_epi32(K0, K1); \
-   K1 = _mm_unpackhi_epi32(K0, K1); \
-   K0 = _mm_unpacklo_epi32(K2, K3); \
-   K3 = _mm_unpackhi_epi32(K2, K3); \
+   (T)  = _mm_unpacklo_epi32(K0, K1); \
+   (K1) = _mm_unpackhi_epi32(K0, K1); \
+   (K0) = _mm_unpacklo_epi32(K2, K3); \
+   (K3) = _mm_unpackhi_epi32(K2, K3); \
    \
-   K2 = _mm_unpacklo_epi64(K1, K3); \
-   K3 = _mm_unpackhi_epi64(K1, K3); \
-   K1 = _mm_unpackhi_epi64(T,  K0); \
-   K0 = _mm_unpacklo_epi64(T,  K0)
+   (K2) = _mm_unpacklo_epi64(K1, K3); \
+   (K3) = _mm_unpackhi_epi64(K1, K3); \
+   (K1) = _mm_unpackhi_epi64(T,  K0); \
+   (K0) = _mm_unpacklo_epi64(T,  K0)
 
 /*
 // TRANSPOSE_OUT
@@ -232,22 +232,22 @@ __FORCEINLINE __m128i L128(__m128i x)
 */
 
 #define TRANSPOSE_OUT_512(T0,T1,T2,T3, K0,K1,K2,K3) \
-   T0 = _mm512_shuffle_i32x4(K0, K1, 0x44); \
-   T1 = _mm512_shuffle_i32x4(K0, K1, 0xee); \
-   T2 = _mm512_shuffle_i32x4(K2, K3, 0x44); \
-   T3 = _mm512_shuffle_i32x4(K2, K3, 0xee); \
+   (T0) = _mm512_shuffle_i32x4(K0, K1, 0x44); \
+   (T1) = _mm512_shuffle_i32x4(K0, K1, 0xee); \
+   (T2) = _mm512_shuffle_i32x4(K2, K3, 0x44); \
+   (T3) = _mm512_shuffle_i32x4(K2, K3, 0xee); \
    \
-   K0 = _mm512_shuffle_i32x4(T0, T2, 0x88); \
-   K1 = _mm512_shuffle_i32x4(T0, T2, 0xdd); \
-   K2 = _mm512_shuffle_i32x4(T1, T3, 0x88); \
-   K3 = _mm512_shuffle_i32x4(T1, T3, 0xdd); \
+   (K0) = _mm512_shuffle_i32x4(T0, T2, 0x88); \
+   (K1) = _mm512_shuffle_i32x4(T0, T2, 0xdd); \
+   (K2) = _mm512_shuffle_i32x4(T1, T3, 0x88); \
+   (K3) = _mm512_shuffle_i32x4(T1, T3, 0xdd); \
    \
-   K0 = _mm512_permutexvar_epi32(M512(permMask_out), K0);\
-   K1 = _mm512_permutexvar_epi32(M512(permMask_out), K1);\
-   K2 = _mm512_permutexvar_epi32(M512(permMask_out), K2);\
-   K3 = _mm512_permutexvar_epi32(M512(permMask_out), K3);\
+   (K0) = _mm512_permutexvar_epi32(M512(permMask_out), K0);\
+   (K1) = _mm512_permutexvar_epi32(M512(permMask_out), K1);\
+   (K2) = _mm512_permutexvar_epi32(M512(permMask_out), K2);\
+   (K3) = _mm512_permutexvar_epi32(M512(permMask_out), K3);\
    \
-T0=K0,T1=K1,T2=K2,T3=K3
+(T0)=(K0),(T1)=(K1),(T2)=(K2),(T3)=(K3)
 
 
 /*
@@ -275,16 +275,16 @@ T0=K0,T1=K1,T2=K2,T3=K3
 */
 
 #define TRANSPOSE_OUT_128(K0,K1,K2,K3, T) \
-   T  = _mm_unpacklo_epi32(K1, K0); \
-   K0 = _mm_unpackhi_epi32(K1, K0); \
-   K1 = _mm_unpacklo_epi32(K3, K2); \
-   K3 = _mm_unpackhi_epi32(K3, K2); \
+   (T)  = _mm_unpacklo_epi32(K1, K0); \
+   (K0) = _mm_unpackhi_epi32(K1, K0); \
+   (K1) = _mm_unpacklo_epi32(K3, K2); \
+   (K3) = _mm_unpackhi_epi32(K3, K2); \
    \
-   K2 = _mm_unpackhi_epi64(K1,  T); \
-   T  = _mm_unpacklo_epi64(K1,  T); \
-   K1 = _mm_unpacklo_epi64(K3, K0); \
-   K0 = _mm_unpackhi_epi64(K3, K0); \
-   K3 = T
+   (K2) = _mm_unpackhi_epi64(K1,  T); \
+   (T)  = _mm_unpacklo_epi64(K1,  T); \
+   (K1) = _mm_unpacklo_epi64(K3, K0); \
+   (K0) = _mm_unpackhi_epi64(K3, K0); \
+   (K3) = (T)
 
 //#define PR(X) printf("%08u %08u %08u %08u | %08u %08u %08u %08u | %08u %08u %08u %08u | %08u %08u %08u %08u\n",\
 //         X.m512i_u32[0], X.m512i_u32[1], X.m512i_u32[2],\

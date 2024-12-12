@@ -30,156 +30,180 @@ typedef int to_avoid_translation_unit_is_empty_warning;
 // public exponent e=65537 implied
 */
 
-void ifma_ssl_rsa1K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const n_pa[8])
+void ifma_ssl_rsa1K_pub_layer_mb8(const int8u* const from_pa[8],
+                                  int8u* const to_pa[8],
+                                  const BIGNUM* const n_pa[8])
 {
 #define RSA_BITLEN (RSA_1K)
-#define LEN52 (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
+#define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
 
-   /* allocate mb8 buffers */
-   __ALIGN64 int64u k0_mb8[8];
-   __ALIGN64 int64u rr_mb8[LEN52][8];
-   __ALIGN64 int64u inout_mb8[LEN52][8];
-   /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb8() implementation specific */
-   __ALIGN64 int64u n_mb8[MULTIPLE_OF(LEN52, 10)][8];
-   /* allocate stack for red(undant) result and multiplier */
-   __ALIGN64 int64u work_buffer[LEN52 * 2][8];
+    /* allocate mb8 buffers */
+    __ALIGN64 int64u k0_mb8[8];
+    __ALIGN64 int64u rr_mb8[LEN52][8];
+    __ALIGN64 int64u inout_mb8[LEN52][8];
+    /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb8() implementation specific */
+    __ALIGN64 int64u n_mb8[MULTIPLE_OF(LEN52, 10)][8];
+    /* allocate stack for red(undant) result and multiplier */
+    __ALIGN64 int64u work_buffer[LEN52 * 2][8];
 
-   /* convert modulus to ifma fmt */
-   zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
-   ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
+    /* convert modulus to ifma fmt */
+    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
-   /* compute k0[] */
-   ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
+    /* compute k0[] */
+    ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
 
-   /* compute to_Montgomery domain converters */
-   ifma_montRR52x_mb8(rr_mb8, n_mb8, RSA_BITLEN);
+    /* compute to_Montgomery domain converters */
+    ifma_montRR52x_mb8(rr_mb8, n_mb8, RSA_BITLEN);
 
-   /* convert input to ifma fmt */
-   ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
+    /* convert input to ifma fmt */
+    ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
 
-   /* exponentiation */
-   EXP52x20_pub65537_mb8(
-      inout_mb8, (const int64u(*)[8])inout_mb8, (const int64u(*)[8])n_mb8, (const int64u(*)[8])rr_mb8, k0_mb8, (int64u(*)[8])work_buffer);
+    /* exponentiation */
+    EXP52x20_pub65537_mb8(inout_mb8,
+                          (const int64u(*)[8])inout_mb8,
+                          (const int64u(*)[8])n_mb8,
+                          (const int64u(*)[8])rr_mb8,
+                          k0_mb8,
+                          (int64u(*)[8])work_buffer);
 
-   /* convert result from ifma fmt */
-   ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
+    /* convert result from ifma fmt */
+    ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
 
 #undef RSA_BITLEN
 #undef LEN52
 }
 
 
-void ifma_ssl_rsa2K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const n_pa[8])
+void ifma_ssl_rsa2K_pub_layer_mb8(const int8u* const from_pa[8],
+                                  int8u* const to_pa[8],
+                                  const BIGNUM* const n_pa[8])
 {
 #define RSA_BITLEN (RSA_2K)
-#define LEN52 (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
+#define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
 
-   /* allocate mb8 buffers */
-   __ALIGN64 int64u k0_mb8[8];
-   __ALIGN64 int64u rr_mb8[LEN52][8];
-   __ALIGN64 int64u inout_mb8[LEN52][8];
-   /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb8() implementation specific */
-   __ALIGN64 int64u n_mb8[MULTIPLE_OF(LEN52, 10)][8];
-   /* allocate stack for red(undant) result and multiplier */
-   __ALIGN64 int64u work_buffer[LEN52 * 2][8];
+    /* allocate mb8 buffers */
+    __ALIGN64 int64u k0_mb8[8];
+    __ALIGN64 int64u rr_mb8[LEN52][8];
+    __ALIGN64 int64u inout_mb8[LEN52][8];
+    /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb8() implementation specific */
+    __ALIGN64 int64u n_mb8[MULTIPLE_OF(LEN52, 10)][8];
+    /* allocate stack for red(undant) result and multiplier */
+    __ALIGN64 int64u work_buffer[LEN52 * 2][8];
 
-   /* convert modulus to ifma fmt */
-   zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
-   ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
+    /* convert modulus to ifma fmt */
+    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
-   /* compute k0[] */
-   ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
+    /* compute k0[] */
+    ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
 
-   /* compute to_Montgomery domain converters */
-   ifma_montRR52x_mb8(rr_mb8, n_mb8, RSA_BITLEN);
+    /* compute to_Montgomery domain converters */
+    ifma_montRR52x_mb8(rr_mb8, n_mb8, RSA_BITLEN);
 
-   /* convert input to ifma fmt */
-   ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
+    /* convert input to ifma fmt */
+    ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
 
-   /* exponentiation */
-   EXP52x40_pub65537_mb8(
-      inout_mb8, (const int64u(*)[8])inout_mb8, (const int64u(*)[8])n_mb8, (const int64u(*)[8])rr_mb8, k0_mb8, (int64u(*)[8])work_buffer);
+    /* exponentiation */
+    EXP52x40_pub65537_mb8(inout_mb8,
+                          (const int64u(*)[8])inout_mb8,
+                          (const int64u(*)[8])n_mb8,
+                          (const int64u(*)[8])rr_mb8,
+                          k0_mb8,
+                          (int64u(*)[8])work_buffer);
 
-   /* convert result from ifma fmt */
-   ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
+    /* convert result from ifma fmt */
+    ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
 
 #undef RSA_BITLEN
 #undef LEN52
 }
 
 
-void ifma_ssl_rsa3K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const n_pa[8])
+void ifma_ssl_rsa3K_pub_layer_mb8(const int8u* const from_pa[8],
+                                  int8u* const to_pa[8],
+                                  const BIGNUM* const n_pa[8])
 {
 #define RSA_BITLEN (RSA_3K)
-#define LEN52 (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
+#define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
 
-   /* allocate mb8 buffers */
-   __ALIGN64 int64u k0_mb8[8];
-   __ALIGN64 int64u rr_mb8[LEN52][8];
-   __ALIGN64 int64u inout_mb8[LEN52][8];
-   /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb8() implementation specific */
-   __ALIGN64 int64u n_mb8[MULTIPLE_OF(LEN52, 10)][8];
-   /* allocate stack for red(undant) result and multiplier */
-   __ALIGN64 int64u work_buffer[LEN52 * 2][8];
+    /* allocate mb8 buffers */
+    __ALIGN64 int64u k0_mb8[8];
+    __ALIGN64 int64u rr_mb8[LEN52][8];
+    __ALIGN64 int64u inout_mb8[LEN52][8];
+    /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb8() implementation specific */
+    __ALIGN64 int64u n_mb8[MULTIPLE_OF(LEN52, 10)][8];
+    /* allocate stack for red(undant) result and multiplier */
+    __ALIGN64 int64u work_buffer[LEN52 * 2][8];
 
-   /* convert modulus to ifma fmt */
-   zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
-   ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
+    /* convert modulus to ifma fmt */
+    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
-   /* compute k0[] */
-   ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
+    /* compute k0[] */
+    ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
 
-   /* compute to_Montgomery domain converters */
-   ifma_montRR52x_mb8(rr_mb8, n_mb8, RSA_BITLEN);
+    /* compute to_Montgomery domain converters */
+    ifma_montRR52x_mb8(rr_mb8, n_mb8, RSA_BITLEN);
 
-   /* convert input to ifma fmt */
-   ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
+    /* convert input to ifma fmt */
+    ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
 
-   /* exponentiation */
-   EXP52x60_pub65537_mb8(
-      inout_mb8, (const int64u(*)[8])inout_mb8, (const int64u(*)[8])n_mb8, (const int64u(*)[8])rr_mb8, k0_mb8, (int64u(*)[8])work_buffer);
+    /* exponentiation */
+    EXP52x60_pub65537_mb8(inout_mb8,
+                          (const int64u(*)[8])inout_mb8,
+                          (const int64u(*)[8])n_mb8,
+                          (const int64u(*)[8])rr_mb8,
+                          k0_mb8,
+                          (int64u(*)[8])work_buffer);
 
-   /* convert result from ifma fmt */
-   ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
+    /* convert result from ifma fmt */
+    ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
 
 #undef RSA_BITLEN
 #undef LEN52
 }
 
 
-void ifma_ssl_rsa4K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to_pa[8], const BIGNUM *const n_pa[8])
+void ifma_ssl_rsa4K_pub_layer_mb8(const int8u* const from_pa[8],
+                                  int8u* const to_pa[8],
+                                  const BIGNUM* const n_pa[8])
 {
 #define RSA_BITLEN (RSA_4K)
-#define LEN52 (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
+#define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
 
-   /* allocate mb8 buffers */
-   __ALIGN64 int64u k0_mb8[8];
-   __ALIGN64 int64u rr_mb8[LEN52][8];
-   __ALIGN64 int64u inout_mb8[LEN52][8];
-   /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb8() implementation specific */
-   __ALIGN64 int64u n_mb8[MULTIPLE_OF(LEN52, 10)][8];
-   /* allocate stack for red(undant) result and multiplier */
-   __ALIGN64 int64u work_buffer[LEN52 * 2 + 1][8];
+    /* allocate mb8 buffers */
+    __ALIGN64 int64u k0_mb8[8];
+    __ALIGN64 int64u rr_mb8[LEN52][8];
+    __ALIGN64 int64u inout_mb8[LEN52][8];
+    /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb8() implementation specific */
+    __ALIGN64 int64u n_mb8[MULTIPLE_OF(LEN52, 10)][8];
+    /* allocate stack for red(undant) result and multiplier */
+    __ALIGN64 int64u work_buffer[LEN52 * 2 + 1][8];
 
-   /* convert modulus to ifma fmt */
-   zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
-   ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
+    /* convert modulus to ifma fmt */
+    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
-   /* compute k0[] */
-   ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
+    /* compute k0[] */
+    ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
 
-   /* compute to_Montgomery domain converters */
-   ifma_montRR52x_mb8(rr_mb8, n_mb8, RSA_BITLEN);
+    /* compute to_Montgomery domain converters */
+    ifma_montRR52x_mb8(rr_mb8, n_mb8, RSA_BITLEN);
 
-   /* convert input to ifma fmt */
-   ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
+    /* convert input to ifma fmt */
+    ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
 
-   /* exponentiation */
-   EXP52x79_pub65537_mb8(
-      inout_mb8, (const int64u(*)[8])inout_mb8, (const int64u(*)[8])n_mb8, (const int64u(*)[8])rr_mb8, k0_mb8, (int64u(*)[8])work_buffer);
+    /* exponentiation */
+    EXP52x79_pub65537_mb8(inout_mb8,
+                          (const int64u(*)[8])inout_mb8,
+                          (const int64u(*)[8])n_mb8,
+                          (const int64u(*)[8])rr_mb8,
+                          k0_mb8,
+                          (int64u(*)[8])work_buffer);
 
-   /* convert result from ifma fmt */
-   ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
+    /* convert result from ifma fmt */
+    ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
 
 #undef RSA_BITLEN
 #undef LEN52
@@ -191,156 +215,180 @@ void ifma_ssl_rsa4K_pub_layer_mb8(const int8u *const from_pa[8], int8u *const to
 // public exponent e=65537 implied
 */
 
-void ifma_ssl_rsa1K_pub_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const n_pa[4])
+void ifma_ssl_rsa1K_pub_layer_mb4(const int8u* const from_pa[4],
+                                  int8u* const to_pa[4],
+                                  const BIGNUM* const n_pa[4])
 {
 #define RSA_BITLEN (RSA_1K)
-#define LEN52 (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
+#define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
 
-   /* allocate mb4 buffers */
-   __ALIGN64 int64u k0_mb4[4];
-   __ALIGN64 int64u rr_mb4[LEN52][4];
-   __ALIGN64 int64u inout_mb4[LEN52][4];
-   /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb4() implementation specific */
-   __ALIGN64 int64u n_mb4[MULTIPLE_OF(LEN52, 10)][4];
-   /* allocate stack for red(undant) result and multiplier */
-   __ALIGN64 int64u work_buffer[LEN52 * 2][4];
+    /* allocate mb4 buffers */
+    __ALIGN64 int64u k0_mb4[4];
+    __ALIGN64 int64u rr_mb4[LEN52][4];
+    __ALIGN64 int64u inout_mb4[LEN52][4];
+    /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb4() implementation specific */
+    __ALIGN64 int64u n_mb4[MULTIPLE_OF(LEN52, 10)][4];
+    /* allocate stack for red(undant) result and multiplier */
+    __ALIGN64 int64u work_buffer[LEN52 * 2][4];
 
-   /* convert modulus to ifma fmt */
-   zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
-   ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
+    /* convert modulus to ifma fmt */
+    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
-   /* compute k0[] */
-   ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
+    /* compute k0[] */
+    ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
 
-   /* compute to_Montgomery domain converters */
-   ifma_montRR52x_mb4(rr_mb4, n_mb4, RSA_BITLEN);
+    /* compute to_Montgomery domain converters */
+    ifma_montRR52x_mb4(rr_mb4, n_mb4, RSA_BITLEN);
 
-   /* convert input to ifma fmt */
-   ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
+    /* convert input to ifma fmt */
+    ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
 
-   /* exponentiation */
-   EXP52x20_pub65537_mb4(
-      inout_mb4, (const int64u(*)[4])inout_mb4, (const int64u(*)[4])n_mb4, (const int64u(*)[4])rr_mb4, k0_mb4, (int64u(*)[4])work_buffer);
+    /* exponentiation */
+    EXP52x20_pub65537_mb4(inout_mb4,
+                          (const int64u(*)[4])inout_mb4,
+                          (const int64u(*)[4])n_mb4,
+                          (const int64u(*)[4])rr_mb4,
+                          k0_mb4,
+                          (int64u(*)[4])work_buffer);
 
-   /* convert result from ifma fmt */
-   ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
+    /* convert result from ifma fmt */
+    ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
 
 #undef RSA_BITLEN
 #undef LEN52
 }
 
 
-void ifma_ssl_rsa2K_pub_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const n_pa[4])
+void ifma_ssl_rsa2K_pub_layer_mb4(const int8u* const from_pa[4],
+                                  int8u* const to_pa[4],
+                                  const BIGNUM* const n_pa[4])
 {
 #define RSA_BITLEN (RSA_2K)
-#define LEN52 (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
+#define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
 
-   /* allocate mb4 buffers */
-   __ALIGN64 int64u k0_mb4[4];
-   __ALIGN64 int64u rr_mb4[LEN52][4];
-   __ALIGN64 int64u inout_mb4[LEN52][4];
-   /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb4() implementation specific */
-   __ALIGN64 int64u n_mb4[MULTIPLE_OF(LEN52, 10)][4];
-   /* allocate stack for red(undant) result and multiplier */
-   __ALIGN64 int64u work_buffer[LEN52 * 2][4];
+    /* allocate mb4 buffers */
+    __ALIGN64 int64u k0_mb4[4];
+    __ALIGN64 int64u rr_mb4[LEN52][4];
+    __ALIGN64 int64u inout_mb4[LEN52][4];
+    /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb4() implementation specific */
+    __ALIGN64 int64u n_mb4[MULTIPLE_OF(LEN52, 10)][4];
+    /* allocate stack for red(undant) result and multiplier */
+    __ALIGN64 int64u work_buffer[LEN52 * 2][4];
 
-   /* convert modulus to ifma fmt */
-   zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
-   ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
+    /* convert modulus to ifma fmt */
+    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
-   /* compute k0[] */
-   ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
+    /* compute k0[] */
+    ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
 
-   /* compute to_Montgomery domain converters */
-   ifma_montRR52x_mb4(rr_mb4, n_mb4, RSA_BITLEN);
+    /* compute to_Montgomery domain converters */
+    ifma_montRR52x_mb4(rr_mb4, n_mb4, RSA_BITLEN);
 
-   /* convert input to ifma fmt */
-   ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
+    /* convert input to ifma fmt */
+    ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
 
-   /* exponentiation */
-   EXP52x40_pub65537_mb4(
-      inout_mb4, (const int64u(*)[4])inout_mb4, (const int64u(*)[4])n_mb4, (const int64u(*)[4])rr_mb4, k0_mb4, (int64u(*)[4])work_buffer);
+    /* exponentiation */
+    EXP52x40_pub65537_mb4(inout_mb4,
+                          (const int64u(*)[4])inout_mb4,
+                          (const int64u(*)[4])n_mb4,
+                          (const int64u(*)[4])rr_mb4,
+                          k0_mb4,
+                          (int64u(*)[4])work_buffer);
 
-   /* convert result from ifma fmt */
-   ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
+    /* convert result from ifma fmt */
+    ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
 
 #undef RSA_BITLEN
 #undef LEN52
 }
 
 
-void ifma_ssl_rsa3K_pub_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const n_pa[4])
+void ifma_ssl_rsa3K_pub_layer_mb4(const int8u* const from_pa[4],
+                                  int8u* const to_pa[4],
+                                  const BIGNUM* const n_pa[4])
 {
 #define RSA_BITLEN (RSA_3K)
-#define LEN52 (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
+#define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
 
-   /* allocate mb4 buffers */
-   __ALIGN64 int64u k0_mb4[4];
-   __ALIGN64 int64u rr_mb4[LEN52][4];
-   __ALIGN64 int64u inout_mb4[LEN52][4];
-   /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb4() implementation specific */
-   __ALIGN64 int64u n_mb4[MULTIPLE_OF(LEN52, 10)][4];
-   /* allocate stack for red(undant) result and multiplier */
-   __ALIGN64 int64u work_buffer[LEN52 * 2][4];
+    /* allocate mb4 buffers */
+    __ALIGN64 int64u k0_mb4[4];
+    __ALIGN64 int64u rr_mb4[LEN52][4];
+    __ALIGN64 int64u inout_mb4[LEN52][4];
+    /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb4() implementation specific */
+    __ALIGN64 int64u n_mb4[MULTIPLE_OF(LEN52, 10)][4];
+    /* allocate stack for red(undant) result and multiplier */
+    __ALIGN64 int64u work_buffer[LEN52 * 2][4];
 
-   /* convert modulus to ifma fmt */
-   zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
-   ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
+    /* convert modulus to ifma fmt */
+    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
-   /* compute k0[] */
-   ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
+    /* compute k0[] */
+    ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
 
-   /* compute to_Montgomery domain converters */
-   ifma_montRR52x_mb4(rr_mb4, n_mb4, RSA_BITLEN);
+    /* compute to_Montgomery domain converters */
+    ifma_montRR52x_mb4(rr_mb4, n_mb4, RSA_BITLEN);
 
-   /* convert input to ifma fmt */
-   ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
+    /* convert input to ifma fmt */
+    ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
 
-   /* exponentiation */
-   EXP52x60_pub65537_mb4(
-      inout_mb4, (const int64u(*)[4])inout_mb4, (const int64u(*)[4])n_mb4, (const int64u(*)[4])rr_mb4, k0_mb4, (int64u(*)[4])work_buffer);
+    /* exponentiation */
+    EXP52x60_pub65537_mb4(inout_mb4,
+                          (const int64u(*)[4])inout_mb4,
+                          (const int64u(*)[4])n_mb4,
+                          (const int64u(*)[4])rr_mb4,
+                          k0_mb4,
+                          (int64u(*)[4])work_buffer);
 
-   /* convert result from ifma fmt */
-   ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
+    /* convert result from ifma fmt */
+    ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
 
 #undef RSA_BITLEN
 #undef LEN52
 }
 
 
-void ifma_ssl_rsa4K_pub_layer_mb4(const int8u *const from_pa[4], int8u *const to_pa[4], const BIGNUM *const n_pa[4])
+void ifma_ssl_rsa4K_pub_layer_mb4(const int8u* const from_pa[4],
+                                  int8u* const to_pa[4],
+                                  const BIGNUM* const n_pa[4])
 {
 #define RSA_BITLEN (RSA_4K)
-#define LEN52 (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
+#define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
 
-   /* allocate mb4 buffers */
-   __ALIGN64 int64u k0_mb4[4];
-   __ALIGN64 int64u rr_mb4[LEN52][4];
-   __ALIGN64 int64u inout_mb4[LEN52][4];
-   /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb4() implementation specific */
-   __ALIGN64 int64u n_mb4[MULTIPLE_OF(LEN52, 10)][4];
-   /* allocate stack for red(undant) result and multiplier */
-   __ALIGN64 int64u work_buffer[LEN52 * 2 + 1][4];
+    /* allocate mb4 buffers */
+    __ALIGN64 int64u k0_mb4[4];
+    __ALIGN64 int64u rr_mb4[LEN52][4];
+    __ALIGN64 int64u inout_mb4[LEN52][4];
+    /* MULTIPLE_OF_10 because of AMS5x52x79_diagonal_mb4() implementation specific */
+    __ALIGN64 int64u n_mb4[MULTIPLE_OF(LEN52, 10)][4];
+    /* allocate stack for red(undant) result and multiplier */
+    __ALIGN64 int64u work_buffer[LEN52 * 2 + 1][4];
 
-   /* convert modulus to ifma fmt */
-   zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
-   ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
+    /* convert modulus to ifma fmt */
+    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
-   /* compute k0[] */
-   ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
+    /* compute k0[] */
+    ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
 
-   /* compute to_Montgomery domain converters */
-   ifma_montRR52x_mb4(rr_mb4, n_mb4, RSA_BITLEN);
+    /* compute to_Montgomery domain converters */
+    ifma_montRR52x_mb4(rr_mb4, n_mb4, RSA_BITLEN);
 
-   /* convert input to ifma fmt */
-   ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
+    /* convert input to ifma fmt */
+    ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
 
-   /* exponentiation */
-   EXP52x79_pub65537_mb4(
-      inout_mb4, (const int64u(*)[4])inout_mb4, (const int64u(*)[4])n_mb4, (const int64u(*)[4])rr_mb4, k0_mb4, (int64u(*)[4])work_buffer);
+    /* exponentiation */
+    EXP52x79_pub65537_mb4(inout_mb4,
+                          (const int64u(*)[4])inout_mb4,
+                          (const int64u(*)[4])n_mb4,
+                          (const int64u(*)[4])rr_mb4,
+                          k0_mb4,
+                          (int64u(*)[4])work_buffer);
 
-   /* convert result from ifma fmt */
-   ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
+    /* convert result from ifma fmt */
+    ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
 
 #undef RSA_BITLEN
 #undef LEN52

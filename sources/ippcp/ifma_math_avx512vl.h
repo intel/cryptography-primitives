@@ -70,13 +70,13 @@
 
       #define _mm_madd52lo_epu64_(r, a, b, c, o) \
       { \
-          r=a; \
+          (r)=a; \
           __asm__ ( "vpmadd52luq " #o "(%2), %1, %0" : "+x" (r): "x" (b), "r" (c) ); \
       }
 
       #define _mm_madd52hi_epu64_(r, a, b, c, o) \
       { \
-          r=a; \
+          (r)=a; \
           __asm__ ( "vpmadd52huq " #o "(%2), %1, %0" : "+x" (r): "x" (b), "r" (c) ); \
       }
   #else
@@ -176,11 +176,11 @@
 
   #define fma52x8lo_mem_len(r, a, b, c, o, l) \
       fma52lo_mem(r, a, b, c, o);             \
-      if (l > 4) { fma52lo_mem(r ## h, a ## h, b, c, (o) + 32); }
+      if ((l) > 4) { fma52lo_mem(r ## h, a ## h, b, c, (o) + 32); }
 
   #define fma52x8hi_mem_len(r, a, b, c, o, l) \
       fma52hi_mem(r, a, b, c, o);             \
-      if (l > 4) { fma52hi_mem(r ## h, a ## h, b, c, (o) + 32); }
+      if ((l) > 4) { fma52hi_mem(r ## h, a ## h, b, c, (o) + 32); }
 
   #define fma52x8lo_mask_mem(r, m, a, b, c, o)     \
       fma52lo_mem(r, a, b, c, o);                  \
@@ -191,14 +191,14 @@
       fma52hi_mem(r ## h, a ## h, b, c, (o) + 32);
 
   #define shift64(R0, R1) { \
-      R0 = R0 ## h;         \
+      (R0) = R0 ## h;         \
       R0 ## h = R1; }
 
   #define shift64_imm(R0, R1, imm) \
       R0 = _mm256_alignr_epi64(R1, R0, imm);
 
   #define blend64(a, b, m) \
-      _mm256_blend_epi32(a, b, (int)(0x3<<((m-1)<<1)));
+      _mm256_blend_epi32(a, b, (int)(0x3<<(((m)-1)<<1)));
 
 #else
   #error "Incorrect SIMD length"
