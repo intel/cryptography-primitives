@@ -37,7 +37,7 @@ typedef int64u (*pint64u_x4)[4]; // pointer to 4-term vector of int64u each
 #define RSA_4K (4 * RSA_1K)
 
 #ifndef NUMBER_OF_DIGITS
-#define NUMBER_OF_DIGITS(bitsize, digsize) (((bitsize) + (digsize) - 1) / (digsize))
+#define NUMBER_OF_DIGITS(bitsize, digsize) (((bitsize) + (digsize)-1) / (digsize))
 #endif
 #define MULTIPLE_OF(x, factor) ((x) + (((factor) - ((x) % (factor))) % (factor)))
 

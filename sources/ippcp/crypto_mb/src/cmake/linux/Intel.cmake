@@ -16,7 +16,7 @@
 
 # Security Linker flags
 
-set(LINK_FLAG_SECURITY "") 
+set(LINK_FLAG_SECURITY "")
 # Data relocation and protection (RELRO)
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,relro -Wl,-z,now")
 # Stack execution protection

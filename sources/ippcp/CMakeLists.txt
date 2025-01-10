@@ -236,6 +236,7 @@ file(GLOB LIBRARY_C_SOURCES_ORIGINAL
     ${IPP_CRYPTO_SOURCES_DIR}/hash/*/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/gfpec/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/gfpec/*/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/sms4/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/xmss/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/lms/*.c
 )

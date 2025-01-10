@@ -40,7 +40,7 @@ align 16
 SHUFF_MASK:
     db 3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12
 
-segment .text
+segment .text align=IPP_ALIGN_FACTOR
 
 ; ***************************************************************************
 ; Create 4 x 32-bit new words of message schedule W[] using SM3 instructions
@@ -89,7 +89,6 @@ segment .text
 ;********************************************************************
 align IPP_ALIGN_FACTOR
 IPPASM UpdateSM3ni,PUBLIC
-%assign LOCAL_FRAME 68*sizeof(dword)+3*sizeof(qword)
         USES_GPR rsi,rdi,rdx,rcx
         USES_XMM
         COMP_ABI 4

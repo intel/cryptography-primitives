@@ -148,8 +148,8 @@ align IPP_ALIGN_FACTOR
         vpermq          ymm0, ymm6, 0x1b                ;; ymm0 = W[12] W[13] W[14] W[15]
         vpermq          ymm7, ymm5, 0x39                ;; ymm7 = W[8]  W[11] W[10] W[9]
         vpblendd        ymm0, ymm0, ymm7, 0x3f          ;; ymm0 = W[12] W[11] W[10] W[9]
-        vpaddq          ymm3, ymm3, ymm0
-        vsha512msg2     ymm3, ymm6                      ;; W[16..19] = ymm3 + W[9..12] + S1(W[14..17])
+        vpaddq          ymm3, ymm3, ymm0                ;; ymm3 = W[0..3] + S0(W[1..4]) + W[9..12]
+        vsha512msg2     ymm3, ymm6                      ;; W[16..19] = ymm3 + S1(W[14..17])
         vpaddq          ymm0, ymm6, [arg_sha512_k + 3 * 32]
         vsha512rnds2    ymm2, ymm1, xmm0
         vperm2i128      ymm0, ymm0, ymm0, 0x01
@@ -165,7 +165,7 @@ align IPP_ALIGN_FACTOR
         vpblendd        ymm7, ymm0, ymm7, 0x3f          ;; ymm7 = W[16] W[15] W[14] W[13]
         vpaddq          ymm0, ymm3, [arg_sha512_k + I * 32]
         vpaddq          ymm4, ymm4, ymm7                ;; ymm4 = W[4..7] + S0(W[5..8]) + W[13..16]
-        vsha512msg2     ymm4, ymm3                      ;; ymm4 += S1(W[14..17])
+        vsha512msg2     ymm4, ymm3                      ;; W[20..23] = ymm4 + S1(W[18..21])
         vsha512rnds2    ymm2, ymm1, xmm0
         vperm2i128      ymm0, ymm0, ymm0, 0x01
         vsha512rnds2    ymm1, ymm2, xmm0
@@ -178,7 +178,7 @@ align IPP_ALIGN_FACTOR
         vpblendd        ymm7, ymm0, ymm7, 0x3f          ;; ymm7 = W[20] W[19] W[18] W[17]
         vpaddq          ymm0, ymm4, [arg_sha512_k + I * 32]
         vpaddq          ymm5, ymm5, ymm7                ;; ymm5 = W[8..11] + S0(W[9..12]) + W[17..20]
-        vsha512msg2     ymm5, ymm4                      ;; ymm5 += S1(W[18..21])
+        vsha512msg2     ymm5, ymm4                      ;; W[24..27] = ymm5 + S1(W[22..25])
         vsha512rnds2    ymm2, ymm1, xmm0
         vperm2i128      ymm0, ymm0, ymm0, 0x01
         vsha512rnds2    ymm1, ymm2, xmm0
@@ -191,7 +191,7 @@ align IPP_ALIGN_FACTOR
         vpblendd        ymm7, ymm0, ymm7, 0x3f          ;; ymm7 = W[24] W[23] W[22] W[21]
         vpaddq          ymm0, ymm5, [arg_sha512_k + I * 32]
         vpaddq          ymm6, ymm6, ymm7                ;; ymm6 = W[12..15] + S0(W[13..16]) + W[21..24]
-        vsha512msg2     ymm6, ymm5                      ;; ymm6 += S1(W[22..25])
+        vsha512msg2     ymm6, ymm5                      ;; W[28..31] = ymm6 + S1(W[26..29])
         vsha512rnds2    ymm2, ymm1, xmm0
         vperm2i128      ymm0, ymm0, ymm0, 0x01
         vsha512rnds2    ymm1, ymm2, xmm0
@@ -204,7 +204,7 @@ align IPP_ALIGN_FACTOR
         vpblendd        ymm7, ymm0, ymm7, 0x3f          ;; ymm7 = W[28] W[27] W[26] W[25]
         vpaddq          ymm0, ymm6, [arg_sha512_k + I * 32]
         vpaddq          ymm3, ymm3, ymm7                ;; ymm3 = W[16..19] + S0(W[17..20]) + W[25..28]
-        vsha512msg2     ymm3, ymm6                      ;; ymm3 += S1(W[26..29])
+        vsha512msg2     ymm3, ymm6                      ;; W[32..35] = ymm3 + S1(W[30..33])
         vsha512rnds2    ymm2, ymm1, xmm0
         vperm2i128      ymm0, ymm0, ymm0, 0x01
         vsha512rnds2    ymm1, ymm2, xmm0
@@ -218,7 +218,7 @@ align IPP_ALIGN_FACTOR
         vpblendd        ymm7, ymm0, ymm7, 0x3f          ;; ymm7 = W[64] W[63] W[62] W[61]
         vpaddq          ymm0, ymm3, [arg_sha512_k + 16 * 32]
         vpaddq          ymm4, ymm4, ymm7                ;; ymm4 = W[52..55] + S0(W[53..56]) + W[61..64]
-        vsha512msg2     ymm4, ymm3                      ;; ymm4 += S1(W[62..65])
+        vsha512msg2     ymm4, ymm3                      ;; W[64..67] = ymm4 + S1(W[62..65])
         vsha512rnds2    ymm2, ymm1, xmm0
         vperm2i128      ymm0, ymm0, ymm0, 0x01
         vsha512rnds2    ymm1, ymm2, xmm0
@@ -230,7 +230,7 @@ align IPP_ALIGN_FACTOR
         vpblendd        ymm7, ymm0, ymm7, 0x3f          ;; ymm7 = W[68] W[67] W[66] W[65]
         vpaddq          ymm0, ymm4, [arg_sha512_k + 17 * 32]
         vpaddq          ymm5, ymm5, ymm7                ;; ymm5 = W[56..59] + S0(W[57..60]) + W[65..68]
-        vsha512msg2     ymm5, ymm4                      ;; ymm5 += S1(W[66..69])
+        vsha512msg2     ymm5, ymm4                      ;; W[68..71] = ymm5 + S1(W[66..69])
         vsha512rnds2    ymm2, ymm1, xmm0
         vperm2i128      ymm0, ymm0, ymm0, 0x01
         vsha512rnds2    ymm1, ymm2, xmm0
@@ -241,7 +241,7 @@ align IPP_ALIGN_FACTOR
         vpblendd        ymm7, ymm0, ymm7, 0x3f          ;; ymm7 = W[72] W[71] W[70] W[69]
         vpaddq          ymm0, ymm5, [arg_sha512_k + 18 * 32]
         vpaddq          ymm6, ymm6, ymm7                ;; ymm6 = W[60..63] + S0(W[61..64]) + W[69..72]
-        vsha512msg2     ymm6, ymm5                      ;; ymm6 += S1(W[70..73])
+        vsha512msg2     ymm6, ymm5                      ;; W[72..75] = ymm6 + S1(W[70..73])
         vsha512rnds2    ymm2, ymm1, xmm0
         vperm2i128      ymm0, ymm0, ymm0, 0x01
         vsha512rnds2    ymm1, ymm2, xmm0

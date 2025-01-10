@@ -4,6 +4,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 
 ## Intel(R) Cryptography Primitives Library 1.1.0
 
+- Added single buffer SM4 (former SMS4) algorithm with the new SM4 instructions for Lunar Lake and Arrow Lake S CPUs.
 - Added single buffer SHA384, SHA512, SHA512/224, SHA512/256 hash algorithm optimizations with the new SHA512 instructions for Lunar Lake and Arrow Lake S CPUs.
 - Enabled support of [specific ISA library](./OVERVIEW.md#specific-isa-library) build for Crypto Multi buffer library.
 Cmake build options `-DMERGED_BLD:BOOL=off -DMBX_PLATFORM_LIST="k1;l9"` may be used. Please refer to

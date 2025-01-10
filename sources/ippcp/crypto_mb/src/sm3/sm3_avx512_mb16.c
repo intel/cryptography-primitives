@@ -143,13 +143,13 @@ __MBX_INLINE void TRANSPOSE_16X16_I32(int32u out[][16], const int32u* const inp[
     (_mm512_xor_epi32(_mm512_xor_epi32(X, _mm512_rol_epi32(X, 15)), _mm512_rol_epi32(X, 23)))
 
 /* Update W */
-#define WUPDATE(nr, W)                                                                         \
-    (_mm512_xor_epi32(                                                                         \
-        _mm512_xor_epi32(                                                                      \
-            P1(_mm512_xor_epi32(_mm512_xor_epi32((W)[((nr) - 16) & 15], (W)[((nr) - 9) & 15]), \
-                                _mm512_rol_epi32((W)[((nr) - 3) & 15], 15))),                  \
-            _mm512_rol_epi32((W)[((nr) - 13) & 15], 7)),                                       \
-        (W)[((nr) - 6) & 15]))
+#define WUPDATE(nr, W)                                                                     \
+    (_mm512_xor_epi32(                                                                     \
+        _mm512_xor_epi32(                                                                  \
+            P1(_mm512_xor_epi32(_mm512_xor_epi32((W)[((nr)-16) & 15], (W)[((nr)-9) & 15]), \
+                                _mm512_rol_epi32((W)[((nr)-3) & 15], 15))),                \
+            _mm512_rol_epi32((W)[((nr)-13) & 15], 7)),                                     \
+        (W)[((nr)-6) & 15]))
 
 // SM3 steps
 /* (0<=nr<16) */

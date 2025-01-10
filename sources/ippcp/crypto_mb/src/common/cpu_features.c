@@ -340,10 +340,10 @@ MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo)
         const algo_width_map* arr_algo_width;
         unsigned num_tbl;
     } map_tbl[] = {
-        { arr_algo_width_k1,
-         (unsigned)sizeof(arr_algo_width_k1) / sizeof(algo_width_map) }, // K1 = index 0
-        { arr_algo_width_l9,
-         (unsigned)sizeof(arr_algo_width_l9) / sizeof(algo_width_map) }, // L9 = index 1
+        {arr_algo_width_k1,
+         (unsigned)sizeof(arr_algo_width_k1) / sizeof(algo_width_map)}, // K1 = index 0
+        {arr_algo_width_l9,
+         (unsigned)sizeof(arr_algo_width_l9) / sizeof(algo_width_map)}, // L9 = index 1
     };
     int num_width = 0;
 

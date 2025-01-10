@@ -50,6 +50,7 @@
 │       ├── gfpec
 │       ├── hash
 │       ├── lms
+│       ├── sms4
 │       └── xmss
 ├── tools
 |   └── ipp_custom_library_tool_python       < Custom Library Tool
@@ -74,7 +75,7 @@
 
 - `develop` - snapshots of the library under active development.
 Contains code that may not be fully functional and that Intel may substantially modify in development of a production version.
-- `ipp_crypto_<release>` - source code of the official production release `<release>`.
+- `cryptography-primitives_<release>` - source code of the official production release `<release>`.
 
 ## Dispatcher
 

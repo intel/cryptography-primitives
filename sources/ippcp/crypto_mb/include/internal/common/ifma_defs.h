@@ -69,15 +69,14 @@
 
 /* num of digit in "digsize" retresentation of "bitsize" value */
 #ifndef NUMBER_OF_DIGITS
-#define NUMBER_OF_DIGITS(bitsize, digsize) (((bitsize) + (digsize) - 1) / (digsize))
+#define NUMBER_OF_DIGITS(bitsize, digsize) (((bitsize) + (digsize)-1) / (digsize))
 #endif
 /* mask of most significant digit wrt "digsize" retresentation */
 #define MS_DIGIT_MASK(bitsize, digsize) (((int64u)1 << ((bitsize) % (digsize))) - 1)
 
 /* pointer alignment */
-#define IFMA_UINT_PTR(ptr) ((int64u)(ptr))
-#define IFMA_BYTES_TO_ALIGN(ptr, align) \
-    ((~(IFMA_UINT_PTR(ptr) & ((align) - 1)) + 1) & ((align) - 1))
+#define IFMA_UINT_PTR(ptr)              ((int64u)(ptr))
+#define IFMA_BYTES_TO_ALIGN(ptr, align) ((~(IFMA_UINT_PTR(ptr) & ((align)-1)) + 1) & ((align)-1))
 #define IFMA_ALIGNED_PTR(ptr, align) \
     (void*)((unsigned char*)(ptr) + (IFMA_BYTES_TO_ALIGN(ptr, align)))
 

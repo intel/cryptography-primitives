@@ -35,13 +35,13 @@
     (_mm256_xor_si256(_mm256_xor_si256(X, _mm256_rol_epi32(X, 15)), _mm256_rol_epi32(X, 23)))
 
 /* Update W */
-#define WUPDATE(nr, W)                                                                         \
-    (_mm256_xor_si256(                                                                         \
-        _mm256_xor_si256(                                                                      \
-            P1(_mm256_xor_si256(_mm256_xor_si256((W)[((nr) - 16) & 15], (W)[((nr) - 9) & 15]), \
-                                _mm256_rol_epi32((W)[((nr) - 3) & 15], 15))),                  \
-            _mm256_rol_epi32((W)[((nr) - 13) & 15], 7)),                                       \
-        (W)[((nr) - 6) & 15]))
+#define WUPDATE(nr, W)                                                                     \
+    (_mm256_xor_si256(                                                                     \
+        _mm256_xor_si256(                                                                  \
+            P1(_mm256_xor_si256(_mm256_xor_si256((W)[((nr)-16) & 15], (W)[((nr)-9) & 15]), \
+                                _mm256_rol_epi32((W)[((nr)-3) & 15], 15))),                \
+            _mm256_rol_epi32((W)[((nr)-13) & 15], 7)),                                     \
+        (W)[((nr)-6) & 15]))
 
 // SM3 steps
 /* (0<=nr<16) */

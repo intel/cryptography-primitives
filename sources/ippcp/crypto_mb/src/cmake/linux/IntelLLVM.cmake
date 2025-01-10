@@ -56,7 +56,7 @@ set(CMAKE_C_FLAGS " -falign-functions=32")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffreestanding")
 
 if(CODE_COVERAGE)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -prof-gen:srcpos -prof-dir $ENV{PROF_DATA_DIR}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")

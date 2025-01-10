@@ -88,7 +88,7 @@ elseif(NOT ${ARCH} MATCHES "ia32")
 endif()
 
 if(CODE_COVERAGE)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -prof-gen:srcpos -prof-dir $ENV{PROF_DATA_DIR}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
 endif()
 
 # Optimization level = 3, no-debug definition (turns off asserts), warning level = 3, treat warnings as errors

@@ -63,7 +63,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -wd10120 -Wno-unused-command-line-argument -
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qfreestanding")
 
 if(CODE_COVERAGE)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qrof-gen:srcpos /Qprof-dir:${PROF_DATA_DIR}")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
