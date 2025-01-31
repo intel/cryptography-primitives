@@ -26,18 +26,18 @@ set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,noexecstack")
 
 set(CMAKE_C_FLAGS_SECURITY "")
 # Format string vulnerabilities
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wformat -Wformat-security -Werror=format-security")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wformat -Wformat-security")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fcf-protection=full")
 
 # Stack-based Buffer Overrun Detection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fstack-protector")
-# Position Independent Execution (PIE)
+# Position Independent Code (PIC)
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fpic -fPIC")
 # Enables important warning and error messages relevant to security during compilation
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wall")
 # Warnings=errors
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Werror")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Werror -Wimplicit-fallthrough")
 
 # Linker flags
 

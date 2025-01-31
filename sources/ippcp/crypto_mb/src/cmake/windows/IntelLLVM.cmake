@@ -42,7 +42,7 @@ set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /WX")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fcf-protection:full")
 # Recommended security flags
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wall -Wformat -Wformat-security -Werror=format-security")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wall -Wformat -Wformat-security")
 
 # Linker flags
 

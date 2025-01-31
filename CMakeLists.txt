@@ -236,6 +236,22 @@ else()
   set(LINUX OFF)
 endif()
 
+# Function to check that platform_list only contains valid platforms from the reference_platform_list
+function(CheckPlatformList platform_list reference_platform_list error_message)
+  foreach(platform ${platform_list})
+    set(FOUND_PLATFORM false)
+    foreach(ref_platform ${reference_platform_list})
+      string(STRIP "${platform}" platform_strip)
+      if(platform_strip STREQUAL ref_platform)
+        set(FOUND_PLATFORM true)
+      endif()
+    endforeach(ref_platform ${reference_platform_list})
+    if(NOT FOUND_PLATFORM)
+      message (FATAL_ERROR ${error_message} ": " ${platform})
+    endif()
+  endforeach(platform ${platform_list})
+endfunction()
+
 add_subdirectory(sources/ippcp)
 
 if (NOT (CRYPTO_USE_CLANG_TIDY))

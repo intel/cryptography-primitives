@@ -57,7 +57,7 @@ IPP_OWN_DEFN (void, AesGcmDec_vaes_avx2, (Ipp8u* pDst, const Ipp8u* pSrc, int le
       __m256i plainText, plainText_1, plainText_2, plainText_3, plainText_4, plainText_5, plainText_6, plainText_7;
       __m256i rpHash[8];
       __m256i HashKey[8];
-      __m128i resultHash = _mm_setzero_si128();
+      __m128i resultHash = _mm_setzero_si128(), block128, cipherText128, plainText128;
       __m256i tmpKey;
 
       // setting temporary data for incremention
@@ -107,7 +107,6 @@ IPP_OWN_DEFN (void, AesGcmDec_vaes_avx2, (Ipp8u* pDst, const Ipp8u* pSrc, int le
       }
 
       while(len >= 16*BLOCK_SIZE) {
-         // decrypt stage
          tmpKey = _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES))));
          block = _mm256_xor_si256(pCounter256, tmpKey);
          block1 = _mm256_xor_si256(pCounter256_1, tmpKey);
@@ -299,7 +298,6 @@ IPP_OWN_DEFN (void, AesGcmDec_vaes_avx2, (Ipp8u* pDst, const Ipp8u* pSrc, int le
       } // while(len >= 16*BLOCK_SIZE)
 
       if (len >= 8*BLOCK_SIZE) {
-         // decrypt stage
          tmpKey = _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES))));
          block = _mm256_xor_si256(pCounter256, tmpKey);
          block1 = _mm256_xor_si256(pCounter256_1, tmpKey);
@@ -411,7 +409,6 @@ IPP_OWN_DEFN (void, AesGcmDec_vaes_avx2, (Ipp8u* pDst, const Ipp8u* pSrc, int le
       } //if (len >= 8*BLOCK_SIZE)
 
       if (len >= 4*BLOCK_SIZE) {
-         // decrypt stage
          tmpKey = _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES))));
          block = _mm256_xor_si256(pCounter256, tmpKey);
          block1 = _mm256_xor_si256(pCounter256_1, tmpKey);
@@ -514,65 +511,64 @@ IPP_OWN_DEFN (void, AesGcmDec_vaes_avx2, (Ipp8u* pDst, const Ipp8u* pSrc, int le
          len -= 2*BLOCK_SIZE;
       }
 
-      // encryption for the tail (1-3 block)
-      while (len >= BLOCK_SIZE) {
-         block = _mm256_xor_si256(pCounter256, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+1*16))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+2*16))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+3*16))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+4*16))));
+      if (len >= BLOCK_SIZE) {
+         block128 = _mm_xor_si128(_mm256_castsi256_si128(pCounter256), _mm_loadu_si128((void*)(RIJ_EKEYS(pAES))));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+1*16)));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+2*16)));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+3*16)));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+4*16)));
          IncrementRegister256(pCounter256, increment1, shuffle_mask);
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+5*16))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+6*16))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+7*16))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+8*16))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+9*16))));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+5*16)));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+6*16)));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+7*16)));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+8*16)));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+9*16)));
          if (RIJ_NR(pAES) >= 12) {
-            block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+10*16))));
-            block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+11*16))));
+            block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+10*16)));
+            block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+11*16)));
             if (RIJ_NR(pAES) >= 14) {
-               block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+12*16))));
-               block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+13*16))));
+               block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+12*16)));
+               block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+13*16)));
             }
          } 
-         block = _mm256_aesenclast_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+RIJ_NR(pAES)*16))));
+         block128 = _mm_aesenclast_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+RIJ_NR(pAES)*16)));
 
          // set ciphertext 
-         plainText = _mm256_loadu_si256((void*)pSrc);
-         cipherText = _mm256_xor_si256(plainText, block);
+         plainText128 = _mm_loadu_si128((void*)pSrc);
+         cipherText128 = _mm_xor_si128(plainText128, block128);
          pSrc += BLOCK_SIZE;
-         _mm_storeu_si128((void*)pDst, _mm256_castsi256_si128(cipherText));
+         _mm_storeu_si128((void*)pDst, cipherText128);
          pDst += BLOCK_SIZE;
          // hash calculation stage
          HashKey[0] = _mm256_setr_m128i(_mm_loadu_si128((void*)(AESGCM_HKEY(pState))), _mm_loadu_si128((void*)(AESGCM_HKEY(pState))));
-         rpHash[0] = _mm256_xor_si256(rpHash[0], _mm256_shuffle_epi8(plainText, shuff_mask_256));
+         rpHash[0] = _mm256_xor_si256(rpHash[0], _mm256_shuffle_epi8(_mm256_broadcastsi128_si256(plainText128), shuff_mask_256));
          resultHash = avx2_clmul_gcm(rpHash, HashKey);
          len -= BLOCK_SIZE;
       }
 
       //decrypt the remainder
-      block = _mm256_xor_si256(pCounter256, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+1*16))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+2*16))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+3*16))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+4*16))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+5*16))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+6*16))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+7*16))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+8*16))));
-      block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+9*16))));
+      block128 = _mm_xor_si128(_mm256_castsi256_si128(pCounter256), _mm_loadu_si128((void*)(RIJ_EKEYS(pAES))));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+1*16)));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+2*16)));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+3*16)));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+4*16)));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+5*16)));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+6*16)));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+7*16)));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+8*16)));
+      block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+9*16)));
       if (RIJ_NR(pAES) >= 12) {
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+10*16))));
-         block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+11*16))));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+10*16)));
+         block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+11*16)));
          if (RIJ_NR(pAES) >= 14) {
-            block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+12*16))));
-            block = _mm256_aesenc_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+13*16))));
+            block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+12*16)));
+            block128 = _mm_aesenc_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+13*16)));
          }
       } 
-      block = _mm256_aesenclast_epi128(block, _mm256_broadcastsi128_si256(_mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+RIJ_NR(pAES)*16))));
+      block128 = _mm_aesenclast_si128(block128, _mm_loadu_si128((void*)(RIJ_EKEYS(pAES)+RIJ_NR(pAES)*16)));
 
-      // loand data to the memory
-      _mm_storeu_si128((void*)pECounter, _mm256_castsi256_si128(block));
+      // store data to the memory
+      _mm_storeu_si128((void*)pECounter, block128);
       _mm_storeu_si128((void*)pCounter, _mm256_castsi256_si128(pCounter256));
       resultHash = _mm_shuffle_epi8(resultHash, shuff_mask_128);
       _mm_storeu_si128((void*)(AESGCM_GHASH(pState)), resultHash);

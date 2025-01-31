@@ -73,14 +73,14 @@ if ((${ARCH} MATCHES "ia32") OR (NOT NONPIC_LIB))
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector")
 endif()
 
-# Format string vulnerabilities
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Wformat-security -Wunknown-pragmas")
+# Format string vulnerabilities, enable specific format-security warning and precisely convert it to error
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Werror=format-security -Wunknown-pragmas")
 
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcf-protection=full -O3")
 
 if(NOT NONPIC_LIB)
-  # Position Independent Execution (PIE)
+  # Position Independent Code (PIC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fpic -fPIC")
 elseif(NOT ${ARCH} MATCHES "ia32")
   # NONPIC intel64: specify kernel code model
@@ -92,7 +92,7 @@ if(CODE_COVERAGE)
 endif()
 
 # Optimization level = 3, no-debug definition (turns off asserts), warning level = 3, treat warnings as errors
-set(CMAKE_C_FLAGS_RELEASE " -Ofast -DNDEBUG -Wall -Wno-unused-function -Werror")
+set(CMAKE_C_FLAGS_RELEASE " -Ofast -DNDEBUG -Wall -Wconversion -Wno-unused-function -Werror")
 # Security flag that adds compile-time and run-time checks
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
 

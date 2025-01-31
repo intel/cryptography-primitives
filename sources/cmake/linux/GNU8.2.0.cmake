@@ -60,8 +60,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LIBRARY_DEFINES}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffreestanding")
 # Tells the compiler to align functions and loops
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -falign-functions=32 -falign-loops=32")
-# Format string vulnerabilities
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Wformat-security")
+# Format string vulnerabilities, enable specific format-security warning and precisely convert it to error
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Werror=format-security")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcf-protection=full")
 # Prints a report with internal details on the workings of the link-time optimizer
@@ -74,7 +74,7 @@ if ((${ARCH} MATCHES "ia32") OR (NOT NONPIC_LIB))
 endif()
 
 if(NOT NONPIC_LIB)
-  # Position Independent Execution (PIE)
+  # Position Independent Code (PIC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fpic -fPIC")
 elseif(NOT ${ARCH} MATCHES "ia32")
   # NONPIC intel64: specify kernel code model

@@ -60,8 +60,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LIBRARY_DEFINES}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffreestanding")
 # Tells the compiler to align functions
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -falign-functions=32")
-# Format string vulnerabilities
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Wformat-security")
+# Format string vulnerabilities, enable specific format-security warning and precisely convert it to error
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Werror=format-security")
 #Diagnostic flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wdouble-promotion -Wshadow -Wunreachable-code -Wpointer-arith -Wuninitialized -Wconversion")
 # Enable __declspec attribute
@@ -78,7 +78,7 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcf-protection=full")
 
 if(NOT NONPIC_LIB)
-  # Position Independent Execution (PIE)
+  # Position Independent Code (PIC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fpic -fPIC")
 elseif(NOT ${ARCH} MATCHES "ia32")
   # NONPIC intel64: specify kernel code model

@@ -23,7 +23,7 @@ set(LINK_FLAG_SECURITY " -Wl,-dynamic")
 
 set(CMAKE_C_FLAGS_SECURITY "")
 # Format string vulnerabilities
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wformat -Wformat-security -Werror=format-security")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wformat -Wformat-security")
 # Stack-based Buffer Overrun Detection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fstack-protector")
 # Position Independent Execution (PIE)
