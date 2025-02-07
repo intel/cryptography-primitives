@@ -143,7 +143,7 @@ __IPPCP_INLINE void cpSM2KE_compute_hash_SM3(Ipp8u *r, const Ipp8u *a, const int
    static IppsHashState_rmf ctx;
 
    /* init */
-   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3());
+   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
    /* update hash */
    ippsHashUpdate_rmf(a, numBytes, &ctx);
    /* final */

@@ -25,7 +25,7 @@
   *  The LMS algorithm is implemented according to the
   *  "Leighton-Micali Hash-Based Signatures" document:
   *
-  *  https://datatracker.ietf.org/doc/html/rfc8554
+  *  https://www.rfc-editor.org/info/rfc8554
   *
   */
 

@@ -911,7 +911,7 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
 */
 #ifdef IPPCP_PREVIEW_LMS
     /* Parameters set is based on two articles:
-     *  RFC8554 (https://datatracker.ietf.org/doc/html/rfc8554)
+     *  RFC8554 (https://www.rfc-editor.org/info/rfc8554)
      *  https://datatracker.ietf.org/doc/html/draft-fluhrer-lms-more-parm-sets-00
      */
     typedef enum

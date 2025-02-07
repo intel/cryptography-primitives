@@ -27,7 +27,7 @@
  *  The RSASSA-PSS scheme is implemented according to the PKCS#1 v2.1: RSA Cryptography Standard (June 2002),
  *  available at:
  *
- *  https://tools.ietf.org/html/rfc3447.
+ *  https://www.rfc-editor.org/info/rfc3447.
  *
  */
 

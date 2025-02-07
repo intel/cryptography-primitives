@@ -97,6 +97,18 @@
 
 /*
 // if there is no outside assignment
+// set _SM3_ENABLING_ based on CPU specification
+*/
+#if !defined(_SM3_ENABLING_)
+   #if (_IPP32E >= _IPP32E_L9)
+      #define _SM3_ENABLING_  _FEATURE_TICKTOCK_
+   #else
+      #define _SM3_ENABLING_  _FEATURE_OFF_
+   #endif
+#endif
+
+/*
+// if there is no outside assignment
 // set _SHA512_ENABLING_ based on CPU specification
 */
 #if !defined(_SHA512_ENABLING_)

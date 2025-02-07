@@ -46,7 +46,7 @@ IPPFUN(IppStatus, ippsGFpECESStart_SM2, (IppsECESState_SM2* pState)) {
    IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
    IPP_BADARG_RET(pState->state != ECESAlgoKeySet, ippStsContextMatchErr);
 
-   ippsHashInit_rmf(pState->pTagHasher, ippsHashMethod_SM3());
+   ippsHashInit_rmf(pState->pTagHasher, ippsHashMethod_SM3_TT());
    ippsHashUpdate_rmf(pState->pSharedSecret, pState->sharedSecretLen / 2, pState->pTagHasher);
 
    pState->state = ECESAlgoProcessing;

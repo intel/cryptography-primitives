@@ -74,7 +74,7 @@ IPPFUN(IppStatus, ippsAES_S2V_CMAC,(const Ipp8u* pKey, int keyLen,
 
    int n;
    for(n=0; n<numAD; n++) {
-      /* test input message and it's length */
+      /* test input message and its length */
       IPP_BADARG_RET((pADlen[n]<0), ippStsLengthErr);
       /* test source pointer */
       IPP_BADARG_RET((pADlen[n] && !pAD[n]), ippStsNullPtrErr);

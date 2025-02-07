@@ -36,7 +36,7 @@ IPP_OWN_DEFN (void, cpComputeDigest, (Ipp8u* pHashTag, int hashTagLen, const Ipp
 {
    /* hash alg and parameters */
    cpHashProc hashFunc = HASH_FUNC(pCtx);    /* processing function */
-   const void* pParam = HASH_FUNC_PAR(pCtx); /* and it's addition params */
+   const void* pParam = HASH_FUNC_PAR(pCtx); /* and its addition params */
 
    /* attributes */
    const cpHashAttr* pAttr = &cpHashAlgAttr[HASH_ALG_ID(pCtx)];
@@ -94,7 +94,7 @@ IPP_OWN_DEFN (void, cpComputeDigest, (Ipp8u* pHashTag, int hashTagLen, const Ipp
       }
    }
 
-   /* copmplete hash computation */
+   /* complete hash computation */
    hashFunc(hash, buffer, bufferLen, pParam);
 
    /* store digest into the user buffer (remember digest in big endian) */

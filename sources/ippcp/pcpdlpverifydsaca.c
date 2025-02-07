@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     DL over Prime Finite Field (Verify, DSA version)
-// 
+//
 //  Contents:
 //     ippsDLPVerifyDSA()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -115,7 +115,7 @@ IPPFUN(IppStatus, ippsDLPVerifyDSA,(const IppsBigNumState* pMsgDigest,
       ippsModInv_BN((IppsBigNumState*)pSignS, pOrder, pW);
       cpMontEnc_BN(pW, pW, DLP_MONTR(pDL));
 
-      /* reduct pMsgDigest if necessary */
+      /* reduce pMsgDigest if necessary */
       if(0 < cpBN_cmp(pMsgDigest, pOrder))
          ippsMod_BN((IppsBigNumState*)pMsgDigest, pOrder, pU1);
       else

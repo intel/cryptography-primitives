@@ -651,7 +651,7 @@ p224r1_mmull:
    mov   t2, qword [rel Lpoly+sizeof(qword)*2]
    mov   t3, qword [rel Lpoly+sizeof(qword)*3]
 
-   mov   acc0, acc4     ;; copy reducted result
+   mov   acc0, acc4     ;; copy reduced result
    mov   acc1, acc5
    mov   acc2, acc6
    mov   acc3, acc7
@@ -798,7 +798,7 @@ p224r1_mmulx:
    mov   t2, qword [rel Lpoly+sizeof(qword)*2]
    mov   t3, qword [rel Lpoly+sizeof(qword)*3]
 
-   mov   acc0, acc4     ;; copy reducted result
+   mov   acc0, acc4     ;; copy reduced result
    mov   acc1, acc5
    mov   acc2, acc6
    mov   acc3, acc7

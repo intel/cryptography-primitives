@@ -87,7 +87,7 @@ IPPFUN(IppStatus, ippsAES_SIVEncrypt,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
    {
       int n;
       for (n = 0; n < numAD; n++) {
-         /* test input message and it's length */
+         /* test input message and its length */
          IPP_BADARG_RET((pADlen[n] < 0), ippStsLengthErr);
          /* test source pointer */
          IPP_BADARG_RET((pADlen[n] && !pAD[n]), ippStsNullPtrErr);

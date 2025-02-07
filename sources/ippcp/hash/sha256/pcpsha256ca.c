@@ -59,6 +59,6 @@ IPP_OWN_DEFN (void, cpFinalizeSHA256, (DigestSHA256 pHash, const Ipp8u* inpBuffe
    processedMsgLen = ENDIANNESS64(processedMsgLen<<3);
    ((Ipp64u*)(buffer+bufferLen))[-1] = processedMsgLen;
 
-   /* copmplete hash computation */
+   /* complete hash computation */
    updateFunc(pHash, buffer, bufferLen, sha256_cnt);
 }

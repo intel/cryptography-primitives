@@ -51,6 +51,6 @@ IPP_OWN_DEFN (void, cpFinalize_rmf, (DigestSHA512 pHash, const Ipp8u* inpBuffer,
    /* message length representation */
    method->msgLenRep(buffer+bufferLen-mrl, lenLo, lenHi);
 
-   /* copmplete hash computation */
+   /* complete hash computation */
    method->hashUpdate(pHash, buffer, bufferLen);
 }

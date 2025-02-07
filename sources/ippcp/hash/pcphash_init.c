@@ -65,7 +65,7 @@ IPP_OWN_DEFN (int, cpInitHash, (IppsHashState* pCtx, IppHashAlgId algID))
    #if (_IPP32E >= _IPP32E_L9)
       /* update processing function if Intel® SM3 instructions enabled */
       #if defined(_ENABLE_ALG_SM3_)
-         if (ippHashAlg_SM3 == algID && IsFeatureEnabled(ippCPUID_AVX2SM3)) {
+         if ((ippHashAlg_SM3 == algID) && IsFeatureEnabled(ippCPUID_AVX2SM3)) {
             HASH_FUNC(pCtx) = UpdateSM3ni;
          }
       #endif

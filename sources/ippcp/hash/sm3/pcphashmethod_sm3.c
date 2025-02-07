@@ -55,15 +55,7 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SM3, (void) )
    };
 
    method.hashInit   = sm3_hashInit;
-#if (_IPP32E >= _IPP32E_L9)
-   if (IsFeatureEnabled(ippCPUID_AVX2SM3)) {
-      method.hashUpdate = sm3_hashUpdate_ni;
-   }
-   else
-#endif
-   {
-      method.hashUpdate = sm3_hashUpdate;
-   }
+   method.hashUpdate = sm3_hashUpdate;
    method.hashOctStr = sm3_hashOctString;
    method.msgLenRep  = sm3_msgRep;
 

@@ -106,6 +106,18 @@
 %endif
 
 ;;
+;; if there is no outside assignment
+;; set _SM3_ENABLING_  based on CPU specification
+;;
+%ifndef _SM3_ENABLING_
+  %if (_IPP32E >= _IPP32E_L9 )
+    %assign _SM3_ENABLING_ _FEATURE_TICKTOCK_
+  %else
+    %assign _SM3_ENABLING_ _FEATURE_OFF_
+  %endif
+%endif
+
+;;
 ;; set _ADCOX_NI_ENABLING_
 ;;
 %ifdef _IPP_ADCX_NI_

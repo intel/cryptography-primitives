@@ -137,6 +137,8 @@ ippsHashMessage
 ippsHashMethodGetSize
 ippsHashMethodSet_MD5
 ippsHashMethodSet_SM3
+ippsHashMethodSet_SM3_NI
+ippsHashMethodSet_SM3_TT
 ippsHashMethodSet_SHA1
 ippsHashMethodSet_SHA1_NI
 ippsHashMethodSet_SHA1_TT
@@ -159,6 +161,8 @@ ippsHashMethodSet_SHA512_224
 ippsHashMethodSet_SHA512_224_NI
 ippsHashMethodSet_SHA512_224_TT
 ippsHashStateMethodSet_SM3
+ippsHashStateMethodSet_SM3_NI
+ippsHashStateMethodSet_SM3_TT
 ippsHashStateMethodSet_SHA256
 ippsHashStateMethodSet_SHA256_NI
 ippsHashStateMethodSet_SHA256_TT
@@ -179,6 +183,8 @@ ippsHashStateMethodSet_SHA512_224_NI
 ippsHashStateMethodSet_SHA512_224_TT
 ippsHashMethod_MD5
 ippsHashMethod_SM3
+ippsHashMethod_SM3_NI
+ippsHashMethod_SM3_TT
 ippsHashMethod_SHA1
 ippsHashMethod_SHA1_NI
 ippsHashMethod_SHA1_TT

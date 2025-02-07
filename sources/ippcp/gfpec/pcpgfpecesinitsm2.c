@@ -67,7 +67,7 @@ IPPFUN(IppStatus, ippsGFpECESInit_SM2, (IppsGFpECState* pEC, IppsECESState_SM2* 
          pState->pKdfHasher = (IppsHashState_rmf*)(((Ipp8u*)pState) + sizeof(IppsECESState_SM2) + pState->sharedSecretLen);
          pState->pTagHasher = (IppsHashState_rmf*)(((Ipp8u*)pState) + sizeof(IppsECESState_SM2) + pState->sharedSecretLen + sm3size);
 
-         ippsHashInit_rmf(pState->pKdfHasher, ippsHashMethod_SM3());
+         ippsHashInit_rmf(pState->pKdfHasher, ippsHashMethod_SM3_TT());
 
          pState->state = ECESAlgoInit;
 

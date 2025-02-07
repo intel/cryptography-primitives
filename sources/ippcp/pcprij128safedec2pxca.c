@@ -66,7 +66,8 @@ __IPPCP_INLINE Ipp8u getInvSboxValue(Ipp8u x)
    Ipp32u _x = x/sizeof(BNU_CHUNK_T);
    Ipp32u i;
    for(i=0; i<sizeof(RijEncSbox)/(sizeof(BNU_CHUNK_T)); i++) {
-      BNS_CHUNK_T mask = (BNS_CHUNK_T)cpIsEqu_ct(_x, i);
+      // volatile is needed to prevent the compiler from optimizing to keep the execution time constant
+      volatile BNS_CHUNK_T mask = (BNS_CHUNK_T)cpIsEqu_ct(_x, i);
       selection |= SboxEntry[i] & (BNU_CHUNK_T)mask;
    }
    selection >>= (x & SELECTION_BITS)*8;

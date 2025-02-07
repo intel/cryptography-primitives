@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2013 Intel Corporation
+* Copyright (C) 2025 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 //     Digesting message according to SM3
 // 
 //  Contents:
-//        ippsHashMethodSet_SM3()
+//        ippsHashMethodSet_SM3_NI()
 //
 */
 
@@ -33,28 +33,41 @@
 #include "hash/sm3/pcpsm3stuff.h"
 
 /*F*
-//    Name: ippsHashMethodSet_SM3
+//    Name: ippsHashMethodSet_SM3_NI
 //
-// Purpose: Setup SM3 method.
+// Purpose: Setup SM3 method optimized with SM3 instructions.
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pMethod == NULL
 //    ippStsNoErr             no errors
 //
 *F*/
-IPPFUN( IppStatus, ippsHashMethodSet_SM3, (IppsHashMethod* pMethod) )
+IPPFUN( IppStatus, ippsHashMethodSet_SM3_NI, (IppsHashMethod* pMethod) )
 {
    /* test pointers */
    IPP_BAD_PTR1_RET(pMethod);
+#if (_SM3_ENABLING_==_FEATURE_TICKTOCK_ || _SM3_ENABLING_==_FEATURE_ON_)
 
    pMethod->hashAlgId     = ippHashAlg_SM3;
    pMethod->hashLen       = IPP_SM3_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_SM3;
    pMethod->msgLenRepSize = MLR_SM3;
    pMethod->hashInit      = sm3_hashInit;
-   pMethod->hashUpdate    = sm3_hashUpdate;
+   pMethod->hashUpdate    = sm3_hashUpdate_ni;
    pMethod->hashOctStr    = sm3_hashOctString;
    pMethod->msgLenRep     = sm3_msgRep;
 
    return ippStsNoErr;
+#else
+   pMethod->hashAlgId     = ippHashAlg_Unknown;
+   pMethod->hashLen       = 0;
+   pMethod->msgBlkSize    = 0;
+   pMethod->msgLenRepSize = 0;
+   pMethod->hashInit      = 0;
+   pMethod->hashUpdate    = 0;
+   pMethod->hashOctStr    = 0;
+   pMethod->msgLenRep     = 0;
+
+   return ippStsNotSupportedModeErr;
+#endif
 }

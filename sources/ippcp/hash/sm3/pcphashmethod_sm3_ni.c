@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2013 Intel Corporation
+* Copyright (C) 2025 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,9 +21,8 @@
 //     Digesting message according to SM3
 // 
 //  Contents:
-//     cpFinalizeSM3()
-// 
-// 
+//        ippsHashMethod_SM3_NI()
+//
 */
 
 #include "owndefs.h"
@@ -33,23 +32,36 @@
 #include "pcptool.h"
 #include "hash/sm3/pcpsm3stuff.h"
 
-IPP_OWN_DEFN (void, cpFinalizeSM3, (DigestSHA1 pHash, const Ipp8u* inpBuffer, int inpLen, Ipp64u processedMsgLen))
+/*F*
+//    Name: ippsHashMethod_SM3_NI
+//
+// Purpose: Return SM3 method optimized with SM3 instructions.
+//
+// Returns:
+//          Pointer to SM3 hash-method.
+//
+*F*/
+IPPFUN( const IppsHashMethod*, ippsHashMethod_SM3_NI, (void) )
 {
-   /* local buffer and it length */
-   Ipp8u buffer[MBS_SM3*2];
-   int bufferLen = inpLen < (MBS_SM3-(int)MLR_SM3)? MBS_SM3 : MBS_SM3*2; 
+#if (_SM3_ENABLING_==_FEATURE_TICKTOCK_ || _SM3_ENABLING_==_FEATURE_ON_)
+   static IppsHashMethod method = {
+      ippHashAlg_SM3,
+      IPP_SM3_DIGEST_BITSIZE/8,
+      MBS_SM3,
+      MLR_SM3,
+      0,
+      0,
+      0,
+      0
+   };
 
-   /* copy rest of message into internal buffer */
-   CopyBlock(inpBuffer, buffer, inpLen);
+   method.hashInit   = sm3_hashInit;
+   method.hashUpdate = sm3_hashUpdate_ni; // SM3 instructions are used
+   method.hashOctStr = sm3_hashOctString;
+   method.msgLenRep  = sm3_msgRep;
 
-   /* pad message */
-   buffer[inpLen++] = 0x80;
-   PadBlock(0, buffer+inpLen, (cpSize)(bufferLen-inpLen-(int)MLR_SM3));
-
-   /* put processed message length in bits */
-   processedMsgLen = ENDIANNESS64(processedMsgLen<<3);
-   ((Ipp64u*)(buffer+bufferLen))[-1] = processedMsgLen;
-
-   /* complete hash computation */
-   UpdateSM3(pHash, buffer, bufferLen, sm3_cnt);
+   return &method;
+#else
+   return NULL;
+#endif
 }

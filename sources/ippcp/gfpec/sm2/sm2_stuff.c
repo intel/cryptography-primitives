@@ -61,7 +61,7 @@ IPP_OWN_DEFN(IppStatus, computeZa_user_id_hash_sm2, (Ipp8u * pZa_digest,
 
    static IppsHashState_rmf ctx;
 
-   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3());
+   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
 
    /* compute Za = SM3( ENTL || ID || a || b || xG || yG || xA || yA ) */
    /* ENLT */
@@ -142,7 +142,7 @@ IPP_OWN_DEFN(IppStatus, KDF_sm3, (Ipp8u * pKDF, int kdf_len, const Ipp8u *pZ, co
       int num_copy = IPP_SM3_DIGEST_BYTESIZE;
 
       static IppsHashState_rmf ctx;
-      ippsHashInit_rmf(&ctx, ippsHashMethod_SM3());
+      ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
 
       /* compute length K = Ha1 || Ha2 || ... */
       // step (b)

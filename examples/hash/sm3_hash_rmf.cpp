@@ -49,7 +49,8 @@ int main(void)
     IppStatus status = ippStsNoErr;
 
     /*! 1. Get the hash methods which is used */
-    const IppsHashMethod* hash_method = ippsHashMethod_SM3();
+    /* _TT (tick-tock) version of ippsHashMethod_SM3() function automatically switch on SM3 instructions, if possible*/
+    const IppsHashMethod* hash_method = ippsHashMethod_SM3_TT();
 
     /*! The digest size of the SM3 standard */
     Ipp32u hash_size = IPP_SM3_DIGEST_BYTESIZE;

@@ -231,8 +231,10 @@ __IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
       IPP_OWN_DECL (void, UpdateSHA256ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #endif
 
+#if (_SM3_ENABLING_ == _FEATURE_TICKTOCK_) || (_SM3_ENABLING_ == _FEATURE_ON_)
 #define UpdateSM3ni    OWNAPI(UpdateSM3ni)
    IPP_OWN_DECL (void, UpdateSM3ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#endif
 
 /* general methods */
 #define cpInitHash OWNAPI(cpInitHash)

@@ -77,7 +77,7 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Werror=format-security -Wunknown-pragmas")
 
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcf-protection=full -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcf-protection=full")
 
 if(NOT NONPIC_LIB)
   # Position Independent Code (PIC)
@@ -92,7 +92,7 @@ if(CODE_COVERAGE)
 endif()
 
 # Optimization level = 3, no-debug definition (turns off asserts), warning level = 3, treat warnings as errors
-set(CMAKE_C_FLAGS_RELEASE " -Ofast -DNDEBUG -Wall -Wconversion -Wno-unused-function -Werror")
+set(CMAKE_C_FLAGS_RELEASE " -O3 -ffast-math -DNDEBUG -Wall -Wconversion -Wno-unused-function -Werror")
 # Security flag that adds compile-time and run-time checks
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
 

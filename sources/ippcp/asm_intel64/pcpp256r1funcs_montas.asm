@@ -642,7 +642,7 @@ p256r1_mmull:
    mov   t2, qword [rel Lpoly+sizeof(qword)*2]
    mov   t3, qword [rel Lpoly+sizeof(qword)*3]
 
-   mov   t4,   acc4     ;; copy reducted result
+   mov   t4,   acc4     ;; copy reduced result
    mov   acc3, acc5
    mov   acc6, acc0
    mov   acc7, acc1
@@ -839,7 +839,7 @@ p256r1_mmulx:
    mov   t2, qword [rel Lpoly+sizeof(qword)*2]
    mov   t3, qword [rel Lpoly+sizeof(qword)*3]
 
-   mov   t4,   acc4     ;; copy reducted result
+   mov   t4,   acc4     ;; copy reduced result
    mov   acc3, acc5
    mov   acc6, acc0
    mov   acc7, acc1

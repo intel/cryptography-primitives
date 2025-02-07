@@ -30,7 +30,6 @@
 
 %if (_IPP32E >= _IPP32E_L9)
 
-
 segment .data align=IPP_ALIGN_FACTOR
 
 align 16
@@ -171,4 +170,4 @@ IPPASM cpSMS4_ECB_ni_256,PUBLIC
     ret
 ENDFUNC cpSMS4_ECB_ni_256
 
-%endif    ;; _IPP32E >= _IPP32E_L9
+%endif ;; _IPP32E >= _IPP32E_L9

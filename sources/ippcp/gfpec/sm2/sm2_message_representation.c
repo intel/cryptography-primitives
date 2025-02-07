@@ -88,7 +88,7 @@ IPPFUN(IppStatus, ippsGFpECMessageRepresentationSM2, (IppsBigNumState * pMsgDige
    /* e = SM3(Za || M) */
    static IppsHashState_rmf ctx;
 
-   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3());
+   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
    /* Za */
    ippsHashUpdate_rmf(Za, sizeof(Za), &ctx);
    /* M */

@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2013 Intel Corporation
+* Copyright (C) 2025 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 //     Digesting message according to SM3
 // 
 //  Contents:
-//        ippsHashMethodSet_SM3()
+//        ippsHashStateMethodSet_SM3_NI()
 //
 */
 
@@ -33,28 +33,44 @@
 #include "hash/sm3/pcpsm3stuff.h"
 
 /*F*
-//    Name: ippsHashMethodSet_SM3
+//    Name: ippsHashStateMethodSet_SM3_NI
 //
-// Purpose: Setup SM3 method.
+// Purpose: Setup SM3 method inside the hash state optimized with SM3 instructions.
 //
 // Returns:                Reason:
-//    ippStsNullPtrErr        pMethod == NULL
+//    ippStsNullPtrErr        pMethod == NULL or pState == NULL
 //    ippStsNoErr             no errors
 //
 *F*/
-IPPFUN( IppStatus, ippsHashMethodSet_SM3, (IppsHashMethod* pMethod) )
+IPPFUN( IppStatus, ippsHashStateMethodSet_SM3_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
 {
    /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+   IPP_BAD_PTR2_RET(pState, pMethod);
 
+   HASH_METHOD(pState) = pMethod;
+
+#if (_SM3_ENABLING_==_FEATURE_TICKTOCK_ || _SM3_ENABLING_==_FEATURE_ON_)
    pMethod->hashAlgId     = ippHashAlg_SM3;
    pMethod->hashLen       = IPP_SM3_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_SM3;
    pMethod->msgLenRepSize = MLR_SM3;
+
    pMethod->hashInit      = sm3_hashInit;
-   pMethod->hashUpdate    = sm3_hashUpdate;
+   pMethod->hashUpdate    = sm3_hashUpdate_ni;
    pMethod->hashOctStr    = sm3_hashOctString;
    pMethod->msgLenRep     = sm3_msgRep;
 
    return ippStsNoErr;
+#else
+   pMethod->hashAlgId     = ippHashAlg_Unknown;
+   pMethod->hashLen       = 0;
+   pMethod->msgBlkSize    = 0;
+   pMethod->msgLenRepSize = 0;
+   pMethod->hashInit      = 0;
+   pMethod->hashUpdate    = 0;
+   pMethod->hashOctStr    = 0;
+   pMethod->msgLenRep     = 0;
+
+   return ippStsNotSupportedModeErr;
+#endif
 }

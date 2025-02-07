@@ -516,7 +516,7 @@ p192r1_mmull:
    p192r1_mul_redstep acc1,acc0,acc4,acc3,acc2
 
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   mov   t0, acc3     ;; copy reducted result
+   mov   t0, acc3     ;; copy reduced result
    mov   t1, acc4
    mov   t2, acc0
 
@@ -619,7 +619,7 @@ p192r1_mmulx:
    p192r1_mul_redstep acc1,acc0,acc4,acc3,acc2
 
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   mov   t0, acc3     ;; copy reducted result
+   mov   t0, acc3     ;; copy reduced result
    mov   t1, acc4
    mov   t2, acc0
 

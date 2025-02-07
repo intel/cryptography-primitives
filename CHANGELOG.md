@@ -10,6 +10,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 Cmake build options `-DMERGED_BLD:BOOL=off -DMBX_PLATFORM_LIST="k1;l9"` may be used. Please refer to
 [BUILD.md](./BUILD.md) for the details.
 - Fixed AVX512 IFMA implementation (k1 branch) of SM2 signature and verification single-buffer algorithm. The optimized path is re-enabled.
+- Added `ippsHashMethod_SM3_NI` and `ippsHashMethod_SM3_TT` methods for SM3 hash algorithm optimization with the new SM3 instructions for Lunar Lake and Arrow Lake S CPUs. The runtime dispatch introduced in Intel(R) Cryptography Primitives Library 1.0.0 release `ippsHashMethod_SM3` is moved to `ippsHashMethod_SM3_TT` and the behavior of `ippsHashMethod` API is aligned with SHA hash family.
 
 ## Intel(R) Cryptography Primitives Library 1.0.1
 - Fixed an issue with invalid memory access for AES-GCM algorithm with Intel® Advanced Vector Extensions 2 (Intel® AVX2) vector extensions of Intel® AES New Instructions (Intel® AES-NI) in case of corner sizes.

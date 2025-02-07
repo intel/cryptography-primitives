@@ -249,19 +249,19 @@ IPP_OWN_DEFN(void, ifma_lnorm52_dual_p521, (fe521 pr1[], const fe521 a1, fe521 p
    group_madd52hi_i64((R), (R), (A), (BI)); \
    group_madd52lo_i64((R), (R), (A), (BJ));
 
-#define REDUCTION(R, U, REDUCT)                                                \
+#define REDUCTION(R, U, REDUCE)                                                \
    (U) = m256_permutexvar_i8(idx0, FE521_LO(R));                               \
    /* shift */                                                                 \
    FE521_LO(R)  = m256_alignr_i64(FE521_MID(R), FE521_LO(R), 1);               \
    FE521_MID(R) = m256_alignr_i64(FE521_HI(R), FE521_MID(R), 1);               \
    FE521_HI(R)  = m256_maskz_permutexvar_i8(mask_sr64, idx_sr64, FE521_HI(R)); \
    /* carry chunk 1 */                                                         \
-   FE521_LO(REDUCT) = m256_maskz_srai_i64(0x1, (U), DIGIT_SIZE_52);            \
+   FE521_LO(REDUCE) = m256_maskz_srai_i64(0x1, (U), DIGIT_SIZE_52);            \
    /* carry chunk 2 */                                                         \
    (U)              = m256_and_i64((U), filt_rad52);                           \
-   FE521_HI(REDUCT) = m256_maskz_add_i64(0x2, (U), (U));                       \
-   FE521_LO(R)      = m256_add_i64(FE521_LO(R), FE521_LO(REDUCT));             \
-   FE521_HI(R)      = m256_add_i64(FE521_HI(R), FE521_HI(REDUCT));
+   FE521_HI(REDUCE) = m256_maskz_add_i64(0x2, (U), (U));                       \
+   FE521_LO(R)      = m256_add_i64(FE521_LO(R), FE521_LO(REDUCE));             \
+   FE521_HI(R)      = m256_add_i64(FE521_HI(R), FE521_HI(REDUCE));
 
 IPP_OWN_DEFN(void, ifma_amm52_p521, (fe521 pr[], const fe521 a, const fe521 b))
 {
@@ -311,40 +311,40 @@ IPP_OWN_DEFN(void, ifma_amm52_p521, (fe521 pr[], const fe521 a, const fe521 b))
                                       23, 22, 21, 20, 19, 18, 17, 16,
                                       15, 14, 13, 12, 11, 10, 9, 8);
 
-   fe521 reduct;
-   FE521_SET(reduct) = m256_setzero_i64();
+   fe521 reduce;
+   FE521_SET(reduce) = m256_setzero_i64();
    m256i u;
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p0);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p1);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p2);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p3);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p4);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p5);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p6);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p7);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p8);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p9);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    fe521_add_no_red(r0, r0, p10);
 
@@ -608,8 +608,8 @@ IPP_OWN_DEFN(void, ifma_ams52_p521, (fe521 pr[], const fe521 a))
                 /* AI = */ a9, /* MMI = */ 0xE, /* MAI = */ 0xC,
                 /* AJ = */ a10, /* MMJ = */ 0xC, /* MAJ = */ 0x8)
 
-   fe521 reduct;
-   FE521_SET(reduct) = m256_setzero_i64();
+   fe521 reduce;
+   FE521_SET(reduce) = m256_setzero_i64();
    m256i u;
    const m256i filt_rad52 = m256_set1_i64(DIGIT_MASK_52);
    const m256i idx0       = m256_set_i8(REPL4(7, 6, 5, 4, 3, 2, 1, 0)); /* B[ 0] -> chunk1[0] */
@@ -619,37 +619,37 @@ IPP_OWN_DEFN(void, ifma_ams52_p521, (fe521 pr[], const fe521 a))
                                       31, 30, 29, 28, 27, 26, 25, 24,
                                       23, 22, 21, 20, 19, 18, 17, 16,
                                       15, 14, 13, 12, 11, 10, 9, 8);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_LO(r0, r0, p0);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_LO(r0, r0, p1);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_LO(r0, r0, p2);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_LO(r0, r0, p3);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_MID(r0, r0, p4);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_MID(r0, r0, p5);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_MID(r0, r0, p6);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_MID(r0, r0, p7);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_HI(r0, r0, p8);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    ADD_HI(r0, r0, p9);
-   REDUCTION(r0, u, reduct)
+   REDUCTION(r0, u, reduce)
 
    FE521_COPY(*pr, r0);
    return;

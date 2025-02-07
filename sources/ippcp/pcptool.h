@@ -28,9 +28,6 @@
 
 #include "pcpmask_ct.h"
 
-#define _NEW_COPY16_
-#define _NEW_XOR16_
-
 /* copy data block */
 __IPPCP_INLINE void CopyBlock(const void* pSrc, void* pDst, cpSize numBytes)
 {
@@ -48,9 +45,21 @@ __IPPCP_INLINE void CopyBlock8(const void* pSrc, void* pDst)
       ((Ipp8u*)pDst)[k] = ((Ipp8u*)pSrc)[k];
 }
 
-/* Because of the incorrect inlining with ICX compiler definition of CopyBlock16 function was moved to pcptool.c */
-#define CopyBlock16 OWNAPI(CopyBlock16)
-IPP_OWN_DECL (void, CopyBlock16, (const void* pSrc, void* pDst))
+/*
+ * copy data block of 16 bytes
+ * Note: source and destination are not required to be aligned to 16-byte boundaries
+*/
+__IPPCP_INLINE void CopyBlock16(const void* pSrc, void* pDst)
+{
+#if (_IPP > _IPP_PX || _IPP32E > _IPP32E_PX)
+    const __m128i src = _mm_loadu_si128((__m128i const*)pSrc);
+    _mm_storeu_si128((__m128i*)pDst, src);
+#else
+   int k;
+   for(k=0; k<16; k++ )
+      ((Ipp8u*)pDst)[k] = ((Ipp8u*)pSrc)[k];
+#endif
+}
 
 __IPPCP_INLINE void CopyBlock24(const void* pSrc, void* pDst)
 {
@@ -132,9 +141,26 @@ __IPPCP_INLINE void XorBlock8(const void* pSrc1, const void* pSrc2, void* pDst)
       d[k] = (Ipp8u)(p1[k] ^p2[k]);
 }
 
-// Because of the incorrect inlining definition of XorBlock16 function was moved to pcptool.c
-#define XorBlock16 OWNAPI(XorBlock16)
-IPP_OWN_DECL (void, XorBlock16, (const void* pSrc1, const void* pSrc2, void* pDst))
+/*
+ * xor data block of 16 bytes
+ * Note: sources and destination are not required to be aligned to 16-byte boundaries
+*/
+__IPPCP_INLINE void XorBlock16(const void* pSrc1, const void* pSrc2, void* pDst)
+{
+#if (_IPP > _IPP_PX || _IPP32E > _IPP32E_PX)
+    const __m128i p1 = _mm_loadu_si128((__m128i const*)pSrc1);
+    const __m128i p2 = _mm_loadu_si128((__m128i const*)pSrc2);
+    __m128i res = _mm_xor_si128(p1, p2);
+    _mm_storeu_si128((__m128i*)pDst, res);
+#else
+   const Ipp8u* p1 = (const Ipp8u*)pSrc1;
+   const Ipp8u* p2 = (const Ipp8u*)pSrc2;
+   Ipp8u* d  = (Ipp8u*)pDst;
+   int k;
+   for(k=0; k<16; k++ )
+      d[k] = (Ipp8u)(p1[k] ^p2[k]);
+#endif
+}
 
 __IPPCP_INLINE void XorBlock24(const void* pSrc1, const void* pSrc2, void* pDst)
 {

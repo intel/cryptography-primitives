@@ -92,7 +92,7 @@ IPPFUN(IppStatus, ippsAES_CMACUpdate,(const Ipp8u* pSrc, int len, IppsAES_CMACSt
    IPP_BAD_PTR1_RET(pState);
    /* test ID */
    IPP_BADARG_RET(!VALID_AESCMAC_ID(pState), ippStsContextMatchErr);
-   /* test input message and it's length */
+   /* test input message and its length */
    IPP_BADARG_RET((len<0 && pSrc), ippStsLengthErr);
    /* test source pointer */
    IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);

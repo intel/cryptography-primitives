@@ -55,15 +55,7 @@ IPPFUN( IppStatus, ippsHashStateMethodSet_SM3, (IppsHashState_rmf* pState, IppsH
    pMethod->msgLenRepSize = MLR_SM3;
 
    pMethod->hashInit      = sm3_hashInit;
-#if (_IPP32E >= _IPP32E_L9)
-   if (IsFeatureEnabled(ippCPUID_AVX2SM3)) {
-      pMethod->hashUpdate = sm3_hashUpdate_ni;
-   }
-   else
-#endif
-   {
-      pMethod->hashUpdate = sm3_hashUpdate;
-   }
+   pMethod->hashUpdate    = sm3_hashUpdate;
    pMethod->hashOctStr    = sm3_hashOctString;
    pMethod->msgLenRep     = sm3_msgRep;
 

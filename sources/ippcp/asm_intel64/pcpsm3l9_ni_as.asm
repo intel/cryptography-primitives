@@ -28,7 +28,7 @@
 %include "pcpvariant.inc"
 
 %if (_ENABLE_ALG_SM3_)
-%if (_IPP32E >= _IPP32E_L9)
+%if (_SM3_ENABLING_ == _FEATURE_ON_) || (_SM3_ENABLING_ == _FEATURE_TICKTOCK_)
 
 %xdefine hPtr    rdi
 %xdefine mPtr    rsi
@@ -226,5 +226,5 @@ align IPP_ALIGN_FACTOR
    ret
 ENDFUNC UpdateSM3ni
 
-%endif    ;; _IPP32E >= _IPP32E_L9
+%endif    ;;  %if (_SM3_ENABLING_ == _FEATURE_ON_) || (_SM3_ENABLING_ == _FEATURE_TICKTOCK_)
 %endif    ;; _ENABLE_ALG_SM3_

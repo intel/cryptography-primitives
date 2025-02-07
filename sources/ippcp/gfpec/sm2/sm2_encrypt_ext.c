@@ -171,7 +171,7 @@ IPPFUN(IppStatus, ippsGFpECEncryptSM2_Ext, (Ipp8u *pOut, int maxOutLen,
       /* step 7: C3 = Hash(x2 || M || y2) */
       static IppsHashState_rmf ctx;
 
-      ippsHashInit_rmf(&ctx, ippsHashMethod_SM3());
+      ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
       /* x2 */
       ippsHashUpdate_rmf((Ipp8u *)pX, elemBytes, &ctx);
       /* M */

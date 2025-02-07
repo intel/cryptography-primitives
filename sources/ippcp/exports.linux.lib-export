@@ -135,6 +135,8 @@ EXTERN (ippsHashMessage)
 EXTERN (ippsHashMethodGetSize)
 EXTERN (ippsHashMethodSet_MD5)
 EXTERN (ippsHashMethodSet_SM3)
+EXTERN (ippsHashMethodSet_SM3_NI)
+EXTERN (ippsHashMethodSet_SM3_TT)
 EXTERN (ippsHashMethodSet_SHA1)
 EXTERN (ippsHashMethodSet_SHA1_NI)
 EXTERN (ippsHashMethodSet_SHA1_TT)
@@ -157,6 +159,8 @@ EXTERN (ippsHashMethodSet_SHA512_224)
 EXTERN (ippsHashMethodSet_SHA512_224_NI)
 EXTERN (ippsHashMethodSet_SHA512_224_TT)
 EXTERN (ippsHashStateMethodSet_SM3)
+EXTERN (ippsHashStateMethodSet_SM3_NI)
+EXTERN (ippsHashStateMethodSet_SM3_TT)
 EXTERN (ippsHashStateMethodSet_SHA256)
 EXTERN (ippsHashStateMethodSet_SHA256_NI)
 EXTERN (ippsHashStateMethodSet_SHA256_TT)
@@ -177,6 +181,8 @@ EXTERN (ippsHashStateMethodSet_SHA512_224_NI)
 EXTERN (ippsHashStateMethodSet_SHA512_224_TT)
 EXTERN (ippsHashMethod_MD5)
 EXTERN (ippsHashMethod_SM3)
+EXTERN (ippsHashMethod_SM3_NI)
+EXTERN (ippsHashMethod_SM3_TT)
 EXTERN (ippsHashMethod_SHA1)
 EXTERN (ippsHashMethod_SHA1_NI)
 EXTERN (ippsHashMethod_SHA1_TT)
@@ -612,6 +618,8 @@ VERSION {
    ippsHashMethodGetSize;
    ippsHashMethodSet_MD5;
    ippsHashMethodSet_SM3;
+   ippsHashMethodSet_SM3_NI;
+   ippsHashMethodSet_SM3_TT;
    ippsHashMethodSet_SHA1;
    ippsHashMethodSet_SHA1_NI;
    ippsHashMethodSet_SHA1_TT;
@@ -634,6 +642,8 @@ VERSION {
    ippsHashMethodSet_SHA512_224_NI;
    ippsHashMethodSet_SHA512_224_TT;
    ippsHashStateMethodSet_SM3;
+   ippsHashStateMethodSet_SM3_NI;
+   ippsHashStateMethodSet_SM3_TT;
    ippsHashStateMethodSet_SHA256;
    ippsHashStateMethodSet_SHA256_NI;
    ippsHashStateMethodSet_SHA256_TT;
@@ -654,6 +664,8 @@ VERSION {
    ippsHashStateMethodSet_SHA512_224_TT;
    ippsHashMethod_MD5;
    ippsHashMethod_SM3;
+   ippsHashMethod_SM3_NI;
+   ippsHashMethod_SM3_TT;
    ippsHashMethod_SHA1;
    ippsHashMethod_SHA1_NI;
    ippsHashMethod_SHA1_TT;

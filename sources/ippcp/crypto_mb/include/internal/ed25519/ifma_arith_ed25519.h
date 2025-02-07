@@ -37,7 +37,7 @@ typedef struct ge52_mb_t {
     fe52_mb Z;
 } ge52_ext_mb;
 
-/* copmpleted: (X:Y:Z:T) satisfying x=X/Z, y=Y/T */
+/* completed: (X:Y:Z:T) satisfying x=X/Z, y=Y/T */
 typedef struct ge52_p1p1_mb_t {
     fe52_mb X;
     fe52_mb Y;

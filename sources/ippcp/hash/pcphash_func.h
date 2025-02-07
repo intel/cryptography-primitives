@@ -94,7 +94,11 @@ static cpHashProc cpHashProcFunc[] = {
    #endif
 
    #if defined(_ENABLE_ALG_SM3_)
-      UpdateSM3,
+      #if(_SM3_ENABLING_==_FEATURE_ON_)
+         UpdateSM3ni,
+      #else
+         UpdateSM3,
+      #endif
    #else
       NULL,
    #endif

@@ -437,6 +437,8 @@ IPPAPI(IppStatus, ippsHashMessage,(const Ipp8u* pMsg, int len, Ipp8u* pMD, IppHa
 IPP_DEPRECATED(MD5_DEPRECATED) \
 IPPAPI( const IppsHashMethod*, ippsHashMethod_MD5, (void) )
 IPPAPI( const IppsHashMethod*, ippsHashMethod_SM3, (void) )
+IPPAPI( const IppsHashMethod*, ippsHashMethod_SM3_NI, (void) )
+IPPAPI( const IppsHashMethod*, ippsHashMethod_SM3_TT, (void) )
 
 IPP_DEPRECATED(SHA1_DEPRECATED) \
 IPPAPI( const IppsHashMethod*, ippsHashMethod_SHA1,    (void) )
@@ -473,8 +475,12 @@ IPPAPI( IppStatus, ippsHashMethodGetSize, (int* pSize) )
 IPP_DEPRECATED(MD5_DEPRECATED) \
 IPPAPI( IppStatus, ippsHashMethodSet_MD5, (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SM3, (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SM3_NI, (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SM3_TT, (IppsHashMethod* pMethod) )
 
 IPPAPI( IppStatus, ippsHashStateMethodSet_SM3, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SM3_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SM3_TT, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
 
 IPP_DEPRECATED(SHA1_DEPRECATED) \
 IPPAPI( IppStatus, ippsHashMethodSet_SHA1,    (IppsHashMethod* pMethod) )

@@ -55,6 +55,6 @@ IPP_OWN_DEFN (void, cpFinalizeMD5, (DigestMD5 pHash, const Ipp8u* inpBuffer, int
    processedMsgLen <<= 3;
    ((Ipp64u*)(buffer+bufferLen))[-1] = processedMsgLen;
 
-   /* copmplete hash computation */
+   /* complete hash computation */
    UpdateMD5(pHash, buffer, bufferLen, MD5_cnt);
 }

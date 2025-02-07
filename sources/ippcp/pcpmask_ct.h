@@ -48,14 +48,6 @@
 //    cpIs_msb_ct(       sgn_char)     tests  7 bit of sgn_char
 */
 
-/* Disable optimization for Clang compiler to produce constant execution time code */
-#if defined( __clang__ ) && !defined (__INTEL_COMPILER)
-/* Disable optimization for _px, _w7, _s8 (ia32) and _px, _m7 and _n8 (intel64) code branches */
-#if !((_IPP>_IPP_S8) || (_IPP32E>_IPP32E_N8))
-   #pragma clang optimize off
-#endif
-#endif
-
 /* replace under mask: dst[] = replaceFlag? src[] : dst[] */
 __IPPCP_INLINE void cpMaskedReplace_ct(BNU_CHUNK_T* dst, const BNU_CHUNK_T* src, int len, BNU_CHUNK_T replaceMask)
 {
@@ -156,11 +148,5 @@ __IPPCP_INLINE Ipp8u cpSelect_ct_8u(BNU_CHUNK_T mask, Ipp8u a, Ipp8u b)
 {
    return (Ipp8u)cpSelect_ct(mask, a, b);
 }
-
-#if defined( __clang__ ) && !defined (__INTEL_COMPILER)
-#if !((_IPP>_IPP_S8) || (_IPP32E>_IPP32E_N8))
-   #pragma clang optimize on
-#endif
-#endif
 
 #endif /* _PCP_MASK_CT_H */

@@ -82,7 +82,7 @@ IPPFUN(IppStatus, ippsHashUpdate,(const Ipp8u* pSrc, int len, IppsHashState* pSt
 
       else {
          cpHashProc hashFunc = HASH_FUNC(pState);    /* processing function */
-         const void* pParam = HASH_FUNC_PAR(pState); /* and it's addition params */
+         const void* pParam = HASH_FUNC_PAR(pState); /* and its addition params */
          int mbs = pAttr->msgBlkSize;              /* data block size */
 
          /*

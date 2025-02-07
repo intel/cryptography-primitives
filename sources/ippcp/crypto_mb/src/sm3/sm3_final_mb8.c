@@ -85,7 +85,7 @@ mbx_status sm3_final_mb8(int8u* hash_pa[8], SM3_CTX_mb8* p_state)
         ((int64u*)(loc_buffer[i] + buffer_len[i]))[-1] = sum_msg_len[i];
     }
 
-    /* Copmplete hash computation */
+    /* Complete hash computation */
     sm3_avx512_mb8(HASH_VALUE(p_state), buffer_pa, buffer_len);
 
     /* Convert hash into big endian */

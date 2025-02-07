@@ -158,7 +158,7 @@ IPPFUN(IppStatus, ippsGFpECDecryptSM2_Ext, (Ipp8u *pOut, int maxOutLen,
          static IppsHashState_rmf ctx;
 
          Ipp8u u[IPP_SM3_DIGEST_BYTESIZE];
-         ippsHashInit_rmf(&ctx, ippsHashMethod_SM3());
+         ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
          /* x2 */
          ippsHashUpdate_rmf((Ipp8u *)pX, elemBytes, &ctx);
          /* M */
