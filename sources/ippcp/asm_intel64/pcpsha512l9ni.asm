@@ -78,7 +78,6 @@ IPPASM UpdateSHA512ni,PUBLIC
         ;; hash infrastructure (caller) sends the block size in bytes
         ;; the algorithm requires the number of 2^7=128 byte blocks
         shr             arg_num_blks, 7
-        or              arg_num_blks, arg_num_blks
         je              .done_hash
 
 ;; ===========================================================

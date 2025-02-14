@@ -67,11 +67,11 @@ static int GenerateSign(const Ipp8u* pMsg, int msgLen,  /* message representatio
 
         ippsGetOctString_BN(pSign, k, &bnP);
 
-        /* check the result before send it out (fault attack mitigatioin) */
+        /* check the result before send it out (fault attack mitigation) */
         if (pPubKey) {
             gsRSApub_cipher(&bnP, &bnP, pPubKey, pBuffer);
 
-            /* check signature before send it out (fault attack mitigatioin) */
+            /* check signature before send it out (fault attack mitigation) */
             if (0 != cpBN_cmp(&bnP, &bnC)) {
                 PadBlock(0, pSign, k);
                 result = 0;

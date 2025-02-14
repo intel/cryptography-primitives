@@ -49,12 +49,14 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SM3_NI, (void) )
       IPP_SM3_DIGEST_BITSIZE/8,
       MBS_SM3,
       MLR_SM3,
-      0,
-      0,
-      0,
-      0
+      NULL,
+      NULL,
+      NULL,
+      NULL,
    };
 
+   // don't merge `method` initialization with function pointers assignment
+   // to prevent relocations (indirect calls) to be generated in the binary
    method.hashInit   = sm3_hashInit;
    method.hashUpdate = sm3_hashUpdate_ni; // SM3 instructions are used
    method.hashOctStr = sm3_hashOctString;

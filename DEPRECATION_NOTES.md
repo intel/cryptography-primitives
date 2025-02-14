@@ -4,6 +4,20 @@ This document describes deprecated API in different Intel® Cryptography Primiti
 
 The deprecated API means it is obsolete and will be removed in one of future Intel® Cryptography Primitives Library releases. If you have any concerns, please use the following link for opening a ticket and providing feedback:  <https://supporttickets.intel.com.>
 
+## Intel® Cryptography Primitives Library v1.1.0
+
+### FIPS self-tests
+
+The common `fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size*` functions have been specialized for signing and signature verification.
+The memory footprint of the corresponding FIPS self-tests was reduced.
+
+| Deprecated                                                 | Recommended replacement                                | Context                                                                |
+| :--------------------------------------------------------- | :----------------------------------------------------: | :--------------------------------------------------------------------: |
+| fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys | fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size_keys   | Understand memory requirements of RSA PKCS1 v1.5 signature generation  |
+| fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size      | fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size        | Understand memory requirements of RSA PKCS1 v1.5 signature generation  |
+| fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys | fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size_keys | Understand memory requirements of RSA PKCS1 v1.5 signature verfication |
+| fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size      | fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size      | Understand memory requirements of RSA PKCS1 v1.5 signature verfication |
+
 ## Intel® Cryptography Primitives Library v1.0.0
 
 ### Service Functions

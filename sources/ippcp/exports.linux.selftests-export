@@ -514,6 +514,10 @@ EXTERN (fips_selftest_ippsHMACUpdate_rmf)
 EXTERN (fips_selftest_ippsHMACMessage_rmf)
 EXTERN (fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys)
 EXTERN (fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size)
+EXTERN (fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size_keys)
+EXTERN (fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size)
+EXTERN (fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size_keys)
+EXTERN (fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size)
 EXTERN (fips_selftest_ippsRSASign_PKCS1v15_rmf)
 EXTERN (fips_selftest_ippsRSAVerify_PKCS1v15_rmf)
 EXTERN (fips_selftest_ippsRSASignVerify_PSS_rmf_get_size_keys)
@@ -1052,6 +1056,10 @@ VERSION {
    fips_selftest_ippsHMACMessage_rmf;
    fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys;
    fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size;
+   fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size_keys;
+   fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size;
+   fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size_keys;
+   fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size;
    fips_selftest_ippsRSASign_PKCS1v15_rmf;
    fips_selftest_ippsRSAVerify_PKCS1v15_rmf;
    fips_selftest_ippsRSASignVerify_PSS_rmf_get_size_keys;

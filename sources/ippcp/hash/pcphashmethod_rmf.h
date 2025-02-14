@@ -33,7 +33,7 @@ IPP_OWN_FUNPTR (void, msgLenRepF, (Ipp8u* pDst, Ipp64u lenLo, Ipp64u lenHi))
 typedef struct _cpHashMethod_rmf {
    IppHashAlgId   hashAlgId;     /* algorithm ID */
    int            hashLen;       /* hash length in bytes */
-   int            msgBlkSize;    /* message blkock size in bytes */
+   int            msgBlkSize;    /* message block size in bytes */
    int            msgLenRepSize; /* length of processed msg length representation in bytes */
    hashInitF      hashInit;      /* set initial hash value */
    hashUpdateF    hashUpdate;    /* hash compressor */

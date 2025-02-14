@@ -50,12 +50,14 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA1_NI, (void) )
       IPP_SHA1_DIGEST_BITSIZE/8,
       MBS_SHA1,
       MLR_SHA1,
-      0,
-      0,
-      0,
-      0
+      NULL,
+      NULL,
+      NULL,
+      NULL,
    };
 
+   // don't merge `method` initialization with function pointers assignment
+   // to prevent relocations (indirect calls) to be generated in the binary
    method.hashInit   = sha1_hashInit;
    method.hashUpdate = sha1_ni_hashUpdate;
    method.hashOctStr = sha1_hashOctString;

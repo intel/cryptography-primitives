@@ -356,8 +356,6 @@ static void ams52x20_square_diagonal_mb4(__m256i* res, const int64u* inpA_mb)
     AL      = inpA[9];
     r2      = _mm256_madd52lo_epu64(r2, AL, inpA[10]);     // Sum(19)
     r3      = _mm256_madd52hi_epu64(r3, AL, inpA[10]);     // Sum(19)
-    AL      = inpA[10];
-    AL      = inpA[11];
     r0      = _mm256_add_epi64(r0, r0);                    // Double(17)
     r0      = _mm256_madd52hi_epu64(r0, inpA[8], inpA[8]); // Add square(17)
     res[17] = r0;
@@ -367,8 +365,7 @@ static void ams52x20_square_diagonal_mb4(__m256i* res, const int64u* inpA_mb)
     r2      = _mm256_add_epi64(r2, r2);                    // Double(19)
     r2      = _mm256_madd52hi_epu64(r2, inpA[9], inpA[9]); // Add square(19)
     res[19] = r2;
-    r0      = r3;
-    res[20] = r0;                                          // finish up 1st triangle
+    r0      = r3;                                          // finish up 1st triangle
 
     ASM("jmp l0\nl0:\n");
 

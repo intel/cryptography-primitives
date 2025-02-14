@@ -34,7 +34,7 @@
 ;;
 ;; assignments
 ;;
-%xdefine hA  eax  ;; hash values into GPR registers
+%xdefine hA  eax  ;; hash values into general purpose registers (GPRs)
 %xdefine hB  ebx
 %xdefine hC  ecx
 %xdefine hD  edx

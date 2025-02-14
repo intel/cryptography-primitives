@@ -53,12 +53,14 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA224_TT, (void) )
       IPP_SHA224_DIGEST_BITSIZE/8,
       MBS_SHA256,
       MLR_SHA256,
-      0,
-      0,
-      0,
-      0
+      NULL,
+      NULL,
+      NULL,
+      NULL,
    };
 
+   // don't merge `method` initialization with function pointers assignment
+   // to prevent relocations (indirect calls) to be generated in the binary
    method.hashInit   = sha224_hashInit;
    method.hashUpdate = sha256_hashUpdate;
    method.hashOctStr = sha224_hashOctString;

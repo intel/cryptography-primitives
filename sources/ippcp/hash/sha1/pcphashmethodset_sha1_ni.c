@@ -65,10 +65,10 @@ IPPFUN( IppStatus, ippsHashMethodSet_SHA1_NI, (IppsHashMethod* pMethod) )
    pMethod->hashLen       = 0;
    pMethod->msgBlkSize    = 0;
    pMethod->msgLenRepSize = 0;
-   pMethod->hashInit      = 0;
-   pMethod->hashUpdate    = 0;
-   pMethod->hashOctStr    = 0;
-   pMethod->msgLenRep     = 0;
+   pMethod->hashInit      = NULL;
+   pMethod->hashUpdate    = NULL;
+   pMethod->hashOctStr    = NULL;
+   pMethod->msgLenRep     = NULL;
 
    return ippStsNotSupportedModeErr;
 #endif

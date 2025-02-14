@@ -90,6 +90,9 @@ IPPASM cpSMS4_SetRoundKeys_ni,PUBLIC
     %assign i (i + 1)
     %endrep
 
+    ; zeroize
+    vpxor xmm0, xmm0
+
     REST_XMM_AVX
     REST_GPR
     ret
@@ -126,6 +129,9 @@ IPPASM cpSMS4_ECB_ni,PUBLIC
 
     vpshufb xmm0, [rel out_shufb]
     vmovdqu [pOut], xmm0
+
+    ; zeroize
+    vpxor xmm0, xmm0
 
     REST_XMM_AVX
     REST_GPR
@@ -164,6 +170,10 @@ IPPASM cpSMS4_ECB_ni_256,PUBLIC
 
     vpshufb ymm0, [rel out_shufb]
     vmovdqu [pOut], ymm0
+
+    ; zeroize
+    vpxor ymm0, ymm0
+    vpxor ymm1, ymm1
 
     REST_XMM_AVX
     REST_GPR

@@ -549,7 +549,7 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
-        _mm512_storeu_si512((__m512i*)loc_out[13], _mm512_xor_si512(TMP[1], TWEAK[13]));
+        _mm512_storeu_si512((__m512i*)loc_out[12], _mm512_xor_si512(TMP[0], TWEAK[12]));
         _mm512_storeu_si512((__m512i*)loc_out[13], _mm512_xor_si512(TMP[1], TWEAK[13]));
         _mm512_storeu_si512((__m512i*)loc_out[14], _mm512_xor_si512(TMP[2], TWEAK[14]));
         _mm512_storeu_si512((__m512i*)loc_out[15], _mm512_xor_si512(TMP[3], TWEAK[15]));

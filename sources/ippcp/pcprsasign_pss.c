@@ -202,7 +202,7 @@ IPPFUN(IppStatus, ippsRSASign_PSS,(const Ipp8u* pMsg,  int msgLen,
       if(!pPubKey)
          return ippStsNoErr;
 
-      /* check the result before send it out (fault attack mitigatioin) */
+      /* check the result before send it out (fault attack mitigation) */
       else {
          gsRSApub_cipher(&bnP, &bnP, pPubKey, pBuffer);
          if(0==cpBN_cmp(&bnP, &bnC))
