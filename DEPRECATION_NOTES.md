@@ -15,8 +15,8 @@ The memory footprint of the corresponding FIPS self-tests was reduced.
 | :--------------------------------------------------------- | :----------------------------------------------------: | :--------------------------------------------------------------------: |
 | fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys | fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size_keys   | Understand memory requirements of RSA PKCS1 v1.5 signature generation  |
 | fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size      | fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size        | Understand memory requirements of RSA PKCS1 v1.5 signature generation  |
-| fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys | fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size_keys | Understand memory requirements of RSA PKCS1 v1.5 signature verfication |
-| fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size      | fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size      | Understand memory requirements of RSA PKCS1 v1.5 signature verfication |
+| fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys | fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size_keys | Understand memory requirements of RSA PKCS1 v1.5 signature verification |
+| fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size      | fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size      | Understand memory requirements of RSA PKCS1 v1.5 signature verification |
 
 ## Intel® Cryptography Primitives Library v1.0.0
 

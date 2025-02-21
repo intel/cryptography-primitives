@@ -14,16 +14,15 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SM3
-// 
+//
 //  Contents:
 //     SM3 methods and constants
-// 
-// 
+//
 */
 
 #include "owndefs.h"

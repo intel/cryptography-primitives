@@ -23,10 +23,8 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_get_tag_mb16)(int8u* pa_tag[SM4_LINES],
                                               SM4_CCM_CTX_mb16* p_context)
 {
     int buf_no;
-    mbx_status16 status   = 0;
-    int16u mb_mask        = 0xFFFF;
-    int64u* processed_len = SM4_CCM_CONTEXT_PROCESSED_LEN(p_context);
-    int64u* msg_len       = SM4_CCM_CONTEXT_MSG_LEN(p_context);
+    mbx_status16 status = 0;
+    int16u mb_mask      = 0xFFFF;
 
     /* Test input pointers */
     if (NULL == pa_tag || NULL == tag_len || NULL == p_context) {
@@ -54,12 +52,6 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_get_tag_mb16)(int8u* pa_tag[SM4_LINES],
             if (tag_len[buf_no] < 4 || tag_len[buf_no] > 16 || tag_len[buf_no] & 0x1) {
                 status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
                 mb_mask &= ~(0x1 << buf_no);
-            } else {
-                /* Check if total processed length is not equal to total message length passed at init */
-                if (processed_len[buf_no] != msg_len[buf_no]) {
-                    status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-                    mb_mask &= ~(0x1 << buf_no);
-                }
             }
         }
     }

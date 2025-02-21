@@ -152,6 +152,7 @@ List of CPU feature subsets that the library has special optimizations for:
 - Intel AVX-512 IFMA
 - Intel AVX-512 GFNI
 - SM3
+- SM4
 - SHA512
 
  > **NOTE:** For some features there is also an opportunity to force their dispatching inside the 1CPU libraries manually during the compile time. For more information please, refer to [common for all operating systems CMake build options](./BUILD.md/#common-for-all-operating-systems).

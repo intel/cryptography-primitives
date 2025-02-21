@@ -21,16 +21,7 @@
 //     Digesting message according to SHA256
 //
 //  Contents:
-//     ippsSHA256GetSize()
-//     ippsSHA256Init()
-//     ippsSHA256Pack()
-//     ippsSHA256Unpack()
-//     ippsSHA256Duplicate()
-//     ippsSHA256Update()
-//     ippsSHA256GetTag()
-//     ippsSHA256Final()
-//     ippsSHA256MessageDigest()
-//
+//     SHA256 methods and constants
 //
 */
 

@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SHA1
-// 
+//
 //  Contents:
-//        SHA1 stuff
+//        SHA1 methods and constants
 //
 */
 
