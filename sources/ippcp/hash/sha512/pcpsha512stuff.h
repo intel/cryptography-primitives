@@ -21,7 +21,8 @@
 //     SHA512 message digest
 //
 //  Contents:
-//     SHA512 methods and constants
+//     SHA512 stuff
+//
 //
 */
 

@@ -14,18 +14,18 @@
 * limitations under the License.
 *************************************************************************/
 
-/*
-//
+/* 
+// 
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to MD5
 //     (derived from the RSA Data Security, Inc. MD5 Message-Digest Algorithm)
-//
+// 
 //     Equivalent code is available from RFC 1321.
-//
+// 
 //  Contents:
-//    MD5 methods and constants
-//
+//    MD4 methods and constants
+// 
 */
 
 #include "owndefs.h"
