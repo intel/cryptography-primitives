@@ -31,9 +31,11 @@ typedef int8u ed25519_private_key[32];
 // pa_public_key[]   array of pointers to the public keys
 // pa_private_key[]  array of pointers to the public keys Y-coordinates
 */
-MBXAPI(mbx_status,
-       mbx_ed25519_public_key_mb8,
-       (ed25519_public_key * pa_public_key[8], const ed25519_private_key* const pa_private_key[8]))
+/* clang-format off */
+MBXAPI(mbx_status, mbx_ed25519_public_key_mb8,(
+        ed25519_public_key* pa_public_key[8],
+        const ed25519_private_key* const pa_private_key[8]))
+/* clang-format on */
 
 /*
 // Computes ed25519 signature
@@ -44,14 +46,15 @@ MBXAPI(mbx_status,
 // pa_private_key[]  array of pointers to the signer's private keys
 // pa_public_key[]   array of pointers to the signer's public keys
 */
-MBXAPI(mbx_status,
-       mbx_ed25519_sign_mb8,
-       (ed25519_sign_component * pa_sign_r[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_ed25519_sign_mb8,(
+        ed25519_sign_component* pa_sign_r[8],
         ed25519_sign_component* pa_sign_s[8],
         const int8u* const pa_msg[8],
         const int32u msgLen[8],
         const ed25519_private_key* const pa_private_key[8],
         const ed25519_public_key* const pa_public_key[8]))
+/* clang-format on */
 
 /*
 // Verifies ed25519 signature
@@ -61,13 +64,13 @@ MBXAPI(mbx_status,
 // msgLen[]          array of signed messages lengths
 // pa_public_key[]   array of pointers to the signer's public keys
 */
-MBXAPI(mbx_status,
-       mbx_ed25519_verify_mb8,
-       (const ed25519_sign_component* const pa_sign_r[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_ed25519_verify_mb8,(
+        const ed25519_sign_component* const pa_sign_r[8],
         const ed25519_sign_component* const pa_sign_s[8],
         const int8u* const pa_msg[8],
         const int32u msgLen[8],
         const ed25519_public_key* const pa_public_key[8]))
-
+/* clang-format on */
 
 #endif /* ED25519_H */

@@ -41,23 +41,25 @@
 // output public key is represented by (X:Y:Z) projective Jacobian coordinates
 */
 #ifndef BN_OPENSSL_DISABLE
-MBXAPI(mbx_status,
-       mbx_nistp256_ecpublic_key_ssl_mb8,
-       (BIGNUM * pa_pubx[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecpublic_key_ssl_mb8,(
+        BIGNUM* pa_pubx[8],
         BIGNUM* pa_puby[8],
         BIGNUM* pa_pubz[8],
         const BIGNUM* const pa_skey[8],
         int8u* pBuffer))
+/* clang-format on */
 #endif // BN_OPENSSL_DISABLE
 
-
-MBXAPI(mbx_status,
-       mbx_nistp256_ecpublic_key_mb8,
-       (int64u * pa_pubx[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecpublic_key_mb8,(
+        int64u* pa_pubx[8],
         int64u* pa_puby[8],
         int64u* pa_pubz[8],
         const int64u* const pa_skey[8],
         int8u* pBuffer))
+/* clang-format on */
+
 /*
 // Computes shared key
 // pa_shared_key[]   array of pointers to the shared keys
@@ -71,26 +73,26 @@ MBXAPI(mbx_status,
 // input party's public key is represented by (X:Y:Z) projective Jacobian coordinates
 */
 #ifndef BN_OPENSSL_DISABLE
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdh_ssl_mb8,
-       (int8u * pa_shared_key[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdh_ssl_mb8,(
+        int8u* pa_shared_key[8],
         const BIGNUM* const pa_skey[8],
         const BIGNUM* const pa_pubx[8],
         const BIGNUM* const pa_puby[8],
         const BIGNUM* const pa_pubz[8],
         int8u* pBuffer))
+/* clang-format on */
 #endif // BN_OPENSSL_DISABLE
 
-
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdh_mb8,
-       (int8u * pa_shared_key[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdh_mb8,(
+        int8u* pa_shared_key[8],
         const int64u* const pa_skey[8],
         const int64u* const pa_pubx[8],
         const int64u* const pa_puby[8],
         const int64u* const pa_pubz[8],
         int8u* pBuffer))
-
+/* clang-format on */
 
 /*
 // ECDSA signature generation
@@ -103,12 +105,14 @@ MBXAPI(mbx_status,
 // pa_eph_skey[]     array of pointers to the signer's ephemeral private keys
 // pBuffer           pointer to the scratch buffer
 */
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdsa_sign_setup_mb8,
-       (int64u * pa_inv_eph_skey[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdsa_sign_setup_mb8,(
+        int64u* pa_inv_eph_skey[8],
         int64u* pa_sign_rp[8],
         const int64u* const pa_eph_skey[8],
         int8u* pBuffer))
+/* clang-format on */
+
 /*
 // computes ECDSA signature
 //
@@ -120,15 +124,17 @@ MBXAPI(mbx_status,
 // pa_reg_skey[]     array of pointers to the regular signer's ephemeral private keys
 // pBuffer           pointer to the scratch buffer
 */
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdsa_sign_complete_mb8,
-       (int8u * pa_sign_r[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdsa_sign_complete_mb8,(
+        int8u* pa_sign_r[8],
         int8u* pa_sign_s[8],
         const int8u* const pa_msg[8],
         const int64u* const pa_sgn_rp[8],
         const int64u* const pa_inv_eph_skey[8],
         const int64u* const pa_reg_skey[8],
         int8u* pBuffer))
+/* clang-format on */
+
 /*
 // Computes ECDSA signature
 // pa_sign_r[]       array of pointers to the computed r-components of the signatures
@@ -138,14 +144,15 @@ MBXAPI(mbx_status,
 // pa_reg_skey[]     array of pointers to the signer's regular private keys
 // pBuffer           pointer to the scratch buffer
 */
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdsa_sign_mb8,
-       (int8u * pa_sign_r[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdsa_sign_mb8,(
+        int8u* pa_sign_r[8],
         int8u* pa_sign_s[8],
         const int8u* const pa_msg[8],
         const int64u* const pa_eph_skey[8],
         const int64u* const pa_reg_skey[8],
         int8u* pBuffer))
+/* clang-format on */
 
 /*
 // Verifies ECDSA signature
@@ -157,53 +164,60 @@ MBXAPI(mbx_status,
 // pa_pubz[]         array of pointers to the signer's public keys Z-coordinates  (or NULL, if affine coordinate requested)
 // pBuffer           pointer to the scratch buffer
 */
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdsa_verify_mb8,
-       (const int8u* const pa_sign_r[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdsa_verify_mb8,(
+        const int8u* const pa_sign_r[8],
         const int8u* const pa_sign_s[8],
         const int8u* const pa_msg[8],
         const int64u* const pa_pubx[8],
         const int64u* const pa_puby[8],
         const int64u* const pa_pubz[8],
         int8u* pBuffer))
+/* clang-format on */
+
 /*
 // OpenSSL's specific similar APIs
 */
+
 #ifndef BN_OPENSSL_DISABLE
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdsa_sign_setup_ssl_mb8,
-       (BIGNUM * pa_inv_eph_skey[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdsa_sign_setup_ssl_mb8,(
+        BIGNUM* pa_inv_eph_skey[8],
         BIGNUM* pa_sign_pr[8],
         const BIGNUM* const pa_eph_skey[8],
         int8u* pBuffer))
+/* clang-format on */
 
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdsa_sign_complete_ssl_mb8,
-       (int8u * pa_sign_r[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdsa_sign_complete_ssl_mb8,(
+        int8u* pa_sign_r[8],
         int8u* pa_sign_s[8],
         const int8u* const pa_msg[8],
         const BIGNUM* const pa_sgn_rp[8],
         const BIGNUM* const pa_inv_eph_skey[8],
         const BIGNUM* const pa_reg_skey[8],
         int8u* pBuffer))
+/* clang-format on */
 
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdsa_sign_ssl_mb8,
-       (int8u * pa_sign_r[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdsa_sign_ssl_mb8,(
+        int8u* pa_sign_r[8],
         int8u* pa_sign_s[8],
         const int8u* const pa_msg[8],
         const BIGNUM* const pa_eph_skey[8],
         const BIGNUM* const pa_reg_skey[8],
         int8u* pBuffer))
+/* clang-format on */
 
-MBXAPI(mbx_status,
-       mbx_nistp256_ecdsa_verify_ssl_mb8,
-       (const ECDSA_SIG* const pa_sig[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_nistp256_ecdsa_verify_ssl_mb8,(
+        const ECDSA_SIG* const pa_sig[8],
         const int8u* const pa_msg[8],
         const BIGNUM* const pa_pubx[8],
         const BIGNUM* const pa_puby[8],
         const BIGNUM* const pa_pubz[8],
         int8u* pBuffer))
+/* clang-format on */
 
 #endif // BN_OPENSSL_DISABLE
 #endif /* EC_NISTP256_H */

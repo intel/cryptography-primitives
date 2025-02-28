@@ -23,25 +23,27 @@
 #ifndef BN_OPENSSL_DISABLE
 #include <openssl/bn.h>
 
-MBXAPI(mbx_status,
-       mbx_rsa_public_ssl_mb8,
-       (const int8u* const from_pa[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_rsa_public_ssl_mb8,(
+        const int8u* const from_pa[8],
         int8u* const to_pa[8],
         const BIGNUM* const e_pa[8],
         const BIGNUM* const n_pa[8],
         int expected_rsa_bitsize))
+/* clang-format on */
 
-MBXAPI(mbx_status,
-       mbx_rsa_private_ssl_mb8,
-       (const int8u* const from_pa[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_rsa_private_ssl_mb8,(
+        const int8u* const from_pa[8],
         int8u* const to_pa[8],
         const BIGNUM* const d_pa[8],
         const BIGNUM* const n_pa[8],
         int expected_rsa_bitsize))
+/* clang-format on */
 
-MBXAPI(mbx_status,
-       mbx_rsa_private_crt_ssl_mb8,
-       (const int8u* const from_pa[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_rsa_private_crt_ssl_mb8,(
+        const int8u* const from_pa[8],
         int8u* const to_pa[8],
         const BIGNUM* const p_pa[8],
         const BIGNUM* const q_pa[8],
@@ -49,12 +51,13 @@ MBXAPI(mbx_status,
         const BIGNUM* const dq_pa[8],
         const BIGNUM* const iq_pa[8],
         int expected_rsa_bitsize))
+/* clang-format on */
 #endif /* BN_OPENSSL_DISABLE */
-
 
 /*
 // rsa cp methods
 */
+
 typedef struct _ifma_rsa_method mbx_RSA_Method;
 
 /* rsa public key operation */
@@ -80,29 +83,30 @@ MBXAPI(const mbx_RSA_Method*, mbx_RSA_private_crt_Method, (int rsaBitsize))
 
 MBXAPI(int, mbx_RSA_Method_BufSize, (const mbx_RSA_Method* m))
 
-
-MBXAPI(mbx_status,
-       mbx_rsa_public_mb8,
-       (const int8u* const from_pa[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_rsa_public_mb8,(
+        const int8u* const from_pa[8],
         int8u* const to_pa[8],
         const int64u* const n_pa[8],
         int rsaBitlen,
         const mbx_RSA_Method* m,
         int8u* pBuffer))
+/* clang-format on */
 
-MBXAPI(mbx_status,
-       mbx_rsa_private_mb8,
-       (const int8u* const from_pa[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_rsa_private_mb8,(
+        const int8u* const from_pa[8],
         int8u* const to_pa[8],
         const int64u* const d_pa[8],
         const int64u* const n_pa[8],
         int rsaBitlen,
         const mbx_RSA_Method* m,
         int8u* pBuffer))
+/* clang-format on */
 
-MBXAPI(mbx_status,
-       mbx_rsa_private_crt_mb8,
-       (const int8u* const from_pa[8],
+/* clang-format off */
+MBXAPI(mbx_status, mbx_rsa_private_crt_mb8,(
+        const int8u* const from_pa[8],
         int8u* const to_pa[8],
         const int64u* const p_pa[8],
         const int64u* const q_pa[8],
@@ -112,5 +116,6 @@ MBXAPI(mbx_status,
         int rsaBitlen,
         const mbx_RSA_Method* m,
         int8u* pBuffer))
+/* clang-format on */
 
 #endif /* RSA_H */

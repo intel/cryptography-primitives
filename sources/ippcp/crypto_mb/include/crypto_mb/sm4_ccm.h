@@ -89,15 +89,16 @@ typedef struct _sm4_ccm_context_mb16 SM4_CCM_CTX_mb16;
  *
  * @return Bitmask of operation status
  */
-
-MBXAPI(mbx_status16,
-       mbx_sm4_ccm_init_mb16,
-       (const sm4_key* const pa_key[SM4_LINES],
+/* clang-format off */
+MBXAPI(mbx_status16, mbx_sm4_ccm_init_mb16,(
+        const sm4_key* const pa_key[SM4_LINES],
         const int8u* const pa_iv[SM4_LINES],
         const int iv_len[SM4_LINES],
         const int tag_len[SM4_LINES],
         const int64u msg_len[SM4_LINES],
         SM4_CCM_CTX_mb16* p_context))
+/* clang-format on */
+
 /*
  * Digests additional authenticated data (AAD) for 16 buffers
  *
@@ -107,11 +108,13 @@ MBXAPI(mbx_status16,
  *
  * @return Bitmask of operation status
  */
-MBXAPI(mbx_status16,
-       mbx_sm4_ccm_update_aad_mb16,
-       (const int8u* const pa_aad[SM4_LINES],
+/* clang-format off */
+MBXAPI(mbx_status16, mbx_sm4_ccm_update_aad_mb16,(
+        const int8u* const pa_aad[SM4_LINES],
         const int aad_len[SM4_LINES],
         SM4_CCM_CTX_mb16* p_context))
+/* clang-format on */
+
 /*
  * Retrieves authentication tag for 16 buffers
  *
@@ -121,9 +124,13 @@ MBXAPI(mbx_status16,
  *
  * @return Bitmask of operation status
  */
-MBXAPI(mbx_status16,
-       mbx_sm4_ccm_get_tag_mb16,
-       (int8u * pa_tag[SM4_LINES], const int tag_len[SM4_LINES], SM4_CCM_CTX_mb16* p_context))
+/* clang-format off */
+MBXAPI(mbx_status16, mbx_sm4_ccm_get_tag_mb16,(
+        int8u* pa_tag[SM4_LINES],
+        const int tag_len[SM4_LINES],
+        SM4_CCM_CTX_mb16* p_context))
+/* clang-format on */
+
 /*
  * Encrypts 16 buffers with SM4-CCM.
  *
@@ -134,12 +141,14 @@ MBXAPI(mbx_status16,
  *
  * @return Bitmask of operation status
  */
-MBXAPI(mbx_status16,
-       mbx_sm4_ccm_encrypt_mb16,
-       (int8u * pa_out[SM4_LINES],
+/* clang-format off */
+MBXAPI(mbx_status16, mbx_sm4_ccm_encrypt_mb16,(
+        int8u* pa_out[SM4_LINES],
         const int8u* const pa_in[SM4_LINES],
         const int in_len[SM4_LINES],
         SM4_CCM_CTX_mb16* p_context))
+/* clang-format on */
+
 /*
  * Decrypts 16 buffers with SM4-CCM.
  *
@@ -150,11 +159,12 @@ MBXAPI(mbx_status16,
  *
  * @return Bitmask of operation status
  */
-MBXAPI(mbx_status16,
-       mbx_sm4_ccm_decrypt_mb16,
-       (int8u * pa_out[SM4_LINES],
+/* clang-format off */
+MBXAPI(mbx_status16, mbx_sm4_ccm_decrypt_mb16,(
+        int8u* pa_out[SM4_LINES],
         const int8u* const pa_in[SM4_LINES],
         const int in_len[SM4_LINES],
         SM4_CCM_CTX_mb16* p_context))
+/* clang-format on */
 
 #endif /* SM4_CCM_H */
