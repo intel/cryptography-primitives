@@ -2,6 +2,9 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 1.1.1
+- Fixed setting the `method.hashUpdate` variable twice in `ippsHashMethod_SHA256_TT` implementation. In a multithreaded environment this destroyed memory caches. Note that to make the code cleaner I used an early return in the special `sha256_ni_hashUpdate` case. Fixes intel/linux-sgx#1073
+
 ## Intel(R) Cryptography Primitives Library 1.1.0
 
 - Added single buffer SM4 (former SMS4) algorithm with the new SM4 instructions for Lunar Lake and Arrow Lake S CPUs.
