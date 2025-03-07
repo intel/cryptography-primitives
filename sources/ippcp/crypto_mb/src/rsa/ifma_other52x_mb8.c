@@ -2415,21 +2415,6 @@ void ifma_montRR52x_mb8(int64u pRR[][8], int64u pM[][8], int convBitLen)
 
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
 
-__MBX_INLINE __m256i _mm256_srai_epi64_wrapper(__m256i A, const int imm)
-{
-    const __m256i sign_bit_mask    = _mm256_and_si256(A, _mm256_set1_epi64x(1ULL << 63));
-    const __m256i is_not_sign_mask = _mm256_cmpeq_epi64(sign_bit_mask, _mm256_setzero_si256());
-    const __m256i shifted_in_bits  = _mm256_set1_epi64x(0xFFFFFFFFFFFFFFFFULL << (64 - imm));
-    const __m256i or_mask          = _mm256_andnot_si256(is_not_sign_mask, shifted_in_bits);
-
-    /* logical shift right */
-    A = _mm256_srli_epi64(A, imm);
-    /* put sign bits into the most significant imm number of bits */
-    A = _mm256_or_si256(A, or_mask);
-
-    return A;
-}
-
 __MBX_INLINE __m256i _mm256_cvtpd_epi64_wrapper(__m256d A)
 {
     const __m128d lo = _mm256_castpd256_pd128(A);

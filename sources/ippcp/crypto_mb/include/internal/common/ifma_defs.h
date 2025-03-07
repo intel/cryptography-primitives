@@ -57,6 +57,13 @@
 #define MB_FUNC_NAME(name) name##mb4
 #endif
 
+/* generic status function */
+#if (SIMD_LEN == 512)
+#define MBX_STS_BY_MASK_GENERIC MBX_SET_STS_BY_MASK
+#else
+#define MBX_STS_BY_MASK_GENERIC MBX_SET_STS_BY_U64
+#endif
+
 #define SIMD_TYPE(LEN) typedef __m##LEN##i U64;
 
 /* max internal data bitsize */
@@ -84,6 +91,12 @@
 #define REP2_DECL(a) a, a
 #define REP4_DECL(a) REP2_DECL(a), REP2_DECL(a)
 #define REP8_DECL(a) REP4_DECL(a), REP4_DECL(a)
+/* repetitions for a specific ISA (applicable for mb8 and mb4) */
+#if (SIMD_LEN == 512)
+#define REP_NUM_BUFF_DECL(a) REP8_DECL(a)
+#else
+#define REP_NUM_BUFF_DECL(a) REP4_DECL(a)
+#endif
 
 /* define directive for inline assembly */
 #ifdef __GNUC__

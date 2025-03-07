@@ -16,7 +16,7 @@
 
 #include <internal/ecnist/ifma_arith_p256.h>
 
-#if (_MBX >= _MBX_K1)
+#if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
 
 /*=====================================================================
 
@@ -259,8 +259,12 @@ void MB_FUNC_NAME(ifma_ams52x5_)(U64 r[], const U64 a[], const U64 m[], const in
     r[3] = res8;
     r[4] = res9;
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*=====================================================================
+
+ General 256-bit operations - add & sub & neg
+
+=====================================================================*/
 
 /* R = (A+B) mod M */
 void MB_FUNC_NAME(ifma_add52x5_)(U64 R[], const U64 A[], const U64 B[], const U64 M[])
@@ -292,7 +296,7 @@ void MB_FUNC_NAME(ifma_add52x5_)(U64 R[], const U64 A[], const U64 B[], const U6
     NORM_ASHIFTR(t, 3, 4)
 
     /* condition mask t4<0? (-1) : 0 */
-    __mb_mask cmask = cmp64_mask(t4, get_zero64(), _MM_CMPINT_LT);
+    __mb_mask cmask = cmplt64_mask(t4, get_zero64());
 
     R[0] = cmov_U64(t0, r0, cmask);
     R[1] = cmov_U64(t1, r1, cmask);
@@ -300,7 +304,6 @@ void MB_FUNC_NAME(ifma_add52x5_)(U64 R[], const U64 A[], const U64 B[], const U6
     R[3] = cmov_U64(t3, r3, cmask);
     R[4] = cmov_U64(t4, r4, cmask);
 }
-
 
 /* R = (A-B) mod M */
 void MB_FUNC_NAME(ifma_sub52x5_)(U64 R[], const U64 A[], const U64 B[], const U64 M[])
@@ -332,7 +335,7 @@ void MB_FUNC_NAME(ifma_sub52x5_)(U64 R[], const U64 A[], const U64 B[], const U6
     NORM_ASHIFTR(t, 3, 4)
 
     /* condition mask t4<0? (-1) : 0 */
-    __mb_mask cmask = cmp64_mask(r4, get_zero64(), _MM_CMPINT_LT);
+    __mb_mask cmask = cmplt64_mask(r4, get_zero64());
 
     R[0] = cmov_U64(r0, t0, cmask);
     R[1] = cmov_U64(r1, t1, cmask);
@@ -345,18 +348,18 @@ void MB_FUNC_NAME(ifma_sub52x5_)(U64 R[], const U64 A[], const U64 B[], const U6
 void MB_FUNC_NAME(ifma_neg52x5_)(U64 R[], const U64 A[], const U64 M[])
 {
     /*  mask = a[]!=0? 1 : 0 */
-    U64 t          = _mm512_or_epi64(A[0], A[1]);
-    t              = _mm512_or_epi64(t, A[2]);
-    t              = _mm512_or_epi64(t, A[3]);
-    t              = _mm512_or_epi64(t, A[4]);
-    __mb_mask mask = cmp64_mask(t, get_zero64(), _MM_CMPINT_NE);
+    U64 t          = or64(A[0], A[1]);
+    t              = or64(t, A[2]);
+    t              = or64(t, A[3]);
+    t              = or64(t, A[4]);
+    __mb_mask mask = cmpneq64_mask(t, get_zero64());
 
     /* r = M - A */
-    U64 r0 = _mm512_maskz_sub_epi64(mask, M[0], A[0]);
-    U64 r1 = _mm512_maskz_sub_epi64(mask, M[1], A[1]);
-    U64 r2 = _mm512_maskz_sub_epi64(mask, M[2], A[2]);
-    U64 r3 = _mm512_maskz_sub_epi64(mask, M[3], A[3]);
-    U64 r4 = _mm512_maskz_sub_epi64(mask, M[4], A[4]);
+    U64 r0 = maskz_sub64(mask, M[0], A[0]);
+    U64 r1 = maskz_sub64(mask, M[1], A[1]);
+    U64 r2 = maskz_sub64(mask, M[2], A[2]);
+    U64 r3 = maskz_sub64(mask, M[3], A[3]);
+    U64 r4 = maskz_sub64(mask, M[4], A[4]);
 
     /* normalize r0, r1, r2, r3, r4 */
     NORM_ASHIFTR(r, 0, 1)
@@ -371,4 +374,4 @@ void MB_FUNC_NAME(ifma_neg52x5_)(U64 R[], const U64 A[], const U64 M[])
     R[4] = r4;
 }
 
-#endif /* #if (_MBX>=_MBX_K1) */
+#endif /* #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)) */

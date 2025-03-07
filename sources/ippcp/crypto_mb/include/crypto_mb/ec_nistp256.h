@@ -62,7 +62,7 @@ MBXAPI(mbx_status, mbx_nistp256_ecpublic_key_mb8,(
 
 /*
 // Computes shared key
-// pa_shared_key[]   array of pointers to the shared keys
+// pa_shared_key[]   array of pointers to the output shared keys
 // pa_skey[]   array of pointers to the own (ephemeral) private keys
 // pa_pubx[]   array of pointers to the party's public keys X-coordinates
 // pa_puby[]   array of pointers to the party's public keys Y-coordinates

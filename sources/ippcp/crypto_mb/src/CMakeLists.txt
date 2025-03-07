@@ -43,7 +43,7 @@ file(GLOB X25519_SOURCES        "${CRYPTO_MB_SOURCES_DIR}/x25519/*.c"
                                 "${CRYPTO_MB_SOURCES_DIR}/x25519/internal_avx512/*.c")
 
 file(GLOB ECNIST_SOURCES        "${CRYPTO_MB_SOURCES_DIR}/ecnist/*.c"
-                                "${CRYPTO_MB_SOURCES_DIR}/ecnist/internal_avx512/*.c")
+                                "${CRYPTO_MB_SOURCES_DIR}/ecnist/*/*.c")
 
 file(GLOB SM2_SOURCES           "${CRYPTO_MB_SOURCES_DIR}/sm2/*.c"
                                 "${CRYPTO_MB_SOURCES_DIR}/sm2/internal_avx512/*.c")

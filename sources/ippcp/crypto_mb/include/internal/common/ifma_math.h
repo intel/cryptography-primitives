@@ -114,8 +114,8 @@
 
     __MBX_INLINE U64 srli64(U64 a, int s) { return _mm512_srli_epi64(a, s); }
 
-    #define srai64 _mm512_srai_epi64
-    #define slli64 _mm512_slli_epi64
+    #define srai64  _mm512_srai_epi64
+    #define slli64  _mm512_slli_epi64
 
     __MBX_INLINE U64 and64_const(U64 a, unsigned long long mask)
     {
@@ -124,11 +124,13 @@
 
     __MBX_INLINE U64 and64(U64 a, U64 mask) { return _mm512_and_epi64(a, mask); }
 
-    #define or64         _mm512_or_epi64
-    #define xor64        _mm512_xor_epi64
-    #define cmp64_mask   _mm512_cmp_epi64_mask
-    #define cmpeq16_mask _mm512_cmpeq_epi16_mask
-    #define cmpeq64_mask _mm512_cmpeq_epi64_mask
+    #define or64          _mm512_or_epi64
+    #define xor64         _mm512_xor_epi64
+    #define cmp64_mask    _mm512_cmp_epi64_mask
+    #define cmpeq16_mask  _mm512_cmpeq_epi16_mask
+    #define cmpeq64_mask  _mm512_cmpeq_epi64_mask
+    #define cmpneq64_mask _mm512_cmpneq_epi64_mask
+    #define cmplt64_mask  _mm512_cmplt_epi64_mask
 
     // Mask operations
     #define mask_blend64 _mm512_mask_blend_epi64
@@ -136,14 +138,28 @@
     #define mask_sub64   _mm512_mask_sub_epi64
     #define maskz_sub64  _mm512_maskz_sub_epi64
 
-    __MBX_INLINE __mb_mask is_zero(U64* p, int len)
+    /* return the suitable zeroization for the mask */
+    __MBX_INLINE __mb_mask zero_mask_mb(void)
     {
-        U64 Z = p[0];
-        for (int i = 1; i < len; i++) {
-            Z = or64(Z, p[i]);
-        }
+        return 0;
+    }
 
-        return cmpeq64_mask(Z, get_zero64());
+    __MBX_INLINE int8u is_zero_mb_mask(__mb_mask in_mask)
+    {
+        return (in_mask == 0);
+    }
+
+    /* Mask manipulation operations */
+    __MBX_INLINE __mb_mask not_mb_mask(__mb_mask a) {
+        return ~a;
+    }
+
+    __MBX_INLINE __mb_mask and_mb_mask(__mb_mask a, __mb_mask b) {
+        return (a & b);
+    }
+
+    __MBX_INLINE __mb_mask or_mb_mask(__mb_mask a, __mb_mask b) {
+        return (a | b);
     }
 
     #if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER) // for MSVC
@@ -186,23 +202,175 @@
         }
 #elif (SIMD_LEN == 256)
     SIMD_TYPE(256)
-
+    /*
+     * AVX2 ISA doesn't support masks __mmask*, all conditional operations are done
+     * by blend intrinsics with __m256i masks
+     */
+    typedef U64 __mb_mask;
+    #define MB_WIDTH    (SIMD_LEN / 64)
+    #define ALL_ONES_64 (0xFFFFFFFFFFFFFFFFULL)
+    
     #if (defined(__GNUC__) && !defined(__clang__))
         #define _mm_cvtsd_si64(_x)     _mm_cvtsd_si64x(_x)
         #define _mm_cvtsi64_sd(_x, _y) _mm_cvtsi64x_sd((_x), (_y))
     #elif defined(__clang__)
-        // nothing for now here
-    #elif defined(_MSC_VER)
-        #define _mm_madd52hi_epu64    _mm_madd52hi_avx_epu64
-        #define _mm_madd52lo_epu64    _mm_madd52lo_avx_epu64
-        #define _mm256_madd52hi_epu64 _mm256_madd52hi_avx_epu64
-        #define _mm256_madd52lo_epu64 _mm256_madd52lo_avx_epu64
+    // nothing for now here
+    #elif (defined(_MSC_VER))
+        #ifdef _MBX_AVX_IFMA_SUPPORTED
+            #define _mm_madd52hi_epu64    _mm_madd52hi_avx_epu64
+            #define _mm_madd52lo_epu64    _mm_madd52lo_avx_epu64
+            #define _mm256_madd52hi_epu64 _mm256_madd52hi_avx_epu64
+            #define _mm256_madd52lo_epu64 _mm256_madd52lo_avx_epu64
+        #endif /* #ifdef _MBX_AVX_IFMA_SUPPORTED */
     #else
         #error " wrappers need update for the compiler being used"
     #endif
-#else //SIMD_LEN
-    #error "Incorrect SIMD length"
-/* clang-format on */
-#endif // SIMD_LEN
 
+    /* Simple redefenitions */
+    #define set64   _mm256_set1_epi64x
+
+    #define srai64  _mm256_srai_epi64_wrapper
+    #define slli64  _mm256_slli_epi64
+
+    #define or64         _mm256_or_si256
+    #define and64        _mm256_and_si256
+    #define andnot64     _mm256_andnot_si256
+    #define xor64        _mm256_xor_si256
+    #define cmpeq64      _mm256_cmpeq_epi64
+    #define cmpeq64_mask cmpeq64
+
+    /* More complicated wrappers */
+    __MBX_INLINE U64 mask_mov64(U64 src, __mb_mask k, U64 a) {
+        return _mm256_blendv_epi8(src, a, k);
+    }
+
+    __MBX_INLINE U64 set1(unsigned long long a) {
+        return _mm256_set1_epi64x((long long)a);
+    }
+
+    __MBX_INLINE U64 loadu64(const void* p) {
+        return _mm256_loadu_si256((U64*)p);
+    }
+
+    __MBX_INLINE U64 sub64(U64 a, U64 b) {
+        return _mm256_sub_epi64(a, b);
+    }
+
+    __MBX_INLINE U64 get_zero64() {
+        return _mm256_setzero_si256();
+    }
+
+#if (_MBX_AVX_IFMA_SUPPORTED)
+
+    __MBX_INLINE U64 fma52lo(U64 a, U64 b, U64 c) {
+        return _mm256_madd52lo_epu64(a, b, c);
+    }
+
+    __MBX_INLINE U64 fma52hi(U64 a, U64 b, U64 c) {
+        return _mm256_madd52hi_epu64(a, b, c);
+    }
+    
+    __MBX_INLINE U64 mul52lo(U64 b, U64 c) {
+        return _mm256_madd52lo_epu64(get_zero64(), b, c);
+    }
+#endif /* #if (_MBX_AVX_IFMA_SUPPORTED) */
+
+    __MBX_INLINE U64 srli64(U64 a, int s) {
+        return _mm256_srli_epi64(a, s);
+    }
+
+    __MBX_INLINE U64 add64(U64 a, U64 b) {
+        return _mm256_add_epi64(a, b);
+    }
+
+    __MBX_INLINE U64 select64(__mb_mask k, U64 v, U64* d)
+    {
+        return _mm256_blendv_epi8(v, loadu64(d), k);
+    }
+
+    // Return the suitable zeroization for the mask
+    __MBX_INLINE __mb_mask zero_mask_mb(void) {
+        return get_zero64();
+    }
+
+    __MBX_INLINE int8u is_zero_mb_mask(__mb_mask in_mask)
+    {
+        U64 eq_mask = cmpeq64(in_mask, get_zero64());
+        return (_mm256_movemask_epi8(eq_mask) != 0);
+    }
+
+    /* Mask manipulation operations */
+    __MBX_INLINE __mb_mask not_mb_mask(__mb_mask a) {
+        return xor64(a, set64(ALL_ONES_64));
+    }
+
+    __MBX_INLINE __mb_mask and_mb_mask(__mb_mask a, __mb_mask b) {
+        return and64(a, b);
+    }
+
+    __MBX_INLINE __mb_mask or_mb_mask(__mb_mask a, __mb_mask b) {
+        return or64(a, b);
+    }
+
+    __MBX_INLINE U64 mask_sub64(U64 src, __mb_mask k, U64 a, U64 b)
+    {
+        __m256i sub_res = sub64(a, b);
+        return mask_mov64(src, k, sub_res);
+    }
+
+    __MBX_INLINE U64 maskz_sub64(__mb_mask k, U64 a, U64 b)
+    {
+        return mask_sub64(get_zero64(), k, a, b);
+    }
+
+    __MBX_INLINE U64 mask_add64(U64 src, __mb_mask k, U64 a, U64 b)
+    {
+        __m256i add_res = add64(a, b);
+        return mask_mov64(src, k, add_res);
+    }
+
+    __MBX_INLINE __mb_mask cmpneq64_mask(U64 a, U64 b)
+    {
+        __mb_mask eq_mask = cmpeq64(a, b);
+        // Invert the equality mask to get the inequality mask
+        return not_mb_mask(eq_mask);
+    }
+
+    __MBX_INLINE __mb_mask cmpgt64_mask(U64 a, U64 b) { return _mm256_cmpgt_epi64(a, b); }
+
+    // Check element a < b
+    __MBX_INLINE __mb_mask cmplt64_mask(U64 a, U64 b)
+    {
+        // Inverse operation and exclude the equality
+        return and64(cmpgt64_mask(b, a), cmpneq64_mask(a, b));
+    }
+
+    __MBX_INLINE U64 _mm256_srai_epi64_wrapper(U64 A, const int imm)
+    {
+        const U64 sign_bit_mask    = and64(A, set64(1ULL << 63));
+        const U64 is_not_sign_mask = cmpeq64(sign_bit_mask, get_zero64());
+        const U64 shifted_in_bits  = set64(ALL_ONES_64 << (64 - imm));
+        const U64 or_mask          = andnot64(is_not_sign_mask, shifted_in_bits);
+
+        // logical shift right
+        A = srli64(A, imm);
+        // put sign bits into the most significant imm number of bits
+        A = or64(A, or_mask);
+
+        return A;
+    }
+#else
+    #error "Incorrect SIMD length"
+#endif // SIMD_LEN
+/* clang-format on */
+
+__MBX_INLINE __mb_mask is_zero(U64* p, int len)
+{
+    U64 Z = p[0];
+    for (int i = 1; i < len; i++) {
+        Z = or64(Z, p[i]);
+    }
+
+    return cmpeq64_mask(Z, get_zero64());
+}
 #endif // IFMA_MATH_H

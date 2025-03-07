@@ -16,63 +16,61 @@
 
 #include <internal/ecnist/ifma_arith_p256.h>
 
-#if (_MBX >= _MBX_K1)
+#if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
+
+#define LEN52 NUMBER_OF_DIGITS(256, DIGIT_SIZE)
 
 /* Constants */
-#define LEN52 NUMBER_OF_DIGITS(256, DIGIT_SIZE)
+
+// Implementation takes into account that
+// k0 = -(1/p256 mod 2^DIGIT_SIZE) equals 1
 
 /*
 // prime256 = 2^256 - 2^224 + 2^192 + 2^96 -1
 // in 2^52 radix
 */
 /* clang-format off */
-__ALIGN64 static const int64u p256_mb[LEN52][8] = {
-    { REP8_DECL(0x000fffffffffffff) },
-    { REP8_DECL(0x00000fffffffffff) },
-    { REP8_DECL(0x0000000000000000) },
-    { REP8_DECL(0x0000001000000000) },
-    { REP8_DECL(0x0000ffffffff0000) }
+__ALIGN64 static const int64u p256_mb[LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x000fffffffffffff) },
+    { REP_NUM_BUFF_DECL(0x00000fffffffffff) },
+    { REP_NUM_BUFF_DECL(0x0000000000000000) },
+    { REP_NUM_BUFF_DECL(0x0000001000000000) },
+    { REP_NUM_BUFF_DECL(0x0000ffffffff0000) }
 };
 
-__ALIGN64 static const int64u p256x2_mb[LEN52][8] = {
-    { REP8_DECL(0x000ffffffffffffe) },
-    { REP8_DECL(0x00001fffffffffff) },
-    { REP8_DECL(0x0000000000000000) },
-    { REP8_DECL(0x0000002000000000) },
-    { REP8_DECL(0x0001fffffffe0000) }
+__ALIGN64 static const int64u p256x2_mb[LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x000ffffffffffffe) },
+    { REP_NUM_BUFF_DECL(0x00001fffffffffff) },
+    { REP_NUM_BUFF_DECL(0x0000000000000000) },
+    { REP_NUM_BUFF_DECL(0x0000002000000000) },
+    { REP_NUM_BUFF_DECL(0x0001fffffffe0000) }
 };
 
 /*
-// Note that
-// k0 = -(1/p256 mod 2^DIGIT_SIZE) equals 1
-// The implementation takes this fact into account
-*/
-
-/* to Montgomery conversion constant
+// to Montgomery conversion constant
 // rr = 2^((5*DIGIT_SIZE)*2) mod p256
 */
-__ALIGN64 static const int64u p256_rr_mb[5][8] = {
-    { REP8_DECL(0x0000000000000300) },
-    { REP8_DECL(0x000ffffffff00000) },
-    { REP8_DECL(0x000ffffefffffffb) },
-    { REP8_DECL(0x000fdfffffffffff) },
-    { REP8_DECL(0x0000000004ffffff) }
+__ALIGN64 static const int64u p256_rr_mb[LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x0000000000000300) },
+    { REP_NUM_BUFF_DECL(0x000ffffffff00000) },
+    { REP_NUM_BUFF_DECL(0x000ffffefffffffb) },
+    { REP_NUM_BUFF_DECL(0x000fdfffffffffff) },
+    { REP_NUM_BUFF_DECL(0x0000000004ffffff) }
 };
-/* clang-format on */
-
 
 
 /* other constants */
-__ALIGN64 static const int64u VDIGIT_MASK_[8] = { DIGIT_MASK, DIGIT_MASK, DIGIT_MASK, DIGIT_MASK,
-                                                  DIGIT_MASK, DIGIT_MASK, DIGIT_MASK, DIGIT_MASK };
+__ALIGN64 static const int64u VDIGIT_MASK_[sizeof(U64) / sizeof(int64u)] = {
+    REP_NUM_BUFF_DECL(DIGIT_MASK)
+};
 #define VDIGIT_MASK loadu64(VDIGIT_MASK_)
 
 #define P256_PRIME_TOP_ 0xFFFFFFFF0000LL
-__ALIGN64 static const int64u VP256_PRIME_TOP_[8] = { P256_PRIME_TOP_, P256_PRIME_TOP_,
-                                                      P256_PRIME_TOP_, P256_PRIME_TOP_,
-                                                      P256_PRIME_TOP_, P256_PRIME_TOP_,
-                                                      P256_PRIME_TOP_, P256_PRIME_TOP_ };
+__ALIGN64 static const int64u VP256_PRIME_TOP_[sizeof(U64) / sizeof(int64u)] = {
+    REP_NUM_BUFF_DECL(P256_PRIME_TOP_)
+};
 #define VP256_PRIME_TOP loadu64(VP256_PRIME_TOP_)
+/* clang-format on */
 
 
 /* Round operations */
@@ -83,7 +81,11 @@ __ALIGN64 static const int64u VP256_PRIME_TOP_[8] = { P256_PRIME_TOP_, P256_PRIM
 
 #define ROUND_MUL(I, J, M0, M1) ROUND_MUL_SRC(I, J, M0, M0, M1, M1)
 
-/* Reduction round for p256 prime */
+/*=====================================================================
+
+ Reduction round for p256 prime
+
+=====================================================================*/
 
 // Note that k == 1 for p256 curve
 #ifdef IFMA_RED
@@ -125,7 +127,7 @@ __ALIGN64 static const int64u VP256_PRIME_TOP_[8] = { P256_PRIME_TOP_, P256_PRIM
 
 /*=====================================================================
 
- Specialized single and dual operations in p256 - sqr & mul
+ Specialized single operations in p256 - sqr & mul
 
 =====================================================================*/
 
@@ -235,223 +237,6 @@ void MB_FUNC_NAME(ifma_amm52_p256_)(U64 r[], const U64 va[], const U64 vb[])
     r[4] = r9;
 }
 
-void MB_FUNC_NAME(ifma_ams52_p256_dual_)(U64 r0[], U64 r1[], const U64 inp0[], const U64 inp1[])
-{
-    U64* va; // = (U64 *)inp0;
-    U64* vb; // = (U64 *)inp0;
-
-    U64 r00, r01, r02, r03, r04, r05, r06, r07, r08, r09;
-    U64 r10, r11, r12, r13, r14, r15, r16, r17, r18, r19;
-    r00 = r01 = r02 = r03 = r04 = r05 = r06 = r07 = r08 = r09 = get_zero64();
-    r10 = r11 = r12 = r13 = r14 = r15 = r16 = r17 = r18 = r19 = get_zero64();
-
-    /// Calculate full square
-    va = vb = (U64*)inp0;
-    // Multiplication
-    ROUND_MUL(0, 1, r01, r02)
-    ROUND_MUL(0, 2, r02, r03)
-    ROUND_MUL(0, 3, r03, r04)
-    ROUND_MUL(0, 4, r04, r05)
-    ROUND_MUL(1, 4, r05, r06)
-    ROUND_MUL(2, 4, r06, r07)
-    ROUND_MUL(3, 4, r07, r08)
-    ROUND_MUL(1, 2, r03, r04)
-    ROUND_MUL(1, 3, r04, r05)
-    ROUND_MUL(2, 3, r05, r06)
-    // Doubling
-    r01 = add64(r01, r01);
-    r02 = add64(r02, r02);
-    r03 = add64(r03, r03);
-    r04 = add64(r04, r04);
-    r05 = add64(r05, r05);
-    r06 = add64(r06, r06);
-    r07 = add64(r07, r07);
-    r08 = add64(r08, r08);
-    // Adding square
-    ROUND_MUL(0, 0, r00, r01)
-    ROUND_MUL(1, 1, r02, r03)
-    ROUND_MUL(2, 2, r04, r05)
-    ROUND_MUL(3, 3, r06, r07)
-    ROUND_MUL(4, 4, r08, r09)
-
-    /// Calculate full square
-    va = vb = (U64*)inp1;
-    // Multiplication
-    ROUND_MUL(0, 1, r11, r12)
-    ROUND_MUL(0, 2, r12, r13)
-    ROUND_MUL(0, 3, r13, r14)
-    ROUND_MUL(0, 4, r14, r15)
-    ROUND_MUL(1, 4, r15, r16)
-    ROUND_MUL(2, 4, r16, r17)
-    ROUND_MUL(3, 4, r17, r18)
-    ROUND_MUL(1, 2, r13, r14)
-    ROUND_MUL(1, 3, r14, r15)
-    ROUND_MUL(2, 3, r15, r16)
-    // Doubling
-    r11 = add64(r11, r11);
-    r12 = add64(r12, r12);
-    r13 = add64(r13, r13);
-    r14 = add64(r14, r14);
-    r15 = add64(r15, r15);
-    r16 = add64(r16, r16);
-    r17 = add64(r17, r17);
-    r18 = add64(r18, r18);
-    // Adding square
-    ROUND_MUL(0, 0, r10, r11)
-    ROUND_MUL(1, 1, r12, r13)
-    ROUND_MUL(2, 2, r14, r15)
-    ROUND_MUL(3, 3, r16, r17)
-    ROUND_MUL(4, 4, r18, r19)
-
-    // Reduction res0
-    MUL_ADD_P256(u0, r00, r01, r02, r03, r04, r05);
-    MUL_ADD_P256(u1, r01, r02, r03, r04, r05, r06);
-    MUL_ADD_P256(u2, r02, r03, r04, r05, r06, r07);
-    MUL_ADD_P256(u3, r03, r04, r05, r06, r07, r08);
-    MUL_ADD_P256(u4, r04, r05, r06, r07, r08, r09);
-
-    // Reduction res1
-    MUL_ADD_P256(u0, r10, r11, r12, r13, r14, r15);
-    MUL_ADD_P256(u1, r11, r12, r13, r14, r15, r16);
-    MUL_ADD_P256(u2, r12, r13, r14, r15, r16, r17);
-    MUL_ADD_P256(u3, r13, r14, r15, r16, r17, r18);
-    MUL_ADD_P256(u4, r14, r15, r16, r17, r18, r19);
-
-    // normalization res0
-    NORM_LSHIFTR(r0, 5, 6)
-    NORM_LSHIFTR(r0, 6, 7)
-    NORM_LSHIFTR(r0, 7, 8)
-    NORM_LSHIFTR(r0, 8, 9)
-
-    r0[0] = r05;
-    r0[1] = r06;
-    r0[2] = r07;
-    r0[3] = r08;
-    r0[4] = r09;
-
-    // normalization res1
-    NORM_LSHIFTR(r1, 5, 6)
-    NORM_LSHIFTR(r1, 6, 7)
-    NORM_LSHIFTR(r1, 7, 8)
-    NORM_LSHIFTR(r1, 8, 9)
-
-    r1[0] = r15;
-    r1[1] = r16;
-    r1[2] = r17;
-    r1[3] = r18;
-    r1[4] = r19;
-}
-
-void MB_FUNC_NAME(ifma_amm52_p256_dual_)(U64 r0[],
-                                         U64 r1[],
-                                         const U64 inp0A[],
-                                         const U64 inp0B[],
-                                         const U64 inp1A[],
-                                         const U64 inp1B[])
-{
-    U64 *va, *vb;
-
-    U64 r00, r01, r02, r03, r04, r05, r06, r07, r08, r09;
-    U64 r10, r11, r12, r13, r14, r15, r16, r17, r18, r19;
-    r00 = r01 = r02 = r03 = r04 = r05 = r06 = r07 = r08 = r09 = get_zero64();
-    r10 = r11 = r12 = r13 = r14 = r15 = r16 = r17 = r18 = r19 = get_zero64();
-
-    // 5x5 multiplication
-    va = (U64*)inp0A;
-    vb = (U64*)inp0B;
-    ROUND_MUL(4, 4, r08, r09)
-    ROUND_MUL(3, 0, r03, r04)
-    ROUND_MUL(1, 2, r03, r04)
-    ROUND_MUL(0, 3, r03, r04)
-    ROUND_MUL(2, 1, r03, r04)
-    ROUND_MUL(2, 2, r04, r05)
-    ROUND_MUL(0, 4, r04, r05)
-    ROUND_MUL(1, 3, r04, r05)
-    ROUND_MUL(3, 1, r04, r05)
-    ROUND_MUL(4, 0, r04, r05)
-    ROUND_MUL(1, 4, r05, r06)
-    ROUND_MUL(2, 3, r05, r06)
-    ROUND_MUL(3, 2, r05, r06)
-    ROUND_MUL(4, 1, r05, r06)
-    ROUND_MUL(2, 4, r06, r07)
-    ROUND_MUL(3, 3, r06, r07)
-    ROUND_MUL(4, 2, r06, r07)
-    ROUND_MUL(0, 0, r00, r01)
-    ROUND_MUL(0, 1, r01, r02)
-    ROUND_MUL(0, 2, r02, r03)
-    ROUND_MUL(1, 0, r01, r02)
-    ROUND_MUL(1, 1, r02, r03)
-    ROUND_MUL(2, 0, r02, r03)
-    ROUND_MUL(3, 4, r07, r08)
-    ROUND_MUL(4, 3, r07, r08)
-
-    // 5x5 multiplication
-    va = (U64*)inp1A;
-    vb = (U64*)inp1B;
-    ROUND_MUL(4, 4, r18, r19)
-    ROUND_MUL(3, 0, r13, r14)
-    ROUND_MUL(1, 2, r13, r14)
-    ROUND_MUL(0, 3, r13, r14)
-    ROUND_MUL(2, 1, r13, r14)
-    ROUND_MUL(2, 2, r14, r15)
-    ROUND_MUL(0, 4, r14, r15)
-    ROUND_MUL(1, 3, r14, r15)
-    ROUND_MUL(3, 1, r14, r15)
-    ROUND_MUL(4, 0, r14, r15)
-    ROUND_MUL(1, 4, r15, r16)
-    ROUND_MUL(2, 3, r15, r16)
-    ROUND_MUL(3, 2, r15, r16)
-    ROUND_MUL(4, 1, r15, r16)
-    ROUND_MUL(2, 4, r16, r17)
-    ROUND_MUL(3, 3, r16, r17)
-    ROUND_MUL(4, 2, r16, r17)
-    ROUND_MUL(0, 0, r10, r11)
-    ROUND_MUL(0, 1, r11, r12)
-    ROUND_MUL(0, 2, r12, r13)
-    ROUND_MUL(1, 0, r11, r12)
-    ROUND_MUL(1, 1, r12, r13)
-    ROUND_MUL(2, 0, r12, r13)
-    ROUND_MUL(3, 4, r17, r18)
-    ROUND_MUL(4, 3, r17, r18)
-
-    // Reduction for input 0
-    MUL_ADD_P256(u0, r00, r01, r02, r03, r04, r05)
-    MUL_ADD_P256(u1, r01, r02, r03, r04, r05, r06)
-    MUL_ADD_P256(u2, r02, r03, r04, r05, r06, r07)
-    MUL_ADD_P256(u3, r03, r04, r05, r06, r07, r08)
-    MUL_ADD_P256(u4, r04, r05, r06, r07, r08, r09)
-
-    // Reduction for input 1
-    MUL_ADD_P256(u0, r10, r11, r12, r13, r14, r15)
-    MUL_ADD_P256(u1, r11, r12, r13, r14, r15, r16)
-    MUL_ADD_P256(u2, r12, r13, r14, r15, r16, r17)
-    MUL_ADD_P256(u3, r13, r14, r15, r16, r17, r18)
-    MUL_ADD_P256(u4, r14, r15, r16, r17, r18, r19)
-
-    // normalization res0
-    NORM_LSHIFTR(r0, 5, 6)
-    NORM_LSHIFTR(r0, 6, 7)
-    NORM_LSHIFTR(r0, 7, 8)
-    NORM_LSHIFTR(r0, 8, 9)
-
-    r0[0] = r05;
-    r0[1] = r06;
-    r0[2] = r07;
-    r0[3] = r08;
-    r0[4] = r09;
-
-    // normalization res1
-    NORM_LSHIFTR(r1, 5, 6)
-    NORM_LSHIFTR(r1, 6, 7)
-    NORM_LSHIFTR(r1, 7, 8)
-    NORM_LSHIFTR(r1, 8, 9)
-
-    r1[0] = r15;
-    r1[1] = r16;
-    r1[2] = r17;
-    r1[3] = r18;
-    r1[4] = r19;
-}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define LEN52 NUMBER_OF_DIGITS(256, DIGIT_SIZE)
@@ -472,7 +257,7 @@ void MB_FUNC_NAME(ifma_reduce52_p256_)(U64 R[], const U64 A[])
     NORM_ASHIFTR(r, 3, 4)
 
     /* r = a<p256_mb? a : r */
-    __mb_mask lt = cmp64_mask(r4, get_zero64(), _MM_CMPINT_LT);
+    __mb_mask lt = cmplt64_mask(r4, get_zero64());
     R[0]         = mask_mov64(r0, lt, A[0]);
     R[1]         = mask_mov64(r1, lt, A[1]);
     R[2]         = mask_mov64(r2, lt, A[2]);
@@ -604,7 +389,6 @@ void MB_FUNC_NAME(ifma_aminv52_p256_)(U64 r[], const U64 z[])
     mul_p256(r, tmp1, tmp2);
 }
 
-
 /*=====================================================================
 
  Specialized single operations in n256 - add, sub & neg
@@ -625,6 +409,12 @@ void MB_FUNC_NAME(ifma_neg52_p256_)(U64 r[], const U64 a[])
 {
     MB_FUNC_NAME(ifma_neg52x5_)(r, a, (U64*)p256x2_mb);
 }
+
+/*=====================================================================
+
+ Specialized single operations in n256 - double, triple & half52
+
+=====================================================================*/
 
 void MB_FUNC_NAME(ifma_double52_p256_)(U64 r[], const U64 a[])
 {
@@ -683,6 +473,7 @@ void MB_FUNC_NAME(ifma_half52_p256_)(U64 r[], const U64 a[])
     r[4] = t4;
 }
 
+/* Check the ranges operations */
 __mb_mask MB_FUNC_NAME(ifma_cmp_lt_p256_)(const U64 a[])
 {
     return MB_FUNC_NAME(cmp_lt_FE256_)(a, (const U64(*))p256_mb);
@@ -691,9 +482,237 @@ __mb_mask MB_FUNC_NAME(ifma_cmp_lt_p256_)(const U64 a[])
 __mb_mask MB_FUNC_NAME(ifma_check_range_p256_)(const U64 A[])
 {
     __mb_mask mask = MB_FUNC_NAME(is_zero_FE256_)(A);
-    mask |= ~MB_FUNC_NAME(ifma_cmp_lt_p256_)(A);
+    mask           = or_mb_mask(mask, not_mb_mask(MB_FUNC_NAME(ifma_cmp_lt_p256_)(A)));
 
     return mask;
 }
 
-#endif /* #if (_MBX>=_MBX_K1) */
+
+#if (_MBX >= _MBX_K1)
+
+/*=====================================================================
+
+ Specialized dual operations in p256 - sqr & mul
+
+=====================================================================*/
+
+void ifma_ams52_p256_dual_mb8(U64 r0[], U64 r1[], const U64 inp0[], const U64 inp1[])
+{
+    U64* va; // = (U64 *)inp0;
+    U64* vb; // = (U64 *)inp0;
+
+    U64 r00, r01, r02, r03, r04, r05, r06, r07, r08, r09;
+    U64 r10, r11, r12, r13, r14, r15, r16, r17, r18, r19;
+    r00 = r01 = r02 = r03 = r04 = r05 = r06 = r07 = r08 = r09 = get_zero64();
+    r10 = r11 = r12 = r13 = r14 = r15 = r16 = r17 = r18 = r19 = get_zero64();
+
+    /// Calculate full square
+    va = vb = (U64*)inp0;
+    // Multiplication
+    ROUND_MUL(0, 1, r01, r02)
+    ROUND_MUL(0, 2, r02, r03)
+    ROUND_MUL(0, 3, r03, r04)
+    ROUND_MUL(0, 4, r04, r05)
+    ROUND_MUL(1, 4, r05, r06)
+    ROUND_MUL(2, 4, r06, r07)
+    ROUND_MUL(3, 4, r07, r08)
+    ROUND_MUL(1, 2, r03, r04)
+    ROUND_MUL(1, 3, r04, r05)
+    ROUND_MUL(2, 3, r05, r06)
+    // Doubling
+    r01 = add64(r01, r01);
+    r02 = add64(r02, r02);
+    r03 = add64(r03, r03);
+    r04 = add64(r04, r04);
+    r05 = add64(r05, r05);
+    r06 = add64(r06, r06);
+    r07 = add64(r07, r07);
+    r08 = add64(r08, r08);
+    // Adding square
+    ROUND_MUL(0, 0, r00, r01)
+    ROUND_MUL(1, 1, r02, r03)
+    ROUND_MUL(2, 2, r04, r05)
+    ROUND_MUL(3, 3, r06, r07)
+    ROUND_MUL(4, 4, r08, r09)
+
+    /// Calculate full square
+    va = vb = (U64*)inp1;
+    // Multiplication
+    ROUND_MUL(0, 1, r11, r12)
+    ROUND_MUL(0, 2, r12, r13)
+    ROUND_MUL(0, 3, r13, r14)
+    ROUND_MUL(0, 4, r14, r15)
+    ROUND_MUL(1, 4, r15, r16)
+    ROUND_MUL(2, 4, r16, r17)
+    ROUND_MUL(3, 4, r17, r18)
+    ROUND_MUL(1, 2, r13, r14)
+    ROUND_MUL(1, 3, r14, r15)
+    ROUND_MUL(2, 3, r15, r16)
+    // Doubling
+    r11 = add64(r11, r11);
+    r12 = add64(r12, r12);
+    r13 = add64(r13, r13);
+    r14 = add64(r14, r14);
+    r15 = add64(r15, r15);
+    r16 = add64(r16, r16);
+    r17 = add64(r17, r17);
+    r18 = add64(r18, r18);
+    // Adding square
+    ROUND_MUL(0, 0, r10, r11)
+    ROUND_MUL(1, 1, r12, r13)
+    ROUND_MUL(2, 2, r14, r15)
+    ROUND_MUL(3, 3, r16, r17)
+    ROUND_MUL(4, 4, r18, r19)
+
+    // Reduction res0
+    MUL_ADD_P256(u0, r00, r01, r02, r03, r04, r05);
+    MUL_ADD_P256(u1, r01, r02, r03, r04, r05, r06);
+    MUL_ADD_P256(u2, r02, r03, r04, r05, r06, r07);
+    MUL_ADD_P256(u3, r03, r04, r05, r06, r07, r08);
+    MUL_ADD_P256(u4, r04, r05, r06, r07, r08, r09);
+
+    // Reduction res1
+    MUL_ADD_P256(u0, r10, r11, r12, r13, r14, r15);
+    MUL_ADD_P256(u1, r11, r12, r13, r14, r15, r16);
+    MUL_ADD_P256(u2, r12, r13, r14, r15, r16, r17);
+    MUL_ADD_P256(u3, r13, r14, r15, r16, r17, r18);
+    MUL_ADD_P256(u4, r14, r15, r16, r17, r18, r19);
+
+    // normalization res0
+    NORM_LSHIFTR(r0, 5, 6)
+    NORM_LSHIFTR(r0, 6, 7)
+    NORM_LSHIFTR(r0, 7, 8)
+    NORM_LSHIFTR(r0, 8, 9)
+
+    r0[0] = r05;
+    r0[1] = r06;
+    r0[2] = r07;
+    r0[3] = r08;
+    r0[4] = r09;
+
+    // normalization res1
+    NORM_LSHIFTR(r1, 5, 6)
+    NORM_LSHIFTR(r1, 6, 7)
+    NORM_LSHIFTR(r1, 7, 8)
+    NORM_LSHIFTR(r1, 8, 9)
+
+    r1[0] = r15;
+    r1[1] = r16;
+    r1[2] = r17;
+    r1[3] = r18;
+    r1[4] = r19;
+}
+
+void ifma_amm52_p256_dual_mb8(U64 r0[],
+                              U64 r1[],
+                              const U64 inp0A[],
+                              const U64 inp0B[],
+                              const U64 inp1A[],
+                              const U64 inp1B[])
+{
+    U64 *va, *vb;
+
+    U64 r00, r01, r02, r03, r04, r05, r06, r07, r08, r09;
+    U64 r10, r11, r12, r13, r14, r15, r16, r17, r18, r19;
+    r00 = r01 = r02 = r03 = r04 = r05 = r06 = r07 = r08 = r09 = get_zero64();
+    r10 = r11 = r12 = r13 = r14 = r15 = r16 = r17 = r18 = r19 = get_zero64();
+
+    // 5x5 multiplication
+    va = (U64*)inp0A;
+    vb = (U64*)inp0B;
+    ROUND_MUL(4, 4, r08, r09)
+    ROUND_MUL(3, 0, r03, r04)
+    ROUND_MUL(1, 2, r03, r04)
+    ROUND_MUL(0, 3, r03, r04)
+    ROUND_MUL(2, 1, r03, r04)
+    ROUND_MUL(2, 2, r04, r05)
+    ROUND_MUL(0, 4, r04, r05)
+    ROUND_MUL(1, 3, r04, r05)
+    ROUND_MUL(3, 1, r04, r05)
+    ROUND_MUL(4, 0, r04, r05)
+    ROUND_MUL(1, 4, r05, r06)
+    ROUND_MUL(2, 3, r05, r06)
+    ROUND_MUL(3, 2, r05, r06)
+    ROUND_MUL(4, 1, r05, r06)
+    ROUND_MUL(2, 4, r06, r07)
+    ROUND_MUL(3, 3, r06, r07)
+    ROUND_MUL(4, 2, r06, r07)
+    ROUND_MUL(0, 0, r00, r01)
+    ROUND_MUL(0, 1, r01, r02)
+    ROUND_MUL(0, 2, r02, r03)
+    ROUND_MUL(1, 0, r01, r02)
+    ROUND_MUL(1, 1, r02, r03)
+    ROUND_MUL(2, 0, r02, r03)
+    ROUND_MUL(3, 4, r07, r08)
+    ROUND_MUL(4, 3, r07, r08)
+
+    // 5x5 multiplication
+    va = (U64*)inp1A;
+    vb = (U64*)inp1B;
+    ROUND_MUL(4, 4, r18, r19)
+    ROUND_MUL(3, 0, r13, r14)
+    ROUND_MUL(1, 2, r13, r14)
+    ROUND_MUL(0, 3, r13, r14)
+    ROUND_MUL(2, 1, r13, r14)
+    ROUND_MUL(2, 2, r14, r15)
+    ROUND_MUL(0, 4, r14, r15)
+    ROUND_MUL(1, 3, r14, r15)
+    ROUND_MUL(3, 1, r14, r15)
+    ROUND_MUL(4, 0, r14, r15)
+    ROUND_MUL(1, 4, r15, r16)
+    ROUND_MUL(2, 3, r15, r16)
+    ROUND_MUL(3, 2, r15, r16)
+    ROUND_MUL(4, 1, r15, r16)
+    ROUND_MUL(2, 4, r16, r17)
+    ROUND_MUL(3, 3, r16, r17)
+    ROUND_MUL(4, 2, r16, r17)
+    ROUND_MUL(0, 0, r10, r11)
+    ROUND_MUL(0, 1, r11, r12)
+    ROUND_MUL(0, 2, r12, r13)
+    ROUND_MUL(1, 0, r11, r12)
+    ROUND_MUL(1, 1, r12, r13)
+    ROUND_MUL(2, 0, r12, r13)
+    ROUND_MUL(3, 4, r17, r18)
+    ROUND_MUL(4, 3, r17, r18)
+
+    // Reduction for input 0
+    MUL_ADD_P256(u0, r00, r01, r02, r03, r04, r05)
+    MUL_ADD_P256(u1, r01, r02, r03, r04, r05, r06)
+    MUL_ADD_P256(u2, r02, r03, r04, r05, r06, r07)
+    MUL_ADD_P256(u3, r03, r04, r05, r06, r07, r08)
+    MUL_ADD_P256(u4, r04, r05, r06, r07, r08, r09)
+
+    // Reduction for input 1
+    MUL_ADD_P256(u0, r10, r11, r12, r13, r14, r15)
+    MUL_ADD_P256(u1, r11, r12, r13, r14, r15, r16)
+    MUL_ADD_P256(u2, r12, r13, r14, r15, r16, r17)
+    MUL_ADD_P256(u3, r13, r14, r15, r16, r17, r18)
+    MUL_ADD_P256(u4, r14, r15, r16, r17, r18, r19)
+
+    // normalization res0
+    NORM_LSHIFTR(r0, 5, 6)
+    NORM_LSHIFTR(r0, 6, 7)
+    NORM_LSHIFTR(r0, 7, 8)
+    NORM_LSHIFTR(r0, 8, 9)
+
+    r0[0] = r05;
+    r0[1] = r06;
+    r0[2] = r07;
+    r0[3] = r08;
+    r0[4] = r09;
+
+    // normalization res1
+    NORM_LSHIFTR(r1, 5, 6)
+    NORM_LSHIFTR(r1, 6, 7)
+    NORM_LSHIFTR(r1, 7, 8)
+    NORM_LSHIFTR(r1, 8, 9)
+
+    r1[0] = r15;
+    r1[1] = r16;
+    r1[2] = r17;
+    r1[3] = r18;
+    r1[4] = r19;
+}
+
+#endif /* #if (_MBX >= _MBX_K1) */
+#endif /* #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)) */

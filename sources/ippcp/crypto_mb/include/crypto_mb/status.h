@@ -41,6 +41,13 @@ __MBX_INLINE mbx_status MBX_GET_STS(mbx_status status, int numb)
 {
     return (status >> (numb * 4)) & 0xF;
 }
+
+// Construct mb8 mbx_status from _lo and _hi mb4 statuses
+__MBX_INLINE mbx_status MBX_COMBINE_STS_MB4(mbx_status status_lo, mbx_status status_hi)
+{
+    return status_lo | ((status_hi << 4 * 4) & 0xFFFF0000);
+}
+
 __MBX_INLINE mbx_status MBX_SET_STS_ALL(mbx_status stsVal)
 {
     return (stsVal << 4 * 7) | (stsVal << 4 * 6) | (stsVal << 4 * 5) | (stsVal << 4 * 4) |

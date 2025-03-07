@@ -2,6 +2,9 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 1.2.0
+- Crypto Multi buffer library was extended with Intel® AVX-IFMA implementation of ECDSA (Sign and Verify), public key generation, ECDHE over NIST p256r1 curve.
+
 ## Intel(R) Cryptography Primitives Library 1.1.0
 
 - Added single buffer SM4 (former SMS4) algorithm with the new SM4 instructions for Lunar Lake and Arrow Lake S CPUs.

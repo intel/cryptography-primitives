@@ -16,8 +16,9 @@
 
 #include <internal/ecnist/ifma_ecpoint_p256.h>
 #include <internal/rsa/ifma_rsa_arith.h>
+#include <internal/ecnist/ifma_ecprecomp4_p256.h>
 
-#if (_MBX >= _MBX_K1)
+#if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
 
 /* simplify naming */
 #define sqr  MB_FUNC_NAME(ifma_ams52_p256_)
@@ -34,6 +35,19 @@
 //    - projective (X : Y : 0)
 //    - affine     (0 : 0)
 */
+
+
+/* 
+// to Montgomery conversion constant
+// r = 2^(P256_LEN52*DIGIT_SIZE) mod p256
+*/
+__ALIGN64 static const int64u p256_r_mb[P256_LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x0000000000000010) },
+    { REP_NUM_BUFF_DECL(0x000f000000000000) },
+    { REP_NUM_BUFF_DECL(0x000fffffffffffff) },
+    { REP_NUM_BUFF_DECL(0x000ffeffffffffff) },
+    { REP_NUM_BUFF_DECL(0x00000000000fffff) }
+};
 
 /*
 // R(X3:Y3:Z3) = [2]P(X1:Y1:Z1)
@@ -90,7 +104,6 @@ void MB_FUNC_NAME(ifma_ec_nistp256_dbl_point_)(P256_POINT* r, const P256_POINT* 
 
     sub(Y3, U, Y3); /* Y3 = B*(A-X3) -8*Y1^4 */
 }
-
 
 /*
 // R(X3:Y3:Z3) = P(X1:Y1:Z1) + Q(X2:Y2:Z2)
@@ -150,13 +163,17 @@ void MB_FUNC_NAME(ifma_ec_nistp256_add_point_)(P256_POINT* r,
     sub(H, U2, U1);  /* H = U2-U1 */
 
     /* check if affine (p.x:p.y) == (q.x:q.y) and and do doubling if this happens */
-    __mb_mask x_are_equal      = MB_FUNC_NAME(is_zero_FE256_)(H);
-    __mb_mask y_are_equal      = MB_FUNC_NAME(is_zero_FE256_)(R);
-    __mb_mask points_are_equal = (x_are_equal & y_are_equal & (~p_at_infinity) & (~q_at_infinity));
+    __mb_mask x_are_equal = MB_FUNC_NAME(is_zero_FE256_)(H);
+    __mb_mask y_are_equal = MB_FUNC_NAME(is_zero_FE256_)(R);
+    /* clang-format off */
+    __mb_mask points_are_equal = and_mb_mask(and_mb_mask(and_mb_mask(x_are_equal, y_are_equal),
+                                                         not_mb_mask(p_at_infinity)), 
+                                             not_mb_mask(q_at_infinity));
+    /* clang-format on */
 
     P256_POINT P2;
     MB_FUNC_NAME(set_point_to_infinity_)(&P2);
-    if (points_are_equal) {
+    if (!is_zero_mb_mask(points_are_equal)) {
         MB_FUNC_NAME(ifma_ec_nistp256_dbl_point_)(&P2, p);
     }
 
@@ -191,20 +208,6 @@ void MB_FUNC_NAME(ifma_ec_nistp256_add_point_)(P256_POINT* r,
     MB_FUNC_NAME(mask_mov_FE256_)(r->Z, Z3, points_are_equal, P2.Z);
 }
 
-
-/* to Montgomery conversion constant
-// r = 2^(P256_LEN52*DIGIT_SIZE) mod p256
-*/
-__ALIGN64 static const int64u p256_r_mb[P256_LEN52][sizeof(U64) / sizeof(int64u)] = {
-    { REP8_DECL(0x0000000000000010) },
-    { REP8_DECL(0x000f000000000000) },
-    { REP8_DECL(0x000fffffffffffff) },
-    { REP8_DECL(0x000ffeffffffffff) },
-    { REP8_DECL(0x00000000000fffff) }
-};
-const U64* MB_FUNC_NAME(ifma_ec_nistp256_coord_one_)(void) { return (U64*)p256_r_mb; }
-
-
 /*
 // R(X3:Y3:Z3) = P(X1:Y1:Z1) + Q(X2:Y2:Z2=1)
 //
@@ -235,10 +238,10 @@ void MB_FUNC_NAME(ifma_ec_nistp256_add_point_affine_)(P256_POINT* r,
     __mb_mask p_at_infinity = MB_FUNC_NAME(is_zero_point_cordinate_)(p->Z);
 
     /* coordinates of q (affine) */
-    const U64* X2 = q->x;
-    const U64* Y2 = q->y;
-    __mb_mask q_at_infinity =
-        MB_FUNC_NAME(is_zero_point_cordinate_)(q->x) & MB_FUNC_NAME(is_zero_point_cordinate_)(q->y);
+    const U64* X2           = q->x;
+    const U64* Y2           = q->y;
+    __mb_mask q_at_infinity = and_mb_mask(MB_FUNC_NAME(is_zero_point_cordinate_)(q->x),
+                                          MB_FUNC_NAME(is_zero_point_cordinate_)(q->y));
 
     /* coordinates of temp point T(X3:Y3:Z3) */
     __ALIGN64 U64 X3[P256_LEN52];
@@ -318,12 +321,11 @@ static __NOINLINE void clear_secret_context(U64* wval, U64* dval, __mb_mask* dsi
 {
     *wval  = get_zero64();
     *dval  = get_zero64();
-    *dsign = 0;
+    *dsign = zero_mask_mb();
     return;
 }
 
 #define WIN_SIZE (4)
-
 /*
    s = (Ipp8u)(~((wvalue >> ws) - 1)); //sign
    d = (1 << (ws+1)) - wvalue - 1;     // digit, win size "ws"
@@ -337,7 +339,7 @@ __MBX_INLINE void MB_FUNC_NAME(booth_recode_)(__mb_mask* sign, U64* dvalue, U64 
     U64 one     = set1(1);
     U64 zero    = get_zero64();
     U64 t       = srli64(wvalue, WIN_SIZE);
-    __mb_mask s = cmp64_mask(t, zero, _MM_CMPINT_NE);
+    __mb_mask s = cmpneq64_mask(t, zero);
     U64 d       = sub64(sub64(set1(1 << (WIN_SIZE + 1)), wvalue), one);
     d           = mask_mov64(wvalue, s, d);
     U64 odd     = and64(d, one);
@@ -361,7 +363,7 @@ static void MB_FUNC_NAME(extract_point_)(P256_POINT* r, const P256_POINT tbl[], 
     int32u n;
     for (n = 0; n < (1 << (WIN_SIZE - 1)); n++) {
         U64 idx_curr = set1(n);
-        __mb_mask k  = cmp64_mask(idx_curr, idx_target, _MM_CMPINT_EQ);
+        __mb_mask k  = cmpeq64_mask(idx_curr, idx_target);
 
         /* R = k? tbl[] : R */
         MB_FUNC_NAME(secure_mask_mov_FE256_)(R.X, R.X, k, tbl[n].X);
@@ -435,12 +437,13 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(P256_POINT* r,
         chunk_shift = (bit - 1) % 64;
 
         wvalue = loadu64(&scalar[chunk_no]);
-#if (_MSC_VER <= 1916) /* VS 2017 not supported _mm512_shrdv_epi64 */
+
+/* AVX-IFMA don't supported _mm512_shrdv_epi64 */
+#if ((_MBX == _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
         {
-            __m512i t_lo_ = _mm512_srlv_epi64(wvalue, set64(chunk_shift));
-            __m512i t_hi_ =
-                _mm512_sllv_epi64(loadu64(&scalar[chunk_no + 1]), set64(64 - chunk_shift));
-            wvalue = or64(t_lo_, t_hi_);
+            U64 t_lo_ = srli64(wvalue, chunk_shift);
+            U64 t_hi_ = slli64(loadu64(&scalar[chunk_no + 1]), (64 - chunk_shift));
+            wvalue    = or64(t_lo_, t_hi_);
         }
 #else
         wvalue =
@@ -491,20 +494,18 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(P256_POINT* r,
 }
 #undef WIN_SIZE
 
-
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-#include <internal/ecnist/ifma_ecprecomp4_p256.h>
-
-#define BP_WIN_SIZE MUL_BASEPOINT_WIN_SIZE /* defined in the header above */
+/* defined in the <internal/ecnist/ifma_ecprecomp4_p256.h> header */
+#define BP_WIN_SIZE MUL_BASEPOINT_WIN_SIZE
 
 __MBX_INLINE void MB_FUNC_NAME(booth_recode_bp_)(__mb_mask* sign, U64* dvalue, U64 wvalue)
 {
     U64 one     = set1(1);
     U64 zero    = get_zero64();
     U64 t       = srli64(wvalue, BP_WIN_SIZE);
-    __mb_mask s = cmp64_mask(t, zero, _MM_CMPINT_NE);
+    __mb_mask s = cmpneq64_mask(t, zero);
     U64 d       = sub64(sub64(set1(1 << (BP_WIN_SIZE + 1)), wvalue), one);
     d           = mask_mov64(wvalue, s, d);
     U64 odd     = and64(d, one);
@@ -531,7 +532,7 @@ __MBX_INLINE void MB_FUNC_NAME(extract_point_affine_)(P256_POINT_AFFINE* r,
     int n;
     U64 currIdx = get_zero64();
     for (n = 0; n < (1 << (BP_WIN_SIZE - 1)); n++, tbl++, currIdx = add64(currIdx, set1(1))) {
-        __mb_mask k = cmp64_mask(currIdx, targIdx, _MM_CMPINT_EQ);
+        __mb_mask k = cmpeq64_mask(currIdx, targIdx);
 
         /* R = k? set1( tbl[] ) : R */
         ax0 = mask_add64(ax0, k, ax0, set1(tbl->x[0]));
@@ -560,10 +561,13 @@ __MBX_INLINE void MB_FUNC_NAME(extract_point_affine_)(P256_POINT_AFFINE* r,
     r->y[4] = ay4;
 }
 
+/* Get the precomputed table from another translation unit */
+extern const SINGLE_P256_POINT_AFFINE ifma_ec_nistp256_bp_precomp[][BP_N_ENTRY];
+
 void MB_FUNC_NAME(ifma_ec_nistp256_mul_pointbase_)(P256_POINT* r, const U64 scalar[])
 {
     /* pre-computed table of base powers */
-    SINGLE_P256_POINT_AFFINE* tbl = &ifma_ec_nistp256_bp_precomp[0][0];
+    const SINGLE_P256_POINT_AFFINE* tbl = &ifma_ec_nistp256_bp_precomp[0][0];
 
     P256_POINT R;
     P256_POINT_AFFINE A;
@@ -572,11 +576,11 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_pointbase_)(P256_POINT* r, const U64 scal
     /* R = O */
     MB_FUNC_NAME(set_point_to_infinity_)(&R);
 
-
     /*
-   // base point (RL) multiplication
+    // base point (RL) multiplication
    */
     U64 wvalue, dvalue;
+    wvalue = dvalue = get_zero64();
     __mb_mask dsign;
 
     U64 idx_mask = set1((1 << (BP_WIN_SIZE + 1)) - 1);
@@ -603,17 +607,19 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_pointbase_)(P256_POINT* r, const U64 scal
         chunk_shift = (bit - 1) % 64;
 
         wvalue = loadu64(&scalar[chunk_no]);
-#if (_MSC_VER <= 1916) /* VS 2017 not supported _mm512_shrdv_epi64 */
+
+/* AVX-IFMA don't supported _mm512_shrdv_epi64 */
+#if ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
         {
-            __m512i t_lo_ = _mm512_srlv_epi64(wvalue, set64(chunk_shift));
-            __m512i t_hi_ =
-                _mm512_sllv_epi64(loadu64(&scalar[chunk_no + 1]), set64(64 - chunk_shift));
-            wvalue = or64(t_lo_, t_hi_);
+            U64 t_lo_ = srli64(wvalue, chunk_shift);
+            U64 t_hi_ = slli64(loadu64(&scalar[chunk_no + 1]), (64 - chunk_shift));
+            wvalue    = or64(t_lo_, t_hi_);
         }
 #else
         wvalue =
             _mm512_shrdv_epi64(wvalue, loadu64(&scalar[chunk_no + 1]), set1((int32u)chunk_shift));
 #endif
+
         wvalue = and64(wvalue, idx_mask);
 
         MB_FUNC_NAME(booth_recode_bp_)(&dsign, &dvalue, wvalue);
@@ -638,18 +644,24 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_pointbase_)(P256_POINT* r, const U64 scal
 }
 #undef BP_WIN_SIZE
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 /* P256 parameters: mont(a), mont(b) */
-__ALIGN64 static const int64u mont_a_p256_mb[P256_LEN52][8] = { { REP8_DECL(0x000fffffffffffcf) },
-                                                                { REP8_DECL(0x00030fffffffffff) },
-                                                                { REP8_DECL(0x000000000000000) },
-                                                                { REP8_DECL(0x0000031000000000) },
-                                                                { REP8_DECL(0x0000ffffffcf0000) } };
-__ALIGN64 static const int64u mont_b_p256_mb[P256_LEN52][8] = { { REP8_DECL(0x000df6229c4bddfd) },
-                                                                { REP8_DECL(0x000ca8843090d89c) },
-                                                                { REP8_DECL(0x000212ed6acf005c) },
-                                                                { REP8_DECL(0x00083415a220abf7) },
-                                                                { REP8_DECL(0x0000c30061dd4874) } };
+__ALIGN64 static const int64u mont_a_p256_mb[P256_LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x000fffffffffffcf) },
+    { REP_NUM_BUFF_DECL(0x00030fffffffffff) },
+    { REP_NUM_BUFF_DECL(0x000000000000000) },
+    { REP_NUM_BUFF_DECL(0x0000031000000000) },
+    { REP_NUM_BUFF_DECL(0x0000ffffffcf0000) }
+};
+__ALIGN64 static const int64u mont_b_p256_mb[P256_LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x000df6229c4bddfd) },
+    { REP_NUM_BUFF_DECL(0x000ca8843090d89c) },
+    { REP_NUM_BUFF_DECL(0x000212ed6acf005c) },
+    { REP_NUM_BUFF_DECL(0x00083415a220abf7) },
+    { REP_NUM_BUFF_DECL(0x0000c30061dd4874) }
+};
 
 /*
 // We have a curve defined by a Weierstrass equation: y^2 = x^3 + a*x + b.
@@ -660,6 +672,7 @@ __ALIGN64 static const int64u mont_b_p256_mb[P256_LEN52][8] = { { REP8_DECL(0x00
 //      Y^2 = X^3 + a*X*Z^4 + b*Z^6
 // To test this, we add up the right-hand side in 'rh'.
 */
+
 __mb_mask MB_FUNC_NAME(ifma_is_on_curve_p256_)(const P256_POINT* p, int use_jproj_coords)
 {
     U64 rh[P256_LEN52];
@@ -700,4 +713,9 @@ __mb_mask MB_FUNC_NAME(ifma_is_on_curve_p256_)(const P256_POINT* p, int use_jpro
     return is_on_curve_mask;
 }
 
-#endif /* #if (_MBX>=_MBX_K1) */
+#if (_MBX >= _MBX_K1)
+
+const U64* ifma_ec_nistp256_coord_one_mb8(void) { return (U64*)p256_r_mb; }
+
+#endif /* #if (_MBX >= _MBX_K1) */
+#endif /* #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)) */

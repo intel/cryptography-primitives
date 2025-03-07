@@ -16,7 +16,7 @@
 
 #include <internal/ecnist/ifma_arith_p256.h>
 
-#if (_MBX >= _MBX_K1)
+#if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
 
 /* Constants */
 #define LEN52 NUMBER_OF_DIGITS(256, DIGIT_SIZE)
@@ -26,46 +26,42 @@
 // in 2^52 radix
 */
 /* clang-format off */
-__ALIGN64 static const int64u n256_mb[LEN52][8] = {
-    {0x9cac2fc632551, 0x9cac2fc632551, 0x9cac2fc632551, 0x9cac2fc632551, 0x9cac2fc632551, 0x9cac2fc632551, 0x9cac2fc632551, 0x9cac2fc632551},
-    {0xada7179e84f3b, 0xada7179e84f3b, 0xada7179e84f3b, 0xada7179e84f3b, 0xada7179e84f3b, 0xada7179e84f3b, 0xada7179e84f3b, 0xada7179e84f3b},
-    {0xfffffffbce6fa, 0xfffffffbce6fa, 0xfffffffbce6fa, 0xfffffffbce6fa, 0xfffffffbce6fa, 0xfffffffbce6fa, 0xfffffffbce6fa, 0xfffffffbce6fa},
-    {0x0000fffffffff, 0x0000fffffffff, 0x0000fffffffff, 0x0000fffffffff, 0x0000fffffffff, 0x0000fffffffff, 0x0000fffffffff, 0x0000fffffffff},
-    {0x0ffffffff0000, 0x0ffffffff0000, 0x0ffffffff0000, 0x0ffffffff0000, 0x0ffffffff0000, 0x0ffffffff0000, 0x0ffffffff0000, 0x0ffffffff0000}
+__ALIGN64 static const int64u n256_mb[LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x9cac2fc632551) },
+    { REP_NUM_BUFF_DECL(0xada7179e84f3b) },
+    { REP_NUM_BUFF_DECL(0xfffffffbce6fa) },
+    { REP_NUM_BUFF_DECL(0x0000fffffffff) },
+    { REP_NUM_BUFF_DECL(0x0ffffffff0000) }
 };
 
-__ALIGN64 static const int64u n256x2_mb[LEN52][8] = {
-    {0x39585f8c64aa2, 0x39585f8c64aa2, 0x39585f8c64aa2, 0x39585f8c64aa2, 0x39585f8c64aa2, 0x39585f8c64aa2, 0x39585f8c64aa2, 0x39585f8c64aa2},
-    {0x5b4e2f3d09e77, 0x5b4e2f3d09e77, 0x5b4e2f3d09e77, 0x5b4e2f3d09e77, 0x5b4e2f3d09e77, 0x5b4e2f3d09e77, 0x5b4e2f3d09e77, 0x5b4e2f3d09e77},
-    {0xfffffff79cdf5, 0xfffffff79cdf5, 0xfffffff79cdf5, 0xfffffff79cdf5, 0xfffffff79cdf5, 0xfffffff79cdf5, 0xfffffff79cdf5, 0xfffffff79cdf5},
-    {0x0001fffffffff, 0x0001fffffffff, 0x0001fffffffff, 0x0001fffffffff, 0x0001fffffffff, 0x0001fffffffff, 0x0001fffffffff, 0x0001fffffffff},
-    {0x1fffffffe0000, 0x1fffffffe0000, 0x1fffffffe0000, 0x1fffffffe0000, 0x1fffffffe0000, 0x1fffffffe0000, 0x1fffffffe0000, 0x1fffffffe0000}
+__ALIGN64 static const int64u n256x2_mb[LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x39585f8c64aa2) },
+    { REP_NUM_BUFF_DECL(0x5b4e2f3d09e77) },
+    { REP_NUM_BUFF_DECL(0xfffffff79cdf5) },
+    { REP_NUM_BUFF_DECL(0x0001fffffffff) },
+    { REP_NUM_BUFF_DECL(0x1fffffffe0000) }
 };
 
 /* k0 = -( (1/n256 mod 2^DIGIT_SIZE) ) mod 2^DIGIT_SIZE */
-__ALIGN64 static const int64u n256_k0_mb[8] = {
-    0x1c8aaee00bc4f, 0x1c8aaee00bc4f, 0x1c8aaee00bc4f, 0x1c8aaee00bc4f, 0x1c8aaee00bc4f, 0x1c8aaee00bc4f, 0x1c8aaee00bc4f, 0x1c8aaee00bc4f
-};
+__ALIGN64 static const int64u n256_k0_mb[sizeof(U64) / sizeof(int64u)] = { REP_NUM_BUFF_DECL(0x1c8aaee00bc4f) };
 
 /* to Montgomery conversion constant
 // rr = 2^((LEN52*DIGIT_SIZE)*2) mod n256
 */
-__ALIGN64 static const int64u n256_rr_mb[LEN52][8] = {
-    {0x0005cc0dea6dc3ba,0x0005cc0dea6dc3ba,0x0005cc0dea6dc3ba,0x0005cc0dea6dc3ba,0x0005cc0dea6dc3ba,0x0005cc0dea6dc3ba,0x0005cc0dea6dc3ba,0x0005cc0dea6dc3ba},
-    {0x000192a067d8a084,0x000192a067d8a084,0x000192a067d8a084,0x000192a067d8a084,0x000192a067d8a084,0x000192a067d8a084,0x000192a067d8a084,0x000192a067d8a084},
-    {0x000bec59615571bb,0x000bec59615571bb,0x000bec59615571bb,0x000bec59615571bb,0x000bec59615571bb,0x000bec59615571bb,0x000bec59615571bb,0x000bec59615571bb},
-    {0x0001fc245b2392b6,0x0001fc245b2392b6,0x0001fc245b2392b6,0x0001fc245b2392b6,0x0001fc245b2392b6,0x0001fc245b2392b6,0x0001fc245b2392b6,0x0001fc245b2392b6},
-    {0x0000e12d9559d956,0x0000e12d9559d956,0x0000e12d9559d956,0x0000e12d9559d956,0x0000e12d9559d956,0x0000e12d9559d956,0x0000e12d9559d956,0x0000e12d9559d956}
+__ALIGN64 static const int64u n256_rr_mb[LEN52][sizeof(U64) / sizeof(int64u)] = {
+    { REP_NUM_BUFF_DECL(0x0005cc0dea6dc3ba) },
+    { REP_NUM_BUFF_DECL(0x000192a067d8a084) },
+    { REP_NUM_BUFF_DECL(0x000bec59615571bb) },
+    { REP_NUM_BUFF_DECL(0x0001fc245b2392b6) },
+    { REP_NUM_BUFF_DECL(0x0000e12d9559d956) }
 };
 /* clang-format on */
 
-
 /*=====================================================================
 
- Specialized single operations in n256 - sqr & mul
+Specialized single operations in n256 - sqr & mul
 
 =====================================================================*/
-EXTERN_C U64* MB_FUNC_NAME(ifma_n256_)(void) { return (U64*)n256_mb; }
 
 void MB_FUNC_NAME(ifma_ams52_n256_)(U64 r[], const U64 a[])
 {
@@ -76,7 +72,6 @@ void MB_FUNC_NAME(ifma_amm52_n256_)(U64 r[], const U64 a[], const U64 b[])
 {
     MB_FUNC_NAME(ifma_amm52x5_)(r, a, b, (U64*)n256_mb, n256_k0_mb);
 }
-
 void MB_FUNC_NAME(ifma_tomont52_n256_)(U64 r[], const U64 a[])
 {
     MB_FUNC_NAME(ifma_amm52x5_)(r, a, (U64*)n256_rr_mb, (U64*)n256_mb, n256_k0_mb);
@@ -88,7 +83,7 @@ void MB_FUNC_NAME(ifma_frommont52_n256_)(U64 r[], const U64 a[])
 }
 
 /*
-// computes r = 1/z = z^(n256-2) mod n256
+// Computes r = 1/z = z^(n256-2) mod n256
 //
 // note: z in in Montgomery domain (as soon mul() and sqr() below are amm-functions
 //       r in Montgomery domain too
@@ -141,7 +136,7 @@ void MB_FUNC_NAME(ifma_aminv52_n256_)(U64 r[], const U64 z[])
 
 /*=====================================================================
 
- Specialized single operations in n256 - add, sub & neg
+Specialized single operations in n256 - add, sub & neg
 
 =====================================================================*/
 
@@ -150,20 +145,12 @@ void MB_FUNC_NAME(ifma_add52_n256_)(U64 r[], const U64 a[], const U64 b[])
     MB_FUNC_NAME(ifma_add52x5_)(r, a, b, (U64*)n256x2_mb);
 }
 
-void MB_FUNC_NAME(ifma_sub52_n256_)(U64 r[], const U64 a[], const U64 b[])
-{
-    MB_FUNC_NAME(ifma_sub52x5_)(r, a, b, (U64*)n256x2_mb);
-}
 
-void MB_FUNC_NAME(ifma_neg52_n256_)(U64 r[], const U64 a[])
-{
-    MB_FUNC_NAME(ifma_neg52x5_)(r, a, (U64*)n256x2_mb);
-}
 
 __mb_mask MB_FUNC_NAME(lt_mbx_digit_)(const U64 a, const U64 b, const __mb_mask lt_mask)
 {
     U64 d = mask_sub64(sub64(a, b), lt_mask, sub64(a, b), set1(1));
-    return cmp64_mask(d, get_zero64(), _MM_CMPINT_LT);
+    return cmplt64_mask(d, get_zero64());
 }
 
 /* r = (a>=n256)? a-n256 : a */
@@ -177,17 +164,17 @@ void MB_FUNC_NAME(ifma_fastred52_pn256_)(U64 R[], const U64 A[])
     U64 r4 = sub64(A[4], ((U64*)(n256_mb))[4]);
 
     /* lt = {r0 - r4} < 0 */
-    __mb_mask lt = MB_FUNC_NAME(lt_mbx_digit_)(r0, get_zero64(), 0);
+    __mb_mask lt = MB_FUNC_NAME(lt_mbx_digit_)(r0, get_zero64(), zero_mask_mb());
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r1, get_zero64(), lt);
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r2, get_zero64(), lt);
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r3, get_zero64(), lt);
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r4, get_zero64(), lt);
 
-    r0 = mask_mov64(A[0], ~lt, r0);
-    r1 = mask_mov64(A[1], ~lt, r1);
-    r2 = mask_mov64(A[2], ~lt, r2);
-    r3 = mask_mov64(A[3], ~lt, r3);
-    r4 = mask_mov64(A[4], ~lt, r4);
+    r0 = mask_mov64(A[0], not_mb_mask(lt), r0);
+    r1 = mask_mov64(A[1], not_mb_mask(lt), r1);
+    r2 = mask_mov64(A[2], not_mb_mask(lt), r2);
+    r3 = mask_mov64(A[3], not_mb_mask(lt), r3);
+    r4 = mask_mov64(A[4], not_mb_mask(lt), r4);
 
     /* normalize r0 - r4 */
     NORM_ASHIFTR(r, 0, 1)
@@ -210,9 +197,28 @@ __mb_mask MB_FUNC_NAME(ifma_cmp_lt_n256_)(const U64 a[])
 __mb_mask MB_FUNC_NAME(ifma_check_range_n256_)(const U64 A[])
 {
     __mb_mask mask = MB_FUNC_NAME(is_zero_FE256_)(A);
-    mask |= ~MB_FUNC_NAME(ifma_cmp_lt_n256_)(A);
+    mask           = or_mb_mask(mask, not_mb_mask(MB_FUNC_NAME(ifma_cmp_lt_n256_)(A)));
 
     return mask;
 }
 
-#endif /* #if (_MBX>=_MBX_K1) */
+
+#if (_MBX >= _MBX_K1)
+
+/*=====================================================================
+
+Specialized single operations in n256 - sub & neg
+
+=====================================================================*/
+
+EXTERN_C U64* ifma_n256_mb8(void) { return (U64*)n256_mb; }
+
+void ifma_sub52_n256_mb8(U64 r[], const U64 a[], const U64 b[])
+{
+    ifma_sub52x5_mb8(r, a, b, (U64*)n256x2_mb);
+}
+
+void ifma_neg52_n256_mb8(U64 r[], const U64 a[]) { ifma_neg52x5_mb8(r, a, (U64*)n256x2_mb); }
+
+#endif /* #if (_MBX >= _MBX_K1) */
+#endif /* #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)) */

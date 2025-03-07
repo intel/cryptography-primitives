@@ -51,6 +51,23 @@
 #elif defined(_K1)
     #define _MBX _MBX_K1
 #endif
+
+/* 
+ * Memory consumption optimization: merged build compiles data only 
+ * for a one single object(lib letter) to avoid multiple copies of the data.
+ */
+#if defined(_MBX_MERGED_BLD)
+    /* compile data only for l9_ sources in case it has compiler's support */
+    #if defined(_L9) && defined(_MBX_AVX_IFMA_SUPPORTED)
+        #define _MBX_DATA 1
+    /* no compiler's support  */
+    #elif defined(_K1) && !defined(_MBX_AVX_IFMA_SUPPORTED)
+        #define _MBX_DATA 1
+    #endif /* #if defined(_L9) */
+#else
+    /* compile data unconditionally */
+    #define _MBX_DATA 1
+#endif /* #if defined(_MBX_MERGED_BLD) */
 /* clang-format on */
 
 #endif /* INTERNAL_DEFS_H */
