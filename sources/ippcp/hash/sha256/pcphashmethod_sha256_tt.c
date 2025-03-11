@@ -71,7 +71,7 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA256_TT, (void))
         return &method;
     }
 #endif
-    method.hashUpdate = sha256_hashUpdate;
 
+    method.hashUpdate = sha256_hashUpdate;
     return &method;
 }

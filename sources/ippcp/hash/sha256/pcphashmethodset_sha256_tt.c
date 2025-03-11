@@ -45,24 +45,26 @@
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashMethodSet_SHA256_TT, (IppsHashMethod* pMethod) )
+IPPFUN(IppStatus, ippsHashMethodSet_SHA256_TT, (IppsHashMethod * pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   pMethod->hashAlgId     =  ippHashAlg_SHA256;
-   pMethod->hashLen       =  IPP_SHA256_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    =  MBS_SHA256;
-   pMethod->msgLenRepSize =  MLR_SHA256;
-   pMethod->hashInit      =  sha256_hashInit;
-   pMethod->hashUpdate    =  sha256_hashUpdate;
-   pMethod->hashOctStr    =  sha256_hashOctString;
-   pMethod->msgLenRep     =  sha256_msgRep;
+    pMethod->hashAlgId     = ippHashAlg_SHA256;
+    pMethod->hashLen       = IPP_SHA256_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA256;
+    pMethod->msgLenRepSize = MLR_SHA256;
+    pMethod->hashInit      = sha256_hashInit;
+    pMethod->hashOctStr    = sha256_hashOctString;
+    pMethod->msgLenRep     = sha256_msgRep;
 
-#if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
-   if(IsFeatureEnabled(ippCPUID_SHA))
-      pMethod->hashUpdate = sha256_ni_hashUpdate;
+#if (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_ == _FEATURE_ON_)
+    if (IsFeatureEnabled(ippCPUID_SHA)) {
+        pMethod->hashUpdate = sha256_ni_hashUpdate;
+        return ippStsNoErr;
+    }
 #endif
 
-   return ippStsNoErr;
+    pMethod->hashUpdate = sha256_hashUpdate;
+    return ippStsNoErr;
 }

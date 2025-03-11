@@ -46,29 +46,25 @@
 //
 *F*/
 
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA1_TT, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA1_TT, (void))
 {
-   static IppsHashMethod method = {
-      ippHashAlg_SHA1,
-      IPP_SHA1_DIGEST_BITSIZE/8,
-      MBS_SHA1,
-      MLR_SHA1,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-   };
+    static IppsHashMethod method = {
+        ippHashAlg_SHA1, IPP_SHA1_DIGEST_BITSIZE / 8, MBS_SHA1, MLR_SHA1, NULL, NULL, NULL, NULL,
+    };
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashInit   = sha1_hashInit;
-   method.hashUpdate = sha1_hashUpdate;
-   method.hashOctStr = sha1_hashOctString;
-   method.msgLenRep  = sha1_msgRep;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashInit   = sha1_hashInit;
+    method.hashOctStr = sha1_hashOctString;
+    method.msgLenRep  = sha1_msgRep;
 
-   #if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
-   if(IsFeatureEnabled(ippCPUID_SHA))
-      method.hashUpdate = sha1_ni_hashUpdate;
-   #endif
-   return &method;
+#if (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_ == _FEATURE_ON_)
+    if (IsFeatureEnabled(ippCPUID_SHA)) {
+        method.hashUpdate = sha1_ni_hashUpdate;
+        return &method;
+    }
+#endif
+
+    method.hashUpdate = sha1_hashUpdate;
+    return &method;
 }
