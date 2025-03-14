@@ -280,6 +280,12 @@ if(IPPCP_FIPS_MODE)
   endif()
 endif()
 
+if (WIN32)
+    set(IPPCP_WIN_RESOURCE_FILE ${IPP_CRYPTO_SOURCES_DIR}/pcpver.rc)
+else()
+    set(IPPCP_WIN_RESOURCE_FILE "")
+endif()
+
 # Because of CMake bug (https://gitlab.kitware.com/cmake/cmake/issues/19178) it is impossible to add
 # target specific NASM compiler options/definitions when using VS generator, but it is possible to specify
 # them based on source files. So, here is the workaround - we spawn same assembler sources across different
@@ -321,7 +327,7 @@ foreach(opt ${PLATFORM_LIST})
       # Code coverage data gathering is a bit easier, when sources for ISA-specific builds point to the same location on a filesystem
       set(LIBRARY_C_SOURCES_${opt} "${LIBRARY_C_SOURCES_ORIGINAL}")
     endif()
-    set_source_files_properties(${LIBRARY_C_SOURCES_${opt}} pcpver.rc PROPERTIES INCLUDE_DIRECTORIES "${C_INCLUDE_DIRECTORIES}")
+    set_source_files_properties(${LIBRARY_C_SOURCES_${opt}} ${IPPCP_WIN_RESOURCE_FILE} PROPERTIES INCLUDE_DIRECTORIES "${C_INCLUDE_DIRECTORIES}")
     # Set optimization flag for cpinit.c to -O1
     # Fix for problem related with MSVC compiler -O2 optimization
     if((${ARCH} STREQUAL "intel64") AND ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC"))
@@ -372,7 +378,7 @@ foreach(opt ${PLATFORM_LIST})
     if(WIN32)
       add_library(${IPPCP_DYN_ITER_ASMOBJS} OBJECT ${LIBRARY_ASM_SOURCES_${opt}})
       add_library(${IPPCP_DYN_ITER} SHARED ${IPPCP_WIN_DEF_FILE}
-                                           pcpver.rc
+                                           ${IPPCP_WIN_RESOURCE_FILE}
                                            ${LIBRARY_HEADERS}
                                            ${LIBRARY_C_SOURCES_${opt}}
                                            ${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES}
@@ -521,8 +527,13 @@ if(MERGED_BLD)
     ${CMAKE_BINARY_DIR}/dispatcher/*.asm
     )
 
+  set(IPPCP_DISPATCHER_OBJS ${TARGET_NAME}_s_dispatcher)
+  add_library(${IPPCP_DISPATCHER_OBJS} OBJECT ${DISPATCHER_C_SOURCES} ${DISPATCHER_ASM_SOURCES})
+
+  set(merged_dependency ${merged_dependency} $<TARGET_OBJECTS:${IPPCP_DISPATCHER_OBJS}>)
+
   set(IPPCP_LIB_MERGED ${TARGET_NAME}_s)
-  add_library(${IPPCP_LIB_MERGED} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${DISPATCHER_ASM_SOURCES} ${merged_dependency})
+  add_library(${IPPCP_LIB_MERGED} STATIC ${DISPATCHER_HEADERS} ${merged_dependency})
 
   set(IPPCP_LIB_MERGED ${IPPCP_LIB_MERGED} PARENT_SCOPE)
 
@@ -566,11 +577,8 @@ if(MERGED_BLD)
     set(IPPCP_LIB_PCS ${TARGET_NAME}_dyn)
     set(IPPCP_LIB_PCS ${IPPCP_LIB_PCS} PARENT_SCOPE)
 
-    if(WIN32)
-      add_library(${IPPCP_LIB_PCS} SHARED ${IPPCP_WIN_DEF_FILE} emptyfile.c pcpver.rc) # emptyfile.c - Visual Studio does not produce a .dll without source files
-    else()
-      add_library(${IPPCP_LIB_PCS} SHARED emptyfile.c) # emptyfile.c to suppress the cmake warning
-    endif()
+    add_library(${IPPCP_LIB_PCS} SHARED ${IPPCP_WIN_DEF_FILE} ${IPPCP_WIN_RESOURCE_FILE}
+                                        ${DISPATCHER_HEADERS} ${merged_dependency})
 
     set_target_properties(${IPPCP_LIB_PCS} PROPERTIES LINKER_LANGUAGE C
                                                       COMPILE_DEFINITIONS  "_MERGED_BLD"
@@ -581,7 +589,6 @@ if(MERGED_BLD)
                                                          SOVERSION ${IPPCP_INTERFACE_VERSION_MAJOR})
     endif()
 
-    target_link_libraries(${IPPCP_LIB_PCS} ${IPPCP_LIB_MERGED}) # link to the static merged
     set_target_properties(${IPPCP_LIB_PCS} PROPERTIES OUTPUT_NAME "${TARGET_NAME}")
 
     install(TARGETS ${IPPCP_LIB_PCS}

@@ -81,7 +81,11 @@ file(GLOB OPENSSL_HEADERS      "${OPENSSL_INCLUDE_DIR}/openssl/*.h")
 set(CRYPTO_MB_SOURCES_ORIGINAL ${RSA_SOURCES} ${COMMON_SOURCES} ${X25519_SOURCES} ${ECNIST_SOURCES} ${SM2_SOURCES} ${SM3_SOURCES} ${SM4_SOURCES} ${ED25519_SOURCES} ${EXP_SOURCES})
 set(CRYPTO_MB_HEADERS ${MB_PUBLIC_HEADERS} ${MB_PRIVATE_HEADERS} ${OPENSSL_HEADERS})
 
-set(WIN_RESOURCE_FILE ${CRYPTO_MB_SOURCES_DIR}/common/crypto_mb_ver.rc)
+if (WIN32)
+    set(CRYPTO_MB_WIN_RESOURCE_FILE ${CRYPTO_MB_SOURCES_DIR}/common/crypto_mb_ver.rc)
+else()
+    set(CRYPTO_MB_WIN_RESOURCE_FILE "")
+endif()
 set(CPU_FEATURES_FILE ${CRYPTO_MB_SOURCES_DIR}/common/cpu_features.c)
 set(MBX_VERSION_FILE ${CRYPTO_MB_SOURCES_DIR}/common/ifma_version.c)
 
@@ -209,11 +213,12 @@ endif()
 
 # Static library
 if (MBX_MERGED_BLD)
-    if(WIN32)
-        add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${FIPS_SELFTESTS} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE} ${WIN_RESOURCE_FILE})
-    else()
-        add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${DISPATCHER_C_SOURCES} ${FIPS_SELFTESTS} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE})
-    endif()
+    set(MBX_DISPATCHER_OBJS ${MBX_TARGET_NAME}_s_dispatcher)
+    add_library(${MBX_DISPATCHER_OBJS} OBJECT ${DISPATCHER_C_SOURCES})
+
+    set(MBX_MERGED_DEPENDENCY ${MBX_MERGED_DEPENDENCY} $<TARGET_OBJECTS:${MBX_DISPATCHER_OBJS}>)
+    add_library(${MB_STATIC_LIB_TARGET} STATIC ${DISPATCHER_HEADERS} ${FIPS_SELFTESTS} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE} ${CRYPTO_MB_WIN_RESOURCE_FILE})
+
 
     set_target_properties(${MB_STATIC_LIB_TARGET} PROPERTIES C_VISIBILITY_PRESET hidden
                                                             VISIBILITY_INLINES_HIDDEN ON
@@ -250,7 +255,7 @@ endif()
 # Create shared library
 if(DYNAMIC_LIB OR MB_STANDALONE)
     if (MBX_MERGED_BLD)
-        add_library(${MB_DYN_LIB_TARGET} SHARED common/emptyfile.c common/crypto_mb_ver.rc) # emptyfile.c to suppress the cmake warning
+        add_library(${MB_DYN_LIB_TARGET} SHARED ${DISPATCHER_HEADERS} ${FIPS_SELFTESTS} ${MBX_MERGED_DEPENDENCY} ${CPU_FEATURES_FILE} ${CRYPTO_MB_WIN_RESOURCE_FILE})
 
         set_target_properties(${MB_DYN_LIB_TARGET} PROPERTIES C_VISIBILITY_PRESET hidden
                                                             VISIBILITY_INLINES_HIDDEN ON
@@ -264,7 +269,7 @@ if(DYNAMIC_LIB OR MB_STANDALONE)
                                                                 SOVERSION ${MBX_INTERFACE_VERSION_MAJOR})
         endif()
 
-        target_link_libraries(${MB_DYN_LIB_TARGET} ${MB_STATIC_LIB_TARGET}) # link to the static merged
+        target_link_libraries(${MB_DYN_LIB_TARGET} OpenSSL::Crypto)
 
         # Installation of the shared library
         install(TARGETS ${MB_DYN_LIB_TARGET}
@@ -275,7 +280,7 @@ if(DYNAMIC_LIB OR MB_STANDALONE)
     else()
         foreach(opt ${MBX_PLATFORM_LIST})
             set(MBX_DYN_ITER ${MB_DYN_LIB_TARGET}_${opt})
-            add_library(${MBX_DYN_ITER} SHARED common/emptyfile.c common/crypto_mb_ver.rc) # emptyfile.c to suppress the cmake warning
+            add_library(${MBX_DYN_ITER} SHARED ${CRYPTO_MB_WIN_RESOURCE_FILE} ${CRYPTO_MB_HEADERS} ${MBX_C_SOURCES_${opt}} ${FIPS_SELFTESTS})
 
             set_target_properties(${MBX_DYN_ITER} PROPERTIES C_VISIBILITY_PRESET hidden
                                                                 VISIBILITY_INLINES_HIDDEN ON
@@ -286,7 +291,7 @@ if(DYNAMIC_LIB OR MB_STANDALONE)
                 set_target_properties(${MBX_DYN_ITER} PROPERTIES  VERSION   ${MBX_INTERFACE_VERSION}
                                                                     SOVERSION ${MBX_INTERFACE_VERSION_MAJOR})
             endif()
-            target_link_libraries(${MBX_DYN_ITER} ${MBX_TARGET_NAME}_${opt}) # link to the static 1CPU
+            target_link_libraries(${MBX_DYN_ITER} OpenSSL::Crypto)
             install(TARGETS ${MBX_DYN_ITER}
                             ARCHIVE DESTINATION ${MBX_LIB_INSTALL_DIR}
                             PUBLIC_HEADER DESTINATION "include/crypto_mb"
