@@ -1,0 +1,142 @@
+.. _mbx_exp-1024-2048-3072-4096_mb8:
+
+
+mbx_exp/1024/2048/3072/4096_mb8
+===============================
+
+
+Performs modular exponentiation.
+
+
+Syntax
+------
+
+
+mbx_status mbx_exp1024_mb8(int64u\* const out_pa[8], const int64u\*
+const base_pa[8], const int64u\* const exp_pa[8], int exp_bits, const
+int64u\* const mod_pa[8], int mod_bits, int8u\* pBuffer, int bufferLen);
+
+
+mbx_status mbx_exp2048_mb8(int64u\* const out_pa[8], const int64u\*
+const base_pa[8], const int64u\* const exp_pa[8], int exp_bits, const
+int64u\* const mod_pa[8], int mod_bits, int8u\* pBuffer, int bufferLen);
+
+
+mbx_status mbx_exp3072_mb8(int64u\* const out_pa[8], const int64u\*
+const base_pa[8], const int64u\* const exp_pa[8], int exp_bits, const
+int64u\* const mod_pa[8], int mod_bits, int8u\* pBuffer, int bufferLen);
+
+
+mbx_status mbx_exp4096_mb8(int64u\* const out_pa[8], const int64u\*
+const base_pa[8], const int64u\* const exp_pa[8], int exp_bits, const
+int64u\* const mod_pa[8], int mod_bits, int8u\* pBuffer, int bufferLen);
+
+
+mbx_status mbx_exp_mb8(int64u\* const out_pa[8], const int64u\* const
+base_pa[8], const int64u\* const exp_pa[8], int exp_bits, const int64u\*
+const mod_pa[8], int mod_bits, int8u\* pBuffer, int bufferLen);
+
+
+Include Files
+-------------
+
+
+``crypto_mb/exp.h``
+
+
+Parameters
+----------
+
+
+.. list-table:: 
+   :header-rows: 0
+
+   * -     out_pa   
+     -  Array of pointers to the computed exponents.
+   * -     base_pa   
+     -  Array of pointers to the input bases to be exponentiated.
+   * -     exp_pa   
+     -  Array of pointers to the input power values.
+   * -     exp_bits   
+     -  Size of power in bits.
+   * -     mod_pa   
+     -  Array of pointers to the input modules used for reduction.
+   * -     mod_bits   
+     -  Size of modulus in bits.
+   * -     pBuffer   
+     -  Pointer to the work buffer.
+   * -     bufferLen   
+     -  Size of the work buffer in bytes.
+
+
+
+
+Description
+-----------
+
+
+All the functions compute modular exponentiation by the following
+formula:
+
+
+.. image:: GUID-DC7DABA7-E95A-4B16-AC21-C3B1CD4426D7-low.png
+
+
+Functions mbx_exp1024_mb8, mbx_exp2048_mb8, mbx_exp3072_mb8, and
+mbx_exp4096_mb8 are focused on exponentiation over the limited range of
+modulus n[i] - 1Kb, 2Kb, 3Kb, and 4Kb correspondingly.
+
+
+Exact ranges of supported modulus are represented in the table below.
+
+
+.. list-table:: 
+   :header-rows: 1
+
+   * -  function name
+     -  modulus range
+     -  exact boundaries (min, max) of the modulus size in bits
+   * -  mbx_exp1024_mb8
+     -  1Kb
+     -  989, 1038
+   * -  mbx_exp2048_mb8
+     -  2Kb
+     -  2029, 2078
+   * -  mbx_exp3072_mb8
+     -  3Kb
+     -  3069, 3118
+   * -  mbx_exp4096_mb8
+     -  4Kb
+     -  4057, 4106
+
+
+
+
+If actual sizes of modules are different, set the mod_bits parameter
+equal to maximum size of the actual module in bit size and extend all
+the modules with zero bits to the mod_bits value. The same is applicable
+for the exp_bits parameter and actual exponents.
+
+
+The mbx_exp_mb8 function provides processing of modules belonging to
+either 1Kb, 2Kb, 3Kb or 4Kb range only, calling appropriate
+mbx_exp1024_mb8, mbx_exp2048_mb8, mbx_exp3072_mb8 or mbx_exp4096_mb8
+function based on mod_bits parameter.
+
+
+Parameters pBuffer and bufferLen are defining the work buffer used for
+internal purposes. Minimal size of the work buffer necessary for
+performing modular exponentiation can be obtained by the call of the
+mbx_exp_BufferSize function.
+
+
+Return Values
+-------------
+
+
+The mbx_exp1024_mb8, mbx_exp2048_mb8, mbx_exp3072_mb8, mbx_exp4096_mb8,
+and mbx_exp_mb8 functions return the status that indicates whether the
+operation completed successfully or not. The status value of 0 indicates
+that all operations completed successfully. The error condition can be
+analyzed by the MBX_GET_STS() call.
+

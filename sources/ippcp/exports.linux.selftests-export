@@ -477,6 +477,7 @@ EXTERN (ippsLMSPublicKeyStateGetSize)
 EXTERN (ippsLMSSetPublicKeyState)
 EXTERN (ippsLMSSetSignatureState)
 EXTERN (ippsLMSVerify)
+EXTERN (ippsHKDF_expand)
 
 EXTERN (ippcp_is_fips_approved_func)
 EXTERN (fips_selftest_ippsAESEncryptDecrypt_get_size)
@@ -1019,6 +1020,7 @@ VERSION {
    ippsLMSSetPublicKeyState;
    ippsLMSSetSignatureState;
    ippsLMSVerify;
+   ippsHKDF_expand;
 
    ippcp_is_fips_approved_func;
    fips_selftest_ippsAESEncryptDecrypt_get_size;

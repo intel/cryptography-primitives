@@ -479,3 +479,4 @@ ippsLMSPublicKeyStateGetSize
 ippsLMSSetPublicKeyState
 ippsLMSSetSignatureState
 ippsLMSVerify
+ippsHKDF_expand

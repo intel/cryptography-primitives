@@ -477,6 +477,7 @@ EXTERN (ippsLMSPublicKeyStateGetSize)
 EXTERN (ippsLMSSetPublicKeyState)
 EXTERN (ippsLMSSetSignatureState)
 EXTERN (ippsLMSVerify)
+EXTERN (ippsHKDF_expand)
 
 VERSION {
  {
@@ -960,6 +961,7 @@ VERSION {
    ippsLMSSetPublicKeyState;
    ippsLMSSetSignatureState;
    ippsLMSVerify;
+   ippsHKDF_expand;
   local: *;
  };
 }

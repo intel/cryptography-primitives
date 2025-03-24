@@ -168,7 +168,14 @@ enable_language(ASM_NASM)
 if(NOT CMAKE_ASM_NASM_COMPILER_LOADED)
   message(FATAL_ERROR "Can't find assembler")
 endif()
-message(STATUS "ASM compiler version .................. " ${CMAKE_ASM_NASM_COMPILER})
+
+execute_process(
+    COMMAND ${CMAKE_ASM_NASM_COMPILER} "-v"
+    OUTPUT_VARIABLE NASM_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+message(STATUS "ASM compiler path ..................... " ${CMAKE_ASM_NASM_COMPILER})
+message(STATUS "ASM compiler version .................. " ${NASM_VERSION})
 message(STATUS "ASM object format ..................... " ${CMAKE_ASM_NASM_OBJECT_FORMAT})
 
 # set Intel Cryptography Primitives Library revision, if required

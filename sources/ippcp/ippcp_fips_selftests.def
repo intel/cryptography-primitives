@@ -479,6 +479,7 @@ ippsLMSPublicKeyStateGetSize
 ippsLMSSetPublicKeyState
 ippsLMSSetSignatureState
 ippsLMSVerify
+ippsHKDF_expand
 
 ippcp_is_fips_approved_func
 
