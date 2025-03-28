@@ -109,18 +109,14 @@ DOMAINS = {
 }
 
 SSE3 = "sse3"
-SSSE3 = "ssse3"
 SSE42 = "sse42"
-AVX = "avx"
 AVX2 = "avx2"
 AVX512BW = "avx512bw"
 AVX512IFMA = "avx512ifma"
 
 CPU = {
     SSE3: {INTEL64: "m7"},
-    SSSE3: {INTEL64: "n8"},
     SSE42: {INTEL64: "y8"},
-    AVX: {INTEL64: "e9"},
     AVX2: {INTEL64: "l9"},
     AVX512BW: {INTEL64: "k0"},
     AVX512IFMA: {INTEL64: "k1"},
@@ -129,8 +125,8 @@ CPU = {
 SUPPORTED_CPUS = {
     IPP: {
         INTEL64: {
-            WINDOWS: [SSE3, SSSE3, SSE42, AVX, AVX2, AVX512BW],
-            LINUX: [SSE3, SSSE3, SSE42, AVX, AVX2, AVX512BW],
+            WINDOWS: [SSE3, SSE42, AVX2, AVX512BW],
+            LINUX: [SSE3, SSE42, AVX2, AVX512BW],
         },
     },
     IPPCP: {
@@ -145,9 +141,7 @@ CPUID = {
     AVX512IFMA: "AVX3I_FEATURES",
     AVX512BW: "AVX3X_FEATURES",
     AVX2: "ippCPUID_AVX2",
-    AVX: "ippCPUID_AVX",
     SSE42: "ippCPUID_SSE42",
-    SSSE3: "ippCPUID_SSSE3",
     SSE3: "ippCPUID_SSE3",
 }
 

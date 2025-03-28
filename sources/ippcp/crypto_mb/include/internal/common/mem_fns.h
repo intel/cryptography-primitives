@@ -14,6 +14,9 @@
 * limitations under the License.
 *************************************************************************/
 
+#ifndef IFMA_MEM_FUNCTIONS_H
+#define IFMA_MEM_FUNCTIONS_H
+
 /*
  * Auxiliary functions to set and copy memory
  */
@@ -33,3 +36,5 @@ __MBX_INLINE void PadBlock(int8u paddingByte, void* pDst, int numBytes)
     for (k = 0; k < numBytes; k++)
         d[k] = paddingByte;
 }
+
+#endif /* IFMA_MEM_FUNCTIONS_H */

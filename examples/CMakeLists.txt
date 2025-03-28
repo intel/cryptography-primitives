@@ -20,6 +20,7 @@
 
 # List of examples for targets generation
 set(IPPCP_EXAMPLES
+  common/library_get_started.cpp
   # AES-CTR examples
   aes/aes-256-ctr-encryption.cpp
   aes/aes-256-ctr-decryption.cpp
@@ -43,7 +44,7 @@ set(IPPCP_EXAMPLES
   # Post-quantum algorithms examples
   post-quantum/lms_m32_h5_w8_verification.cpp
   # Elliptic curve algorithms examples
-  ecdsa/ecdsa-256r1-sign.cpp 
+  ecdsa/ecdsa-256r1-sign.cpp
   )
 
 cmake_policy(SET CMP0003 NEW)

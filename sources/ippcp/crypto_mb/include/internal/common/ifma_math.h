@@ -33,9 +33,7 @@
     SIMD_TYPE(512)
     typedef __mmask8 __mb_mask;
 
-    #define SIMD_LEN   512
     #define SIMD_BYTES (SIMD_LEN / 8)
-    #define MB_WIDTH   (SIMD_LEN / 64)
 
     __MBX_INLINE U64 loadu64(const void* p) { return _mm512_loadu_si512((U64*)p); }
 
@@ -207,9 +205,8 @@
      * by blend intrinsics with __m256i masks
      */
     typedef U64 __mb_mask;
-    #define MB_WIDTH    (SIMD_LEN / 64)
     #define ALL_ONES_64 (0xFFFFFFFFFFFFFFFFULL)
-    
+
     #if (defined(__GNUC__) && !defined(__clang__))
         #define _mm_cvtsd_si64(_x)     _mm_cvtsd_si64x(_x)
         #define _mm_cvtsi64_sd(_x, _y) _mm_cvtsi64x_sd((_x), (_y))
@@ -269,7 +266,7 @@
     __MBX_INLINE U64 fma52hi(U64 a, U64 b, U64 c) {
         return _mm256_madd52hi_epu64(a, b, c);
     }
-    
+
     __MBX_INLINE U64 mul52lo(U64 b, U64 c) {
         return _mm256_madd52lo_epu64(get_zero64(), b, c);
     }

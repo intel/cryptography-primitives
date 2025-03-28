@@ -5,8 +5,9 @@ PRNGenRDRAND
 ============
 
 
-Generates a pseudorandom unsigned number of the specified bit length
-using the RDRAND instruction.
+Generates a pseudorandom unsigned 32-bit int buffer of the specified bit length
+using the RDRAND instruction. If the last 32-bit int is not filled, its most significant
+bits are zeroed.
 
 
 Syntax
@@ -67,9 +68,9 @@ Return Values
    * -     ippStsNoErr
      -  Indicates no error. Any other value indicates an error or warning.
    * -     ippStsNullPtrErr
-     -  Indicates an error condition if any of the specified pointers is NULL.
-   * -     ippStsContextMatchErr
-     -  Indicates an error condition if the context parameter does not match the operation.
+     -  Indicates an error condition if pRand is NULL.
+   * -     ippStsErr
+     -  Indicates an error condition if the random bit sequence can't be generated.
    * -     ippStsLengthErr
      -  Indicates an error condition if nBits is less than 1.
    * -     ippStsNotSupportedModeErr

@@ -21,6 +21,8 @@
 
 #if (_MBX >= _MBX_K1)
 
+#include <internal/common/ssl_convert_func.h>
+
 /*
 // common functions
 */
@@ -388,36 +390,6 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_mb8(const int8u* const pa_sign_
 */
 #ifndef BN_OPENSSL_DISABLE
 
-static void reverse_inplace(int8u* inpout, int len)
-{
-    int mudpoint = len / 2;
-    for (int n = 0; n < mudpoint; n++) {
-        int x               = inpout[n];
-        inpout[n]           = inpout[len - 1 - n];
-        inpout[len - 1 - n] = x;
-    }
-}
-
-static BIGNUM* BN_bnu2bn(int64u* val, int len, BIGNUM* ret)
-{
-    len = len * sizeof(int64u);
-    reverse_inplace((int8u*)val, len);
-    ret = BN_bin2bn((int8u*)val, len, ret);
-    reverse_inplace((int8u*)val, len);
-    return ret;
-}
-
-static void ifma_mb8_to_BN_384(BIGNUM* out_bn[8], const int64u inp_mb8[][8])
-{
-    int64u tmp[8][P384_LEN64];
-    int64u* pa_tmp[8] = { tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6], tmp[7] };
-    /* convert to plain data */
-    ifma_mb8_to_BNU(pa_tmp, (const int64u(*)[8])inp_mb8, P384_BITSIZE);
-
-    for (int nb = 0; nb < 8; nb++)
-        out_bn[nb] = BN_bnu2bn(tmp[nb], P384_LEN64, out_bn[nb]);
-}
-
 mbx_status internal_avx512_nistp384_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey[8],
                                                              BIGNUM* pa_sign_rp[8],
                                                              const BIGNUM* const pa_eph_skey[8],
@@ -439,7 +411,7 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey
 
     nistp384_ecdsa_inv_keys_mb8(T, T, 0);
     /* store results in suitable format */
-    ifma_mb8_to_BN_384(pa_inv_skey, (const int64u(*)[8])T);
+    ifma_to_BN_mb8(pa_inv_skey, (const int64u(*)[8])T, P384_BITSIZE);
 
     /* clear key's inversion */
     MB_FUNC_NAME(zero_)((int64u(*)[8])T, sizeof(T) / sizeof(U64));
@@ -455,7 +427,7 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey
     MB_FUNC_NAME(zero_)((int64u(*)[8])scalarz, sizeof(scalarz) / sizeof(U64));
 
     /* store results in suitable format */
-    ifma_mb8_to_BN_384(pa_sign_rp, (const int64u(*)[8])T);
+    ifma_to_BN_mb8(pa_sign_rp, (const int64u(*)[8])T, P384_BITSIZE);
 
     status |= MBX_SET_STS_BY_MASK(status, stt_mask, MBX_STATUS_SIGNATURE_ERR);
     return status;

@@ -32,6 +32,10 @@
     #define ifma_mb_to_HexStr ifma_mb8_to_HexStr8
     #define ifma_mb_to_BNU    ifma_mb8_to_BNU
 
+    #ifndef BN_OPENSSL_DISABLE
+    #define ifma_BN_to_mb ifma_BN_to_mb8
+    #endif /* BN_OPENSSL_DISABLE */
+
     // from 8 buffers regular (radix2^64) to mb8 redundant (radix 2^52) representation
     EXTERN_C int8u ifma_BNU_to_mb8(int64u out_mb8[][8], const int64u* const bn[8], int bitLen);
     EXTERN_C int8u ifma_HexStr8_to_mb8(int64u out_mb8[][8], const int8u* const pStr[8], int bitLen);
@@ -56,6 +60,11 @@
     #define ifma_HexStr_to_mb       ifma_HexStr4_to_mb4
     #define ifma_mb_to_HexStr       ifma_mb4_to_HexStr4
     #define ifma_mb_to_BNU          ifma_mb4_to_BNU
+
+    #ifndef BN_OPENSSL_DISABLE
+    #define ifma_BN_to_mb ifma_BN_to_mb4
+    #define ifma_BN_transpose_copy ifma_BN_transpose_copy_mb4
+    #endif /* BN_OPENSSL_DISABLE */
 
     // from 4 buffers regular (radix2^64) to mb4 redundant (radix 2^52) representation
     EXTERN_C int8u ifma_BNU_to_mb4(int64u out_mb4[][4], const int64u* const bn[4], int bitLen);

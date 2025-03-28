@@ -48,6 +48,9 @@
 #error "Incorrect SIMD length"
 #endif
 
+/* macro defining the number of buffers */
+#define MB_WIDTH (SIMD_LEN / 64)
+
 /* internal function names */
 #if (SIMD_LEN == 512)
 #define FUNC_SUFFIX        mb8

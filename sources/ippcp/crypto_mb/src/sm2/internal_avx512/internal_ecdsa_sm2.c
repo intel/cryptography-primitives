@@ -25,6 +25,8 @@
 
 #if (_MBX >= _MBX_K1)
 
+#include <internal/common/ssl_convert_func.h>
+
 #ifndef BN_OPENSSL_DISABLE
 #include <openssl/bn.h>
 #include <openssl/ec.h>
@@ -113,16 +115,6 @@ static void sm2_ecdsa_compute_msg_digest(int8u* pa_msg_digest[8],
     sm3_update_mb8(pa_msg, (int*)msg_len, p_ctx);
 
     sm3_final_mb8(pa_msg_digest, p_ctx);
-    return;
-}
-
-static void reverse_inplace(int8u* inp, int len)
-{
-    for (int i = 0; i < len / 2; ++i) {
-        int8u a          = inp[i];
-        inp[i]           = inp[len - 1 - i];
-        inp[len - 1 - i] = a;
-    }
     return;
 }
 

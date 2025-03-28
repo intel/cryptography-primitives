@@ -24,10 +24,12 @@
 #ifndef BN_OPENSSL_DISABLE
 #include <openssl/bn.h>
 #include <openssl/ec.h>
+
 #ifdef OPENSSL_IS_BORINGSSL
 #include <openssl/ecdsa.h>
-#endif
-#endif
+#endif /* OPENSSL_IS_BORINGSSL */
+
+#endif /* BN_OPENSSL_DISABLE */
 
 /*
 // ECDSA kernels
@@ -315,6 +317,11 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_verify_mb8)(const int8u* const pa_sign_r[8]
     return status;
 }
 
+//----------------------------------------------
+//      OpenSSL's specific implementations
+//----------------------------------------------
+
+#ifndef BN_OPENSSL_DISABLE
 
 DLL_PUBLIC
 mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_setup_ssl_mb8)(BIGNUM* pa_inv_skey[8],
@@ -345,8 +352,18 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_setup_ssl_mb8)(BIGNUM* pa_inv_skey[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_avx512_nistp256_ecdsa_sign_setup_ssl_mb8(
-        pa_inv_skey, pa_sign_rp, pa_eph_skey, pBuffer);
+    status |=
+        internal_nistp256_ecdsa_sign_setup_ssl_mb8(pa_inv_skey, pa_sign_rp, pa_eph_skey, pBuffer);
+#elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
+    mbx_status status_lo = 0, status_hi = 0;
+
+    if (MBX_IS_ANY_0_TO_3_OK_STS(status))
+        status_lo = internal_nistp256_ecdsa_sign_setup_ssl_mb4(
+            &pa_inv_skey[0], &pa_sign_rp[0], &pa_eph_skey[0], pBuffer);
+    if (MBX_IS_ANY_4_TO_7_OK_STS(status))
+        status_hi = internal_nistp256_ecdsa_sign_setup_ssl_mb4(
+            &pa_inv_skey[4], &pa_sign_rp[4], &pa_eph_skey[4], pBuffer);
+    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
@@ -389,8 +406,28 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_complete_ssl_mb8)(int8u* pa_sign_r[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_avx512_nistp256_ecdsa_sign_complete_ssl_mb8(
+    status |= internal_nistp256_ecdsa_sign_complete_ssl_mb8(
         pa_sign_r, pa_sign_s, pa_msg, pa_sign_rp, pa_inv_eph_skey, pa_reg_skey, pBuffer);
+#elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
+    mbx_status status_lo = 0, status_hi = 0;
+
+    if (MBX_IS_ANY_0_TO_3_OK_STS(status))
+        status_lo = internal_nistp256_ecdsa_sign_complete_ssl_mb4(&pa_sign_r[0],
+                                                                  &pa_sign_s[0],
+                                                                  &pa_msg[0],
+                                                                  &pa_sign_rp[0],
+                                                                  &pa_inv_eph_skey[0],
+                                                                  &pa_reg_skey[0],
+                                                                  pBuffer);
+    if (MBX_IS_ANY_4_TO_7_OK_STS(status))
+        status_hi = internal_nistp256_ecdsa_sign_complete_ssl_mb4(&pa_sign_r[4],
+                                                                  &pa_sign_s[4],
+                                                                  &pa_msg[4],
+                                                                  &pa_sign_rp[4],
+                                                                  &pa_inv_eph_skey[4],
+                                                                  &pa_reg_skey[4],
+                                                                  pBuffer);
+    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
@@ -431,8 +468,18 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_ssl_mb8)(int8u* pa_sign_r[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_avx512_nistp256_ecdsa_sign_ssl_mb8(
+    status |= internal_nistp256_ecdsa_sign_ssl_mb8(
         pa_sign_r, pa_sign_s, pa_msg, pa_eph_skey, pa_reg_skey, pBuffer);
+#elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
+    mbx_status status_lo = 0, status_hi = 0;
+
+    if (MBX_IS_ANY_0_TO_3_OK_STS(status))
+        status_lo = internal_nistp256_ecdsa_sign_ssl_mb4(
+            &pa_sign_r[0], &pa_sign_s[0], &pa_msg[0], &pa_eph_skey[0], &pa_reg_skey[0], pBuffer);
+    if (MBX_IS_ANY_4_TO_7_OK_STS(status))
+        status_hi = internal_nistp256_ecdsa_sign_ssl_mb4(
+            &pa_sign_r[4], &pa_sign_s[4], &pa_msg[4], &pa_eph_skey[4], &pa_reg_skey[4], pBuffer);
+    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
@@ -477,10 +524,31 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_verify_ssl_mb8)(const ECDSA_SIG* const pa_s
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_avx512_nistp256_ecdsa_verify_ssl_mb8(
+    status |= internal_nistp256_ecdsa_verify_ssl_mb8(
         pa_sig, pa_msg, pa_pubx, pa_puby, pa_pubz, pBuffer, use_jproj_coords);
+#elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
+    mbx_status status_lo = 0, status_hi = 0;
+
+    if (MBX_IS_ANY_0_TO_3_OK_STS(status))
+        status_lo = internal_nistp256_ecdsa_verify_ssl_mb4(&pa_sig[0],
+                                                           &pa_msg[0],
+                                                           &pa_pubx[0],
+                                                           &pa_puby[0],
+                                                           &pa_pubz[0],
+                                                           pBuffer,
+                                                           use_jproj_coords);
+    if (MBX_IS_ANY_4_TO_7_OK_STS(status))
+        status_hi = internal_nistp256_ecdsa_verify_ssl_mb4(&pa_sig[4],
+                                                           &pa_msg[4],
+                                                           &pa_pubx[4],
+                                                           &pa_puby[4],
+                                                           &pa_pubz[4],
+                                                           pBuffer,
+                                                           use_jproj_coords);
+    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
 }
+#endif /* #ifndef BN_OPENSSL_DISABLE */

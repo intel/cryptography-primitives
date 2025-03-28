@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     PRNG Functions
-// 
+//
 //  Contents:
 //        ippsPRNGenRDRAND()
 //
@@ -34,8 +34,9 @@
 /*F*
 // Name: ippsPRNGenRDRAND
 //
-// Purpose: Generates a pseudorandom bit sequence
-//          based on RDRAND instruction of the specified nBits length.
+// Purpose: Generates a pseudorandom unsigned 32-bit int buffer of the
+// specified nBits length using the RDRAND instruction. If the last 32-bit
+// int is not filled, its most significant bits are zeroed.
 //
 // Returns:                   Reason:
 //    ippStsNullPtrErr           NULL == pRand
@@ -51,7 +52,7 @@
 // Parameters:
 //    pRand    pointer to the buffer
 //    nBits    number of bits be requested
-//    pCtx     pointer to the context
+//    pCtx     pointer to the context, unused, can be NULL
 *F*/
 IPPFUN(IppStatus, ippsPRNGenRDRAND,(Ipp32u* pRand, int nBits, void* pCtx))
 {

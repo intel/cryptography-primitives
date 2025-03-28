@@ -49,9 +49,7 @@ class SettingsPanel(QWidget):
 
         self.custom_dispatch = QGroupBox("Custom dispatcher")
         self.sse3 = QCheckBox("SSE3")
-        self.ssse3 = QCheckBox("SSSE3")
         self.sse42 = QCheckBox("SSE4.2")
-        self.avx = QCheckBox("AVX")
         self.avx2 = QCheckBox("AVX2")
         self.avx512bw = QCheckBox("AVX512BW")
         self.avx512ifma = QCheckBox("AVX512IFMA")
@@ -91,13 +89,11 @@ class SettingsPanel(QWidget):
         custom_dispatch_layout = QGridLayout()
 
         custom_dispatch_layout.addWidget(self.sse3, 1, 0)
-        custom_dispatch_layout.addWidget(self.ssse3, 1, 1)
-        custom_dispatch_layout.addWidget(self.sse42, 1, 2)
+        custom_dispatch_layout.addWidget(self.sse42, 1, 1)
 
-        custom_dispatch_layout.addWidget(self.avx, 2, 0)
-        custom_dispatch_layout.addWidget(self.avx2, 2, 1)
-        custom_dispatch_layout.addWidget(self.avx512bw, 2, 2)
-        custom_dispatch_layout.addWidget(self.avx512ifma, 2, 3)
+        custom_dispatch_layout.addWidget(self.avx2, 2, 0)
+        custom_dispatch_layout.addWidget(self.avx512bw, 2, 1)
+        custom_dispatch_layout.addWidget(self.avx512ifma, 2, 2)
 
         self.custom_dispatch.setLayout(custom_dispatch_layout)
 

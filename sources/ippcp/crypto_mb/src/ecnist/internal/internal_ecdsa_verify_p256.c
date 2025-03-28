@@ -116,7 +116,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_)(const int8u* const pa_s
                                                          int8u* pBuffer,
                                                          int use_jproj_coords)
 {
-    (void)pBuffer;
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
 
     mbx_status status = 0;
 
@@ -164,5 +164,95 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_)(const int8u* const pa_s
 
     return status;
 }
+
+//----------------------------------------------
+//      OpenSSL's specific implementations
+//----------------------------------------------
+
+#ifndef BN_OPENSSL_DISABLE
+
+/*
+// Internal (layer 2) verify function, ssl-specific API
+// pa_sig           input signature (r,s)
+// pa_msg           input message representation
+// pa_pubx          input BIGNUMs with pub key x coordinate
+// pa_puby          input BIGNUMs with pub key y coordinate
+// pa_pubz          input BIGNUMs with pub key z coordinate
+// pBuffer          input working buffer, currently unused
+// use_jproj_coords input flag specifying the type of the pub key point
+//
+//      h = s^–1(mod n); h1 = msg*h(mod n); h2 = r*h(mod n)
+//      P = h1*G + h2*W
+//      r1 = P.x(mod n)
+//      r1 == r?
+*/
+mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_ssl_)(
+    const ECDSA_SIG* const pa_sig[MB_WIDTH],
+    const int8u* const pa_msg[MB_WIDTH],
+    const BIGNUM* const pa_pubx[MB_WIDTH],
+    const BIGNUM* const pa_puby[MB_WIDTH],
+    const BIGNUM* const pa_pubz[MB_WIDTH],
+    int8u* pBuffer,
+    int use_jproj_coords)
+{
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
+
+    mbx_status status           = 0;
+    BIGNUM* pa_sign_r[MB_WIDTH] = { REP_NUM_BUFF_DECL(NULL) };
+    BIGNUM* pa_sign_s[MB_WIDTH] = { REP_NUM_BUFF_DECL(NULL) };
+
+    for (int buf_no = 0; buf_no < MB_WIDTH; buf_no++) {
+        if (pa_sig[buf_no] != NULL) {
+            ECDSA_SIG_get0(pa_sig[buf_no],
+                           (const BIGNUM(**))pa_sign_r + buf_no,
+                           (const BIGNUM(**))pa_sign_s + buf_no);
+        }
+    }
+
+    __ALIGN64 U64 msg[P256_LEN52];
+    __ALIGN64 U64 sign_r[P256_LEN52];
+    __ALIGN64 U64 sign_s[P256_LEN52];
+
+    /* convert input params */
+    ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])msg, pa_msg, P256_BITSIZE);
+    ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_r, (const BIGNUM(**))pa_sign_r, P256_BITSIZE);
+    ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_s, (const BIGNUM(**))pa_sign_s, P256_BITSIZE);
+
+    status |= MBX_STS_BY_MASK_GENERIC(
+        status, MB_FUNC_NAME(ifma_check_range_n256_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(
+        status, MB_FUNC_NAME(ifma_check_range_n256_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(
+        status, MB_FUNC_NAME(ifma_check_range_n256_)(sign_s), MBX_STATUS_MISMATCH_PARAM_ERR);
+
+    if (!MBX_IS_ANY_OK_STS(status))
+        return status;
+
+    P256_POINT W;
+
+    ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.X, pa_pubx, P256_BITSIZE);
+    ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.Y, pa_puby, P256_BITSIZE);
+    if (use_jproj_coords)
+        ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.Z, pa_pubz, P256_BITSIZE);
+    else
+        MB_FUNC_NAME(mov_FE256_)(W.Z, (U64*)ones);
+
+    status |= MBX_STS_BY_MASK_GENERIC(
+        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.X), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(
+        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.Y), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(
+        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.Z), MBX_STATUS_MISMATCH_PARAM_ERR);
+
+    if (!MBX_IS_ANY_OK_STS(status))
+        return status;
+
+    __mb_mask signature_err_mask = MB_FUNC_NAME(nistp256_ecdsa_verify_)(sign_r, sign_s, msg, &W);
+    status |= MBX_STS_BY_MASK_GENERIC(status, signature_err_mask, MBX_STATUS_SIGNATURE_ERR);
+
+    return status;
+}
+
+#endif /* BN_OPENSSL_DISABLE */
 
 #endif /* #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)) */

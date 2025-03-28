@@ -25,9 +25,11 @@
 #ifndef BN_OPENSSL_DISABLE
 #include <openssl/bn.h>
 #include <openssl/ec.h>
+
 #ifdef OPENSSL_IS_BORINGSSL
 #include <openssl/ecdsa.h>
-#endif
+#endif /* OPENSSL_IS_BORINGSSL */
+
 #endif /* BN_OPENSSL_DISABLE */
 
 typedef struct {
@@ -147,6 +149,61 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_)(int64u* pa_pubx[MB_WIDT
                                                          int8u* pBuffer,
                                                          int use_jproj_coords);
 
+/* 
+ *   "Level 2" processing functions declaration, ssl-specific API
+ */
+
+#ifndef BN_OPENSSL_DISABLE
+
+mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_ssl_)(
+    BIGNUM* pa_inv_skey[MB_WIDTH],
+    BIGNUM* pa_sign_rp[MB_WIDTH],
+    const BIGNUM* const pa_eph_skey[MB_WIDTH],
+    int8u* pBuffer);
+
+mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_ssl_)(
+    int8u* pa_sign_r[MB_WIDTH],
+    int8u* pa_sign_s[MB_WIDTH],
+    const int8u* const pa_msg[MB_WIDTH],
+    const BIGNUM* const pa_sign_rp[MB_WIDTH],
+    const BIGNUM* const pa_inv_eph_skey[MB_WIDTH],
+    const BIGNUM* const pa_reg_skey[MB_WIDTH],
+    int8u* pBuffer);
+
+mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_ssl_)(
+    int8u* pa_sign_r[MB_WIDTH],
+    int8u* pa_sign_s[MB_WIDTH],
+    const int8u* const pa_msg[MB_WIDTH],
+    const BIGNUM* const pa_eph_skey[MB_WIDTH],
+    const BIGNUM* const pa_reg_skey[MB_WIDTH],
+    int8u* pBuffer);
+
+mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_ssl_)(
+    const ECDSA_SIG* const pa_sig[MB_WIDTH],
+    const int8u* const pa_msg[MB_WIDTH],
+    const BIGNUM* const pa_pubx[MB_WIDTH],
+    const BIGNUM* const pa_puby[MB_WIDTH],
+    const BIGNUM* const pa_pubz[MB_WIDTH],
+    int8u* pBuffer,
+    int use_jproj_coords);
+
+
+mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB_WIDTH],
+                                                         const BIGNUM* const pa_skey[MB_WIDTH],
+                                                         const BIGNUM* const pa_pubx[MB_WIDTH],
+                                                         const BIGNUM* const pa_puby[MB_WIDTH],
+                                                         const BIGNUM* const pa_pubz[MB_WIDTH],
+                                                         int8u* pBuffer,
+                                                         int use_jproj_coords);
+
+mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_ssl_)(BIGNUM* pa_pubx[MB_WIDTH],
+                                                             BIGNUM* pa_puby[MB_WIDTH],
+                                                             BIGNUM* pa_pubz[MB_WIDTH],
+                                                             const BIGNUM* const pa_skey[MB_WIDTH],
+                                                             int8u* pBuffer,
+                                                             int use_jproj_coords);
+#endif /* BN_OPENSSL_DISABLE */
+
 #if (_MBX >= _MBX_K1)
 
 /* set affine point to infinity */
@@ -159,55 +216,7 @@ __MBX_INLINE void set_point_affine_to_infinity_mb8(P256_POINT_AFFINE* r)
 EXTERN_C void ifma_ec_nistp256_dbl_point_mb8(P256_POINT* r, const P256_POINT* p);
 EXTERN_C const U64* ifma_ec_nistp256_coord_one_mb8(void);
 
-
-#ifndef BN_OPENSSL_DISABLE
-
-mbx_status internal_avx512_mbx_nistp256_ecdh_ssl_mb8(int8u* pa_shared_key[8],
-                                                     const BIGNUM* const pa_skey[8],
-                                                     const BIGNUM* const pa_pubx[8],
-                                                     const BIGNUM* const pa_puby[8],
-                                                     const BIGNUM* const pa_pubz[8],
-                                                     int8u* pBuffer,
-                                                     int use_jproj_coords);
-
-mbx_status internal_avx512_nistp256_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey[8],
-                                                             BIGNUM* pa_sign_rp[8],
-                                                             const BIGNUM* const pa_eph_skey[8],
-                                                             int8u* pBuffer);
-
-mbx_status internal_avx512_nistp256_ecdsa_sign_complete_ssl_mb8(
-    int8u* pa_sign_r[8],
-    int8u* pa_sign_s[8],
-    const int8u* const pa_msg[8],
-    const BIGNUM* const pa_sign_rp[8],
-    const BIGNUM* const pa_inv_eph_skey[8],
-    const BIGNUM* const pa_reg_skey[8],
-    int8u* pBuffer);
-
-mbx_status internal_avx512_nistp256_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
-                                                       int8u* pa_sign_s[8],
-                                                       const int8u* const pa_msg[8],
-                                                       const BIGNUM* const pa_eph_skey[8],
-                                                       const BIGNUM* const pa_reg_skey[8],
-                                                       int8u* pBuffer);
-
-mbx_status internal_avx512_nistp256_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_sig[8],
-                                                         const int8u* const pa_msg[8],
-                                                         const BIGNUM* const pa_pubx[8],
-                                                         const BIGNUM* const pa_puby[8],
-                                                         const BIGNUM* const pa_pubz[8],
-                                                         int8u* pBuffer,
-                                                         int use_jproj_coords);
-
-mbx_status internal_avx512_nistp256_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
-                                                         BIGNUM* pa_puby[8],
-                                                         BIGNUM* pa_pubz[8],
-                                                         const BIGNUM* const pa_skey[8],
-                                                         int8u* pBuffer,
-                                                         int use_jproj_coords);
-
-#endif /* BN_OPENSSL_DISABLE */
-
 #endif /* #if (_MBX >= _MBX_K1) */
+
 #endif /* #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)) */
 #endif /* IFMA_ECPOINT_P256_H */

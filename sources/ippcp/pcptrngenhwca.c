@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     TRNG Functions
-// 
+//
 //  Contents:
 //     ippsTRNGenHW()
 //     ippsTRNGenHW_BN()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -92,15 +92,16 @@ static int cpSeedHW_buffer(Ipp32u* pRand, int bufLen)
 /*F*
 // Name: ippsTRNGenRDSEED
 //
-// Purpose: Generates a true random bit sequence
-//          based on Intel® instruction RDSEED of the specified nBits length.
+// Purpose: Generates a true random unsigned 32-bit int buffer of the
+// specified nBits length using the RDSEED instruction. If the last 32-bit
+// int is not filled, its most significant bits are zeroed.
 //
 // Returns:                   Reason:
 //    ippStsNullPtrErr           NULL == pRand
 //
 //    ippStsLengthErr            1 > nBits
 //
-//    ippStsNotSupportedModeErr  unsupported rdrand instruction
+//    ippStsNotSupportedModeErr  unsupported rdseed instruction
 //
 //    ippStsErr                  random bit sequence can't be generated
 //
@@ -109,7 +110,7 @@ static int cpSeedHW_buffer(Ipp32u* pRand, int bufLen)
 // Parameters:
 //    pRand    pointer to the buffer
 //    nBits    number of bits be requested
-//    pCtx     pointer to the context
+//    pCtx     pointer to the context, unused, can be NULL
 *F*/
 IPPFUN(IppStatus, ippsTRNGenRDSEED,(Ipp32u* pRand, int nBits, void* pCtx))
 {
@@ -133,7 +134,7 @@ IPPFUN(IppStatus, ippsTRNGenRDSEED,(Ipp32u* pRand, int nBits, void* pCtx))
       else
          return ippStsErr;
    }
-   /* unsupported rdrand instruction */
+   /* unsupported rdseed instruction */
    else
    #endif
       IPP_ERROR_RET(ippStsNotSupportedModeErr);
@@ -152,7 +153,7 @@ IPPFUN(IppStatus, ippsTRNGenRDSEED,(Ipp32u* pRand, int nBits, void* pCtx))
 //    ippStsLengthErr            1 > nBits
 //                               nBits > BN_ROOM(pRand)
 //
-//    ippStsNotSupportedModeErr  unsupported rdrand instruction
+//    ippStsNotSupportedModeErr  unsupported rdseed instruction
 //
 //    ippStsErr                  random big number can't be generated
 //
@@ -161,7 +162,7 @@ IPPFUN(IppStatus, ippsTRNGenRDSEED,(Ipp32u* pRand, int nBits, void* pCtx))
 // Parameters:
 //    pRand  pointer to the big number
 //    nBits    number of bits be requested
-//    pCtx  pointer to the context
+//    pCtx  pointer to the context, unused, can be NULL
 *F*/
 IPPFUN(IppStatus, ippsTRNGenRDSEED_BN,(IppsBigNumState* pRand, int nBits, void* pCtx))
 {
@@ -194,7 +195,7 @@ IPPFUN(IppStatus, ippsTRNGenRDSEED_BN,(IppsBigNumState* pRand, int nBits, void* 
          return ippStsErr;
    }
 
-   /* unsupported rdrand instruction */
+   /* unsupported rdseed instruction */
    else
    #endif
       IPP_ERROR_RET(ippStsNotSupportedModeErr);
