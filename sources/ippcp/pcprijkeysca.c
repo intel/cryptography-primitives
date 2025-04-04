@@ -27,6 +27,11 @@
 //
 */
 
+// Prevent code expansion from inline functions for clang compiler
+#if defined( __clang__ ) && !defined (__INTEL_COMPILER) && !defined (__INTEL_LLVM_COMPILER)
+#define __IPPCP_INLINE static __attribute__((noinline))
+#endif
+
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcprij.h"
@@ -298,3 +303,7 @@ IPP_OWN_DEFN (void, ExpandRijndaelKey, (const Ipp8u* pKey, int NK, int NB, int N
       dec_keys[n] = InvMixColumn(dec_keys[n]);
    }
 }
+
+#if defined( __clang__ ) && !defined (__INTEL_COMPILER) && !defined (__INTEL_LLVM_COMPILER)
+#undef __IPPCP_INLINE
+#endif

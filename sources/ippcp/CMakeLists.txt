@@ -169,14 +169,20 @@ if(NOT CMAKE_ASM_NASM_COMPILER_LOADED)
   message(FATAL_ERROR "Can't find assembler")
 endif()
 
+message(STATUS "Assembler path ........................ " ${CMAKE_ASM_NASM_COMPILER})
 execute_process(
     COMMAND ${CMAKE_ASM_NASM_COMPILER} "-v"
-    OUTPUT_VARIABLE NASM_VERSION
+    OUTPUT_VARIABLE NASM_VERSION_VERBOSE
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-message(STATUS "ASM compiler path ..................... " ${CMAKE_ASM_NASM_COMPILER})
-message(STATUS "ASM compiler version .................. " ${NASM_VERSION})
-message(STATUS "ASM object format ..................... " ${CMAKE_ASM_NASM_OBJECT_FORMAT})
+message(STATUS "Assembler version string .............. " ${NASM_VERSION_VERBOSE})
+string(REGEX MATCH "([0-9]+\\.[0-9]+\\.[0-9]+)" DETECTED_NASM_VERSION ${NASM_VERSION_VERBOSE})
+message(STATUS "Assembler version ..................... " ${DETECTED_NASM_VERSION})
+set(REQUIRED_NASM_VERSION "2.16.02")
+if(${DETECTED_NASM_VERSION} VERSION_LESS ${REQUIRED_NASM_VERSION})
+    message(FATAL_ERROR "Required NASM version ${REQUIRED_NASM_VERSION}, detected ${DETECTED_NASM_VERSION}.")
+endif()
+message(STATUS "Assembler object format ............... " ${CMAKE_ASM_NASM_OBJECT_FORMAT})
 
 # set Intel Cryptography Primitives Library revision, if required
 if(IPP_REVISION)
