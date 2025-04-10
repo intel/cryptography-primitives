@@ -38,18 +38,30 @@ IPP_OWN_DECL(void, base_w, (const Ipp8u* pMsg, Ipp32s out_len, Ipp8u* basew, cpW
 
 #define do_xmss_hash OWNAPI(do_xmss_hash)
 IPP_OWN_DECL(IppStatus, do_xmss_hash, (Ipp32u padding_id, const Ipp8u* key,
-                const Ipp8u* msg, Ipp32s msgLen, Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params))
+                const Ipp8u* msg, Ipp32s msgLen, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params))
 
 #define prf OWNAPI(prf)
-IPP_OWN_DECL(IppStatus, prf, (const Ipp8u* key, const Ipp8u* index, Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params))
+IPP_OWN_DECL(IppStatus, prf, (const Ipp8u* key, const Ipp8u* index, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params))
 
 #define chain OWNAPI(chain)
 IPP_OWN_DECL(IppStatus, chain, (Ipp8u* X, Ipp8u i, Ipp8u s, Ipp8u* pSeed, Ipp8u* adrs,
-            Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params))
+            Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params))
 
 #define WOTS_pkFromSig OWNAPI(WOTS_pkFromSig)
 IPP_OWN_DECL(IppStatus, WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSeed,
             Ipp8u* adrs, Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params))
+
+#define randNum OWNAPI(randNum)
+IPP_OWN_DECL(IppStatus, randNum, (Ipp8u* out, Ipp32s byteSize,
+                IppBitSupplier rndFunc, void* pRndParam))
+
+#define WOTS_genPK OWNAPI(WOTS_genPK)
+IPP_OWN_DECL(IppStatus, WOTS_genPK, (Ipp8u* pSecretSeed, Ipp8u* pPublicKey,
+                Ipp8u* pPublicSeed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params))
+
+#define WOTS_sign OWNAPI(WOTS_sign)
+IPP_OWN_DECL(IppStatus, WOTS_sign, (const Ipp8u* M, Ipp8u* pSecretSeed, Ipp8u* pSignature,
+             Ipp8u* pPublicSeed, Ipp8u* adrs, Ipp8u* temp_buf, cpWOTSParams* params))
 
 /*
  * Set idx as a 4-elements byte array to adrs
@@ -67,6 +79,25 @@ __IPPCP_INLINE void set_adrs_idx(Ipp8u* adrs, Ipp32u idx, int word_id){
     adrs[4 * word_id + 2] = (Ipp8u)(idx >>  8) & 0xff;
     adrs[4 * word_id + 1] = (Ipp8u)(idx >> 16) & 0xff;
     adrs[4 * word_id]     = (Ipp8u)(idx >> 24) & 0xff;
+}
+
+/*
+ * Get idx from a 4-elements byte array
+ *
+ * Returns:
+ *    value to represent as 4-bytes array
+ *
+ * Input parameters:
+ *    input     array of bytes
+ *    word_id   int32 idx in the input array
+ */
+
+__IPPCP_INLINE Ipp32u get_adrs_idx(Ipp8u* input, int word_id) {
+    Ipp32u idx = input[4 * word_id];
+    idx = (idx << 8) | input[4 * word_id + 1];
+    idx = (idx << 8) | input[4 * word_id + 2];
+    idx = (idx << 8) | input[4 * word_id + 3];
+    return idx;
 }
 
 /*

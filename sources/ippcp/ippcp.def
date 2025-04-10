@@ -480,3 +480,10 @@ ippsLMSSetPublicKeyState
 ippsLMSSetSignatureState
 ippsLMSVerify
 ippsHKDF_expand
+ippsXMSSKeyGenBufferGetSize
+ippsXMSSSignBufferGetSize
+ippsXMSSPrivateKeyStateGetSize
+ippsXMSSInitKeyPair
+ippsXMSSInitSignature
+ippsXMSSKeyGen
+ippsXMSSSign

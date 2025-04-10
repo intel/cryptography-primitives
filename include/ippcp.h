@@ -1235,8 +1235,18 @@ IPPAPI(IppStatus, ippsGFpECDecryptSM2_Ext, (Ipp8u *pOut, int maxOutLen,
 
 /* XMSS */
 IPPAPI(IppStatus, ippsXMSSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+IPPAPI(IppStatus, ippsXMSSKeyGenBufferGetSize, (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
+IPPAPI(IppStatus, ippsXMSSSignBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+
+IPPAPI(IppStatus, ippsXMSSPrivateKeyStateGetSize, (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
 IPPAPI(IppStatus, ippsXMSSPublicKeyStateGetSize, (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
 IPPAPI(IppStatus, ippsXMSSSignatureStateGetSize, (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
+
+IPPAPI(IppStatus, ippsXMSSInitSignature, (IppsXMSSAlgo OIDAlgo, IppsXMSSSignatureState* pState))
+IPPAPI(IppStatus, ippsXMSSInitKeyPair, (IppsXMSSAlgo OIDAlgo,
+                                        IppsXMSSPrivateKeyState* pPrvKey,
+                                        IppsXMSSPublicKeyState* pPubKey))
+
 IPPAPI(IppStatus, ippsXMSSSetPublicKeyState, (IppsXMSSAlgo OIDAlgo,
                                               const Ipp8u* pRoot,
                                               const Ipp8u* pSeed,
@@ -1247,6 +1257,17 @@ IPPAPI(IppStatus, ippsXMSSSetSignatureState, (IppsXMSSAlgo OIDAlgo,
                                               const Ipp8u* pOTSSign,
                                               const Ipp8u* pAuthPath,
                                               IppsXMSSSignatureState* pState))
+
+IPPAPI(IppStatus, ippsXMSSKeyGen, (IppsXMSSPrivateKeyState* pPrvKey,
+                                          IppsXMSSPublicKeyState* pPubKey,
+                                          IppBitSupplier rndFunc,
+                                          void* pRndParam,
+                                          Ipp8u* pBuffer))
+IPPAPI(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
+                                 const Ipp32s msgLen,
+                                 IppsXMSSPrivateKeyState* pPrvKey,
+                                 IppsXMSSSignatureState* pSign,
+                                 Ipp8u* pBuffer))
 IPPAPI(IppStatus, ippsXMSSVerify, (const Ipp8u* pMsg,
                                    const Ipp32s msgLen,
                                    const IppsXMSSSignatureState* pSign,

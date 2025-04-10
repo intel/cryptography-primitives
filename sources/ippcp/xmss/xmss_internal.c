@@ -33,7 +33,7 @@
  */
 
 IPP_OWN_DEFN(IppStatus, rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
-            Ipp8u* adrs, Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params)){
+            Ipp8u* adrs, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params)){
     IppStatus retCode = ippStsNoErr;
     Ipp8u* pMsg = temp_buf;
     Ipp8u* pKey = temp_buf + 2 * params->n;
@@ -77,7 +77,7 @@ IPP_OWN_DEFN(IppStatus, rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
  *
  */
 
-IPP_OWN_DEFN(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp_buf, cpWOTSParams* params)) {
+IPP_OWN_DEFN(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params)) {
     IppStatus retCode = ippStsNoErr;
     Ipp32s len_ = params->len;
     Ipp32s n_ = params->n;
@@ -106,5 +106,82 @@ IPP_OWN_DEFN(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp
     // null tree height and tree index
     adrs[set_adrs_1_byte(5)] = 0;
     adrs[set_adrs_1_byte(6)] = 0;
+    return retCode;
+}
+
+/*
+ * Builds the binary hash tree, a so-called L-tree.
+ * For the height of a node within a tree, counting starts with the leaves at height zero.
+ * The treeHash algorithm returns the root node of a tree (out).
+ * The treeHash algorithm described here uses a stack holding up to (h - 1) nodes.
+ * We furthermore assume that the height of a node is stored alongside
+ * a node’s value (an n-byte string) on the stack.
+ *
+ * temp_buf size is (h + 1) * (n + 1) + 2 * len * n + 7 * n bytes at least.
+ *
+ */
+IPP_OWN_DEFN(IppStatus, tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSecretKey, Ipp8u* adrs,
+                Ipp8u* out, Ipp32u idx_leaf, Ipp8u* temp_buf,
+                Ipp32s h, const cpWOTSParams* params)){
+    IppStatus retCode = ippStsNoErr;
+    Ipp8u* heights = temp_buf;
+    Ipp8u* stack = heights + (h + 1);
+
+    Ipp32s len = params->len;
+    Ipp32s n = params->n;
+    Ipp32s len_n = len * n;
+    Ipp32s stack_size = 0;
+    Ipp8u *node, *temp_node;
+    // Note: there is no overflow since the maximum value for h is 20 according to the Spec
+    for(Ipp32u i = 0; i < (Ipp32u)(1 << h); ++i) {
+        // generate OTS public key
+        toByte(adrs, 32, 0);
+        adrs[set_adrs_1_byte(3)] = /*tree type is OTS hash address*/ 0;
+        set_adrs_idx(adrs, /*setOTSAddress*/ i, 4);
+        node = stack + (h + 1) * n; // size: len * n
+        temp_node = node + len_n;
+        retCode = WOTS_genPK(pSecretKey->pSecretSeed, node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n
+        IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+
+        // call ltree
+        toByte(adrs, 32, 0);
+        adrs[set_adrs_1_byte(3)] = /*tree type is L-tree address*/ 1;
+        set_adrs_idx(adrs, /*setLTreeAddress*/ i, 4);
+        retCode = ltree(node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n
+        IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+
+        if (isKeyGen == 0 && (idx_leaf ^ 1) == i) {
+            CopyBlock(node, out, n);
+        }
+
+        // calculate a root of sub-tree
+        toByte(adrs, 32, 0);
+        adrs[set_adrs_1_byte(3)] = /*tree type is hash tree address*/ 2;
+        adrs[set_adrs_1_byte(5)] = /*setTreeHeight*/ 0;
+        set_adrs_idx(adrs, (Ipp32u)i, /*setTreeIndex*/6);
+        heights[stack_size] = 0;
+        while(stack_size > 0 && heights[stack_size - 1] == heights[stack_size]) {
+            Ipp32u idx = get_adrs_idx(adrs, 6);
+            idx = (idx - 1) / 2;
+            set_adrs_idx(adrs, idx, 6);
+            stack_size--; // stack.pop
+
+            retCode = rand_hash(stack + (stack_size * n), node, pSecretKey->pPublicSeed, adrs, node, temp_node, params);
+            IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+
+            heights[stack_size]++;
+            adrs[set_adrs_1_byte(5)] = /*setTreeHeight*/ heights[stack_size];
+
+            if (isKeyGen == 0 && ((idx_leaf >> heights[stack_size]) ^ 1) == idx) {
+                CopyBlock(node, out + heights[stack_size] * n, n);
+            }
+        }
+        CopyBlock(node, stack + (stack_size * n), n);
+        stack_size++; // stack.push
+    }
+    if(isKeyGen == 1) {
+        CopyBlock(stack, out, n);
+    }
+
     return retCode;
 }

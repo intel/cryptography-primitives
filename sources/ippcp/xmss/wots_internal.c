@@ -16,6 +16,8 @@
 
 #include "owndefs.h"
 #include "owncp.h"
+#include "pcpbnumisc.h"
+#include "pcpprng.h"
 #include "xmss_internal/wots.h"
 
 /*
@@ -73,7 +75,8 @@ IPP_OWN_DEFN(void, base_w, (const Ipp8u* X, Ipp32s out_len, Ipp8u* basew, cpWOTS
  */
 
 IPP_OWN_DEFN(IppStatus, do_xmss_hash, (Ipp32u padding_id, const Ipp8u* key,
-                    const Ipp8u* msg, Ipp32s msgLen, Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params)) {
+                    const Ipp8u* msg, Ipp32s msgLen, Ipp8u* out, Ipp8u* temp_buf,
+                    const cpWOTSParams* params)) {
 
     toByte(temp_buf, params->n, padding_id);
     CopyBlock(key, temp_buf + params->n, params->n);
@@ -98,7 +101,7 @@ IPP_OWN_DEFN(IppStatus, do_xmss_hash, (Ipp32u padding_id, const Ipp8u* key,
  *    out          resulted n-byte array
  */
 
-IPP_OWN_DEFN(IppStatus, prf, (const Ipp8u* key, const Ipp8u* msg, Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params)) {
+IPP_OWN_DEFN(IppStatus, prf, (const Ipp8u* key, const Ipp8u* msg, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params)) {
     return do_xmss_hash(/*prf function padding id*/ 3, key, msg, /*bit size of index*/32, out, temp_buf, params);
 }
 
@@ -117,7 +120,7 @@ IPP_OWN_DEFN(IppStatus, prf, (const Ipp8u* key, const Ipp8u* msg, Ipp8u* out, Ip
  */
 
 IPP_OWN_DEFN(IppStatus, chain, (Ipp8u* X, Ipp8u i, Ipp8u s, Ipp8u* pSeed, Ipp8u* adrs,
-            Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params)) {
+            Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params)) {
     IppStatus retCode = ippStsNoErr;
     Ipp8u* bm = temp_buf;
     Ipp8u* key = bm;
@@ -197,6 +200,118 @@ IPP_OWN_DEFN(IppStatus, WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSee
             out + (i * params->n),
             temp_buf + (params->len + len_2), params
         );
+        IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+    }
+    // null chain address for next call
+    adrs[set_adrs_1_byte(5)] = 0;
+    return retCode;
+}
+
+/*
+ * Generates byteSize random Ipp8u numbers using rndFunc and pRndParam parameters.
+ * If rndFunc is NULL the function uses library-based solutions by default.
+ *
+ * Output parameters:
+ *    out   resulted byteSize bytes array with random numbers
+ */
+
+IPP_OWN_DEFN(IppStatus, randNum, (Ipp8u* out, Ipp32s byteSize,
+                IppBitSupplier rndFunc, void* pRndParam)) {
+    if(rndFunc == NULL) {
+        return ippsPRNGenRDRAND((Ipp32u *)out, byteSize * /*bit size of 1 byte*/ 8, pRndParam);
+    }
+    return rndFunc((Ipp32u *)out, byteSize * /*bit size of 1 byte*/ 8, pRndParam);
+}
+
+/*
+ * Generates the WOTS+ public key.
+ *
+ * temp_buf size is (7 * n) bytes at least.
+ *
+ * Output parameters:
+ *    pPublicKey   resulted len * n bytes array that contains WOTS+ public key
+ *
+ */
+IPP_OWN_DEFN(IppStatus, WOTS_genPK, (Ipp8u* pSecretSeed, Ipp8u* pPublicKey,
+                Ipp8u* pPublicSeed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params)){
+    IppStatus retCode = ippStsNoErr;
+    Ipp32s n = params->n;
+    Ipp32s len = params->len;
+    Ipp8u* sk = temp_buf;
+    Ipp8u* i_32 = temp_buf + n;
+    for (Ipp32s i = 0; i < len; i++ ) {
+        // generate secret key from secret seed
+        toByte(i_32, n, (Ipp32u)i);
+        retCode = prf(pSecretSeed, i_32, sk, temp_buf + 2 * n, params);
+        IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+
+        // chaining
+        adrs[set_adrs_1_byte(5)] = /*chain address*/ (Ipp8u)i;
+        retCode = chain(sk,
+                        (Ipp8u) 0,
+                        (Ipp8u) (params->w - 1),
+                        pPublicSeed,
+                        adrs,
+                        pPublicKey + (i * n),
+                        temp_buf + 2 * n, params
+                    );
+        IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+    }
+    // null chain address for next call
+    adrs[set_adrs_1_byte(5)] = 0;
+    return retCode;
+}
+
+/*
+ * Generates the WOTS+ signature for the message M using pSecretSeed.
+ *
+ * temp_buf size is (7 * n + len) bytes at least.
+ *
+ * Output parameters:
+ *    pSignature   resulted len * n bytes array that contains WOTS+ public key
+ *
+ */
+IPP_OWN_DEFN(IppStatus, WOTS_sign, (const Ipp8u* M, Ipp8u* pSecretSeed, Ipp8u* pSignature,
+                Ipp8u* pPublicSeed, Ipp8u* adrs, Ipp8u* temp_buf, cpWOTSParams* params)) {
+    IppStatus retCode = ippStsNoErr;
+    // Convert message to base w
+    Ipp32s len = params->len;
+    Ipp32s len_1 = params->len_1;
+    Ipp32s len_2 = len - len_1;
+    Ipp32s n = params->n;
+    Ipp8u* msg = temp_buf;
+    base_w(M, params->len_1, msg, params);
+
+    // Compute checksum
+    Ipp32u csum = 0;
+    for (Ipp32s i = 0; i < params->len_1; i++ ) {
+        csum = csum + params->w - 1 - msg[i];
+    }
+
+    // Convert csum to base w
+    csum = csum << (8 - ((len_2 * params->log2_w) & 7));
+    Ipp32s len_2_bytes = cpCeil( ( len_2 * params->log2_w) / 8.0 );
+    toByte(msg + len, len_2_bytes, csum);
+    base_w(msg + len, len_2, msg + len_1, params);
+
+    Ipp8u* sk = temp_buf + len;
+    Ipp8u* i_32 = temp_buf + (len + n);
+    for (Ipp32s i = 0; i < len; i++ ) {
+        // generate secret key from secret seed
+        toByte(i_32, n, (Ipp32u)i);
+        retCode = prf(pSecretSeed, i_32, sk, temp_buf + (len + 2 * n), params);
+        IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+
+        // chaining
+        adrs[set_adrs_1_byte(5)] = /*chain address*/ (Ipp8u)i;
+        retCode = chain(sk,
+                        (Ipp8u) 0,
+                        msg[i],
+                        pPublicSeed,
+                        adrs,
+                        pSignature  + (i * n),
+                        temp_buf + (len + 2 * n), params
+                    );
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
     // null chain address for next call

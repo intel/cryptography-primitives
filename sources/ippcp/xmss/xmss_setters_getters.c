@@ -47,8 +47,8 @@ IPPFUN(IppStatus, ippsXMSSSetPublicKeyState,( IppsXMSSAlgo OIDAlgo,
     IPP_BAD_PTR1_RET(pRoot);
     IPP_BAD_PTR1_RET(pSeed);
     IPP_BAD_PTR1_RET(pState);
-    IPP_BADARG_RET(OIDAlgo >  6, ippStsBadArgErr);
-    IPP_BADARG_RET(OIDAlgo <= 0, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
@@ -109,8 +109,8 @@ IPPFUN(IppStatus, ippsXMSSSetSignatureState,( IppsXMSSAlgo OIDAlgo,
     IPP_BAD_PTR1_RET(pAuthPath);
     IPP_BAD_PTR1_RET(pState);
 
-    IPP_BADARG_RET(OIDAlgo >  6, ippStsBadArgErr);
-    IPP_BADARG_RET(OIDAlgo <= 0, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
@@ -158,8 +158,8 @@ IPPFUN(IppStatus, ippsXMSSSetSignatureState,( IppsXMSSAlgo OIDAlgo,
 IPPFUN(IppStatus, ippsXMSSSignatureStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
 {
     IPP_BAD_PTR1_RET(pSize);
-    IPP_BADARG_RET(OIDAlgo >  6, ippStsBadArgErr);
-    IPP_BADARG_RET(OIDAlgo <= 0, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
@@ -194,8 +194,8 @@ IPPFUN(IppStatus, ippsXMSSSignatureStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OI
 IPPFUN(IppStatus, ippsXMSSPublicKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
 {
     IPP_BAD_PTR1_RET(pSize);
-    IPP_BADARG_RET(OIDAlgo >  6, ippStsBadArgErr);
-    IPP_BADARG_RET(OIDAlgo <= 0, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
@@ -209,9 +209,45 @@ IPPFUN(IppStatus, ippsXMSSPublicKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OI
 }
 
 /*F*
+//    Name: ippsXMSSPrivateKeyStateGetSize
+//
+// Purpose: Get the XMSS private key state size (bytes).
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//    ippStsBadArgErr         OIDAlgo > Max value for IppsXMSSAlgo
+//    ippStsBadArgErr         OIDAlgo <= 0
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize         pointer to the size
+//    OIDAlgo       id of XMSS set of parameters (algorithm)
+//
+*F*/
+
+IPPFUN(IppStatus, ippsXMSSPrivateKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
+{
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
+    IppStatus status = ippStsNoErr;
+    cpWOTSParams params;
+    Ipp32s h = 0;
+    status = setXMSSParams(OIDAlgo, &h, &params);
+    Ipp32s n = params.n;
+
+    *pSize = (Ipp32s)sizeof(IppsXMSSPrivateKeyState) +
+        /*pSecretSeed*/n +
+        /*pSK_PRF*/n +
+        /*pRoot*/n +
+        /*pPublicSeed*/n;
+    return status;
+}
+
+/*F*
 //    Name: ippsXMSSBufferGetSize
 //
-// Purpose: Get the XMSS temporary buffer size (bytes).
+// Purpose: Get the XMSS temporary buffer size (bytes) for signature verification.
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pSize == NULL
@@ -233,8 +269,8 @@ IPPFUN(IppStatus, ippsXMSSBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength
     IppStatus status = ippStsNoErr;
 
     IPP_BAD_PTR1_RET(pSize);
-    IPP_BADARG_RET(OIDAlgo >  6, ippStsBadArgErr);
-    IPP_BADARG_RET(OIDAlgo <= 0, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
     IPP_BADARG_RET(maxMessageLength < 1, ippStsLengthErr);
 
     /* Set XMSS parameters */
@@ -251,5 +287,209 @@ IPPFUN(IppStatus, ippsXMSSBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength
     IPP_BADARG_RET(maxMessageLength > (Ipp32s)(IPP_MAX_32S) - (numTempBufs + len) * n, ippStsLengthErr);
 
     *pSize = (numTempBufs + len) * n + maxMessageLength;
+    return status;
+}
+
+/*F*
+//    Name: ippsXMSSKeyGenBufferGetSize
+//
+// Purpose: Get the XMSS temporary buffer size (bytes) for public and private keys generation.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//    ippStsBadArgErr         OIDAlgo > Max value for IppsXMSSAlgo
+//    ippStsBadArgErr         OIDAlgo <= 0
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize             pointer to the size
+//    OIDAlgo           id of XMSS set of parameters (algorithm)
+//
+*F*/
+
+IPPFUN(IppStatus, ippsXMSSKeyGenBufferGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
+{
+    IppStatus status = ippStsNoErr;
+
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
+
+    /* Set XMSS parameters */
+    Ipp32s h = 0;
+    cpWOTSParams params;
+    status = setXMSSParams(OIDAlgo, &h, &params);
+    IPP_BADARG_RET((ippStsNoErr != status), status)
+
+    Ipp32s n = params.n;
+    Ipp32s len = params.len;
+
+    *pSize = (h + 1) * (n + 1) + 2 * len * n + 7 * n;
+    return status;
+}
+
+/*F*
+//    Name: ippsXMSSSignBufferGetSize
+//
+// Purpose: Get the XMSS temporary buffer size (bytes) for signature creation.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//    ippStsBadArgErr         OIDAlgo > Max value for IppsXMSSAlgo
+//    ippStsBadArgErr         OIDAlgo <= 0
+//    ippStsLengthErr         maxMessageLength < 1
+//    ippStsLengthErr         maxMessageLength > IPP_MAX_32S - (n + 5 * n + len + key_gen_size)
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize             pointer to the size
+//    maxMessageLength  maximum length of the message
+//    OIDAlgo           id of XMSS set of parameters (algorithm)
+//
+*F*/
+
+IPPFUN(IppStatus, ippsXMSSSignBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+{
+    IppStatus status = ippStsNoErr;
+
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
+    IPP_BADARG_RET(maxMessageLength < 1, ippStsLengthErr);
+
+    /* Set XMSS parameters */
+    Ipp32s h = 0;
+    cpWOTSParams params;
+    status = setXMSSParams(OIDAlgo, &h, &params);
+    IPP_BADARG_RET((ippStsNoErr != status), status)
+
+    Ipp32s n = params.n;
+    Ipp32s len = params.len;
+
+    Ipp32s key_gen_size;
+    status = ippsXMSSKeyGenBufferGetSize(&key_gen_size, OIDAlgo);
+    IPP_BADARG_RET((ippStsNoErr != status), status)
+
+    // this restriction is needed to avoid overflow of Ipp32s
+    IPP_BADARG_RET(maxMessageLength > (Ipp32s)(IPP_MAX_32S) - (n + 5 * n + len + key_gen_size), ippStsLengthErr);
+
+    *pSize = maxMessageLength + n + 5 * n + len + key_gen_size;
+    return status;
+}
+
+/*F*
+//    Name: ippsXMSSInitKeyPair
+//
+// Purpose: Init XMSS public and private keys states.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pPrvKey == NULL
+//    ippStsBadArgErr         OIDAlgo > Max value for IppsXMSSAlgo
+//    ippStsBadArgErr         OIDAlgo <= 0
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    OIDAlgo        id of XMSS set of parameters (algorithm)
+//    pPrvKey        pointer to the XMSS private key state
+//    pPubKey        pointer to the XMSS public key state
+//
+*F*/
+
+IPPFUN(IppStatus, ippsXMSSInitKeyPair,( IppsXMSSAlgo OIDAlgo,
+    IppsXMSSPrivateKeyState* pPrvKey,
+    IppsXMSSPublicKeyState* pPubKey))
+{
+    IPP_BAD_PTR1_RET(pPrvKey);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
+    IppStatus status = ippStsNoErr;
+    cpWOTSParams params;
+    Ipp32s h = 0;
+    status = setXMSSParams(OIDAlgo, &h, &params);
+    Ipp32s n = params.n;
+
+    // init private key state
+    pPrvKey->OIDAlgo = OIDAlgo;
+    pPrvKey->idx = 0;
+
+    Ipp8u* ptr = (Ipp8u*)pPrvKey;
+
+    /* allocate internal contexts */
+    ptr += sizeof(IppsXMSSPrivateKeyState);
+
+    pPrvKey->pSecretSeed = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)) );
+    ptr += n;
+
+    pPrvKey->pSK_PRF = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)) );
+    ptr += n;
+
+    pPrvKey->pRoot = ptr;
+    ptr += n;
+
+    pPrvKey->pPublicSeed = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)) );
+
+    if(pPubKey != NULL) {
+        // init public key state
+        pPubKey->OIDAlgo = OIDAlgo;
+
+        ptr = (Ipp8u*)pPubKey;
+
+        /* allocate internal contexts */
+        ptr += sizeof(IppsXMSSPublicKeyState);
+
+        pPubKey->pRoot = ptr;
+        ptr += n;
+
+        pPubKey->pSeed = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)) );
+    }
+
+    return status;
+}
+
+/*F*
+//    Name: ippsXMSSInitSignature
+//
+// Purpose: Init the XMSS signature state.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pState == NULL
+//    ippStsBadArgErr         OIDAlgo > Max value for IppsXMSSAlgo
+//    ippStsBadArgErr         OIDAlgo <= 0
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    OIDAlgo        id of XMSS set of parameters (algorithm)
+//    pState         pointer to the XMSS signature state
+//
+*F*/
+
+IPPFUN(IppStatus, ippsXMSSInitSignature,( IppsXMSSAlgo OIDAlgo,
+    IppsXMSSSignatureState* pState))
+{
+    IPP_BAD_PTR1_RET(pState);
+    IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
+    IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
+    IppStatus status = ippStsNoErr;
+    cpWOTSParams params;
+    Ipp32s h = 0;
+    status = setXMSSParams(OIDAlgo, &h, &params);
+    Ipp32s n = params.n;
+    Ipp32s len = params.len;
+
+    pState->idx = 0;
+
+    Ipp8u* ptr = (Ipp8u*)pState;
+
+    /* allocate internal contexts */
+    ptr += sizeof(IppsXMSSSignatureState);
+
+    pState->r = ptr;
+    ptr += n;
+
+    pState->pOTSSign = ptr;
+    ptr += len * n;
+
+    pState->pAuthPath = ptr;
+
     return status;
 }

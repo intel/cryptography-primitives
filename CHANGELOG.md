@@ -5,6 +5,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 ## Intel(R) Cryptography Primitives Library 1.2.0
 - Crypto Multi buffer library was extended with Intel® AVX-IFMA implementation of ECDSA (Sign and Verify), public key generation, ECDHE over NIST p256r1 curve.
 - Added support for HKDF, Hashed Message Authentication Code (HMAC)-based key derivation function as defined by RFC-5869.
+- Added key and signature generations for the eXtended Merkle Signature Scheme (XMSS) algorithm.
 
 ## Intel(R) Cryptography Primitives Library 1.1.0
 

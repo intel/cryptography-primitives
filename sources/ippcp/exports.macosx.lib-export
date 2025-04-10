@@ -471,3 +471,10 @@ _ippsLMSPublicKeyStateGetSize
 _ippsLMSSetPublicKeyState
 _ippsLMSSetSignatureState
 _ippsLMSVerify
+_ippsXMSSKeyGenBufferGetSize
+_ippsXMSSSignBufferGetSize
+_ippsXMSSPrivateKeyStateGetSize
+_ippsXMSSInitKeyPair
+_ippsXMSSInitSignature
+_ippsXMSSKeyGen
+_ippsXMSSSign

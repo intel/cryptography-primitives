@@ -21,6 +21,38 @@
 #include "owncp.h"
 #include "wots.h"
 
+// The format of an XMSS private key
+// +---------------------------------+
+// | algorithm OID                   |
+// +---------------------------------+
+// | index idx                       | 4 bytes
+// +---------------------------------+
+// |                                 |
+// | private key seed                | n bytes
+// |                                 |
+// +---------------------------------+
+// |                                 |
+// | SK_PRF key                      | n bytes
+// |                                 |
+// +---------------------------------+
+// |                                 |
+// | root node                       | n bytes
+// |                                 |
+// +---------------------------------+
+// |                                 |
+// | public key seed                 | n bytes
+// |                                 |
+// +---------------------------------+
+
+struct _cpXMSSPrivateKeyState {
+    IppsXMSSAlgo OIDAlgo;
+    Ipp32u idx;
+    Ipp8u* pSecretSeed;
+    Ipp8u* pSK_PRF;
+    Ipp8u* pRoot;
+    Ipp8u* pPublicSeed;
+};
+
 // The format of an XMSS public key
 // +---------------------------------+
 // | algorithm OID                   |
@@ -76,11 +108,16 @@ struct _cpXMSSSignatureState {
 
 // declarations
 #define ltree OWNAPI(ltree)
-IPP_OWN_DECL(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp_buf, cpWOTSParams* params))
+IPP_OWN_DECL(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params))
 
 #define rand_hash OWNAPI(rand_hash)
 IPP_OWN_DECL(IppStatus, rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
-            Ipp8u* adrs, Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params))
+            Ipp8u* adrs, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params))
+
+#define tree_hash OWNAPI(tree_hash)
+IPP_OWN_DECL(IppStatus, tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSecretKey, Ipp8u* adrs,
+            Ipp8u* out, Ipp32u idx_leaf, Ipp8u* temp_buf,
+            Ipp32s h, const cpWOTSParams* params))
 
 /*
  * Set XMSS algorithms parameters

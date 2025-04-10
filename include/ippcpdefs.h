@@ -900,6 +900,7 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
 
     typedef struct _cpXMSSSignatureState IppsXMSSSignatureState;
     typedef struct _cpXMSSPublicKeyState IppsXMSSPublicKeyState;
+    typedef struct _cpXMSSPrivateKeyState IppsXMSSPrivateKeyState;
 
 #endif // IPPCP_PREVIEW_XMSS
 
