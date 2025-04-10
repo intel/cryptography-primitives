@@ -69,6 +69,8 @@ Contains code that may not be fully functional and that Intel may substantially 
 
 See [Contributing](./CONTRIBUTING.md) document for details about contribution process.
 
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](./CODE_OF_CONDUCT.md) code of conduct.
+
 ### License
 Intel® Cryptography Primitives Library is licensed under Apache License, Version 2.0. By contributing to the project, you agree to the license and copyright terms therein and release your contribution under these terms.
 
