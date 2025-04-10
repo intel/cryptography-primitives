@@ -14,8 +14,8 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7f41d439"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/documentation_options.js?v=18c2809b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -33,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Intel® Integrated Performance Primitives Cryptography
+            Intel® Cryptography Primitives Library
               <img src="_static/logo-classicblue-400px.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -118,11 +118,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="preview-features.html">Preview Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="related-products.html">Related Products</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="related-products.html#intel-integrated-performance-primitives-intel-ipp">Intel® Integrated Performance Primitives (Intel® IPP)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="related-products.html#intel-ipp-samples">Intel IPP Samples</a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="overview-1.html">Overview</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="basic-features.html">Basic Features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="basic-features.html#cross-platform-cryptographic-support">Cross-platform Cryptographic Support</a></li>
@@ -727,7 +722,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #007ab2" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Intel® Integrated Performance Primitives Cryptography</a>
+          <a href="index.html">Intel® Cryptography Primitives Library</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -747,23 +742,18 @@
              
   <section id="building-a-custom-dll-with-custom-library-tool">
 <span id="id1"></span><h1>Building a Custom DLL with Custom Library Tool<a class="headerlink" href="#building-a-custom-dll-with-custom-library-tool" title="Link to this heading"></a></h1>
-<p>Follow the steps below to build a custom dynamic library using the Intel
-IPP Custom Library Tool:</p>
-<a class="reference internal image-reference" href="_images/GUID-FE2BE1C5-39A8-44E5-B7A9-CEBF51157F15-low.png"><img alt="_images/GUID-FE2BE1C5-39A8-44E5-B7A9-CEBF51157F15-low.png" src="_images/GUID-FE2BE1C5-39A8-44E5-B7A9-CEBF51157F15-low.png" style="width: 626.4px; height: 492.0px;" />
-</a>
+<p>Follow the steps below to build a custom dynamic library using the
+Intel® Integrated Performance Primitives (Intel® IPP) Custom Library Tool:</p>
 <ol class="arabic simple">
 <li><p>Run <code class="samp docutils literal notranslate"><span class="pre">python</span> <span class="pre">main.py</span></code> to launch the GUI version of the tool.</p></li>
-<li><p>Select the Intel® Integrated Performance Primitives (Intel® IPP) or
-Intel® Cryptography Primitives Library package (optional). If
-you run the tool inside the Intel IPP or Intel® Cryptography Primitives Library
-package, the current one will be used as default. Otherwise, you need
-to provide the path to the package.</p></li>
+<li><p>Select the Intel® Cryptography Primitives Library package.</p></li>
 <li><p>Configure your custom library.</p></li>
 <li><p>Set the library name.</p></li>
 <li><p>Select functions from the list. You can build a dynamic library
-containing Intel IPP or Intel® Cryptography Primitives Library functionality,
+containing Intel® Integrated Performance Primitives (Intel® IPP)
+or Intel® Cryptography Primitives Library functionality,
 but not both. If you need to add threaded functions to the custom list,
-select <strong>Threading layer</strong> checkbox to show the list of threaded
+select the <strong>Threading layer</strong> checkbox to show the list of threaded
 functions.</p></li>
 <li><p>Build the library automatically (if available) or save a build
 script.</p></li>
@@ -771,10 +761,12 @@ script.</p></li>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can save the configuration and the list of custom functions as a
-project by clicking <strong>Save project</strong> or <strong>Save project as…</strong>. The
-project is saved as a file with the .cltproj extension. Then you can
-open this project by clicking <strong>Open project</strong> button.</p>
+project by selecting <strong>Save project</strong> or <strong>Save project as…</strong>. The
+project is saved as a file with the .cltproj extension. You can then
+open the project by selecting <strong>Open project</strong>.</p>
 </div>
+<a class="reference internal image-reference" href="_images/crypto_dynamic_dispatcher.png"><img alt="_images/crypto_dynamic_dispatcher.png" src="_images/crypto_dynamic_dispatcher.png" style="width: 614.4px; height: 517.1999999999999px;" />
+</a>
 </section>
 
 

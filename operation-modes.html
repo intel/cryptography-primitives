@@ -14,8 +14,8 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7f41d439"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/documentation_options.js?v=18c2809b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -33,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Intel® Integrated Performance Primitives Cryptography
+            Intel® Cryptography Primitives Library
               <img src="_static/logo-classicblue-400px.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -118,11 +118,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="preview-features.html">Preview Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="related-products.html">Related Products</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="related-products.html#intel-integrated-performance-primitives-intel-ipp">Intel® Integrated Performance Primitives (Intel® IPP)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="related-products.html#intel-ipp-samples">Intel IPP Samples</a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="overview-1.html">Overview</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="basic-features.html">Basic Features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="basic-features.html#cross-platform-cryptographic-support">Cross-platform Cryptographic Support</a></li>
@@ -727,7 +722,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #007ab2" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Intel® Integrated Performance Primitives Cryptography</a>
+          <a href="index.html">Intel® Cryptography Primitives Library</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -747,16 +742,25 @@
              
   <section id="operation-modes">
 <span id="id1"></span><h1>Operation Modes<a class="headerlink" href="#operation-modes" title="Link to this heading"></a></h1>
-<p>You can choose one of two tool operation modes, as shown at the screen
-shot below:</p>
-<a class="reference internal image-reference" href="_images/GUID-798D615B-C2E8-487C-AB91-DBC29F22C72A-low.png"><img alt="_images/GUID-798D615B-C2E8-487C-AB91-DBC29F22C72A-low.png" src="_images/GUID-798D615B-C2E8-487C-AB91-DBC29F22C72A-low.png" style="width: 626.4px; height: 492.59999999999997px;" />
-</a>
+<p>The Custom Library Tool (CLT) has two operation modes:</p>
 <ul class="simple">
 <li><p><strong>Auto build</strong>. The tool automatically sets the environment and
 builds a dynamic library.</p></li>
 <li><p><strong>Save script</strong>. The tool generates and saves a custom build
-script.</p></li>
+script using one of two dispatchers:</p>
+<ul>
+<li><p><strong>Dynamic dispatcher</strong> (default): Library initialization happens before a call of any custom dispatcher function:</p>
+<ul>
+<li><p>Manually when generating a custom dispatcher script without building a custom library.</p></li>
+<li><p>In dynamic/shared library initialization function (generated automatically by CLT) when building a custom library.</p></li>
 </ul>
+</li>
+<li><p><strong>Static Dispatcher</strong>: Enables custom dispatcher functions to initialize a library (if it hasn’t been initialized yet) before the call of the dispatched function.</p></li>
+</ul>
+</li>
+</ul>
+<a class="reference internal image-reference" href="_images/crypto_operation_modes.png"><img alt="_images/crypto_operation_modes.png" src="_images/crypto_operation_modes.png" style="width: 614.4px; height: 517.1999999999999px;" />
+</a>
 </section>
 
 

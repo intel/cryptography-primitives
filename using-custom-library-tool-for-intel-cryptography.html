@@ -14,8 +14,8 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7f41d439"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/documentation_options.js?v=18c2809b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -33,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Intel® Integrated Performance Primitives Cryptography
+            Intel® Cryptography Primitives Library
               <img src="_static/logo-classicblue-400px.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -118,11 +118,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="preview-features.html">Preview Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="related-products.html">Related Products</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="related-products.html#intel-integrated-performance-primitives-intel-ipp">Intel® Integrated Performance Primitives (Intel® IPP)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="related-products.html#intel-ipp-samples">Intel IPP Samples</a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="overview-1.html">Overview</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="basic-features.html">Basic Features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="basic-features.html#cross-platform-cryptographic-support">Cross-platform Cryptographic Support</a></li>
@@ -727,7 +722,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #007ab2" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Intel® Integrated Performance Primitives Cryptography</a>
+          <a href="index.html">Intel® Cryptography Primitives Library</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -748,14 +743,14 @@
 <span id="using-custom-library-tool-for-crypto-primitives-library"></span><h1>Using Custom Library Tool for Intel® Cryptography Primitives Library<a class="headerlink" href="#using-custom-library-tool-for-intel-cryptography-primitives-library" title="Link to this heading"></a></h1>
 <p>With the Intel® Integrated Performance Primitives (Intel® IPP) Custom
 Library Tool, you can build your own dynamic library containing only the
-Intel IPP/Intel® Cryptography Primitives Library functionality that is necessary for
+Intel® Cryptography Primitives Library functionality that is necessary for
 your application.</p>
 <p>The use of custom libraries built with the Custom Library Tool provides
 the following advantages:</p>
 <ul>
-<li><p><strong>Package size</strong>. Your package may have much smaller size if linked
-with a custom library because standard dynamic libraries additionally
-contain all optimized versions of Intel IPP/Intel® Cryptography Primitives Library
+<li><p><strong>Package size</strong>. Your package may be much smaller if linked
+with a custom library because standard dynamic libraries
+contain all optimized versions of Intel® Cryptography Primitives Library
 functions and a dispatcher. The following table compares the contents
 and size of packages for an end-user application linked with a custom
 dynamic library and an application linked with the standard Intel IPP
@@ -772,35 +767,21 @@ dynamic libraries:</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="file docutils literal notranslate"><span class="pre">ipp_test_app.exe</span></code> (for Windows*) or <code class="file docutils literal notranslate"><span class="pre">ipp_test_app</span></code> (for Linux* OS)</p>
-<p><code class="docutils literal notranslate"><span class="pre">ipp_custom\_{dll\|so}.{dll\|so\|dylib}</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">crypto_custom\_{dll\|so}.{dll\|so\}</span></code></p>
 </td>
 <td><p><code class="file docutils literal notranslate"><span class="pre">ipp_test_app.exe</span></code> (for Windows*) or <code class="file docutils literal notranslate"><span class="pre">ipp_test_app</span></code> (for Linux* OS)</p>
-<p><code class="docutils literal notranslate"><span class="pre">ippi.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippig9.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippih9.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippip8.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippipx.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippis8.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippiw7.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ipps.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippsg9.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippsh9.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippsp8.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippspx.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippss8.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippsw7.{dll|so|dylib}</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">ippcore.{dll|so|dylib}</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">ippcp.dll</span></code> (for Windows*) or <code class="docutils literal notranslate"><span class="pre">libippcp.so</span></code> (for Linux* OS)</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Package size: 0.1 Mb</strong></p></td>
-<td><p><strong>Package size: 121.5 Mb</strong></p></td>
+<td><p><strong>Package size: 6.9 Mb</strong></p></td>
 </tr>
 </tbody>
 </table>
 </li>
-<li><p><strong>Smooth transition to a higher version of Intel IPP/Intel® Cryptography
-Primitives Library</strong>. You can easily build the same custom dynamic library
-from a higher version of Intel IPP/Intel® Cryptography Primitives Library and
+<li><p><strong>Smooth transition to a higher version of Intel® Cryptography
+Primitives Library</strong>. You can build the same custom dynamic library
+from a higher version of Intel® Cryptography Primitives Library and
 substitute the libraries in your application without relinking.</p></li>
 </ul>
 <div class="admonition note">
