@@ -59,20 +59,18 @@ static BigNumber InvQ("0xB06C4FDABB6301198D265BDBAE9423B380F271F73453885093077FC
                       "C98632154F5883B167A967BF402B4E9E2E0F9656E698EA3666EDFB25798039F7");
 
 /*! Plain text */
-static Ipp8u sourceMessageRef[] =
-      "\xd4\x36\xe9\x95\x69\xfd\x32\xa7"
-      "\xc8\xa0\x5b\xbc\x90\xd3\x2c\x49";
+static Ipp8u sourceMessageRef[] = "\xd4\x36\xe9\x95\x69\xfd\x32\xa7"
+                                  "\xc8\xa0\x5b\xbc\x90\xd3\x2c\x49";
 
 /*! Cipher text to decrypt. */
-static Ipp8u cipherText[] =
-      "\x12\x53\xE0\x4D\xC0\xA5\x39\x7B\xB4\x4A\x7A\xB8\x7E\x9B\xF2\xA0"
-      "\x39\xA3\x3D\x1E\x99\x6F\xC8\x2A\x94\xCC\xD3\x00\x74\xC9\x5D\xF7"
-      "\x63\x72\x20\x17\x06\x9E\x52\x68\xDA\x5D\x1C\x0B\x4F\x87\x2C\xF6"
-      "\x53\xC1\x1D\xF8\x23\x14\xA6\x79\x68\xDF\xEA\xE2\x8D\xEF\x04\xBB"
-      "\x6D\x84\xB1\xC3\x1D\x65\x4A\x19\x70\xE5\x78\x3B\xD6\xEB\x96\xA0"
-      "\x24\xC2\xCA\x2F\x4A\x90\xFE\x9F\x2E\xF5\xC9\xC1\x40\xE5\xBB\x48"
-      "\xDA\x95\x36\xAD\x87\x00\xC8\x4F\xC9\x13\x0A\xDE\xA7\x4E\x55\x8D"
-      "\x51\xA7\x4D\xDF\x85\xD8\xB5\x0D\xE9\x68\x38\xD6\x06\x3E\x09\x55";
+static Ipp8u cipherText[] = "\x12\x53\xE0\x4D\xC0\xA5\x39\x7B\xB4\x4A\x7A\xB8\x7E\x9B\xF2\xA0"
+                            "\x39\xA3\x3D\x1E\x99\x6F\xC8\x2A\x94\xCC\xD3\x00\x74\xC9\x5D\xF7"
+                            "\x63\x72\x20\x17\x06\x9E\x52\x68\xDA\x5D\x1C\x0B\x4F\x87\x2C\xF6"
+                            "\x53\xC1\x1D\xF8\x23\x14\xA6\x79\x68\xDF\xEA\xE2\x8D\xEF\x04\xBB"
+                            "\x6D\x84\xB1\xC3\x1D\x65\x4A\x19\x70\xE5\x78\x3B\xD6\xEB\x96\xA0"
+                            "\x24\xC2\xCA\x2F\x4A\x90\xFE\x9F\x2E\xF5\xC9\xC1\x40\xE5\xBB\x48"
+                            "\xDA\x95\x36\xAD\x87\x00\xC8\x4F\xC9\x13\x0A\xDE\xA7\x4E\x55\x8D"
+                            "\x51\xA7\x4D\xDF\x85\xD8\xB5\x0D\xE9\x68\x38\xD6\x06\x3E\x09\x55";
 
 /*! Main function  */
 int main(void)
@@ -93,11 +91,11 @@ int main(void)
      */
     int keySize = 0;
     ippsRSA_GetSizePrivateKeyType2(bitSizeP, bitSizeQ, &keySize);
-    IppsRSAPrivateKeyState* pPrvKeyType2 = (IppsRSAPrivateKeyState*)(new Ipp8u [keySize]);
+    IppsRSAPrivateKeyState* pPrvKeyType2 = (IppsRSAPrivateKeyState*)(new Ipp8u[keySize]);
     ippsRSA_InitPrivateKeyType2(bitSizeP, bitSizeQ, pPrvKeyType2, keySize);
 
     /* Allocate memory for decrypted plain text, not less than RSA modulus size. */
-    int plainTextLen = bitSizeInBytes(bitSizeP + bitSizeQ);
+    int plainTextLen  = bitSizeInBytes(bitSizeP + bitSizeQ);
     Ipp8u* pPlainText = new Ipp8u[plainTextLen];
 
     do {
@@ -108,7 +106,7 @@ int main(void)
 
         /* Calculate temporary buffer size */
         int bufSize = 0;
-        status = ippsRSA_GetBufferSizePrivateKey(&bufSize, pPrvKeyType2);
+        status      = ippsRSA_GetBufferSizePrivateKey(&bufSize, pPrvKeyType2);
         if (!checkStatus("ippsRSA_GetBufferSizePrivateKey", ippStsNoErr, status))
             break;
 
@@ -116,30 +114,34 @@ int main(void)
         Ipp8u* pScratchBuffer = new Ipp8u[bufSize];
 
         /* Decrypt message */
-       status = ippsRSADecrypt_OAEP_rmf(cipherText,
-                                        0  /* optional label to be associated with the message */,
-                                        0, /* label length */
-                                        pPlainText, &plainTextLen,
-                                        pPrvKeyType2,
-                                        ippsHashMethod_SHA1(),
-                                        pScratchBuffer);
+        status = ippsRSADecrypt_OAEP_rmf(cipherText,
+                                         0 /* optional label to be associated with the message */,
+                                         0, /* label length */
+                                         pPlainText,
+                                         &plainTextLen,
+                                         pPrvKeyType2,
+                                         ippsHashMethod_SHA1(),
+                                         pScratchBuffer);
 
-        if (pScratchBuffer) delete [] pScratchBuffer;
+        if (pScratchBuffer)
+            delete[] pScratchBuffer;
 
         if (!checkStatus("ippsRSADecrypt_OAEP_rmf", ippStsNoErr, status))
             break;
 
-        if (0 != memcmp(sourceMessageRef, pPlainText, sizeof(sourceMessageRef)-1)) {
+        if (0 != memcmp(sourceMessageRef, pPlainText, sizeof(sourceMessageRef) - 1)) {
             printf("ERROR: Decrypted and plain text messages do not match\n");
             status = ippStsErr;
         }
     } while (0);
 
-    PRINT_EXAMPLE_STATUS("ippsRSADecrypt_OAEP_rmf", "RSA-OAEP 1024 (SHA1) Type2 decryption", ippStsNoErr == status)
+    PRINT_EXAMPLE_STATUS(
+        "ippsRSADecrypt_OAEP_rmf", "RSA-OAEP 1024 (SHA1) Type2 decryption", ippStsNoErr == status)
 
-    if (pPlainText) delete [] pPlainText;
-    if (pPrvKeyType2) delete [] (Ipp8u*)pPrvKeyType2;
+    if (pPlainText)
+        delete[] pPlainText;
+    if (pPrvKeyType2)
+        delete[] (Ipp8u*)pPrvKeyType2;
 
     return status;
 }
-

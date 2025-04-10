@@ -38,7 +38,8 @@
 #include "bignum.h"
 
 /*! 3072-bit RSA Modulus N = P*Q */
-BigNumber N("0xA7A1882A7FB896786034D07FB1B9F6327C27BDD7CE6FE39C285AE3B6C34259ADC0DC4F7B9C7DEC3CA4A20D3407339EEDD\
+BigNumber N(
+    "0xA7A1882A7FB896786034D07FB1B9F6327C27BDD7CE6FE39C285AE3B6C34259ADC0DC4F7B9C7DEC3CA4A20D3407339EEDD\
 7A12A421DA18F5954673CAC2FF059156ECC73C6861EC761E6A0F2A5A033A6768C6A42D8B459E1B4932349E84EFD92DF59B45935F3D0E3081\
 7C66201AA99D07AE36C5D74F408D69CC08F044151FF4960E531360CB19077833ADF7BCE77ECFAA133C0CCC63C93B856814569E0B9884EE55\
 4061B9A20AB46C38263C094DAE791AA61A17F8D16F0E85B7E5CE3B067ECE89E20BC4E8F1AE814B276D234E04F4E766F501DA74EA7E3817C2\
@@ -50,7 +51,8 @@ BigNumber N("0xA7A1882A7FB896786034D07FB1B9F6327C27BDD7CE6FE39C285AE3B6C34259ADC
 BigNumber E("0x1415a7");
 
 /*! Private exponent */
-BigNumber D("0x073A5FC4CD642F6113DFFC4F84035CEE3A2B8ACC549703751A1D6A5EAA13487229A58EF7D7A522BB9F4F25510F1AA0F74\
+BigNumber D(
+    "0x073A5FC4CD642F6113DFFC4F84035CEE3A2B8ACC549703751A1D6A5EAA13487229A58EF7D7A522BB9F4F25510F1AA0F74\
 C6A8FC8A5C5BE8B91A674EDE50E92F7E34A90A3C9DA999FFFB1D695E4588F451256C163484C151350CB9C7825A7D910845EE5CF826FECF9A\
 7C0FBBBBA22BB4A531C131D2E7761BA898F002EBEF8AB87218511F81D3266E1EC07A7CA8622514C6DFDC86C67679A2C8F5F031DE9A0C22B5\
 A88060B46EE0C64D3B9AF3C0A379BCD9C6A1B51CF6480456D3FD6DEF94CD2A6C171DD3F010E3C9D662BC857208248C94EBCB9FD997B9FF4A\
@@ -60,7 +62,7 @@ A88060B46EE0C64D3B9AF3C0A379BCD9C6A1B51CF6480456D3FD6DEF94CD2A6C171DD3F010E3C9D6
 
 /*! Reference value of signature */
 static const Ipp8u signatureRef[] =
-"\x96\x87\x11\x5b\xe4\x78\xe4\xb6\x42\xcd\x36\x93\x92\xb9\xdd\x0f\x35\x76\xe7\x04\xaf\x72\x18\xb1\xf9\x4d\x7f\x8f\
+    "\x96\x87\x11\x5b\xe4\x78\xe4\xb6\x42\xcd\x36\x93\x92\xb9\xdd\x0f\x35\x76\xe7\x04\xaf\x72\x18\xb1\xf9\x4d\x7f\x8f\
 \xe7\xf0\x70\x73\xe3\xe8\xe1\x18\x6f\xa7\x68\x97\x7d\x6b\x51\x4e\x51\x34\x59\xf2\x37\x3d\xf6\xec\x52\xe3\xde\x9b\
 \xd8\x3f\xcc\x5c\xc3\xe6\xb9\x7f\x8b\x3f\xb5\x34\x16\x3c\x64\xf5\x26\x76\x20\x70\x0e\x9d\x8c\x52\xb3\xdf\x61\xa7\
 \xc3\x74\x8e\xf1\x59\xd6\xb3\x90\x89\x5a\xfa\x3a\xf5\x91\x09\xa5\x47\x8d\x01\x6d\x96\xc4\x9f\x68\xdf\xc7\x35\xba\
@@ -77,7 +79,7 @@ static const Ipp8u signatureRef[] =
 
 /*! Message to be signed */
 static const Ipp8u sourceMessage[] =
-"\x92\x21\xf0\xfe\x91\x15\x84\x35\x54\xd5\x68\x5d\x9f\xe6\x9d\xc4\x9e\x95\xce\xb5\x79\x39\x86\xe4\x28\xb8\xa1\x0b\
+    "\x92\x21\xf0\xfe\x91\x15\x84\x35\x54\xd5\x68\x5d\x9f\xe6\x9d\xc4\x9e\x95\xce\xb5\x79\x39\x86\xe4\x28\xb8\xa1\x0b\
 \x89\x4c\x01\xd6\xaf\x87\x82\xfd\x7d\x95\x2f\xaf\x74\xc2\xb6\x37\xca\x3b\x19\xda\xbc\x19\xa7\xfe\x25\x9b\x2b\x92\
 \x4e\xb3\x63\xa9\x08\xc5\xb3\x68\xf8\xab\x1b\x23\x33\xfc\x67\xc3\x0b\x8e\xa5\x6b\x28\x39\xdc\x5b\xda\xde\xfb\x14\
 \xad\xa8\x10\xbc\x3e\x92\xba\xc5\x4e\x2a\xe1\xca\x15\x94\xa4\xb9\xd8\xd1\x93\x37\xbe\x42\x1f\x40\xe0\x67\x4e\x0e\
@@ -85,7 +87,7 @@ static const Ipp8u sourceMessage[] =
 
 /*! Salt */
 static const Ipp8u salt[] =
-"\x61\xa7\x62\xf8\x96\x8d\x5f\x36\x7e\x2d\xbc\xac\xb4\x02\x16\x53\xdc\x75\x43\x7d\x90\x00\xe3\x16\x9d\x94\x37\x29\
+    "\x61\xa7\x62\xf8\x96\x8d\x5f\x36\x7e\x2d\xbc\xac\xb4\x02\x16\x53\xdc\x75\x43\x7d\x90\x00\xe3\x16\x9d\x94\x37\x29\
 \x70\x38\x37\xa5\xcb\xf4\xde\x62\xbd\xed\xc9\x5f\xd0\xd1\x00\x4e\x84\x75\x14\x52";
 
 
@@ -107,7 +109,7 @@ int main(void)
      * Size shall be equal to the RSA modulus size.
      */
     const int signatureLen = bitSizeInBytes(RSA_MODULUS);
-    Ipp8u* pSignature = new Ipp8u[signatureLen];
+    Ipp8u* pSignature      = new Ipp8u[signatureLen];
 
     /* Allocate memory private key.
      * There are two types of private keys that are supported: Type1 and Type2.
@@ -129,21 +131,25 @@ int main(void)
 
             /* Calculate temporary buffer size */
             int bufSize = 0;
-            status = ippsRSA_GetBufferSizePrivateKey(&bufSize, pPrvKeyType1);
+            status      = ippsRSA_GetBufferSizePrivateKey(&bufSize, pPrvKeyType1);
             if (!checkStatus("ippsRSA_GetBufferSizePrivateKey", ippStsNoErr, status))
                 break;
 
             Ipp8u* pScratchBuffer = new Ipp8u[bufSize];
 
             /* Sign message with use of SHA384 hash function */
-            status = ippsRSASign_PSS_rmf(sourceMessage,  sizeof(sourceMessage)-1,
-                                         salt, sizeof(salt)-1,
+            status = ippsRSASign_PSS_rmf(sourceMessage,
+                                         sizeof(sourceMessage) - 1,
+                                         salt,
+                                         sizeof(salt) - 1,
                                          pSignature,
-                                         pPrvKeyType1, NULL /* public key */,
+                                         pPrvKeyType1,
+                                         NULL /* public key */,
                                          ippsHashMethod_SHA384(),
                                          pScratchBuffer);
 
-            if (pScratchBuffer) delete [] pScratchBuffer;
+            if (pScratchBuffer)
+                delete[] pScratchBuffer;
 
             if (!checkStatus("ippsRSASign_PSS_rmf", ippStsNoErr, status))
                 break;
@@ -156,10 +162,13 @@ int main(void)
         } while (0);
     }
 
-    if (pPrvKeyType1) delete [] (Ipp8u*)pPrvKeyType1;
-    if (pSignature) delete [] pSignature;
+    if (pPrvKeyType1)
+        delete[] (Ipp8u*)pPrvKeyType1;
+    if (pSignature)
+        delete[] pSignature;
 
-    PRINT_EXAMPLE_STATUS("ippsRSASign_PSS_rmf", "RSA-PSS 3072 (SHA-384) Type1 Signature", ippStsNoErr == status);
+    PRINT_EXAMPLE_STATUS(
+        "ippsRSASign_PSS_rmf", "RSA-PSS 3072 (SHA-384) Type1 Signature", ippStsNoErr == status);
 
     return status;
 }

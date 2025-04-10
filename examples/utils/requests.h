@@ -35,63 +35,33 @@ class Request {
     BigNumber m_D;
     bool m_isCompatible;
 
-    public:
-        Request(const BigNumber& pPlainText, const BigNumber& N, const BigNumber& E, const BigNumber& D);
-        ~Request();
+public:
+    Request(const BigNumber& pPlainText,
+            const BigNumber& N,
+            const BigNumber& E,
+            const BigNumber& D);
+    ~Request();
 
-        IppsBigNumState* GetPlainText() const
-        {
-            return m_plainText;
-        }
+    IppsBigNumState* GetPlainText() const { return m_plainText; }
 
-        IppsBigNumState* GetCipherText() const
-        {
-            return m_cipherText;
-        }
+    IppsBigNumState* GetCipherText() const { return m_cipherText; }
 
-        IppsBigNumState* GetDecipherText() const
-        {
-            return m_decipherText;
-        }
+    IppsBigNumState* GetDecipherText() const { return m_decipherText; }
 
-        int GetBitSizeN() const
-        {
-            return m_N.BitSize();
-        }
+    int GetBitSizeN() const { return m_N.BitSize(); }
 
-        const BigNumber& GetValueN() const
-        {
-            return m_N;
-        }
+    const BigNumber& GetValueN() const { return m_N; }
 
-        int GetBitSizeE() const
-        {
-            return m_E.BitSize();
-        }
+    int GetBitSizeE() const { return m_E.BitSize(); }
 
-        const BigNumber& GetValueE() const
-        {
-            return m_E;
-        }
+    const BigNumber& GetValueE() const { return m_E; }
 
-        int GetBitSizeD() const
-        {
-            return m_D.BitSize();
-        }
+    int GetBitSizeD() const { return m_D.BitSize(); }
 
-        const BigNumber& GetValueD() const
-        {
-            return m_D;
-        }
-        void SetCompatibilityStatus(bool status)
-        {
-            m_isCompatible = status;
-        }
+    const BigNumber& GetValueD() const { return m_D; }
+    void SetCompatibilityStatus(bool status) { m_isCompatible = status; }
 
-        bool IsCompatible() const
-        {
-            return m_isCompatible;
-        }        
+    bool IsCompatible() const { return m_isCompatible; }
 };
 
 #endif /* #ifndef _REQUESTS_H_ */

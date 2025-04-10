@@ -52,13 +52,13 @@
  */
 inline int checkStatus(const char* funcName, IppStatus expectedStatus, IppStatus status)
 {
-   if (expectedStatus != status) {
-      printf("%s: unexpected return status\n", funcName);
-      printf("Expected: %s\n", ippcpGetStatusString(expectedStatus));
-      printf("Received: %s\n", ippcpGetStatusString(status));
-      return 0;
-   }
-   return 1;
+    if (expectedStatus != status) {
+        printf("%s: unexpected return status\n", funcName);
+        printf("Expected: %s\n", ippcpGetStatusString(expectedStatus));
+        printf("Received: %s\n", ippcpGetStatusString(status));
+        return 0;
+    }
+    return 1;
 }
 
 /*!
@@ -68,10 +68,7 @@ inline int checkStatus(const char* funcName, IppStatus expectedStatus, IppStatus
  *
  * \return size in bytes
  */
-inline int bitSizeInBytes(int nBits)
-{
-   return (nBits + 7) >> 3;
-}
+inline int bitSizeInBytes(int nBits) { return (nBits + 7) >> 3; }
 
 /*!
  * Helper function to convert bit size into word size.
@@ -81,9 +78,6 @@ inline int bitSizeInBytes(int nBits)
  * \return size in words
  */
 
-inline int bitSizeInWords(int nBits)
-{
-    return (nBits + 31) >> 5;
-}
+inline int bitSizeInWords(int nBits) { return (nBits + 31) >> 5; }
 
 #endif /* #ifndef EXAMPLES_COMMON_H_ */

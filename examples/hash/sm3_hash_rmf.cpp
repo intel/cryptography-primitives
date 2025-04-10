@@ -36,12 +36,11 @@
 const Ipp8u msg[] = "abc";
 
 /*! Known digest to check the results */
-const
-Ipp8u sm3[] = "\x66\xc7\xf0\xf4\x62\xee\xed\xd9\xd1\xf2\xd4\x6b\xdc\x10\xe4\xe2"
-              "\x41\x67\xc4\x87\x5c\xf2\xf7\xa2\x29\x7d\xa0\x2b\x8f\x4b\xa8\xe0";
+const Ipp8u sm3[] = "\x66\xc7\xf0\xf4\x62\xee\xed\xd9\xd1\xf2\xd4\x6b\xdc\x10\xe4\xe2"
+                    "\x41\x67\xc4\x87\x5c\xf2\xf7\xa2\x29\x7d\xa0\x2b\x8f\x4b\xa8\xe0";
 
 /*! Message size in bytes */
-const int msg_byte_len = sizeof(msg)-1;
+const int msg_byte_len = sizeof(msg) - 1;
 
 int main(void)
 {
@@ -93,7 +92,7 @@ int main(void)
 
     /*! 8. Verify the resulted digest with the known one */
     int check = memcmp(output_hash_buffer, sm3, hash_size);
-    if(check != 0) {
+    if (check != 0) {
         printf("ERROR: Hash and the reference do not match\n");
         status = -1;
     }

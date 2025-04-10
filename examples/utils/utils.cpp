@@ -17,7 +17,8 @@
 
 #include "utils.h"
 
-size_t strlen_safe(const char* dest, size_t dmax) {
+size_t strlen_safe(const char* dest, size_t dmax)
+{
     size_t count;
 
     /* check null pointer */

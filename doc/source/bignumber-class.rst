@@ -567,7 +567,7 @@ declarations to be included, see the preceding
       ippsRef_BN(NULL, &bnBitLen, &bnData, *this);
 
 
-      int len = BITSIZE_WORD(bnBitLen);;
+      int len = BITSIZE_WORD(bnBitLen);
       for(int n=0; n<len; n++)
          v.push_back( bnData[n] );
    }

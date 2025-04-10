@@ -135,6 +135,9 @@ int main(int argc, char* argv[])
         printf("Intel(R) Xeon Phi™ coprocessor instruction set\n");
     }
 
-    PRINT_EXAMPLE_STATUS("ippcpGetCpuFeatures", "Demonstration of cryptoGetLibVersion and ippcpGetCpuFeatures functions work", ippStsNoErr == status);
+    PRINT_EXAMPLE_STATUS(
+        "ippcpGetCpuFeatures",
+        "Demonstration of cryptoGetLibVersion and ippcpGetCpuFeatures functions work",
+        ippStsNoErr == status);
     return status;
 }

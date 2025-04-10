@@ -26,13 +26,18 @@
 #include "examples_common.h"
 
 /* Allocated memory for cipher and decipher texts is not less than RSA modulus size and source plain text */
-Request::Request(const BigNumber& pPlainText, const BigNumber& N, const BigNumber& E, const BigNumber& D)
+Request::Request(const BigNumber& pPlainText,
+                 const BigNumber& N,
+                 const BigNumber& E,
+                 const BigNumber& D)
     : m_plainText(pPlainText)
     , m_N(N)
     , m_E(E)
     , m_D(D)
     , m_cipherText(N)
     , m_decipherText(pPlainText)
-    , m_isCompatible(true) {}
+    , m_isCompatible(true)
+{
+}
 
-Request::~Request(){}
+Request::~Request() { }
