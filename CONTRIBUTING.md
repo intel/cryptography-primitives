@@ -16,14 +16,14 @@ If you have an idea how to improve the product:
 
 Intel® Cryptography Primitives Library supports two repositories that are named as "Public Repository" and "Inner Repository". Privately hosted "Inner Repository" is required for extensive internal testing and experimental features development.
 
-Existing automation guarantees regular synchronization of repositories.
+Existing automation guarantees synchronization of repositories for each commit.
 
 <pre>
   +-------------+                     +------------+
-  | Public Repo |        regular      | Inner Repo |
+  | Public Repo |                     | Inner Repo |
   | ----------- |    synchronization  |  --------  |       +----------+
   |    rev.1    | <------------------ |    rev.1   |       | internal |
-  |    rev.2    |   bunch of changes  |    rev.2   |-----> | testing  |
+  |    rev.2    |   of each commit    |    rev.2   |-----> | testing  |
   |    rev.3    |                     |    rev.3   |       +----------+
   +-------------+                     +------------+
 </pre>
@@ -32,8 +32,8 @@ Existing automation guarantees regular synchronization of repositories.
 Intel® Cryptography Primitives Library is licensed under the terms in [LICENSE](./LICENSE). By contributing to the project, you agree to the license and copyright terms therein and release your contribution under these terms.
 
 ## Developer Certification of Origin (DCO)
-We encourage you to use Signed-off-by feature to comply with [Developer Certification of Origin (DCO)](https://developercertificate.org/).  
-The name in the commit message Signed-off-by line and your email must match the change authorship information.  Make sure your `.gitconfig` is set up correctly so you can use `git commit -s` for signing your commits: 
+We encourage you to use Signed-off-by feature to comply with [Developer Certification of Origin (DCO)](https://developercertificate.org/).
+The name in the commit message Signed-off-by line and your email must match the change authorship information.  Make sure your `.gitconfig` is set up correctly so you can use `git commit -s` for signing your commits:
 
 `git config --global user.name "Kris Smith"`
 
