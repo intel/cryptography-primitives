@@ -22,32 +22,34 @@
 #include "ippcp/fips_cert.h"
 #include "fips_cert_internal/common.h"
 
-#if defined( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 IPPFUN(func_fips_approved, ippcp_is_fips_approved_func, (enum FIPS_IPPCP_FUNC function))
 {
-  return ((int)function > 0);
+    return ((int)function > 0);
 }
 
 #endif // _IPP_DATA
 
-IPP_OWN_DEFN (int, ippcp_is_mem_eq, (const Ipp8u *p1, Ipp32u p1_byte_len, const Ipp8u *p2, Ipp32u p2_byte_len)) 
+IPP_OWN_DEFN(int,
+             ippcp_is_mem_eq,
+             (const Ipp8u* p1, Ipp32u p1_byte_len, const Ipp8u* p2, Ipp32u p2_byte_len))
 {
-  if (p1_byte_len != p2_byte_len){
-    return 0;
-  }
-
-  while (p1_byte_len) {
-    if (*p1 != *p2) {
-      return 0;
+    if (p1_byte_len != p2_byte_len) {
+        return 0;
     }
-    ++p1;
-    ++p2;
 
-    --p1_byte_len;
-  }
+    while (p1_byte_len) {
+        if (*p1 != *p2) {
+            return 0;
+        }
+        ++p1;
+        ++p2;
 
-  return 1;
+        --p1_byte_len;
+    }
+
+    return 1;
 }
 
 #endif // IPPCP_FIPS_MODE

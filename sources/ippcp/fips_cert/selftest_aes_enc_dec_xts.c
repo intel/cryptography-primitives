@@ -15,7 +15,7 @@
 *************************************************************************/
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-    #pragma warning(disable: 4206) // empty translation unit in MSVC
+#pragma warning(disable : 4206) // empty translation unit in MSVC
 #endif
 
 /* Selftests are disabled for now, since AES-XTS algorithm didn't pass CAVP testing */
