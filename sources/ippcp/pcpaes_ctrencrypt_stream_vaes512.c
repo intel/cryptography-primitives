@@ -34,7 +34,7 @@
 /* Mask to convert low 32-bit parts of four 128-bit Big-Endian numbers
  * stored in 512-bit register. The low 32-bit of each number converted
  * from LE to BE */
-static __ALIGN32 Ipp8u swapBytes[] = {
+static __ALIGN64 Ipp8u swapBytes[] = {
    0,  1, 2, 3,  4, 5, 6, 7,  8, 9,10,11, 15,14,13,12,
    16,17,18,19, 20,21,22,23, 24,25,26,27, 31,30,29,28,
    32,33,34,35, 36,37,38,39, 40,41,42,43, 47,46,45,44,
