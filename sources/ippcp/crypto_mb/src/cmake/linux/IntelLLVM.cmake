@@ -74,6 +74,9 @@ if(NOT DEFINED NO_FORTIFY_SOURCE)
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
 endif()
 
+# DEBUG flags - optimization level = 0, generation GDB information (-g)
+set (CMAKE_C_FLAGS_DEBUG " -O0 -g")
+
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
 # Optimisation dependent flags

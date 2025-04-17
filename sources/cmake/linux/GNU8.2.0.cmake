@@ -97,6 +97,9 @@ set(CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG -Werror")
 # Security flag that adds compile-time and run-time checks
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
 
+# DEBUG flags - optimization level = 0, generation GDB information (-g)
+set (CMAKE_C_FLAGS_DEBUG " -O0 -g")
+
 set(w7_opt "${w7_opt} -march=pentium4 -msse2")
 set(s8_opt "${s8_opt} -march=core2 -mssse3")
 set(p8_opt "${p8_opt} -march=nehalem -msse4.2 -maes -mpclmul -msha")

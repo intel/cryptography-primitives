@@ -96,6 +96,9 @@ set(CMAKE_C_FLAGS_RELEASE " -O3 -ffast-math -DNDEBUG -Wall -Wconversion -Wno-unu
 # Security flag that adds compile-time and run-time checks
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
 
+# DEBUG flags - optimization level = 0, generation GDB information (-g)
+set (CMAKE_C_FLAGS_DEBUG " -O0 -g")
+
 # Alignment for structures on byte boundaries (= 16)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Zp16")
 if(${ARCH} MATCHES "ia32")
