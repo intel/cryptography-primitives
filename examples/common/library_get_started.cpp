@@ -57,20 +57,24 @@ int main(int argc, char* argv[])
         printf("%c\t%c\t", (mask & ippCPUID_SSE3) ? 'Y' : 'N', (emask & ippCPUID_SSE3) ? 'Y' : 'N');
         printf("Intel(R) Streaming SIMD Extensions 3 (Intel(R) SSE3)\n");
         printf("  ippCPUID_SSSE3      = ");
-        printf(
-            "%c\t%c\t", (mask & ippCPUID_SSSE3) ? 'Y' : 'N', (emask & ippCPUID_SSSE3) ? 'Y' : 'N');
+        printf("%c\t%c\t",
+               (mask & ippCPUID_SSSE3) ? 'Y' : 'N',
+               (emask & ippCPUID_SSSE3) ? 'Y' : 'N');
         printf("Supplemental Streaming SIMD Extensions 3 (SSSE3)\n");
         printf("  ippCPUID_MOVBE      = ");
-        printf(
-            "%c\t%c\t", (mask & ippCPUID_MOVBE) ? 'Y' : 'N', (emask & ippCPUID_MOVBE) ? 'Y' : 'N');
+        printf("%c\t%c\t",
+               (mask & ippCPUID_MOVBE) ? 'Y' : 'N',
+               (emask & ippCPUID_MOVBE) ? 'Y' : 'N');
         printf("The processor supports MOVBE instruction\n");
         printf("  ippCPUID_SSE41      = ");
-        printf(
-            "%c\t%c\t", (mask & ippCPUID_SSE41) ? 'Y' : 'N', (emask & ippCPUID_SSE41) ? 'Y' : 'N');
+        printf("%c\t%c\t",
+               (mask & ippCPUID_SSE41) ? 'Y' : 'N',
+               (emask & ippCPUID_SSE41) ? 'Y' : 'N');
         printf("Intel(R) Streaming SIMD Extensions 4.1 (Intel(R) SSE4.1)\n");
         printf("  ippCPUID_SSE42      = ");
-        printf(
-            "%c\t%c\t", (mask & ippCPUID_SSE42) ? 'Y' : 'N', (emask & ippCPUID_SSE42) ? 'Y' : 'N');
+        printf("%c\t%c\t",
+               (mask & ippCPUID_SSE42) ? 'Y' : 'N',
+               (emask & ippCPUID_SSE42) ? 'Y' : 'N');
         printf("Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2)\n");
         printf("  ippCPUID_AVX        = ");
         printf("%c\t%c\t", (mask & ippCPUID_AVX) ? 'Y' : 'N', (emask & ippCPUID_AVX) ? 'Y' : 'N');
@@ -87,8 +91,9 @@ int main(int argc, char* argv[])
         printf("%c\t%c\t", (mask & ippCPUID_SHA) ? 'Y' : 'N', (emask & ippCPUID_SHA) ? 'Y' : 'N');
         printf("Intel(R) Secure Hash Algorithm - New Instructions (Intel(R) SHA-NI)\n");
         printf("  ippCPUID_CLMUL      = ");
-        printf(
-            "%c\t%c\t", (mask & ippCPUID_CLMUL) ? 'Y' : 'N', (emask & ippCPUID_CLMUL) ? 'Y' : 'N');
+        printf("%c\t%c\t",
+               (mask & ippCPUID_CLMUL) ? 'Y' : 'N',
+               (emask & ippCPUID_CLMUL) ? 'Y' : 'N');
         printf("PCLMULQDQ instruction\n");
         printf("  ippCPUID_RDRAND     = ");
         printf("%c\t%c\t",
@@ -117,8 +122,9 @@ int main(int argc, char* argv[])
                (emask & ippCPUID_AVX512ER) ? 'Y' : 'N');
         printf("Intel(R) Advanced Vector Extensions ER instruction set\n");
         printf("  ippCPUID_ADCOX      = ");
-        printf(
-            "%c\t%c\t", (mask & ippCPUID_ADCOX) ? 'Y' : 'N', (emask & ippCPUID_ADCOX) ? 'Y' : 'N');
+        printf("%c\t%c\t",
+               (mask & ippCPUID_ADCOX) ? 'Y' : 'N',
+               (emask & ippCPUID_ADCOX) ? 'Y' : 'N');
         printf("ADCX and ADOX instructions\n");
         printf("  ippCPUID_RDSEED     = ");
         printf("%c\t%c\t",

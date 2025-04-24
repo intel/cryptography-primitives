@@ -48,8 +48,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_)(int64u* pa_pubx[MB_WIDT
     ifma_BNU_transpose_copy((int64u(*)[MB_WIDTH])scalarz, pa_skey, P256_BITSIZE);
     scalarz[P256_LEN64] = get_zero64();
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, is_zero(scalarz, P256_LEN64 + 1), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      is_zero(scalarz, P256_LEN64 + 1),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     /* Do not need to clear copy of secret keys before this return - all of them is NULL or zero */
     if (!MBX_IS_ANY_OK_STS(status))
@@ -113,8 +114,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_ssl_)(BIGNUM* pa_pubx[MB_
     ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])scalarz, pa_skey, P256_BITSIZE);
     scalarz[P256_LEN64] = get_zero64();
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, is_zero(scalarz, P256_LEN64 + 1), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      is_zero(scalarz, P256_LEN64 + 1),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     /* Do not need to clear copy of secret keys before this return - all of them is NULL or zero */
     if (!MBX_IS_ANY_OK_STS(status))

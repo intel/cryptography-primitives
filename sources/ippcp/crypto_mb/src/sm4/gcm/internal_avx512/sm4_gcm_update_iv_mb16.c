@@ -76,13 +76,19 @@ __mmask16 sm4_gcm_update_iv_mb16(const int8u* const pa_iv[SM4_LINES],
     __mmask16 mask_overflow = mask_overflow_hi << 8 | mask_overflow_lo;
 
     /* Process full blocks of IVs */
-    sm4_gcm_update_ghash_full_blocks_mb16(
-        j0, loc_pa_iv, &loc_iv_len, SM4_GCM_CONTEXT_HASHKEY(p_context), mb_mask);
+    sm4_gcm_update_ghash_full_blocks_mb16(j0,
+                                          loc_pa_iv,
+                                          &loc_iv_len,
+                                          SM4_GCM_CONTEXT_HASHKEY(p_context),
+                                          mb_mask);
 
     if (cmp_epi32_mask(loc_iv_len, setzero(), _MM_CMPINT_EQ) != 0xFFFF) {
         /* Process partial blocks of IVs and finalize IVs */
-        sm4_gcm_update_ghash_partial_blocks_mb16(
-            j0, loc_pa_iv, &loc_iv_len, SM4_GCM_CONTEXT_HASHKEY(p_context)[0], mb_mask);
+        sm4_gcm_update_ghash_partial_blocks_mb16(j0,
+                                                 loc_pa_iv,
+                                                 &loc_iv_len,
+                                                 SM4_GCM_CONTEXT_HASHKEY(p_context)[0],
+                                                 mb_mask);
         sm4_gcm_finalize_iv_mb16(loc_pa_iv, mb_mask, p_context);
 
         SM4_GCM_CONTEXT_STATE(p_context) = sm4_gcm_update_aad;

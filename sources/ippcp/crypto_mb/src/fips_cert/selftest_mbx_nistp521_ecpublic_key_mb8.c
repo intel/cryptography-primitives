@@ -107,8 +107,13 @@ fips_test_status fips_selftest_mbx_nistp521_ecpublic_key_mb8(void)
     const int64u* const* _pa_pub_Qy = (const int64u* const*)pa_pub_Qy;
 
     // sign and verify with the generated keypair
-    sts = mbx_nistp521_ecdsa_sign_mb8(
-        pa_sign_r, pa_sign_s, pa_pub_msg_digest, pa_prv_k, pa_prv_d, NULL);
+    sts = mbx_nistp521_ecdsa_sign_mb8(pa_sign_r,
+                                      pa_sign_s,
+                                      pa_pub_msg_digest,
+                                      pa_prv_k,
+                                      pa_prv_d,
+                                      NULL);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
     if (test_result != MBX_ALGO_SELFTEST_OK) {
         return test_result;
@@ -118,8 +123,13 @@ fips_test_status fips_selftest_mbx_nistp521_ecpublic_key_mb8(void)
     const int8u* const* _pa_sign_r = (const int8u* const*)pa_sign_r;
     const int8u* const* _pa_sign_s = (const int8u* const*)pa_sign_s;
 
-    sts = mbx_nistp521_ecdsa_verify_mb8(
-        _pa_sign_r, _pa_sign_s, pa_pub_msg_digest, _pa_pub_Qx, _pa_pub_Qy, NULL, NULL);
+    sts = mbx_nistp521_ecdsa_verify_mb8(_pa_sign_r,
+                                        _pa_sign_s,
+                                        pa_pub_msg_digest,
+                                        _pa_pub_Qx,
+                                        _pa_pub_Qy,
+                                        NULL,
+                                        NULL);
     // check the result of verification
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_KAT_ERR);
 
@@ -212,8 +222,13 @@ fips_test_status fips_selftest_mbx_nistp521_ecpublic_key_ssl_mb8(void)
     const BIGNUM* const* _pa_pub_Qy = (const BIGNUM* const*)pa_pub_Qy;
 
     // sign and verify with the generate   d keypair
-    sts = mbx_nistp521_ecdsa_sign_ssl_mb8(
-        pa_sign_r, pa_sign_s, pa_pub_msg_digest, pa_prv_k, pa_prv_d, NULL);
+    sts = mbx_nistp521_ecdsa_sign_ssl_mb8(pa_sign_r,
+                                          pa_sign_s,
+                                          pa_pub_msg_digest,
+                                          pa_prv_k,
+                                          pa_prv_d,
+                                          NULL);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
     if (test_result != MBX_ALGO_SELFTEST_OK) {
         MEM_FREE(pa_pub_Qx, pa_pub_Qy, pa_sig, BN_d, BN_k)
@@ -239,8 +254,12 @@ fips_test_status fips_selftest_mbx_nistp521_ecpublic_key_ssl_mb8(void)
         BN_bin2bn(out_s[i], MBX_NISTP521_DATA_BYTE_LEN, BN_s);
         ECDSA_SIG_set0(pa_sig[i], BN_r, BN_s);
     }
-    sts = mbx_nistp521_ecdsa_verify_ssl_mb8(
-        (const ECDSA_SIG* const*)pa_sig, pa_pub_msg_digest, _pa_pub_Qx, _pa_pub_Qy, NULL, NULL);
+    sts = mbx_nistp521_ecdsa_verify_ssl_mb8((const ECDSA_SIG* const*)pa_sig,
+                                            pa_pub_msg_digest,
+                                            _pa_pub_Qx,
+                                            _pa_pub_Qy,
+                                            NULL,
+                                            NULL);
     // check the result of verification
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_KAT_ERR);
 

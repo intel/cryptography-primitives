@@ -200,8 +200,10 @@ fips_test_status fips_selftest_mbx_rsa3k_private_crt_mb8(void)
     // compare output plaintext to known answer
     int output_status;
     for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
-        output_status = mbx_is_mem_eq(
-            pa_plaintext[i], MBX_RSA3K_DATA_BYTE_LEN, plaintext, MBX_RSA3K_DATA_BYTE_LEN);
+        output_status = mbx_is_mem_eq(pa_plaintext[i],
+                                      MBX_RSA3K_DATA_BYTE_LEN,
+                                      plaintext,
+                                      MBX_RSA3K_DATA_BYTE_LEN);
         if (!output_status) { // wrong output
             test_result = MBX_ALGO_SELFTEST_KAT_ERR;
         }
@@ -285,15 +287,24 @@ fips_test_status fips_selftest_mbx_rsa3k_private_crt_ssl_mb8(void)
 
     /* test function */
     mbx_status sts;
-    sts = mbx_rsa_private_crt_ssl_mb8(
-        pa_ciphertext, pa_plaintext, pa_p, pa_q, pa_dp, pa_dq, pa_inv_q, MBX_RSA3K_DATA_BIT_LEN);
+    sts = mbx_rsa_private_crt_ssl_mb8(pa_ciphertext,
+                                      pa_plaintext,
+                                      pa_p,
+                                      pa_q,
+                                      pa_dp,
+                                      pa_dq,
+                                      pa_inv_q,
+                                      MBX_RSA3K_DATA_BIT_LEN);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
 
     // compare output signature to known answer
     int output_status;
     for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
-        output_status = mbx_is_mem_eq(
-            pa_plaintext[i], MBX_RSA3K_DATA_BYTE_LEN, plaintext, MBX_RSA3K_DATA_BYTE_LEN);
+        output_status = mbx_is_mem_eq(pa_plaintext[i],
+                                      MBX_RSA3K_DATA_BYTE_LEN,
+                                      plaintext,
+                                      MBX_RSA3K_DATA_BYTE_LEN);
         if (!output_status) { // wrong output
             test_result = MBX_ALGO_SELFTEST_KAT_ERR;
         }

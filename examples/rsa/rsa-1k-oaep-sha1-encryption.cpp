@@ -124,8 +124,9 @@ int main(void)
         }
     } while (0);
 
-    PRINT_EXAMPLE_STATUS(
-        "ippsRSAEncrypt_OAEP_rmf", "RSA-OAEP 1024 (SHA1) Encryption", ippStsNoErr == status);
+    PRINT_EXAMPLE_STATUS("ippsRSAEncrypt_OAEP_rmf",
+                         "RSA-OAEP 1024 (SHA1) Encryption",
+                         ippStsNoErr == status);
 
     if (pCipherText)
         delete[] pCipherText;

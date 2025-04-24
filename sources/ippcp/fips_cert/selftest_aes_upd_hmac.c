@@ -164,8 +164,13 @@ IPPFUN(fips_test_status, fips_selftest_ippsHMACMessage_rmf, (void))
     }
 
     /* function call */
-    sts = ippsHMACMessage_rmf(
-        msg, msgByteLen, key, keyByteSize, outTagBuff, IPPCP_TAG_BYTE_SIZE, locMethod);
+    sts = ippsHMACMessage_rmf(msg,
+                              msgByteLen,
+                              key,
+                              keyByteSize,
+                              outTagBuff,
+                              IPPCP_TAG_BYTE_SIZE,
+                              locMethod);
     if (sts != ippStsNoErr) {
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }

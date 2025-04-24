@@ -68,8 +68,8 @@ __mmask16 sm4_gcm_decrypt_mb16(int8u* pa_out[SM4_LINES],
    */
 
     for (int i = 0; i < 4; i++) {
-        __m512i len_updade = maskz_expandloadu_epi32(
-            0x1111, (void*)(in_len_rearranged + i * 4)); /* Load txt len to high part of registry */
+        /* Load txt len to high part of registry */
+        __m512i len_updade  = maskz_expandloadu_epi32(0x1111, (void*)(in_len_rearranged + i * 4));
         __m512i len_context = loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), i));
 
         len_context = add_epi64(len_context, len_updade);

@@ -38,8 +38,12 @@ void sm4_encrypt_j0_mb16(SM4_GCM_CTX_mb16* p_context)
         pa_inp[i] = (unsigned char*)(j0 + tagRearrange[i]);
     }
 
-    TRANSPOSE_16x4_I32_EPI32(
-        &j0_blocks[0], &j0_blocks[1], &j0_blocks[2], &j0_blocks[3], pa_inp, 0xFFFF);
+    TRANSPOSE_16x4_I32_EPI32(&j0_blocks[0],
+                             &j0_blocks[1],
+                             &j0_blocks[2],
+                             &j0_blocks[3],
+                             pa_inp,
+                             0xFFFF);
 
     const __m512i* p_rk = (const __m512i*)key_sched;
 

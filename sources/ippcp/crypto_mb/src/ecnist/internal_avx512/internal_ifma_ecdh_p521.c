@@ -39,8 +39,9 @@ mbx_status internal_avx512_nistp521_ecdh_ssl_mb8(int8u* pa_shared_key[8],
     ifma_BN_transpose_copy((int64u(*)[8])secretz, (const BIGNUM**)pa_skey, P521_BITSIZE);
     secretz[P521_LEN64] = get_zero64();
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, is_zero(secretz, P521_LEN64 + 1), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  is_zero(secretz, P521_LEN64 + 1),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
@@ -112,8 +113,9 @@ mbx_status internal_avx512_nistp521_ecdh_mb8(int8u* pa_shared_key[8],
     ifma_BNU_transpose_copy((int64u(*)[8])secretz, (const int64u**)pa_skey, P521_BITSIZE);
     secretz[P521_LEN64] = get_zero64();
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, is_zero(secretz, P521_LEN64 + 1), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  is_zero(secretz, P521_LEN64 + 1),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
@@ -123,8 +125,8 @@ mbx_status internal_avx512_nistp521_ecdh_mb8(int8u* pa_shared_key[8],
 
     P521_POINT P;
     /* set party's public */
-    ifma_BNU_to_mb8(
-        (int64u(*)[8])P.X, (const int64u*(*))pa_pubx, P521_BITSIZE); // P-> crypto_mb radix 2^52
+    // P-> crypto_mb radix 2^52
+    ifma_BNU_to_mb8((int64u(*)[8])P.X, (const int64u*(*))pa_pubx, P521_BITSIZE);
     ifma_BNU_to_mb8((int64u(*)[8])P.Y, (const int64u*(*))pa_puby, P521_BITSIZE);
     if (use_jproj_coords)
         ifma_BNU_to_mb8((int64u(*)[8])P.Z, (const int64u*(*))pa_pubz, P521_BITSIZE);

@@ -154,8 +154,9 @@ mbx_status16 sm4_ccm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],
             if (additional_lens[i]) {
                 block_ptrs[i] = tmp[i]; /* First 46 bytes have been processed */
                 PadBlock(0, tmp[i], SM4_BLOCK_SIZE);
-                CopyBlock(
-                    pa_aad[i] + MAX_AAD_SIZE_BLOCKS_0_3 + auth_lens[i], tmp[i], additional_lens[i]);
+                CopyBlock(pa_aad[i] + MAX_AAD_SIZE_BLOCKS_0_3 + auth_lens[i],
+                          tmp[i],
+                          additional_lens[i]);
                 auth_lens[i] = SM4_BLOCK_SIZE;
             }
         }

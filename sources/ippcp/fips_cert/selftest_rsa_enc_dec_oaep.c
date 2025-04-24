@@ -186,8 +186,11 @@ IPPFUN(fips_test_status,
     IppsBigNumState* bnN = (IppsBigNumState*)pLocKeysBuffer;
     pLocKeysBuffer += nByteSize;
 
-    sts = ippcp_init_set_bn(
-        bnE, IPPCP_PUB_EXP_WORD_SIZE, ippBigNumPOS, (const Ipp32u*)dataE, IPPCP_PUB_EXP_WORD_SIZE);
+    sts = ippcp_init_set_bn(bnE,
+                            IPPCP_PUB_EXP_WORD_SIZE,
+                            ippBigNumPOS,
+                            (const Ipp32u*)dataE,
+                            IPPCP_PUB_EXP_WORD_SIZE);
     if (sts != ippStsNoErr)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     sts = ippcp_init_set_bn(bnD,
@@ -197,8 +200,11 @@ IPPFUN(fips_test_status,
                             IPPCP_PRIV_EXP_WORD_SIZE);
     if (sts != ippStsNoErr)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
-    sts = ippcp_init_set_bn(
-        bnN, IPPCP_MODULUS_WORD_SIZE, ippBigNumPOS, (const Ipp32u*)dataN, IPPCP_MODULUS_WORD_SIZE);
+    sts = ippcp_init_set_bn(bnN,
+                            IPPCP_MODULUS_WORD_SIZE,
+                            ippBigNumPOS,
+                            (const Ipp32u*)dataN,
+                            IPPCP_MODULUS_WORD_SIZE);
     if (sts != ippStsNoErr)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
 
@@ -311,14 +317,20 @@ IPPFUN(fips_test_status,
     IppsBigNumState* bnN = (IppsBigNumState*)pLocKeysBuffer;
     pLocKeysBuffer += nByteSize;
 
-    sts = ippcp_init_set_bn(
-        bnE, IPPCP_PUB_EXP_WORD_SIZE, ippBigNumPOS, (const Ipp32u*)dataE, IPPCP_PUB_EXP_WORD_SIZE);
+    sts = ippcp_init_set_bn(bnE,
+                            IPPCP_PUB_EXP_WORD_SIZE,
+                            ippBigNumPOS,
+                            (const Ipp32u*)dataE,
+                            IPPCP_PUB_EXP_WORD_SIZE);
     if (sts != ippStsNoErr) {
         MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
-    sts = ippcp_init_set_bn(
-        bnN, IPPCP_MODULUS_WORD_SIZE, ippBigNumPOS, (const Ipp32u*)dataN, IPPCP_MODULUS_WORD_SIZE);
+    sts = ippcp_init_set_bn(bnN,
+                            IPPCP_MODULUS_WORD_SIZE,
+                            ippBigNumPOS,
+                            (const Ipp32u*)dataN,
+                            IPPCP_MODULUS_WORD_SIZE);
     if (sts != ippStsNoErr) {
         MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
@@ -371,8 +383,15 @@ IPPFUN(fips_test_status,
 
     Ipp8u* encScratchBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
 
-    sts = ippsRSAEncrypt_OAEP_rmf(
-        pMsg, IPPCP_MSG_BYTE_LEN, 0, 0, seed, pOutCtxt, pPubKey, locMethod, encScratchBuffer);
+    sts = ippsRSAEncrypt_OAEP_rmf(pMsg,
+                                  IPPCP_MSG_BYTE_LEN,
+                                  0,
+                                  0,
+                                  seed,
+                                  pOutCtxt,
+                                  pPubKey,
+                                  locMethod,
+                                  encScratchBuffer);
 
     int sigFlagErr = ippcp_is_mem_eq(ctext, IPPCP_CTEXT_BYTE_LEN, pOutCtxt, IPPCP_CTEXT_BYTE_LEN);
     if (1 != sigFlagErr || sts != ippStsNoErr) {
@@ -444,8 +463,11 @@ IPPFUN(fips_test_status,
         MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
-    sts = ippcp_init_set_bn(
-        bnN, IPPCP_MODULUS_WORD_SIZE, ippBigNumPOS, (const Ipp32u*)dataN, IPPCP_MODULUS_WORD_SIZE);
+    sts = ippcp_init_set_bn(bnN,
+                            IPPCP_MODULUS_WORD_SIZE,
+                            ippBigNumPOS,
+                            (const Ipp32u*)dataN,
+                            IPPCP_MODULUS_WORD_SIZE);
     if (sts != ippStsNoErr) {
         MEMORY_FREE_2(pKeysBuffer, pBuffer, memMgmFlag)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
@@ -499,8 +521,14 @@ IPPFUN(fips_test_status,
 
     int ptxtLen;
 
-    sts = ippsRSADecrypt_OAEP_rmf(
-        ctext, 0, 0, pOutPtxt, &ptxtLen, pPrivKey, locMethod, decScratchBuffer);
+    sts = ippsRSADecrypt_OAEP_rmf(ctext,
+                                  0,
+                                  0,
+                                  pOutPtxt,
+                                  &ptxtLen,
+                                  pPrivKey,
+                                  locMethod,
+                                  decScratchBuffer);
 
     int sigFlagErr = ippcp_is_mem_eq(pMsg, IPPCP_MSG_BYTE_LEN, pOutPtxt, IPPCP_MSG_BYTE_LEN);
     if (1 != sigFlagErr || sts != ippStsNoErr) {

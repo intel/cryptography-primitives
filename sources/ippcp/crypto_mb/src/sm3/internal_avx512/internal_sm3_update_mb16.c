@@ -51,8 +51,9 @@ mbx_status16 internal_avx512_sm3_update_mb16(const int8u* const msg_pa[16],
         __ALIGN64 const int8u* loc_src[SM3_NUM_BUFFERS];
         /* We need the address of the zero_buffer to form the fully valid array of pointers loc_src */
         _mm512_storeu_si512((void*)loc_src,
-                            _mm512_mask_loadu_epi64(
-                                _mm512_set1_epi64((long long)&zero_buffer), mb_mask8[0], msg_pa));
+                            _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer),
+                                                    mb_mask8[0],
+                                                    msg_pa));
         _mm512_storeu_si512((void*)(loc_src + 8),
                             _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer),
                                                     mb_mask8[1],
@@ -108,9 +109,10 @@ mbx_status16 internal_avx512_sm3_update_mb16(const int8u* const msg_pa[16],
             /* calculate how many bytes need to be added in the internal buffer */
             __m512i empty_bytes_buffer =
                 _mm512_sub_epi32(_mm512_set1_epi32(SM3_MSG_BLOCK_SIZE), idx);
-            processed_mask = _mm512_cmp_epi32_mask(
-                _mm512_sub_epi32(loc_len, empty_bytes_buffer), zero_buffer, _MM_CMPINT_LT);
-            proc_len = _mm512_mask_loadu_epi32(empty_bytes_buffer, processed_mask, p_loc_len);
+            processed_mask = _mm512_cmp_epi32_mask(_mm512_sub_epi32(loc_len, empty_bytes_buffer),
+                                                   zero_buffer,
+                                                   _MM_CMPINT_LT);
+            proc_len       = _mm512_mask_loadu_epi32(empty_bytes_buffer, processed_mask, p_loc_len);
 
             /* copy from valid input streams to the internal buffers as much as possible */
             for (i = 0; i < SM3_NUM_BUFFERS; i++) {
@@ -119,18 +121,21 @@ mbx_status16 internal_avx512_sm3_update_mb16(const int8u* const msg_pa[16],
                         0xFFFFFFFFFFFFFFFF >> (SM3_MSG_BLOCK_SIZE - p_proc_len[i]);
                     _mm512_storeu_si512(
                         p_buffer[i] + p_idx[i],
-                        _mm512_mask_loadu_epi8(
-                            _mm512_loadu_si512(p_buffer[i] + p_idx[i]), mb_mask64, loc_src[i]));
+                        _mm512_mask_loadu_epi8(_mm512_loadu_si512(p_buffer[i] + p_idx[i]),
+                                               mb_mask64,
+                                               loc_src[i]));
                 }
             }
 
             idx     = _mm512_add_epi32(idx, proc_len);
             loc_len = _mm512_sub_epi32(loc_len, proc_len);
 
-            loc_src_m512_low = _mm512_add_epi64(
-                loc_src_m512_low, _mm512_cvtepu32_epi64(_mm512_castsi512_si256(proc_len)));
-            loc_src_m512_high = _mm512_add_epi64(
-                loc_src_m512_high, _mm512_cvtepu32_epi64(_mm512_extracti32x8_epi32(proc_len, 1)));
+            loc_src_m512_low =
+                _mm512_add_epi64(loc_src_m512_low,
+                                 _mm512_cvtepu32_epi64(_mm512_castsi512_si256(proc_len)));
+            loc_src_m512_high =
+                _mm512_add_epi64(loc_src_m512_high,
+                                 _mm512_cvtepu32_epi64(_mm512_extracti32x8_epi32(proc_len, 1)));
 
             _mm512_storeu_si512((void*)loc_src, loc_src_m512_low);
             _mm512_storeu_si512((void*)(loc_src + 8), loc_src_m512_high);
@@ -143,7 +148,9 @@ mbx_status16 internal_avx512_sm3_update_mb16(const int8u* const msg_pa[16],
             if (processed_mask) {
                 sm3_avx512_mb16(HASH_VALUE(p_state), (const int8u**)p_buffer, p_proc_len);
                 idx = _mm512_mask_set1_epi32(
-                    idx, ~_mm512_cmp_epi32_mask(proc_len, zero_buffer, _MM_CMPINT_LE), 0);
+                    idx,
+                    ~_mm512_cmp_epi32_mask(proc_len, zero_buffer, _MM_CMPINT_LE),
+                    0);
             }
         }
 
@@ -156,10 +163,12 @@ mbx_status16 internal_avx512_sm3_update_mb16(const int8u* const msg_pa[16],
 
         loc_len = _mm512_sub_epi32(loc_len, proc_len);
 
-        loc_src_m512_low = _mm512_add_epi64(
-            loc_src_m512_low, _mm512_cvtepu32_epi64(_mm512_castsi512_si256(proc_len)));
-        loc_src_m512_high = _mm512_add_epi64(
-            loc_src_m512_high, _mm512_cvtepu32_epi64(_mm512_extracti32x8_epi32(proc_len, 1)));
+        loc_src_m512_low =
+            _mm512_add_epi64(loc_src_m512_low,
+                             _mm512_cvtepu32_epi64(_mm512_castsi512_si256(proc_len)));
+        loc_src_m512_high =
+            _mm512_add_epi64(loc_src_m512_high,
+                             _mm512_cvtepu32_epi64(_mm512_extracti32x8_epi32(proc_len, 1)));
 
         _mm512_storeu_si512((void*)loc_src, loc_src_m512_low);
         _mm512_storeu_si512((void*)(loc_src + 8), loc_src_m512_high);
@@ -178,8 +187,9 @@ mbx_status16 internal_avx512_sm3_update_mb16(const int8u* const msg_pa[16],
 
         /* Update length of processed message */
         _mm512_storeu_si512(MSG_LEN(p_state),
-                            _mm512_mask_loadu_epi64(
-                                _mm512_loadu_si512(MSG_LEN(p_state)), mb_mask8[0], sum_msg_len));
+                            _mm512_mask_loadu_epi64(_mm512_loadu_si512(MSG_LEN(p_state)),
+                                                    mb_mask8[0],
+                                                    sum_msg_len));
         _mm512_storeu_si512(MSG_LEN(p_state) + 8,
                             _mm512_mask_loadu_epi64(_mm512_loadu_si512(MSG_LEN(p_state) + 8),
                                                     mb_mask8[1],

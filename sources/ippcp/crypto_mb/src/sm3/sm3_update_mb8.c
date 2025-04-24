@@ -77,10 +77,12 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
                                               HASH_BUFF(p_state)[6], HASH_BUFF(p_state)[7] };
 
         __mmask8 processed_mask = _mm256_cmp_epi32_mask(idx, _mm256_setzero_si256(), _MM_CMPINT_NE);
-
         __m512i sum_msg_len_m512 = _mm512_loadu_si512(sum_msg_len);
-        sum_msg_len_m512         = _mm512_mask_add_epi64(
-            sum_msg_len_m512, mb_mask, _mm512_loadu_si512(MSG_LEN(p_state)), sum_msg_len_m512);
+
+        sum_msg_len_m512 = _mm512_mask_add_epi64(sum_msg_len_m512,
+                                                 mb_mask,
+                                                 _mm512_loadu_si512(MSG_LEN(p_state)),
+                                                 sum_msg_len_m512);
 
         _mm512_storeu_si512(sum_msg_len, sum_msg_len_m512);
 
@@ -90,8 +92,9 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
         if (processed_mask) {
 
             __m256i tmp    = _mm256_sub_epi32(_mm256_set1_epi32(SM3_MSG_BLOCK_SIZE), idx);
-            processed_mask = _mm256_cmp_epi32_mask(
-                _mm256_sub_epi32(loc_len, tmp), _mm256_setzero_si256(), _MM_CMPINT_LT);
+            processed_mask = _mm256_cmp_epi32_mask(_mm256_sub_epi32(loc_len, tmp),
+                                                   _mm256_setzero_si256(),
+                                                   _MM_CMPINT_LT);
 
             /* p_proc_len[i] = MIN(p_loc_len[i], (SM3_MSG_BLOCK_SIZE - p_idx[i])) */
             proc_len = _mm256_mask_loadu_epi32(tmp, processed_mask, p_loc_len);
@@ -102,8 +105,9 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
                 __mmask64 mb_mask64 = ~(0xFFFFFFFFFFFFFFFF << p_proc_len[i]);
                 _mm512_storeu_si512(
                     p_buffer[i] + p_idx[i],
-                    _mm512_mask_loadu_epi8(
-                        _mm512_loadu_si512(p_buffer[i] + p_idx[i]), mb_mask64, loc_src[i]));
+                    _mm512_mask_loadu_epi8(_mm512_loadu_si512(p_buffer[i] + p_idx[i]),
+                                           mb_mask64,
+                                           loc_src[i]));
             }
 
             idx     = _mm256_add_epi32(idx, proc_len);

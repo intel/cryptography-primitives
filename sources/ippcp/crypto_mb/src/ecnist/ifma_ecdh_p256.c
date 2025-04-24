@@ -77,8 +77,13 @@ mbx_status OWNAPI(mbx_nistp256_ecdh_ssl_mb8)(int8u* pa_shared_key[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_mbx_nistp256_ecdh_ssl_mb8(
-        pa_shared_key, pa_skey, pa_pubx, pa_puby, pa_pubz, pBuffer, use_jproj_coords);
+    status |= internal_mbx_nistp256_ecdh_ssl_mb8(pa_shared_key,
+                                                 pa_skey,
+                                                 pa_pubx,
+                                                 pa_puby,
+                                                 pa_pubz,
+                                                 pBuffer,
+                                                 use_jproj_coords);
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 
@@ -146,8 +151,13 @@ mbx_status OWNAPI(mbx_nistp256_ecdh_mb8)(int8u* pa_shared_key[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_nistp256_ecdh_mb8(
-        pa_shared_key, pa_skey, pa_pubx, pa_puby, pa_pubz, pBuffer, use_jproj_coords);
+    status |= internal_nistp256_ecdh_mb8(pa_shared_key,
+                                         pa_skey,
+                                         pa_pubx,
+                                         pa_puby,
+                                         pa_pubz,
+                                         pBuffer,
+                                         use_jproj_coords);
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 

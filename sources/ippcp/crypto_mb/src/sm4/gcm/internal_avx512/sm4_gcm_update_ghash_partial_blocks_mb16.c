@@ -167,9 +167,10 @@ void sm4_gcm_update_ghash_partial_blocks_mb16(__m128i ghash[SM4_LINES],
     __m512i* hashkeys[] = { &hashkeys_4_0, &hashkeys_4_1, &hashkeys_4_2, &hashkeys_4_3 };
 
     __m512i data_blocks_4_0, data_blocks_4_1, data_blocks_4_2, data_blocks_4_3;
-    __m512i* data_blocks[] = {
-        &data_blocks_4_0, &data_blocks_4_1, &data_blocks_4_2, &data_blocks_4_3
-    };
+    __m512i* data_blocks[] = { &data_blocks_4_0,
+                               &data_blocks_4_1,
+                               &data_blocks_4_2,
+                               &data_blocks_4_3 };
 
     __mmask16 load_mask = ~cmp_epi32_mask((*input_len), setzero(), _MM_CMPINT_EQ) & mb_mask;
 

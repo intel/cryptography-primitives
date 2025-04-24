@@ -85,8 +85,9 @@ static __mb_mask MB_FUNC_NAME(nistp256_ecdsa_verify_)(U64 sign_r[],
     MB_FUNC_NAME(ifma_fastred52_pn256_)(sign_r_restored, sign_r_restored);
 
     /* sign_r_restored != sign_r */
-    signature_err_mask = or_mb_mask(
-        signature_err_mask, not_mb_mask((MB_FUNC_NAME(cmp_eq_FE256_)(sign_r_restored, sign_r))));
+    signature_err_mask =
+        or_mb_mask(signature_err_mask,
+                   not_mb_mask((MB_FUNC_NAME(cmp_eq_FE256_)(sign_r_restored, sign_r))));
 
     return signature_err_mask;
 }
@@ -129,12 +130,15 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_)(const int8u* const pa_s
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])sign_r, pa_sign_r, P256_BITSIZE);
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])sign_s, pa_sign_s, P256_BITSIZE);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(sign_s), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(msg),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(sign_r),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(sign_s),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -148,12 +152,15 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_)(const int8u* const pa_s
     else
         MB_FUNC_NAME(mov_FE256_)(W.Z, (U64*)ones);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.X), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.Y), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.Z), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_p256_)(W.X),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_p256_)(W.Y),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_p256_)(W.Z),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -218,12 +225,15 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_ssl_)(
     ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_r, (const BIGNUM(**))pa_sign_r, P256_BITSIZE);
     ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_s, (const BIGNUM(**))pa_sign_s, P256_BITSIZE);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(sign_s), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(msg),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(sign_r),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(sign_s),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -237,12 +247,15 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_ssl_)(
     else
         MB_FUNC_NAME(mov_FE256_)(W.Z, (U64*)ones);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.X), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.Y), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_p256_)(W.Z), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_p256_)(W.X),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_p256_)(W.Y),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_p256_)(W.Z),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;

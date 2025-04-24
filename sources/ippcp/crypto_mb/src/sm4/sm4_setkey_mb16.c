@@ -45,8 +45,9 @@ mbx_status16 OWNAPI(mbx_sm4_set_key_mb16)(mbx_sm4_key_schedule* key_sched,
 
 #if (_MBX >= _MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        status |= internal_avx512_sm4_set_round_keys_mb16(
-            (int32u**)key_sched, (const int8u**)pa_key, (__mmask16)mb_mask);
+        status |= internal_avx512_sm4_set_round_keys_mb16((int32u**)key_sched,
+                                                          (const int8u**)pa_key,
+                                                          (__mmask16)mb_mask);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
@@ -77,8 +78,10 @@ mbx_status16 OWNAPI(mbx_sm4_xts_set_keys_mb16)(mbx_sm4_key_schedule* key_sched1,
 
 #if (_MBX >= _MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        status |= internal_avx512_sm4_xts_set_keys_mb16(
-            key_sched1, key_sched2, pa_key, (__mmask16)mb_mask);
+        status |= internal_avx512_sm4_xts_set_keys_mb16(key_sched1,
+                                                        key_sched2,
+                                                        pa_key,
+                                                        (__mmask16)mb_mask);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

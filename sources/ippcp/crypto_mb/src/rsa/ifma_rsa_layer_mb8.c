@@ -229,8 +229,10 @@ void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
                  (const int64u(*)[8])xq_mb8,
                  (const int64u(*)[8])p_mb8,
                  (const int64u(*)[8])p_mb8); /* for specific case p<q */
-    m->modsub52x(
-        xp_mb8, (const int64u(*)[8])xp_mb8, (const int64u(*)[8])inp_mb8, (const int64u(*)[8])p_mb8);
+    m->modsub52x(xp_mb8,
+                 (const int64u(*)[8])xp_mb8,
+                 (const int64u(*)[8])inp_mb8,
+                 (const int64u(*)[8])p_mb8);
 
     /* xp = (xp*coef) mod p */
     ifma_BNU_to_mb8(inp_mb8, iq_pa, factorBitlen); /* coef */
@@ -239,8 +241,11 @@ void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
                 (int64u*)rr_mb8,
                 (int64u*)p_mb8,
                 k0_mb8[0]); /* -> mont domain */
-    m->ammul52x(
-        (int64u*)xp_mb8, (int64u*)xp_mb8, (int64u*)inp_mb8, (int64u*)p_mb8, k0_mb8[0]); /* mmul */
+    m->ammul52x((int64u*)xp_mb8,
+                (int64u*)xp_mb8,
+                (int64u*)inp_mb8,
+                (int64u*)p_mb8,
+                k0_mb8[0]); /* mmul */
     m->modsub52x(xp_mb8,
                  (const int64u(*)[8])xp_mb8,
                  (const int64u(*)[8])p_mb8,
@@ -469,8 +474,10 @@ void ifma_cp_rsa_prv5_layer_mb4(const int8u* const from_pa[4],
                  (const int64u(*)[4])xq_mb4,
                  (const int64u(*)[4])p_mb4,
                  (const int64u(*)[4])p_mb4); /* for specific case p<q */
-    m->modsub52x(
-        xp_mb4, (const int64u(*)[4])xp_mb4, (const int64u(*)[4])inp_mb4, (const int64u(*)[4])p_mb4);
+    m->modsub52x(xp_mb4,
+                 (const int64u(*)[4])xp_mb4,
+                 (const int64u(*)[4])inp_mb4,
+                 (const int64u(*)[4])p_mb4);
 
     /* xp = (xp*coef) mod p */
     ifma_BNU_to_mb4(inp_mb4, iq_pa, factorBitlen); /* coef */
@@ -479,8 +486,11 @@ void ifma_cp_rsa_prv5_layer_mb4(const int8u* const from_pa[4],
                 (int64u*)rr_mb4,
                 (int64u*)p_mb4,
                 k0_mb4[0]); /* -> mont domain */
-    m->ammul52x(
-        (int64u*)xp_mb4, (int64u*)xp_mb4, (int64u*)inp_mb4, (int64u*)p_mb4, k0_mb4[0]); /* mmul */
+    m->ammul52x((int64u*)xp_mb4,
+                (int64u*)xp_mb4,
+                (int64u*)inp_mb4,
+                (int64u*)p_mb4,
+                k0_mb4[0]); /* mmul */
     m->modsub52x(xp_mb4,
                  (const int64u(*)[4])xp_mb4,
                  (const int64u(*)[4])p_mb4,

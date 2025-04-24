@@ -87,8 +87,10 @@ fips_test_status fips_selftest_mbx_nistp521_ecdh_mb8(void)
     // compare output shared key to known answer
     int output_status;
     for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
-        output_status = mbx_is_mem_eq(
-            pa_shared_key[i], MBX_NISTP521_DATA_BYTE_LEN, sh_key, MBX_NISTP521_DATA_BYTE_LEN);
+        output_status = mbx_is_mem_eq(pa_shared_key[i],
+                                      MBX_NISTP521_DATA_BYTE_LEN,
+                                      sh_key,
+                                      MBX_NISTP521_DATA_BYTE_LEN);
         if (!output_status) { // wrong output
             test_result = MBX_ALGO_SELFTEST_KAT_ERR;
         }
@@ -152,8 +154,10 @@ fips_test_status fips_selftest_mbx_nistp521_ecdh_ssl_mb8(void)
     // compare output shared key to known answer
     int output_status;
     for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
-        output_status = mbx_is_mem_eq(
-            pa_shared_key[i], MBX_NISTP521_DATA_BYTE_LEN, sh_key, MBX_NISTP521_DATA_BYTE_LEN);
+        output_status = mbx_is_mem_eq(pa_shared_key[i],
+                                      MBX_NISTP521_DATA_BYTE_LEN,
+                                      sh_key,
+                                      MBX_NISTP521_DATA_BYTE_LEN);
         if (!output_status) { // wrong output
             test_result = MBX_ALGO_SELFTEST_KAT_ERR;
         }

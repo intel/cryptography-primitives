@@ -32,8 +32,12 @@ static void sm4_encrypt_ctr0_mb16(SM4_CCM_CTX_mb16* p_context, __m512i* s0_block
     for (int i = 0; i < SM4_LINES; i++)
         pa_inp[i] = (unsigned char*)(ctr0 + i);
 
-    TRANSPOSE_16x4_I32_EPI32(
-        &s0_blocks[0], &s0_blocks[1], &s0_blocks[2], &s0_blocks[3], pa_inp, 0xFFFF);
+    TRANSPOSE_16x4_I32_EPI32(&s0_blocks[0],
+                             &s0_blocks[1],
+                             &s0_blocks[2],
+                             &s0_blocks[3],
+                             pa_inp,
+                             0xFFFF);
 
     const __m512i* p_rk = (const __m512i*)key_sched;
 

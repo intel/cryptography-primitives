@@ -107,35 +107,75 @@ mbx_status mbx_rsa_private_crt_ssl_mb8(const int8u* const from_pa[8],
         switch (expected_rsa_bitsize) {
         case RSA_1K:
             if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-                ifma_ssl_rsa1K_prv5_layer_mb4(
-                    &from_pa[0], &to_pa[0], &p_pa[0], &q_pa[0], &dp_pa[0], &dq_pa[0], &iq_pa[0]);
+                ifma_ssl_rsa1K_prv5_layer_mb4(&from_pa[0],
+                                              &to_pa[0],
+                                              &p_pa[0],
+                                              &q_pa[0],
+                                              &dp_pa[0],
+                                              &dq_pa[0],
+                                              &iq_pa[0]);
             if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-                ifma_ssl_rsa1K_prv5_layer_mb4(
-                    &from_pa[4], &to_pa[4], &p_pa[4], &q_pa[4], &dp_pa[4], &dq_pa[4], &iq_pa[4]);
+                ifma_ssl_rsa1K_prv5_layer_mb4(&from_pa[4],
+                                              &to_pa[4],
+                                              &p_pa[4],
+                                              &q_pa[4],
+                                              &dp_pa[4],
+                                              &dq_pa[4],
+                                              &iq_pa[4]);
             break;
         case RSA_2K:
             if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-                ifma_ssl_rsa2K_prv5_layer_mb4(
-                    &from_pa[0], &to_pa[0], &p_pa[0], &q_pa[0], &dp_pa[0], &dq_pa[0], &iq_pa[0]);
+                ifma_ssl_rsa2K_prv5_layer_mb4(&from_pa[0],
+                                              &to_pa[0],
+                                              &p_pa[0],
+                                              &q_pa[0],
+                                              &dp_pa[0],
+                                              &dq_pa[0],
+                                              &iq_pa[0]);
             if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-                ifma_ssl_rsa2K_prv5_layer_mb4(
-                    &from_pa[4], &to_pa[4], &p_pa[4], &q_pa[4], &dp_pa[4], &dq_pa[4], &iq_pa[4]);
+                ifma_ssl_rsa2K_prv5_layer_mb4(&from_pa[4],
+                                              &to_pa[4],
+                                              &p_pa[4],
+                                              &q_pa[4],
+                                              &dp_pa[4],
+                                              &dq_pa[4],
+                                              &iq_pa[4]);
             break;
         case RSA_3K:
             if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-                ifma_ssl_rsa3K_prv5_layer_mb4(
-                    &from_pa[0], &to_pa[0], &p_pa[0], &q_pa[0], &dp_pa[0], &dq_pa[0], &iq_pa[0]);
+                ifma_ssl_rsa3K_prv5_layer_mb4(&from_pa[0],
+                                              &to_pa[0],
+                                              &p_pa[0],
+                                              &q_pa[0],
+                                              &dp_pa[0],
+                                              &dq_pa[0],
+                                              &iq_pa[0]);
             if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-                ifma_ssl_rsa3K_prv5_layer_mb4(
-                    &from_pa[4], &to_pa[4], &p_pa[4], &q_pa[4], &dp_pa[4], &dq_pa[4], &iq_pa[4]);
+                ifma_ssl_rsa3K_prv5_layer_mb4(&from_pa[4],
+                                              &to_pa[4],
+                                              &p_pa[4],
+                                              &q_pa[4],
+                                              &dp_pa[4],
+                                              &dq_pa[4],
+                                              &iq_pa[4]);
             break;
         case RSA_4K:
             if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-                ifma_ssl_rsa4K_prv5_layer_mb4(
-                    &from_pa[0], &to_pa[0], &p_pa[0], &q_pa[0], &dp_pa[0], &dq_pa[0], &iq_pa[0]);
+                ifma_ssl_rsa4K_prv5_layer_mb4(&from_pa[0],
+                                              &to_pa[0],
+                                              &p_pa[0],
+                                              &q_pa[0],
+                                              &dp_pa[0],
+                                              &dq_pa[0],
+                                              &iq_pa[0]);
             if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-                ifma_ssl_rsa4K_prv5_layer_mb4(
-                    &from_pa[4], &to_pa[4], &p_pa[4], &q_pa[4], &dp_pa[4], &dq_pa[4], &iq_pa[4]);
+                ifma_ssl_rsa4K_prv5_layer_mb4(&from_pa[4],
+                                              &to_pa[4],
+                                              &p_pa[4],
+                                              &q_pa[4],
+                                              &dp_pa[4],
+                                              &dq_pa[4],
+                                              &iq_pa[4]);
             break;
         }
     }

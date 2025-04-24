@@ -2325,8 +2325,8 @@ static __m512i estimateq_mb8(const __m512i* ptopX, const __m512i* ptopY)
 
     // if(left>right)
     quo = _mm512_mask_sub_epi64(quo, k1, quo, one); // quo -= 1
-    rem = _mm512_mask_add_epi64(
-        rem, k1, rem, y0); // rem += y0 , note "right" increased at the same time
+    // rem += y0 , note "right" increased at the same time
+    rem = _mm512_mask_add_epi64(rem, k1, rem, y0);
 
     k0      = _mm512_mask_cmpgt_epu64_mask(k1, y1, left_lo);   // k0 = left_lo < y1
     left_lo = _mm512_mask_sub_epi64(left_lo, k1, left_lo, y1); // left -= y1
@@ -2575,8 +2575,12 @@ void ifma_modsub52x10_mb4(int64u res[][4],
                           const int64u inpB[][4],
                           const int64u inpM[][4])
 {
-    ifma_modsub52xN_mb4(
-        res, inpA, inpB, inpM, MS_DIGIT_MASK(BITSIZE_512, 52), NUMBER_OF_DIGITS(BITSIZE_512, 52));
+    ifma_modsub52xN_mb4(res,
+                        inpA,
+                        inpB,
+                        inpM,
+                        MS_DIGIT_MASK(BITSIZE_512, 52),
+                        NUMBER_OF_DIGITS(BITSIZE_512, 52));
 }
 
 void ifma_modsub52x20_mb4(int64u res[][4],
@@ -2584,8 +2588,12 @@ void ifma_modsub52x20_mb4(int64u res[][4],
                           const int64u inpB[][4],
                           const int64u inpM[][4])
 {
-    ifma_modsub52xN_mb4(
-        res, inpA, inpB, inpM, MS_DIGIT_MASK(BITSIZE_1024, 52), NUMBER_OF_DIGITS(BITSIZE_1024, 52));
+    ifma_modsub52xN_mb4(res,
+                        inpA,
+                        inpB,
+                        inpM,
+                        MS_DIGIT_MASK(BITSIZE_1024, 52),
+                        NUMBER_OF_DIGITS(BITSIZE_1024, 52));
 }
 
 void ifma_modsub52x30_mb4(int64u res[][4],
@@ -2593,8 +2601,12 @@ void ifma_modsub52x30_mb4(int64u res[][4],
                           const int64u inpB[][4],
                           const int64u inpM[][4])
 {
-    ifma_modsub52xN_mb4(
-        res, inpA, inpB, inpM, MS_DIGIT_MASK(BITSIZE_1536, 52), NUMBER_OF_DIGITS(BITSIZE_1536, 52));
+    ifma_modsub52xN_mb4(res,
+                        inpA,
+                        inpB,
+                        inpM,
+                        MS_DIGIT_MASK(BITSIZE_1536, 52),
+                        NUMBER_OF_DIGITS(BITSIZE_1536, 52));
 }
 
 void ifma_modsub52x40_mb4(int64u res[][4],
@@ -2602,8 +2614,12 @@ void ifma_modsub52x40_mb4(int64u res[][4],
                           const int64u inpB[][4],
                           const int64u inpM[][4])
 {
-    ifma_modsub52xN_mb4(
-        res, inpA, inpB, inpM, MS_DIGIT_MASK(BITSIZE_2048, 52), NUMBER_OF_DIGITS(BITSIZE_2048, 52));
+    ifma_modsub52xN_mb4(res,
+                        inpA,
+                        inpB,
+                        inpM,
+                        MS_DIGIT_MASK(BITSIZE_2048, 52),
+                        NUMBER_OF_DIGITS(BITSIZE_2048, 52));
 }
 
 /* r += a*b */

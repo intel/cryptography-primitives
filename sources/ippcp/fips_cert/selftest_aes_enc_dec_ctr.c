@@ -87,8 +87,10 @@ IPPFUN(fips_test_status, fips_selftest_ippsAESEncryptCTR, (Ipp8u * pBuffer))
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     /* compare output to known answer */
-    if (!ippcp_is_mem_eq(
-            out_ctext, IPPCP_AES_MSG_BYTE_LEN, ctext, IPPCP_AES_MSG_BYTE_LEN) ||  // ciphertext
+    if (!ippcp_is_mem_eq(out_ctext,
+                         IPPCP_AES_MSG_BYTE_LEN,
+                         ctext,
+                         IPPCP_AES_MSG_BYTE_LEN) ||                               // ciphertext
         !ippcp_is_mem_eq(out_ctr, IPPCP_CTR_BYTE_LEN, ctr, IPPCP_CTR_BYTE_LEN)) { // counter
         MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_KAT_ERR;
@@ -134,8 +136,10 @@ IPPFUN(fips_test_status, fips_selftest_ippsAESDecryptCTR, (Ipp8u * pBuffer))
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     /* compare output to known answer */
-    if (!ippcp_is_mem_eq(
-            out_ptext, IPPCP_AES_MSG_BYTE_LEN, ptext, IPPCP_AES_MSG_BYTE_LEN) ||  // plaintext
+    if (!ippcp_is_mem_eq(out_ptext,
+                         IPPCP_AES_MSG_BYTE_LEN,
+                         ptext,
+                         IPPCP_AES_MSG_BYTE_LEN) ||                               // plaintext
         !ippcp_is_mem_eq(out_ctr, IPPCP_CTR_BYTE_LEN, ctr, IPPCP_CTR_BYTE_LEN)) { // counter
         MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_KAT_ERR;

@@ -314,8 +314,12 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         SM4_FOUR_ROUNDS(TMP[4], TMP[5], TMP[6], TMP[7], TMP[8], p_rk, 1);
     p_rk = (const __m512i*)key_sched;
     /* Load and transpose ciphertext */
-    TRANSPOSE_16x4_I32_EPI32(
-        &TMP[9], &TMP[10], &TMP[11], &TMP[12], (const int8u**)loc_inp, mb_mask);
+    TRANSPOSE_16x4_I32_EPI32(&TMP[9],
+                             &TMP[10],
+                             &TMP[11],
+                             &TMP[12],
+                             (const int8u**)loc_inp,
+                             mb_mask);
 
     /* Change the order of blocks (Y0, Y1, Y2, Y3) = R(X32, X33, X34, X35) = (X35, X34, X33, X32) and xor with plain text */
     TMP[8] = TMP[4];
@@ -343,8 +347,10 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
     loc_len = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(SM4_BLOCK_SIZE));
 
     /* Generate the mask to process 4 blocks from each buffer */
-    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(
-        mb_mask, loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask,
+                                                    loc_len,
+                                                    _mm512_set1_epi32(4 * SM4_BLOCK_SIZE),
+                                                    _MM_CMPINT_NLT);
 
     /* Go to this loop if all 16 buffers contain at least 4 blocks each */
     while (tmp_mask == 0xFFFF) {
@@ -390,8 +396,9 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[7] = _mm512_xor_si512(TMP[3], _mm512_loadu_si512(loc_inp[3]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 0; i < 4; i++)
-            STORED_CT[i] = _mm512_inserti64x2(
-                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i],
+                                              _mm_loadu_si128((__m128i const*)loc_inp[i] + 3),
+                                              3);
         _mm512_storeu_si512((__m512i*)(loc_out[0]), TMP[4]);
         _mm512_storeu_si512((__m512i*)(loc_out[1]), TMP[5]);
         _mm512_storeu_si512((__m512i*)(loc_out[2]), TMP[6]);
@@ -409,8 +416,9 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[11] = _mm512_xor_si512(TMP[3], _mm512_loadu_si512(loc_inp[7]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 4; i < 8; i++)
-            STORED_CT[i] = _mm512_inserti64x2(
-                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i],
+                                              _mm_loadu_si128((__m128i const*)loc_inp[i] + 3),
+                                              3);
         _mm512_storeu_si512((__m512i*)(loc_out[4]), TMP[8]);
         _mm512_storeu_si512((__m512i*)(loc_out[5]), TMP[9]);
         _mm512_storeu_si512((__m512i*)(loc_out[6]), TMP[10]);
@@ -428,8 +436,9 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[15] = _mm512_xor_si512(TMP[3], _mm512_loadu_si512(loc_inp[11]));
         /* Store last block of ciphertext for next iteration */
         for (int i = 8; i < 12; i++)
-            STORED_CT[i] = _mm512_inserti64x2(
-                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i],
+                                              _mm_loadu_si128((__m128i const*)loc_inp[i] + 3),
+                                              3);
         _mm512_storeu_si512((__m512i*)(loc_out[8]), TMP[12]);
         _mm512_storeu_si512((__m512i*)(loc_out[9]), TMP[13]);
         _mm512_storeu_si512((__m512i*)(loc_out[10]), TMP[14]);
@@ -446,8 +455,9 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[18] = _mm512_xor_si512(TMP[2], _mm512_loadu_si512(loc_inp[14]));
         TMP[19] = _mm512_xor_si512(TMP[3], _mm512_loadu_si512(loc_inp[15]));
         for (int i = 12; i < SM4_LINES; i++)
-            STORED_CT[i] = _mm512_inserti64x2(
-                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i],
+                                              _mm_loadu_si128((__m128i const*)loc_inp[i] + 3),
+                                              3);
         _mm512_storeu_si512((__m512i*)(loc_out[12]), TMP[16]);
         _mm512_storeu_si512((__m512i*)(loc_out[13]), TMP[17]);
         _mm512_storeu_si512((__m512i*)(loc_out[14]), TMP[18]);
@@ -466,8 +476,10 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
 
         /* Update number of blocks left and processing mask */
         loc_len  = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE));
-        tmp_mask = _mm512_mask_cmp_epi32_mask(
-            mb_mask, loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask,
+                                              loc_len,
+                                              _mm512_set1_epi32(4 * SM4_BLOCK_SIZE),
+                                              _MM_CMPINT_NLT);
     }
 
     /* Check if we have any data */

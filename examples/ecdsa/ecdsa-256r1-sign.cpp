@@ -131,8 +131,13 @@ int main(void)
     std::vector<Ipp8u> pScratchBuffer(scratchSize);
 
     /* 9. Compute the digital signature over the message digest */
-    status = ippsGFpECSignDSA(
-        bnMsgDigest, bnRegPrivate, bnEphPrivate, bnR, bnS, pEC, pScratchBuffer.data());
+    status = ippsGFpECSignDSA(bnMsgDigest,
+                              bnRegPrivate,
+                              bnEphPrivate,
+                              bnR,
+                              bnS,
+                              pEC,
+                              pScratchBuffer.data());
     if (!checkStatus("ippsGFpECSignDSA", ippStsNoErr, status))
         return status;
 

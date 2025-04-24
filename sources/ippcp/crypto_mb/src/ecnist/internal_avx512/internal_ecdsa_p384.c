@@ -222,14 +222,18 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_complete_mb8(int8u* pa_sign_r[8],
     ifma_BNU_to_mb8((int64u(*)[8])sign_r, pa_sign_rp, P384_BITSIZE);
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, pa_msg, P384_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(inv_eph), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(reg_skey), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(inv_eph),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(reg_skey),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(sign_r),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(msg),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the ephemeral secret keys */
@@ -285,12 +289,15 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_mb8(int8u* pa_sign_r[8],
     /* convert message */
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, pa_msg, P384_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(inv_eph_key), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(reg_key), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(inv_eph_key),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(reg_key),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(msg),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the ephemeral secret keys */
@@ -351,12 +358,15 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_mb8(const int8u* const pa_sign_
    // check, that sign_r and sign_s is in [1, n – 1]
    // it's equivalent to sign_<r/s> != 0 (because it is unsigned value) and sign_<r/s> < n
    */
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(sign_s), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(msg),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(sign_r),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(sign_s),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -370,12 +380,15 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_mb8(const int8u* const pa_sign_
     else
         MB_FUNC_NAME(mov_FE384_)(W.Z, (U64*)ones);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_p384_)(W.X), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_p384_)(W.Y), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_p384_)(W.Z), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_p384_)(W.X),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_p384_)(W.Y),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_p384_)(W.Z),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -455,14 +468,18 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_complete_ssl_mb8(
     ifma_BN_to_mb8((int64u(*)[8])sign_r, pa_sign_rp, P384_BITSIZE);
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, pa_msg, P384_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(inv_eph), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(reg_skey), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(inv_eph),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(reg_skey),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(sign_r),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(msg),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the ephemeral secret keys */
@@ -517,12 +534,15 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
     /* convert message */
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, pa_msg, P384_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(inv_eph_key), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FE384_)(reg_key), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(inv_eph_key),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FE384_)(reg_key),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(msg),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the ephemeral secret keys */
@@ -588,12 +608,15 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const 
     ifma_BN_to_mb8((int64u(*)[8])sign_r, (const BIGNUM(**))pa_sign_r, P384_BITSIZE);
     ifma_BN_to_mb8((int64u(*)[8])sign_s, (const BIGNUM(**))pa_sign_s, P384_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_n384_)(sign_s), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(msg),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(sign_r),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_n384_)(sign_s),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -607,12 +630,15 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const 
     else
         MB_FUNC_NAME(mov_FE384_)(W.Z, (U64*)ones);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_p384_)(W.X), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_p384_)(W.Y), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_p384_)(W.Z), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_p384_)(W.X),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_p384_)(W.Y),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_p384_)(W.Z),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;

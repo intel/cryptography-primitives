@@ -82,8 +82,14 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_verify_mb8(void)
 
     /* test function */
     mbx_status sts;
-    sts = mbx_nistp256_ecdsa_verify_mb8(
-        pa_sign_r, pa_sign_s, pa_pub_msg_digest, pa_pub_Qx, pa_pub_Qy, NULL, NULL);
+    sts = mbx_nistp256_ecdsa_verify_mb8(pa_sign_r,
+                                        pa_sign_s,
+                                        pa_pub_msg_digest,
+                                        pa_pub_Qx,
+                                        pa_pub_Qy,
+                                        NULL,
+                                        NULL);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_KAT_ERR);
 
     return test_result;
@@ -143,8 +149,13 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_verify_ssl_mb8(void)
 
     /* test function */
     mbx_status sts;
-    sts = mbx_nistp256_ecdsa_verify_ssl_mb8(
-        pa_sig, pa_pub_msg_digest, pa_pub_Qx, pa_pub_Qy, NULL, NULL);
+    sts = mbx_nistp256_ecdsa_verify_ssl_mb8(pa_sig,
+                                            pa_pub_msg_digest,
+                                            pa_pub_Qx,
+                                            pa_pub_Qy,
+                                            NULL,
+                                            NULL);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_KAT_ERR);
 
     // memory free

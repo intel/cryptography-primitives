@@ -131,14 +131,17 @@ static mbx_status sm2_ecdsa_process_pubkeys(SM2_POINT* P,
 {
     mbx_status status = current_status;
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_psm2_)(P->X), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_psm2_)(P->Y), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_psm2_)(P->X),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_psm2_)(P->Y),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (use_jproj_coords) {
-        status |= MBX_SET_STS_BY_MASK(
-            status, MB_FUNC_NAME(ifma_check_range_psm2_)(P->Z), MBX_STATUS_MISMATCH_PARAM_ERR);
+        status |= MBX_SET_STS_BY_MASK(status,
+                                      MB_FUNC_NAME(ifma_check_range_psm2_)(P->Z),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
         MB_FUNC_NAME(ifma_tomont52_psm2_)(P->X, P->X);
         MB_FUNC_NAME(ifma_tomont52_psm2_)(P->Y, P->Y);
@@ -332,10 +335,12 @@ mbx_status internal_avx512_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
     ifma_BNU_to_mb8((int64u(*)[8])reg_skey, pa_reg_skey, PSM2_BITSIZE);
     ifma_BNU_to_mb8((int64u(*)[8])eph_skey, pa_eph_skey, PSM2_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FESM2_)(reg_skey), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FESM2_)(eph_skey), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FESM2_)(reg_skey),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FESM2_)(eph_skey),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
@@ -363,8 +368,11 @@ mbx_status internal_avx512_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
         ifma_BNU_to_mb8((int64u(*)[8])P.Z, (const int64u*(*))pa_pubz, PSM2_BITSIZE);
     }
 
-    status = sm2_ecdsa_process_pubkeys(
-        &P, pa_rev_bytes_pubX, pa_rev_bytes_pubY, use_jproj_coords, status);
+    status = sm2_ecdsa_process_pubkeys(&P,
+                                       pa_rev_bytes_pubX,
+                                       pa_rev_bytes_pubY,
+                                       use_jproj_coords,
+                                       status);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
@@ -385,8 +393,10 @@ mbx_status internal_avx512_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
                                (const int8u**)pa_rev_bytes_pubY);
 
     /* compute msg digest */
-    sm2_ecdsa_compute_msg_digest(
-        pa_msg_digest, (const int8u**)pa_msg_digest, (const int8u**)pa_msg, (const int*)msg_len);
+    sm2_ecdsa_compute_msg_digest(pa_msg_digest,
+                                 (const int8u**)pa_msg_digest,
+                                 (const int8u**)pa_msg,
+                                 (const int*)msg_len);
 
     /* zero padded keys */
     U64 scalar_eph_skey[PSM2_LEN64 + 1];
@@ -436,10 +446,12 @@ mbx_status internal_avx512_sm2_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
     ifma_HexStr8_to_mb8((int64u(*)[8])sign_r, (const int8u* const*)pa_sign_r, PSM2_BITSIZE);
     ifma_HexStr8_to_mb8((int64u(*)[8])sign_s, (const int8u* const*)pa_sign_s, PSM2_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_nsm2_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_nsm2_)(sign_s), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_nsm2_)(sign_r),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_nsm2_)(sign_s),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -463,8 +475,11 @@ mbx_status internal_avx512_sm2_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
         ifma_BNU_to_mb8((int64u(*)[8])P.Z, (const int64u*(*))pa_pubz, PSM2_BITSIZE);
     }
 
-    status = sm2_ecdsa_process_pubkeys(
-        &P, pa_rev_bytes_pubX, pa_rev_bytes_pubY, use_jproj_coords, status);
+    status = sm2_ecdsa_process_pubkeys(&P,
+                                       pa_rev_bytes_pubX,
+                                       pa_rev_bytes_pubY,
+                                       use_jproj_coords,
+                                       status);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -481,8 +496,10 @@ mbx_status internal_avx512_sm2_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
                                (const int8u**)pa_rev_bytes_pubY);
 
     /* compute msg digest */
-    sm2_ecdsa_compute_msg_digest(
-        pa_msg_digest, (const int8u**)pa_msg_digest, (const int8u**)pa_msg, (const int*)msg_len);
+    sm2_ecdsa_compute_msg_digest(pa_msg_digest,
+                                 (const int8u**)pa_msg_digest,
+                                 (const int8u**)pa_msg,
+                                 (const int*)msg_len);
 
     __ALIGN64 U64 msg[PSM2_LEN52];
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, (const int8u* const*)pa_msg_digest, PSM2_BITSIZE);
@@ -518,10 +535,12 @@ mbx_status internal_avx512_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
     ifma_BN_to_mb8((int64u(*)[8])reg_skey, pa_reg_skey, PSM2_BITSIZE);
     ifma_BN_to_mb8((int64u(*)[8])eph_skey, pa_eph_skey, PSM2_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FESM2_)(reg_skey), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(is_zero_FESM2_)(eph_skey), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FESM2_)(reg_skey),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(is_zero_FESM2_)(eph_skey),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
@@ -549,8 +568,11 @@ mbx_status internal_avx512_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
         ifma_BN_to_mb8((int64u(*)[8])P.Z, pa_pubz, PSM2_BITSIZE);
     }
 
-    status = sm2_ecdsa_process_pubkeys(
-        &P, pa_rev_bytes_pubX, pa_rev_bytes_pubY, use_jproj_coords, status);
+    status = sm2_ecdsa_process_pubkeys(&P,
+                                       pa_rev_bytes_pubX,
+                                       pa_rev_bytes_pubY,
+                                       use_jproj_coords,
+                                       status);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
@@ -571,8 +593,10 @@ mbx_status internal_avx512_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
                                (const int8u**)pa_rev_bytes_pubY);
 
     /* compute msg digest */
-    sm2_ecdsa_compute_msg_digest(
-        pa_msg_digest, (const int8u**)pa_msg_digest, (const int8u**)pa_msg, (const int*)msg_len);
+    sm2_ecdsa_compute_msg_digest(pa_msg_digest,
+                                 (const int8u**)pa_msg_digest,
+                                 (const int8u**)pa_msg,
+                                 (const int*)msg_len);
 
     /* zero padded keys */
     U64 scalar_eph_skey[PSM2_LEN64 + 1];
@@ -633,10 +657,12 @@ mbx_status internal_avx512_sm2_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_si
     ifma_BN_to_mb8((int64u(*)[8])sign_r, (const BIGNUM(**))pa_sign_r, PSM2_BITSIZE);
     ifma_BN_to_mb8((int64u(*)[8])sign_s, (const BIGNUM(**))pa_sign_s, PSM2_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_nsm2_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_SET_STS_BY_MASK(
-        status, MB_FUNC_NAME(ifma_check_range_nsm2_)(sign_s), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_nsm2_)(sign_r),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  MB_FUNC_NAME(ifma_check_range_nsm2_)(sign_s),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -660,8 +686,11 @@ mbx_status internal_avx512_sm2_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_si
         ifma_BN_to_mb8((int64u(*)[8])P.Z, pa_pubz, PSM2_BITSIZE);
     }
 
-    status = sm2_ecdsa_process_pubkeys(
-        &P, pa_rev_bytes_pubX, pa_rev_bytes_pubY, use_jproj_coords, status);
+    status = sm2_ecdsa_process_pubkeys(&P,
+                                       pa_rev_bytes_pubX,
+                                       pa_rev_bytes_pubY,
+                                       use_jproj_coords,
+                                       status);
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -678,8 +707,10 @@ mbx_status internal_avx512_sm2_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_si
                                (const int8u**)pa_rev_bytes_pubY);
 
     /* compute msg digest */
-    sm2_ecdsa_compute_msg_digest(
-        pa_msg_digest, (const int8u**)pa_msg_digest, (const int8u**)pa_msg, (const int*)msg_len);
+    sm2_ecdsa_compute_msg_digest(pa_msg_digest,
+                                 (const int8u**)pa_msg_digest,
+                                 (const int8u**)pa_msg,
+                                 (const int*)msg_len);
 
     __ALIGN64 U64 msg[PSM2_LEN52];
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, (const int8u* const*)pa_msg_digest, PSM2_BITSIZE);

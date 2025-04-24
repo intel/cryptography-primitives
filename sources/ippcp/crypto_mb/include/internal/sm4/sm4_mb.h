@@ -876,10 +876,11 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI32(__m512i* t0,
                                                    __mmask16 mb_mask)
 {
 
-#define XOR_AND_STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti, IV, TMP)        \
-    TMP = _mm512_maskz_loadu_epi32((store_mask) * (0x1 & (loc_mb_mask)), IV);  \
-    _mm512_mask_storeu_epi32(                                                  \
-        OUT, (store_mask) * (0x1 & (loc_mb_mask)), _mm512_xor_epi32(Ti, TMP)); \
+#define XOR_AND_STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti, IV, TMP)       \
+    TMP = _mm512_maskz_loadu_epi32((store_mask) * (0x1 & (loc_mb_mask)), IV); \
+    _mm512_mask_storeu_epi32(OUT,                                             \
+                             (store_mask) * (0x1 & (loc_mb_mask)),            \
+                             _mm512_xor_epi32(Ti, TMP));                      \
     (loc_mb_mask) >>= 1;
 
     __m512i z0 = _mm512_setzero_si512();
@@ -906,6 +907,7 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI32(__m512i* t0,
     XOR_AND_STORE_RESULT(p_out[2], 0x000F, loc_mb_mask, *t2, p_iv[2], z2);
     XOR_AND_STORE_RESULT(p_out[3], 0x000F, loc_mb_mask, *t3, p_iv[3], z3);
 
+    /* clang-format off */
     // L4 - L7
     XOR_AND_STORE_RESULT(
         (__m128i*)p_out[4] - 1, 0x00F0, loc_mb_mask, *t0, (__m128i*)p_iv[4] - 1, z0);
@@ -935,6 +937,7 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI32(__m512i* t0,
         (__m128i*)p_out[14] - 3, 0xF000, loc_mb_mask, *t2, (__m128i*)p_iv[14] - 3, z2);
     XOR_AND_STORE_RESULT(
         (__m128i*)p_out[15] - 3, 0xF000, loc_mb_mask, *t3, (__m128i*)p_iv[15] - 3, z3);
+    /* clang-format on */
 }
 
 __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI8(__m512i t0,
@@ -981,7 +984,7 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI8(__m512i t0,
     XOR_AND_STORE_RESULT_EPI8(p_out[2], stream_mask, loc_mb_mask, t2, p_iv[2], z2);
     UPDATE_STREAM_MASK_16(stream_mask, p_loc_len)
     XOR_AND_STORE_RESULT_EPI8(p_out[3], stream_mask, loc_mb_mask, t3, p_iv[3], z3);
-
+    /* clang-format off */
     // L4 - L7
     UPDATE_STREAM_MASK_16(stream_mask, p_loc_len)
     XOR_AND_STORE_RESULT_EPI8(
@@ -1023,6 +1026,7 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI8(__m512i t0,
     UPDATE_STREAM_MASK_16(stream_mask, p_loc_len)
     XOR_AND_STORE_RESULT_EPI8(
         (__m128i*)p_out[15] - 3, stream_mask << 48, loc_mb_mask, t3, (__m128i*)p_iv[15] - 3, z3);
+    /* clang-format on */
 }
 
 #endif /* #if (_MBX>=_MBX_K1) */

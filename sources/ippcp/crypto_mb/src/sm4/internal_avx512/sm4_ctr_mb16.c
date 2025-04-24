@@ -266,8 +266,10 @@ mbx_status16 sm4_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
     }
 
     /* Generate the mask to process 4 blocks from each buffer */
-    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(
-        mb_mask, loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask,
+                                                    loc_len,
+                                                    _mm512_set1_epi32(4 * SM4_BLOCK_SIZE),
+                                                    _MM_CMPINT_NLT);
 
     int8u* inc = (int8u*)firstInc;
 
@@ -385,9 +387,11 @@ mbx_status16 sm4_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
 
         /* Update number of blocks left and processing mask */
         loc_len  = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE));
-        tmp_mask = _mm512_mask_cmp_epi32_mask(
-            mb_mask, loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
-        inc = (int8u*)nextInc;
+        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask,
+                                              loc_len,
+                                              _mm512_set1_epi32(4 * SM4_BLOCK_SIZE),
+                                              _MM_CMPINT_NLT);
+        inc      = (int8u*)nextInc;
     }
 
     /* Check if we have any data */

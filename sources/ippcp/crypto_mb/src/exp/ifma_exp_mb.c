@@ -313,8 +313,15 @@ mbx_status OWNAPI(mbx_exp_mb8)(int64u* const out_pa[8],
         break;
     }
 
-    status |= ifma_exp_mb(
-        out_pa, base_pa, exp_pa, exp_bits, mod_pa, mod_bits, expfunc, pBuffer, bufferLen);
+    status |= ifma_exp_mb(out_pa,
+                          base_pa,
+                          exp_pa,
+                          exp_bits,
+                          mod_pa,
+                          mod_bits,
+                          expfunc,
+                          pBuffer,
+                          bufferLen);
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */

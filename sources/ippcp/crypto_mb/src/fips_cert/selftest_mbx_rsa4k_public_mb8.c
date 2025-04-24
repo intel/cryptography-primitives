@@ -153,15 +153,22 @@ fips_test_status fips_selftest_mbx_rsa4k_public_mb8(void)
 
     /* test function */
     mbx_status sts;
-    sts = mbx_rsa_public_mb8(
-        pa_plaintext, pa_ciphertext, pa_moduli, MBX_RSA4K_DATA_BIT_LEN, method, NULL);
+    sts = mbx_rsa_public_mb8(pa_plaintext,
+                             pa_ciphertext,
+                             pa_moduli,
+                             MBX_RSA4K_DATA_BIT_LEN,
+                             method,
+                             NULL);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
 
     // compare output ciphertext to known answer
     int output_status;
     for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
-        output_status = mbx_is_mem_eq(
-            pa_ciphertext[i], MBX_RSA4K_DATA_BYTE_LEN, ciphertext, MBX_RSA4K_DATA_BYTE_LEN);
+        output_status = mbx_is_mem_eq(pa_ciphertext[i],
+                                      MBX_RSA4K_DATA_BYTE_LEN,
+                                      ciphertext,
+                                      MBX_RSA4K_DATA_BYTE_LEN);
         if (!output_status) { // wrong output
             test_result = MBX_ALGO_SELFTEST_KAT_ERR;
         }
@@ -223,15 +230,21 @@ fips_test_status fips_selftest_mbx_rsa4k_public_ssl_mb8(void)
 
     /* test function */
     mbx_status sts;
-    sts = mbx_rsa_public_ssl_mb8(
-        pa_plaintext, pa_ciphertext, pa_e, pa_moduli, MBX_RSA4K_DATA_BIT_LEN);
+    sts = mbx_rsa_public_ssl_mb8(pa_plaintext,
+                                 pa_ciphertext,
+                                 pa_e,
+                                 pa_moduli,
+                                 MBX_RSA4K_DATA_BIT_LEN);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
 
     // compare output signature to known answer
     int output_status;
     for (int i = 0; (i < MBX_LANES) && (MBX_ALGO_SELFTEST_OK == test_result); ++i) {
-        output_status = mbx_is_mem_eq(
-            pa_ciphertext[i], MBX_RSA4K_DATA_BYTE_LEN, ciphertext, MBX_RSA4K_DATA_BYTE_LEN);
+        output_status = mbx_is_mem_eq(pa_ciphertext[i],
+                                      MBX_RSA4K_DATA_BYTE_LEN,
+                                      ciphertext,
+                                      MBX_RSA4K_DATA_BYTE_LEN);
         if (!output_status) { // wrong output
             test_result = MBX_ALGO_SELFTEST_KAT_ERR;
         }

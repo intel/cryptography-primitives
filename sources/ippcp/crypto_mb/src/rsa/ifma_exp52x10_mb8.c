@@ -41,6 +41,7 @@
     ifma_amm52x10_mb8((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0));
 #define SQUARE_5x52x10_mb8(out, Y, mod, k0)                                                       \
     ifma_amm52x10_mb8((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0)); \
+    /* clang-format off */                                                                        \
     ifma_amm52x10_mb8(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));           \
     ifma_amm52x10_mb8(                                                                            \
@@ -50,6 +51,7 @@
     ifma_amm52x10_mb8(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));
 #endif
+/* clang-format on */
 
 #define BITSIZE_MODULUS (512)
 #define LEN52           (NUMBER_OF_DIGITS(BITSIZE_MODULUS, DIGIT_SIZE)) // 10
@@ -134,15 +136,23 @@ void EXP52x10_mb8(int64u out[][8],
    */
     zero_mb8(red_X, LEN52); /* table[0] = mont(x^0) = mont(1) */
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
-    ifma_amm52x10_mb8(
-        (int64u*)red_table[0], (int64u*)red_X, (int64u*)toMont, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x10_mb8((int64u*)red_table[0],
+                      (int64u*)red_X,
+                      (int64u*)toMont,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
-    ifma_amm52x10_mb8(
-        (int64u*)red_table[1], (int64u*)base, (int64u*)toMont, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x10_mb8((int64u*)red_table[1],
+                      (int64u*)base,
+                      (int64u*)toMont,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
     for (idx = 1; idx < (1 << EXP_WIN_SIZE) / 2; idx++) {
-        SQUARE_52x10_mb8(
-            (int64u*)red_table[2 * idx], (int64u*)red_table[idx], (int64u*)modulus, (int64u*)k0);
+        SQUARE_52x10_mb8((int64u*)red_table[2 * idx],
+                         (int64u*)red_table[idx],
+                         (int64u*)modulus,
+                         (int64u*)k0);
         ifma_amm52x10_mb8((int64u*)red_table[2 * idx + 1],
                           (int64u*)red_table[2 * idx],
                           (int64u*)red_table[1],
@@ -199,8 +209,11 @@ void EXP52x10_mb8(int64u out[][8],
                 extract_multiplier_mb8(red_X, red_table, (int64u*)(&red_table_idx));
             }
             /* and multiply */
-            ifma_amm52x10_mb8(
-                (int64u*)red_Y, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
+            ifma_amm52x10_mb8((int64u*)red_Y,
+                              (int64u*)red_Y,
+                              (int64u*)red_X,
+                              (int64u*)modulus,
+                              (int64u*)k0);
         }
     }
 
@@ -238,6 +251,7 @@ void EXP52x10_mb8(int64u out[][8],
     ifma_amm52x10_mb4((int64u*)out, (int64u*)Y, (int64u*)Y, (int64u*)mod, (int64u*)k0);
 #define SQUARE_5x52x10_mb4(out, Y, mod, k0)                                                       \
     ifma_amm52x10_mb4((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0)); \
+    /* clang-format off */                                                                        \
     ifma_amm52x10_mb4(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));           \
     ifma_amm52x10_mb4(                                                                            \
@@ -247,6 +261,7 @@ void EXP52x10_mb8(int64u out[][8],
     ifma_amm52x10_mb4(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));
 #endif
+/* clang-format on */
 
 #define BITSIZE_MODULUS (512)
 #define LEN52           (NUMBER_OF_DIGITS(BITSIZE_MODULUS, DIGIT_SIZE)) // 10
@@ -290,15 +305,23 @@ void EXP52x10_mb4(int64u out[][4],
     _mm256_store_si256((__m256i*)red_X, _mm256_set1_epi64x(1));
     zero_mb4(&red_X[1], LEN52 - 1); /* table[0] = mont(x^0) = mont(1) */
 
-    ifma_amm52x10_mb4(
-        (int64u*)red_table[0], (int64u*)red_X, (int64u*)toMont, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x10_mb4((int64u*)red_table[0],
+                      (int64u*)red_X,
+                      (int64u*)toMont,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
-    ifma_amm52x10_mb4(
-        (int64u*)red_table[1], (int64u*)base, (int64u*)toMont, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x10_mb4((int64u*)red_table[1],
+                      (int64u*)base,
+                      (int64u*)toMont,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
     for (idx = 1; idx < (1 << EXP_WIN_SIZE) / 2; idx++) {
-        SQUARE_52x10_mb4(
-            (int64u*)red_table[2 * idx], (int64u*)red_table[idx], (int64u*)modulus, (int64u*)k0);
+        SQUARE_52x10_mb4((int64u*)red_table[2 * idx],
+                         (int64u*)red_table[idx],
+                         (int64u*)modulus,
+                         (int64u*)k0);
         ifma_amm52x10_mb4((int64u*)red_table[2 * idx + 1],
                           (int64u*)red_table[2 * idx],
                           (int64u*)red_table[1],
@@ -355,8 +378,11 @@ void EXP52x10_mb4(int64u out[][4],
         extract_multiplier_mb4(red_X, red_table, red_table_idx);
 
         /* and multiply */
-        ifma_amm52x10_mb4(
-            (int64u*)red_Y, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
+        ifma_amm52x10_mb4((int64u*)red_Y,
+                          (int64u*)red_Y,
+                          (int64u*)red_X,
+                          (int64u*)modulus,
+                          (int64u*)k0);
     }
 
     /* clear exponents */

@@ -44,8 +44,9 @@ mbx_status internal_avx512_sm2_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
     ifma_BN_transpose_copy((int64u(*)[8])scalarz, pa_skey, PSM2_BITSIZE);
     scalarz[PSM2_LEN64] = get_zero64();
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, is_zero(scalarz, PSM2_LEN64 + 1), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  is_zero(scalarz, PSM2_LEN64 + 1),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     /* do not need to clear copy of secret keys before this return - all of them is NULL or zero */
     if (!MBX_IS_ANY_OK_STS(status))
@@ -112,8 +113,9 @@ mbx_status internal_avx512_sm2_ecpublic_key_mb8(int64u* pa_pubx[8],
     ifma_BNU_transpose_copy((int64u(*)[8])scalarz, pa_skey, PSM2_BITSIZE);
     scalarz[PSM2_LEN64] = get_zero64();
 
-    status |= MBX_SET_STS_BY_MASK(
-        status, is_zero(scalarz, PSM2_LEN64 + 1), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  is_zero(scalarz, PSM2_LEN64 + 1),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     /* do not need to clear copy of secret keys before this return - all of them is NULL or zero */
     if (!MBX_IS_ANY_OK_STS(status))

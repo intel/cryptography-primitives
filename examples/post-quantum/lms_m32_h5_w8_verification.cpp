@@ -188,7 +188,8 @@ int main(void)
 
     /* 4. Allocate memory for the LMS public key state */
     std::unique_ptr<IppsLMSPublicKeyState, decltype(toIpp8uDeleter)> pPubKey(
-        (IppsLMSPublicKeyState*)(new Ipp8u[ippcpPubKeySize]), toIpp8uDeleter);
+        (IppsLMSPublicKeyState*)(new Ipp8u[ippcpPubKeySize]),
+        toIpp8uDeleter);
 
     /* 5. Set the LMS public key */
     status = ippsLMSSetPublicKeyState(lmsAlgTypePk, pI, pK, pPubKey.get());
@@ -203,7 +204,8 @@ int main(void)
 
     /* 7. Allocate memory for the LMS signature buffer */
     std::unique_ptr<IppsLMSSignatureState, decltype(toIpp8uDeleter)> pSignature(
-        (IppsLMSSignatureState*)(new Ipp8u[sigBuffSize]), toIpp8uDeleter);
+        (IppsLMSSignatureState*)(new Ipp8u[sigBuffSize]),
+        toIpp8uDeleter);
 
     /* 8. Set the LMS signature */
     status = ippsLMSSetSignatureState(lmsAlgTypePk, q, pC, pY, pAuthPath, pSignature.get());
@@ -212,8 +214,12 @@ int main(void)
 
     int is_valid = 0;
     /* 9. Verify the LMS signature */
-    status = ippsLMSVerify(
-        pMsg, msgLen, pSignature.get(), &is_valid, pPubKey.get(), pScratchBuffer.get());
+    status = ippsLMSVerify(pMsg,
+                           msgLen,
+                           pSignature.get(),
+                           &is_valid,
+                           pPubKey.get(),
+                           pScratchBuffer.get());
     if (!checkStatus("ippsLMSVerify", ippStsNoErr, status))
         return status;
 

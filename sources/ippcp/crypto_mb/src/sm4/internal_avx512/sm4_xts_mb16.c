@@ -76,11 +76,13 @@ static void prepare_last_tweaks(__m512i* TWEAK,
             *NEXT_TWEAK =
                 _mm512_permutexvar_epi64(_mm512_loadu_si512(&xts_next_tweak_permq_enc[0]), *TWEAK);
         else if (num_remain_full_blocks == 2)
-            *NEXT_TWEAK = _mm512_permutexvar_epi64(
-                _mm512_loadu_si512(&xts_next_tweak_permq_enc[1 * 8]), *TWEAK);
+            *NEXT_TWEAK =
+                _mm512_permutexvar_epi64(_mm512_loadu_si512(&xts_next_tweak_permq_enc[1 * 8]),
+                                         *TWEAK);
         else if (num_remain_full_blocks == 3)
-            *NEXT_TWEAK = _mm512_permutexvar_epi64(
-                _mm512_loadu_si512(&xts_next_tweak_permq_enc[2 * 8]), *TWEAK);
+            *NEXT_TWEAK =
+                _mm512_permutexvar_epi64(_mm512_loadu_si512(&xts_next_tweak_permq_enc[2 * 8]),
+                                         *TWEAK);
         /*
      * For the decryption case, it is a bit more complicated.
      * In case of a partial block, the last two tweaks (the last tweak of the last full block)
@@ -102,10 +104,13 @@ static void prepare_last_tweaks(__m512i* TWEAK,
                 _mm512_permutexvar_epi64(_mm512_loadu_si512(&xts_next_tweak_permq[2 * 8]), *TWEAK);
             *TWEAK = _mm512_permutexvar_epi64(_mm512_loadu_si512(&xts_tweak_permq[2 * 8]), *TWEAK);
         } else if (num_remain_full_blocks == 4) {
-            *NEXT_TWEAK = _mm512_permutex2var_epi64(
-                *NEXT_TWEAK, _mm512_loadu_si512(&xts_next_tweak_permq[3 * 8]), *TWEAK);
-            *TWEAK = _mm512_permutex2var_epi64(
-                *TWEAK, _mm512_loadu_si512(&xts_tweak_permq[3 * 8]), *NEXT_TWEAK);
+            *NEXT_TWEAK =
+                _mm512_permutex2var_epi64(*NEXT_TWEAK,
+                                          _mm512_loadu_si512(&xts_next_tweak_permq[3 * 8]),
+                                          *TWEAK);
+            *TWEAK = _mm512_permutex2var_epi64(*TWEAK,
+                                               _mm512_loadu_si512(&xts_tweak_permq[3 * 8]),
+                                               *NEXT_TWEAK);
         }
     }
 }
@@ -128,16 +133,23 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
     /* Length in bytes of full blocks for all buffers */
     loc_len32 = _mm512_and_si512(loc_len32, z_full_block_mask);
 
-    __mmask16 ge_64_mask = _mm512_mask_cmp_epi32_mask(
-        mb_mask, loc_len32, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+    __mmask16 ge_64_mask = _mm512_mask_cmp_epi32_mask(mb_mask,
+                                                      loc_len32,
+                                                      _mm512_set1_epi32(4 * SM4_BLOCK_SIZE),
+                                                      _MM_CMPINT_NLT);
+
     __mmask8 ge_64_mask_0_7  = (__mmask8)ge_64_mask;
     __mmask8 ge_64_mask_8_15 = (__mmask8)_kshiftri_mask16(ge_64_mask, 8);
     /* Expand 32-bit lengths to 64-bit lengths for 16 buffers */
     const __mmask16 expand_mask = _cvtu32_mask16(0x5555);
-    __m512i remain_len64_0_7    = _mm512_maskz_permutexvar_epi32(
-        expand_mask, _mm512_loadu_si512(xts_dw0_7_to_qw_idx), loc_len32);
-    __m512i remain_len64_8_15 = _mm512_maskz_permutexvar_epi32(
-        expand_mask, _mm512_loadu_si512(xts_dw8_15_to_qw_idx), loc_len32);
+    __m512i remain_len64_0_7 =
+        _mm512_maskz_permutexvar_epi32(expand_mask,
+                                       _mm512_loadu_si512(xts_dw0_7_to_qw_idx),
+                                       loc_len32);
+    __m512i remain_len64_8_15 =
+        _mm512_maskz_permutexvar_epi32(expand_mask,
+                                       _mm512_loadu_si512(xts_dw8_15_to_qw_idx),
+                                       loc_len32);
     __m512i processed_len64_0_7;
     __m512i processed_len64_8_15;
     __m512i TWEAK[SM4_LINES];
@@ -173,8 +185,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
 
             /* If there is a partial block, tweaks need to be rearranged depending on cipher direction */
             if ((p_partial_block[i] > 0) & (p_num_remain_full_blocks[i] <= 4))
-                prepare_last_tweaks(
-                    &TWEAK[i], &NEXT_TWEAK[i], operation, p_num_remain_full_blocks[i]);
+                prepare_last_tweaks(&TWEAK[i],
+                                    &NEXT_TWEAK[i],
+                                    operation,
+                                    p_num_remain_full_blocks[i]);
         }
 
         num_remain_full_blocks = _mm512_sub_epi32(num_remain_full_blocks, _mm512_set1_epi32(4));
@@ -253,63 +267,81 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[0], stream_mask[0], _mm512_xor_si512(TMP[0], TWEAK[0]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[1], stream_mask[1], _mm512_xor_si512(TMP[1], TWEAK[1]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[2], stream_mask[2], _mm512_xor_si512(TMP[2], TWEAK[2]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[3], stream_mask[3], _mm512_xor_si512(TMP[3], TWEAK[3]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[0],
+                                stream_mask[0],
+                                _mm512_xor_si512(TMP[0], TWEAK[0]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[1],
+                                stream_mask[1],
+                                _mm512_xor_si512(TMP[1], TWEAK[1]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[2],
+                                stream_mask[2],
+                                _mm512_xor_si512(TMP[2], TWEAK[2]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[3],
+                                stream_mask[3],
+                                _mm512_xor_si512(TMP[3], TWEAK[3]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[8], TMP[9], TMP[10], TMP[11]);
         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[4], stream_mask[4], _mm512_xor_si512(TMP[0], TWEAK[4]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[5], stream_mask[5], _mm512_xor_si512(TMP[1], TWEAK[5]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[6], stream_mask[6], _mm512_xor_si512(TMP[2], TWEAK[6]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[7], stream_mask[7], _mm512_xor_si512(TMP[3], TWEAK[7]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[4],
+                                stream_mask[4],
+                                _mm512_xor_si512(TMP[0], TWEAK[4]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[5],
+                                stream_mask[5],
+                                _mm512_xor_si512(TMP[1], TWEAK[5]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[6],
+                                stream_mask[6],
+                                _mm512_xor_si512(TMP[2], TWEAK[6]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[7],
+                                stream_mask[7],
+                                _mm512_xor_si512(TMP[3], TWEAK[7]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[12], TMP[13], TMP[14], TMP[15]);
         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[8], stream_mask[8], _mm512_xor_si512(TMP[0], TWEAK[8]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[9], stream_mask[9], _mm512_xor_si512(TMP[1], TWEAK[9]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[10], stream_mask[10], _mm512_xor_si512(TMP[2], TWEAK[10]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[11], stream_mask[11], _mm512_xor_si512(TMP[3], TWEAK[11]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[8],
+                                stream_mask[8],
+                                _mm512_xor_si512(TMP[0], TWEAK[8]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[9],
+                                stream_mask[9],
+                                _mm512_xor_si512(TMP[1], TWEAK[9]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[10],
+                                stream_mask[10],
+                                _mm512_xor_si512(TMP[2], TWEAK[10]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[11],
+                                stream_mask[11],
+                                _mm512_xor_si512(TMP[3], TWEAK[11]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[16], TMP[17], TMP[18], TMP[19]);
         TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
         TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
         TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
         TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[12], stream_mask[12], _mm512_xor_si512(TMP[0], TWEAK[12]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[13], stream_mask[13], _mm512_xor_si512(TMP[1], TWEAK[13]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[14], stream_mask[14], _mm512_xor_si512(TMP[2], TWEAK[14]));
-        _mm512_mask_storeu_epi8(
-            (__m512i*)loc_out[15], stream_mask[15], _mm512_xor_si512(TMP[3], TWEAK[15]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[12],
+                                stream_mask[12],
+                                _mm512_xor_si512(TMP[0], TWEAK[12]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[13],
+                                stream_mask[13],
+                                _mm512_xor_si512(TMP[1], TWEAK[13]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[14],
+                                stream_mask[14],
+                                _mm512_xor_si512(TMP[2], TWEAK[14]));
+        _mm512_mask_storeu_epi8((__m512i*)loc_out[15],
+                                stream_mask[15],
+                                _mm512_xor_si512(TMP[3], TWEAK[15]));
 
         /* Update input/output pointers to data */
-        processed_len64_0_7 = _mm512_mask_blend_epi64(
-            ge_64_mask_0_7, remain_len64_0_7, _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        processed_len64_8_15 = _mm512_mask_blend_epi64(
-            ge_64_mask_8_15, remain_len64_8_15, _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp)     = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), processed_len64_0_7);
+        processed_len64_0_7  = _mm512_mask_blend_epi64(ge_64_mask_0_7,
+                                                      remain_len64_0_7,
+                                                      _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        processed_len64_8_15 = _mm512_mask_blend_epi64(ge_64_mask_8_15,
+                                                       remain_len64_8_15,
+                                                       _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        M512(loc_inp)        = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), processed_len64_0_7);
         M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), processed_len64_8_15);
 
         M512(loc_out)     = _mm512_add_epi64(_mm512_loadu_si512(loc_out), processed_len64_0_7);
@@ -321,10 +353,12 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
         loc_len32         = _mm512_sub_epi32(loc_len32, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE));
         tmp_mask =
             _mm512_mask_cmp_epi32_mask(mb_mask, loc_len32, _mm512_set1_epi32(0), _MM_CMPINT_NLE);
-        ge_64_mask_0_7 = _mm512_cmp_epi64_mask(
-            remain_len64_0_7, _mm512_set1_epi64(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
-        ge_64_mask_8_15 = _mm512_cmp_epi64_mask(
-            remain_len64_8_15, _mm512_set1_epi64(4 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+        ge_64_mask_0_7  = _mm512_cmp_epi64_mask(remain_len64_0_7,
+                                               _mm512_set1_epi64(4 * SM4_BLOCK_SIZE),
+                                               _MM_CMPINT_NLT);
+        ge_64_mask_8_15 = _mm512_cmp_epi64_mask(remain_len64_8_15,
+                                                _mm512_set1_epi64(4 * SM4_BLOCK_SIZE),
+                                                _MM_CMPINT_NLT);
     }
 
     /* At this stage, all buffers have at most 15 bytes (a partial block) */
@@ -453,8 +487,10 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
      * Less than 5 full blocks requires sm4_xts_mask_kernel_mb16 to handle it,
      * as it is the function that can handle partial blocks.
      */
-    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(
-        mb_mask, loc_len, _mm512_set1_epi32(5 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+    __mmask16 tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask,
+                                                    loc_len,
+                                                    _mm512_set1_epi32(5 * SM4_BLOCK_SIZE),
+                                                    _MM_CMPINT_NLT);
 
     /* Go to this loop if all 16 buffers contain at least 5 full blocks each */
     while (tmp_mask == 0xFFFF) {
@@ -567,8 +603,10 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
 
         /* Update number of blocks left and processing mask */
         loc_len  = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE));
-        tmp_mask = _mm512_mask_cmp_epi32_mask(
-            mb_mask, loc_len, _mm512_set1_epi32(5 * SM4_BLOCK_SIZE), _MM_CMPINT_NLT);
+        tmp_mask = _mm512_mask_cmp_epi32_mask(mb_mask,
+                                              loc_len,
+                                              _mm512_set1_epi32(5 * SM4_BLOCK_SIZE),
+                                              _MM_CMPINT_NLT);
     }
 
     /* Check if we have any data left on any of the buffers */

@@ -520,8 +520,13 @@ IPPFUN(fips_test_status,
     Ipp8u* pLocSignBuffer = (IPP_ALIGNED_PTR(pBuffer + hash_method_size, IPPCP_RSA_ALIGNMENT));
     /* pPubKey is used to validate back the signature and protect against fault attacks */
     /* pPubKey can be NULL during FIPS testing */
-    sts = ippsRSASign_PKCS1v15_rmf(
-        pMsg, msgByteLen, pOutSig, pPrvKey, /* pPubKey= */ NULL, locMethod, pLocSignBuffer);
+    sts = ippsRSASign_PKCS1v15_rmf(pMsg,
+                                   msgByteLen,
+                                   pOutSig,
+                                   pPrvKey,
+                                   /* pPubKey= */ NULL,
+                                   locMethod,
+                                   pLocSignBuffer);
 
     int sigFlagErr = ippcp_is_mem_eq(pSig, sizeof(pSig), pOutSig, sizeof(pSig));
     if (1 != sigFlagErr || sts != ippStsNoErr) {
@@ -771,8 +776,13 @@ IPPFUN(fips_test_status,
 
     /* RSA Signature Verification */
     int isValid;
-    sts = ippsRSAVerify_PKCS1v15_rmf(
-        pMsg, msgByteLen, pSig, &isValid, pPubKey, locMethod, pLocVerifBuffer);
+    sts = ippsRSAVerify_PKCS1v15_rmf(pMsg,
+                                     msgByteLen,
+                                     pSig,
+                                     &isValid,
+                                     pPubKey,
+                                     locMethod,
+                                     pLocVerifBuffer);
 
     if (!isValid || sts != ippStsNoErr) {
         test_result = IPPCP_ALGO_SELFTEST_KAT_ERR;

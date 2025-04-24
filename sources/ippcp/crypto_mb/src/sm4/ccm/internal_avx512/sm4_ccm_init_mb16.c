@@ -37,8 +37,9 @@ mbx_status16 internal_avx512_sm4_ccm_init_mb16(const sm4_key* const pa_key[SM4_L
     // key0 key4 key8 key12 key1 key5 key9 key13 key2 key6 key10 key14 key3 key7 key11 key15
     */
 
-    internal_avx512_sm4_set_round_keys_mb16(
-        (int32u**)SM4_CCM_CONTEXT_KEY(p_context), (const int8u**)pa_key, mb_mask);
+    internal_avx512_sm4_set_round_keys_mb16((int32u**)SM4_CCM_CONTEXT_KEY(p_context),
+                                            (const int8u**)pa_key,
+                                            mb_mask);
 
     /* Process IV */
     sm4_ccm_update_iv_mb16(pa_iv, iv_len, mb_mask, p_context);

@@ -127,8 +127,10 @@ void ifma_ssl_rsa1K_prv5_layer_mb8(const int8u* const from_pa[8],
                          (const int64u(*)[8])xq_mb8,
                          (const int64u(*)[8])p_mb8,
                          (const int64u(*)[8])p_mb8); /* for specific case p<q */
-    ifma_modsub52x10_mb8(
-        xp_mb8, (const int64u(*)[8])xp_mb8, (const int64u(*)[8])inp_mb8, (const int64u(*)[8])p_mb8);
+    ifma_modsub52x10_mb8(xp_mb8,
+                         (const int64u(*)[8])xp_mb8,
+                         (const int64u(*)[8])inp_mb8,
+                         (const int64u(*)[8])p_mb8);
 
     /* xp = (xp*coef) mod p */
     ifma_BN_to_mb8(inp_mb8, iq_pa, FACTOR_BITLEN); /* coef */
@@ -137,8 +139,11 @@ void ifma_ssl_rsa1K_prv5_layer_mb8(const int8u* const from_pa[8],
                       (int64u*)rr_mb8,
                       (int64u*)p_mb8,
                       k0_mb8); /* -> mont domain */
-    ifma_amm52x10_mb8(
-        (int64u*)xp_mb8, (int64u*)xp_mb8, (int64u*)inp_mb8, (int64u*)p_mb8, k0_mb8); /* mmul */
+    ifma_amm52x10_mb8((int64u*)xp_mb8,
+                      (int64u*)xp_mb8,
+                      (int64u*)inp_mb8,
+                      (int64u*)p_mb8,
+                      k0_mb8); /* mmul */
     ifma_modsub52x10_mb8(xp_mb8,
                          (const int64u(*)[8])xp_mb8,
                          (const int64u(*)[8])p_mb8,
@@ -258,8 +263,10 @@ void ifma_ssl_rsa2K_prv5_layer_mb8(const int8u* const from_pa[8],
                          (const int64u(*)[8])xq_mb8,
                          (const int64u(*)[8])p_mb8,
                          (const int64u(*)[8])p_mb8); /* for specific case p<q */
-    ifma_modsub52x20_mb8(
-        xp_mb8, (const int64u(*)[8])xp_mb8, (const int64u(*)[8])inp_mb8, (const int64u(*)[8])p_mb8);
+    ifma_modsub52x20_mb8(xp_mb8,
+                         (const int64u(*)[8])xp_mb8,
+                         (const int64u(*)[8])inp_mb8,
+                         (const int64u(*)[8])p_mb8);
 
     /* xp = (xp*coef) mod p */
     ifma_BN_to_mb8(inp_mb8, iq_pa, FACTOR_BITLEN); /* coef */
@@ -268,8 +275,11 @@ void ifma_ssl_rsa2K_prv5_layer_mb8(const int8u* const from_pa[8],
                       (int64u*)rr_mb8,
                       (int64u*)p_mb8,
                       k0_mb8); /* -> mont domain */
-    ifma_amm52x20_mb8(
-        (int64u*)xp_mb8, (int64u*)xp_mb8, (int64u*)inp_mb8, (int64u*)p_mb8, k0_mb8); /* mmul */
+    ifma_amm52x20_mb8((int64u*)xp_mb8,
+                      (int64u*)xp_mb8,
+                      (int64u*)inp_mb8,
+                      (int64u*)p_mb8,
+                      k0_mb8); /* mmul */
     ifma_modsub52x20_mb8(xp_mb8,
                          (const int64u(*)[8])xp_mb8,
                          (const int64u(*)[8])p_mb8,
@@ -389,8 +399,10 @@ void ifma_ssl_rsa3K_prv5_layer_mb8(const int8u* const from_pa[8],
                          (const int64u(*)[8])xq_mb8,
                          (const int64u(*)[8])p_mb8,
                          (const int64u(*)[8])p_mb8); /* for specific case p<q */
-    ifma_modsub52x30_mb8(
-        xp_mb8, (const int64u(*)[8])xp_mb8, (const int64u(*)[8])inp_mb8, (const int64u(*)[8])p_mb8);
+    ifma_modsub52x30_mb8(xp_mb8,
+                         (const int64u(*)[8])xp_mb8,
+                         (const int64u(*)[8])inp_mb8,
+                         (const int64u(*)[8])p_mb8);
 
     /* xp = (xp*coef) mod p */
     ifma_BN_to_mb8(inp_mb8, iq_pa, FACTOR_BITLEN); /* coef */
@@ -399,8 +411,11 @@ void ifma_ssl_rsa3K_prv5_layer_mb8(const int8u* const from_pa[8],
                       (int64u*)rr_mb8,
                       (int64u*)p_mb8,
                       k0_mb8); /* -> mont domain */
-    ifma_amm52x30_mb8(
-        (int64u*)xp_mb8, (int64u*)xp_mb8, (int64u*)inp_mb8, (int64u*)p_mb8, k0_mb8); /* mmul */
+    ifma_amm52x30_mb8((int64u*)xp_mb8,
+                      (int64u*)xp_mb8,
+                      (int64u*)inp_mb8,
+                      (int64u*)p_mb8,
+                      k0_mb8); /* mmul */
     ifma_modsub52x30_mb8(xp_mb8,
                          (const int64u(*)[8])xp_mb8,
                          (const int64u(*)[8])p_mb8,
@@ -520,8 +535,10 @@ void ifma_ssl_rsa4K_prv5_layer_mb8(const int8u* const from_pa[8],
                          (const int64u(*)[8])xq_mb8,
                          (const int64u(*)[8])p_mb8,
                          (const int64u(*)[8])p_mb8); /* for specific case p<q */
-    ifma_modsub52x40_mb8(
-        xp_mb8, (const int64u(*)[8])xp_mb8, (const int64u(*)[8])inp_mb8, (const int64u(*)[8])p_mb8);
+    ifma_modsub52x40_mb8(xp_mb8,
+                         (const int64u(*)[8])xp_mb8,
+                         (const int64u(*)[8])inp_mb8,
+                         (const int64u(*)[8])p_mb8);
 
     /* xp = (xp*coef) mod p */
     ifma_BN_to_mb8(inp_mb8, iq_pa, FACTOR_BITLEN); /* coef */
@@ -530,8 +547,11 @@ void ifma_ssl_rsa4K_prv5_layer_mb8(const int8u* const from_pa[8],
                       (int64u*)rr_mb8,
                       (int64u*)p_mb8,
                       k0_mb8); /* -> mont domain */
-    ifma_amm52x40_mb8(
-        (int64u*)xp_mb8, (int64u*)xp_mb8, (int64u*)inp_mb8, (int64u*)p_mb8, k0_mb8); /* mmul */
+    ifma_amm52x40_mb8((int64u*)xp_mb8,
+                      (int64u*)xp_mb8,
+                      (int64u*)inp_mb8,
+                      (int64u*)p_mb8,
+                      k0_mb8); /* mmul */
     ifma_modsub52x40_mb8(xp_mb8,
                          (const int64u(*)[8])xp_mb8,
                          (const int64u(*)[8])p_mb8,
@@ -659,8 +679,10 @@ void ifma_ssl_rsa1K_prv5_layer_mb4(const int8u* const from_pa[4],
                          (const int64u(*)[4])xq_mb4,
                          (const int64u(*)[4])p_mb4,
                          (const int64u(*)[4])p_mb4); /* for specific case p<q */
-    ifma_modsub52x10_mb4(
-        xp_mb4, (const int64u(*)[4])xp_mb4, (const int64u(*)[4])inp_mb4, (const int64u(*)[4])p_mb4);
+    ifma_modsub52x10_mb4(xp_mb4,
+                         (const int64u(*)[4])xp_mb4,
+                         (const int64u(*)[4])inp_mb4,
+                         (const int64u(*)[4])p_mb4);
 
     /* xp = (xp*coef) mod p */
     ifma_BN_to_mb4(inp_mb4, iq_pa, FACTOR_BITLEN); /* coef */
@@ -669,8 +691,11 @@ void ifma_ssl_rsa1K_prv5_layer_mb4(const int8u* const from_pa[4],
                       (int64u*)rr_mb4,
                       (int64u*)p_mb4,
                       k0_mb4); /* -> mont domain */
-    ifma_amm52x10_mb4(
-        (int64u*)xp_mb4, (int64u*)xp_mb4, (int64u*)inp_mb4, (int64u*)p_mb4, k0_mb4); /* mmul */
+    ifma_amm52x10_mb4((int64u*)xp_mb4,
+                      (int64u*)xp_mb4,
+                      (int64u*)inp_mb4,
+                      (int64u*)p_mb4,
+                      k0_mb4); /* mmul */
     ifma_modsub52x10_mb4(xp_mb4,
                          (const int64u(*)[4])xp_mb4,
                          (const int64u(*)[4])p_mb4,
@@ -790,8 +815,10 @@ void ifma_ssl_rsa2K_prv5_layer_mb4(const int8u* const from_pa[4],
                          (const int64u(*)[4])xq_mb4,
                          (const int64u(*)[4])p_mb4,
                          (const int64u(*)[4])p_mb4); /* for specific case p<q */
-    ifma_modsub52x20_mb4(
-        xp_mb4, (const int64u(*)[4])xp_mb4, (const int64u(*)[4])inp_mb4, (const int64u(*)[4])p_mb4);
+    ifma_modsub52x20_mb4(xp_mb4,
+                         (const int64u(*)[4])xp_mb4,
+                         (const int64u(*)[4])inp_mb4,
+                         (const int64u(*)[4])p_mb4);
 
     /* xp = (xp*coef) mod p */
     ifma_BN_to_mb4(inp_mb4, iq_pa, FACTOR_BITLEN); /* coef */
@@ -800,8 +827,11 @@ void ifma_ssl_rsa2K_prv5_layer_mb4(const int8u* const from_pa[4],
                       (int64u*)rr_mb4,
                       (int64u*)p_mb4,
                       k0_mb4); /* -> mont domain */
-    ifma_amm52x20_mb4(
-        (int64u*)xp_mb4, (int64u*)xp_mb4, (int64u*)inp_mb4, (int64u*)p_mb4, k0_mb4); /* mmul */
+    ifma_amm52x20_mb4((int64u*)xp_mb4,
+                      (int64u*)xp_mb4,
+                      (int64u*)inp_mb4,
+                      (int64u*)p_mb4,
+                      k0_mb4); /* mmul */
     ifma_modsub52x20_mb4(xp_mb4,
                          (const int64u(*)[4])xp_mb4,
                          (const int64u(*)[4])p_mb4,
@@ -921,8 +951,10 @@ void ifma_ssl_rsa3K_prv5_layer_mb4(const int8u* const from_pa[4],
                          (const int64u(*)[4])xq_mb4,
                          (const int64u(*)[4])p_mb4,
                          (const int64u(*)[4])p_mb4); /* for specific case p<q */
-    ifma_modsub52x30_mb4(
-        xp_mb4, (const int64u(*)[4])xp_mb4, (const int64u(*)[4])inp_mb4, (const int64u(*)[4])p_mb4);
+    ifma_modsub52x30_mb4(xp_mb4,
+                         (const int64u(*)[4])xp_mb4,
+                         (const int64u(*)[4])inp_mb4,
+                         (const int64u(*)[4])p_mb4);
 
     /* xp = (xp*coef) mod p */
     ifma_BN_to_mb4(inp_mb4, iq_pa, FACTOR_BITLEN); /* coef */
@@ -931,8 +963,11 @@ void ifma_ssl_rsa3K_prv5_layer_mb4(const int8u* const from_pa[4],
                       (int64u*)rr_mb4,
                       (int64u*)p_mb4,
                       k0_mb4); /* -> mont domain */
-    ifma_amm52x30_mb4(
-        (int64u*)xp_mb4, (int64u*)xp_mb4, (int64u*)inp_mb4, (int64u*)p_mb4, k0_mb4); /* mmul */
+    ifma_amm52x30_mb4((int64u*)xp_mb4,
+                      (int64u*)xp_mb4,
+                      (int64u*)inp_mb4,
+                      (int64u*)p_mb4,
+                      k0_mb4); /* mmul */
     ifma_modsub52x30_mb4(xp_mb4,
                          (const int64u(*)[4])xp_mb4,
                          (const int64u(*)[4])p_mb4,
@@ -1052,8 +1087,10 @@ void ifma_ssl_rsa4K_prv5_layer_mb4(const int8u* const from_pa[4],
                          (const int64u(*)[4])xq_mb4,
                          (const int64u(*)[4])p_mb4,
                          (const int64u(*)[4])p_mb4); /* for specific case p<q */
-    ifma_modsub52x40_mb4(
-        xp_mb4, (const int64u(*)[4])xp_mb4, (const int64u(*)[4])inp_mb4, (const int64u(*)[4])p_mb4);
+    ifma_modsub52x40_mb4(xp_mb4,
+                         (const int64u(*)[4])xp_mb4,
+                         (const int64u(*)[4])inp_mb4,
+                         (const int64u(*)[4])p_mb4);
 
     /* xp = (xp*coef) mod p */
     ifma_BN_to_mb4(inp_mb4, iq_pa, FACTOR_BITLEN); /* coef */
@@ -1062,8 +1099,11 @@ void ifma_ssl_rsa4K_prv5_layer_mb4(const int8u* const from_pa[4],
                       (int64u*)rr_mb4,
                       (int64u*)p_mb4,
                       k0_mb4); /* -> mont domain */
-    ifma_amm52x40_mb4(
-        (int64u*)xp_mb4, (int64u*)xp_mb4, (int64u*)inp_mb4, (int64u*)p_mb4, k0_mb4); /* mmul */
+    ifma_amm52x40_mb4((int64u*)xp_mb4,
+                      (int64u*)xp_mb4,
+                      (int64u*)inp_mb4,
+                      (int64u*)p_mb4,
+                      k0_mb4); /* mmul */
     ifma_modsub52x40_mb4(xp_mb4,
                          (const int64u(*)[4])xp_mb4,
                          (const int64u(*)[4])p_mb4,

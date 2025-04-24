@@ -1256,8 +1256,9 @@ mbx_status MB_FUNC_NAME(internal_avx512_x25519_)(int8u* const pa_shared_key[8],
         __ALIGN64 U64 shared52_mb8[5];
 
         /* get scalars and convert to MB8 */
-        ifma_BNU_transpose_copy(
-            (int64u(*)[8])private64_mb8, (const int64u* const*)pa_private_key, 256);
+        ifma_BNU_transpose_copy((int64u(*)[8])private64_mb8,
+                                (const int64u* const*)pa_private_key,
+                                256);
         /* decode keys into scalars according to RFC7748 */
         private64_mb8[0] = and64_const(private64_mb8[0], 0xfffffffffffffff8);
         private64_mb8[3] = and64_const(private64_mb8[3], 0x7fffffffffffffff);
@@ -1589,8 +1590,9 @@ mbx_status MB_FUNC_NAME(internal_avx512_x25519_public_key_)(int8u* const pa_publ
 
         /* convert private to to MB8 and decode */
         __ALIGN64 U64 scalar_mb8[4];
-        ifma_BNU_transpose_copy(
-            (int64u(*)[8])scalar_mb8, (const int64u* const*)pa_private_key, 256);
+        ifma_BNU_transpose_copy((int64u(*)[8])scalar_mb8,
+                                (const int64u* const*)pa_private_key,
+                                256);
         /* decode keys into scalars according to RFC4448 */
         scalar_mb8[0] = and64_const(scalar_mb8[0], 0xfffffffffffffff8);
         scalar_mb8[3] = and64_const(scalar_mb8[3], 0x7fffffffffffffff);
@@ -1604,9 +1606,8 @@ mbx_status MB_FUNC_NAME(internal_avx512_x25519_public_key_)(int8u* const pa_publ
 
         /* set up: pre-computed G-S (base and "special") */
         __ALIGN64 U64 Z2[5];
-        __ALIGN64 U64 U2[5] = {
-            loadu64(U2_0), loadu64(U2_1), loadu64(U2_2), loadu64(U2_3), loadu64(U2_4)
-        };
+        __ALIGN64 U64
+            U2[5] = { loadu64(U2_0), loadu64(U2_1), loadu64(U2_2), loadu64(U2_3), loadu64(U2_4) };
         fe52mb8_set(Z2, 1);
 
         __ALIGN64 U64 A[5], B[5], C[5], D[5];

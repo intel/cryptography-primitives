@@ -56,8 +56,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdh_)(int8u* pa_shared_key[MB_WIDTH],
     ifma_BNU_transpose_copy((int64u(*)[MB_WIDTH])secretz, (const int64u**)pa_skey, P256_BITSIZE);
     secretz[P256_LEN64] = get_zero64();
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, is_zero(secretz, P256_LEN64 + 1), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      is_zero(secretz, P256_LEN64 + 1),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Сlear copy of the secret keys */
@@ -152,8 +153,9 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
     ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])secretz, (const BIGNUM**)pa_skey, P256_BITSIZE);
     secretz[P256_LEN64] = get_zero64();
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, is_zero(secretz, P256_LEN64 + 1), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      is_zero(secretz, P256_LEN64 + 1),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Сlear copy of the secret keys */
@@ -163,8 +165,9 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
 
     /* Construct party's public point(P-> crypto_mb radix 2^52) */
     P256_POINT P;
-    ifma_BN_to_mb(
-        (int64u(*)[MB_WIDTH])P.X, (const BIGNUM*(*))pa_pubx, P256_BITSIZE); /* P-> radix 2^52 */
+
+    /* P-> radix 2^52 */
+    ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.X, (const BIGNUM*(*))pa_pubx, P256_BITSIZE);
     ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.Y, (const BIGNUM*(*))pa_puby, P256_BITSIZE);
     if (use_jproj_coords)
         ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.Z, (const BIGNUM*(*))pa_pubz, P256_BITSIZE);

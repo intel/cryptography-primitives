@@ -69,10 +69,12 @@ mbx_status16 internal_avx512_sm3_final_mb16(int8u* hash_pa[16], SM3_CTX_mb16* p_
 
     _mm512_storeu_si512(input_len, input_len_m512);
 
-    __mmask16 tmp_mask = _mm512_cmplt_epi32_mask(
-        input_len_m512, _mm512_set1_epi32(SM3_MSG_BLOCK_SIZE - (int)SM3_MSG_LEN_REPR));
-    __m512i buffer_len_m512 = _mm512_mask_set1_epi32(
-        _mm512_set1_epi32(SM3_MSG_BLOCK_SIZE * 2), tmp_mask, SM3_MSG_BLOCK_SIZE);
+    __mmask16 tmp_mask =
+        _mm512_cmplt_epi32_mask(input_len_m512,
+                                _mm512_set1_epi32(SM3_MSG_BLOCK_SIZE - (int)SM3_MSG_LEN_REPR));
+    __m512i buffer_len_m512 = _mm512_mask_set1_epi32(_mm512_set1_epi32(SM3_MSG_BLOCK_SIZE * 2),
+                                                     tmp_mask,
+                                                     SM3_MSG_BLOCK_SIZE);
 
     buffer_len_m512 = _mm512_mask_set1_epi32(buffer_len_m512, ~mb_mask16, 0);
     buffer_len_m512 = _mm512_mask_set1_epi32(buffer_len_m512, ~mb_mask16, 0);

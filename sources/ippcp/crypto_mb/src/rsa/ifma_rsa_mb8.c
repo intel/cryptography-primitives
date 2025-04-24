@@ -113,10 +113,18 @@ mbx_status OWNAPI(mbx_rsa_public_mb8)(const int8u* const from_pa[8],
 #if (_MBX >= _MBX_K1)
         ifma_cp_rsa_pub_layer_mb8(from_pa, to_pa, n_pa, expected_rsa_bitsize, meth, buffer);
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
-        ifma_cp_rsa_pub_layer_mb4(
-            &from_pa[0], &to_pa[0], &n_pa[0], expected_rsa_bitsize, meth, buffer);
-        ifma_cp_rsa_pub_layer_mb4(
-            &from_pa[4], &to_pa[4], &n_pa[4], expected_rsa_bitsize, meth, buffer);
+        ifma_cp_rsa_pub_layer_mb4(&from_pa[0],
+                                  &to_pa[0],
+                                  &n_pa[0],
+                                  expected_rsa_bitsize,
+                                  meth,
+                                  buffer);
+        ifma_cp_rsa_pub_layer_mb4(&from_pa[4],
+                                  &to_pa[4],
+                                  &n_pa[4],
+                                  expected_rsa_bitsize,
+                                  meth,
+                                  buffer);
 #else
         status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX >= _MBX_K1) */
@@ -216,10 +224,20 @@ mbx_status OWNAPI(mbx_rsa_private_mb8)(const int8u* const from_pa[8],
 #if (_MBX >= _MBX_K1)
         ifma_cp_rsa_prv2_layer_mb8(from_pa, to_pa, d_pa, n_pa, expected_rsa_bitsize, meth, buffer);
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
-        ifma_cp_rsa_prv2_layer_mb4(
-            &from_pa[0], &to_pa[0], &d_pa[0], &n_pa[0], expected_rsa_bitsize, meth, buffer);
-        ifma_cp_rsa_prv2_layer_mb4(
-            &from_pa[4], &to_pa[4], &d_pa[4], &n_pa[4], expected_rsa_bitsize, meth, buffer);
+        ifma_cp_rsa_prv2_layer_mb4(&from_pa[0],
+                                   &to_pa[0],
+                                   &d_pa[0],
+                                   &n_pa[0],
+                                   expected_rsa_bitsize,
+                                   meth,
+                                   buffer);
+        ifma_cp_rsa_prv2_layer_mb4(&from_pa[4],
+                                   &to_pa[4],
+                                   &d_pa[4],
+                                   &n_pa[4],
+                                   expected_rsa_bitsize,
+                                   meth,
+                                   buffer);
 #else
         status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX >= _MBX_K1) */
@@ -326,8 +344,16 @@ mbx_status OWNAPI(mbx_rsa_private_crt_mb8)(const int8u* const from_pa[8],
 #endif
 
 #if (_MBX >= _MBX_K1)
-        ifma_cp_rsa_prv5_layer_mb8(
-            from_pa, to_pa, p_pa, q_pa, dp_pa, dq_pa, iq_pa, expected_rsa_bitsize, meth, buffer);
+        ifma_cp_rsa_prv5_layer_mb8(from_pa,
+                                   to_pa,
+                                   p_pa,
+                                   q_pa,
+                                   dp_pa,
+                                   dq_pa,
+                                   iq_pa,
+                                   expected_rsa_bitsize,
+                                   meth,
+                                   buffer);
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
         ifma_cp_rsa_prv5_layer_mb4(&from_pa[0],
                                    &to_pa[0],

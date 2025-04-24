@@ -76,17 +76,29 @@ mbx_status OWNAPI(mbx_nistp256_ecpublic_key_ssl_mb8)(BIGNUM* pa_pubx[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_nistp256_ecpublic_key_ssl_mb8(
-        pa_pubx, pa_puby, pa_pubz, pa_skey, pBuffer, use_jproj_coords);
+    status |= internal_nistp256_ecpublic_key_ssl_mb8(pa_pubx,
+                                                     pa_puby,
+                                                     pa_pubz,
+                                                     pa_skey,
+                                                     pBuffer,
+                                                     use_jproj_coords);
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 
     if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-        status_lo = internal_nistp256_ecpublic_key_ssl_mb4(
-            &pa_pubx[0], &pa_puby[0], &pa_pubz[0], &pa_skey[0], pBuffer, use_jproj_coords);
+        status_lo = internal_nistp256_ecpublic_key_ssl_mb4(&pa_pubx[0],
+                                                           &pa_puby[0],
+                                                           &pa_pubz[0],
+                                                           &pa_skey[0],
+                                                           pBuffer,
+                                                           use_jproj_coords);
     if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-        status_hi = internal_nistp256_ecpublic_key_ssl_mb4(
-            &pa_pubx[4], &pa_puby[4], &pa_pubz[4], &pa_skey[4], pBuffer, use_jproj_coords);
+        status_hi = internal_nistp256_ecpublic_key_ssl_mb4(&pa_pubx[4],
+                                                           &pa_puby[4],
+                                                           &pa_pubz[4],
+                                                           &pa_skey[4],
+                                                           pBuffer,
+                                                           use_jproj_coords);
     status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
@@ -131,17 +143,29 @@ mbx_status OWNAPI(mbx_nistp256_ecpublic_key_mb8)(int64u* pa_pubx[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_nistp256_ecpublic_key_mb8(
-        pa_pubx, pa_puby, pa_pubz, pa_skey, pBuffer, use_jproj_coords);
+    status |= internal_nistp256_ecpublic_key_mb8(pa_pubx,
+                                                 pa_puby,
+                                                 pa_pubz,
+                                                 pa_skey,
+                                                 pBuffer,
+                                                 use_jproj_coords);
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 
     if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-        status_lo = internal_nistp256_ecpublic_key_mb4(
-            &pa_pubx[0], &pa_puby[0], &pa_pubz[0], &pa_skey[0], pBuffer, use_jproj_coords);
+        status_lo = internal_nistp256_ecpublic_key_mb4(&pa_pubx[0],
+                                                       &pa_puby[0],
+                                                       &pa_pubz[0],
+                                                       &pa_skey[0],
+                                                       pBuffer,
+                                                       use_jproj_coords);
     if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-        status_hi = internal_nistp256_ecpublic_key_mb4(
-            &pa_pubx[4], &pa_puby[4], &pa_pubz[4], &pa_skey[4], pBuffer, use_jproj_coords);
+        status_hi = internal_nistp256_ecpublic_key_mb4(&pa_pubx[4],
+                                                       &pa_puby[4],
+                                                       &pa_pubz[4],
+                                                       &pa_skey[4],
+                                                       pBuffer,
+                                                       use_jproj_coords);
     status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

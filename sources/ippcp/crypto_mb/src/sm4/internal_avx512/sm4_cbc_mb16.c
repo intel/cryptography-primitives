@@ -272,7 +272,8 @@ mbx_status16 sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE)));
 
     _mm512_storeu_si512(
-        loc_out, _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(SM4_BLOCK_SIZE)));
+        loc_out,
+        _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(SM4_BLOCK_SIZE)));
     _mm512_storeu_si512(
         (loc_out + 8),
         _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE)));
@@ -344,8 +345,9 @@ mbx_status16 sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[7] = _mm512_xor_si512(TMP[3], STORED_CT[3]);
         /* Store last block of ciphertext for next iteration */
         for (int i = 0; i < 4; i++)
-            STORED_CT[i] = _mm512_inserti64x2(
-                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i],
+                                              _mm_loadu_si128((__m128i const*)loc_inp[i] + 3),
+                                              3);
         _mm512_storeu_si512((__m512i*)(loc_out[0]), TMP[4]);
         _mm512_storeu_si512((__m512i*)(loc_out[1]), TMP[5]);
         _mm512_storeu_si512((__m512i*)(loc_out[2]), TMP[6]);
@@ -363,8 +365,9 @@ mbx_status16 sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[11] = _mm512_xor_si512(TMP[3], STORED_CT[7]);
         /* Store last block of ciphertext for next iteration */
         for (int i = 4; i < 8; i++)
-            STORED_CT[i] = _mm512_inserti64x2(
-                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i],
+                                              _mm_loadu_si128((__m128i const*)loc_inp[i] + 3),
+                                              3);
         _mm512_storeu_si512((__m512i*)(loc_out[4]), TMP[8]);
         _mm512_storeu_si512((__m512i*)(loc_out[5]), TMP[9]);
         _mm512_storeu_si512((__m512i*)(loc_out[6]), TMP[10]);
@@ -382,8 +385,9 @@ mbx_status16 sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[15] = _mm512_xor_si512(TMP[3], STORED_CT[11]);
         /* Store last block of ciphertext for next iteration */
         for (int i = 8; i < 12; i++)
-            STORED_CT[i] = _mm512_inserti64x2(
-                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i],
+                                              _mm_loadu_si128((__m128i const*)loc_inp[i] + 3),
+                                              3);
         _mm512_storeu_si512((__m512i*)(loc_out[8]), TMP[12]);
         _mm512_storeu_si512((__m512i*)(loc_out[9]), TMP[13]);
         _mm512_storeu_si512((__m512i*)(loc_out[10]), TMP[14]);
@@ -400,8 +404,9 @@ mbx_status16 sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[18] = _mm512_xor_si512(TMP[2], STORED_CT[14]);
         TMP[19] = _mm512_xor_si512(TMP[3], STORED_CT[15]);
         for (int i = 12; i < SM4_LINES; i++)
-            STORED_CT[i] = _mm512_inserti64x2(
-                STORED_CT[i], _mm_loadu_si128((__m128i const*)loc_inp[i] + 3), 3);
+            STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i],
+                                              _mm_loadu_si128((__m128i const*)loc_inp[i] + 3),
+                                              3);
         _mm512_storeu_si512((__m512i*)(loc_out[12]), TMP[16]);
         _mm512_storeu_si512((__m512i*)(loc_out[13]), TMP[17]);
         _mm512_storeu_si512((__m512i*)(loc_out[14]), TMP[18]);

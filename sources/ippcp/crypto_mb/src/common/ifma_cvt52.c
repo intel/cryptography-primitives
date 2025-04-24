@@ -846,8 +846,11 @@ int8u ifma_HexStr4_to_mb4(int64u out_mb4[][4], const int8u* const pStr[4], int b
         }
     }
 
-    transform_4sb_to_mb4(
-        (U64*)out_mb4, bitLen, (const int8u**)pStr, byteLens, RADIX_CVT | BYTES_REV);
+    transform_4sb_to_mb4((U64*)out_mb4,
+                         bitLen,
+                         (const int8u**)pStr,
+                         byteLens,
+                         RADIX_CVT | BYTES_REV);
 
     return retVal;
 }
@@ -952,8 +955,10 @@ __MBX_INLINE void transform_mb4_to_4sb(int8u* out[4],
                 int8u* ptr      = out[n] + sbidx;
 
                 // inverse bytes (reverse=1)
-                const __m256i swap_mask = _mm256_set_epi64x(
-                    0x0001020304050607, 0x08090a0b0c0d0e0f, 0x0001020304050607, 0x08090a0b0c0d0e0f);
+                const __m256i swap_mask = _mm256_set_epi64x(0x0001020304050607,
+                                                            0x08090a0b0c0d0e0f,
+                                                            0x0001020304050607,
+                                                            0x08090a0b0c0d0e0f);
 
                 const __m256i t256ab = _mm256_shuffle_epi8(X[n], swap_mask);
                 const __m256i t256ba = _mm256_permute4x64_epi64(t256ab, 0x4e);

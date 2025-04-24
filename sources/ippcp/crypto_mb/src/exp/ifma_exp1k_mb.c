@@ -42,6 +42,7 @@
     ifma_amm52x20_mb8((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0));
 #define SQUARE_5x52x20_mb8(out, Y, mod, k0)                                                       \
     ifma_amm52x20_mb8((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0)); \
+    /* clang-format off */                                                                        \
     ifma_amm52x20_mb8(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));           \
     ifma_amm52x20_mb8(                                                                            \
@@ -51,6 +52,7 @@
     ifma_amm52x20_mb8(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));
 #endif
+/* clang-format on */
 
 #define BITSIZE_MODULUS (1024)
 #define LEN52           (NUMBER_OF_DIGITS(BITSIZE_MODULUS, DIGIT_SIZE)) //20
@@ -160,15 +162,23 @@ void ifma_modexp1024_mb(int64u out[][8],
    */
     zero_mb8(red_X, LEN52); /* table[0] = mont(x^0) = mont(1) */
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
-    ifma_amm52x20_mb8(
-        (int64u*)red_table[0], (int64u*)red_X, (int64u*)toMont, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x20_mb8((int64u*)red_table[0],
+                      (int64u*)red_X,
+                      (int64u*)toMont,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
-    ifma_amm52x20_mb8(
-        (int64u*)red_table[1], (int64u*)base, (int64u*)toMont, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x20_mb8((int64u*)red_table[1],
+                      (int64u*)base,
+                      (int64u*)toMont,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
     for (idx = 1; idx < (1 << EXP_WIN_SIZE) / 2; idx++) {
-        SQUARE_52x20_mb8(
-            (int64u*)red_table[2 * idx], (int64u*)red_table[idx], (int64u*)modulus, (int64u*)k0);
+        SQUARE_52x20_mb8((int64u*)red_table[2 * idx],
+                         (int64u*)red_table[idx],
+                         (int64u*)modulus,
+                         (int64u*)k0);
         ifma_amm52x20_mb8((int64u*)red_table[2 * idx + 1],
                           (int64u*)red_table[2 * idx],
                           (int64u*)red_table[1],

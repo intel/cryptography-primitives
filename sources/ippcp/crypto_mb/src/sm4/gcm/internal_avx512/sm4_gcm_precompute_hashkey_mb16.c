@@ -131,9 +131,10 @@ void sm4_gcm_precompute_hashkey_mb16(const mbx_sm4_key_schedule* key_sched,
     __m512i hashkey_pwr_blocks_4_2 = hashkey_blocks_4_2;
     __m512i hashkey_pwr_blocks_4_3 = hashkey_blocks_4_3;
 
-    __m512i* hashkey[] = {
-        &hashkey_blocks_4_0, &hashkey_blocks_4_1, &hashkey_blocks_4_2, &hashkey_blocks_4_3
-    };
+    __m512i* hashkey[]     = { &hashkey_blocks_4_0,
+                               &hashkey_blocks_4_1,
+                               &hashkey_blocks_4_2,
+                               &hashkey_blocks_4_3 };
     __m512i* hashkey_pwr[] = { &hashkey_pwr_blocks_4_0,
                                &hashkey_pwr_blocks_4_1,
                                &hashkey_pwr_blocks_4_2,

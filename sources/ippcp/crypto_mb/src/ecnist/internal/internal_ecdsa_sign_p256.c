@@ -121,8 +121,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_)(
     U64 T[P256_LEN52];
     ifma_BNU_to_mb((int64u(*)[MB_WIDTH])T, pa_eph_skey, P256_BITSIZE);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(T), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(T),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear key's inversion */
@@ -194,14 +195,18 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_)(
     ifma_BNU_to_mb((int64u(*)[MB_WIDTH])sign_r, pa_sign_rp, P256_BITSIZE);
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])msg, pa_msg, P256_BITSIZE);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(inv_eph), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(reg_skey), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(inv_eph),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(reg_skey),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(sign_r),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(msg),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the ephemeral secret keys */
@@ -272,12 +277,15 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_)(int8u* pa_sign_r[MB_WIDTH
     /* Convert message into radix 2^52 */
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])msg, pa_msg, P256_BITSIZE);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(inv_eph_key), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(reg_key), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(inv_eph_key),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(reg_key),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(msg),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the ephemeral and regular secret keys */
@@ -341,8 +349,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_ssl_)(
     U64 T[P256_LEN52];
     ifma_BN_to_mb((int64u(*)[MB_WIDTH])T, pa_eph_skey, P256_BITSIZE);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(T), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(T),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear key's inversion */
@@ -414,14 +423,18 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_ssl_)(
     ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_r, pa_sign_rp, P256_BITSIZE);
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])msg, pa_msg, P256_BITSIZE);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(inv_eph), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(reg_skey), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(sign_r), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(inv_eph),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(reg_skey),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(sign_r),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(msg),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the ephemeral secret keys */
@@ -493,12 +506,15 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_ssl_)(
     /* Convert message into radix 2^52 */
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])msg, pa_msg, P256_BITSIZE);
 
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(inv_eph_key), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(is_zero_FE256_)(reg_key), MBX_STATUS_MISMATCH_PARAM_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(
-        status, MB_FUNC_NAME(ifma_check_range_n256_)(msg), MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(inv_eph_key),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(is_zero_FE256_)(reg_key),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_STS_BY_MASK_GENERIC(status,
+                                      MB_FUNC_NAME(ifma_check_range_n256_)(msg),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the ephemeral and regular secret keys */

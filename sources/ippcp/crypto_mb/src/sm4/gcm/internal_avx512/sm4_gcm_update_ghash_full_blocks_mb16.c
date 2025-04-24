@@ -256,9 +256,10 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
 
     __m512i hashkeys_4_0, hashkeys_4_1, hashkeys_4_2, hashkeys_4_3;
     __m512i data_blocks_4_0, data_blocks_4_1, data_blocks_4_2, data_blocks_4_3;
-    __m512i* data_blocks[] = {
-        &data_blocks_4_0, &data_blocks_4_1, &data_blocks_4_2, &data_blocks_4_3
-    };
+    __m512i* data_blocks[] = { &data_blocks_4_0,
+                               &data_blocks_4_1,
+                               &data_blocks_4_2,
+                               &data_blocks_4_3 };
 
     __m512i T1_0, T2_0, T3_0, T4_0;
     __m512i T1_1, T2_1, T3_1, T4_1;
@@ -481,10 +482,14 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
         __m512i loc_pa_input_lo = loadu(pa_input);
         __m512i loc_pa_input_hi = loadu(pa_input + 8);
 
-        loc_pa_input_lo = mask_add_epi64(
-            loc_pa_input_lo, ptr_update_mask_lo, loc_pa_input_lo, set1_epi64(16 * stream_len));
-        loc_pa_input_hi = mask_add_epi64(
-            loc_pa_input_hi, ptr_update_mask_hi, loc_pa_input_hi, set1_epi64(16 * stream_len));
+        loc_pa_input_lo = mask_add_epi64(loc_pa_input_lo,
+                                         ptr_update_mask_lo,
+                                         loc_pa_input_lo,
+                                         set1_epi64(16 * stream_len));
+        loc_pa_input_hi = mask_add_epi64(loc_pa_input_hi,
+                                         ptr_update_mask_hi,
+                                         loc_pa_input_hi,
+                                         set1_epi64(16 * stream_len));
 
         storeu((void*)pa_input, loc_pa_input_lo);
         storeu((void*)(pa_input + 8), loc_pa_input_hi);

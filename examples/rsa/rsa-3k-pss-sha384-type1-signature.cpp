@@ -167,8 +167,9 @@ int main(void)
     if (pSignature)
         delete[] pSignature;
 
-    PRINT_EXAMPLE_STATUS(
-        "ippsRSASign_PSS_rmf", "RSA-PSS 3072 (SHA-384) Type1 Signature", ippStsNoErr == status);
+    PRINT_EXAMPLE_STATUS("ippsRSASign_PSS_rmf",
+                         "RSA-PSS 3072 (SHA-384) Type1 Signature",
+                         ippStsNoErr == status);
 
     return status;
 }

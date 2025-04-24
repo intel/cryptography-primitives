@@ -53,8 +53,12 @@ mbx_status16 OWNAPI(mbx_sm4_decrypt_cbc_mb16)(int8u* pa_out[SM4_LINES],
 
 #if (_MBX >= _MBX_K1)
     if (MBX_IS_ANY_OK_STS16(status))
-        status |= sm4_cbc_dec_kernel_mb16(
-            pa_out, pa_inp, len, (const int32u**)key_sched, (__mmask16)mb_mask, pa_iv);
+        status |= sm4_cbc_dec_kernel_mb16(pa_out,
+                                          pa_inp,
+                                          len,
+                                          (const int32u**)key_sched,
+                                          (__mmask16)mb_mask,
+                                          pa_iv);
 #else
     MBX_UNREFERENCED_PARAMETER(mb_mask);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

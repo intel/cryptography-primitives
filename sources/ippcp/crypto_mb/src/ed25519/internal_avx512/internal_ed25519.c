@@ -67,8 +67,9 @@ mbx_status internal_avx512_ed25519_public_key_mb8(
 
         /* convert into mb format */
         U64 scalar[FE_LEN64];
-        ifma_BNU_transpose_copy(
-            (int64u(*)[8])scalar, (const int64u**)pa_sha512_digest, SHA512_HASH_BITLENGTH / 2);
+        ifma_BNU_transpose_copy((int64u(*)[8])scalar,
+                                (const int64u**)pa_sha512_digest,
+                                SHA512_HASH_BITLENGTH / 2);
 
         /* r = [scalar]*G */
         ge52_ext_mb r;
@@ -79,8 +80,9 @@ mbx_status internal_avx512_ed25519_public_key_mb8(
         ge52_ext_compress(packed_point, &r);
 
         /* return result */
-        ifma_mb8_to_BNU(
-            (int64u* const*)pa_public_key, (const int64u(*)[8])packed_point, GE25519_COMP_BITSIZE);
+        ifma_mb8_to_BNU((int64u* const*)pa_public_key,
+                        (const int64u(*)[8])packed_point,
+                        GE25519_COMP_BITSIZE);
 
         /* clear memory containing potentially secret data */
         MB_FUNC_NAME(zero_)((int64u(*)[8])scalar, sizeof(scalar) / sizeof(U64));
@@ -200,8 +202,9 @@ mbx_status MB_FUNC_NAME(internal_avx512_ed25519_sign_)(
         ge52_ext_compress(mb_sign_r, &R);          /* compress point to r-component */
 
         /* store r-component of the  signature */
-        ifma_mb8_to_BNU(
-            (int64u* const*)pa_sign_r, (const int64u(*)[8])mb_sign_r, GE25519_COMP_BITSIZE);
+        ifma_mb8_to_BNU((int64u* const*)pa_sign_r,
+                        (const int64u(*)[8])mb_sign_r,
+                        GE25519_COMP_BITSIZE);
 
         /* computes hram, hram = H(r_sign, public_key,  msg)  */
         ed25519_hash_r_pub_msg((int8u**)pa_hram,

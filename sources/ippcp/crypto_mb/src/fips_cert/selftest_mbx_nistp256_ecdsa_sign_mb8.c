@@ -80,8 +80,13 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_mb8(void)
 
     /* test function */
     mbx_status sts;
-    sts = mbx_nistp256_ecdsa_sign_mb8(
-        pa_sign_r, pa_sign_s, pa_pub_msg_digest, pa_prv_k, pa_prv_d, NULL);
+    sts = mbx_nistp256_ecdsa_sign_mb8(pa_sign_r,
+                                      pa_sign_s,
+                                      pa_pub_msg_digest,
+                                      pa_prv_k,
+                                      pa_prv_d,
+                                      NULL);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
 
     // compare output signature to known answer
@@ -147,8 +152,13 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_ssl_mb8(void)
 
     /* test function */
     mbx_status sts;
-    sts = mbx_nistp256_ecdsa_sign_ssl_mb8(
-        pa_sign_r, pa_sign_s, pa_pub_msg_digest, pa_prv_k, pa_prv_d, NULL);
+    sts = mbx_nistp256_ecdsa_sign_ssl_mb8(pa_sign_r,
+                                          pa_sign_s,
+                                          pa_pub_msg_digest,
+                                          pa_prv_k,
+                                          pa_prv_d,
+                                          NULL);
+
     test_result = mbx_selftest_check_if_success(sts, MBX_ALGO_SELFTEST_BAD_ARGS_ERR);
 
     // compare output signature to known answer

@@ -43,9 +43,10 @@ mbx_status16 sm4_gcm_get_tag_mb16(int8u* pa_out[SM4_LINES],
     __m512i* hashkeys[] = { &hashkeys_4_0, &hashkeys_4_1, &hashkeys_4_2, &hashkeys_4_3 };
 
     __m512i data_len_blocks_4_0, data_len_blocks_4_1, data_len_blocks_4_2, data_len_blocks_4_3;
-    __m512i* data_blocks[] = {
-        &data_len_blocks_4_0, &data_len_blocks_4_1, &data_len_blocks_4_2, &data_len_blocks_4_3
-    };
+    __m512i* data_blocks[] = { &data_len_blocks_4_0,
+                               &data_len_blocks_4_1,
+                               &data_len_blocks_4_2,
+                               &data_len_blocks_4_3 };
 
     __m128i* hashkey = SM4_GCM_CONTEXT_HASHKEY(p_context)[0];
     hashkeys_4_0     = loadu(hashkey + 0);

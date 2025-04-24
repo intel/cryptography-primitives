@@ -17,6 +17,7 @@
 #===============================================================================
 
 BasedOnStyle: WebKit
+Language: Cpp
 
 # Parameters that are different from the default WebKit
 AlignAfterOpenBracket: Align
@@ -26,6 +27,7 @@ AlignConsecutiveBitFields: true
 AlignConsecutiveMacros: true
 AlignEscapedNewlines: Left
 AlignOperands: true
+AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 BinPackArguments: false
 BinPackParameters: false

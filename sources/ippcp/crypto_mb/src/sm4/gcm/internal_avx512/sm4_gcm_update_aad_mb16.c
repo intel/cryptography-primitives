@@ -84,13 +84,19 @@ __mmask16 sm4_gcm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],
     }
 
     /* Process full blocks of AADs */
-    sm4_gcm_update_ghash_full_blocks_mb16(
-        ghash, loc_pa_aad, &loc_aad_len, SM4_GCM_CONTEXT_HASHKEY(p_context), mb_mask);
+    sm4_gcm_update_ghash_full_blocks_mb16(ghash,
+                                          loc_pa_aad,
+                                          &loc_aad_len,
+                                          SM4_GCM_CONTEXT_HASHKEY(p_context),
+                                          mb_mask);
 
     if (cmp_epi32_mask(loc_aad_len, setzero(), _MM_CMPINT_EQ) != 0xFFFF) {
         /* Process partial blocks of AADs */
-        sm4_gcm_update_ghash_partial_blocks_mb16(
-            ghash, loc_pa_aad, &loc_aad_len, SM4_GCM_CONTEXT_HASHKEY(p_context)[0], mb_mask);
+        sm4_gcm_update_ghash_partial_blocks_mb16(ghash,
+                                                 loc_pa_aad,
+                                                 &loc_aad_len,
+                                                 SM4_GCM_CONTEXT_HASHKEY(p_context)[0],
+                                                 mb_mask);
         SM4_GCM_CONTEXT_STATE(p_context) = sm4_gcm_start_encdec;
     }
 

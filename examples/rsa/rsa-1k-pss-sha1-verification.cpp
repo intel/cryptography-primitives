@@ -99,7 +99,8 @@ int main(void)
             /* Verify message with use of SHA-1 hash function. The verification result will be placed
              * into isValid variable. */
             int isValid = 0;
-            status      = ippsRSAVerify_PSS_rmf(sourceMessage,
+
+            status = ippsRSAVerify_PSS_rmf(sourceMessage,
                                            sizeof(sourceMessage) - 1,
                                            signatureRef,
                                            &isValid,
@@ -121,8 +122,9 @@ int main(void)
     if (pPubKey)
         delete[] (Ipp8u*)pPubKey;
 
-    PRINT_EXAMPLE_STATUS(
-        "ippsRSAVerify_PSS_rmf", "RSA-PSS 1024 (SHA1) Verification", ippStsNoErr == status);
+    PRINT_EXAMPLE_STATUS("ippsRSAVerify_PSS_rmf",
+                         "RSA-PSS 1024 (SHA1) Verification",
+                         ippStsNoErr == status);
 
     return status;
 }

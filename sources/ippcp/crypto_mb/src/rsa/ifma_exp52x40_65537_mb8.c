@@ -43,6 +43,7 @@
     ifma_amm52x40_mb8((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0));
 #define SQUARE_5x52x40_mb8(out, Y, mod, k0)                                                       \
     ifma_amm52x40_mb8((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0)); \
+    /* clang-format off */                                                                        \
     ifma_amm52x40_mb8(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));           \
     ifma_amm52x40_mb8(                                                                            \
@@ -52,6 +53,7 @@
     ifma_amm52x40_mb8(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));
 #endif
+/* clang-format on */
 
 void EXP52x40_pub65537_mb8(int64u out[][8],
                            const int64u base[][8],
@@ -65,16 +67,22 @@ void EXP52x40_pub65537_mb8(int64u out[][8],
     pint64u_x8 red_X = (pint64u_x8)(work_buffer + LEN52);
 
     /* convert base into redundant domain */
-    ifma_amm52x40_mb8(
-        (int64u*)red_X, (int64u*)base, (int64u*)toMont, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x40_mb8((int64u*)red_X,
+                      (int64u*)base,
+                      (int64u*)toMont,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
     /* exponentiation 65537 = 0x10001 */
     SQUARE_52x40_mb8((int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
     SQUARE_5x52x40_mb8((int64u*)red_Y, (int64u*)red_Y, (int64u*)modulus, (int64u*)k0);
     SQUARE_5x52x40_mb8((int64u*)red_Y, (int64u*)red_Y, (int64u*)modulus, (int64u*)k0);
     SQUARE_5x52x40_mb8((int64u*)red_Y, (int64u*)red_Y, (int64u*)modulus, (int64u*)k0);
-    ifma_amm52x40_mb8(
-        (int64u*)red_Y, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x40_mb8((int64u*)red_Y,
+                      (int64u*)red_Y,
+                      (int64u*)red_X,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
     /* convert result back in regular 2^52 domain */
     zero_mb8(red_X, LEN52);
@@ -105,6 +113,7 @@ void EXP52x40_pub65537_mb8(int64u out[][8],
     ifma_amm52x40_mb4((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0));
 #define SQUARE_5x52x40_mb4(out, Y, mod, k0)                                                       \
     ifma_amm52x40_mb4((int64u*)(out), (int64u*)(Y), (int64u*)(Y), (int64u*)(mod), (int64u*)(k0)); \
+    /* clang-format off */                                                                        \
     ifma_amm52x40_mb4(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));           \
     ifma_amm52x40_mb4(                                                                            \
@@ -114,7 +123,7 @@ void EXP52x40_pub65537_mb8(int64u out[][8],
     ifma_amm52x40_mb4(                                                                            \
         (int64u*)(out), (int64u*)(out), (int64u*)(out), (int64u*)(mod), (int64u*)(k0));
 #endif
-
+/* clang-format on */
 void EXP52x40_pub65537_mb4(int64u out[][4],
                            const int64u base[][4],
                            const int64u modulus[][4],
@@ -127,16 +136,22 @@ void EXP52x40_pub65537_mb4(int64u out[][4],
     pint64u_x4 red_X = (pint64u_x4)(work_buffer + LEN52);
 
     /* convert base into redundant domain */
-    ifma_amm52x40_mb4(
-        (int64u*)red_X, (int64u*)base, (int64u*)toMont, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x40_mb4((int64u*)red_X,
+                      (int64u*)base,
+                      (int64u*)toMont,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
     /* exponentiation 65537 = 0x10001 */
     SQUARE_52x40_mb4((int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
     SQUARE_5x52x40_mb4((int64u*)red_Y, (int64u*)red_Y, (int64u*)modulus, (int64u*)k0);
     SQUARE_5x52x40_mb4((int64u*)red_Y, (int64u*)red_Y, (int64u*)modulus, (int64u*)k0);
     SQUARE_5x52x40_mb4((int64u*)red_Y, (int64u*)red_Y, (int64u*)modulus, (int64u*)k0);
-    ifma_amm52x40_mb4(
-        (int64u*)red_Y, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
+    ifma_amm52x40_mb4((int64u*)red_Y,
+                      (int64u*)red_Y,
+                      (int64u*)red_X,
+                      (int64u*)modulus,
+                      (int64u*)k0);
 
     /* convert result back in regular 2^52 domain */
     zero_mb4(red_X, LEN52);

@@ -220,8 +220,9 @@ void sm3_avx512_mb16(int32u hash_pa[][16], const int8u* const msg_pa[16], int le
 
     /* We need the address of the zero_buffer to form the fully valid array of pointers loc_src */
     _mm512_storeu_si512(loc_data,
-                        _mm512_mask_loadu_epi64(
-                            _mm512_set1_epi64((long long)&zero_buffer), (__mmask8)mb_mask, msg_pa));
+                        _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer),
+                                                (__mmask8)mb_mask,
+                                                msg_pa));
     _mm512_storeu_si512(loc_data + 8,
                         _mm512_mask_loadu_epi64(_mm512_set1_epi64((long long)&zero_buffer),
                                                 *((__mmask8*)&mb_mask + 1),
@@ -362,9 +363,11 @@ void sm3_avx512_mb16(int32u hash_pa[][16], const int8u* const msg_pa[16], int le
                                                   _mm512_loadu_si512(loc_data + 8),
                                                   _mm512_set1_epi64(SM3_MSG_BLOCK_SIZE)));
 
-        loc_len_m512 = _mm512_mask_sub_epi32(
-            zero_buffer, mb_mask, loc_len_m512, _mm512_set1_epi32(SM3_MSG_BLOCK_SIZE));
-        mb_mask = _mm512_cmp_epi32_mask(loc_len_m512, zero_buffer, _MM_CMPINT_NLE);
+        loc_len_m512 = _mm512_mask_sub_epi32(zero_buffer,
+                                             mb_mask,
+                                             loc_len_m512,
+                                             _mm512_set1_epi32(SM3_MSG_BLOCK_SIZE));
+        mb_mask      = _mm512_cmp_epi32_mask(loc_len_m512, zero_buffer, _MM_CMPINT_NLE);
     }
 }
 
