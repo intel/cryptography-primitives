@@ -61,7 +61,7 @@ IPPFUN(IppStatus, ippsXMSSVerify,( const Ipp8u* pMsg,
     /* Parameters of the current XMSS */
     Ipp32s h = 0;
     cpWOTSParams params;
-    retCode = setXMSSParams(pKey->OIDAlgo, &h, &params);
+    retCode = cp_xmss_set_params(pKey->OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     Ipp32s len = params.len;
     Ipp32s n = params.n;
@@ -100,33 +100,33 @@ IPPFUN(IppStatus, ippsXMSSVerify,( const Ipp8u* pMsg,
     Ipp8u* temp_buf = pBuffer + n + (len * n);
 
     // byte[n] M_ = H_msg(r || getRoot(PK) || (toByte(idx_sig, n)), M);
-    toByte(temp_buf, n, /*h_msg padding id*/ 2);
+    cp_to_byte(temp_buf, n, /*h_msg padding id*/ 2);
     CopyBlock(pSign->r, temp_buf + n, n);
     CopyBlock(pKey->pRoot, temp_buf + 2 * n, n);
-    toByte(temp_buf + 3 * n, n, idx);
+    cp_to_byte(temp_buf + 3 * n, n, idx);
     CopyBlock(pMsg, temp_buf + 4 * n, msgLen);
 
     retCode = ippsHashMessage_rmf(temp_buf, 4 * n + msgLen, pMsg_,
         params.hash_method);
 
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
-    set_adrs_idx(adrs, idx, /*start point in adrs to write idx*/4);
+    cp_xmss_set_ots_address(adrs, idx);
 
     // 1. get ots public key working with msg and ots signature
-    retCode = WOTS_pkFromSig(pMsg_, pSign->pOTSSign, pKey->pSeed, adrs, temp_key, temp_buf, &params);
+    retCode = cp_xmss_WOTS_pkFromSig(pMsg_, pSign->pOTSSign, pKey->pSeed, adrs, temp_key, temp_buf, &params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
-    adrs[set_adrs_1_byte(3)] = /*tree type is L-tree*/ 1;
-    retCode = ltree(temp_key, pKey->pSeed, adrs, temp_buf, &params);
+    cp_xmss_set_tree_type(adrs, /*L-tree*/ 1);
+    retCode = cp_xmss_ltree(temp_key, pKey->pSeed, adrs, temp_buf, &params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
     // 2. do hashing using authorization path
-    adrs[set_adrs_1_byte(3)] = /*tree type is hash tree*/ 2;
+    cp_xmss_set_tree_type(adrs, /*hash tree*/ 2);
 
-    set_adrs_idx(adrs, 0, 4);
+    cp_xmss_set_ots_address(adrs, 0);
 
     for(Ipp32s i = 0; i < h; ++i){
-        adrs[set_adrs_1_byte(5)] = /*tree height*/(Ipp8u) i;
+        cp_xmss_set_tree_height(adrs, (Ipp8u) i);
         // if we are the left child
         if (((pSign->idx / (1 << i)) & 1) == 0) {
             // leaf || auth_path
@@ -140,9 +140,9 @@ IPPFUN(IppStatus, ippsXMSSVerify,( const Ipp8u* pMsg,
         }
 
         idx /= 2;
-        set_adrs_idx(adrs, idx, 6);
+        cp_xmss_set_tree_index_32(adrs, idx);
 
-        retCode = rand_hash(temp_buf, temp_buf + n, pKey->pSeed, adrs, temp_key, temp_buf + 2 * n, &params);
+        retCode = cp_xmss_rand_hash(temp_buf, temp_buf + n, pKey->pSeed, adrs, temp_key, temp_buf + 2 * n, &params);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
 

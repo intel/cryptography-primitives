@@ -57,7 +57,7 @@ IPPFUN(IppStatus, ippsXMSSKeyGen,( IppsXMSSPrivateKeyState* pPrvKey,
     /* Parameters of the current XMSS */
     Ipp32s h = 0;
     cpWOTSParams params;
-    retCode = setXMSSParams(pPubKey->OIDAlgo, &h, &params);
+    retCode = cp_xmss_set_params(pPubKey->OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     Ipp32s n = params.n;
 
@@ -88,18 +88,18 @@ IPPFUN(IppStatus, ippsXMSSKeyGen,( IppsXMSSPrivateKeyState* pPrvKey,
 
     // fill private key fields
     pPrvKey->idx = 0;
-    retCode = randNum(pPrvKey->pSecretSeed, n, rndFunc, pRndParam);
+    retCode = cp_xmss_rand_num(pPrvKey->pSecretSeed, n, rndFunc, pRndParam);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
-    retCode = randNum(pPrvKey->pSK_PRF, n, rndFunc, pRndParam);
+    retCode = cp_xmss_rand_num(pPrvKey->pSK_PRF, n, rndFunc, pRndParam);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
-    retCode = randNum(pPrvKey->pPublicSeed, n, rndFunc, pRndParam);
+    retCode = cp_xmss_rand_num(pPrvKey->pPublicSeed, n, rndFunc, pRndParam);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
     Ipp32s pBufferSize;
     retCode = ippsXMSSKeyGenBufferGetSize(&pBufferSize, pPrvKey->OIDAlgo);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
-    retCode = tree_hash(/*isKeyGen*/ 1, pPrvKey, adrs, pPrvKey->pRoot, /*empty*/ 0, pBuffer, h, &params);
+    retCode = cp_xmss_tree_hash(/*isKeyGen*/ 1, pPrvKey, adrs, pPrvKey->pRoot, /*empty*/ 0, pBuffer, h, &params);
     PurgeBlock(pBuffer, pBufferSize); // zeroize the temporary memory
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 

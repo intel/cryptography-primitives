@@ -58,7 +58,7 @@ IPPFUN(IppStatus, ippsXMSSSign,( const Ipp8u* pMsg,
     /* Parameters of the current XMSS */
     Ipp32s h = 0;
     cpWOTSParams params;
-    retCode = setXMSSParams(pPrvKey->OIDAlgo, &h, &params);
+    retCode = cp_xmss_set_params(pPrvKey->OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     Ipp32s len = params.len;
     Ipp32s n = params.n;
@@ -102,8 +102,8 @@ IPPFUN(IppStatus, ippsXMSSSign,( const Ipp8u* pMsg,
 
     // fill r
     Ipp8u* idx_buf = pBuffer;
-    toByte(idx_buf, n, pPrvKey->idx);
-    retCode = prf(pPrvKey->pSK_PRF, idx_buf, pSign->r, idx_buf + n, &params);
+    cp_to_byte(idx_buf, n, pPrvKey->idx);
+    retCode = cp_xmss_prf(pPrvKey->pSK_PRF, idx_buf, pSign->r, idx_buf + n, &params);
     if(ippStsNoErr != retCode) {
         PurgeBlock(pBuffer, pBufferSize);
         return retCode;
@@ -113,10 +113,10 @@ IPPFUN(IppStatus, ippsXMSSSign,( const Ipp8u* pMsg,
     Ipp8u* pMsg_ = pBuffer;
     Ipp8u* temp_buf = pMsg_ + n;
 
-    toByte(temp_buf, n, /*h_msg padding id*/ 2);
+    cp_to_byte(temp_buf, n, /*h_msg padding id*/ 2);
     CopyBlock(pSign->r, temp_buf + n, n);
     CopyBlock(pPrvKey->pRoot, temp_buf + 2 * n, n);
-    toByte(temp_buf + 3 * n, n, pPrvKey->idx);
+    cp_to_byte(temp_buf + 3 * n, n, pPrvKey->idx);
     CopyBlock(pMsg, temp_buf + 4 * n, msgLen);
 
     retCode = ippsHashMessage_rmf(temp_buf, 4 * n + msgLen, pMsg_, params.hash_method);
@@ -126,22 +126,23 @@ IPPFUN(IppStatus, ippsXMSSSign,( const Ipp8u* pMsg,
     }
 
     // pAuthPath
-    retCode = tree_hash(/*isKeyGen*/ 0, pPrvKey, adrs, pSign->pAuthPath, pPrvKey->idx, temp_buf, h, &params);
+    retCode = cp_xmss_tree_hash(/*isKeyGen*/ 0, pPrvKey, adrs, pSign->pAuthPath, pPrvKey->idx, temp_buf, h, &params);
     if(ippStsNoErr != retCode) {
         PurgeBlock(pBuffer, pBufferSize);
         return retCode;
     }
 
     // pOTSSign
-    toByte(adrs, 32, 0);
-    set_adrs_idx(adrs, pPrvKey->idx, /*start point in adrs to write idx*/4);
-    adrs[set_adrs_1_byte(3)] = /*tree type is OTS hash address*/ 0;
-    set_adrs_idx(adrs, /*setOTSAddress*/ pPrvKey->idx, 4);
-    retCode = WOTS_sign(pMsg_, pPrvKey->pSecretSeed, pSign->pOTSSign, pPrvKey->pPublicSeed, adrs, temp_buf, &params);
+    cp_to_byte(adrs, 32, 0);
+    cp_xmss_set_tree_type(adrs, /*OTS hash*/ 0);
+    cp_xmss_set_ots_address(adrs, /*setOTSAddress*/ pPrvKey->idx);
+    retCode = cp_xmss_WOTS_sign(pMsg_, pPrvKey->pSecretSeed, pSign->pOTSSign, pPrvKey->pPublicSeed, adrs, temp_buf, &params);
 
-    PurgeBlock(pBuffer, pBufferSize); // zeroize the temporary memory if everything else was successful
+    // zeroize the temporary memory if everything else was successful
+    PurgeBlock(pBuffer, pBufferSize);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
+    // during the next call another private key should be used to sign
     pPrvKey->idx++;
 
     // pass the error if we are out of secret keys

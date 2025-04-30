@@ -1234,7 +1234,13 @@ IPPAPI(IppStatus, ippsGFpECDecryptSM2_Ext, (Ipp8u *pOut, int maxOutLen,
 #ifdef IPPCP_PREVIEW_XMSS
 
 /* XMSS */
+#define XMSS_DEPRECATED "This function is considered to be renamed due to an ambiguous \
+name. Use ippsXMSSVerifyBufferGetSize instead."
+
+IPP_DEPRECATED(XMSS_DEPRECATED) \
 IPPAPI(IppStatus, ippsXMSSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+
+IPPAPI(IppStatus, ippsXMSSVerifyBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
 IPPAPI(IppStatus, ippsXMSSKeyGenBufferGetSize, (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
 IPPAPI(IppStatus, ippsXMSSSignBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
 

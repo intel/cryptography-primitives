@@ -107,15 +107,15 @@ struct _cpXMSSSignatureState {
 };
 
 // declarations
-#define ltree OWNAPI(ltree)
-IPP_OWN_DECL(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params))
+#define cp_xmss_ltree OWNAPI(cp_xmss_ltree)
+IPP_OWN_DECL(IppStatus, cp_xmss_ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params))
 
-#define rand_hash OWNAPI(rand_hash)
-IPP_OWN_DECL(IppStatus, rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
+#define cp_xmss_rand_hash OWNAPI(cp_xmss_rand_hash)
+IPP_OWN_DECL(IppStatus, cp_xmss_rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
             Ipp8u* adrs, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params))
 
-#define tree_hash OWNAPI(tree_hash)
-IPP_OWN_DECL(IppStatus, tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSecretKey, Ipp8u* adrs,
+#define cp_xmss_tree_hash OWNAPI(cp_xmss_tree_hash)
+IPP_OWN_DECL(IppStatus, cp_xmss_tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSecretKey, Ipp8u* adrs,
             Ipp8u* out, Ipp32u idx_leaf, Ipp8u* temp_buf,
             Ipp32s h, const cpWOTSParams* params))
 
@@ -135,7 +135,7 @@ IPP_OWN_DECL(IppStatus, tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSe
  *    params    WOTS parameters (w, log2_w, n, len, len_1, hash_method)
  */
 
-__IPPCP_INLINE IppStatus setXMSSParams(IppsXMSSAlgo OIDAlgo, Ipp32s* h, cpWOTSParams* params) {
+__IPPCP_INLINE IppStatus cp_xmss_set_params(IppsXMSSAlgo OIDAlgo, Ipp32s* h, cpWOTSParams* params) {
 
     // Digits below are from the XMSS algo spec
     // don't depend on the algo

@@ -37,7 +37,7 @@
  *    basew     resulted out_len-byte array
  */
 
-IPP_OWN_DEFN(void, base_w, (const Ipp8u* X, Ipp32s out_len, Ipp8u* basew, cpWOTSParams* params)) {
+IPP_OWN_DEFN(void, cp_xmss_base_w, (const Ipp8u* X, Ipp32s out_len, Ipp8u* basew, cpWOTSParams* params)) {
     Ipp32s in = 0;
     Ipp32s out = 0;
     Ipp32u total = 0;
@@ -74,11 +74,11 @@ IPP_OWN_DEFN(void, base_w, (const Ipp8u* X, Ipp32s out_len, Ipp8u* basew, cpWOTS
  *    out          resulted n-byte array
  */
 
-IPP_OWN_DEFN(IppStatus, do_xmss_hash, (Ipp32u padding_id, const Ipp8u* key,
+IPP_OWN_DEFN(IppStatus, cp_do_xmss_hash, (Ipp32u padding_id, const Ipp8u* key,
                     const Ipp8u* msg, Ipp32s msgLen, Ipp8u* out, Ipp8u* temp_buf,
                     const cpWOTSParams* params)) {
 
-    toByte(temp_buf, params->n, padding_id);
+    cp_to_byte(temp_buf, params->n, padding_id);
     CopyBlock(key, temp_buf + params->n, params->n);
     CopyBlock(msg, temp_buf + 2 * params->n, msgLen);
 
@@ -101,8 +101,8 @@ IPP_OWN_DEFN(IppStatus, do_xmss_hash, (Ipp32u padding_id, const Ipp8u* key,
  *    out          resulted n-byte array
  */
 
-IPP_OWN_DEFN(IppStatus, prf, (const Ipp8u* key, const Ipp8u* msg, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params)) {
-    return do_xmss_hash(/*prf function padding id*/ 3, key, msg, /*bit size of index*/32, out, temp_buf, params);
+IPP_OWN_DEFN(IppStatus, cp_xmss_prf, (const Ipp8u* key, const Ipp8u* msg, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params)) {
+    return cp_do_xmss_hash(/*prf function padding id*/ 3, key, msg, /*bit size of index*/32, out, temp_buf, params);
 }
 
 /*
@@ -119,7 +119,7 @@ IPP_OWN_DEFN(IppStatus, prf, (const Ipp8u* key, const Ipp8u* msg, Ipp8u* out, Ip
  * temp_buf size is 4 * n bytes at least.
  */
 
-IPP_OWN_DEFN(IppStatus, chain, (Ipp8u* X, Ipp8u i, Ipp8u s, Ipp8u* pSeed, Ipp8u* adrs,
+IPP_OWN_DEFN(IppStatus, cp_xmss_chain, (Ipp8u* X, Ipp8u i, Ipp8u s, Ipp8u* pSeed, Ipp8u* adrs,
             Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params)) {
     IppStatus retCode = ippStsNoErr;
     Ipp8u* bm = temp_buf;
@@ -127,11 +127,11 @@ IPP_OWN_DEFN(IppStatus, chain, (Ipp8u* X, Ipp8u i, Ipp8u s, Ipp8u* pSeed, Ipp8u*
     CopyBlock(X, out, params->n);
 
     for (Ipp8u k = i; k < (i + s) && k < params->w; k++) {
-        adrs[set_adrs_1_byte(6)] = /*hash address*/ k;
+        cp_xmss_set_hash_address(adrs, k);
 
         // BM = PRF(SEED, ADRS);
-        adrs[set_adrs_1_byte(7)] = /*bitmask for bm*/ 1;
-        retCode = prf(pSeed, adrs, bm, temp_buf + params->n, params);
+        cp_xmss_set_key_and_mask(adrs, /*bitmask for bm*/ 1);
+        retCode = cp_xmss_prf(pSeed, adrs, bm, temp_buf + params->n, params);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         // out = out ^ BM;
@@ -140,12 +140,12 @@ IPP_OWN_DEFN(IppStatus, chain, (Ipp8u* X, Ipp8u i, Ipp8u s, Ipp8u* pSeed, Ipp8u*
         }
 
         // KEY = PRF(SEED, ADRS);
-        adrs[set_adrs_1_byte(7)] = /*bitmask for key*/ 0;
-        retCode = prf(pSeed, adrs, key, temp_buf + params->n, params);
+        cp_xmss_set_key_and_mask(adrs, /*bitmask for key*/ 0);
+        retCode = cp_xmss_prf(pSeed, adrs, key, temp_buf + params->n, params);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         // tmp = F(KEY, out);
-        retCode = do_xmss_hash(/*F function padding id*/ 0, key, out, params->n, out, temp_buf + params->n, params);
+        retCode = cp_do_xmss_hash(/*F function padding id*/ 0, key, out, params->n, out, temp_buf + params->n, params);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
     return retCode;
@@ -170,13 +170,13 @@ IPP_OWN_DEFN(IppStatus, chain, (Ipp8u* X, Ipp8u i, Ipp8u s, Ipp8u* pSeed, Ipp8u*
  *
  */
 
-IPP_OWN_DEFN(IppStatus, WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSeed,
+IPP_OWN_DEFN(IppStatus, cp_xmss_WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSeed,
             Ipp8u* adrs, Ipp8u* out, Ipp8u* temp_buf, cpWOTSParams* params)) {
     IppStatus retCode = ippStsNoErr;
     // Convert message to base w
     Ipp32s len_2 = params->len - params->len_1;
     Ipp8u* msg = temp_buf;
-    base_w(M, params->len_1, msg, params);
+    cp_xmss_base_w(M, params->len_1, msg, params);
 
     // Compute checksum
     Ipp32u csum = 0;
@@ -186,13 +186,13 @@ IPP_OWN_DEFN(IppStatus, WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSee
 
     // Convert csum to base w
     csum = csum << (8 - ((len_2 * params->log2_w) & 7));
-    Ipp32s len_2_bytes = cpCeil( ( len_2 * params->log2_w) / 8.0 );
-    toByte(msg + params->len, len_2_bytes, csum);
-    base_w(msg + params->len, len_2, msg + params->len_1, params);
+    Ipp32s len_2_bytes = cp_xmss_ceil( ( len_2 * params->log2_w) / 8.0 );
+    cp_to_byte(msg + params->len, len_2_bytes, csum);
+    cp_xmss_base_w(msg + params->len, len_2, msg + params->len_1, params);
 
     for (Ipp32s i = 0; i < params->len; i++ ) {
-        adrs[set_adrs_1_byte(5)] = /*chain address*/ (Ipp8u)i;
-        retCode = chain(sig + i * params->n,
+        cp_xmss_set_chain_address(adrs, (Ipp8u)i);
+        retCode = cp_xmss_chain(sig + i * params->n,
             msg[i],
             (Ipp8u)(params->w - 1 - msg[i]),
             pSeed,
@@ -203,7 +203,7 @@ IPP_OWN_DEFN(IppStatus, WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSee
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
     // null chain address for next call
-    adrs[set_adrs_1_byte(5)] = 0;
+    cp_xmss_set_chain_address(adrs, 0);
     return retCode;
 }
 
@@ -215,7 +215,7 @@ IPP_OWN_DEFN(IppStatus, WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp8u* pSee
  *    out   resulted byteSize bytes array with random numbers
  */
 
-IPP_OWN_DEFN(IppStatus, randNum, (Ipp8u* out, Ipp32s byteSize,
+IPP_OWN_DEFN(IppStatus, cp_xmss_rand_num, (Ipp8u* out, Ipp32s byteSize,
                 IppBitSupplier rndFunc, void* pRndParam)) {
     if(rndFunc == NULL) {
         return ippsPRNGenRDRAND((Ipp32u *)out, byteSize * /*bit size of 1 byte*/ 8, pRndParam);
@@ -232,7 +232,7 @@ IPP_OWN_DEFN(IppStatus, randNum, (Ipp8u* out, Ipp32s byteSize,
  *    pPublicKey   resulted len * n bytes array that contains WOTS+ public key
  *
  */
-IPP_OWN_DEFN(IppStatus, WOTS_genPK, (Ipp8u* pSecretSeed, Ipp8u* pPublicKey,
+IPP_OWN_DEFN(IppStatus, cp_xmss_WOTS_genPK, (Ipp8u* pSecretSeed, Ipp8u* pPublicKey,
                 Ipp8u* pPublicSeed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params)){
     IppStatus retCode = ippStsNoErr;
     Ipp32s n = params->n;
@@ -241,13 +241,13 @@ IPP_OWN_DEFN(IppStatus, WOTS_genPK, (Ipp8u* pSecretSeed, Ipp8u* pPublicKey,
     Ipp8u* i_32 = temp_buf + n;
     for (Ipp32s i = 0; i < len; i++ ) {
         // generate secret key from secret seed
-        toByte(i_32, n, (Ipp32u)i);
-        retCode = prf(pSecretSeed, i_32, sk, temp_buf + 2 * n, params);
+        cp_to_byte(i_32, n, (Ipp32u)i);
+        retCode = cp_xmss_prf(pSecretSeed, i_32, sk, temp_buf + 2 * n, params);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         // chaining
-        adrs[set_adrs_1_byte(5)] = /*chain address*/ (Ipp8u)i;
-        retCode = chain(sk,
+        cp_xmss_set_chain_address(adrs, (Ipp8u)i);
+        retCode = cp_xmss_chain(sk,
                         (Ipp8u) 0,
                         (Ipp8u) (params->w - 1),
                         pPublicSeed,
@@ -258,7 +258,7 @@ IPP_OWN_DEFN(IppStatus, WOTS_genPK, (Ipp8u* pSecretSeed, Ipp8u* pPublicKey,
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
     // null chain address for next call
-    adrs[set_adrs_1_byte(5)] = 0;
+    cp_xmss_set_chain_address(adrs, 0);
     return retCode;
 }
 
@@ -271,7 +271,7 @@ IPP_OWN_DEFN(IppStatus, WOTS_genPK, (Ipp8u* pSecretSeed, Ipp8u* pPublicKey,
  *    pSignature   resulted len * n bytes array that contains WOTS+ public key
  *
  */
-IPP_OWN_DEFN(IppStatus, WOTS_sign, (const Ipp8u* M, Ipp8u* pSecretSeed, Ipp8u* pSignature,
+IPP_OWN_DEFN(IppStatus, cp_xmss_WOTS_sign, (const Ipp8u* M, Ipp8u* pSecretSeed, Ipp8u* pSignature,
                 Ipp8u* pPublicSeed, Ipp8u* adrs, Ipp8u* temp_buf, cpWOTSParams* params)) {
     IppStatus retCode = ippStsNoErr;
     // Convert message to base w
@@ -280,7 +280,7 @@ IPP_OWN_DEFN(IppStatus, WOTS_sign, (const Ipp8u* M, Ipp8u* pSecretSeed, Ipp8u* p
     Ipp32s len_2 = len - len_1;
     Ipp32s n = params->n;
     Ipp8u* msg = temp_buf;
-    base_w(M, params->len_1, msg, params);
+    cp_xmss_base_w(M, params->len_1, msg, params);
 
     // Compute checksum
     Ipp32u csum = 0;
@@ -290,21 +290,21 @@ IPP_OWN_DEFN(IppStatus, WOTS_sign, (const Ipp8u* M, Ipp8u* pSecretSeed, Ipp8u* p
 
     // Convert csum to base w
     csum = csum << (8 - ((len_2 * params->log2_w) & 7));
-    Ipp32s len_2_bytes = cpCeil( ( len_2 * params->log2_w) / 8.0 );
-    toByte(msg + len, len_2_bytes, csum);
-    base_w(msg + len, len_2, msg + len_1, params);
+    Ipp32s len_2_bytes = cp_xmss_ceil( ( len_2 * params->log2_w) / 8.0 );
+    cp_to_byte(msg + len, len_2_bytes, csum);
+    cp_xmss_base_w(msg + len, len_2, msg + len_1, params);
 
     Ipp8u* sk = temp_buf + len;
     Ipp8u* i_32 = temp_buf + (len + n);
     for (Ipp32s i = 0; i < len; i++ ) {
         // generate secret key from secret seed
-        toByte(i_32, n, (Ipp32u)i);
-        retCode = prf(pSecretSeed, i_32, sk, temp_buf + (len + 2 * n), params);
+        cp_to_byte(i_32, n, (Ipp32u)i);
+        retCode = cp_xmss_prf(pSecretSeed, i_32, sk, temp_buf + (len + 2 * n), params);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         // chaining
-        adrs[set_adrs_1_byte(5)] = /*chain address*/ (Ipp8u)i;
-        retCode = chain(sk,
+        cp_xmss_set_chain_address(adrs, (Ipp8u)i);
+        retCode = cp_xmss_chain(sk,
                         (Ipp8u) 0,
                         msg[i],
                         pPublicSeed,
@@ -315,6 +315,6 @@ IPP_OWN_DEFN(IppStatus, WOTS_sign, (const Ipp8u* M, Ipp8u* pSecretSeed, Ipp8u* p
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
     // null chain address for next call
-    adrs[set_adrs_1_byte(5)] = 0;
+    cp_xmss_set_chain_address(adrs, 0);
     return retCode;
 }

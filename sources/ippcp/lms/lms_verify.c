@@ -100,8 +100,8 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
     Ipp32u total_size = 0;
     // Buffer's invariant for alg correctness - first 16 bytes is always pubKey->I
     CopyBlock(pKey->I, tmpQBuf, CP_PK_I_BYTESIZE); total_size+=CP_PK_I_BYTESIZE;
-    toByte(tmpQBuf+total_size, /*q byteLen*/ 4, q); total_size += /*q byteLen*/ 4;
-    toByte(tmpQBuf+total_size, /*D_MESG byteLen*/ 2, D_MESG); total_size += /*D_MESG byteLen*/ 2;
+    cp_to_byte(tmpQBuf+total_size, /*q byteLen*/ 4, q); total_size += /*q byteLen*/ 4;
+    cp_to_byte(tmpQBuf+total_size, /*D_MESG byteLen*/ 2, D_MESG); total_size += /*D_MESG byteLen*/ 2;
     CopyBlock(lmotsSig.pC, tmpQBuf+total_size, (cpSize)nParam); total_size += nParam;
     CopyBlock(pMsg, tmpQBuf+total_size, msgLen); total_size += (Ipp32u)msgLen;
 
@@ -112,7 +112,7 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
 
     /* Calculate checksum Cksm(Q) and append it to Q */
     Ipp32u cksmQ = cpCksm(Q_CksmQ, lmotsParams);
-    toByte(Q_CksmQ+nParam, /*cksmQ byteLen*/2, cksmQ);
+    cp_to_byte(Q_CksmQ+nParam, /*cksmQ byteLen*/2, cksmQ);
 
     Ipp8u z[CP_SIG_MAX_Y_WORDSIZE+1][CP_LMS_MAX_HASH_BYTESIZE];
     Ipp8u* pZ = z[0];
@@ -127,10 +127,10 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
         // I || u32str(q)
         Ipp8u* tmpBuff = pBuffer;
         // I || u32str(q) || u16str(i)
-        toByte(tmpBuff+CP_PK_I_BYTESIZE+/*q byteLen*/4,/*i byteLen*/2,i);
+        cp_to_byte(tmpBuff+CP_PK_I_BYTESIZE+/*q byteLen*/4,/*i byteLen*/2,i);
         for(Ipp32u j = a; j < (Ipp32u)((1 << wParam) - 1); j++) {
             // I || u32str(q) || u16str(i) || u8str(j)
-            toByte(tmpBuff+CP_PK_I_BYTESIZE+/*q byteLen*/4+/*i byteLen*/2,/*j byteLen*/1,j);
+            cp_to_byte(tmpBuff+CP_PK_I_BYTESIZE+/*q byteLen*/4+/*i byteLen*/2,/*j byteLen*/1,j);
             // I || u32str(q) || u16str(i) || u8str(j) || tmp
             CopyBlock(tmp, tmpBuff+CP_PK_I_BYTESIZE+/*q byteLen*/4+/*i byteLen*/2+/*j byteLen*/1, (cpSize)nParam);
             // tmp = H(I || u32str(q) || u16str(i) || u8str(j) || tmp)
@@ -147,7 +147,7 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
     //                                            I          u16str(D_PBLC)
     CopyBlock(tmpQBuf, pZ + zStartOffset, CP_PK_I_BYTESIZE +       4       );
     // Conduct operation u16str(D_PBLC)
-    toByte(pZ + nParam - /*D_PBLC byteLen*/2, /*D_PBLC byteLen*/2, D_PBLC);
+    cp_to_byte(pZ + nParam - /*D_PBLC byteLen*/2, /*D_PBLC byteLen*/2, D_PBLC);
     // tmp = Kc = H(I || u32str(q) || u16str(D_PBLC) || z[0] || z[1] || ... || z[p-1])
     Ipp8u Kc[CP_LMS_MAX_HASH_BYTESIZE];
     ippcpSts = ippsHashMessage_rmf(pZ+zStartOffset,
@@ -161,9 +161,9 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
     Ipp32u node_num = (1 << hParam) + q;
     Ipp8u* tmpBuffKc = pBuffer;
     // I || u32str(node_num)
-    toByte(tmpBuffKc+CP_PK_I_BYTESIZE, /*node_num byteLen*/4, node_num);
+    cp_to_byte(tmpBuffKc+CP_PK_I_BYTESIZE, /*node_num byteLen*/4, node_num);
     // I || u32str(node_num) || u16str(D_LEAF)
-    toByte(tmpBuffKc+CP_PK_I_BYTESIZE+/*node_num byteLen*/4, /*D_LEAF byteLen*/2, D_LEAF);
+    cp_to_byte(tmpBuffKc+CP_PK_I_BYTESIZE+/*node_num byteLen*/4, /*D_LEAF byteLen*/2, D_LEAF);
     // I || u32str(node_num) || u16str(D_LEAF) || Kc
     CopyBlock(Kc, tmpBuffKc+CP_PK_I_BYTESIZE+/*node_num byteLen*/4+/*D_LEAF byteLen*/2, (cpSize)mParam);
     Ipp8u tmp[CP_LMS_MAX_HASH_BYTESIZE];
@@ -176,10 +176,10 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
     Ipp32u i = 0;
     Ipp8u* locTmp = pBuffer;
     // I || u32str(node_num/2) || u16str(D_INTR)
-    toByte(locTmp+CP_PK_I_BYTESIZE+/*node_num byteLen*/4, /*D_INTR byteLen*/2, D_INTR);
+    cp_to_byte(locTmp+CP_PK_I_BYTESIZE+/*node_num byteLen*/4, /*D_INTR byteLen*/2, D_INTR);
     while (node_num > 1) {
         // I || u32str(node_num/2)
-        toByte(locTmp+CP_PK_I_BYTESIZE, /*node_num byteLen*/4, node_num/2);
+        cp_to_byte(locTmp+CP_PK_I_BYTESIZE, /*node_num byteLen*/4, node_num/2);
 
         if((node_num & 1) == 1) {
             // I || u32str(node_num/2) || u16str(D_INTR) || path[i]

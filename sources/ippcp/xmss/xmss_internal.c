@@ -32,27 +32,27 @@
  *    out         resulted n-byte array that contains hash
  */
 
-IPP_OWN_DEFN(IppStatus, rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
+IPP_OWN_DEFN(IppStatus, cp_xmss_rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
             Ipp8u* adrs, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params)){
     IppStatus retCode = ippStsNoErr;
     Ipp8u* pMsg = temp_buf;
     Ipp8u* pKey = temp_buf + 2 * params->n;
     Ipp8u* temp = temp_buf + 3 * params->n;
 
-    adrs[set_adrs_1_byte(7)] = /*key bitmask*/ 0;
-    retCode = prf(seed, adrs, pKey, temp, params);
+    cp_xmss_set_key_and_mask(adrs, /*key bitmask*/ 0);
+    retCode = cp_xmss_prf(seed, adrs, pKey, temp, params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
-    adrs[set_adrs_1_byte(7)] = /*left bitmask*/ 1;
-    retCode = prf(seed, adrs, pMsg, temp, params);
+    cp_xmss_set_key_and_mask(adrs, /*left bitmask*/ 1);
+    retCode = cp_xmss_prf(seed, adrs, pMsg, temp, params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
-    adrs[set_adrs_1_byte(7)] = /*right bitmask*/ 2;
-    retCode = prf(seed, adrs, pMsg + params->n, temp, params);
+    cp_xmss_set_key_and_mask(adrs, /*right bitmask*/ 2);
+    retCode = cp_xmss_prf(seed, adrs, pMsg + params->n, temp, params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
     // null adrs
-    adrs[set_adrs_1_byte(7)] = 0;
+    cp_xmss_set_key_and_mask(adrs, 0);
 
     // (LEFT XOR BM_0) || (RIGHT XOR BM_1)
     for (Ipp32s i = 0; i < params->n; ++i) {
@@ -61,7 +61,7 @@ IPP_OWN_DEFN(IppStatus, rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
     }
 
     //H(KEY, pMsg);
-    retCode = do_xmss_hash(/*H padding id*/ 1, pKey, pMsg, 2 * params->n, out, temp, params);
+    retCode = cp_do_xmss_hash(/*H padding id*/ 1, pKey, pMsg, 2 * params->n, out, temp, params);
     return retCode;
 }
 
@@ -77,19 +77,19 @@ IPP_OWN_DEFN(IppStatus, rand_hash, (Ipp8u* left, Ipp8u* right, Ipp8u* seed,
  *
  */
 
-IPP_OWN_DEFN(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params)) {
+IPP_OWN_DEFN(IppStatus, cp_xmss_ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp_buf, const cpWOTSParams* params)) {
     IppStatus retCode = ippStsNoErr;
     Ipp32s len_ = params->len;
     Ipp32s n_ = params->n;
 
     // tree height is 0 for now
-    adrs[set_adrs_1_byte(5)] = 0;
+    cp_xmss_set_tree_height(adrs, 0);
 
     while (len_ > 1) {
         for (Ipp32s i = 0; i < len_ / 2; i++) {
-            adrs[set_adrs_1_byte(6)] = /*tree index*/ (Ipp8u) i;
+            cp_xmss_set_tree_index_8(adrs, (Ipp8u) i);
 
-            retCode = rand_hash(pk + (2 * i * n_), pk + ((2 * i * n_) + n_), seed, adrs, pk + (i * n_), temp_buf, params);
+            retCode = cp_xmss_rand_hash(pk + (2 * i * n_), pk + ((2 * i * n_) + n_), seed, adrs, pk + (i * n_), temp_buf, params);
             IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
         }
         if ((len_ & 1) == 1) {
@@ -100,12 +100,12 @@ IPP_OWN_DEFN(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp
             len_ = len_ >> 1;
         }
         // increase the tree height
-        adrs[set_adrs_1_byte(5)] += 1;
+        cp_xmss_set_tree_height(adrs, cp_xmss_get_tree_height(adrs) + 1);
     }
 
     // null tree height and tree index
-    adrs[set_adrs_1_byte(5)] = 0;
-    adrs[set_adrs_1_byte(6)] = 0;
+    cp_xmss_set_tree_height(adrs, 0);
+    cp_xmss_set_tree_index_8(adrs, (Ipp8u) 0);
     return retCode;
 }
 
@@ -120,7 +120,7 @@ IPP_OWN_DEFN(IppStatus, ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp8u* temp
  * temp_buf size is (h + 1) * (n + 1) + 2 * len * n + 7 * n bytes at least.
  *
  */
-IPP_OWN_DEFN(IppStatus, tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSecretKey, Ipp8u* adrs,
+IPP_OWN_DEFN(IppStatus, cp_xmss_tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSecretKey, Ipp8u* adrs,
                 Ipp8u* out, Ipp32u idx_leaf, Ipp8u* temp_buf,
                 Ipp32s h, const cpWOTSParams* params)){
     IppStatus retCode = ippStsNoErr;
@@ -135,19 +135,19 @@ IPP_OWN_DEFN(IppStatus, tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSe
     // Note: there is no overflow since the maximum value for h is 20 according to the Spec
     for(Ipp32u i = 0; i < (Ipp32u)(1 << h); ++i) {
         // generate OTS public key
-        toByte(adrs, 32, 0);
-        adrs[set_adrs_1_byte(3)] = /*tree type is OTS hash address*/ 0;
-        set_adrs_idx(adrs, /*setOTSAddress*/ i, 4);
+        cp_to_byte(adrs, 32, 0);
+        cp_xmss_set_tree_type(adrs, /*OTS hash*/ 0);
+        cp_xmss_set_ots_address(adrs, i);
         node = stack + (h + 1) * n; // size: len * n
         temp_node = node + len_n;
-        retCode = WOTS_genPK(pSecretKey->pSecretSeed, node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n
+        retCode = cp_xmss_WOTS_genPK(pSecretKey->pSecretSeed, node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         // call ltree
-        toByte(adrs, 32, 0);
-        adrs[set_adrs_1_byte(3)] = /*tree type is L-tree address*/ 1;
-        set_adrs_idx(adrs, /*setLTreeAddress*/ i, 4);
-        retCode = ltree(node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n
+        cp_to_byte(adrs, 32, 0);
+        cp_xmss_set_tree_type(adrs, /*L-tree*/ 1);
+        cp_xmss_set_ltree_address(adrs, i);
+        retCode = cp_xmss_ltree(node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         if (isKeyGen == 0 && (idx_leaf ^ 1) == i) {
@@ -155,22 +155,22 @@ IPP_OWN_DEFN(IppStatus, tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSe
         }
 
         // calculate a root of sub-tree
-        toByte(adrs, 32, 0);
-        adrs[set_adrs_1_byte(3)] = /*tree type is hash tree address*/ 2;
-        adrs[set_adrs_1_byte(5)] = /*setTreeHeight*/ 0;
-        set_adrs_idx(adrs, (Ipp32u)i, /*setTreeIndex*/6);
+        cp_to_byte(adrs, 32, 0);
+        cp_xmss_set_tree_type(adrs, /*hash tree*/ 2);
+        cp_xmss_set_tree_height(adrs, 0);
+        cp_xmss_set_tree_index_32(adrs, i);
         heights[stack_size] = 0;
         while(stack_size > 0 && heights[stack_size - 1] == heights[stack_size]) {
-            Ipp32u idx = get_adrs_idx(adrs, 6);
+            Ipp32u idx = cp_xmss_get_tree_index(adrs);
             idx = (idx - 1) / 2;
-            set_adrs_idx(adrs, idx, 6);
+            cp_xmss_set_tree_index_32(adrs, idx);
             stack_size--; // stack.pop
 
-            retCode = rand_hash(stack + (stack_size * n), node, pSecretKey->pPublicSeed, adrs, node, temp_node, params);
+            retCode = cp_xmss_rand_hash(stack + (stack_size * n), node, pSecretKey->pPublicSeed, adrs, node, temp_node, params);
             IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
             heights[stack_size]++;
-            adrs[set_adrs_1_byte(5)] = /*setTreeHeight*/ heights[stack_size];
+            cp_xmss_set_tree_height(adrs, heights[stack_size]);
 
             if (isKeyGen == 0 && ((idx_leaf >> heights[stack_size]) ^ 1) == idx) {
                 CopyBlock(node, out + heights[stack_size] * n, n);

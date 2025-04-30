@@ -52,7 +52,7 @@ IPPFUN(IppStatus, ippsXMSSSetPublicKeyState,( IppsXMSSAlgo OIDAlgo,
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
 
     pState->OIDAlgo = OIDAlgo;
@@ -62,11 +62,11 @@ IPPFUN(IppStatus, ippsXMSSSetPublicKeyState,( IppsXMSSAlgo OIDAlgo,
     /* allocate internal contexts */
     ptr += sizeof(IppsXMSSPublicKeyState);
 
-    pState->pRoot = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp8u)) );
+    pState->pRoot = ptr;
     CopyBlock(pRoot, pState->pRoot, n);
     ptr += n;
 
-    pState->pSeed = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp8u)) );
+    pState->pSeed = ptr;
     CopyBlock(pSeed, pState->pSeed, n);
 
     return status;
@@ -114,7 +114,7 @@ IPPFUN(IppStatus, ippsXMSSSetSignatureState,( IppsXMSSAlgo OIDAlgo,
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
     Ipp32s len = params.len;
 
@@ -124,15 +124,15 @@ IPPFUN(IppStatus, ippsXMSSSetSignatureState,( IppsXMSSAlgo OIDAlgo,
     /* allocate internal contexts */
     ptr += sizeof(IppsXMSSSignatureState);
 
-    pState->r = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp8u)) );
+    pState->r = ptr;
     CopyBlock(r, pState->r, n);
     ptr += n;
 
-    pState->pOTSSign = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp8u)) );
+    pState->pOTSSign = ptr;
     CopyBlock(pOTSSign, pState->pOTSSign, len * n);
     ptr += len * n;
 
-    pState->pAuthPath = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp8u)) );
+    pState->pAuthPath = ptr;
     CopyBlock(pAuthPath, pState->pAuthPath, h * n);
 
     return status;
@@ -163,7 +163,7 @@ IPPFUN(IppStatus, ippsXMSSSignatureStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OI
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
     Ipp32s len = params.len;
 
@@ -199,7 +199,7 @@ IPPFUN(IppStatus, ippsXMSSPublicKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OI
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
 
     *pSize = (Ipp32s)sizeof(IppsXMSSPublicKeyState) +
@@ -233,7 +233,7 @@ IPPFUN(IppStatus, ippsXMSSPrivateKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo O
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
 
     *pSize = (Ipp32s)sizeof(IppsXMSSPrivateKeyState) +
@@ -276,7 +276,7 @@ IPPFUN(IppStatus, ippsXMSSBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength
     /* Set XMSS parameters */
     Ipp32s h = 0;
     cpWOTSParams params;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != status), status)
 
     const Ipp32s numTempBufs = 10;
@@ -288,6 +288,31 @@ IPPFUN(IppStatus, ippsXMSSBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength
 
     *pSize = (numTempBufs + len) * n + maxMessageLength;
     return status;
+}
+
+/*F*
+//    Name: ippsXMSSVerifyBufferGetSize
+//
+// Purpose: Get the XMSS temporary buffer size (bytes) for signature verification.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//    ippStsBadArgErr         OIDAlgo > Max value for IppsXMSSAlgo
+//    ippStsBadArgErr         OIDAlgo <= 0
+//    ippStsLengthErr         maxMessageLength < 1
+//    ippStsLengthErr         maxMessageLength > IPP_MAX_32S - (numTempBufs + len) * n
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize             pointer to the size
+//    maxMessageLength  maximum length of the message
+//    OIDAlgo           id of XMSS set of parameters (algorithm)
+//
+*F*/
+
+IPPFUN(IppStatus, ippsXMSSVerifyBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+{
+    return ippsXMSSBufferGetSize(pSize, maxMessageLength, OIDAlgo);
 }
 
 /*F*
@@ -318,7 +343,7 @@ IPPFUN(IppStatus, ippsXMSSKeyGenBufferGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDA
     /* Set XMSS parameters */
     Ipp32s h = 0;
     cpWOTSParams params;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != status), status)
 
     Ipp32s n = params.n;
@@ -360,7 +385,7 @@ IPPFUN(IppStatus, ippsXMSSSignBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLe
     /* Set XMSS parameters */
     Ipp32s h = 0;
     cpWOTSParams params;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != status), status)
 
     Ipp32s n = params.n;
@@ -405,7 +430,7 @@ IPPFUN(IppStatus, ippsXMSSInitKeyPair,( IppsXMSSAlgo OIDAlgo,
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
 
     // init private key state
@@ -472,7 +497,7 @@ IPPFUN(IppStatus, ippsXMSSInitSignature,( IppsXMSSAlgo OIDAlgo,
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = setXMSSParams(OIDAlgo, &h, &params);
+    status = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
     Ipp32s len = params.len;
 
