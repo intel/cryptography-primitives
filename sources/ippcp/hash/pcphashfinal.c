@@ -41,6 +41,9 @@
 //    ippStsNullPtrErr           pMD == NULL
 //                               pState == NULL
 //    ippStsContextMatchErr      pState->idCtx != idCtxHash
+//
+//    ippStsNotSupportedModeErr  method from the SHA3 family
+//
 //    ippStsNoErr                no errors
 //
 // Parameters:
@@ -54,6 +57,8 @@ IPPFUN(IppStatus, ippsHashFinal,(Ipp8u* pMD, IppsHashState* pState))
    IPP_BAD_PTR2_RET(pMD, pState);
    /* test the context */
    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
 
    {
       IppHashAlgId algID = HASH_ALG_ID(pState);

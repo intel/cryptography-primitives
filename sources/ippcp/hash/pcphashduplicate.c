@@ -37,11 +37,14 @@
 // Purpose: Clone Hash context.
 //
 // Returns:                Reason:
-//    ippStsNullPtrErr        pSrcState == NULL
-//                            pDstState == NULL
-//    ippStsContextMatchErr   pSrcState->idCtx != idCtxHash
-//                            pDstState->idCtx != idCtxHash
-//    ippStsNoErr             no errors
+//    ippStsNullPtrErr           pSrcState == NULL
+//                               pDstState == NULL
+//    ippStsContextMatchErr      pSrcState->idCtx != idCtxHash
+//                               pDstState->idCtx != idCtxHash
+//
+//    ippStsNotSupportedModeErr  method from the SHA3 family
+//
+//    ippStsNoErr                no errors
 //
 // Parameters:
 //    pSrcState     pointer to the source Hash context
@@ -57,7 +60,8 @@ IPPFUN(IppStatus, ippsHashDuplicate,(const IppsHashState* pSrcState, IppsHashSta
    IPP_BAD_PTR2_RET(pSrcState, pDstState);
    /* test states ID */
    IPP_BADARG_RET(!HASH_VALID_ID(pSrcState, idCtxHash), ippStsContextMatchErr);
-
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pSrcState)), ippStsNotSupportedModeErr);
    /* copy state */
    CopyBlock(pSrcState, pDstState, sizeof(IppsHashState));
    HASH_SET_ID(pDstState, idCtxHash);

@@ -31,7 +31,6 @@
 #include "hash/pcphash_rmf.h"
 #include "pcptool.h"
 
-
 /*F*
 //    Name: ippsHashFinal_rmf
 //
@@ -61,13 +60,16 @@ IPPFUN(IppStatus, ippsHashFinal_rmf,(Ipp8u* pMD, IppsHashState_rmf* pState))
                      HASH_BUFF(pState), HASH_BUFFIDX(pState),
                      HASH_LENLO(pState), HASH_LENHI(pState),
                      method);
-      /* convert hash into oct string */
-      method->hashOctStr(pMD, HASH_VALUE(pState));
 
+      /* calculate the rest of hash if any and put it to user's buffer */
+      int digestLenProcessed = 0;
+      hash_squeeze(pMD, HASH_VALUE(pState), method, method->hashLen, &digestLenProcessed);
+      
       /* re-init hash value */
       HASH_BUFFIDX(pState) = 0;
       HASH_LENLO(pState) = 0;
       HASH_LENHI(pState) = 0;
+      PadBlock(0, HASH_VALUE(pState), method->stateLen);
       method->hashInit(HASH_VALUE(pState));
 
       return ippStsNoErr;

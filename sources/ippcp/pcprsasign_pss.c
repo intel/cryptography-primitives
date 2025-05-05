@@ -83,6 +83,8 @@ IPPFUN(IppStatus, ippsRSASign_PSS,(const Ipp8u* pMsg,  int msgLen,
    /* test hash algorithm ID */
    hashAlg = cpValidHashAlg(hashAlg);
    IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
    /* test message length */
    IPP_BADARG_RET((msgLen<0), ippStsLengthErr);

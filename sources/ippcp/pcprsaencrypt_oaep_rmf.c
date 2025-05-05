@@ -53,6 +53,8 @@
 //
 //    ippStsIncompleteContextErr public key is not set up
 //
+//    ippStsNotSupportedModeErr  unknown or SHA3 hashAlg
+//
 //    ippStsNoErr                no error
 //
 // Parameters:
@@ -88,6 +90,9 @@ IPPFUN(IppStatus, ippsRSAEncrypt_OAEP_rmf,(const Ipp8u* pSrc, int srcLen,
 
    /* test length */
    IPP_BADARG_RET(srcLen<0||labLen<0, ippStsLengthErr);
+
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
+   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
     hashLen = pMethod->hashLen;
    /* test compatibility of RSA and hash length */

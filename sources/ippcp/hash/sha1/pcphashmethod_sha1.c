@@ -48,10 +48,11 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA1, (void) )
       IPP_SHA1_DIGEST_BITSIZE/8,
       MBS_SHA1,
       MLR_SHA1,
+      IPP_SHA1_STATE_BYTESIZE,
       NULL,
       NULL,
       NULL,
-      NULL,
+      NULL
    };
 
    method.hashInit   = sha1_hashInit;

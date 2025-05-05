@@ -49,6 +49,7 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SM3_TT, (void) )
       IPP_SM3_DIGEST_BITSIZE/8,
       MBS_SM3,
       MLR_SM3,
+      IPP_SM3_STATE_BYTESIZE,
       NULL,
       NULL,
       NULL,

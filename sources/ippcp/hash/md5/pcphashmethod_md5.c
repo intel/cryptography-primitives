@@ -51,6 +51,7 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_MD5, (void) )
       IPP_MD5_DIGEST_BITSIZE/8,
       MBS_MD5,
       MLR_MD5,
+      IPP_MD5_STATE_BYTESIZE,
       0,
       0,
       0,

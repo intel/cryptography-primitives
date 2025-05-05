@@ -540,20 +540,32 @@ typedef enum {
    ippHashAlg_SM3,
    ippHashAlg_SHA512_224,
    ippHashAlg_SHA512_256,
+   ippHashAlg_SHA3_224,
+   ippHashAlg_SHA3_256,
+   ippHashAlg_SHA3_384,
+   ippHashAlg_SHA3_512,
+   ippHashAlg_SHAKE128,
+   ippHashAlg_SHAKE256,
    ippHashAlg_MaxNo
 } IppHashAlgId;
 
-#define IPP_ALG_HASH_UNKNOWN     (ippHashAlg_Unknown) /* unknown  */
-#define IPP_ALG_HASH_SHA1        (ippHashAlg_SHA1)    /* SHA1     */
-#define IPP_ALG_HASH_SHA256      (ippHashAlg_SHA256)  /* SHA256   */
-#define IPP_ALG_HASH_SHA224      (ippHashAlg_SHA224)  /* SHA224 or SHA256/224 */
-#define IPP_ALG_HASH_SHA512      (ippHashAlg_SHA512)  /* SHA512   */
-#define IPP_ALG_HASH_SHA384      (ippHashAlg_SHA384)  /* SHA384 or SHA512/384 */
-#define IPP_ALG_HASH_MD5         (ippHashAlg_MD5)     /* MD5      */
-#define IPP_ALG_HASH_SM3         (ippHashAlg_SM3)     /* SM3      */
-#define IPP_ALG_HASH_SHA512_224  (ippHashAlg_SHA512_224) /* SHA512/224 */
-#define IPP_ALG_HASH_SHA512_256  (ippHashAlg_SHA512_256) /* SHA512/256 */
-#define IPP_ALG_HASH_LIMIT       (ippHashAlg_MaxNo)   /* hash alg limiter*/
+#define IPP_ALG_HASH_UNKNOWN         (ippHashAlg_Unknown)     /* unknown  */
+#define IPP_ALG_HASH_SHA1            (ippHashAlg_SHA1)        /* SHA1     */
+#define IPP_ALG_HASH_SHA256          (ippHashAlg_SHA256)      /* SHA256   */
+#define IPP_ALG_HASH_SHA224          (ippHashAlg_SHA224)      /* SHA224 or SHA256/224 */
+#define IPP_ALG_HASH_SHA512          (ippHashAlg_SHA512)      /* SHA512   */
+#define IPP_ALG_HASH_SHA384          (ippHashAlg_SHA384)      /* SHA384 or SHA512/384 */
+#define IPP_ALG_HASH_MD5             (ippHashAlg_MD5)         /* MD5      */
+#define IPP_ALG_HASH_SM3             (ippHashAlg_SM3)         /* SM3      */
+#define IPP_ALG_HASH_SHA512_224      (ippHashAlg_SHA512_224)  /* SHA512/224 */
+#define IPP_ALG_HASH_SHA512_256      (ippHashAlg_SHA512_256)  /* SHA512/256 */
+#define IPP_ALG_HASH_SHA3_224        (ippHashAlg_SHA3_224)    /* SHA3_224     */
+#define IPP_ALG_HASH_SHA3_256        (ippHashAlg_SHA3_256)    /* SHA3_256     */
+#define IPP_ALG_HASH_SHA3_384        (ippHashAlg_SHA3_384)    /* SHA3_384     */
+#define IPP_ALG_HASH_SHA3_512        (ippHashAlg_SHA3_512)    /* SHA3_512     */
+#define IPP_ALG_HASH_SHAKE128        (ippHashAlg_SHAKE128)    /* SHAKE128     */
+#define IPP_ALG_HASH_SHAKE256        (ippHashAlg_SHAKE256)    /* SHAKE256     */
+#define IPP_ALG_HASH_LIMIT           (ippHashAlg_MaxNo)       /* hash alg limiter*/
 
 typedef struct _cpSHA1     IppsSHA1State;
 typedef struct _cpSHA256   IppsSHA256State;
@@ -576,6 +588,10 @@ typedef struct _cpHashCtx_rmf    IppsHashState_rmf;
 #define    IPP_SM3_DIGEST_BITSIZE  256
 #define IPP_SHA512_224_DIGEST_BITSIZE  224
 #define IPP_SHA512_256_DIGEST_BITSIZE  256
+#define IPP_SHA3_224_DIGEST_BITSIZE  224
+#define IPP_SHA3_256_DIGEST_BITSIZE  256
+#define IPP_SHA3_384_DIGEST_BITSIZE  384
+#define IPP_SHA3_512_DIGEST_BITSIZE  512
 
 /*
 // =========================================================

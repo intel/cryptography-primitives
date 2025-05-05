@@ -29,16 +29,35 @@
 
 
 /* message block size */
-#define MBS_SHA1     (64)           /* SHA1 message block size (bytes) */
-#define MBS_SHA256   (64)           /* SHA256 and SHA224               */
-#define MBS_SHA224   (64)           /* SHA224                          */
-#define MBS_SHA512   (128)          /* SHA512 and SHA384               */
-#define MBS_SHA384   (128)          /* SHA384                          */
-#define MBS_MD5      (64)           /* MD5                             */
-#define MBS_SM3      (64)           /* SM3                             */
-#define MBS_HASH_MAX (MBS_SHA512)   /* max message block size (bytes)  */
+#define MBS_SHA1       (64)           /* SHA1 message block size (bytes) */
+#define MBS_SHA256     (64)           /* SHA256 and SHA224               */
+#define MBS_SHA224     (64)           /* SHA224                          */
+#define MBS_SHA512     (128)          /* SHA512 and SHA384               */
+#define MBS_SHA384     (128)          /* SHA384                          */
+#define MBS_MD5        (64)           /* MD5                             */
+#define MBS_SM3        (64)           /* SM3                             */
+#define MBS_SHA3_224   (144)          /* SHA3_224                        */
+#define MBS_SHA3_256   (136)          /* SHA3_256                        */
+#define MBS_SHA3_384   (104)          /* SHA3_384                        */
+#define MBS_SHA3_512   (72)           /* SHA3_512                        */
+#define MBS_SHAKE128   (168)          /* SHAKE128                        */
+#define MBS_SHAKE256   (136)          /* SHAKE256                        */
+#define MBS_HASH_MAX   (MBS_SHAKE128) /* max message block size (bytes)  */
 
 #define MAX_HASH_SIZE (IPP_SHA512_DIGEST_BITSIZE/8)   /* hash of the max len (bytes) */
+
+/* size of the state (bytes) */
+#define IPP_SHA1_STATE_BYTESIZE        20
+#define IPP_SHA256_STATE_BYTESIZE      32
+#define IPP_SHA224_STATE_BYTESIZE      32
+#define IPP_SHA384_STATE_BYTESIZE      64
+#define IPP_SHA512_STATE_BYTESIZE      64
+#define IPP_MD5_STATE_BYTESIZE         16
+#define IPP_SM3_STATE_BYTESIZE         32
+#define IPP_SHA512_224_STATE_BYTESIZE  64
+#define IPP_SHA512_256_STATE_BYTESIZE  64
+#define IPP_SHA3_STATE_BYTESIZE        200  
+#define IPP_HASH_STATE_BYTESIZE_MAX    (IPP_SHA3_STATE_BYTESIZE)
 
 /* size of processed message length representation (bytes) */
 #define MLR_SHA1     (sizeof(Ipp64u))
@@ -120,7 +139,7 @@ typedef struct _cpHashAttr {
 } cpHashAttr;
 
 /* hash value */
-typedef Ipp64u cpHash[IPP_SHA512_DIGEST_BITSIZE/BITSIZE(Ipp64u)]; /* hash value */
+typedef Ipp64u cpHash[IPP_HASH_STATE_BYTESIZE_MAX/sizeof(Ipp64u)]; /* hash value */
 
 /* hash update function */
 IPP_OWN_FUNPTR (void, cpHashProc, (void* pHash, const Ipp8u* pMsg, int msgLen, const void* pParam))
@@ -150,7 +169,6 @@ struct _cpHashCtx {
 #define HASH_BUFFIDX(stt)           ((stt)->msgBuffIdx)
 #define HASH_BUFF(stt)              ((stt)->msgBuffer)
 #define HASH_VALID_ID(stt,ctxId)    ((((stt)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((stt))) == (Ipp32u)(ctxId))
-
 
 /* initial hash values */
 extern const Ipp32u SHA1_IV[];
@@ -200,6 +218,23 @@ __IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
    /* maps algID into the valid range */
    algID = (((int)ippHashAlg_Unknown < (int)algID) && ((int)algID < (int)ippHashAlg_MaxNo))? algID : ippHashAlg_Unknown;
    return cpEnabledHashAlgID[algID];
+}
+
+/* check if algID is from SHA3 family */
+__IPPCP_INLINE IppBool cpIsSHA3AlgID(IppHashAlgId algID)
+{
+   if(algID == ippHashAlg_SHA3_224 || algID == ippHashAlg_SHA3_256 || algID == ippHashAlg_SHA3_384 ||
+      algID == ippHashAlg_SHA3_512 || algID == ippHashAlg_SHAKE128 || algID == ippHashAlg_SHAKE256)
+         return ippTrue;
+   return ippFalse;
+}
+
+/* check if algID is SHAKE128 or SHAKE256 */
+__IPPCP_INLINE IppBool cpIsSHAKEAlgID(IppHashAlgId algID)
+{
+   if(algID == ippHashAlg_SHAKE128 || algID == ippHashAlg_SHAKE256)
+         return ippTrue;
+   return ippFalse;
 }
 
 /* common functions */

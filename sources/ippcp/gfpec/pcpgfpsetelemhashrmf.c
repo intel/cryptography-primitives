@@ -52,6 +52,8 @@
 //
 //    ippStsLengthErr            msgLen<0
 //
+//    ippStsNotSupportedModeErr  method from the SHA3 family
+//
 //    ippStsNoErr                no error
 //
 // Parameters:
@@ -74,6 +76,10 @@ IPPFUN(IppStatus, ippsGFpSetElementHash_rmf,(const Ipp8u* pMsg, int msgLen, Ipps
    IPP_BAD_PTR2_RET(pElm, pGFp);
    IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr);
    IPP_BADARG_RET( !GFPE_VALID_ID(pElm), ippStsContextMatchErr);
+
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
+   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+
    {
       gsModEngine* pGFE = GFP_PMA(pGFp);
       IPP_BADARG_RET( !GFP_IS_BASIC(pGFE), ippStsBadArgErr);

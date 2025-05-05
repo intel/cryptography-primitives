@@ -471,16 +471,19 @@ IPPAPI( const IppsHashMethod*, ippsHashMethod_SHA512_224,    (void) )
 IPPAPI( const IppsHashMethod*, ippsHashMethod_SHA512_224_NI, (void) )
 IPPAPI( const IppsHashMethod*, ippsHashMethod_SHA512_224_TT, (void) )
 
+IPPAPI( const IppsHashMethod*, ippsHashMethod_SHA3_224,    (void) )
+IPPAPI( const IppsHashMethod*, ippsHashMethod_SHA3_256,    (void) )
+IPPAPI( const IppsHashMethod*, ippsHashMethod_SHA3_384,    (void) )
+IPPAPI( const IppsHashMethod*, ippsHashMethod_SHA3_512,    (void) )
+IPPAPI( const IppsHashMethod*, ippsHashMethod_SHAKE128,    (int digestBitsize) )
+IPPAPI( const IppsHashMethod*, ippsHashMethod_SHAKE256,    (int digestBitsize) )
+
 IPPAPI( IppStatus, ippsHashMethodGetSize, (int* pSize) )
 IPP_DEPRECATED(MD5_DEPRECATED) \
 IPPAPI( IppStatus, ippsHashMethodSet_MD5, (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SM3, (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SM3_NI, (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SM3_TT, (IppsHashMethod* pMethod) )
-
-IPPAPI( IppStatus, ippsHashStateMethodSet_SM3, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashStateMethodSet_SM3_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashStateMethodSet_SM3_TT, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
 
 IPP_DEPRECATED(SHA1_DEPRECATED) \
 IPPAPI( IppStatus, ippsHashMethodSet_SHA1,    (IppsHashMethod* pMethod) )
@@ -489,37 +492,48 @@ IPPAPI( IppStatus, ippsHashMethodSet_SHA1_NI, (IppsHashMethod* pMethod) )
 IPP_DEPRECATED(SHA1_DEPRECATED) \
 IPPAPI( IppStatus, ippsHashMethodSet_SHA1_TT, (IppsHashMethod* pMethod) )
 
-IPPAPI( IppStatus, ippsHashMethodSet_SHA256,    (IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashMethodSet_SHA256_NI, (IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashMethodSet_SHA256_TT, (IppsHashMethod* pMethod) )
-
-IPPAPI( IppStatus, ippsHashStateMethodSet_SHA256,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashStateMethodSet_SHA256_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashStateMethodSet_SHA256_TT, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
-
 IPPAPI( IppStatus, ippsHashMethodSet_SHA224,    (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SHA224_NI, (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SHA224_TT, (IppsHashMethod* pMethod) )
 
-IPPAPI( IppStatus, ippsHashStateMethodSet_SHA224,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashStateMethodSet_SHA224_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashStateMethodSet_SHA224_TT, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
-
-IPPAPI( IppStatus, ippsHashMethodSet_SHA512,    (IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashMethodSet_SHA512_NI, (IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashMethodSet_SHA512_TT, (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA256,    (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA256_NI, (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA256_TT, (IppsHashMethod* pMethod) )
 
 IPPAPI( IppStatus, ippsHashMethodSet_SHA384,    (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SHA384_NI, (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SHA384_TT, (IppsHashMethod* pMethod) )
 
-IPPAPI( IppStatus, ippsHashMethodSet_SHA512_256,    (IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashMethodSet_SHA512_256_NI, (IppsHashMethod* pMethod) )
-IPPAPI( IppStatus, ippsHashMethodSet_SHA512_256_TT, (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA512,    (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA512_NI, (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA512_TT, (IppsHashMethod* pMethod) )
 
 IPPAPI( IppStatus, ippsHashMethodSet_SHA512_224,    (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SHA512_224_NI, (IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashMethodSet_SHA512_224_TT, (IppsHashMethod* pMethod) )
+
+IPPAPI( IppStatus, ippsHashMethodSet_SHA512_256,    (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA512_256_NI, (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA512_256_TT, (IppsHashMethod* pMethod) )
+
+IPPAPI( IppStatus, ippsHashMethodSet_SHA3_224,    (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA3_256,    (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA3_384,    (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHA3_512,    (IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHAKE128,    (IppsHashMethod* pMethod, int digestBitsize) )
+IPPAPI( IppStatus, ippsHashMethodSet_SHAKE256,    (IppsHashMethod* pMethod, int digestBitsize) )
+
+IPPAPI( IppStatus, ippsHashStateMethodSet_SM3, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SM3_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SM3_TT, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA256,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA256_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA256_TT, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA224,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA224_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA224_TT, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
 
 IPPAPI( IppStatus, ippsHashStateMethodSet_SHA512,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashStateMethodSet_SHA512_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
@@ -537,7 +551,15 @@ IPPAPI( IppStatus, ippsHashStateMethodSet_SHA512_224,    (IppsHashState_rmf* pSt
 IPPAPI( IppStatus, ippsHashStateMethodSet_SHA512_224_NI, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
 IPPAPI( IppStatus, ippsHashStateMethodSet_SHA512_224_TT, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
 
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA3_224,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA3_256,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA3_384,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHA3_512,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHAKE128,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod, int digestBitsize) )
+IPPAPI( IppStatus, ippsHashStateMethodSet_SHAKE256,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod, int digestBitsize) )
+
 IPPAPI(IppStatus, ippsHashGetSize_rmf,(int* pSize))
+IPPAPI(IppStatus, ippsOptimalHashGetSize_rmf,(int* pSize, const IppsHashMethod* pMethod))
 IPPAPI(IppStatus, ippsHashInit_rmf,(IppsHashState_rmf* pState, const IppsHashMethod* pMethod))
 
 IPPAPI(IppStatus, ippsHashPack_rmf,(const IppsHashState_rmf* pState, Ipp8u* pBuffer, int bufSize))

@@ -155,18 +155,19 @@ IPPFUN(IppStatus, ippsGFpECDecryptSM2_Ext, (Ipp8u *pOut, int maxOutLen,
          }
 
          /* step 6 (standard): u = Hash(x2 || M` || y2) */
-         static IppsHashState_rmf ctx;
+         __ALIGN64 Ipp8u ctxMem[SM3_CONTEXT_SIZE];
+         IppsHashState_rmf* ctx = (IppsHashState_rmf*)ctxMem;
 
          Ipp8u u[IPP_SM3_DIGEST_BYTESIZE];
-         ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
+         ippsHashInit_rmf(ctx, ippsHashMethod_SM3_TT());
          /* x2 */
-         ippsHashUpdate_rmf((Ipp8u *)pX, elemBytes, &ctx);
+         ippsHashUpdate_rmf((Ipp8u *)pX, elemBytes, ctx);
          /* M */
-         ippsHashUpdate_rmf(pOut, ciph_msg_size, &ctx);
+         ippsHashUpdate_rmf(pOut, ciph_msg_size, ctx);
          /* y2 */
-         ippsHashUpdate_rmf((Ipp8u *)pY, elemBytes, &ctx);
+         ippsHashUpdate_rmf((Ipp8u *)pY, elemBytes, ctx);
          /* C3 */
-         ippsHashFinal_rmf(u, &ctx);
+         ippsHashFinal_rmf(u, ctx);
 
          if (0 == EquBlock(u, pC3, IPP_SM3_DIGEST_BYTESIZE)) {
             PurgeBlock(pOut, ciph_msg_size);

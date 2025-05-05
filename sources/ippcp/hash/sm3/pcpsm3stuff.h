@@ -75,8 +75,9 @@ IPP_OWN_DEFN (static void, sm3_hashUpdate_ni, (void* pHash, const Ipp8u* pMsg, i
 }
 #endif
 
-IPP_OWN_DEFN (static void, sm3_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, sm3_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    /* convert hash into big endian */
    ((Ipp32u*)pMD)[0] = ENDIANNESS32(((Ipp32u*)pHashVal)[0]);
    ((Ipp32u*)pMD)[1] = ENDIANNESS32(((Ipp32u*)pHashVal)[1]);

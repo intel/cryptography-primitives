@@ -51,7 +51,13 @@ IPPFUN(IppStatus, ippsHashUnpack_rmf,(const Ipp8u* pBuffer, IppsHashState_rmf* p
    /* test pointers */
    IPP_BAD_PTR2_RET(pState, pBuffer);
 
-   CopyBlock(pBuffer, pState, sizeof(IppsHashState_rmf));
+   int context_size = 0;
+   ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pState));
+   CopyBlock(pBuffer, pState, context_size);
    HASH_SET_ID(pState, idCtxHash);
+
+   /* setup pointers to buffer and hash */
+   HASH_SETUP_POINTERS(pState);
+
    return ippStsNoErr;
 }

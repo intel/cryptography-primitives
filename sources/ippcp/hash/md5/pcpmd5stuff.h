@@ -77,8 +77,9 @@ IPP_OWN_DEFN (static void, md5_hashUpdate, (void* pHash, const Ipp8u* pMsg, int 
    UpdateMD5(pHash, pMsg, msgLen, md5_cnt);
 }
 
-IPP_OWN_DEFN (static void, md5_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, md5_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    /* md5 does not need conversion into big endian */
    ((Ipp32u*)pMD)[0] = ((Ipp32u*)pHashVal)[0];
    ((Ipp32u*)pMD)[1] = ((Ipp32u*)pHashVal)[1];

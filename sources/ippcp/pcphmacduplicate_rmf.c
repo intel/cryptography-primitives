@@ -59,10 +59,10 @@ IPPFUN(IppStatus, ippsHMACDuplicate_rmf,(const IppsHMACState_rmf* pSrcCtx, IppsH
    IPP_BADARG_RET(!HMAC_VALID_ID(pSrcCtx), ippStsContextMatchErr);
 
    /* copy HMAC state without Hash context */
-   CopyBlock(pSrcCtx, pDstCtx, (int)(IPP_UINT_PTR(&HASH_CTX(pSrcCtx)) - IPP_UINT_PTR(pSrcCtx)));
+   CopyBlock(pSrcCtx, pDstCtx, (int)(IPP_UINT_PTR(HASH_CTX(pSrcCtx)) - IPP_UINT_PTR(pSrcCtx)));
    HMAC_SET_CTX_ID(pDstCtx);
    /* copy Hash context separately */
-   ippsHashDuplicate_rmf(&HASH_CTX(pSrcCtx), &HASH_CTX(pDstCtx));
+   ippsHashDuplicate_rmf(HASH_CTX(pSrcCtx), HASH_CTX(pDstCtx));
 
    return ippStsNoErr;
 }

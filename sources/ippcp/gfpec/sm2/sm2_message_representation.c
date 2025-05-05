@@ -86,16 +86,17 @@ IPPFUN(IppStatus, ippsGFpECMessageRepresentationSM2, (IppsBigNumState * pMsgDige
    }
 
    /* e = SM3(Za || M) */
-   static IppsHashState_rmf ctx;
+   __ALIGN64 Ipp8u ctxMem[SM3_CONTEXT_SIZE];
+   IppsHashState_rmf* ctx = (IppsHashState_rmf*)ctxMem;
 
-   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
+   ippsHashInit_rmf(ctx, ippsHashMethod_SM3_TT());
    /* Za */
-   ippsHashUpdate_rmf(Za, sizeof(Za), &ctx);
+   ippsHashUpdate_rmf(Za, sizeof(Za), ctx);
    /* M */
-   ippsHashUpdate_rmf(pMsg, msgLen, &ctx);
+   ippsHashUpdate_rmf(pMsg, msgLen, ctx);
 
    /* final */
-   ippsHashFinal_rmf((Ipp8u *)(BN_NUMBER(pMsgDigest)), &ctx);
+   ippsHashFinal_rmf((Ipp8u *)(BN_NUMBER(pMsgDigest)), ctx);
    BN_SIGN(pMsgDigest) = ippBigNumPOS;
 
    /* clear stack data */

@@ -37,8 +37,9 @@
 // Purpose: Init Hash state.
 //
 // Returns:                Reason:
-//    ippStsNullPtrErr        pState == NULL
-//    ippStsNoErr             no errors
+//    ippStsNullPtrErr           pState == NULL
+//    ippStsNotSupportedModeErr  if hashAlg is not match to supported hash alg
+//    ippStsNoErr                no errors
 //
 // Parameters:
 //    pState      pointer to the SHA1 state
@@ -52,6 +53,8 @@ IPPFUN(IppStatus, ippsHashInit,(IppsHashState* pState, IppHashAlgId hashAlg))
    hashAlg = cpValidHashAlg(hashAlg);
    /* test hash alg */
    IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
    /* test ctx pointer */
    IPP_BAD_PTR1_RET(pState);

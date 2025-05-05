@@ -33,7 +33,7 @@ struct _cpHMAC_rmf {
    Ipp32u   idCtx;               /* HMAC identifier   */
    Ipp8u ipadKey[MBS_HASH_MAX];  /* inner padding key */
    Ipp8u opadKey[MBS_HASH_MAX];  /* outer padding key */
-   IppsHashState_rmf hashCtx;    /* hash context      */
+   IppsHashState_rmf hashCtx[CONTEXT_HASH_RMF_ARRAY_SIZE];    /* hash context      */
 };
 
 

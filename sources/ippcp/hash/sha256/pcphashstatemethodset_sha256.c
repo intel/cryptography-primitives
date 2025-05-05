@@ -53,6 +53,7 @@ IPPFUN( IppStatus, ippsHashStateMethodSet_SHA256, (IppsHashState_rmf* pState, Ip
    pMethod->hashLen       = IPP_SHA256_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_SHA256;
    pMethod->msgLenRepSize = MLR_SHA256;
+   pMethod->stateLen      = IPP_SHA256_STATE_BYTESIZE;
    pMethod->hashInit      = sha256_hashInit;
    pMethod->hashUpdate    = sha256_hashUpdate;
    pMethod->hashOctStr    = sha256_hashOctString;

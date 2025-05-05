@@ -66,6 +66,8 @@ IPPFUN(IppStatus, ippsGFpSetElementHash,(const Ipp8u* pMsg, int msgLen, IppsGFpE
    /* get algorithm id */
    hashID = cpValidHashAlg(hashID);
    IPP_BADARG_RET(ippHashAlg_Unknown==hashID, ippStsNotSupportedModeErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(hashID), ippStsNotSupportedModeErr);
 
    /* test message length and pointer */
    IPP_BADARG_RET((msgLen<0), ippStsLengthErr);

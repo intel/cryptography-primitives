@@ -41,7 +41,7 @@
 // Purpose: Performs RSAES-OAEP decryprion scheme
 //
 // Returns:                   Reason:
-//    ippStsNotSupportedModeErr  unknown hashAlg
+//    ippStsNotSupportedModeErr  unknown or SHA3 hashAlg
 //
 //    ippStsNullPtrErr           NULL == pKey
 //                               NULL == pSrc
@@ -97,6 +97,9 @@ IPPFUN(IppStatus, ippsRSADecrypt_OAEP_rmf, (const Ipp8u* pSrc,
 
    /* test hash length */
    IPP_BADARG_RET(labLen < 0, ippStsLengthErr);
+
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
+   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
    hashLen = pMethod->hashLen;
    /* test compatibility of RSA and hash length */

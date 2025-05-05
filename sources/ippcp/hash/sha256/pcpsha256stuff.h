@@ -94,8 +94,9 @@ IPP_OWN_DEFN (static void, sha256_ni_hashUpdate, (void* pHash, const Ipp8u* pMsg
 #endif
 
 /* convert hash into big endian */
-IPP_OWN_DEFN (static void, sha256_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, sha256_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    /* convert hash into big endian */
    ((Ipp32u*)pMD)[0] = ENDIANNESS32(((Ipp32u*)pHashVal)[0]);
    ((Ipp32u*)pMD)[1] = ENDIANNESS32(((Ipp32u*)pHashVal)[1]);
@@ -106,8 +107,9 @@ IPP_OWN_DEFN (static void, sha256_hashOctString, (Ipp8u* pMD, void* pHashVal))
    ((Ipp32u*)pMD)[6] = ENDIANNESS32(((Ipp32u*)pHashVal)[6]);
    ((Ipp32u*)pMD)[7] = ENDIANNESS32(((Ipp32u*)pHashVal)[7]);
 }
-IPP_OWN_DEFN (static void, sha224_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, sha224_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    /* convert hash into big endian */
    ((Ipp32u*)pMD)[0] = ENDIANNESS32(((Ipp32u*)pHashVal)[0]);
    ((Ipp32u*)pMD)[1] = ENDIANNESS32(((Ipp32u*)pHashVal)[1]);

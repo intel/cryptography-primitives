@@ -52,6 +52,7 @@ IPPFUN( IppStatus, ippsHashMethodSet_SM3_NI, (IppsHashMethod* pMethod) )
    pMethod->hashLen       = IPP_SM3_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_SM3;
    pMethod->msgLenRepSize = MLR_SM3;
+   pMethod->stateLen      = IPP_SM3_STATE_BYTESIZE;
    pMethod->hashInit      = sm3_hashInit;
    pMethod->hashUpdate    = sm3_hashUpdate_ni;
    pMethod->hashOctStr    = sm3_hashOctString;
@@ -63,6 +64,7 @@ IPPFUN( IppStatus, ippsHashMethodSet_SM3_NI, (IppsHashMethod* pMethod) )
    pMethod->hashLen       = 0;
    pMethod->msgBlkSize    = 0;
    pMethod->msgLenRepSize = 0;
+   pMethod->stateLen      = 0;
    pMethod->hashInit      = NULL;
    pMethod->hashUpdate    = NULL;
    pMethod->hashOctStr    = NULL;

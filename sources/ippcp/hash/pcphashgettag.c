@@ -42,6 +42,9 @@
 //                               pState == NULL
 //    ippStsContextMatchErr      pState->idCtx != idCtxHash
 //    ippStsLengthErr            hashSize < tagLen <1
+//
+//    ippStsNotSupportedModeErr  method from the SHA3 family
+//
 //    ippStsNoErr                no errors
 //
 // Parameters:
@@ -56,7 +59,9 @@ IPPFUN(IppStatus, ippsHashGetTag,(Ipp8u* pTag, int tagLen, const IppsHashState* 
    IPP_BAD_PTR2_RET(pTag, pState);
    /* test the context */
    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
-
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
+   
    {
       /* size of hash */
       int hashSize = cpHashAlgAttr[HASH_ALG_ID(pState)].hashSize;

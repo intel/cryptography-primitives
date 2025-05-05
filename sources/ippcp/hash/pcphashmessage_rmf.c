@@ -61,11 +61,11 @@ IPPFUN(IppStatus, ippsHashMessage_rmf,(const Ipp8u* pMsg, int len, Ipp8u* pMD, c
 
    {
       /* message length in the multiple MBS and the rest */
-      int msgLenBlks = len &(-pMethod->msgBlkSize);
+      int msgLenBlks = pMethod->msgBlkSize * (int)(len / pMethod->msgBlkSize);
       int msgLenRest = len - msgLenBlks;
 
       /* init hash */
-      DigestSHA512 hash;
+      cpHash hash;
       pMethod->hashInit(hash);
 
       /* process main part of the message */
@@ -78,7 +78,9 @@ IPPFUN(IppStatus, ippsHashMessage_rmf,(const Ipp8u* pMsg, int len, Ipp8u* pMD, c
                      (Ipp64u)len, 0,
                      pMethod);
 
-      pMethod->hashOctStr(pMD, hash);
+      /* calculate the rest of hash if any and put it to user's buffer */
+      int digestLenProcessed = 0;
+      hash_squeeze(pMD, hash, pMethod, pMethod->hashLen, &digestLenProcessed);
 
       return ippStsNoErr;
    }

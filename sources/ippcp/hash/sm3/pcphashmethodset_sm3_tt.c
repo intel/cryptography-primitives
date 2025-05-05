@@ -52,6 +52,7 @@ IPPFUN( IppStatus, ippsHashMethodSet_SM3_TT, (IppsHashMethod* pMethod) )
    pMethod->hashLen       = IPP_SM3_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_SM3;
    pMethod->msgLenRepSize = MLR_SM3;
+   pMethod->stateLen      = IPP_SM3_STATE_BYTESIZE;
    pMethod->hashInit      = sm3_hashInit;
 #if (_SM3_ENABLING_==_FEATURE_TICKTOCK_ || _SM3_ENABLING_==_FEATURE_ON_)
    if (IsFeatureEnabled(ippCPUID_AVX2SM3)) {

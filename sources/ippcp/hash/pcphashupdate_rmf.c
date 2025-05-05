@@ -91,7 +91,7 @@ IPPFUN(IppStatus, ippsHashUpdate_rmf,(const Ipp8u* pSrc, int len, IppsHashState_
       }
 
       /* process main part of the input*/
-      procLen = len & ~(msgBlkSize-1);
+      procLen = msgBlkSize * (int)(len / msgBlkSize);
       if(procLen) {
          hashFunc(HASH_VALUE(pState), pSrc, procLen);
          pSrc += procLen;

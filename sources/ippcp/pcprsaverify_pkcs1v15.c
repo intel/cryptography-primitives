@@ -51,6 +51,8 @@ IPPFUN(IppStatus, ippsRSAVerify_PKCS1v15,(const Ipp8u* pMsg, int msgLen,
    hashAlg = cpValidHashAlg(hashAlg);
    IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
    IPP_BADARG_RET(ippHashAlg_SM3==hashAlg, ippStsNotSupportedModeErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
    /* test data pointer */
    IPP_BAD_PTR3_RET(pMsg, pSign, pIsValid);

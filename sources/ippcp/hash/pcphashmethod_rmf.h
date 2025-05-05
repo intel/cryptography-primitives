@@ -27,7 +27,7 @@
 /* hash alg methods */
 IPP_OWN_FUNPTR (void, hashInitF, (void* pHash))
 IPP_OWN_FUNPTR (void, hashUpdateF, (void* pHash, const Ipp8u* pMsg, int msgLen))
-IPP_OWN_FUNPTR (void, hashOctStrF, (Ipp8u* pDst, void* pHash))
+IPP_OWN_FUNPTR (void, hashOctStrF, (Ipp8u* pDst, void* pHash, const int hashSize))
 IPP_OWN_FUNPTR (void, msgLenRepF, (Ipp8u* pDst, Ipp64u lenLo, Ipp64u lenHi))
 
 typedef struct _cpHashMethod_rmf {
@@ -35,6 +35,7 @@ typedef struct _cpHashMethod_rmf {
    int            hashLen;       /* hash length in bytes */
    int            msgBlkSize;    /* message block size in bytes */
    int            msgLenRepSize; /* length of processed msg length representation in bytes */
+   int            stateLen;      /* length of state that is used for hash calculation in bytes */
    hashInitF      hashInit;      /* set initial hash value */
    hashUpdateF    hashUpdate;    /* hash compressor */
    hashOctStrF    hashOctStr;    /* convert hash into oct string */

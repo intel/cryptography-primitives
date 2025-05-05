@@ -36,20 +36,40 @@ IPP_OWN_DEFN (void, cpFinalize_rmf, (DigestSHA512 pHash, const Ipp8u* inpBuffer,
 {
    int mbs = method->msgBlkSize;    /* message block size */
    int mrl = method->msgLenRepSize; /* processed length representation size */
+   IppHashAlgId algid = method->hashAlgId; 
 
    /* local buffer and it length */
-   Ipp8u buffer[MBS_SHA512*2];
+   Ipp8u buffer[MBS_HASH_MAX*2];
    int bufferLen = inpLen < (mbs-mrl)? mbs : mbs*2; 
 
-   /* copy rest of message into internal buffer */
-   CopyBlock(inpBuffer, buffer, inpLen);
+   // Path for sha3 algorithms
+   if (algid == ippHashAlg_SHA3_224 || algid == ippHashAlg_SHA3_256 ||
+       algid == ippHashAlg_SHA3_384 || algid == ippHashAlg_SHA3_512) {
+      /* copy rest of message into internal buffer */
+      PadBlock(0, buffer, bufferLen);
+      CopyBlock(inpBuffer, buffer, inpLen);
 
-   /* pad message */
-   buffer[inpLen++] = 0x80;
-   PadBlock(0, buffer+inpLen, bufferLen-inpLen-mrl);
+      buffer[inpLen] ^= 0x06;
+      buffer[mbs - 1] ^= 0x80;
+   }
+   else if (cpIsSHAKEAlgID(algid)) {
+      PadBlock(0, buffer, bufferLen);
+      CopyBlock(inpBuffer, buffer, inpLen);
+      buffer[inpLen] ^= 0x1F;
+      buffer[mbs - 1] ^= 0x80;
+   }
 
-   /* message length representation */
-   method->msgLenRep(buffer+bufferLen-mrl, lenLo, lenHi);
+   // Path for not sha3 algorithms
+   else {
+      /* copy rest of message into internal buffer */
+      CopyBlock(inpBuffer, buffer, inpLen);
+      /* pad message */
+      buffer[inpLen++] = 0x80;
+      PadBlock(0, buffer+inpLen, bufferLen-inpLen-mrl);
+
+      /* message length representation */
+      method->msgLenRep(buffer+bufferLen-mrl, lenLo, lenHi);
+   }
 
    /* complete hash computation */
    method->hashUpdate(pHash, buffer, bufferLen);

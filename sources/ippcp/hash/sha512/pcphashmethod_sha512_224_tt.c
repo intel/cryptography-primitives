@@ -51,6 +51,7 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA512_224_TT, (void) )
       IPP_SHA224_DIGEST_BITSIZE/8,
       MBS_SHA512,
       MLR_SHA512,
+      IPP_SHA512_STATE_BYTESIZE,
       NULL,
       NULL,
       NULL,

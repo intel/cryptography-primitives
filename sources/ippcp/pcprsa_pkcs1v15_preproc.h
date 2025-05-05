@@ -33,6 +33,8 @@ __IPPCP_INLINE IppStatus SingleSignPkcs1v15RmfPreproc(const Ipp8u* pMsg, int msg
    /* test hash algorithm ID */
    IPP_BADARG_RET(ippHashAlg_Unknown == pMethod->hashAlgId, ippStsNotSupportedModeErr);
    IPP_BADARG_RET(ippHashAlg_SM3 == pMethod->hashAlgId, ippStsNotSupportedModeErr);
+   /* SHA3 is not supported */
+   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
    /* use aligned public key context if defined */
    if (*pPubKey) {
@@ -63,6 +65,8 @@ __IPPCP_INLINE IppStatus SingleVerifyPkcs1v15RmfPreproc(const Ipp8u* pMsg, int m
    /* test hash algorithm ID */
    IPP_BADARG_RET(ippHashAlg_Unknown == pMethod->hashAlgId, ippStsNotSupportedModeErr);
    IPP_BADARG_RET(ippHashAlg_SM3 == pMethod->hashAlgId, ippStsNotSupportedModeErr);
+   /* SHA3 is not supported */
+   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
    /* test data pointer */
    IPP_BAD_PTR3_RET(pMsg, pSign, pIsValid);

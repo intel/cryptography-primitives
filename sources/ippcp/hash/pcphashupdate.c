@@ -42,6 +42,9 @@
 //                               pSrc==0 but len!=0
 //    ippStsContextMatchErr      pState->idCtx != idCtxHash
 //    ippStsLengthErr            len <0
+//
+//    ippStsNotSupportedModeErr  method from the SHA3 family
+//
 //    ippStsNoErr                no errors
 //
 // Parameters:
@@ -67,6 +70,8 @@ IPPFUN(IppStatus, ippsHashUpdate,(const Ipp8u* pSrc, int len, IppsHashState* pSt
    IPP_BADARG_RET((len<0 && pSrc), ippStsLengthErr);
    /* test source pointer */
    IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
 
    /* handle non empty input */
    if(len) {

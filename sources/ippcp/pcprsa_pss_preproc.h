@@ -43,6 +43,9 @@ __IPPCP_INLINE IppStatus SingleSignPssRmfPreproc(const Ipp8u* pMsg, int msgLen,
    IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(*pPrvKey), ippStsContextMatchErr);
    IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(*pPrvKey), ippStsIncompleteContextErr);
 
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
+   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+
    /* use aligned public key context if defined */
    if (*pPubKey) {
       IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(*pPubKey), ippStsContextMatchErr);
@@ -67,6 +70,9 @@ __IPPCP_INLINE IppStatus SingleVerifyPssRmfPreproc(const Ipp8u* pMsg, int msgLen
 
    /* test data pointer */
    IPP_BAD_PTR3_RET(pSign, pIsValid, pMethod);
+
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
+   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
    /* test public key context */
    IPP_BAD_PTR2_RET(*pKey, pScratchBuffer);

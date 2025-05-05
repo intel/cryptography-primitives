@@ -69,6 +69,8 @@ IPPFUN(IppStatus, ippsHMACMessage_rmf,(const Ipp8u* pMsg, int msgLen,
    /* test input message pointer and length */
    IPP_BADARG_RET((msgLen<0), ippStsLengthErr);
    IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
+   /* SHAKE128/256 are not supported with HMAC mode*/
+   IPP_BADARG_RET(cpIsSHAKEAlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
    /* test MD pointer and length */
    IPP_BAD_PTR1_RET(pMD);
@@ -80,7 +82,7 @@ IPPFUN(IppStatus, ippsHMACMessage_rmf,(const Ipp8u* pMsg, int msgLen,
 
       ippsHMACInit_rmf(pKey, keyLen, &ctx, pMethod);
 
-      sts = ippsHashUpdate_rmf(pMsg,msgLen, &HASH_CTX(&ctx));
+      sts = ippsHashUpdate_rmf(pMsg,msgLen, HASH_CTX(&ctx));
       if(ippStsNoErr!=sts) goto exit;
 
       sts = ippsHMACFinal_rmf(pMD, mdLen, &ctx);

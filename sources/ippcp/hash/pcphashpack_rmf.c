@@ -54,11 +54,19 @@ IPPFUN(IppStatus, ippsHashPack_rmf,(const IppsHashState_rmf* pState, Ipp8u* pBuf
    /* test pointers */
    IPP_BAD_PTR2_RET(pState, pBuffer);
    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
-   /* test buffer length */
-   IPP_BADARG_RET((int)(sizeof(IppsHashState_rmf))>bufSize, ippStsNoMemErr);
 
-   CopyBlock(pState, pBuffer, sizeof(IppsHashState_rmf));
+   int context_size = 0;
+   ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pState));
+
+   /* test buffer length */
+   IPP_BADARG_RET(context_size > bufSize, ippStsNoMemErr);
+
+   CopyBlock(pState, pBuffer, context_size);
    IppsHashState_rmf* pCopy = (IppsHashState_rmf*)pBuffer;
    HASH_RESET_ID(pCopy, idCtxHash);
+
+   /* setup pointers to buffer and hash */
+   HASH_SETUP_POINTERS(pCopy);
+
    return ippStsNoErr;
 }

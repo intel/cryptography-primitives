@@ -48,10 +48,11 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SM3, (void) )
       IPP_SM3_DIGEST_BITSIZE/8,
       MBS_SM3,
       MLR_SM3,
+      IPP_SM3_STATE_BYTESIZE,
       NULL,
       NULL,
       NULL,
-      NULL,
+      NULL
    };
 
    // don't merge `method` initialization with function pointers assignment

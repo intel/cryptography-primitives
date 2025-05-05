@@ -67,6 +67,9 @@ IPPFUN(IppStatus,
     IPP_BAD_PTR2_RET(ikm, okm);
     IPP_BAD_PTR1_RET(pMethod);
 
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+
     // test outkey len
     int hash_len = pMethod->hashLen;
     IPP_BADARG_RET((okm_len <= 0), ippStsLengthErr);

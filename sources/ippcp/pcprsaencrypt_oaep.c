@@ -37,7 +37,7 @@
 // Purpose: Performs RSAES-OAEP encryprion scheme
 //
 // Returns:                   Reason:
-//    ippStsNotSupportedModeErr  unknown hashAlg
+//    ippStsNotSupportedModeErr  unknown or SHA3 hashAlg
 //
 //    ippStsNullPtrErr           NULL == pKey
 //                               NULL == pSrc
@@ -81,6 +81,8 @@ IPPFUN(IppStatus, ippsRSAEncrypt_OAEP,(const Ipp8u* pSrc, int srcLen,
    /* test hash algorithm ID */
    hashAlg = cpValidHashAlg(hashAlg);
    IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
    /* test data pointer */
    IPP_BAD_PTR3_RET(pSrc,pDst, pSeed);

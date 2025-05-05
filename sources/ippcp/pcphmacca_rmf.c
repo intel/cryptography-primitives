@@ -40,6 +40,7 @@
 //    ippStsNullPtrErr           pKey == NULL
 //                               pState == NULL
 //    ippStsLengthErr            keyLen <0
+//    ippStsNotSupportedModeErr  if algID is not match to supported hash alg
 //    ippStsNoErr                no errors
 //
 // Parameters:
@@ -55,6 +56,8 @@ IPPFUN(IppStatus, ippsHMACInit_rmf,(const Ipp8u* pKey, int keyLen,
 {
    /* test pointer */
    IPP_BAD_PTR2_RET(pCtx, pMethod);
+   /* SHAKE128/256 are not supported with HMAC mode*/
+   IPP_BADARG_RET(cpIsSHAKEAlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
    /* test key pointer and key length */
    IPP_BAD_PTR1_RET(pKey);
@@ -64,13 +67,13 @@ IPPFUN(IppStatus, ippsHMACInit_rmf,(const Ipp8u* pKey, int keyLen,
    HMAC_SET_CTX_ID(pCtx);
 
    /* init hash context */
-   ippsHashInit_rmf(&HASH_CTX(pCtx), pMethod);
+   ippsHashInit_rmf(HASH_CTX(pCtx), pMethod);
 
    {
       int n;
 
       /* hash specific */
-      IppsHashState_rmf* pHashCtx = &HASH_CTX(pCtx);
+      IppsHashState_rmf* pHashCtx = HASH_CTX(pCtx);
       int mbs = pMethod->msgBlkSize;
       int hashSize = pMethod->hashLen;
 

@@ -49,10 +49,11 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA224, (void) )
       IPP_SHA224_DIGEST_BITSIZE/8,
       MBS_SHA256,
       MLR_SHA256,
+      IPP_SHA224_STATE_BYTESIZE,
       NULL,
       NULL,
       NULL,
-      NULL,
+      NULL
    };
 
    // don't merge `method` initialization with function pointers assignment

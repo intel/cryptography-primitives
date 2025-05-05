@@ -59,8 +59,13 @@ IPPFUN(IppStatus, ippsHashDuplicate_rmf,(const IppsHashState_rmf* pSrcState, Ipp
    IPP_BADARG_RET(!HASH_VALID_ID(pSrcState,idCtxHash), ippStsContextMatchErr);
 
    /* copy state */
-   CopyBlock(pSrcState, pDstState, sizeof(IppsHashState_rmf));
+   int context_size = 0;
+   ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pSrcState));
+   CopyBlock(pSrcState, pDstState, context_size);
    HASH_SET_ID(pDstState, idCtxHash);
+
+   /* setup pointers to buffer and hash */
+   HASH_SETUP_POINTERS(pDstState);
 
    return ippStsNoErr;
 }

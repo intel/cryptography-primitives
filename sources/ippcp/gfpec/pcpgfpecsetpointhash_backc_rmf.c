@@ -57,6 +57,10 @@
 //
 //    ippStsLengthErr                msgLen<0
 //
+//    ippStsMemAllocErr              MAX_HASH_RMF_CONTEXT_SIZE < contextSize
+//
+//    ippStsNotSupportedModeErr  method from the SHA3 family
+//
 //    ippStsNoErr                    no error
 //
 // Parameters:
@@ -98,6 +102,9 @@ IPPFUN(IppStatus, ippsGFpECSetPointHashBackCompatible_rmf,(Ipp32u hdr, const Ipp
 
    IPP_BADARG_RET( ECP_POINT_FELEN(pPoint)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
+   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+
    {
       int elemLen = GFP_FELEN(pGFE);
       BNU_CHUNK_T* pModulus = GFP_MODULUS(pGFE);
@@ -107,8 +114,14 @@ IPPFUN(IppStatus, ippsGFpECSetPointHashBackCompatible_rmf,(Ipp32u hdr, const Ipp
       BNU_CHUNK_T hashVal[BITS_BNU_CHUNK(IPP_SHA512_DIGEST_BITSIZE)+1];
       int hashValLen;
 
-      IppsHashState_rmf hashCtx;
-      ippsHashInit_rmf(&hashCtx, pMethod);
+      /* check if enough memory is allocated for the context */
+      int contextSize = 0;
+      ippsOptimalHashGetSize_rmf(&contextSize, pMethod);
+      IPP_BADARG_RET((MAX_HASH_RMF_CONTEXT_SIZE < contextSize), ippStsMemAllocErr);
+
+      __ALIGN64 Ipp8u hashCtxMem[MAX_HASH_RMF_CONTEXT_SIZE];
+      IppsHashState_rmf* hashCtx = (IppsHashState_rmf*)hashCtxMem;
+      ippsHashInit_rmf(hashCtx, pMethod);
 
       {
          BNU_CHUNK_T* pPoolElm = cpGFpGetPool(1, pGFE);
@@ -119,9 +132,9 @@ IPPFUN(IppStatus, ippsGFpECSetPointHashBackCompatible_rmf,(Ipp32u hdr, const Ipp
          cpToOctStr_BNU(hdrOctStr, sizeof(hdrOctStr), &locHdr, 1);
 
          /* compute md = hash(hrd||msg) */
-         ippsHashUpdate_rmf(hdrOctStr, sizeof(hdrOctStr), &hashCtx);
-         ippsHashUpdate_rmf(pMsg, msgLen, &hashCtx);
-         ippsHashFinal_rmf(md, &hashCtx);
+         ippsHashUpdate_rmf(hdrOctStr, sizeof(hdrOctStr), hashCtx);
+         ippsHashUpdate_rmf(pMsg, msgLen, hashCtx);
+         ippsHashFinal_rmf(md, hashCtx);
 
          /* convert hash into the integer */
          hashValLen = cpFromOctStr_BNU(hashVal, md, hashLen);

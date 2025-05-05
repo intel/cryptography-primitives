@@ -85,7 +85,43 @@ const IppHashAlgId cpEnabledHashAlgID[] = {
 #endif
 
 #if defined(_ENABLE_ALG_SHA512_256_)
-   IPP_ALG_HASH_SHA512_256
+   IPP_ALG_HASH_SHA512_256,
+#else
+   IPP_ALG_HASH_UNKNOWN,
+#endif
+
+#if defined(_ENABLE_ALG_SHA3_224_)
+   IPP_ALG_HASH_SHA3_224,
+#else
+   IPP_ALG_HASH_UNKNOWN,
+#endif
+
+#if defined(_ENABLE_ALG_SHA3_256_)
+   IPP_ALG_HASH_SHA3_256,
+#else
+   IPP_ALG_HASH_UNKNOWN,
+#endif
+
+#if defined(_ENABLE_ALG_SHA3_384_)
+   IPP_ALG_HASH_SHA3_384,
+#else
+   IPP_ALG_HASH_UNKNOWN,
+#endif
+
+#if defined(_ENABLE_ALG_SHA3_512_)
+   IPP_ALG_HASH_SHA3_512,
+#else
+   IPP_ALG_HASH_UNKNOWN,
+#endif
+
+#if defined(_ENABLE_ALG_SHAKE128_)
+   IPP_ALG_HASH_SHAKE128,
+#else
+   IPP_ALG_HASH_UNKNOWN,
+#endif
+
+#if defined(_ENABLE_ALG_SHAKE256_)
+   IPP_ALG_HASH_SHAKE256
 #else
    IPP_ALG_HASH_UNKNOWN
 #endif

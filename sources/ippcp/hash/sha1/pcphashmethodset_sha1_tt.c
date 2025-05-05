@@ -54,6 +54,7 @@ IPPFUN( IppStatus, ippsHashMethodSet_SHA1_TT, (IppsHashMethod* pMethod) )
    pMethod->hashLen       = IPP_SHA1_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_SHA1;
    pMethod->msgLenRepSize = MLR_SHA1;
+   pMethod->stateLen      = IPP_SHA1_STATE_BYTESIZE;
    pMethod->hashInit      = sha1_hashInit;
    pMethod->hashUpdate    = sha1_hashUpdate;
    pMethod->hashOctStr    = sha1_hashOctString;

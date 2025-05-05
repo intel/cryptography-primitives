@@ -57,6 +57,8 @@ IPPFUN(IppStatus, ippsHashMessage,(const Ipp8u* pMsg, int len, Ipp8u* pMD, IppHa
    hashAlg = cpValidHashAlg(hashAlg);
    /* test hash alg */
    IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
    /* test digest pointer */
    IPP_BAD_PTR1_RET(pMD);

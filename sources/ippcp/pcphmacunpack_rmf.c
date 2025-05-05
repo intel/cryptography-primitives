@@ -56,7 +56,9 @@ IPPFUN(IppStatus, ippsHMACUnpack_rmf,(const Ipp8u* pBuffer, IppsHMACState_rmf* p
    /* Set IppsHMACState_rmf context id */
    HMAC_SET_CTX_ID(pCtx);
    /* Set context id for IppsHashState_rmf, which is the part of IppsHMACState_rmf */
-   HASH_SET_ID(&HASH_CTX(pCtx),idCtxHash);
+   HASH_SET_ID(HASH_CTX(pCtx),idCtxHash);
+   /* setup pointers to buffer and hash in IppsHashState_rmf structure */
+   HASH_SETUP_POINTERS(HASH_CTX(pCtx));
 
    return ippStsNoErr;
 }

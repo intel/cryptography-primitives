@@ -52,7 +52,7 @@ IPPFUN(IppStatus, ippsGFpECESGetSize_SM2, (const IppsGFpECState* pEC, int* pSize
 
    {
       int sm3size;
-      ippsHashGetSize_rmf(&sm3size);
+      ippsOptimalHashGetSize_rmf(&sm3size, ippsHashMethod_SM3());
 
       *pSize = (Ipp32s)sizeof(IppsECESState_SM2) + sm3size * 2 + BITS2WORD8_SIZE(pEC->pGF->pGFE->modBitLen) * 2;
    }

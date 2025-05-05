@@ -59,9 +59,10 @@ IPP_OWN_DEFN(IppStatus, computeZa_user_id_hash_sm2, (Ipp8u * pZa_digest,
    /* Public X|Y */
    IPP_BAD_PTR2_RET(pub_key_x, pub_key_y)
 
-   static IppsHashState_rmf ctx;
+   __ALIGN64 Ipp8u ctxMem[SM3_CONTEXT_SIZE];
+   IppsHashState_rmf* ctx = (IppsHashState_rmf*)ctxMem;
 
-   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
+   ippsHashInit_rmf(ctx, ippsHashMethod_SM3_TT());
 
    /* compute Za = SM3( ENTL || ID || a || b || xG || yG || xA || yA ) */
    /* ENLT */
@@ -69,24 +70,24 @@ IPP_OWN_DEFN(IppStatus, computeZa_user_id_hash_sm2, (Ipp8u * pZa_digest,
    Ipp8u ENTL[sizeof(Ipp16u)];
    ENTL[0] = (Ipp8u)(entl >> 8);
    ENTL[1] = (Ipp8u)(entl & 0xFF);
-   ippsHashUpdate_rmf(ENTL, sizeof(ENTL), &ctx);
+   ippsHashUpdate_rmf(ENTL, sizeof(ENTL), ctx);
    /* ID */
-   ippsHashUpdate_rmf(p_user_id, user_id_len, &ctx);
+   ippsHashUpdate_rmf(p_user_id, user_id_len, ctx);
    /* a */
-   ippsHashUpdate_rmf(a, elem_len, &ctx);
+   ippsHashUpdate_rmf(a, elem_len, ctx);
    /* b */
-   ippsHashUpdate_rmf(b, elem_len, &ctx);
+   ippsHashUpdate_rmf(b, elem_len, ctx);
    /* Gx */
-   ippsHashUpdate_rmf(Gx, elem_len, &ctx);
+   ippsHashUpdate_rmf(Gx, elem_len, ctx);
    /* Gy */
-   ippsHashUpdate_rmf(Gy, elem_len, &ctx);
+   ippsHashUpdate_rmf(Gy, elem_len, ctx);
    /* Px */
-   ippsHashUpdate_rmf(pub_key_x, elem_len, &ctx);
+   ippsHashUpdate_rmf(pub_key_x, elem_len, ctx);
    /* Py */
-   ippsHashUpdate_rmf(pub_key_y, elem_len, &ctx);
+   ippsHashUpdate_rmf(pub_key_y, elem_len, ctx);
 
    /* final */
-   ippsHashFinal_rmf(pZa_digest, &ctx);
+   ippsHashFinal_rmf(pZa_digest, ctx);
 
    /* clear stack data */
    PurgeBlock(ENTL, sizeof(ENTL));
@@ -141,20 +142,21 @@ IPP_OWN_DEFN(IppStatus, KDF_sm3, (Ipp8u * pKDF, int kdf_len, const Ipp8u *pZ, co
       /* init copy output len */
       int num_copy = IPP_SM3_DIGEST_BYTESIZE;
 
-      static IppsHashState_rmf ctx;
-      ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
+      __ALIGN64 Ipp8u ctxMem[SM3_CONTEXT_SIZE];
+      IppsHashState_rmf* ctx = (IppsHashState_rmf*)ctxMem;
+      ippsHashInit_rmf(ctx, ippsHashMethod_SM3_TT());
 
       /* compute length K = Ha1 || Ha2 || ... */
       // step (b)
       for (Ipp32u i = 1u; i < n; ++i) {
          // step (b.1) -> Hai = H(Z || ct)
          /* Z */
-         ippsHashUpdate_rmf(pZ, z_len, &ctx);
+         ippsHashUpdate_rmf(pZ, z_len, ctx);
          /* ct */
          convert_ct_to_big_endian(pCt, i);
-         ippsHashUpdate_rmf(pCt, sizeof(pCt), &ctx);
+         ippsHashUpdate_rmf(pCt, sizeof(pCt), ctx);
          /* auto init of end function - no need call in start loop */
-         ippsHashFinal_rmf(buff, &ctx);
+         ippsHashFinal_rmf(buff, ctx);
          /* copy result */
          if ((i == n - 1u) && (0 != kdf_len % IPP_SM3_DIGEST_BYTESIZE)) {
             num_copy = kdf_len % IPP_SM3_DIGEST_BYTESIZE;

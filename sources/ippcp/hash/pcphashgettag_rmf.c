@@ -62,14 +62,17 @@ IPPFUN(IppStatus, ippsHashGetTag_rmf,(Ipp8u* pTag, int tagLen, const IppsHashSta
    IPP_BADARG_RET((tagLen <1) || HASH_METHOD(pState)->hashLen<tagLen, ippStsLengthErr);
 
    { /* TBD: consider implementation without copy of internal buffer content */
-      DigestSHA512 hash;
+      cpHash hash;
       const IppsHashMethod* method = HASH_METHOD(pState);
-      CopyBlock(HASH_VALUE(pState), hash, sizeof(DigestSHA512));
+      CopyBlock(HASH_VALUE(pState), hash, method->stateLen);
       cpFinalize_rmf(hash,
                   HASH_BUFF(pState), HASH_BUFFIDX(pState),
                   HASH_LENLO(pState), HASH_LENHI(pState),
                   method);
-      method->hashOctStr(pTag, hash);
+      
+      /* calculate the rest of hash if any and put it to user's buffer */
+      int digestLenProcessed = 0;
+      hash_squeeze(pTag, hash, method, method->hashLen, &digestLenProcessed);
 
       return ippStsNoErr;
    }

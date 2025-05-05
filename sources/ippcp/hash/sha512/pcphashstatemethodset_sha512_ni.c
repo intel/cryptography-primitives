@@ -57,6 +57,7 @@ IPPFUN( IppStatus, ippsHashStateMethodSet_SHA512_NI, (IppsHashState_rmf* pState,
    pMethod->hashLen       = IPP_SHA512_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_SHA512;
    pMethod->msgLenRepSize = MLR_SHA512;
+   pMethod->stateLen      = IPP_SHA512_STATE_BYTESIZE;
    pMethod->hashInit      = sha512_hashInit;
    pMethod->hashUpdate    = sha512_hashUpdate_ni;
    pMethod->hashOctStr    = sha512_hashOctString;
@@ -68,6 +69,7 @@ IPPFUN( IppStatus, ippsHashStateMethodSet_SHA512_NI, (IppsHashState_rmf* pState,
    pMethod->hashLen       = 0;
    pMethod->msgBlkSize    = 0;
    pMethod->msgLenRepSize = 0;
+   pMethod->stateLen      = 0;
    pMethod->hashInit      = NULL;
    pMethod->hashUpdate    = NULL;
    pMethod->hashOctStr    = NULL;

@@ -50,6 +50,7 @@ IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA384_NI, (void) )
       IPP_SHA384_DIGEST_BITSIZE/8,
       MBS_SHA512,
       MLR_SHA512,
+      IPP_SHA384_STATE_BYTESIZE,
       NULL,
       NULL,
       NULL,

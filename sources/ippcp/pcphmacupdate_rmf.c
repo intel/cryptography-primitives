@@ -62,7 +62,7 @@ IPPFUN(IppStatus, ippsHMACUpdate_rmf,(const Ipp8u* pSrc, int len, IppsHMACState_
    IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
 
    if(len)
-      return ippsHashUpdate_rmf(pSrc, len, &HASH_CTX(pCtx));
+      return ippsHashUpdate_rmf(pSrc, len, HASH_CTX(pCtx));
    else
       return ippStsNoErr;
 }

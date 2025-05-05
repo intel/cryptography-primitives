@@ -54,6 +54,7 @@ IPPFUN( IppStatus, ippsHashMethodSet_MD5, (IppsHashMethod* pMethod) )
    pMethod->hashLen       = IPP_MD5_DIGEST_BITSIZE/8;
    pMethod->msgBlkSize    = MBS_MD5;
    pMethod->msgLenRepSize = MLR_MD5;
+   pMethod->stateLen      = IPP_MD5_STATE_BYTESIZE;
    pMethod->hashInit      = md5_hashInit;
    pMethod->hashUpdate    = md5_hashUpdate;
    pMethod->hashOctStr    = md5_hashOctString;

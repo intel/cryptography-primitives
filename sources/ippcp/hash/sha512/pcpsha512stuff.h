@@ -120,8 +120,9 @@ IPP_OWN_DEFN (static void, sha512_hashUpdate, (void* pHash, const Ipp8u* pMsg, i
 #endif
 
 /* convert hash into big endian */
-IPP_OWN_DEFN (static void, sha512_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, sha512_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    ((Ipp64u*)pMD)[0] = ENDIANNESS64(((Ipp64u*)pHashVal)[0]);
    ((Ipp64u*)pMD)[1] = ENDIANNESS64(((Ipp64u*)pHashVal)[1]);
    ((Ipp64u*)pMD)[2] = ENDIANNESS64(((Ipp64u*)pHashVal)[2]);
@@ -131,8 +132,9 @@ IPP_OWN_DEFN (static void, sha512_hashOctString, (Ipp8u* pMD, void* pHashVal))
    ((Ipp64u*)pMD)[6] = ENDIANNESS64(((Ipp64u*)pHashVal)[6]);
    ((Ipp64u*)pMD)[7] = ENDIANNESS64(((Ipp64u*)pHashVal)[7]);
 }
-IPP_OWN_DEFN (static void, sha512_384_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, sha512_384_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    ((Ipp64u*)pMD)[0] = ENDIANNESS64(((Ipp64u*)pHashVal)[0]);
    ((Ipp64u*)pMD)[1] = ENDIANNESS64(((Ipp64u*)pHashVal)[1]);
    ((Ipp64u*)pMD)[2] = ENDIANNESS64(((Ipp64u*)pHashVal)[2]);
@@ -140,15 +142,17 @@ IPP_OWN_DEFN (static void, sha512_384_hashOctString, (Ipp8u* pMD, void* pHashVal
    ((Ipp64u*)pMD)[4] = ENDIANNESS64(((Ipp64u*)pHashVal)[4]);
    ((Ipp64u*)pMD)[5] = ENDIANNESS64(((Ipp64u*)pHashVal)[5]);
 }
-IPP_OWN_DEFN (static void, sha512_256_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, sha512_256_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    ((Ipp64u*)pMD)[0] = ENDIANNESS64(((Ipp64u*)pHashVal)[0]);
    ((Ipp64u*)pMD)[1] = ENDIANNESS64(((Ipp64u*)pHashVal)[1]);
    ((Ipp64u*)pMD)[2] = ENDIANNESS64(((Ipp64u*)pHashVal)[2]);
    ((Ipp64u*)pMD)[3] = ENDIANNESS64(((Ipp64u*)pHashVal)[3]);
 }
-IPP_OWN_DEFN (static void, sha512_224_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, sha512_224_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    ((Ipp64u*)pMD)[0] = ENDIANNESS64(((Ipp64u*)pHashVal)[0]);
    ((Ipp64u*)pMD)[1] = ENDIANNESS64(((Ipp64u*)pHashVal)[1]);
    ((Ipp64u*)pMD)[2] = ENDIANNESS64(((Ipp64u*)pHashVal)[2]);

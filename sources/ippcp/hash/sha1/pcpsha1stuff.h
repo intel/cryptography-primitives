@@ -63,8 +63,9 @@ IPP_OWN_DEFN (static void, sha1_ni_hashUpdate, (void* pHash, const Ipp8u* pMsg, 
 }
 #endif
 
-IPP_OWN_DEFN (static void, sha1_hashOctString, (Ipp8u* pMD, void* pHashVal))
+IPP_OWN_DEFN (static void, sha1_hashOctString, (Ipp8u* pMD, void* pHashVal, const int hashSize))
 {
+   IPP_UNREFERENCED_PARAMETER(hashSize);
    /* convert hash into big endian */
    ((Ipp32u*)pMD)[0] = ENDIANNESS32(((Ipp32u*)pHashVal)[0]);
    ((Ipp32u*)pMD)[1] = ENDIANNESS32(((Ipp32u*)pHashVal)[1]);

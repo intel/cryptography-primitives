@@ -60,7 +60,7 @@ IPPFUN(IppStatus, ippsHMACFinal_rmf,(Ipp8u* pMD, int mdLen, IppsHMACState_rmf* p
 
    {
       /* hash specific */
-      IppsHashState_rmf* pHashCtx = &HASH_CTX(pCtx);
+      IppsHashState_rmf* pHashCtx = HASH_CTX(pCtx);
       const IppsHashMethod* method = HASH_METHOD(pHashCtx);
       int mbs = method->msgBlkSize;
       int hashSize = method->hashLen;

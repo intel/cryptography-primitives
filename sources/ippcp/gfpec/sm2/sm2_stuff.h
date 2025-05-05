@@ -140,14 +140,15 @@ __IPPCP_INLINE void cpSM2KE_xy_to_BE(BNU_CHUNK_T *x, BNU_CHUNK_T *y, const IppsG
  */
 __IPPCP_INLINE void cpSM2KE_compute_hash_SM3(Ipp8u *r, const Ipp8u *a, const int numBytes)
 {
-   static IppsHashState_rmf ctx;
+   __ALIGN64 Ipp8u ctxMem[SM3_CONTEXT_SIZE];
+   IppsHashState_rmf* ctx = (IppsHashState_rmf*)ctxMem;
 
    /* init */
-   ippsHashInit_rmf(&ctx, ippsHashMethod_SM3_TT());
+   ippsHashInit_rmf(ctx, ippsHashMethod_SM3_TT());
    /* update hash */
-   ippsHashUpdate_rmf(a, numBytes, &ctx);
+   ippsHashUpdate_rmf(a, numBytes, ctx);
    /* final */
-   ippsHashFinal_rmf(r, &ctx);
+   ippsHashFinal_rmf(r, ctx);
    return;
 }
 

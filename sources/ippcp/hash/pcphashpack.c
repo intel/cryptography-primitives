@@ -41,6 +41,9 @@
 //                            pBuffer == NULL
 //    ippStsContextMatchErr   pState->idCtx != idCtxHash
 //    ippStsNoMemErr          bufSize < sizeof(IppsHashState)
+//
+//    ippStsNotSupportedModeErr  method from the SHA3 family
+//
 //    ippStsNoErr             no errors
 //
 // Parameters:
@@ -57,6 +60,8 @@ IPPFUN(IppStatus, ippsHashPack,(const IppsHashState* pState, Ipp8u* pBuffer, int
    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
    /* test buffer length */
    IPP_BADARG_RET((int)(sizeof(IppsHashState))>bufSize, ippStsNoMemErr);
+   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
 
    CopyBlock(pState, pBuffer, sizeof(IppsHashState));
    IppsHashState* pCopy = (IppsHashState*)pBuffer;

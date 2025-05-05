@@ -201,6 +201,42 @@
 #  undef  _ENABLE_ALG_SM3_         /* SM3         off */
 #endif
 
+#if !defined(_DISABLE_ALG_SHA3_224_)
+#  define _ENABLE_ALG_SHA3_224_        /* SHA3_224         on  */
+#else
+#  undef  _ENABLE_ALG_SHA3_224_        /* SHA3_224         off */
+#endif
+
+#if !defined(_DISABLE_ALG_SHA3_256_)
+#  define _ENABLE_ALG_SHA3_256_        /* SHA3_256         on  */
+#else
+#  undef  _ENABLE_ALG_SHA3_256_        /* SHA3_256         off */
+#endif
+
+#if !defined(_DISABLE_ALG_SHA3_384_)
+#  define _ENABLE_ALG_SHA3_384_        /* SHA3_384         on  */
+#else
+#  undef  _ENABLE_ALG_SHA3_384_        /* SHA3_384         off */
+#endif
+
+#if !defined(_DISABLE_ALG_SHA3_512_)
+#  define _ENABLE_ALG_SHA3_512_        /* SHA3_512         on  */
+#else
+#  undef  _ENABLE_ALG_SHA3_512_        /* SHA3_512         off */
+#endif
+
+#if !defined(_DISABLE_ALG_SHAKE128_)
+#  define _ENABLE_ALG_SHAKE128_        /* SHAKE128         on  */
+#else
+#  undef  _ENABLE_ALG_SHAKE128_        /* SHAKE128         off */
+#endif
+
+#if !defined(_DISABLE_ALG_SHAKE256_)
+#  define _ENABLE_ALG_SHAKE256_        /* SHAKE256         on  */
+#else
+#  undef  _ENABLE_ALG_SHAKE256_        /* SHAKE256         off */
+#endif
+
 /*
 // SHA1 plays especial role in Intel(R) Cryptography Primitives Library.
 // Thus Intel(R) Cryptography Primitives Library random generator and

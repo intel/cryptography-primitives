@@ -66,8 +66,10 @@ IPPFUN(IppStatus, ippsHMACPack_rmf,(const IppsHMACState_rmf* pCtx, Ipp8u* pBuffe
       IppsHMACState_rmf* pCopy = (IppsHMACState_rmf*)pBuffer;
       HMAC_RESET_CTX_ID(pCopy);
       /* Reset context id for IppsHashState_rmf, which is the part of IppsHMACState_rmf */
-      IppsHashState_rmf* pHashCopy = (IppsHashState_rmf*)&HASH_CTX(pCopy);
+      IppsHashState_rmf* pHashCopy = (IppsHashState_rmf*)HASH_CTX(pCopy);
       HASH_RESET_ID(pHashCopy,idCtxHash);
+      /* setup pointers to buffer and hash in IppsHashState_rmf structure */
+      HASH_SETUP_POINTERS((IppsHashState_rmf*)HASH_CTX(pCtx));
 
       return ippStsNoErr;
    }
