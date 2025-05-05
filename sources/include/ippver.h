@@ -15,31 +15,33 @@
 *************************************************************************/
 
 /*
-//              Intel® Cryptography Primitives Library
+// Intel® Cryptography Primitives Library
 //
-//              Purpose: Describes the base Intel® Cryptography Primitives Library version
+// Purpose: Describes the base Intel® Cryptography Primitives Library version
 //
 */
 
 
 #include "ippcpversion.h"
 #ifndef BASE_VERSION
-#define BASE_VERSION() CRYPTO_LIB_VERSION_MAJOR,CRYPTO_LIB_VERSION_MINOR,CRYPTO_LIB_VERSION_PATCH
+#define BASE_VERSION() CRYPTO_LIB_VERSION_MAJOR, CRYPTO_LIB_VERSION_MINOR, CRYPTO_LIB_VERSION_PATCH
 #endif
 
-#define STR2(x)           #x
-#define STR(x)       STR2(x)
+#define STR2(x) #x
+#define STR(x)  STR2(x)
 
 #ifndef STR_BASE_VERSION
-#define STR_BASE_VERSION() STR(CRYPTO_LIB_VERSION_MAJOR) "," STR(CRYPTO_LIB_VERSION_MINOR) ", " STR(CRYPTO_LIB_VERSION_PATCH)
+#define STR_BASE_VERSION()        \
+    STR(CRYPTO_LIB_VERSION_MAJOR) \
+    "," STR(CRYPTO_LIB_VERSION_MINOR) ", " STR(CRYPTO_LIB_VERSION_PATCH)
 #endif
 
 #ifndef STR_VERSION
- #ifdef IPP_REVISION
-  #define STR_VERSION() CRYPTO_LIB_VERSION_STR " (r" STR( IPP_REVISION ) ")"
- #else
-  #define STR_VERSION() CRYPTO_LIB_VERSION_STR
- #endif
+#ifdef IPP_REVISION
+#define STR_VERSION() CRYPTO_LIB_VERSION_STR " (r" STR(IPP_REVISION) ")"
+#else
+#define STR_VERSION() CRYPTO_LIB_VERSION_STR
+#endif
 #endif
 
 

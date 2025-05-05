@@ -25,10 +25,11 @@
  *    out      resulted array of bytes
  */
 
-__IPPCP_INLINE void cp_to_byte(Ipp8u *out, Ipp32s outlen, Ipp32u in) {
+__IPPCP_INLINE void cp_to_byte(Ipp8u* out, Ipp32s outlen, Ipp32u in)
+{
     /* Iterate over out in decreasing order, for big-endianness. */
     for (Ipp32s i = outlen - 1; i >= 0; i--) {
         out[i] = (Ipp8u)(in & 0xff);
-        in = in >> /*bitsize of 1 byte*/ 8;
+        in     = in >> /*bitsize of 1 byte*/ 8;
     }
 }

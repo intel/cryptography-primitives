@@ -20,16 +20,16 @@
 #include "ippcpdefs.h"
 #include "pcpbnuimpl.h"
 
-#define IPPCP_AES_MSG_BYTE_LEN       (64)
-#define IPPCP_AES_KEY128_BYTE_LEN    (16)
-#define IPPCP_AES_KEY256_BYTE_LEN    (32)
+#define IPPCP_AES_MSG_BYTE_LEN    (64)
+#define IPPCP_AES_KEY128_BYTE_LEN (16)
+#define IPPCP_AES_KEY256_BYTE_LEN (32)
 
-#define IPPCP_IV128_BYTE_LEN         (16)
+#define IPPCP_IV128_BYTE_LEN (16)
 
-#define IPPCP_AES_ALIGNMENT  ((int)sizeof(void *))
-#define IPPCP_HASH_ALIGNMENT ((int)sizeof(void *))
-#define IPPCP_HMAC_ALIGNMENT ((int)sizeof(void *))
-#define IPPCP_GFP_ALIGNMENT  ((int)sizeof(void *))
+#define IPPCP_AES_ALIGNMENT  ((int)sizeof(void*))
+#define IPPCP_HASH_ALIGNMENT ((int)sizeof(void*))
+#define IPPCP_HMAC_ALIGNMENT ((int)sizeof(void*))
+#define IPPCP_GFP_ALIGNMENT  ((int)sizeof(void*))
 #define IPPCP_BN_ALIGNMENT   ((int)sizeof(void*))
 #define IPPCP_RSA_ALIGNMENT  ((int)sizeof(BNU_CHUNK_T))
 
@@ -40,38 +40,43 @@
 
 // Feature of internal memory management
 #ifdef IPPCP_SELFTEST_USE_MALLOC
-    #include <stdlib.h>
+#include <stdlib.h>
 
-    // Internal memory management - free resource
-    #define MEMORY_FREE(pBuffer, memMgmFlag)  if(1 == internalMemMgm) {  \
-                                                free((void*)pBuffer);    \
-                                                pBuffer = NULL;          \
-                                              }
-    // If buffer is NULL, allocate memory
-    #define BUF_CHECK_NULL_AND_ALLOC(pBuffer, memMgmFlag, size, ret_sts)         \
-                                        if(NULL == pBuffer) {                    \
-                                            IPP_BADARG_RET((0 == size), ret_sts) \
-                                            memMgmFlag = 1;                      \
-                                            pBuffer = malloc((size_t)size);      \
-                                        }                  
+// Internal memory management - free resource
+#define MEMORY_FREE(pBuffer, memMgmFlag) \
+    if (1 == internalMemMgm) {           \
+        free((void*)pBuffer);            \
+        pBuffer = NULL;                  \
+    }
+// If buffer is NULL, allocate memory
+#define BUF_CHECK_NULL_AND_ALLOC(pBuffer, memMgmFlag, size, ret_sts) \
+    if (NULL == pBuffer) {                                           \
+        IPP_BADARG_RET((0 == size), ret_sts)                         \
+        memMgmFlag = 1;                                              \
+        pBuffer    = malloc((size_t)size);                           \
+    }
 #else
-    // No memory management inside the test
-    #define MEMORY_FREE(pBuffer, memMgmFlag)    (void)internalMemMgm;
-    // Return bad sts if buffer is NULL - we cannot allocate memory
-    // IPPCP_SELFTEST_USE_MALLOC is not defined)
-    #define BUF_CHECK_NULL_AND_ALLOC(pBuffer, memMgmFlag, size, ret_sts)           \
-                                        (void)internalMemMgm;                      \
-                                        IPP_BADARG_RET((NULL == pBuffer), ret_sts);
+// No memory management inside the test
+#define MEMORY_FREE(pBuffer, memMgmFlag) (void)internalMemMgm;
+// Return bad sts if buffer is NULL - we cannot allocate memory
+// IPPCP_SELFTEST_USE_MALLOC is not defined)
+#define BUF_CHECK_NULL_AND_ALLOC(pBuffer, memMgmFlag, size, ret_sts) \
+    (void)internalMemMgm;                                            \
+    IPP_BADARG_RET((NULL == pBuffer), ret_sts);
 
 #endif
 
-#define MEMORY_FREE_2(pBuffer1, pBuffer2, memMgmFlag)       \
-                        { MEMORY_FREE(pBuffer1, memMgmFlag) \
-                          MEMORY_FREE(pBuffer2, memMgmFlag) }            
+#define MEMORY_FREE_2(pBuffer1, pBuffer2, memMgmFlag) \
+    {                                                 \
+        MEMORY_FREE(pBuffer1, memMgmFlag)             \
+        MEMORY_FREE(pBuffer2, memMgmFlag)             \
+    }
 #define MEMORY_FREE_3(pBuffer1, pBuffer2, pBuffer3, memMgmFlag) \
-                         { MEMORY_FREE(pBuffer1, memMgmFlag)    \
-                           MEMORY_FREE(pBuffer2, memMgmFlag)    \
-                           MEMORY_FREE(pBuffer3, memMgmFlag) }   
+    {                                                           \
+        MEMORY_FREE(pBuffer1, memMgmFlag)                       \
+        MEMORY_FREE(pBuffer2, memMgmFlag)                       \
+        MEMORY_FREE(pBuffer3, memMgmFlag)                       \
+    }
 
 /**
  * \brief
@@ -89,6 +94,11 @@
  *
  */
 #define ippcp_is_mem_eq OWNAPI(ippcp_is_mem_eq)
-    IPP_OWN_DECL (int, ippcp_is_mem_eq, (const Ipp8u *p1, Ipp32u p1_byte_len, const Ipp8u *p2, Ipp32u p2_byte_len))
+/* clang-format off */
+    IPP_OWN_DECL(int, ippcp_is_mem_eq, (const Ipp8u* p1,
+                                        Ipp32u p1_byte_len,
+                                        const Ipp8u* p2,
+                                        Ipp32u p2_byte_len))
+/* clang-format on */
 
 #endif // IPPCP_FIPS_CERT_COMMON_H

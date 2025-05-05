@@ -33,14 +33,18 @@
  * \param[in] data_word_len length of integer big number in 32bit size
  *
  */
-__IPPCP_INLINE IppStatus ippcp_init_set_bn(IppsBigNumState *pbn, int max_word_len,
-                                     IppsBigNumSGN sgn, const Ipp32u *pdata, int data_word_len)
+__IPPCP_INLINE IppStatus ippcp_init_set_bn(IppsBigNumState* pbn,
+                                           int max_word_len,
+                                           IppsBigNumSGN sgn,
+                                           const Ipp32u* pdata,
+                                           int data_word_len)
 {
-  IppStatus sts;
-  sts = ippsBigNumInit(max_word_len, pbn);
-  if (sts != ippStsNoErr) return sts;
-  sts = ippsSet_BN(sgn, data_word_len, pdata, pbn);
-  return sts;
+    IppStatus sts;
+    sts = ippsBigNumInit(max_word_len, pbn);
+    if (sts != ippStsNoErr)
+        return sts;
+    sts = ippsSet_BN(sgn, data_word_len, pdata, pbn);
+    return sts;
 }
 
 #endif // IPPCP_FIPS_CERT_BN_COMMON_H

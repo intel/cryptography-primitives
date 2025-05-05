@@ -45,8 +45,8 @@ typedef struct {
  *  |    4 bytes   ||     4 bytes     || 16 bytes ||  n bytes  |
 */
 struct _cpLMSPublicKeyState {
-    Ipp32u _idCtx;           // Pub key ctx identifier
-    IppsLMSAlgo   lmsOIDAlgo;
+    Ipp32u _idCtx; // Pub key ctx identifier
+    IppsLMSAlgo lmsOIDAlgo;
     IppsLMOTSAlgo lmotsOIDAlgo;
     Ipp8u I[CP_PK_I_BYTESIZE];
     Ipp8u* T1;
@@ -58,7 +58,7 @@ struct _cpLMSPublicKeyState {
  *  |     q     || lmots_sig || lms_sigtype ||  path[0] ||  path[1] ||...|| path[h-1] |
  */
 struct _cpLMSSignatureState {
-    Ipp32u _idCtx;  // Signature ctx identifier
+    Ipp32u _idCtx; // Signature ctx identifier
     Ipp32u _q;
     _cpLMOTSSignatureState _lmotsSig;
     IppsLMSAlgo _lmsOIDAlgo;
@@ -69,8 +69,8 @@ struct _cpLMSSignatureState {
 };
 
 /* Defines to handle contexts IDs */
-#define CP_LMS_SET_CTX_ID(ctx)    ((ctx)->_idCtx = (Ipp32u)idCtxLMS ^ (Ipp32u)IPP_UINT_PTR(ctx))
-#define CP_LMS_VALID_CTX_ID(ctx)  ((((ctx)->_idCtx) ^ (Ipp32u)IPP_UINT_PTR(ctx)) == (Ipp32u)idCtxLMS)
+#define CP_LMS_SET_CTX_ID(ctx)   ((ctx)->_idCtx = (Ipp32u)idCtxLMS ^ (Ipp32u)IPP_UINT_PTR(ctx))
+#define CP_LMS_VALID_CTX_ID(ctx) ((((ctx)->_idCtx) ^ (Ipp32u)IPP_UINT_PTR(ctx)) == (Ipp32u)idCtxLMS)
 
 /*
  * Set LMS parameters
@@ -86,25 +86,46 @@ struct _cpLMSSignatureState {
  * Output parameters:
  *    params    LMS parameters (h, m, hash_method)
  */
-__IPPCP_INLINE IppStatus setLMSParams(IppsLMSAlgo lmsOIDAlgo, cpLMSParams* params) {
+__IPPCP_INLINE IppStatus setLMSParams(IppsLMSAlgo lmsOIDAlgo, cpLMSParams* params)
+{
     /* Set h */
     switch (lmsOIDAlgo % 5) {
-        case 0: { params->h = 5;  break; } // LMS_SHA256_M32_H5  and LMS_SHA256_M24_H5
-        case 1: { params->h = 10; break; } // LMS_SHA256_M32_H10 and LMS_SHA256_M24_H10
-        case 2: { params->h = 15; break; } // LMS_SHA256_M32_H15 and LMS_SHA256_M24_H15
-        case 3: { params->h = 20; break; } // LMS_SHA256_M32_H20 and LMS_SHA256_M24_H20
-        case 4: { params->h = 25; break; } // LMS_SHA256_M32_H25 and LMS_SHA256_M24_H25
-        default: return ippStsBadArgErr;
+    case 0: {
+        // LMS_SHA256_M32_H5  and LMS_SHA256_M24_H5
+        params->h = 5;
+        break;
+    }
+    case 1: {
+        // LMS_SHA256_M32_H10 and LMS_SHA256_M24_H10
+        params->h = 10;
+        break;
+    }
+    case 2: {
+        // LMS_SHA256_M32_H15 and LMS_SHA256_M24_H15
+        params->h = 15;
+        break;
+    }
+    case 3: {
+        // LMS_SHA256_M32_H20 and LMS_SHA256_M24_H20
+        params->h = 20;
+        break;
+    }
+    case 4: {
+        // LMS_SHA256_M32_H25 and LMS_SHA256_M24_H25
+        params->h = 25;
+        break;
+    }
+    default:
+        return ippStsBadArgErr;
     }
 
-    if(lmsOIDAlgo <= LMS_SHA256_M32_H25) {
+    if (lmsOIDAlgo <= LMS_SHA256_M32_H25) {
         params->m = 32;
-    }
-    else {
+    } else {
         params->m = 24;
     }
 
-    params->hash_method = (IppsHashMethod*) ippsHashMethod_SHA256_TT();
+    params->hash_method = (IppsHashMethod*)ippsHashMethod_SHA256_TT();
 
     return ippStsNoErr;
 }

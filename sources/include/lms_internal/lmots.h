@@ -58,64 +58,65 @@ typedef struct {
  * Output parameters:
  *    params         LMOTS parameters (w, p, ls, n, hash_method)
  */
-__IPPCP_INLINE IppStatus setLMOTSParams(IppsLMOTSAlgo lmotsOIDAlgo, cpLMOTSParams* params) {
+__IPPCP_INLINE IppStatus setLMOTSParams(IppsLMOTSAlgo lmotsOIDAlgo, cpLMOTSParams* params)
+{
     switch (lmotsOIDAlgo) {
-        case LMOTS_SHA256_N32_W1: {
-            params->w = 1;
-            params->p = 265;
-            params->ls = 7;
-            break;
-        }
-        case LMOTS_SHA256_N32_W2: {
-            params->w = 2;
-            params->p = 133;
-            params->ls = 6;
-            break;
-        }
-        case LMOTS_SHA256_N32_W4: {
-            params->w = 4;
-            params->p = 67;
-            params->ls = 4;
-            break;
-        }
-        case LMOTS_SHA256_N32_W8: {
-            params->w = 8;
-            params->p = 34;
-            params->ls = 0;
-            break;
-        }
-        case LMOTS_SHA256_N24_W1: {
-            params->w = 1;
-            params->p = 200;
-            params->ls = 8;
-            break;
-        }
-        case LMOTS_SHA256_N24_W2: {
-            params->w = 2;
-            params->p = 101;
-            params->ls = 6;
-            break;
-        }
-        case LMOTS_SHA256_N24_W4 : {
-            params->w = 4;
-            params->p = 51;
-            params->ls = 4;
-            break;
-        }
-        case LMOTS_SHA256_N24_W8 : {
-            params->w = 8;
-            params->p = 26;
-            params->ls = 0;
-            break;
-        }
-        default: return ippStsBadArgErr;
+    case LMOTS_SHA256_N32_W1: {
+        params->w  = 1;
+        params->p  = 265;
+        params->ls = 7;
+        break;
     }
-    params->hash_method = (IppsHashMethod*) ippsHashMethod_SHA256_TT();
+    case LMOTS_SHA256_N32_W2: {
+        params->w  = 2;
+        params->p  = 133;
+        params->ls = 6;
+        break;
+    }
+    case LMOTS_SHA256_N32_W4: {
+        params->w  = 4;
+        params->p  = 67;
+        params->ls = 4;
+        break;
+    }
+    case LMOTS_SHA256_N32_W8: {
+        params->w  = 8;
+        params->p  = 34;
+        params->ls = 0;
+        break;
+    }
+    case LMOTS_SHA256_N24_W1: {
+        params->w  = 1;
+        params->p  = 200;
+        params->ls = 8;
+        break;
+    }
+    case LMOTS_SHA256_N24_W2: {
+        params->w  = 2;
+        params->p  = 101;
+        params->ls = 6;
+        break;
+    }
+    case LMOTS_SHA256_N24_W4: {
+        params->w  = 4;
+        params->p  = 51;
+        params->ls = 4;
+        break;
+    }
+    case LMOTS_SHA256_N24_W8: {
+        params->w  = 8;
+        params->p  = 26;
+        params->ls = 0;
+        break;
+    }
+    default:
+        return ippStsBadArgErr;
+    }
+    params->hash_method = (IppsHashMethod*)ippsHashMethod_SHA256_TT();
 
-    if(lmotsOIDAlgo <= LMOTS_SHA256_N32_W8) {
+    if (lmotsOIDAlgo <= LMOTS_SHA256_N32_W8) {
         params->n = 32;
-    }
-    else {
+    } else {
         params->n = 24;
     }
     return ippStsNoErr;
@@ -134,16 +135,18 @@ __IPPCP_INLINE IppStatus setLMOTSParams(IppsLMOTSAlgo lmotsOIDAlgo, cpLMOTSParam
  *    Target element of a specified length
  *
  */
-__IPPCP_INLINE Ipp32u cpCoef(Ipp8u* S, Ipp32u i, Ipp32u w) {
-    return ((1 << w) - 1) & ( S[(i * w) / 8] >> (8 - (w * (i % (8 / w)) + w)));
+__IPPCP_INLINE Ipp32u cpCoef(Ipp8u* S, Ipp32u i, Ipp32u w)
+{
+    return ((1 << w) - 1) & (S[(i * w) / 8] >> (8 - (w * (i % (8 / w)) + w)));
 }
 
-__IPPCP_INLINE Ipp32u cpCksm(Ipp8u* S, cpLMOTSParams lmotsParams) {
-    Ipp32u w = lmotsParams.w;
-    Ipp32u n = lmotsParams.n;
+__IPPCP_INLINE Ipp32u cpCksm(Ipp8u* S, cpLMOTSParams lmotsParams)
+{
+    Ipp32u w  = lmotsParams.w;
+    Ipp32u n  = lmotsParams.n;
     Ipp32u ls = lmotsParams.ls;
 
-    Ipp32u cksmQ = 0; //sum is a 16-bit unsigned integer
+    Ipp32u cksmQ        = 0; //sum is a 16-bit unsigned integer
     Ipp32u cksmItrLimit = (8 * n) / w;
     for (Ipp32u i = 0; i < cksmItrLimit; i++) {
         cksmQ = cksmQ + ((1 << w) - 1) - cpCoef(S, i, w);
