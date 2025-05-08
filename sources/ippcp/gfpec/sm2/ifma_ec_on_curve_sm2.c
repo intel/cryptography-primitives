@@ -24,21 +24,24 @@
 #include "gfpec/ecnist/ifma_arith_method.h"
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 
-IPP_OWN_DEFN(int, gfec_point_on_curve_sm2_avx512, (const IppsGFpECPoint *pPoint, IppsGFpECState *pEC))
+/* clang-format off */
+IPP_OWN_DEFN(int, gfec_point_on_curve_sm2_avx512, (const IppsGFpECPoint* pPoint,
+                                                   IppsGFpECState* pEC))
+/* clang-format on */
 {
-   gsModEngine *pME       = GFP_PMA(ECP_GFP(pEC));
-   ifmaArithMethod *pmeth = (ifmaArithMethod *)GFP_METHOD_ALT(pME);
+    gsModEngine* pME       = GFP_PMA(ECP_GFP(pEC));
+    ifmaArithMethod* pmeth = (ifmaArithMethod*)GFP_METHOD_ALT(pME);
 
-   BNU_CHUNK_T *pPool = cpGFpGetPool(3, pME);
+    BNU_CHUNK_T* pPool = cpGFpGetPool(3, pME);
 
-   __ALIGN64 PSM2_POINT_IFMA P;
+    __ALIGN64 PSM2_POINT_IFMA P;
 
-   recode_point_to_mont52(&P, ECP_POINT_DATA(pPoint), pPool /* 3 elem */, pmeth, pME);
+    recode_point_to_mont52(&P, ECP_POINT_DATA(pPoint), pPool /* 3 elem */, pmeth, pME);
 
-   const int onCurve = gesm2_is_on_curve(&P, /* use_jproj_coord = */ !IS_ECP_AFFINE_POINT(pPoint));
+    const int onCurve = gesm2_is_on_curve(&P, /* use_jproj_coord = */ !IS_ECP_AFFINE_POINT(pPoint));
 
-   cpGFpReleasePool(3, pME);
-   return onCurve;
+    cpGFpReleasePool(3, pME);
+    return onCurve;
 }
 
 #endif // (_IPP32E >= _IPP32E_K1)

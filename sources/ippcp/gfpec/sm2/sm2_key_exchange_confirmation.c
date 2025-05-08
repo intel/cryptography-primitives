@@ -48,68 +48,71 @@ IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_Confirm, (const Ipp8u pSPeer[IPP_SM3_D
                                                     IppsGFpECKeyExchangeSM2State* pKE))
 /* clang-format on */
 {
-   /* check Key Exchange */
-   IPP_BAD_PTR1_RET(pKE);
-   /* check id */
-   IPP_BADARG_RET(!EC_SM2_KEY_EXCH_VALID_ID(pKE), ippStsContextMatchErr);
-   /* check User Role */
-   const IppsKeyExchangeRoleSM2 role = EC_SM2_KEY_EXCH_ROLE(pKE);
-   IPP_BADARG_RET(((ippKESM2Requester != role) && (ippKESM2Responder != role)), ippStsBadArgErr);
+    /* check Key Exchange */
+    IPP_BAD_PTR1_RET(pKE);
+    /* check id */
+    IPP_BADARG_RET(!EC_SM2_KEY_EXCH_VALID_ID(pKE), ippStsContextMatchErr);
+    /* check User Role */
+    const IppsKeyExchangeRoleSM2 role = EC_SM2_KEY_EXCH_ROLE(pKE);
+    IPP_BADARG_RET(((ippKESM2Requester != role) && (ippKESM2Responder != role)), ippStsBadArgErr);
 
-   /* check Elliptic Curve */
-   IppsGFpECState *pEC = EC_SM2_KEY_EXCH_EC(pKE);
+    /* check Elliptic Curve */
+    IppsGFpECState* pEC = EC_SM2_KEY_EXCH_EC(pKE);
 
-   IPP_BAD_PTR1_RET(pEC);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    IPP_BAD_PTR1_RET(pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   gsModEngine *pME = GFP_PMA(ECP_GFP(pEC)); /* base P */
-   IPP_BADARG_RET(1 < GFP_EXTDEGREE(pME), ippStsNotSupportedModeErr);
-   gsModEngine *nME = ECP_MONT_R(pEC); /* base N */
-   IPP_BADARG_RET(1 < GFP_EXTDEGREE(nME), ippStsNotSupportedModeErr);
-   /* check bitsize >= SM3_DIGSET */
-   IPP_BADARG_RET(!(ECP_ORDBITSIZE(pEC) >= IPP_SM3_DIGEST_BITSIZE), ippStsRangeErr);
+    gsModEngine* pME = GFP_PMA(ECP_GFP(pEC)); /* base P */
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(pME), ippStsNotSupportedModeErr);
+    gsModEngine* nME = ECP_MONT_R(pEC);       /* base N */
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(nME), ippStsNotSupportedModeErr);
+    /* check bitsize >= SM3_DIGSET */
+    IPP_BADARG_RET(!(ECP_ORDBITSIZE(pEC) >= IPP_SM3_DIGEST_BITSIZE), ippStsRangeErr);
 
-   /* check call Setup */
-   /* check init Public Key | Ephemeral  Public Key */
-   IPP_BADARG_RET( NULL == EC_SM2_KEY_EXCH_PUB_KEY_USER_A(pKE)     ||
-                   NULL == EC_SM2_KEY_EXCH_PUB_KEY_USER_B(pKE)     ||
-                   NULL == EC_SM2_KEY_EXCH_EPH_PUB_KEY_USER_A(pKE) ||
-                   NULL == EC_SM2_KEY_EXCH_EPH_PUB_KEY_USER_B(pKE), ippStsContextMatchErr)
+    /* check call Setup */
+    /* check init Public Key | Ephemeral  Public Key */
+    IPP_BADARG_RET(NULL == EC_SM2_KEY_EXCH_PUB_KEY_USER_A(pKE) ||
+                       NULL == EC_SM2_KEY_EXCH_PUB_KEY_USER_B(pKE) ||
+                       NULL == EC_SM2_KEY_EXCH_EPH_PUB_KEY_USER_A(pKE) ||
+                       NULL == EC_SM2_KEY_EXCH_EPH_PUB_KEY_USER_B(pKE),
+                   ippStsContextMatchErr)
 
-   /* check pSPeer */
-   IPP_BAD_PTR1_RET(pSPeer);
+    /* check pSPeer */
+    IPP_BAD_PTR1_RET(pSPeer);
 
-   /* check status */
-   IPP_BAD_PTR1_RET(pStatus);
+    /* check status */
+    IPP_BAD_PTR1_RET(pStatus);
 
 
-   const Ipp8u firstNum = (ippKESM2Requester == role) ? 0x02 : 0x03;
+    const Ipp8u firstNum = (ippKESM2Requester == role) ? 0x02 : 0x03;
 
-   {
-      /* extract data Elliptic Curve */
-      const int elemBits  = GFP_FEBITLEN(pME);  /* size Bits */
-      const int elemBytes = (elemBits + 7) / 8; /* size Bytes */
+    {
+        /* extract data Elliptic Curve */
+        const int elemBits  = GFP_FEBITLEN(pME);  /* size Bits */
+        const int elemBytes = (elemBits + 7) / 8; /* size Bytes */
 
-      /* buffer */
-      BNU_CHUNK_T *pDataBuff = cpGFpGetPool(3, pME);
-      Ipp8u *pBuff           = (Ipp8u *)pDataBuff;
+        /* buffer */
+        BNU_CHUNK_T* pDataBuff = cpGFpGetPool(3, pME);
+        Ipp8u* pBuff           = (Ipp8u*)pDataBuff;
 
-      /* 8) S(1/2) = SM3( 0x0(2/3) || y(u/v) || tmp_p ) */
-      /* copy 0x0(2/3) */
-      pBuff[0] = firstNum; /* set first number (role) */
-      /* copy y(u/v) */
-      cpSM2_CopyBlock(pBuff + 1, (const Ipp8u *)EC_SM2_KEY_EXCH_POINT_Y(pKE), elemBytes);
-      /* copy Precomp Hash */
-      cpSM2_CopyBlock(pBuff + 1 + elemBytes, (const Ipp8u *)EC_SM2_KEY_EXCH_PRECOM_HASH(pKE), IPP_SM3_DIGEST_BYTESIZE);
+        /* 8) S(1/2) = SM3( 0x0(2/3) || y(u/v) || tmp_p ) */
+        /* copy 0x0(2/3) */
+        pBuff[0] = firstNum; /* set first number (role) */
+        /* copy y(u/v) */
+        cpSM2_CopyBlock(pBuff + 1, (const Ipp8u*)EC_SM2_KEY_EXCH_POINT_Y(pKE), elemBytes);
+        /* copy Precomp Hash */
+        cpSM2_CopyBlock(pBuff + 1 + elemBytes,
+                        (const Ipp8u*)EC_SM2_KEY_EXCH_PRECOM_HASH(pKE),
+                        IPP_SM3_DIGEST_BYTESIZE);
 
-      const int sizeSab_SM3 = 1 + elemBytes + IPP_SM3_DIGEST_BYTESIZE;
-      cpSM2KE_compute_hash_SM3(pBuff, pBuff, sizeSab_SM3);
+        const int sizeSab_SM3 = 1 + elemBytes + IPP_SM3_DIGEST_BYTESIZE;
+        cpSM2KE_compute_hash_SM3(pBuff, pBuff, sizeSab_SM3);
 
-      /* pS == S(1/2) */
-      *pStatus = EquBlock((Ipp8u *)pBuff, pSPeer, IPP_SM3_DIGEST_BYTESIZE) ? 1 : 0;
+        /* pS == S(1/2) */
+        *pStatus = EquBlock((Ipp8u*)pBuff, pSPeer, IPP_SM3_DIGEST_BYTESIZE) ? 1 : 0;
 
-      cpGFpReleasePool(3, pME);
-      return ippStsNoErr;
-   }
+        cpGFpReleasePool(3, pME);
+        return ippStsNoErr;
+    }
 }

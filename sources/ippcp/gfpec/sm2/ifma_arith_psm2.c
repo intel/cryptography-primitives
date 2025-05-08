@@ -22,26 +22,35 @@
 #include "gfpec/sm2/ifma_defs_sm2.h"
 
 /* modulus psm2 = 2^256 - 2^224 - 2^96 + 2^64 - 1 */
-static const __ALIGN64 Ipp64u psm2_x1[PSM2_LEN52] = {
-    0x000fffffffffffff, 0x000ff00000000fff, 0x000fffffffffffff, 0x000fffffffffffff, 0x0000fffffffeffff};
+static const __ALIGN64 Ipp64u psm2_x1[PSM2_LEN52] = { 0x000fffffffffffff,
+                                                      0x000ff00000000fff,
+                                                      0x000fffffffffffff,
+                                                      0x000fffffffffffff,
+                                                      0x0000fffffffeffff };
 
 /* 4*p */
-static const __ALIGN64 Ipp64u psm2_x4[PSM2_LEN52] = {
-    0x000ffffffffffffc, 0x000fc00000003fff, 0x000fffffffffffff, 0x000fffffffffffff, 0x0003fffffffbffff};
+static const __ALIGN64 Ipp64u psm2_x4[PSM2_LEN52] = { 0x000ffffffffffffc,
+                                                      0x000fc00000003fff,
+                                                      0x000fffffffffffff,
+                                                      0x000fffffffffffff,
+                                                      0x0003fffffffbffff };
 
 /* to Montgomery conversion constant
  * rr = 2^((PSM2_LEN52*DIGIT_SIZE)*2) mod psm2
  */
 /* rr = 2^(52*6*2) mod psm2 */
-static const __ALIGN64 Ipp64u psm2_rr[PSM2_LEN52] = {
-    0x0006000000070000, 0x000fffffd0000000, 0x00000400000003ff, 0x0000000000300000, 0x0000000800000003};
+static const __ALIGN64 Ipp64u psm2_rr[PSM2_LEN52] = { 0x0006000000070000,
+                                                      0x000fffffd0000000,
+                                                      0x00000400000003ff,
+                                                      0x0000000000300000,
+                                                      0x0000000800000003 };
 
-static const __ALIGN64 Ipp64u ones[PSM2_LEN52] = {
-    0x1, 0x0, 0x0, 0x0, 0x0};
+static const __ALIGN64 Ipp64u ones[PSM2_LEN52] = { 0x1, 0x0, 0x0, 0x0, 0x0 };
 
 
 /* R = (A/2) mod M */
-IPP_OWN_DEFN(fesm2, fesm2_div2_norm, (const fesm2 a)) {
+IPP_OWN_DEFN(fesm2, fesm2_div2_norm, (const fesm2 a))
+{
     const fesm2 M    = FESM2_LOADU(psm2_x1);
     const fesm2 zero = setzero_i64();
     const fesm2 one  = set1_i64(1LL);
@@ -56,13 +65,13 @@ IPP_OWN_DEFN(fesm2, fesm2_div2_norm, (const fesm2 a)) {
     /* extract last bite + >> 64 */
     const mask64 mask_shift = 0xFFFFFFFF;
     const fesm2 idx_shift   = set_i64(0x0,                 //  0,  0,  0,  0,  0,  0,  0,  0
-                                      0x3f3e3d3c3b3a3938,  // 63, 62, 61, 60, 59, 58, 57, 56
-                                      0x3736353433323130,  // 55, 54, 53, 52, 51, 50, 49, 48
-                                      0x2f2e2d2c2b2a2928,  // 47, 46, 45, 44, 43, 42, 41, 40
-                                      0x2726252423222120,  // 39, 38, 37, 36, 35, 34, 33, 32
-                                      0x1f1e1d1c1b1a1918,  // 31, 30, 29, 28, 27, 26, 25, 24
-                                      0x1716151413121110,  // 23, 22, 21, 20, 19, 18, 17, 16
-                                      0x0f0e0d0c0b0a0908); // 15, 14, 13, 12, 11, 10, 9, 8
+                                    0x3f3e3d3c3b3a3938,  // 63, 62, 61, 60, 59, 58, 57, 56
+                                    0x3736353433323130,  // 55, 54, 53, 52, 51, 50, 49, 48
+                                    0x2f2e2d2c2b2a2928,  // 47, 46, 45, 44, 43, 42, 41, 40
+                                    0x2726252423222120,  // 39, 38, 37, 36, 35, 34, 33, 32
+                                    0x1f1e1d1c1b1a1918,  // 31, 30, 29, 28, 27, 26, 25, 24
+                                    0x1716151413121110,  // 23, 22, 21, 20, 19, 18, 17, 16
+                                    0x0f0e0d0c0b0a0908); // 15, 14, 13, 12, 11, 10, 9, 8
 
     fesm2 shift_right = maskz_permutexvar_i8(mask_shift, idx_shift, and_i64(r, one));
     /* set last bit is first byte (52 radix) */
@@ -74,7 +83,8 @@ IPP_OWN_DEFN(fesm2, fesm2_div2_norm, (const fesm2 a)) {
     return r;
 }
 
-IPP_OWN_DEFN(fesm2, fesm2_neg_norm, (const fesm2 a)) {
+IPP_OWN_DEFN(fesm2, fesm2_neg_norm, (const fesm2 a))
+{
     const fesm2 M4 = FESM2_LOADU(psm2_x4);
 
     /* a == 0 ? 0xFF : 0 */
@@ -105,7 +115,8 @@ IPP_OWN_DEFN(fesm2, fesm2_neg_norm, (const fesm2 a)) {
     }
 
 /* R = (A*B) - no normalization (in radix 2^52) */
-IPP_OWN_DEFN(fesm2, fesm2_mul, (const fesm2 a, const fesm2 b)) {
+IPP_OWN_DEFN(fesm2, fesm2_mul, (const fesm2 a, const fesm2 b))
+{
     const fesm2 M       = FESM2_LOADU(psm2_x1); /* p */
     const fesm2 zero    = setzero_i64();
     const mask8 maskone = 0x1;
@@ -120,13 +131,13 @@ IPP_OWN_DEFN(fesm2, fesm2_mul, (const fesm2 a, const fesm2 b)) {
     /* shift right 64 bit line [R >> 64] */
     const mask64 mask_sr64 = 0x00FFFFFFFFFFFFFF;
     const fesm2 idx_sr64   = set_i64(0x0,                 //  0,  0,  0,  0,  0,  0,  0,  0
-                                     0x3f3e3d3c3b3a3938,  // 63, 62, 61, 60, 59, 58, 57, 56
-                                     0x3736353433323130,  // 55, 54, 53, 52, 51, 50, 49, 48
-                                     0x2f2e2d2c2b2a2928,  // 47, 46, 45, 44, 43, 42, 41, 40
-                                     0x2726252423222120,  // 39, 38, 37, 36, 35, 34, 33, 32
-                                     0x1f1e1d1c1b1a1918,  // 31, 30, 29, 28, 27, 26, 25, 24
-                                     0x1716151413121110,  // 23, 22, 21, 20, 19, 18, 17, 16
-                                     0x0f0e0d0c0b0a0908); // 15, 14, 13, 12, 11, 10, 9, 8
+                                   0x3f3e3d3c3b3a3938,  // 63, 62, 61, 60, 59, 58, 57, 56
+                                   0x3736353433323130,  // 55, 54, 53, 52, 51, 50, 49, 48
+                                   0x2f2e2d2c2b2a2928,  // 47, 46, 45, 44, 43, 42, 41, 40
+                                   0x2726252423222120,  // 39, 38, 37, 36, 35, 34, 33, 32
+                                   0x1f1e1d1c1b1a1918,  // 31, 30, 29, 28, 27, 26, 25, 24
+                                   0x1716151413121110,  // 23, 22, 21, 20, 19, 18, 17, 16
+                                   0x0f0e0d0c0b0a0908); // 15, 14, 13, 12, 11, 10, 9, 8
 
     fesm2 r = setzero_i64();
     /* PSM2
@@ -153,9 +164,15 @@ IPP_OWN_DEFN(fesm2, fesm2_mul, (const fesm2 a, const fesm2 b)) {
     return r;
 }
 
-IPP_OWN_DEFN(void, fesm2_mul_dual,
-             (fesm2 pr1[], const fesm2 a1, const fesm2 b1,
-              fesm2 pr2[], const fesm2 a2, const fesm2 b2)) {
+/* clang-format off */
+IPP_OWN_DEFN(void, fesm2_mul_dual, (fesm2 pr1[],
+                                    const fesm2 a1,
+                                    const fesm2 b1,
+                                    fesm2 pr2[],
+                                    const fesm2 a2,
+                                    const fesm2 b2))
+/* clang-format on */
+{
     const fesm2 M       = FESM2_LOADU(psm2_x1); /* p */
     const fesm2 zero    = setzero_i64();
     const mask8 maskone = 0x1;
@@ -170,13 +187,13 @@ IPP_OWN_DEFN(void, fesm2_mul_dual,
     /* shift right 64 bit line [R >> 64] */
     const mask64 mask_sr64 = 0x00FFFFFFFFFFFFFF;
     const fesm2 idx_sr64   = set_i64(0x0,                 //  0,  0,  0,  0,  0,  0,  0,  0
-                                     0x3f3e3d3c3b3a3938,  // 63, 62, 61, 60, 59, 58, 57, 56
-                                     0x3736353433323130,  // 55, 54, 53, 52, 51, 50, 49, 48
-                                     0x2f2e2d2c2b2a2928,  // 47, 46, 45, 44, 43, 42, 41, 40
-                                     0x2726252423222120,  // 39, 38, 37, 36, 35, 34, 33, 32
-                                     0x1f1e1d1c1b1a1918,  // 31, 30, 29, 28, 27, 26, 25, 24
-                                     0x1716151413121110,  // 23, 22, 21, 20, 19, 18, 17, 16
-                                     0x0f0e0d0c0b0a0908); // 15, 14, 13, 12, 11, 10, 9, 8
+                                   0x3f3e3d3c3b3a3938,  // 63, 62, 61, 60, 59, 58, 57, 56
+                                   0x3736353433323130,  // 55, 54, 53, 52, 51, 50, 49, 48
+                                   0x2f2e2d2c2b2a2928,  // 47, 46, 45, 44, 43, 42, 41, 40
+                                   0x2726252423222120,  // 39, 38, 37, 36, 35, 34, 33, 32
+                                   0x1f1e1d1c1b1a1918,  // 31, 30, 29, 28, 27, 26, 25, 24
+                                   0x1716151413121110,  // 23, 22, 21, 20, 19, 18, 17, 16
+                                   0x0f0e0d0c0b0a0908); // 15, 14, 13, 12, 11, 10, 9, 8
 
     fesm2 r1, r2;
     r1 = r2 = setzero_i64();
@@ -212,14 +229,16 @@ IPP_OWN_DEFN(void, fesm2_mul_dual,
     return;
 }
 
-IPP_OWN_DEFN(fesm2, fesm2_to_mont, (const fesm2 a)) {
+IPP_OWN_DEFN(fesm2, fesm2_to_mont, (const fesm2 a))
+{
     const fesm2 RR = FESM2_LOADU(psm2_rr);
 
     fesm2 r = fesm2_mul(a, RR);
     return ifma_lnorm52(r);
 }
 
-static fesm2 fesm2_fast_reduction(const fesm2 a) {
+static fesm2 fesm2_fast_reduction(const fesm2 a)
+{
     const fesm2 M    = FESM2_LOADU(psm2_x1);
     const fesm2 zero = setzero_i64();
 
@@ -236,7 +255,8 @@ static fesm2 fesm2_fast_reduction(const fesm2 a) {
     return r;
 }
 
-IPP_OWN_DEFN(fesm2, fesm2_from_mont, (const fesm2 a)) {
+IPP_OWN_DEFN(fesm2, fesm2_from_mont, (const fesm2 a))
+{
     const fesm2 ONE = FESM2_LOADU(ones);
 
     /* from mont */
@@ -246,12 +266,14 @@ IPP_OWN_DEFN(fesm2, fesm2_from_mont, (const fesm2 a)) {
     return r;
 }
 
-__IPPCP_INLINE fesm2 fesm2_mul_norm(const fesm2 a, const fesm2 b) {
+__IPPCP_INLINE fesm2 fesm2_mul_norm(const fesm2 a, const fesm2 b)
+{
     fesm2 r = fesm2_mul(a, b);
     return ifma_lnorm52(r);
 }
 
-__IPPCP_INLINE fesm2 fesm2_sqr_norm(const fesm2 a) {
+__IPPCP_INLINE fesm2 fesm2_sqr_norm(const fesm2 a)
+{
     fesm2 r = fesm2_sqr(a);
     return ifma_lnorm52(r);
 }
@@ -262,7 +284,8 @@ __IPPCP_INLINE fesm2 fesm2_sqr_norm(const fesm2 a) {
     fesm2_mul_dual(&(R1), (A1), (B1), &(R2), (A2), (B2)); \
     ifma_lnorm52_dual(&(R1), (R1), &(R2), (R2));
 
-__IPPCP_INLINE fesm2 fesm2_sqr_ntimes(const fesm2 a, int n) {
+__IPPCP_INLINE fesm2 fesm2_sqr_ntimes(const fesm2 a, int n)
+{
     fesm2 r = a;
     for (; n > 0; --n)
         sqr(r, r);
@@ -271,7 +294,8 @@ __IPPCP_INLINE fesm2 fesm2_sqr_ntimes(const fesm2 a, int n) {
 
 #define sqr_ntimes(R, A, N) (R) = fesm2_sqr_ntimes((A), (N))
 
-IPP_OWN_DEFN(fesm2, fesm2_inv_norm, (const fesm2 z)) {
+IPP_OWN_DEFN(fesm2, fesm2_inv_norm, (const fesm2 z))
+{
 
     fesm2 tmp1, tmp2, D, E, F;
     tmp1 = tmp2 = D = E = F = setzero_i64();
@@ -279,30 +303,35 @@ IPP_OWN_DEFN(fesm2, fesm2_inv_norm, (const fesm2 z)) {
     r = setzero_i64();
 
     sqr(tmp1, z);
-    mul(F, tmp1, z);         /* F = z^3 */
-    sqr_ntimes(tmp2, F, 2);  /* tmp2 = z^0xC */
-                             /**/
-    mul_dual(D, tmp2, z,     /* D = z^0xD */
-             E, tmp2, tmp1); /* E = z^0xE */
-    mul(F, tmp2, F);         /* F = z^0xF */
-                             /**/
-    sqr_ntimes(tmp2, F, 4);  /* tmp2 = z^0xF0 */
-                             /**/
-    mul_dual(D, tmp2, D,     /* D = z^0xFD */
-             E, tmp2, E);    /* E = z^0xFE */
-    mul(F, tmp2, F);         /* F = z^0xFF */
-                             /**/
-    sqr_ntimes(tmp2, F, 8);  /* tmp2 = z^0xFF00 */
-    mul_dual(D, tmp2, D,     /* D = z^0xFFFD */
-             E, tmp2, E);    /* E = z^0xFFFE */
+    mul(F, tmp1, z);        /* F = z^3 */
+    sqr_ntimes(tmp2, F, 2); /* tmp2 = z^0xC */
+
+                            /* D = z^0xD */
+    /* E = z^0xE */
+    mul_dual(D, tmp2, z, E, tmp2, tmp1);
+    mul(F, tmp2, F);        /* F = z^0xF */
+
+    sqr_ntimes(tmp2, F, 4); /* tmp2 = z^0xF0 */
+
+    /* D = z^0xFD */
+    /* E = z^0xFE */
+    mul_dual(D, tmp2, D, E, tmp2, E);
+    mul(F, tmp2, F);        /* F = z^0xFF */
+
+    sqr_ntimes(tmp2, F, 8); /* tmp2 = z^0xFF00 */
+
+                            /* D = z^0xFFFD */
+    /* E = z^0xFFFE */
+    mul_dual(D, tmp2, D, E, tmp2, E);
     mul(F, tmp2, F);         /* F = z^0xFFFF */
-                             /**/
+
     sqr_ntimes(tmp2, F, 16); /* tmp2 = z^0xFFFF0000 */
-    mul_dual(D, tmp2, D,     /* D = z^0xFFFFFFFD */
-             E, tmp2, E);    /* E = z^0xFFFFFFFE */
-    mul(F, tmp2, F);         /* F = z^0xFFFFFFFF */
-                             /**/
-                             /**/
+
+                             /* D = z^0xFFFFFFFD */
+    /* E = z^0xFFFFFFFE */
+    mul_dual(D, tmp2, D, E, tmp2, E);
+    mul(F, tmp2, F); /* F = z^0xFFFFFFFF */
+
     /* z ^ FFFFFFFE 00000000 */
     sqr_ntimes(r, E, 32);
     /* z ^ FFFFFFFE FFFFFFFF */
@@ -330,19 +359,20 @@ IPP_OWN_DEFN(fesm2, fesm2_inv_norm, (const fesm2 z)) {
     return r;
 }
 
-IPP_OWN_DEFN(fesm2, fesm2_convert_radix64_radix52, (const Ipp64u* a)) {
+IPP_OWN_DEFN(fesm2, fesm2_convert_radix64_radix52, (const Ipp64u* a))
+{
     /* load mask to register */
     const mask8 mask_load  = 0x0F;
     const fesm2 mask_rad52 = set1_i64(DIGIT_MASK_52);
     /* set data */
     const fesm2 idx16       = set_i64(0x001f001f00170016,  // 31, 31, 23, 22,
-                                      0x0016001500140013,  // 22, 21, 20, 19,
-                                      0x0013001200110010,  // 19, 18, 17, 16,
-                                      0x0010000f000e000d,  // 16, 15, 14, 13,
-                                      0x000c000b000a0009,  // 12, 11, 10,  9,
-                                      0x0009000800070006,  //  9,  8,  7,  6,
-                                      0x0006000500040003,  //  6,  5,  4,  3,
-                                      0x0003000200010000); //  3,  2,  1,  0
+                                0x0016001500140013,  // 22, 21, 20, 19,
+                                0x0013001200110010,  // 19, 18, 17, 16,
+                                0x0010000f000e000d,  // 16, 15, 14, 13,
+                                0x000c000b000a0009,  // 12, 11, 10,  9,
+                                0x0009000800070006,  //  9,  8,  7,  6,
+                                0x0006000500040003,  //  6,  5,  4,  3,
+                                0x0003000200010000); //  3,  2,  1,  0
     const fesm2 shift_right = set_i64(12LL, 8LL, 4LL, 0LL, 12LL, 8LL, 4LL, 0LL);
 
     fesm2 r = maskz_loadu_i64(mask_load, a);
@@ -352,27 +382,28 @@ IPP_OWN_DEFN(fesm2, fesm2_convert_radix64_radix52, (const Ipp64u* a)) {
     return r;
 }
 
-IPP_OWN_DEFN(void, fesm2_convert_radix52_radix64, (Ipp64u * out, const fesm2 a)) {
+IPP_OWN_DEFN(void, fesm2_convert_radix52_radix64, (Ipp64u * out, const fesm2 a))
+{
     /* mask store */
     const mask8 mask_store = 0x0F;
     const fesm2 shift_left = set_i64(4LL, 0LL, 4LL, 0LL, 4LL, 0LL, 4LL, 0LL);
     const fesm2 idx_up8    = set_i64(0x3f3f3f3f3f3f3f3f,  // {63,63,63,63,63,63,63,63}
-                                     0x3f3f3f3f3e3d3c3b,  // {63,63,63,63,62,61,60,59}
-                                     0x3737363534333231,  // {55,55,54,53,52,51,50,49}
-                                     0x302e2d2c2b2a2928,  // {48,46,45,44,43,42,41,40}
-                                     0x1f1f1f1f1f1f1e1d,  // {31,31,31,31,31,31,30,29}
-                                     0x1717171716151413,  // {23,23,23,23,22,21,20,19}
-                                     0x0f0f0f0e0d0c0b0a,  // {15,15,15,14,13,12,11,10}
-                                     0x0706050403020100); // { 7, 6, 5, 4, 3, 2, 1, 0}
+                                  0x3f3f3f3f3e3d3c3b,  // {63,63,63,63,62,61,60,59}
+                                  0x3737363534333231,  // {55,55,54,53,52,51,50,49}
+                                  0x302e2d2c2b2a2928,  // {48,46,45,44,43,42,41,40}
+                                  0x1f1f1f1f1f1f1e1d,  // {31,31,31,31,31,31,30,29}
+                                  0x1717171716151413,  // {23,23,23,23,22,21,20,19}
+                                  0x0f0f0f0e0d0c0b0a,  // {15,15,15,14,13,12,11,10}
+                                  0x0706050403020100); // { 7, 6, 5, 4, 3, 2, 1, 0}
 
-    const fesm2 idx_down8 = set_i64(0x3f3f3f3f3f3f3f3f,  // {63,63,63,63,63,63,63,63}
-                                    0x3f3f3f3f3f3f3f3f,  // {63,63,63,63,63,63,63,63}
-                                    0x3a39383737373737,  // {58,57,56,55,55,55,55,55}
-                                    0x2727272727272726,  // {39,39,39,39,39,39,39,38}
-                                    0x2524232221201f1f,  // {37,36,35,34,33,32,31,31}
-                                    0x1c1b1a1918171717,  // {28,27,26,25,24,23,23,23}
-                                    0x1211100f0f0f0f0f,  // {18,17,16,15,15,15,15,15}
-                                    0x0908070707070707); // { 9, 8, 7, 7, 7, 7, 7, 7}
+    const fesm2 idx_down8 = set_i64(0x3f3f3f3f3f3f3f3f,   // {63,63,63,63,63,63,63,63}
+                                    0x3f3f3f3f3f3f3f3f,   // {63,63,63,63,63,63,63,63}
+                                    0x3a39383737373737,   // {58,57,56,55,55,55,55,55}
+                                    0x2727272727272726,   // {39,39,39,39,39,39,39,38}
+                                    0x2524232221201f1f,   // {37,36,35,34,33,32,31,31}
+                                    0x1c1b1a1918171717,   // {28,27,26,25,24,23,23,23}
+                                    0x1211100f0f0f0f0f,   // {18,17,16,15,15,15,15,15}
+                                    0x0908070707070707);  // { 9, 8, 7, 7, 7, 7, 7, 7}
 
     fesm2 r = a;
 

@@ -38,7 +38,8 @@ extern const __ALIGN64 SINGLE_PSM2_AFFINE_POINT_IFMA ifma_ec_sm2_bp_precomp[37][
 #if !defined(_DISABLE_ECP_SM2_HARDCODED_BP_TBL_)
 
 const __ALIGN64 SINGLE_PSM2_AFFINE_POINT_IFMA ifma_ec_sm2_bp_precomp[][BASE_POINT_N_ENTRY] = {
-{
+    {
+     /* clang-format off */
 /* digit=0 [{1,2,3,..,}]*([2^0]*G)  */
     {{0x0001167a5f72d7b5,0x000c43181404d9e9,0x000e6dbd3aaf42f3,0x00024c3c33e7981e,0x0000654979a299ac}, {0x0003cd65d4e5a49b,0x0008384568872dd6,0x0008f0fffbcf430c,0x0002a48f8c1f5e57,0x00009272f196066e}},
     {{0x000d7e9c18d8240f,0x000aaa6e417d56a0,0x000a3b0e4550d595,0x00088cd2483bdc9b,0x0000832b6de84b57}, {0x00047e746600a032,0x000d7b7693b68c19,0x000859275c90d69f,0x0007157acccbd8d3,0x00005bc85177169b}},
@@ -2517,17 +2518,17 @@ const __ALIGN64 SINGLE_PSM2_AFFINE_POINT_IFMA ifma_ec_sm2_bp_precomp[][BASE_POIN
     {{0x000f1435aaae6483,0x000a104f999a4352,0x0009f21ba7c9f131,0x0005b56e3000fcee,0x000045e97d130480}, {0x000862d2138a5c21,0x0006da716279c728,0x0006fa6fa150dba3,0x00084fa32f114503,0x000020200ebf2740}},
     {{0x00090af2a4f30bb8,0x000233a2204ec06a,0x000572fbdc316dfd,0x0002843a0475a78f,0x00004ba9e239c4e7}, {0x0009abfc1137d0a0,0x00011346b7ea4127,0x000361a1d3145421,0x00011092560f9c0e,0x0000e66391042bad}},
 }
+    /* clang-format on */
 };
 
 #endif //(_DISABLE_ECP_SM2_HARDCODED_BP_TBL_)
 
-IPP_OWN_DEFN(const cpPrecompAP *, gfpec_precom_sm2_radix52_fun, (void)) {
-   static cpPrecompAP t = {
-      /* w                = */ BASE_POINT_WIN_SIZE,
-      /* select_function  = */ gesm2_select_ap_w7_ifma,
-      /* precomputed_data = */ (BNU_CHUNK_T *)ifma_ec_sm2_bp_precomp
-   };
-   return &t;
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_sm2_radix52_fun, (void))
+{
+    static cpPrecompAP t = { /* w                = */ BASE_POINT_WIN_SIZE,
+                             /* select_function  = */ gesm2_select_ap_w7_ifma,
+                             /* precomputed_data = */ (BNU_CHUNK_T*)ifma_ec_sm2_bp_precomp };
+    return &t;
 }
 
 #endif //(_IPP32E >= _IPP32E_K1)

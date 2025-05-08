@@ -25,25 +25,43 @@
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 
 /* 2*p */
-static const __ALIGN64 Ipp64u psm2_x2[PSM2_LEN52] = {
-    0x000ffffffffffffe, 0x000fe00000001fff, 0x000fffffffffffff, 0x000fffffffffffff, 0x0001fffffffdffff};
+static const __ALIGN64 Ipp64u psm2_x2[PSM2_LEN52] = { 0x000ffffffffffffe,
+                                                      0x000fe00000001fff,
+                                                      0x000fffffffffffff,
+                                                      0x000fffffffffffff,
+                                                      0x0001fffffffdffff };
 /* 4*p */
-static const __ALIGN64 Ipp64u psm2_x4[PSM2_LEN52] = {
-    0x000ffffffffffffc, 0x000fc00000003fff, 0x000fffffffffffff, 0x000fffffffffffff, 0x0003fffffffbffff};
+static const __ALIGN64 Ipp64u psm2_x4[PSM2_LEN52] = { 0x000ffffffffffffc,
+                                                      0x000fc00000003fff,
+                                                      0x000fffffffffffff,
+                                                      0x000fffffffffffff,
+                                                      0x0003fffffffbffff };
 /* 6*p */
-static const __ALIGN64 Ipp64u psm2_x6[PSM2_LEN52] = {
-    0x000ffffffffffffa, 0x000fa00000005fff, 0x000fffffffffffff, 0x000fffffffffffff, 0x0005fffffff9ffff};
+static const __ALIGN64 Ipp64u psm2_x6[PSM2_LEN52] = { 0x000ffffffffffffa,
+                                                      0x000fa00000005fff,
+                                                      0x000fffffffffffff,
+                                                      0x000fffffffffffff,
+                                                      0x0005fffffff9ffff };
 /* 8*p */
-static const __ALIGN64 Ipp64u psm2_x8[PSM2_LEN52] = {
-    0x000ffffffffffff8, 0x000f800000007fff, 0x000fffffffffffff, 0x000fffffffffffff, 0x0007fffffff7ffff};
+static const __ALIGN64 Ipp64u psm2_x8[PSM2_LEN52] = { 0x000ffffffffffff8,
+                                                      0x000f800000007fff,
+                                                      0x000fffffffffffff,
+                                                      0x000fffffffffffff,
+                                                      0x0007fffffff7ffff };
 
 /* Mont(a) = a*r mod psm2, where r = 2^(6*52) mod psm2 */
-static const __ALIGN64 Ipp64u psm2_a[PSM2_LEN52] = {
-    0x000ffffffcffffff, 0x000ff03000000fcf, 0x000cffffffffffff, 0x000fffffffffffff, 0x0000fcfffffeffff};
+static const __ALIGN64 Ipp64u psm2_a[PSM2_LEN52] = { 0x000ffffffcffffff,
+                                                     0x000ff03000000fcf,
+                                                     0x000cffffffffffff,
+                                                     0x000fffffffffffff,
+                                                     0x0000fcfffffeffff };
 
 /* Mont(b) = b*r mod psm2, where r = 2^(6*52) mod psm2 */
-static const __ALIGN64 Ipp64u psm2_b[PSM2_LEN52] = {
-    0x00040fe188de30c4, 0x00012da4d9019422, 0x000b0dc519344af3, 0x000a51c3c71cf379, 0x00005130aa45505e};
+static const __ALIGN64 Ipp64u psm2_b[PSM2_LEN52] = { 0x00040fe188de30c4,
+                                                     0x00012da4d9019422,
+                                                     0x000b0dc519344af3,
+                                                     0x000a51c3c71cf379,
+                                                     0x00005130aa45505e };
 
 
 #define add(R, A, B)    (R) = fesm2_add_no_red((A), (B))
@@ -61,7 +79,8 @@ static const __ALIGN64 Ipp64u psm2_b[PSM2_LEN52] = {
 #define norm_dual(R1, A1, R2, A2)        ifma_norm52_dual(&(R1), (A1), &(R2), (A2))
 #define lnorm_dual(R1, A1, R2, A2)       ifma_lnorm52_dual(&(R1), (A1), &(R2), (A2))
 
-IPP_OWN_DEFN(void, gesm2_to_affine, (fesm2 prx[], fesm2 pry[], const PSM2_POINT_IFMA* a)) {
+IPP_OWN_DEFN(void, gesm2_to_affine, (fesm2 prx[], fesm2 pry[], const PSM2_POINT_IFMA* a))
+{
 
     fesm2 z1, z2, z3;
     z1 = z2 = z3 = setzero_i64();
@@ -86,7 +105,8 @@ IPP_OWN_DEFN(void, gesm2_to_affine, (fesm2 prx[], fesm2 pry[], const PSM2_POINT_
     return;
 }
 
-IPP_OWN_DEFN(void, gesm2_dbl, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p)) {
+IPP_OWN_DEFN(void, gesm2_dbl, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p))
+{
     /*
      * Algorithm (Gueron - Enhanced Montgomery Multiplication)
      * l1 = 3x^2 + a*z^4 = (if sm2 a = -3) = 3*(x^2 - z^4) = 3*(x - z^2)*(x + z^2)
@@ -115,58 +135,66 @@ IPP_OWN_DEFN(void, gesm2_dbl, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p)) {
     const fesm2 M4 = FESM2_LOADU(psm2_x4); /* 4*p */
     const fesm2 M8 = FESM2_LOADU(psm2_x8); /* 8*p */
 
-    add(T, *y1, *y1);    /* T = 2*y1 */
-    lnorm(T, T);         /**/
-                         /*=====*/
-    sqr_dual(V, T,       /* V = 4*y1^2 */
-             U, *z1);    /* U = z1^2 */
-                         /*=====*/
-    sub(B, *x1, U);      /* B = 2*p + x1 - z1^2 */
-    add(B, B, M2);       /**/
-    add(U, *x1, U);      /* U = x1 + z1^2 */
-                         /*=====*/
-                         /* normalization */
-    lnorm_dual(V, V,     /**/
-               U, U);    /**/
-    norm(B, B);          /**/
-                         /*=====*/
-    mul_dual(A, V, *x1,  /* A = 4*x1*y1^2 */
-             B, B, U);   /* B = (x1 - z1^2)*(x1 + z1^2) */
-                         /*=====*/
-    add(x2, A, A);       /* x2 = 8*x1*y1^2 (4p) */
-    add(H, B, B);        /**/
-    add(B, B, H);        /* B(l1) = 3*(x1 - z1^2)*(x1 + z1^2) */
-                         /*=====*/
-                         /* normalization */
-    lnorm(B, B);         /**/
-                         /*=====*/
-    sqr_dual(U, B,       /* U = l1^2 */
-             y2, V);     /* y2 = 16*y^2 */
-                         /*=====*/
-    sub(x2, U, x2);      /* x2 = 4*p + l1^2 - 2*l2 */
-    add(x2, x2, M4);     /**/
-    div2(y2, y2);        /**/
-                         /*=====*/
-    sub(U, A, x2);       /* U = 8*p + l2 - x2 */
-    add(U, U, M8);       /**/
-                         /*=====*/
-                         /* normalization */
-    norm(U, U);          /**/
-                         /*=====*/
-    mul_dual(z2, T, *z1, /* z2 = 2*y1*z1 */
-             U, U, B);   /* U = B(l1)*(A(l2) - x2) */
-                         /*=====*/
-    sub(y2, U, y2);      /* y2 = 2*p + B(l1)*(A(l2) - x2) - y2(l3) */
-    add(y2, y2, M2);     /**/
-                         /*=====*/
-                         /* normalization */
-    norm_dual(r->x, x2,  /**/
-              r->y, y2); /**/
-    lnorm(r->z, z2);     /**/
+    add(T, *y1, *y1);                      /* T = 2*y1 */
+    lnorm(T, T);
+
+    /* V = 4*y1^2 */
+    /* U = z1^2 */
+    sqr_dual(V, T, U, *z1);
+
+    sub(B, *x1, U); /* B = 2*p + x1 - z1^2 */
+    add(B, B, M2);
+    add(U, *x1, U); /* U = x1 + z1^2 */
+
+    /* normalization */
+    lnorm_dual(V, V, U, U);
+    norm(B, B);
+
+    /* A = 4*x1*y1^2 */
+    /* B = (x1 - z1^2)*(x1 + z1^2) */
+    mul_dual(A, V, *x1, B, B, U);
+
+    add(x2, A, A); /* x2 = 8*x1*y1^2 (4p) */
+    add(H, B, B);
+    add(B, B, H);  /* B(l1) = 3*(x1 - z1^2)*(x1 + z1^2) */
+
+    /* normalization */
+    lnorm(B, B);
+
+    /* U = l1^2 */
+    /* y2 = 16*y^2 */
+    sqr_dual(U, B, y2, V);
+
+    /*x2 = 4 * p + l1 ^ 2 - 2 * l2 */
+    sub(x2, U, x2);
+    add(x2, x2, M4);
+    div2(y2, y2);
+
+    sub(U, A, x2); /* U = 8*p + l2 - x2 */
+    add(U, U, M8);
+
+    /* normalization */
+    norm(U, U);
+
+    /* z2 = 2*y1*z1 */
+    /* U = B(l1)*(A(l2) - x2) */
+    mul_dual(z2, T, *z1, U, U, B);
+
+    sub(y2, U, y2); /* y2 = 2*p + B(l1)*(A(l2) - x2) - y2(l3) */
+    add(y2, y2, M2);
+
+    /* normalization */
+    norm_dual(r->x, x2, r->y, y2);
+    lnorm(r->z, z2);
     return;
 }
 
-IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, const PSM2_POINT_IFMA* q)) {
+/* clang-format off */
+IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA* r,
+                               const PSM2_POINT_IFMA* p,
+                               const PSM2_POINT_IFMA* q))
+/* clang-format on */
+{
     /*
      * Algorithm (Gueron - Enhanced Montgomery Multiplication)
      *
@@ -199,41 +227,40 @@ IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
     U1 = U2 = S1 = setzero_i64();
     S2 = H = R = setzero_i64();
 
-    mul_dual(S1, *y1, *z2,  /* s1 = y1*z2 */
-             U1, *z2, *z2); /* u1 = z2^2  */
-                            /*=====*/
-                            /* normalization */
-    lnorm_dual(S1, S1,      /**/
-               U1, U1);     /**/
-                            /*=====*/
-    mul_dual(S2, *y2, *z1,  /* s2 = y2*z1 */
-             U2, *z1, *z1); /* u2 = z1^2 */
-                            /*=====*/
-                            /* normalization */
-    lnorm_dual(S2, S2,      /**/
-               U2, U2);     /**/
-                            /*=====*/
-    mul_dual(S1, S1, U1,    /* s1 = y1*z2^3 (C) */
-             S2, S2, U2);   /* s2 = y2*z1^3 (D) */
-                            /*=====*/
-                            /* normalization */
-    lnorm_dual(S1, S1,      /**/
-               S2, S2);     /* (need by correct compute F = D - C) */
-                            /*=====*/
-    mul_dual(U1, *x1, U1,   /* u1 = x1*z2^2 (A) */
-             U2, *x2, U2);  /* u2 = x2*z1^2 (B) */
-                            /*=====*/
-                            /* normalization */
-    lnorm_dual(U1, U1,      /**/
-               U2, U2);     /**/
-                            /*=====*/
-    sub(R, S2, S1);         /* r = D - C (F) */
-    sub(H, U2, U1);         /* h = B - A (E) */
+    /* s1 = y1*z2 */
+    /* u1 = z2^2  */
+    mul_dual(S1, *y1, *z2, U1, *z2, *z2);
 
-   /* checking the equality of X and Y coordinates (D - C == 0) and (B - A == 0) */
-   const mask8 f_are_zero     = FESM2_IS_ZERO(R);
-   const mask8 e_are_zero     = FESM2_IS_ZERO(H);
-   const mask8 point_is_equal = ((e_are_zero & f_are_zero) & (~p_is_inf) & (~q_is_inf));
+    /* normalization */
+    lnorm_dual(S1, S1, U1, U1);
+
+    /* s2 = y2*z1 */
+    /* u2 = z1^2 */
+    mul_dual(S2, *y2, *z1, U2, *z1, *z1);
+
+    lnorm_dual(S2, S2, U2, U2);
+
+    /* s1 = y1*z2^3 (C) */
+    /* s2 = y2*z1^3 (D) */
+    mul_dual(S1, S1, U1, S2, S2, U2);
+
+    /* (need by correct compute F = D - C) */
+    lnorm_dual(S1, S1, S2, S2);
+
+    /* u1 = x1*z2^2 (A) */
+    /* u2 = x2*z1^2 (B) */
+    mul_dual(U1, *x1, U1, U2, *x2, U2);
+
+    /* normalization */
+    lnorm_dual(U1, U1, U2, U2);
+
+    sub(R, S2, S1); /* r = D - C (F) */
+    sub(H, U2, U1); /* h = B - A (E) */
+
+    /* checking the equality of X and Y coordinates (D - C == 0) and (B - A == 0) */
+    const mask8 f_are_zero     = FESM2_IS_ZERO(R);
+    const mask8 e_are_zero     = FESM2_IS_ZERO(H);
+    const mask8 point_is_equal = ((e_are_zero & f_are_zero) & (~p_is_inf) & (~q_is_inf));
 
     __ALIGN64 PSM2_POINT_IFMA r2;
     r2.x = r2.y = r2.z = setzero_i64();
@@ -241,49 +268,48 @@ IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
         gesm2_dbl(&r2, p);
     }
 
-    add(R, R, M2);         /**/
-    add(H, H, M2);         /**/
-                           /*=====*/
-                           /* normalization */
-    norm_dual(R, R,        /**/
-              H, H);       /**/
-                           /**/
-    mul_dual(z3, *z1, *z2, /* z3 = z1*z2 */
-             U2, H, H);    /* u2 = E^2 */
-                           /*=====*/
-                           /* normalization */
-    lnorm_dual(z3, z3,     /**/
-               U2, U2);    /**/
-                           /**/
-    mul_dual(z3, z3, H,    /* z3 = (z1*z2)*E */
-             S2, R, R);    /* s2 = F^2 */
-    mul(H, H, U2);         /* h  = E^3 */
-                           /*=====*/
-                           /* normalization */
-    lnorm(H, H);           /**/
-                           /*=====*/
-    mul(U1, U1, U2);       /* u1 = A*E^2 */
-    sub(x3, S2, H);        /* x3 = F^2 - E^3 */
-    add(x3, x3, M2);       /**/
-    add(U2, U1, U1);       /* u2 = 2*A*E^2 */
-    mul(S1, S1, H);        /* s1 = C*E^3 */
-    sub(x3, x3, U2);       /* x3 = (F^2 - E^3) -2*A*E^2 */
-    add(x3, x3, M4);       /**/
-                           /*=====*/
-    sub(y3, U1, x3);       /* y3 = A*E^2 - x3 */
-    add(y3, y3, M8);       /**/
-                           /*=====*/
-                           /* normalization */
-    norm(y3, y3);          /**/
-                           /**/
-    mul(y3, y3, R);        /* y3 = F*(A*E^2 - x3) */
-    sub(y3, y3, S1);       /* y3 = F*(A*E^2 - x3) - C*E^3 */
+    add(R, R, M2);
+    add(H, H, M2);
+    /* normalization */
+    norm_dual(R, R, H, H);
+
+    /* z3 = z1*z2 */
+    /* u2 = E^2 */
+    mul_dual(z3, *z1, *z2, U2, H, H);
+
+    /* normalization */
+    lnorm_dual(z3, z3, U2, U2);
+
+    /* z3 = (z1*z2)*E */
+    /* s2 = F^2 */
+    mul_dual(z3, z3, H, S2, R, R);
+    mul(H, H, U2); /* h  = E^3 */
+
+
+    /* normalization */
+    lnorm(H, H);
+
+    mul(U1, U1, U2); /* u1 = A*E^2 */
+    sub(x3, S2, H);  /* x3 = F^2 - E^3 */
+    add(x3, x3, M2);
+    add(U2, U1, U1); /* u2 = 2*A*E^2 */
+    mul(S1, S1, H);  /* s1 = C*E^3 */
+    sub(x3, x3, U2); /* x3 = (F^2 - E^3) -2*A*E^2 */
+    add(x3, x3, M4);
+
+    sub(y3, U1, x3); /* y3 = A*E^2 - x3 */
+    add(y3, y3, M8);
+
+    /* normalization */
+    norm(y3, y3);
+
+    mul(y3, y3, R);  /* y3 = F*(A*E^2 - x3) */
+    sub(y3, y3, S1); /* y3 = F*(A*E^2 - x3) - C*E^3 */
     add(y3, y3, M2);
 
     /* normalization */
-    norm_dual(x3, x3,  /**/
-              y3, y3); /**/
-    lnorm(z3, z3);     /**/
+    norm_dual(x3, x3, y3, y3);
+    lnorm(z3, z3);
 
     /* T = p_is_inf ? q : T */
     FESM2_MASK_MOV(x3, x3, p_is_inf, *x2);
@@ -307,7 +333,12 @@ IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
     return;
 }
 
-IPP_OWN_DEFN(void, gesm2_add_affine, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, const PSM2_AFFINE_POINT_IFMA* q)) {
+/* clang-format off */
+IPP_OWN_DEFN(void, gesm2_add_affine, (PSM2_POINT_IFMA* r,
+                                      const PSM2_POINT_IFMA* p,
+                                      const PSM2_AFFINE_POINT_IFMA* q))
+/* clang-format on */
+{
     /*
      * Algorithm (Gueron - Enhanced Montgomery Multiplication)
      *
@@ -340,54 +371,55 @@ IPP_OWN_DEFN(void, gesm2_add_affine, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA
     fesm2 U2, S2, H, R;
     U2 = S2 = H = R = setzero_i64();
 
-    mul_dual(R, *z1, *z1,   /* R = z1^2 */
-             S2, *y2, *z1); /* S2 = y2*z1 */
-                            /*=====*/
-    lnorm_dual(R, R,        /**/
-               S2, S2);     /**/
-                            /*=====*/
-    mul_dual(U2, *x2, R,    /* U2 = x2*z1^2 (B) */
-             S2, S2, R);    /* S2 = y2*z1^3 (D) */
-                            /**/
-    sub(H, U2, *x1);        /* H = B - A (E) */
-    add(H, H, M8);          /**/
-    sub(R, S2, *y1);        /* R = D - C (F) */
-    add(R, R, M4);          /**/
-                            /*=====*/
-    norm_dual(H, H,         /**/
-              R, R);        /**/
-                            /**/
-    mul(z3, H, *z1);        /* z3 = z1*E */
-                            /**/
-    sqr_dual(U2, H,         /* U2 = E^2 */
-             S2, R);        /* S2 = F^2 */
-                            /**/
-    lnorm(U2, U2);          /**/
-                            /**/
-    mul(H, H, U2);          /* H = E^3 */
-                            /**/
-    lnorm(H, H);            /**/
-                            /**/
-    mul_dual(U2, U2, *x1,   /* U2 = A*E^2 */
-             y3, H, *y1);   /* y3 = C*E^3 */
-                            /**/
-    add(x3, U2, U2);        /* x2 = 2*A*E^2 */
-    sub(x3, S2, x3);        /* x3 = F^2 - 2*A*E^2 */
-    add(x3, x3, M4);        /**/
-    sub(x3, x3, H);         /* x3 = F^2 - 2*A*E^2 - E^3 */
-    add(x3, x3, M2);        /**/
-                            /**/
-    sub(U2, U2, x3);        /* U2 = A*E^2 - x3 */
-    add(U2, U2, M8);        /**/
-    norm(U2, U2);           /**/
-    mul(U2, U2, R);         /* U2 = F*(A*E^2 - x3) */
-    sub(y3, U2, y3);        /* y3 = F*(A*E^2 - x3) - C*E^2 */
-    add(y3, y3, M2);        /**/
+    /* R = z1^2 */
+    /* S2 = y2*z1 */
+    mul_dual(R, *z1, *z1, S2, *y2, *z1);
+
+    lnorm_dual(R, R, S2, S2);
+
+    /* U2 = x2*z1^2 (B) */
+    /* S2 = y2*z1^3 (D) */
+    mul_dual(U2, *x2, R, S2, S2, R);
+
+    sub(H, U2, *x1); /* H = B - A (E) */
+    add(H, H, M8);
+    sub(R, S2, *y1); /* R = D - C (F) */
+    add(R, R, M4);
+
+    norm_dual(H, H, R, R);
+
+    mul(z3, H, *z1); /* z3 = z1*E */
+
+                     /* U2 = E^2 */
+    /* S2 = F^2 */
+    sqr_dual(U2, H, S2, R);
+
+    lnorm(U2, U2);
+
+    mul(H, H, U2); /* H = E^3 */
+
+    lnorm(H, H);
+
+    /* U2 = A*E^2 */
+    /* y3 = C*E^3 */
+    mul_dual(U2, U2, *x1, y3, H, *y1);
+
+    add(x3, U2, U2); /* x2 = 2*A*E^2 */
+    sub(x3, S2, x3); /* x3 = F^2 - 2*A*E^2 */
+    add(x3, x3, M4);
+    sub(x3, x3, H);  /* x3 = F^2 - 2*A*E^2 - E^3 */
+    add(x3, x3, M2);
+
+    sub(U2, U2, x3); /* U2 = A*E^2 - x3 */
+    add(U2, U2, M8);
+    norm(U2, U2);
+    mul(U2, U2, R);  /* U2 = F*(A*E^2 - x3) */
+    sub(y3, U2, y3); /* y3 = F*(A*E^2 - x3) - C*E^2 */
+    add(y3, y3, M2);
 
     /* normalization */
-    norm_dual(x3, x3,  /**/
-              y3, y3); /**/
-    lnorm(z3, z3);     /**/
+    norm_dual(x3, x3, y3, y3);
+    lnorm(z3, z3);
 
     const fesm2 ONE = FESM2_LOADU(PSM2_R);
     /* T = p_is_inf ? q : T */
@@ -406,7 +438,8 @@ IPP_OWN_DEFN(void, gesm2_add_affine, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA
     return;
 }
 
-IPP_OWN_DEFN(int, gesm2_is_on_curve, (const PSM2_POINT_IFMA* p, const int use_jproj_coords)) {
+IPP_OWN_DEFN(int, gesm2_is_on_curve, (const PSM2_POINT_IFMA* p, const int use_jproj_coords))
+{
     /*
      * Algorithm
      *
@@ -430,38 +463,38 @@ IPP_OWN_DEFN(int, gesm2_is_on_curve, (const PSM2_POINT_IFMA* p, const int use_jp
     sqr(rh, p->x); /* rh = x^2 */
     /* rh = x*(x^2 + a*z^4) + b*z^6 = x*(x^2 - 3*z^4) + b*z^6 */
     if (0 != use_jproj_coords) {
-        sqr(tmp, p->z);        /* tmp = z^2 */
-        lnorm(tmp, tmp);       /**/
-                               /**/
-        sqr(Z4, tmp);          /* z4 = z^4 */
-        lnorm(Z4, Z4);         /**/
-        mul(Z6, Z4, tmp);      /* z6 = z^6 */
-        lnorm(Z6, Z6);         /**/
-                               /**/
-        add(tmp, Z4, Z4);      /* tmp = 2*z^4 */
-        add(tmp, tmp, Z4);     /* tmp = 3*z^4 */
-                               /**/
-        sub(rh, rh, tmp);      /* rh = x^2 - 3*z^4 */
-        add(rh, rh, M6);       /**/
-        norm(rh, rh);          /**/
-                               /**/
-        mul_dual(rh, rh, p->x, /* rh = x*(x^2 - 3*z^4) */
-                 tmp, Z6, b);  /* tmp = b*z^6 */
-                               /**/
-        add(rh, rh, tmp);      /* rh = x*(x^2 - 3*z^4) + b*z^6 */
+        sqr(tmp, p->z);    /* tmp = z^2 */
+        lnorm(tmp, tmp);
+
+        sqr(Z4, tmp);      /* z4 = z^4 */
+        lnorm(Z4, Z4);
+        mul(Z6, Z4, tmp);  /* z6 = z^6 */
+        lnorm(Z6, Z6);
+
+        add(tmp, Z4, Z4);  /* tmp = 2*z^4 */
+        add(tmp, tmp, Z4); /* tmp = 3*z^4 */
+
+        sub(rh, rh, tmp);  /* rh = x^2 - 3*z^4 */
+        add(rh, rh, M6);
+        norm(rh, rh);
+
+        /* rh = x*(x^2 - 3*z^4) */
+        mul_dual(rh, rh, p->x, tmp, Z6, b); /* tmp = b*z^6 */
+
+        add(rh, rh, tmp);                   /* rh = x*(x^2 - 3*z^4) + b*z^6 */
     }
     /* rh = x*(x^2 + a) + b */
     else {
         add(rh, rh, a);    /* rh = x^2 + a */
-        lnorm(rh, rh);     /**/
+        lnorm(rh, rh);
         mul(rh, rh, p->x); /* rh = x*(x^2 + a) */
         add(rh, rh, b);    /* rh = x*(x^2 + a) + b */
     }
-    lnorm(rh, rh); /**/
+    lnorm(rh, rh);
 
     /* rl = Y^2 */
-    sqr(tmp, p->y);  /* tmp = y^2 */
-    lnorm(tmp, tmp); /**/
+    sqr(tmp, p->y); /* tmp = y^2 */
+    lnorm(tmp, tmp);
 
     /* from mont */
     from_mont(tmp, tmp);
@@ -483,10 +516,14 @@ IPP_OWN_DEFN(int, gesm2_is_on_curve, (const PSM2_POINT_IFMA* p, const int use_jp
 #undef norm_dual
 
 static __NOINLINE void clear_secret_context(Ipp16u* wval,
-                                            Ipp32s* chunk_no, Ipp32s* chunk_shift,
-                                            Ipp8u* sign, Ipp8u* digit,
-                                            PSM2_POINT_IFMA* R, PSM2_POINT_IFMA* H,
-                                            PSM2_AFFINE_POINT_IFMA* A) {
+                                            Ipp32s* chunk_no,
+                                            Ipp32s* chunk_shift,
+                                            Ipp8u* sign,
+                                            Ipp8u* digit,
+                                            PSM2_POINT_IFMA* R,
+                                            PSM2_POINT_IFMA* H,
+                                            PSM2_AFFINE_POINT_IFMA* A)
+{
     *wval        = 0;
     *chunk_no    = 0;
     *chunk_shift = 0;
@@ -502,7 +539,8 @@ static __NOINLINE void clear_secret_context(Ipp16u* wval,
     return;
 }
 
-__IPPCP_INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b) {
+__IPPCP_INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b)
+{
     const Ipp32s eq  = a ^ b;
     const Ipp32s v   = ~eq & (eq - 1);
     const Ipp32s msb = 0 - (v >> (sizeof(a) * 8 - 1));
@@ -511,7 +549,8 @@ __IPPCP_INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b) {
 
 #define WIN_SIZE (5)
 
-static void table_get_point(PSM2_POINT_IFMA* r, const Ipp32s digit, const PSM2_POINT_IFMA tbl[]) {
+static void table_get_point(PSM2_POINT_IFMA* r, const Ipp32s digit, const PSM2_POINT_IFMA tbl[])
+{
     const Ipp32s idx = digit - 1;
 
     __ALIGN64 PSM2_POINT_IFMA R;
@@ -537,7 +576,13 @@ static void table_get_point(PSM2_POINT_IFMA* r, const Ipp32s digit, const PSM2_P
 #define add_point_affine gesm2_add_affine
 
 /* r = n*P = (P + P + ... + P) */
-IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, const Ipp8u* pExtendedScalar, const int scalarBitSize)) {
+/* clang-format off */
+IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA* r,
+                               const PSM2_POINT_IFMA* p,
+                               const Ipp8u* pExtendedScalar,
+                               const int scalarBitSize))
+/* clang-format on */
+{
     /* default params */
     __ALIGN64 PSM2_POINT_IFMA tbl[(1 << (WIN_SIZE - 1))];
 
@@ -581,7 +626,11 @@ IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
         wval = 0;
     }
 
-    booth_recode(/* sign = */ &sign, /* digit = */ &digit, /* in = */ (Ipp8u)wval, /* w = */ WIN_SIZE);
+    booth_recode(
+        /* sign = */ &sign,
+        /* digit = */ &digit,
+        /* in = */ (Ipp8u)wval,
+        /* w = */ WIN_SIZE);
     table_get_point(/* r = */ &R, /* digit = */ (Ipp32s)digit, /* tbl = */ tbl);
 
     for (bit -= WIN_SIZE; bit >= WIN_SIZE; bit -= WIN_SIZE) {
@@ -599,7 +648,11 @@ IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
         wval = *((Ipp16u*)(pExtendedScalar + chunk_no));
         wval = (Ipp16u)((wval >> chunk_shift) & mask);
 
-        booth_recode(/* sign = */ &sign, /* digit = */ &digit, /* in = */ (Ipp8u)wval, /* w = */ WIN_SIZE);
+        booth_recode(
+            /* sign = */ &sign,
+            /* digit = */ &digit,
+            /* in = */ (Ipp8u)wval,
+            /* w = */ WIN_SIZE);
         table_get_point(/* r = */ &H, /* idx = */ (Ipp32s)digit, /* tbl = */ tbl);
 
         neg_coord(negHy, H.y);
@@ -621,7 +674,11 @@ IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
     wval = *((Ipp16u*)(pExtendedScalar + 0));
     wval = (wval << 1) & mask;
 
-    booth_recode(/* sign = */ &sign, /* digit = */ &digit, /* in = */ (Ipp8u)wval, /* w = */ WIN_SIZE);
+    booth_recode(
+        /* sign = */ &sign,
+        /* digit = */ &digit,
+        /* in = */ (Ipp8u)wval,
+        /* w = */ WIN_SIZE);
     table_get_point(/* r = */ &H, /* idx = */ (Ipp32s)digit, /* tbl = */ tbl);
 
     neg_coord(negHy, H.y);
@@ -636,10 +693,7 @@ IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
     r->z = R.z;
 
     /* clear secret data */
-    clear_secret_context(&wval,
-                         &chunk_no, &chunk_shift,
-                         &sign, &digit,
-                         &R, &H, NULL);
+    clear_secret_context(&wval, &chunk_no, &chunk_shift, &sign, &digit, &R, &H, NULL);
     return;
 }
 
@@ -650,8 +704,9 @@ IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
 #define BP_N_ENTRY  BASE_POINT_N_ENTRY
 
 __IPPCP_INLINE void extract_point_affine(PSM2_AFFINE_POINT_IFMA* r,
-                                   const SINGLE_PSM2_AFFINE_POINT_IFMA* tbl,
-                                   const Ipp32s digit) {
+                                         const SINGLE_PSM2_AFFINE_POINT_IFMA* tbl,
+                                         const Ipp32s digit)
+{
     const Ipp32s idx = digit - 1;
 
     __ALIGN64 PSM2_AFFINE_POINT_IFMA R;
@@ -669,7 +724,12 @@ __IPPCP_INLINE void extract_point_affine(PSM2_AFFINE_POINT_IFMA* r,
     return;
 }
 
-IPP_OWN_DEFN(void, gesm2_select_ap_w7_ifma, (BNU_CHUNK_T * pAffinePoint, const BNU_CHUNK_T* pTable, int index)) {
+/* clang-format off */
+IPP_OWN_DEFN(void, gesm2_select_ap_w7_ifma, (BNU_CHUNK_T* pAffinePoint,
+                                             const BNU_CHUNK_T* pTable,
+                                             int index))
+/* clang-format on */
+{
     __ALIGN64 PSM2_AFFINE_POINT_IFMA ap;
 
     extract_point_affine(&ap, (SINGLE_PSM2_AFFINE_POINT_IFMA*)pTable, index);
@@ -681,7 +741,8 @@ IPP_OWN_DEFN(void, gesm2_select_ap_w7_ifma, (BNU_CHUNK_T * pAffinePoint, const B
     fesm2_convert_radix52_radix64(pAffinePoint + PSM2_LEN64, ap.y);
 }
 
-IPP_OWN_DEFN(void, gesm2_mul_base, (PSM2_POINT_IFMA * r, const Ipp8u* pExtendedScalar)) {
+IPP_OWN_DEFN(void, gesm2_mul_base, (PSM2_POINT_IFMA * r, const Ipp8u* pExtendedScalar))
+{
     const SINGLE_PSM2_AFFINE_POINT_IFMA* tbl = &ifma_ec_sm2_bp_precomp[0][0];
 
     __ALIGN64 PSM2_POINT_IFMA R;
@@ -737,10 +798,7 @@ IPP_OWN_DEFN(void, gesm2_mul_base, (PSM2_POINT_IFMA * r, const Ipp8u* pExtendedS
     r->z = R.z;
 
     /* clear secret data */
-    clear_secret_context(&wval,
-                         &chunk_no, &chunk_shift,
-                         &sign, &digit,
-                         &R, NULL, &A);
+    clear_secret_context(&wval, &chunk_no, &chunk_shift, &sign, &digit, &R, NULL, &A);
     return;
 }
 

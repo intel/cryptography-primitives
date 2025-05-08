@@ -25,14 +25,16 @@
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 #include "gfpec/sm2/ifma_arith_method_sm2.h"
 
-
-IPP_OWN_DEFN(IppStatus, gfec_Sign_sm2_avx512,
-             (const IppsBigNumState* pMsgDigest,
-              const IppsBigNumState* pRegPrivate,
-              IppsBigNumState* pEphPrivate,
-              IppsBigNumState* pSignR, IppsBigNumState* pSignS,
-              IppsGFpECState* pEC,
-              Ipp8u* pScratchBuffer)) {
+/* clang-format off */
+IPP_OWN_DEFN(IppStatus, gfec_Sign_sm2_avx512, (const IppsBigNumState* pMsgDigest,
+                                               const IppsBigNumState* pRegPrivate,
+                                               IppsBigNumState* pEphPrivate,
+                                               IppsBigNumState* pSignR,
+                                               IppsBigNumState* pSignS,
+                                               IppsGFpECState* pEC,
+                                               Ipp8u* pScratchBuffer))
+/* clang-format on */
+{
     IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
 
     IppStatus sts = ippStsNoErr;
@@ -71,7 +73,10 @@ IPP_OWN_DEFN(IppStatus, gfec_Sign_sm2_avx512,
     /* 1) (x1,y1) = [s]G */
     /* copy scalar */
     BNU_CHUNK_T* pExtendedScalar = cpGFpGetPool(2, pME);
-    cpGFpElementCopyPad(pExtendedScalar, orderLen + 1, BN_NUMBER(pEphPrivate), BN_SIZE(pEphPrivate));
+    cpGFpElementCopyPad(pExtendedScalar,
+                        orderLen + 1,
+                        BN_NUMBER(pEphPrivate),
+                        BN_SIZE(pEphPrivate));
 
     __ALIGN64 PSM2_POINT_IFMA P;
 
@@ -132,14 +137,19 @@ IPP_OWN_DEFN(IppStatus, gfec_Sign_sm2_avx512,
     t       = n_to_mont(one);
     reg_key = n_to_mont(reg_key);
 
-    sign_s  = n_mul(sign_r, reg_key);  /* sign_s  = r * d                      (result not normalized) */
-    reg_key = n_add(reg_key, t);       /* reg_key = 1 + d                          (result normalized) */
-    reg_key = n_inv(reg_key);          /* reg_key = (1 + d)^(-1)               (result not normalized) */
-    sign_s  = n_sub(eph_key, sign_s);  /* sign_s  = (k - r * d)                    (result normalized) */
-    sign_s  = n_mul(sign_s, reg_key);  /* sign_s  = (1 + d)^(-1) * (k - r * d) (result not normalized) */
-    
+    /* sign_s  = r * d                      (result not normalized) */
+    sign_s = n_mul(sign_r, reg_key);
+    /* reg_key = 1 + d                          (result normalized) */
+    reg_key = n_add(reg_key, t);
+    /* reg_key = (1 + d)^(-1)               (result not normalized) */
+    reg_key = n_inv(reg_key);
+    /* sign_s  = (k - r * d)                    (result normalized) */
+    sign_s = n_sub(eph_key, sign_s);
+    /* sign_s  = (1 + d)^(-1) * (k - r * d) (result not normalized) */
+    sign_s = n_mul(sign_s, reg_key);
+
     // result shall be normalized before the final multiplication inside `n_from_mont` function
-    sign_s  = ifma_lnorm52(sign_s);
+    sign_s = ifma_lnorm52(sign_s);
     sign_s = n_from_mont(sign_s);
     sign_r = n_from_mont(sign_r);
 

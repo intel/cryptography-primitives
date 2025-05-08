@@ -26,24 +26,32 @@
  * EC SM2 base point order
  * in 2^52 radix
  */
-static const __ALIGN64 Ipp64u nsm2_x1[PSM2_LEN52] = {
-    0x000bf40939d54123, 0x0006b21c6052b53b, 0x000fffffff7203df, 0x000fffffffffffff, 0x0000fffffffeffff};
+static const __ALIGN64 Ipp64u nsm2_x1[PSM2_LEN52] = { 0x000bf40939d54123,
+                                                      0x0006b21c6052b53b,
+                                                      0x000fffffff7203df,
+                                                      0x000fffffffffffff,
+                                                      0x0000fffffffeffff };
 
 /* k0 = -( (1/nsm2) mod 2^DIGIT_SIZE_52 ) mod 2^DIGIT_SIZE_52 */
 static const Ipp64u nsm2_k0 = 0x000f9e8872350975;
 
 /* r = 2^((52*8)) mod nsm2 */
-static const __ALIGN64 Ipp64u nsm2_r[PSM2_LEN52] = {
-    0x00062abedd000000, 0x00006cb726ecad3c, 0x00056c361b698a7e, 0x0000000008dfc209, 0x0000010000000000};
+static const __ALIGN64 Ipp64u nsm2_r[PSM2_LEN52] = { 0x00062abedd000000,
+                                                     0x00006cb726ecad3c,
+                                                     0x00056c361b698a7e,
+                                                     0x0000000008dfc209,
+                                                     0x0000010000000000 };
 
 /* To Montgomery conversion constant
  * rr = 2^((52*6)*2) mod nsm2
  */
-static const __ALIGN64 Ipp64u nsm2_rr[PSM2_LEN52] = {
-    0x000643f5455b3830, 0x000c453935b521eb, 0x0009ec21d42b082e, 0x0004d74634238016, 0x0000ca6ea35cbdde};
+static const __ALIGN64 Ipp64u nsm2_rr[PSM2_LEN52] = { 0x000643f5455b3830,
+                                                      0x000c453935b521eb,
+                                                      0x0009ec21d42b082e,
+                                                      0x0004d74634238016,
+                                                      0x0000ca6ea35cbdde };
 
-static const __ALIGN64 Ipp64u ones[PSM2_LEN52] = {
-    0x1, 0x0, 0x0, 0x0};
+static const __ALIGN64 Ipp64u ones[PSM2_LEN52] = { 0x1, 0x0, 0x0, 0x0 };
 
 #define MULT_ROUND(R, A, B, IDX)                                               \
     const fesm2 Bi##R##IDX     = permutexvar_i8(idx##IDX, (B));                \
@@ -65,7 +73,8 @@ static const __ALIGN64 Ipp64u ones[PSM2_LEN52] = {
     }
 
 /* R = (A*B) - no normalization (in radix 2^52) */
-IPP_OWN_DEFN(fesm2, fesm2_mul_norder, (const fesm2 a, const fesm2 b)) {
+IPP_OWN_DEFN(fesm2, fesm2_mul_norder, (const fesm2 a, const fesm2 b))
+{
     const fesm2 N       = FESM2_LOADU(nsm2_x1); /* p */
     const fesm2 K0      = set1_i64(nsm2_k0);
     const fesm2 zero    = setzero_i64();
@@ -81,13 +90,13 @@ IPP_OWN_DEFN(fesm2, fesm2_mul_norder, (const fesm2 a, const fesm2 b)) {
     /* shift right 64 bit line [R >> 64] */
     const mask64 mask_sr64 = 0x00FFFFFFFFFFFFFF;
     const fesm2 idx_sr64   = set_i64(0x0,                 //  0,  0,  0,  0,  0,  0,  0,  0
-                                     0x3f3e3d3c3b3a3938,  // 63, 62, 61, 60, 59, 58, 57, 56
-                                     0x3736353433323130,  // 55, 54, 53, 52, 51, 50, 49, 48
-                                     0x2f2e2d2c2b2a2928,  // 47, 46, 45, 44, 43, 42, 41, 40
-                                     0x2726252423222120,  // 39, 38, 37, 36, 35, 34, 33, 32
-                                     0x1f1e1d1c1b1a1918,  // 31, 30, 29, 28, 27, 26, 25, 24
-                                     0x1716151413121110,  // 23, 22, 21, 20, 19, 18, 17, 16
-                                     0x0f0e0d0c0b0a0908); // 15, 14, 13, 12, 11, 10, 9, 8
+                                   0x3f3e3d3c3b3a3938,  // 63, 62, 61, 60, 59, 58, 57, 56
+                                   0x3736353433323130,  // 55, 54, 53, 52, 51, 50, 49, 48
+                                   0x2f2e2d2c2b2a2928,  // 47, 46, 45, 44, 43, 42, 41, 40
+                                   0x2726252423222120,  // 39, 38, 37, 36, 35, 34, 33, 32
+                                   0x1f1e1d1c1b1a1918,  // 31, 30, 29, 28, 27, 26, 25, 24
+                                   0x1716151413121110,  // 23, 22, 21, 20, 19, 18, 17, 16
+                                   0x0f0e0d0c0b0a0908); // 15, 14, 13, 12, 11, 10, 9, 8
 
     fesm2 r = setzero_i64();
     /* PSM2
@@ -114,7 +123,8 @@ IPP_OWN_DEFN(fesm2, fesm2_mul_norder, (const fesm2 a, const fesm2 b)) {
     return r;
 }
 
-IPP_OWN_DEFN(fesm2, fesm2_add_norder_norm, (const fesm2 a, const fesm2 b)) {
+IPP_OWN_DEFN(fesm2, fesm2_add_norder_norm, (const fesm2 a, const fesm2 b))
+{
     const fesm2 zero = setzero_i64();
     const fesm2 N    = FESM2_LOADU(nsm2_x1);
 
@@ -134,7 +144,8 @@ IPP_OWN_DEFN(fesm2, fesm2_add_norder_norm, (const fesm2 a, const fesm2 b)) {
     r = mask_mov_i64(t, mask, r);
     return r;
 }
-IPP_OWN_DEFN(fesm2, fesm2_sub_norder_norm, (const fesm2 a, const fesm2 b)) {
+IPP_OWN_DEFN(fesm2, fesm2_sub_norder_norm, (const fesm2 a, const fesm2 b))
+{
     const fesm2 zero = setzero_i64();
     const fesm2 N    = FESM2_LOADU(nsm2_x1);
     /* r = a - b */
@@ -154,7 +165,8 @@ IPP_OWN_DEFN(fesm2, fesm2_sub_norder_norm, (const fesm2 a, const fesm2 b)) {
     return r;
 }
 
-IPP_OWN_DEFN(fesm2, fesm2_fast_reduction_norder, (const fesm2 a)) {
+IPP_OWN_DEFN(fesm2, fesm2_fast_reduction_norder, (const fesm2 a))
+{
     const fesm2 zero = setzero_i64();
     const fesm2 N    = FESM2_LOADU(nsm2_x1);
 
@@ -169,13 +181,15 @@ IPP_OWN_DEFN(fesm2, fesm2_fast_reduction_norder, (const fesm2 a)) {
     return r;
 }
 
-IPP_OWN_DEFN(fesm2, fesm2_to_mont_norder, (const fesm2 a)) {
+IPP_OWN_DEFN(fesm2, fesm2_to_mont_norder, (const fesm2 a))
+{
     const fesm2 RR = FESM2_LOADU(nsm2_rr);
     const fesm2 r  = fesm2_mul_norder(a, RR);
     return ifma_lnorm52(r);
 }
 
-IPP_OWN_DEFN(fesm2, fesm2_from_mont_norder, (const fesm2 a)) {
+IPP_OWN_DEFN(fesm2, fesm2_from_mont_norder, (const fesm2 a))
+{
     const fesm2 ONE = FESM2_LOADU(ones);
     fesm2 r         = fesm2_mul_norder(a, ONE);
     r               = ifma_lnorm52(r);
@@ -183,12 +197,14 @@ IPP_OWN_DEFN(fesm2, fesm2_from_mont_norder, (const fesm2 a)) {
     return r;
 }
 
-__IPPCP_INLINE fesm2 mul_norder_norm(const fesm2 a, const fesm2 b) {
+__IPPCP_INLINE fesm2 mul_norder_norm(const fesm2 a, const fesm2 b)
+{
     const fesm2 r = fesm2_mul_norder(a, b);
     return ifma_lnorm52(r);
 }
 
-__IPPCP_INLINE fesm2 sqr_norder_norm(const fesm2 a) {
+__IPPCP_INLINE fesm2 sqr_norder_norm(const fesm2 a)
+{
     const fesm2 r = fesm2_mul_norder(a, a);
     return ifma_lnorm52(r);
 }
@@ -198,7 +214,8 @@ __IPPCP_INLINE fesm2 sqr_norder_norm(const fesm2 a) {
 #define sqr(R, A)    (R) = sqr_norder_norm((A))
 #define mul(R, A, B) (R) = mul_norder_norm((A), (B))
 
-IPP_OWN_DEFN(fesm2, fesm2_inv_norder_norm, (const fesm2 z)) {
+IPP_OWN_DEFN(fesm2, fesm2_inv_norder_norm, (const fesm2 z))
+{
 
     const fesm2 r_norder = FESM2_LOADU(nsm2_r);
     int i;

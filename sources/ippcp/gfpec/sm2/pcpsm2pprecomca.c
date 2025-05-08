@@ -30,21 +30,22 @@
 #define LEN_P256        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
 
 /* SM2 affine point */
-typedef struct{
-   BNU_CHUNK_T X[LEN_P256];
-   BNU_CHUNK_T Y[LEN_P256];
+typedef struct {
+    BNU_CHUNK_T X[LEN_P256];
+    BNU_CHUNK_T Y[LEN_P256];
 } SM2_POINT_AFFINE;
 
 extern const __ALIGN64 SM2_POINT_AFFINE precomputed_ec_sm2[37][64];
 
 
-#if defined( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 #if !defined(_DISABLE_ECP_SM2_HARDCODED_BP_TBL_)
 /* see ippcp_baseptbl.cpp test for generation details */
 
 const __ALIGN64 SM2_POINT_AFFINE precomputed_ec_sm2[37][64] = {
-/* digit=0 base_pwr=2^0 */
+  /* digit=0 base_pwr=2^0 */
+  /* clang-format off */
 {
    {{LL(0xf418029e,0x61328990),LL(0xdca6c050,0x3e7981ed),LL(0xac24c3c3,0xd6a1ed99),LL(0xe1c13b05,0x91167a5e)}, {LL(0x3c2d0ddd,0xc1354e59),LL(0x8d3295fa,0xc1f5e578),LL(0x6e2a48f8,0x8d4cfb06),LL(0x81d735bd,0x63cd65d4)}},
    {{LL(0xbc3be46a,0x0af037bf),LL(0x2d8fa938,0x83bdc9ba),LL(0x5788cd24,0x5349d94b),LL(0xcaa5736a,0x0d7e9c18)}, {LL(0x69db9ac1,0x6a7e1a1d),LL(0xc4a8e82b,0xccbd8d37),LL(0x9b7157ac,0xc7b14516),LL(0x6c21bdf5,0x947e7465)}},
@@ -2523,17 +2524,16 @@ const __ALIGN64 SM2_POINT_AFFINE precomputed_ec_sm2[37][64] = {
    {{LL(0xa7fe2735,0x71e153af),LL(0xc307721f,0x000fcee9),LL(0x805b56e3,0x3b189004),LL(0x7f504d9b,0x2f1435aa)}, {LL(0xa083bd72,0xd9aa1eba),LL(0x720ccf3d,0xf1145036),LL(0x4084fa32,0x95b29e27),LL(0x01f94f0c,0x8862d213)}},
    {{LL(0x1510a406,0x23fc5ddf),LL(0xc9f0e98d,0x475a78f4),LL(0xe72843a0,0xb6d681c4),LL(0x4a00c5a6,0xa90af2a4)}, {LL(0xa34f4412,0x95fc6d45),LL(0xe7f5d703,0x60f9c0e2),LL(0xad110925,0x2bc0642b),LL(0xbe24a4d5,0x79abfc10)}},
 }
+  /* clang-format on */
 };
 #endif /* _DISABLE_ECP_SM2_HARDCODED_BP_TBL_ */
-#endif  /* _IPP_DATA */
+#endif /* _IPP_DATA */
 
 
-IPP_OWN_DEFN (const cpPrecompAP*, gfpec_precom_sm2_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_sm2_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */                  7,
-      /* select function */    p256r1_select_ap_w7,
-      /* precomputed data */   (BNU_CHUNK_T*)precomputed_ec_sm2
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 7,
+                             /* select function */ p256r1_select_ap_w7,
+                             /* precomputed data */ (BNU_CHUNK_T*)precomputed_ec_sm2 };
+    return &t;
 };

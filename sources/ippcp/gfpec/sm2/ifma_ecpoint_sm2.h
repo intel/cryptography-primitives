@@ -53,8 +53,12 @@ typedef struct PSM2_AFFINE_POINT_IFMA {
  * \param[in]  pExtendedScalar ptr Extended scalar
  * \param[in]  scalarBitSize   size bits scalar
  */
-IPP_OWN_DECL(void, gesm2_mul, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, const Ipp8u* pExtendedScalar, const int scalarBitSize))
-
+/* clang-format off */
+IPP_OWN_DECL(void, gesm2_mul, (PSM2_POINT_IFMA* r,
+                               const PSM2_POINT_IFMA* p,
+                               const Ipp8u* pExtendedScalar,
+                               const int scalarBitSize))
+/* clang-format on */
 /**
  * \brief
  *
@@ -105,8 +109,11 @@ IPP_OWN_DECL(void, gesm2_dbl, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p))
  * \param[in]  p first  point (in radix 2^52)
  * \param[in]  q second point (in radix 2^52)
  */
-IPP_OWN_DECL(void, gesm2_add, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, const PSM2_POINT_IFMA* q))
-
+/* clang-format off */
+IPP_OWN_DECL(void, gesm2_add, (PSM2_POINT_IFMA* r,
+                               const PSM2_POINT_IFMA* p,
+                               const PSM2_POINT_IFMA* q))
+/* clang-format on */
 /**
  * \brief
  *
@@ -116,8 +123,11 @@ IPP_OWN_DECL(void, gesm2_add, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, co
  * \param[in]  p first  point (in radix 2^52)
  * \param[in]  q second affine point (in radix 2^52)
  */
-IPP_OWN_DECL(void, gesm2_add_affine, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p, const PSM2_AFFINE_POINT_IFMA* q))
-
+/* clang-format off */
+IPP_OWN_DECL(void, gesm2_add_affine, (PSM2_POINT_IFMA* r,
+                                      const PSM2_POINT_IFMA* p,
+                                      const PSM2_AFFINE_POINT_IFMA* q))
+/* clang-format on */
 /**
  *  \brief
  *
@@ -127,18 +137,22 @@ IPP_OWN_DECL(void, gesm2_add_affine, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA
  * \param[in]  pTable pointer to a precomputed table
  * \param[in]  index index of desired point in the table
  */
-IPP_OWN_DECL(void, gesm2_select_ap_w7_ifma, (BNU_CHUNK_T * pAffinePoint, const BNU_CHUNK_T* pTable, int index))
-
+/* clang-format off */
+IPP_OWN_DECL(void, gesm2_select_ap_w7_ifma, (BNU_CHUNK_T* pAffinePoint,
+                                             const BNU_CHUNK_T* pTable,
+                                             int index))
+/* clang-format on */
 #include "gfpec/sm2/ifma_arith_method_sm2.h"
 #include "gsmodstuff.h"
 #include "gfpec/pcpgfpstuff.h"
 #include "gfpec/pcpgfpecstuff.h"
 
 __IPPCP_INLINE void recode_point_to_mont52(PSM2_POINT_IFMA* pR,
-                                     const BNU_CHUNK_T* pP,
-                                     BNU_CHUNK_T* pPool,
-                                     ifmaArithMethod* method,
-                                     gsModEngine* pME) {
+                                           const BNU_CHUNK_T* pP,
+                                           BNU_CHUNK_T* pPool,
+                                           ifmaArithMethod* method,
+                                           gsModEngine* pME)
+{
     ifma_import to_radix52 = method->import_to52;
     ifma_encode p_to_mont  = method->encode;
 
@@ -162,10 +176,11 @@ __IPPCP_INLINE void recode_point_to_mont52(PSM2_POINT_IFMA* pR,
 }
 
 __IPPCP_INLINE void recode_point_to_mont64(IppsGFpECPoint* pR,
-                                     PSM2_POINT_IFMA* pP,
-                                     BNU_CHUNK_T* pPool,
-                                     ifmaArithMethod* method,
-                                     gsModEngine* pME) {
+                                           PSM2_POINT_IFMA* pP,
+                                           BNU_CHUNK_T* pPool,
+                                           ifmaArithMethod* method,
+                                           gsModEngine* pME)
+{
     ifma_export to_radix64  = method->export_to64;
     ifma_decode p_from_mont = method->decode;
 

@@ -25,13 +25,15 @@
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 #include "gfpec/sm2/ifma_arith_method_sm2.h"
 
-IPP_OWN_DEFN(int, gfec_SharedSecretDH_sm2_avx512,
-             (IppsGFpECPoint * pR,
-              const IppsGFpECPoint* pP,
-              const BNU_CHUNK_T* pScalar,
-              int scalarLen,
-              IppsGFpECState* pEC,
-              Ipp8u* pScratchBuffer)) {
+/* clang-format off */
+IPP_OWN_DEFN(int, gfec_SharedSecretDH_sm2_avx512, (IppsGFpECPoint* pR,
+                                                   const IppsGFpECPoint* pP,
+                                                   const BNU_CHUNK_T* pScalar,
+                                                   int scalarLen,
+                                                   IppsGFpECState* pEC,
+                                                   Ipp8u* pScratchBuffer))
+/* clang-format on */
+{
     FIX_BNU(pScalar, scalarLen);
     {
         IPP_UNREFERENCED_PARAMETER(pScratchBuffer);

@@ -24,11 +24,13 @@
 #include "gfpec/sm2/ifma_arith_method_sm2.h"
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 
-IPP_OWN_DEFN(IppsGFpECPoint*, gfec_AddPoint_sm2_avx512,
-             (IppsGFpECPoint * pR,
-              const IppsGFpECPoint* pP,
-              const IppsGFpECPoint* pQ,
-              IppsGFpECState* pEC)) {
+/* clang-format off */
+IPP_OWN_DEFN(IppsGFpECPoint*, gfec_AddPoint_sm2_avx512, (IppsGFpECPoint* pR,
+                                                         const IppsGFpECPoint* pP,
+                                                         const IppsGFpECPoint* pQ,
+                                                         IppsGFpECState* pEC))
+/* clang-format on */
+{
     gsModEngine* pME       = GFP_PMA(ECP_GFP(pEC));
     ifmaArithMethod* pmeth = (ifmaArithMethod*)GFP_METHOD_ALT(pME);
 

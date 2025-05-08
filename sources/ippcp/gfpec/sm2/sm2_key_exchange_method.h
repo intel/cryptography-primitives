@@ -24,17 +24,17 @@
 // EC over GF(p) Key Exchange SM2 context
 */
 typedef struct _GFpECKeyExchangeSM2 {
-   Ipp32u idCtx;                    /* context identifier */
-   IppsKeyExchangeRoleSM2 role;     /* role User A(request) or B(response) */
-   IppsGFpECState *pEC;             /* Elliptic Curve data context */
-   IppsGFpECPoint *pPubKeyReqA;     /* Pa[User A] - Public Key */
-   IppsGFpECPoint *pPubKeyRespB;    /* Pb[User B] - Public Key */
-   IppsGFpECPoint *pEphPubKeyReqA;  /* Ra[User A] - Ephemeral Public Key */
-   IppsGFpECPoint *pEphPubKeyRespB; /* Rb[User B] - Ephemeral Public Key */
-   Ipp8u *pZReqA;                   /* Za[User A] - User ID Hash */
-   Ipp8u *pZRespB;                  /* Zb[User B] - User ID Hash */
-   Ipp8u *pPrecHash;                /* Precompute Hash - SM3( x(u/v) || Za || Zb || xa || ya || xb || yb ) */
-   BNU_CHUNK_T *pPointXYBigEndian;  /* U/V */
+    Ipp32u idCtx;                    /* context identifier */
+    IppsKeyExchangeRoleSM2 role;     /* role User A(request) or B(response) */
+    IppsGFpECState* pEC;             /* Elliptic Curve data context */
+    IppsGFpECPoint* pPubKeyReqA;     /* Pa[User A] - Public Key */
+    IppsGFpECPoint* pPubKeyRespB;    /* Pb[User B] - Public Key */
+    IppsGFpECPoint* pEphPubKeyReqA;  /* Ra[User A] - Ephemeral Public Key */
+    IppsGFpECPoint* pEphPubKeyRespB; /* Rb[User B] - Ephemeral Public Key */
+    Ipp8u* pZReqA;                   /* Za[User A] - User ID Hash */
+    Ipp8u* pZRespB;                  /* Zb[User B] - User ID Hash */
+    Ipp8u* pPrecHash; /* Precompute Hash - SM3( x(u/v) || Za || Zb || xa || ya || xb || yb ) */
+    BNU_CHUNK_T* pPointXYBigEndian; /* U/V */
 } GFpECKeyExchangeSM2;
 
 

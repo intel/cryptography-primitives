@@ -21,26 +21,26 @@
 #include "gfpec/sm2/ifma_arith_method_sm2.h"
 #include "gfpec/sm2/ifma_arith_psm2.h"
 
-IPP_OWN_DEFN(ifmaArithMethod*, gsArithGF_psm2_avx512, (void)) {
-    static ifmaArithMethod m = {
-        /* import_to52 = */ fesm2_convert_radix64_radix52,
-        /* export_to64 = */ fesm2_convert_radix52_radix64,
-        /* encode      = */ fesm2_to_mont,
-        /* decode      = */ fesm2_from_mont,
-        /* mul         = */ fesm2_mul,
-        /* mul_dual    = */ fesm2_mul_dual,
-        /* sqr         = */ fesm2_sqr,
-        /* sqr_dual    = */ fesm2_sqr_dual,
-        /* norm        = */ ifma_norm52,
-        /* norm_dual   = */ ifma_norm52_dual,
-        /* lnorm       = */ ifma_lnorm52,
-        /* lnorm_dual  = */ ifma_lnorm52_dual,
-        /* add         = */ 0,
-        /* sub         = */ 0,
-        /* neg         = */ fesm2_neg_norm,
-        /* div2        = */ fesm2_div2_norm,
-        /* inv         = */ fesm2_inv_norm,
-        /* red         = */ 0};
+IPP_OWN_DEFN(ifmaArithMethod*, gsArithGF_psm2_avx512, (void))
+{
+    static ifmaArithMethod m = { /* import_to52 = */ fesm2_convert_radix64_radix52,
+                                 /* export_to64 = */ fesm2_convert_radix52_radix64,
+                                 /* encode      = */ fesm2_to_mont,
+                                 /* decode      = */ fesm2_from_mont,
+                                 /* mul         = */ fesm2_mul,
+                                 /* mul_dual    = */ fesm2_mul_dual,
+                                 /* sqr         = */ fesm2_sqr,
+                                 /* sqr_dual    = */ fesm2_sqr_dual,
+                                 /* norm        = */ ifma_norm52,
+                                 /* norm_dual   = */ ifma_norm52_dual,
+                                 /* lnorm       = */ ifma_lnorm52,
+                                 /* lnorm_dual  = */ ifma_lnorm52_dual,
+                                 /* add         = */ 0,
+                                 /* sub         = */ 0,
+                                 /* neg         = */ fesm2_neg_norm,
+                                 /* div2        = */ fesm2_div2_norm,
+                                 /* inv         = */ fesm2_inv_norm,
+                                 /* red         = */ 0 };
 
     return &m;
 }

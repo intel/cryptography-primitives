@@ -24,12 +24,15 @@
 #include "gfpec/sm2/ifma_arith_method_sm2.h"
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 
-IPP_OWN_DEFN(IppECResult, gfec_Verify_sm2_avx512,
-             (const IppsBigNumState* pMsgDigest,
-              const IppsGFpECPoint* pRegPublic,
-              const IppsBigNumState* pSignR, const IppsBigNumState* pSignS,
-              IppsGFpECState* pEC,
-              Ipp8u* pScratchBuffer)) {
+/* clang-format off */
+IPP_OWN_DEFN(IppECResult, gfec_Verify_sm2_avx512, (const IppsBigNumState* pMsgDigest,
+                                                   const IppsGFpECPoint* pRegPublic,
+                                                   const IppsBigNumState* pSignR,
+                                                   const IppsBigNumState* pSignS,
+                                                   IppsGFpECState* pEC,
+                                                   Ipp8u* pScratchBuffer))
+/* clang-format on */
+{
     IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
 
     IppECResult verifyResult = ippECInvalidSignature;
@@ -51,10 +54,10 @@ IPP_OWN_DEFN(IppECResult, gfec_Verify_sm2_avx512,
     ifma_decode p_from_mont = pmeth->decode;
 
     /* Mod engine (mod n - subgroup order) */
-    ifma_encode n_to_mont    = nmeth->encode;
-    ifma_decode n_from_mont  = nmeth->decode;
-    ifma_add n_add           = nmeth->add;
-    ifma_red n_red           = nmeth->red;
+    ifma_encode n_to_mont   = nmeth->encode;
+    ifma_decode n_from_mont = nmeth->decode;
+    ifma_add n_add          = nmeth->add;
+    ifma_red n_red          = nmeth->red;
 
     /* init message | sign_r | sing_s  */
     fesm2 msg, sign_r, sign_s, t;

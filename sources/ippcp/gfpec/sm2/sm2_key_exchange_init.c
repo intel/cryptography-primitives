@@ -36,72 +36,76 @@
  * ippStsRangeErr            - if BitSize(pEC) < IPP_SM3_DIGEST_BITSIZE
  * ippStsBadArgErr           - if role no equal ippKESM2Requester|ippKESM2Responder
  */
-IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_Init, (IppsGFpECKeyExchangeSM2State * pKE, IppsKeyExchangeRoleSM2 role, IppsGFpECState *pEC))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_Init, (IppsGFpECKeyExchangeSM2State* pKE,
+                                                 IppsKeyExchangeRoleSM2 role,
+                                                 IppsGFpECState* pEC))
+/* clang-format on */
 {
-   /* check Elliptic Curve */
-   IPP_BAD_PTR1_RET(pEC);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
-   /* check support Mode arithmetic */
-   gsModEngine *pME = GFP_PMA(ECP_GFP(pEC)); /* base P */
-   IPP_BADARG_RET(1 < GFP_EXTDEGREE(pME), ippStsNotSupportedModeErr);
-   gsModEngine *nME = ECP_MONT_R(pEC); /* base N */
-   IPP_BADARG_RET(1 < GFP_EXTDEGREE(nME), ippStsNotSupportedModeErr);
-   /* check bitsize >= SM3_DIGSET */
-   IPP_BADARG_RET(!(ECP_ORDBITSIZE(pEC) >= IPP_SM3_DIGEST_BITSIZE), ippStsRangeErr);
+    /* check Elliptic Curve */
+    IPP_BAD_PTR1_RET(pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    /* check support Mode arithmetic */
+    gsModEngine* pME = GFP_PMA(ECP_GFP(pEC)); /* base P */
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(pME), ippStsNotSupportedModeErr);
+    gsModEngine* nME = ECP_MONT_R(pEC);       /* base N */
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(nME), ippStsNotSupportedModeErr);
+    /* check bitsize >= SM3_DIGSET */
+    IPP_BADARG_RET(!(ECP_ORDBITSIZE(pEC) >= IPP_SM3_DIGEST_BITSIZE), ippStsRangeErr);
 
-   /* check Key Exchange */
-   IPP_BAD_PTR1_RET(pKE);
+    /* check Key Exchange */
+    IPP_BAD_PTR1_RET(pKE);
 
-   /* check User Role */
-   IPP_BADARG_RET(((ippKESM2Requester != role) && (ippKESM2Responder != role)), ippStsBadArgErr);
+    /* check User Role */
+    IPP_BADARG_RET(((ippKESM2Requester != role) && (ippKESM2Responder != role)), ippStsBadArgErr);
 
-   {
-      const int elemSize = GFP_FELEN(pME); /* size BNU_CHUNK */
-      /* set id */
-      EC_SM2_KEY_EXCH_SET_ID(pKE);
+    {
+        const int elemSize = GFP_FELEN(pME); /* size BNU_CHUNK */
+        /* set id */
+        EC_SM2_KEY_EXCH_SET_ID(pKE);
 
-      /* set role [User A| User B] */
-      EC_SM2_KEY_EXCH_ROLE(pKE) = role;
+        /* set role [User A| User B] */
+        EC_SM2_KEY_EXCH_ROLE(pKE) = role;
 
-      /* set context EC */
-      EC_SM2_KEY_EXCH_EC(pKE) = pEC;
+        /* set context EC */
+        EC_SM2_KEY_EXCH_EC(pKE) = pEC;
 
-      /* set zero pointer to public key */
-      /* public key */
-      EC_SM2_KEY_EXCH_PUB_KEY_USER_A(pKE) = NULL;
-      EC_SM2_KEY_EXCH_PUB_KEY_USER_B(pKE) = NULL;
-      /* ephemera key */
-      EC_SM2_KEY_EXCH_EPH_PUB_KEY_USER_A(pKE) = NULL;
-      EC_SM2_KEY_EXCH_EPH_PUB_KEY_USER_B(pKE) = NULL;
+        /* set zero pointer to public key */
+        /* public key */
+        EC_SM2_KEY_EXCH_PUB_KEY_USER_A(pKE) = NULL;
+        EC_SM2_KEY_EXCH_PUB_KEY_USER_B(pKE) = NULL;
+        /* ephemera key */
+        EC_SM2_KEY_EXCH_EPH_PUB_KEY_USER_A(pKE) = NULL;
+        EC_SM2_KEY_EXCH_EPH_PUB_KEY_USER_B(pKE) = NULL;
 
-      Ipp8u *ptr = (Ipp8u *)(pKE);
-      ptr += (Ipp32s)sizeof(IppsGFpECKeyExchangeSM2State);
+        Ipp8u* ptr = (Ipp8u*)(pKE);
+        ptr += (Ipp32s)sizeof(IppsGFpECKeyExchangeSM2State);
 
-      /* skip Public Key Space */
-      ptr += 4 * ((Ipp32s)sizeof(IppsGFpECPoint) + 3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize);
+        /* skip Public Key Space */
+        ptr += 4 * ((Ipp32s)sizeof(IppsGFpECPoint) + 3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize);
 
-      /* set Za (user id hash) */
-      EC_SM2_KEY_EXCH_USER_ID_HASH_USER_A(pKE) = ptr;
-      PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
-      ptr += IPP_SM3_DIGEST_BYTESIZE;
+        /* set Za (user id hash) */
+        EC_SM2_KEY_EXCH_USER_ID_HASH_USER_A(pKE) = ptr;
+        PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
+        ptr += IPP_SM3_DIGEST_BYTESIZE;
 
-      /* set Zb (user id hash) */
-      EC_SM2_KEY_EXCH_USER_ID_HASH_USER_B(pKE) = ptr;
-      PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
-      ptr += IPP_SM3_DIGEST_BYTESIZE;
+        /* set Zb (user id hash) */
+        EC_SM2_KEY_EXCH_USER_ID_HASH_USER_B(pKE) = ptr;
+        PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
+        ptr += IPP_SM3_DIGEST_BYTESIZE;
 
-      /* set Precompute Hash */
-      EC_SM2_KEY_EXCH_PRECOM_HASH(pKE) = ptr;
-      PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
-      ptr += IPP_SM3_DIGEST_BYTESIZE;
+        /* set Precompute Hash */
+        EC_SM2_KEY_EXCH_PRECOM_HASH(pKE) = ptr;
+        PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
+        ptr += IPP_SM3_DIGEST_BYTESIZE;
 
-      /* set Point(X,Y) */
-      EC_SM2_KEY_EXCH_POINT_PTR(pKE) = (BNU_CHUNK_T *)ptr;
+        /* set Point(X,Y) */
+        EC_SM2_KEY_EXCH_POINT_PTR(pKE) = (BNU_CHUNK_T*)ptr;
 
-      ZEXPAND_BNU(EC_SM2_KEY_EXCH_POINT_X(pKE), 0, elemSize);
-      ZEXPAND_BNU(EC_SM2_KEY_EXCH_POINT_Y(pKE), 0, elemSize);
+        ZEXPAND_BNU(EC_SM2_KEY_EXCH_POINT_X(pKE), 0, elemSize);
+        ZEXPAND_BNU(EC_SM2_KEY_EXCH_POINT_Y(pKE), 0, elemSize);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

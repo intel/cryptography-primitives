@@ -37,70 +37,78 @@
 
 
 /* clang-format off */
-IPPFUN(IppStatus, ippsGFpECMessageRepresentationSM2, (IppsBigNumState * pMsgDigest,
+IPPFUN(IppStatus, ippsGFpECMessageRepresentationSM2, (IppsBigNumState* pMsgDigest,
                                                       const Ipp8u* pMsg, int msgLen,
                                                       const Ipp8u* pUserID, int userIDLen,
                                                       const IppsGFpECPoint* pRegPublic,
                                                       IppsGFpECState* pEC, Ipp8u* pScratchBuffer))
 /* clang-format on */
 {
-   IppsGFpState *pGF;
-   gsModEngine *pGFE;
+    IppsGFpState* pGF;
+    gsModEngine* pGFE;
 
-   /* check curve data */
-   IPP_BAD_PTR1_RET(pEC);
-   IPP_BAD_PTR1_RET(pScratchBuffer);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    /* check curve data */
+    IPP_BAD_PTR1_RET(pEC);
+    IPP_BAD_PTR1_RET(pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   /* check Message */
-   IPP_BAD_PTR1_RET(pMsg);
-   /* check border (msgLen > 0) */
-   IPP_BADARG_RET(!(msgLen > 0), ippStsOutOfRangeErr);
+    /* check Message */
+    IPP_BAD_PTR1_RET(pMsg);
+    /* check border (msgLen > 0) */
+    IPP_BADARG_RET(!(msgLen > 0), ippStsOutOfRangeErr);
 
-   /* check message digest */
-   IPP_BAD_PTR1_RET(pMsgDigest);
-   IPP_BADARG_RET(!BN_VALID_ID(pMsgDigest), ippStsContextMatchErr);
-   /* make sure bitsize(pMsgDigest) <= bitsize(order) */
-   IPP_BADARG_RET(!(cpBN_bitsize(pMsgDigest) <= ECP_ORDBITSIZE(pEC)), ippStsMessageErr);
+    /* check message digest */
+    IPP_BAD_PTR1_RET(pMsgDigest);
+    IPP_BADARG_RET(!BN_VALID_ID(pMsgDigest), ippStsContextMatchErr);
+    /* make sure bitsize(pMsgDigest) <= bitsize(order) */
+    IPP_BADARG_RET(!(cpBN_bitsize(pMsgDigest) <= ECP_ORDBITSIZE(pEC)), ippStsMessageErr);
 
-   /* check User ID */
-   IPP_BAD_PTR1_RET(pUserID);
-   /* check border (userIDLen > 0) */
-   IPP_BADARG_RET(!(userIDLen > 0), ippStsOutOfRangeErr);
+    /* check User ID */
+    IPP_BAD_PTR1_RET(pUserID);
+    /* check border (userIDLen > 0) */
+    IPP_BADARG_RET(!(userIDLen > 0), ippStsOutOfRangeErr);
 
-   pGF  = ECP_GFP(pEC);
-   pGFE = GFP_PMA(pGF);
-   IPP_BADARG_RET(1 < GFP_EXTDEGREE(pGFE), ippStsNotSupportedModeErr);
+    pGF  = ECP_GFP(pEC);
+    pGFE = GFP_PMA(pGF);
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(pGFE), ippStsNotSupportedModeErr);
 
-   /* check Public Key */
-   IPP_BAD_PTR1_RET(pRegPublic);
-   IPP_BADARG_RET(!ECP_POINT_VALID_ID(pRegPublic), ippStsContextMatchErr);
-   IPP_BADARG_RET(ECP_POINT_FELEN(pRegPublic) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+    /* check Public Key */
+    IPP_BAD_PTR1_RET(pRegPublic);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pRegPublic), ippStsContextMatchErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pRegPublic) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-   Ipp8u Za[IPP_SM3_DIGEST_BYTESIZE];
-   /* compute Za = SM3( ENTL || ID || a || b || xG || yG || xA || yA ) */
-   const IppStatus sts = ippsGFpECUserIDHashSM2((Ipp8u *)Za, pUserID, userIDLen, pRegPublic, pEC, pScratchBuffer);
-   if(ippStsNoErr != sts){
-      return sts;
-   }
+    Ipp8u Za[IPP_SM3_DIGEST_BYTESIZE];
+    /* compute Za = SM3( ENTL || ID || a || b || xG || yG || xA || yA ) */
+    /* clang-format off */
+    const IppStatus sts = ippsGFpECUserIDHashSM2((Ipp8u*)Za,
+                                                 pUserID,
+                                                 userIDLen,
+                                                 pRegPublic,
+                                                 pEC,
+                                                 pScratchBuffer);
+    /* clang-format on */
 
-   /* e = SM3(Za || M) */
-   __ALIGN64 Ipp8u ctxMem[SM3_CONTEXT_SIZE];
-   IppsHashState_rmf* ctx = (IppsHashState_rmf*)ctxMem;
+    if (ippStsNoErr != sts) {
+        return sts;
+    }
 
-   ippsHashInit_rmf(ctx, ippsHashMethod_SM3_TT());
-   /* Za */
-   ippsHashUpdate_rmf(Za, sizeof(Za), ctx);
-   /* M */
-   ippsHashUpdate_rmf(pMsg, msgLen, ctx);
+    /* e = SM3(Za || M) */
+    __ALIGN64 Ipp8u ctxMem[SM3_CONTEXT_SIZE];
+    IppsHashState_rmf* ctx = (IppsHashState_rmf*)ctxMem;
 
-   /* final */
-   ippsHashFinal_rmf((Ipp8u *)(BN_NUMBER(pMsgDigest)), ctx);
-   BN_SIGN(pMsgDigest) = ippBigNumPOS;
+    ippsHashInit_rmf(ctx, ippsHashMethod_SM3_TT());
+    /* Za */
+    ippsHashUpdate_rmf(Za, sizeof(Za), ctx);
+    /* M */
+    ippsHashUpdate_rmf(pMsg, msgLen, ctx);
 
-   /* clear stack data */
-   PurgeBlock(Za, sizeof(Za));
+    /* final */
+    ippsHashFinal_rmf((Ipp8u*)(BN_NUMBER(pMsgDigest)), ctx);
+    BN_SIGN(pMsgDigest) = ippBigNumPOS;
 
-   return ippStsNoErr;
+    /* clear stack data */
+    PurgeBlock(Za, sizeof(Za));
+
+    return ippStsNoErr;
 }

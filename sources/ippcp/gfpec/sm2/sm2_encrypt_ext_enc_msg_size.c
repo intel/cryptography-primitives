@@ -34,35 +34,39 @@
  * ippStsContextMatchErr - if pEC no valid ID or no exists SUBGROUP
  * ippStsBagArgErr       - if message size < 0
  */
-IPPFUN(IppStatus, ippsGFpECEncryptSM2_Ext_EncMsgSize, (const IppsGFpECState *pEC, int ctMsgSize, int *pSize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECEncryptSM2_Ext_EncMsgSize, (const IppsGFpECState* pEC,
+                                                       int ctMsgSize,
+                                                       int* pSize))
+/* clang-format on */
 {
-   /* check Context Elliptic Curve */
-   IPP_BAD_PTR2_RET(pEC, pSize);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    /* check Context Elliptic Curve */
+    IPP_BAD_PTR2_RET(pEC, pSize);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   gsModEngine *pME = GFP_PMA(ECP_GFP(pEC)); /* base P */
-   IPP_BADARG_RET(1 < GFP_EXTDEGREE(pME), ippStsNotSupportedModeErr);
-   gsModEngine *nME = ECP_MONT_R(pEC); /* base N */
-   IPP_BADARG_RET(1 < GFP_EXTDEGREE(nME), ippStsNotSupportedModeErr);
+    gsModEngine* pME = GFP_PMA(ECP_GFP(pEC)); /* base P */
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(pME), ippStsNotSupportedModeErr);
+    gsModEngine* nME = ECP_MONT_R(pEC);       /* base N */
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(nME), ippStsNotSupportedModeErr);
 
-   const int elemSize = GFP_FELEN(pME); /* size BNU_CHUNK */
+    const int elemSize = GFP_FELEN(pME);      /* size BNU_CHUNK */
 
-   /* check message size */
-   IPP_BADARG_RET(!(ctMsgSize >= 0), ippStsOutOfRangeErr)
+    /* check message size */
+    IPP_BADARG_RET(!(ctMsgSize >= 0), ippStsOutOfRangeErr)
 
-   {
-      const int ciph_PC_size   = 1;
-      const int ciph_xy_size   = 2 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize;
-      const int ciph_hash_size = IPP_SM3_DIGEST_BYTESIZE;
-      const int ciph_msg_size  = ctMsgSize;
+    {
+        const int ciph_PC_size   = 1;
+        const int ciph_xy_size   = 2 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize;
+        const int ciph_hash_size = IPP_SM3_DIGEST_BYTESIZE;
+        const int ciph_msg_size  = ctMsgSize;
 
-      const int size = ciph_PC_size     /* PC */
-                       + ciph_xy_size   /* Point (x,y) */
-                       + ciph_hash_size /* SM3 */
-                       + ciph_msg_size; /* message size */
+        const int size = ciph_PC_size     /* PC */
+                         + ciph_xy_size   /* Point (x,y) */
+                         + ciph_hash_size /* SM3 */
+                         + ciph_msg_size; /* message size */
 
-      *pSize = size;
-      return ippStsNoErr;
-   }
+        *pSize = size;
+        return ippStsNoErr;
+    }
 }

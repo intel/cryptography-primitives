@@ -24,13 +24,15 @@
 #include "gfpec/sm2/ifma_arith_method_sm2.h"
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 
-IPP_OWN_DEFN(IppsGFpECPoint*, gfec_MulPoint_sm2_avx512,
-             (IppsGFpECPoint * pR,
-              const IppsGFpECPoint* pP,
-              const BNU_CHUNK_T* pScalar,
-              int scalarLen,
-              IppsGFpECState* pEC,
-              Ipp8u* pScratchBuffer)) {
+/* clang-format off */
+IPP_OWN_DEFN(IppsGFpECPoint*, gfec_MulPoint_sm2_avx512, (IppsGFpECPoint* pR,
+                                                         const IppsGFpECPoint* pP,
+                                                         const BNU_CHUNK_T* pScalar,
+                                                         int scalarLen,
+                                                         IppsGFpECState* pEC,
+                                                         Ipp8u* pScratchBuffer))
+/* clang-format on */
+{
     IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
 
     gsModEngine* pME       = GFP_PMA(ECP_GFP(pEC));
@@ -41,8 +43,8 @@ IPP_OWN_DEFN(IppsGFpECPoint*, gfec_MulPoint_sm2_avx512,
     const int elemLen   = GFP_PELEN(pME);
 
     BNU_CHUNK_T* pPool           = cpGFpGetPool(5, pME);
-    BNU_CHUNK_T* pExtendedScalar = pPool;               /* 2 pool elem to hold scalar */
-    BNU_CHUNK_T* pPointPool      = pPool + 2 * elemLen; /* 3 pool elem to to hold 3 point coordinates */
+    BNU_CHUNK_T* pExtendedScalar = pPool;          /* 2 pool elem to hold scalar */
+    BNU_CHUNK_T* pPointPool = pPool + 2 * elemLen; /* 3 pool elem to to hold 3 point coordinates */
 
     /* Copy scalar */
     cpGFpElementCopyPad(pExtendedScalar, orderLen + 1, pScalar, scalarLen);

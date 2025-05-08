@@ -29,29 +29,34 @@
  * ippStsNullPtrErr      - if pEC or pSize is NULL
  * ippStsContextMatchErr - if pEC no valid ID or no exists SUBGROUP
  */
-IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_GetSize, (const IppsGFpECState *pEC, int *pSize))
+IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_GetSize, (const IppsGFpECState* pEC, int* pSize))
 {
 
-   IPP_BAD_PTR2_RET(pEC, pSize);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    IPP_BAD_PTR2_RET(pEC, pSize);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   {
-      gsModEngine *pME   = GFP_PMA(ECP_GFP(pEC)); /* base P */
-      const int elemSize = GFP_FELEN(pME);        /* size BNU_CHUNK */
+    {
+        gsModEngine* pME   = GFP_PMA(ECP_GFP(pEC));      /* base P */
+        const int elemSize = GFP_FELEN(pME);             /* size BNU_CHUNK */
 
-      const int size = (Ipp32s)sizeof(IppsGFpECKeyExchangeSM2State)                                  /* Key Exchange SM2 struct */
-                       + (Ipp32s)sizeof(IppsGFpECPoint) + 3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize /* User A Public Key + Data */
-                       + (Ipp32s)sizeof(IppsGFpECPoint) + 3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize /* User B Public Key + Data */
-                       + (Ipp32s)sizeof(IppsGFpECPoint) + 3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize /* User A Ephemeral Public Key + Data */
-                       + (Ipp32s)sizeof(IppsGFpECPoint) + 3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize /* User B Ephemeral Public Key + Data */
-                       + (Ipp32s)sizeof(Ipp8u) * IPP_SM3_DIGEST_BYTESIZE                             /* Za [User A] */
-                       + (Ipp32s)sizeof(Ipp8u) * IPP_SM3_DIGEST_BYTESIZE                             /* Zb [User B] */
-                       + (Ipp32s)sizeof(Ipp8u) * IPP_SM3_DIGEST_BYTESIZE                             /*  Precompute Hash */
-                       + (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize                                      /* [U/V].x */
-                       + (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize;                                     /* [U/V].y */
+        const int size =
+            (Ipp32s)sizeof(IppsGFpECKeyExchangeSM2State) /* Key Exchange SM2 struct */
+            + (Ipp32s)sizeof(IppsGFpECPoint) +
+            3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize   /* User A Public Key + Data */
+            + (Ipp32s)sizeof(IppsGFpECPoint) +
+            3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize   /* User B Public Key + Data */
+            + (Ipp32s)sizeof(IppsGFpECPoint) +
+            3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize   /* User A Ephemeral Public Key + Data */
+            + (Ipp32s)sizeof(IppsGFpECPoint) +
+            3 * (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize   /* User B Ephemeral Public Key + Data */
+            + (Ipp32s)sizeof(Ipp8u) * IPP_SM3_DIGEST_BYTESIZE /* Za [User A] */
+            + (Ipp32s)sizeof(Ipp8u) * IPP_SM3_DIGEST_BYTESIZE /* Zb [User B] */
+            + (Ipp32s)sizeof(Ipp8u) * IPP_SM3_DIGEST_BYTESIZE /*  Precompute Hash */
+            + (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize          /* [U/V].x */
+            + (Ipp32s)sizeof(BNU_CHUNK_T) * elemSize;         /* [U/V].y */
 
-      *pSize = size;
-      return ippStsNoErr;
-   }
+        *pSize = size;
+        return ippStsNoErr;
+    }
 }
