@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashGetSize_rmf()
 //        ippsOptimalHashGetSize_rmf()
@@ -45,13 +45,13 @@
 //    pSize       pointer to state size
 //
 *F*/
-IPPFUN(IppStatus, ippsHashGetSize_rmf,(int* pSize))
+IPPFUN(IppStatus, ippsHashGetSize_rmf, (int* pSize))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pSize);
-   *pSize = MAX_HASH_RMF_CONTEXT_SIZE;
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pSize);
+    *pSize = MAX_HASH_RMF_CONTEXT_SIZE;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }
 
 /*F*
@@ -68,12 +68,12 @@ IPPFUN(IppStatus, ippsHashGetSize_rmf,(int* pSize))
 //    pMethod     pointer to hash method state
 //
 *F*/
-IPPFUN(IppStatus, ippsOptimalHashGetSize_rmf,(int* pSize, const IppsHashMethod* pMethod))
+IPPFUN(IppStatus, ippsOptimalHashGetSize_rmf, (int* pSize, const IppsHashMethod* pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pSize, pMethod);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pSize, pMethod);
 
-   *pSize = (int)((Ipp8u)(sizeof(IppsHashState_rmf)) + pMethod->msgBlkSize + pMethod->stateLen);
+    *pSize = (int)((Ipp8u)(sizeof(IppsHashState_rmf)) + pMethod->msgBlkSize + pMethod->stateLen);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

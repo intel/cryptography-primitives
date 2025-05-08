@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     General Functionality
-// 
+//
 //  Contents:
 //        ippsHashUnpack()
 //
@@ -49,14 +49,14 @@
 //    pState      pointer hash state
 //
 *F*/
-IPPFUN(IppStatus, ippsHashUnpack,(const Ipp8u* pBuffer, IppsHashState* pState))
+IPPFUN(IppStatus, ippsHashUnpack, (const Ipp8u* pBuffer, IppsHashState* pState))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pBuffer);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pState, pBuffer);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
 
-   CopyBlock(pBuffer, pState, sizeof(IppsHashState));
-   HASH_SET_ID(pState, idCtxHash);
-   return ippStsNoErr;
+    CopyBlock(pBuffer, pState, sizeof(IppsHashState));
+    HASH_SET_ID(pState, idCtxHash);
+    return ippStsNoErr;
 }

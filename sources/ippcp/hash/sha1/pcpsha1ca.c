@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SHA1
-// 
+//
 //  Contents:
 //    cpFinalizeSHA1()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -33,33 +33,37 @@
 #include "pcptool.h"
 #include "hash/sha1/pcpsha1stuff.h"
 
-
-IPP_OWN_DEFN (void, cpFinalizeSHA1, (DigestSHA1 pHash, const Ipp8u* inpBuffer, int inpLen, Ipp64u processedMsgLen))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpFinalizeSHA1, (DigestSHA1 pHash,
+                                    const Ipp8u* inpBuffer,
+                                    int inpLen,
+                                    Ipp64u processedMsgLen))
+/* clang-format on */
 {
-   /* select processing  function */
-   #if (_SHA_NI_ENABLING_==_FEATURE_ON_)
-   cpHashProc updateFunc = UpdateSHA1ni;
-   #elif (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_)
-   cpHashProc updateFunc = IsFeatureEnabled(ippCPUID_SHA)? UpdateSHA1ni : UpdateSHA1;
-   #else
-   cpHashProc updateFunc = UpdateSHA1;
-   #endif
+/* select processing  function */
+#if (_SHA_NI_ENABLING_ == _FEATURE_ON_)
+    cpHashProc updateFunc = UpdateSHA1ni;
+#elif (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_)
+    cpHashProc updateFunc = IsFeatureEnabled(ippCPUID_SHA) ? UpdateSHA1ni : UpdateSHA1;
+#else
+    cpHashProc updateFunc = UpdateSHA1;
+#endif
 
-   /* local buffer and it length */
-   Ipp8u buffer[MBS_SHA1*2];
-   int bufferLen = inpLen < (MBS_SHA1-(int)MLR_SHA1)? MBS_SHA1 : MBS_SHA1*2; 
+    /* local buffer and it length */
+    Ipp8u buffer[MBS_SHA1 * 2];
+    int bufferLen = inpLen < (MBS_SHA1 - (int)MLR_SHA1) ? MBS_SHA1 : MBS_SHA1 * 2;
 
-   /* copy rest of message into internal buffer */
-   CopyBlock(inpBuffer, buffer, inpLen);
+    /* copy rest of message into internal buffer */
+    CopyBlock(inpBuffer, buffer, inpLen);
 
-   /* pad message */
-   buffer[inpLen++] = 0x80;
-   PadBlock(0, buffer+inpLen, (cpSize)(bufferLen-inpLen-(int)MLR_SHA1));
+    /* pad message */
+    buffer[inpLen++] = 0x80;
+    PadBlock(0, buffer + inpLen, (cpSize)(bufferLen - inpLen - (int)MLR_SHA1));
 
-   /* put processed message length in bits */
-   processedMsgLen = ENDIANNESS64(processedMsgLen<<3);
-   ((Ipp64u*)(buffer+bufferLen))[-1] = processedMsgLen;
+    /* put processed message length in bits */
+    processedMsgLen                     = ENDIANNESS64(processedMsgLen << 3);
+    ((Ipp64u*)(buffer + bufferLen))[-1] = processedMsgLen;
 
-   /* complete hash computation */
-   updateFunc(pHash, buffer, bufferLen, sha1_cnt);
+    /* complete hash computation */
+    updateFunc(pHash, buffer, bufferLen, sha1_cnt);
 }

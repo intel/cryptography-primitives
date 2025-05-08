@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashFinal_rmf()
 //
@@ -47,31 +47,33 @@
 //    pState  pointer to the SHS state
 //
 *F*/
-IPPFUN(IppStatus, ippsHashFinal_rmf,(Ipp8u* pMD, IppsHashState_rmf* pState))
+IPPFUN(IppStatus, ippsHashFinal_rmf, (Ipp8u * pMD, IppsHashState_rmf* pState))
 {
-   /* test state pointer and ID */
-   IPP_BAD_PTR2_RET(pMD, pState);
-   IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+    /* test state pointer and ID */
+    IPP_BAD_PTR2_RET(pMD, pState);
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
 
-   {
-      const IppsHashMethod* method = HASH_METHOD(pState);
+    {
+        const IppsHashMethod* method = HASH_METHOD(pState);
 
-      cpFinalize_rmf(HASH_VALUE(pState),
-                     HASH_BUFF(pState), HASH_BUFFIDX(pState),
-                     HASH_LENLO(pState), HASH_LENHI(pState),
-                     method);
+        cpFinalize_rmf(HASH_VALUE(pState),
+                       HASH_BUFF(pState),
+                       HASH_BUFFIDX(pState),
+                       HASH_LENLO(pState),
+                       HASH_LENHI(pState),
+                       method);
 
-      /* calculate the rest of hash if any and put it to user's buffer */
-      int digestLenProcessed = 0;
-      hash_squeeze(pMD, HASH_VALUE(pState), method, method->hashLen, &digestLenProcessed);
-      
-      /* re-init hash value */
-      HASH_BUFFIDX(pState) = 0;
-      HASH_LENLO(pState) = 0;
-      HASH_LENHI(pState) = 0;
-      PadBlock(0, HASH_VALUE(pState), method->stateLen);
-      method->hashInit(HASH_VALUE(pState));
+        /* calculate the rest of hash if any and put it to user's buffer */
+        int digestLenProcessed = 0;
+        hash_squeeze(pMD, HASH_VALUE(pState), method, method->hashLen, &digestLenProcessed);
 
-      return ippStsNoErr;
-   }
+        /* re-init hash value */
+        HASH_BUFFIDX(pState) = 0;
+        HASH_LENLO(pState)   = 0;
+        HASH_LENHI(pState)   = 0;
+        PadBlock(0, HASH_VALUE(pState), method->stateLen);
+        method->hashInit(HASH_VALUE(pState));
+
+        return ippStsNoErr;
+    }
 }

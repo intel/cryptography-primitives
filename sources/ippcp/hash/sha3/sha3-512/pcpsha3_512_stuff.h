@@ -23,10 +23,10 @@
 #if !defined(_PCP_SHA3_512_STUFF_H)
 #define _PCP_SHA3_512_STUFF_H
 
-IPP_OWN_DEFN (static void, sha3_512_hashUpdate, (void* pHash, const Ipp8u* pMsg, int msgLen))
+IPP_OWN_DEFN(static void, sha3_512_hashUpdate, (void* pHash, const Ipp8u* pMsg, int msgLen))
 {
-   int block_size = MBS_SHA3_512;
-   UpdateSHA3(pHash, pMsg, msgLen, &block_size);
+    int block_size = MBS_SHA3_512;
+    UpdateSHA3(pHash, pMsg, msgLen, &block_size);
 }
 
 #endif /* _PCP_SHA3_512_STUFF_H */

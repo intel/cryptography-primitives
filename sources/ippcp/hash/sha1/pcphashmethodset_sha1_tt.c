@@ -45,25 +45,25 @@
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashMethodSet_SHA1_TT, (IppsHashMethod* pMethod) )
+IPPFUN(IppStatus, ippsHashMethodSet_SHA1_TT, (IppsHashMethod * pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   pMethod->hashAlgId     = ippHashAlg_SHA1;
-   pMethod->hashLen       = IPP_SHA1_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA1;
-   pMethod->msgLenRepSize = MLR_SHA1;
-   pMethod->stateLen      = IPP_SHA1_STATE_BYTESIZE;
-   pMethod->hashInit      = sha1_hashInit;
-   pMethod->hashUpdate    = sha1_hashUpdate;
-   pMethod->hashOctStr    = sha1_hashOctString;
-   pMethod->msgLenRep     = sha1_msgRep;
+    pMethod->hashAlgId     = ippHashAlg_SHA1;
+    pMethod->hashLen       = IPP_SHA1_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA1;
+    pMethod->msgLenRepSize = MLR_SHA1;
+    pMethod->stateLen      = IPP_SHA1_STATE_BYTESIZE;
+    pMethod->hashInit      = sha1_hashInit;
+    pMethod->hashUpdate    = sha1_hashUpdate;
+    pMethod->hashOctStr    = sha1_hashOctString;
+    pMethod->msgLenRep     = sha1_msgRep;
 
-#if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
-   if(IsFeatureEnabled(ippCPUID_SHA))
-      pMethod->hashUpdate = sha1_ni_hashUpdate;
+#if (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_ == _FEATURE_ON_)
+    if (IsFeatureEnabled(ippCPUID_SHA))
+        pMethod->hashUpdate = sha1_ni_hashUpdate;
 #endif
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

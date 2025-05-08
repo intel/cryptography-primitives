@@ -43,12 +43,12 @@
 //    pSize       pointer to state size
 //
 *F*/
-IPPFUN(IppStatus, ippsHashMethodGetSize,(int* pSize))
+IPPFUN(IppStatus, ippsHashMethodGetSize, (int* pSize))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = sizeof(IppsHashMethod);
+    *pSize = sizeof(IppsHashMethod);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

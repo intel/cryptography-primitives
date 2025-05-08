@@ -45,34 +45,34 @@
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashMethodSet_SHA512_224_NI, (IppsHashMethod* pMethod) )
+IPPFUN(IppStatus, ippsHashMethodSet_SHA512_224_NI, (IppsHashMethod * pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-#if (_SHA512_ENABLING_==_FEATURE_TICKTOCK_ || _SHA512_ENABLING_==_FEATURE_ON_)
-   pMethod->hashAlgId     = ippHashAlg_SHA512_224;
-   pMethod->hashLen       = IPP_SHA224_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA512;
-   pMethod->msgLenRepSize = MLR_SHA512;
-   pMethod->stateLen      = IPP_SHA512_STATE_BYTESIZE;
-   pMethod->hashInit      = sha512_224_hashInit;
-   pMethod->hashUpdate    = sha512_hashUpdate_ni;
-   pMethod->hashOctStr    = sha512_224_hashOctString;
-   pMethod->msgLenRep     = sha512_msgRep;
+#if (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA512_ENABLING_ == _FEATURE_ON_)
+    pMethod->hashAlgId     = ippHashAlg_SHA512_224;
+    pMethod->hashLen       = IPP_SHA224_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA512;
+    pMethod->msgLenRepSize = MLR_SHA512;
+    pMethod->stateLen      = IPP_SHA512_STATE_BYTESIZE;
+    pMethod->hashInit      = sha512_224_hashInit;
+    pMethod->hashUpdate    = sha512_hashUpdate_ni;
+    pMethod->hashOctStr    = sha512_224_hashOctString;
+    pMethod->msgLenRep     = sha512_msgRep;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 #else
-   pMethod->hashAlgId     = ippHashAlg_Unknown;
-   pMethod->hashLen       = 0;
-   pMethod->msgBlkSize    = 0;
-   pMethod->msgLenRepSize = 0;
-   pMethod->stateLen      = 0;
-   pMethod->hashInit      = NULL;
-   pMethod->hashUpdate    = NULL;
-   pMethod->hashOctStr    = NULL;
-   pMethod->msgLenRep     = NULL;
+    pMethod->hashAlgId     = ippHashAlg_Unknown;
+    pMethod->hashLen       = 0;
+    pMethod->msgBlkSize    = 0;
+    pMethod->msgLenRepSize = 0;
+    pMethod->stateLen      = 0;
+    pMethod->hashInit      = NULL;
+    pMethod->hashUpdate    = NULL;
+    pMethod->hashOctStr    = NULL;
+    pMethod->msgLenRep     = NULL;
 
-   return ippStsNotSupportedModeErr;
+    return ippStsNotSupportedModeErr;
 #endif
 }

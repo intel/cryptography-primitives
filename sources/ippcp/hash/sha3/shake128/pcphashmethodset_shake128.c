@@ -32,35 +32,32 @@
 //    ippStsNoErr             no errors
 //
 */
-IPPFUN( IppStatus, ippsHashMethodSet_SHAKE128, (IppsHashMethod* pMethod, int digestBitsize) )
+IPPFUN(IppStatus, ippsHashMethodSet_SHAKE128, (IppsHashMethod * pMethod, int digestBitsize))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   if (digestBitsize > 0 && (digestBitsize % 8) == 0) {
-      pMethod->hashAlgId     = ippHashAlg_SHAKE128;
-      pMethod->hashLen       = digestBitsize / 8,
-      pMethod->msgBlkSize    = MBS_SHAKE128;
-      pMethod->msgLenRepSize = 0;
-      pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
-      pMethod->hashInit      = sha3_hashInit;
-      pMethod->hashUpdate    = shake128_hashUpdate;
-      pMethod->hashOctStr    = sha3_hashOctString;
-      pMethod->msgLenRep     = NULL;
+    if (digestBitsize > 0 && (digestBitsize % 8) == 0) {
+        pMethod->hashAlgId = ippHashAlg_SHAKE128;
+        pMethod->hashLen = digestBitsize / 8, pMethod->msgBlkSize = MBS_SHAKE128;
+        pMethod->msgLenRepSize = 0;
+        pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
+        pMethod->hashInit      = sha3_hashInit;
+        pMethod->hashUpdate    = shake128_hashUpdate;
+        pMethod->hashOctStr    = sha3_hashOctString;
+        pMethod->msgLenRep     = NULL;
 
-      return ippStsNoErr;
-   }
-   else {
-      pMethod->hashAlgId     = ippHashAlg_Unknown;
-      pMethod->hashLen       = 0,
-      pMethod->msgBlkSize    = 0;
-      pMethod->msgLenRepSize = 0;
-      pMethod->stateLen      = 0;
-      pMethod->hashInit      = NULL;
-      pMethod->hashUpdate    = NULL;
-      pMethod->hashOctStr    = NULL;
-      pMethod->msgLenRep     = NULL;
+        return ippStsNoErr;
+    } else {
+        pMethod->hashAlgId = ippHashAlg_Unknown;
+        pMethod->hashLen = 0, pMethod->msgBlkSize = 0;
+        pMethod->msgLenRepSize = 0;
+        pMethod->stateLen      = 0;
+        pMethod->hashInit      = NULL;
+        pMethod->hashUpdate    = NULL;
+        pMethod->hashOctStr    = NULL;
+        pMethod->msgLenRep     = NULL;
 
-      return ippStsOutOfRangeErr;
-   }
+        return ippStsOutOfRangeErr;
+    }
 }

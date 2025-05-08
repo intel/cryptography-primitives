@@ -33,7 +33,7 @@
 #include "hash/sha1/pcpsha1stuff.h"
 
 /*F*
-//    Name: ippsHashMethod_SHA1_NI
+// Name: ippsHashMethod_SHA1_NI
 //
 // Purpose: Return SHA1 method (using the Intel® Secure Hash Algorithm - New Instructions (Intel® SHA-NI) instruction set).
 //
@@ -42,30 +42,28 @@
 //
 *F*/
 
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA1_NI, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA1_NI, (void))
 {
-   #if (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_==_FEATURE_ON_)
-   static IppsHashMethod method = {
-      ippHashAlg_SHA1,
-      IPP_SHA1_DIGEST_BITSIZE/8,
-      MBS_SHA1,
-      MLR_SHA1,
-      IPP_SHA1_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL
-   };
+#if (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_ == _FEATURE_ON_)
+    static IppsHashMethod method = { ippHashAlg_SHA1,
+                                     IPP_SHA1_DIGEST_BITSIZE / 8,
+                                     MBS_SHA1,
+                                     MLR_SHA1,
+                                     IPP_SHA1_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashInit   = sha1_hashInit;
-   method.hashUpdate = sha1_ni_hashUpdate;
-   method.hashOctStr = sha1_hashOctString;
-   method.msgLenRep  = sha1_msgRep;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashInit   = sha1_hashInit;
+    method.hashUpdate = sha1_ni_hashUpdate;
+    method.hashOctStr = sha1_hashOctString;
+    method.msgLenRep  = sha1_msgRep;
 
-   return &method;
-   #else
-   return NULL;
-   #endif
+    return &method;
+#else
+    return NULL;
+#endif
 }

@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     General Functionality
-// 
+//
 //  Contents:
 //        ippsHashInit()
 //
@@ -47,24 +47,24 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsHashInit,(IppsHashState* pState, IppHashAlgId hashAlg))
+IPPFUN(IppStatus, ippsHashInit, (IppsHashState * pState, IppHashAlgId hashAlg))
 {
-   /* get algorithm id */
-   hashAlg = cpValidHashAlg(hashAlg);
-   /* test hash alg */
-   IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
+    /* get algorithm id */
+    hashAlg = cpValidHashAlg(hashAlg);
+    /* test hash alg */
+    IPP_BADARG_RET(ippHashAlg_Unknown == hashAlg, ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
-   /* test ctx pointer */
-   IPP_BAD_PTR1_RET(pState);
-   /* test hash alg */
+    /* test ctx pointer */
+    IPP_BAD_PTR1_RET(pState);
+    /* test hash alg */
 
-   /* set ctx ID */
-   HASH_SET_ID(pState, idCtxHash);
-   HASH_ALG_ID(pState) = hashAlg;
+    /* set ctx ID */
+    HASH_SET_ID(pState, idCtxHash);
+    HASH_ALG_ID(pState) = hashAlg;
 
-   /* init context */
-   cpInitHash(pState, hashAlg);
-   return ippStsNoErr;
+    /* init context */
+    cpInitHash(pState, hashAlg);
+    return ippStsNoErr;
 }

@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     General Functionality
-// 
+//
 //  Contents:
 //        ippsHashGetTag()
 //
@@ -53,21 +53,22 @@
 //    pState   pointer to the SHS state
 //
 *F*/
-IPPFUN(IppStatus, ippsHashGetTag,(Ipp8u* pTag, int tagLen, const IppsHashState* pState))
+IPPFUN(IppStatus, ippsHashGetTag, (Ipp8u * pTag, int tagLen, const IppsHashState* pState))
 {
-   /* test state pointer and ID */
-   IPP_BAD_PTR2_RET(pTag, pState);
-   /* test the context */
-   IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
-   
-   {
-      /* size of hash */
-      int hashSize = cpHashAlgAttr[HASH_ALG_ID(pState)].hashSize;
-      if(tagLen<1||hashSize<tagLen) IPP_ERROR_RET(ippStsLengthErr);
+    /* test state pointer and ID */
+    IPP_BAD_PTR2_RET(pTag, pState);
+    /* test the context */
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
 
-      cpComputeDigest(pTag, tagLen, pState);
-      return ippStsNoErr;
-   }
+    {
+        /* size of hash */
+        int hashSize = cpHashAlgAttr[HASH_ALG_ID(pState)].hashSize;
+        if (tagLen < 1 || hashSize < tagLen)
+            IPP_ERROR_RET(ippStsLengthErr);
+
+        cpComputeDigest(pTag, tagLen, pState);
+        return ippStsNoErr;
+    }
 }

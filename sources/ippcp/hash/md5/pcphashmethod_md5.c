@@ -14,15 +14,15 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to MD5
 //     (derived from the RSA Data Security, Inc. MD5 Message-Digest Algorithm)
-// 
+//
 //     Equivalent code is available from RFC 1321.
-// 
+//
 //  Contents:
 //        ippsHashMethod_MD5()
 //
@@ -44,24 +44,22 @@
 //          Pointer to MD5 hash-method.
 //
 *F*/
-IPPFUN( const IppsHashMethod*, ippsHashMethod_MD5, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_MD5, (void))
 {
-   static IppsHashMethod method = {
-      ippHashAlg_MD5,
-      IPP_MD5_DIGEST_BITSIZE/8,
-      MBS_MD5,
-      MLR_MD5,
-      IPP_MD5_STATE_BYTESIZE,
-      0,
-      0,
-      0,
-      0
-   };
+    static IppsHashMethod method = { ippHashAlg_MD5,
+                                     IPP_MD5_DIGEST_BITSIZE / 8,
+                                     MBS_MD5,
+                                     MLR_MD5,
+                                     IPP_MD5_STATE_BYTESIZE,
+                                     0,
+                                     0,
+                                     0,
+                                     0 };
 
-   method.hashInit   = md5_hashInit;
-   method.hashUpdate = md5_hashUpdate;
-   method.hashOctStr = md5_hashOctString;
-   method.msgLenRep  = md5_msgRep;
+    method.hashInit   = md5_hashInit;
+    method.hashUpdate = md5_hashUpdate;
+    method.hashOctStr = md5_hashOctString;
+    method.msgLenRep  = md5_msgRep;
 
-   return &method;
+    return &method;
 }

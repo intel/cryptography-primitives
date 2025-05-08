@@ -31,26 +31,24 @@
 //
 */
 
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA3_224, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA3_224, (void))
 {
-   static IppsHashMethod method = {
-      ippHashAlg_SHA3_224,
-      IPP_SHA3_224_DIGEST_BITSIZE/8,
-      MBS_SHA3_224,
-      0,
-      IPP_SHA3_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL
-   };
+    static IppsHashMethod method = { ippHashAlg_SHA3_224,
+                                     IPP_SHA3_224_DIGEST_BITSIZE / 8,
+                                     MBS_SHA3_224,
+                                     0,
+                                     IPP_SHA3_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashInit   = sha3_hashInit;
-   method.hashUpdate = sha3_224_hashUpdate;
-   method.hashOctStr = sha3_hashOctString;
-   method.msgLenRep  = NULL;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashInit   = sha3_hashInit;
+    method.hashUpdate = sha3_224_hashUpdate;
+    method.hashOctStr = sha3_hashOctString;
+    method.msgLenRep  = NULL;
 
-   return &method;
+    return &method;
 }

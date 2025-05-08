@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashInit_rmf()
 //
@@ -46,19 +46,19 @@
 //    pMethod  hash method
 //
 *F*/
-IPPFUN(IppStatus, ippsHashInit_rmf,(IppsHashState_rmf* pState, const IppsHashMethod* pMethod))
+IPPFUN(IppStatus, ippsHashInit_rmf, (IppsHashState_rmf * pState, const IppsHashMethod* pMethod))
 {
-   /* test ctx pointers */
-   IPP_BAD_PTR2_RET(pState, pMethod);
-   int size = 0;
-   ippsOptimalHashGetSize_rmf(&size, pMethod);
-   PadBlock(0, pState, size);
-   HASH_METHOD(pState) = pMethod;
-   HASH_SET_ID(pState, idCtxHash);
+    /* test ctx pointers */
+    IPP_BAD_PTR2_RET(pState, pMethod);
+    int size = 0;
+    ippsOptimalHashGetSize_rmf(&size, pMethod);
+    PadBlock(0, pState, size);
+    HASH_METHOD(pState) = pMethod;
+    HASH_SET_ID(pState, idCtxHash);
 
-   /* setup pointers to buffer and hash */
-   HASH_SETUP_POINTERS(pState);
-   
-   pMethod->hashInit(HASH_VALUE(pState));
-   return ippStsNoErr;
+    /* setup pointers to buffer and hash */
+    HASH_SETUP_POINTERS(pState);
+
+    pMethod->hashInit(HASH_VALUE(pState));
+    return ippStsNoErr;
 }

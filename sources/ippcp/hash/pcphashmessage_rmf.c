@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashMessage_rmf()
 //
@@ -49,39 +49,40 @@
 //    pMethod     hash methods
 //
 *F*/
-IPPFUN(IppStatus, ippsHashMessage_rmf,(const Ipp8u* pMsg, int len, Ipp8u* pMD, const IppsHashMethod* pMethod))
+/* clang-format off */
+IPPFUN(IppStatus, ippsHashMessage_rmf, (const Ipp8u* pMsg,
+                                        int len, Ipp8u* pMD,
+                                        const IppsHashMethod* pMethod))
+/* clang-format on */
 {
-   /* test method pointer */
-   IPP_BAD_PTR1_RET(pMethod);
-   /* test digest pointer */
-   IPP_BAD_PTR1_RET(pMD);
-   /* test message length */
-   IPP_BADARG_RET(0>len, ippStsLengthErr);
-   IPP_BADARG_RET((len && !pMsg), ippStsNullPtrErr);
+    /* test method pointer */
+    IPP_BAD_PTR1_RET(pMethod);
+    /* test digest pointer */
+    IPP_BAD_PTR1_RET(pMD);
+    /* test message length */
+    IPP_BADARG_RET(0 > len, ippStsLengthErr);
+    IPP_BADARG_RET((len && !pMsg), ippStsNullPtrErr);
 
-   {
-      /* message length in the multiple MBS and the rest */
-      int msgLenBlks = pMethod->msgBlkSize * (int)(len / pMethod->msgBlkSize);
-      int msgLenRest = len - msgLenBlks;
+    {
+        /* message length in the multiple MBS and the rest */
+        int msgLenBlks = pMethod->msgBlkSize * (int)(len / pMethod->msgBlkSize);
+        int msgLenRest = len - msgLenBlks;
 
-      /* init hash */
-      cpHash hash;
-      pMethod->hashInit(hash);
+        /* init hash */
+        cpHash hash;
+        pMethod->hashInit(hash);
 
-      /* process main part of the message */
-      if(msgLenBlks) {
-         pMethod->hashUpdate(hash, pMsg, msgLenBlks);
-         pMsg += msgLenBlks;
-      }
-      cpFinalize_rmf(hash,
-                     pMsg, msgLenRest,
-                     (Ipp64u)len, 0,
-                     pMethod);
+        /* process main part of the message */
+        if (msgLenBlks) {
+            pMethod->hashUpdate(hash, pMsg, msgLenBlks);
+            pMsg += msgLenBlks;
+        }
+        cpFinalize_rmf(hash, pMsg, msgLenRest, (Ipp64u)len, 0, pMethod);
 
-      /* calculate the rest of hash if any and put it to user's buffer */
-      int digestLenProcessed = 0;
-      hash_squeeze(pMD, hash, pMethod, pMethod->hashLen, &digestLenProcessed);
+        /* calculate the rest of hash if any and put it to user's buffer */
+        int digestLenProcessed = 0;
+        hash_squeeze(pMD, hash, pMethod, pMethod->hashLen, &digestLenProcessed);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashGetTag_rmf()
 //
@@ -51,29 +51,31 @@
 //    pState   pointer to the SHS state
 //
 *F*/
-IPPFUN(IppStatus, ippsHashGetTag_rmf,(Ipp8u* pTag, int tagLen, const IppsHashState_rmf* pState))
+IPPFUN(IppStatus, ippsHashGetTag_rmf, (Ipp8u * pTag, int tagLen, const IppsHashState_rmf* pState))
 {
-   /* test state pointer and ID */
-   IPP_BAD_PTR1_RET(pState);
-   IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+    /* test state pointer and ID */
+    IPP_BAD_PTR1_RET(pState);
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
 
-   /* test digest pointer */
-   IPP_BAD_PTR1_RET(pTag);
-   IPP_BADARG_RET((tagLen <1) || HASH_METHOD(pState)->hashLen<tagLen, ippStsLengthErr);
+    /* test digest pointer */
+    IPP_BAD_PTR1_RET(pTag);
+    IPP_BADARG_RET((tagLen < 1) || HASH_METHOD(pState)->hashLen < tagLen, ippStsLengthErr);
 
-   { /* TBD: consider implementation without copy of internal buffer content */
-      cpHash hash;
-      const IppsHashMethod* method = HASH_METHOD(pState);
-      CopyBlock(HASH_VALUE(pState), hash, method->stateLen);
-      cpFinalize_rmf(hash,
-                  HASH_BUFF(pState), HASH_BUFFIDX(pState),
-                  HASH_LENLO(pState), HASH_LENHI(pState),
-                  method);
-      
-      /* calculate the rest of hash if any and put it to user's buffer */
-      int digestLenProcessed = 0;
-      hash_squeeze(pTag, hash, method, method->hashLen, &digestLenProcessed);
+    { /* TBD: consider implementation without copy of internal buffer content */
+        cpHash hash;
+        const IppsHashMethod* method = HASH_METHOD(pState);
+        CopyBlock(HASH_VALUE(pState), hash, method->stateLen);
+        cpFinalize_rmf(hash,
+                       HASH_BUFF(pState),
+                       HASH_BUFFIDX(pState),
+                       HASH_LENLO(pState),
+                       HASH_LENHI(pState),
+                       method);
 
-      return ippStsNoErr;
-   }
+        /* calculate the rest of hash if any and put it to user's buffer */
+        int digestLenProcessed = 0;
+        hash_squeeze(pTag, hash, method, method->hashLen, &digestLenProcessed);
+
+        return ippStsNoErr;
+    }
 }

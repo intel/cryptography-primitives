@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashPack_rmf()
 //
@@ -49,24 +49,24 @@
 //    bufSize     size of the destination buffer
 //
 *F*/
-IPPFUN(IppStatus, ippsHashPack_rmf,(const IppsHashState_rmf* pState, Ipp8u* pBuffer, int bufSize))
+IPPFUN(IppStatus, ippsHashPack_rmf, (const IppsHashState_rmf* pState, Ipp8u* pBuffer, int bufSize))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pBuffer);
-   IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pState, pBuffer);
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
 
-   int context_size = 0;
-   ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pState));
+    int context_size = 0;
+    ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pState));
 
-   /* test buffer length */
-   IPP_BADARG_RET(context_size > bufSize, ippStsNoMemErr);
+    /* test buffer length */
+    IPP_BADARG_RET(context_size > bufSize, ippStsNoMemErr);
 
-   CopyBlock(pState, pBuffer, context_size);
-   IppsHashState_rmf* pCopy = (IppsHashState_rmf*)pBuffer;
-   HASH_RESET_ID(pCopy, idCtxHash);
+    CopyBlock(pState, pBuffer, context_size);
+    IppsHashState_rmf* pCopy = (IppsHashState_rmf*)pBuffer;
+    HASH_RESET_ID(pCopy, idCtxHash);
 
-   /* setup pointers to buffer and hash */
-   HASH_SETUP_POINTERS(pCopy);
+    /* setup pointers to buffer and hash */
+    HASH_SETUP_POINTERS(pCopy);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

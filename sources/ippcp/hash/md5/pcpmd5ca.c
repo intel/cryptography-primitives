@@ -38,23 +38,28 @@
 /*
 // Compute digest
 */
-IPP_OWN_DEFN (void, cpFinalizeMD5, (DigestMD5 pHash, const Ipp8u* inpBuffer, int inpLen, Ipp64u processedMsgLen))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpFinalizeMD5, (DigestMD5 pHash,
+                                   const Ipp8u* inpBuffer,
+                                   int inpLen,
+                                   Ipp64u processedMsgLen))
+/* clang-format on */
 {
-   /* local buffer and it length */
-   Ipp8u buffer[MBS_MD5*2];
-   int bufferLen = inpLen < (MBS_MD5-(int)MLR_MD5)? MBS_MD5 : MBS_MD5*2;
+    /* local buffer and it length */
+    Ipp8u buffer[MBS_MD5 * 2];
+    int bufferLen = inpLen < (MBS_MD5 - (int)MLR_MD5) ? MBS_MD5 : MBS_MD5 * 2;
 
-   /* copy rest of message into internal buffer */
-   CopyBlock(inpBuffer, buffer, (cpSize)inpLen);
+    /* copy rest of message into internal buffer */
+    CopyBlock(inpBuffer, buffer, (cpSize)inpLen);
 
-   /* pad message */
-   buffer[inpLen++] = 0x80;
-   PadBlock(0, buffer+inpLen, (cpSize)(bufferLen-inpLen-(int)MLR_MD5));
+    /* pad message */
+    buffer[inpLen++] = 0x80;
+    PadBlock(0, buffer + inpLen, (cpSize)(bufferLen - inpLen - (int)MLR_MD5));
 
-   /* put processed message length in bits */
-   processedMsgLen <<= 3;
-   ((Ipp64u*)(buffer+bufferLen))[-1] = processedMsgLen;
+    /* put processed message length in bits */
+    processedMsgLen <<= 3;
+    ((Ipp64u*)(buffer + bufferLen))[-1] = processedMsgLen;
 
-   /* complete hash computation */
-   UpdateMD5(pHash, buffer, bufferLen, MD5_cnt);
+    /* complete hash computation */
+    UpdateMD5(pHash, buffer, bufferLen, MD5_cnt);
 }

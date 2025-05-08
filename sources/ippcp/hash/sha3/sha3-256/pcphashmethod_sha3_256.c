@@ -21,8 +21,8 @@
 #include "pcptool.h"
 #include "hash/sha3/sha3-256/pcpsha3_256_stuff.h"
 
-/* 
-//    Name: ippsHashMethod_SHA3_256
+/*
+// Name: ippsHashMethod_SHA3_256
 //
 // Purpose: Return SHA3_256 method.
 //
@@ -31,26 +31,24 @@
 //
 */
 
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA3_256, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA3_256, (void))
 {
-   static IppsHashMethod method = {
-      ippHashAlg_SHA3_256,
-      IPP_SHA3_256_DIGEST_BITSIZE/8,
-      MBS_SHA3_256,
-      0,
-      IPP_SHA3_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL
-   };
+    static IppsHashMethod method = { ippHashAlg_SHA3_256,
+                                     IPP_SHA3_256_DIGEST_BITSIZE / 8,
+                                     MBS_SHA3_256,
+                                     0,
+                                     IPP_SHA3_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashInit   = sha3_hashInit;
-   method.hashUpdate = sha3_256_hashUpdate;
-   method.hashOctStr = sha3_hashOctString;
-   method.msgLenRep  = NULL;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashInit   = sha3_hashInit;
+    method.hashUpdate = sha3_256_hashUpdate;
+    method.hashOctStr = sha3_hashOctString;
+    method.msgLenRep  = NULL;
 
-   return &method;
+    return &method;
 }

@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SM3
-// 
+//
 //  Contents:
 //        ippsHashMethod_SM3_NI()
 //
@@ -41,30 +41,28 @@
 //          Pointer to SM3 hash-method.
 //
 *F*/
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SM3_NI, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SM3_NI, (void))
 {
-#if (_SM3_ENABLING_==_FEATURE_TICKTOCK_ || _SM3_ENABLING_==_FEATURE_ON_)
-   static IppsHashMethod method = {
-      ippHashAlg_SM3,
-      IPP_SM3_DIGEST_BITSIZE/8,
-      MBS_SM3,
-      MLR_SM3,
-      IPP_SM3_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-   };
+#if (_SM3_ENABLING_ == _FEATURE_TICKTOCK_ || _SM3_ENABLING_ == _FEATURE_ON_)
+    static IppsHashMethod method = { ippHashAlg_SM3,
+                                     IPP_SM3_DIGEST_BITSIZE / 8,
+                                     MBS_SM3,
+                                     MLR_SM3,
+                                     IPP_SM3_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashInit   = sm3_hashInit;
-   method.hashUpdate = sm3_hashUpdate_ni; // SM3 instructions are used
-   method.hashOctStr = sm3_hashOctString;
-   method.msgLenRep  = sm3_msgRep;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashInit   = sm3_hashInit;
+    method.hashUpdate = sm3_hashUpdate_ni; // SM3 instructions are used
+    method.hashOctStr = sm3_hashOctString;
+    method.msgLenRep  = sm3_msgRep;
 
-   return &method;
+    return &method;
 #else
-   return NULL;
+    return NULL;
 #endif
 }

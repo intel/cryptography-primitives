@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashUpdate_rmf()
 //
@@ -49,66 +49,67 @@
 //    pState   pointer to the Hash context
 //
 *F*/
-IPPFUN(IppStatus, ippsHashUpdate_rmf,(const Ipp8u* pSrc, int len, IppsHashState_rmf* pState))
+IPPFUN(IppStatus, ippsHashUpdate_rmf, (const Ipp8u* pSrc, int len, IppsHashState_rmf* pState))
 {
-   /* test state pointer and ID */
-   IPP_BAD_PTR1_RET(pState);
-   IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+    /* test state pointer and ID */
+    IPP_BAD_PTR1_RET(pState);
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
 
-   /* test input length */
-   IPP_BADARG_RET((len<0), ippStsLengthErr);
-   /* test source pointer */
-   IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
+    /* test input length */
+    IPP_BADARG_RET((len < 0), ippStsLengthErr);
+    /* test source pointer */
+    IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
 
-   if(len) {
-      const IppsHashMethod* method = HASH_METHOD(pState);
-      hashUpdateF hashFunc = method->hashUpdate;   /* processing function */
-      int msgBlkSize = method->msgBlkSize;         /* message block size */
+    if (len) {
+        const IppsHashMethod* method = HASH_METHOD(pState);
+        hashUpdateF hashFunc         = method->hashUpdate; /* processing function */
+        int msgBlkSize               = method->msgBlkSize; /* message block size */
 
-      int procLen;
+        int procLen;
 
-      int idx = HASH_BUFFIDX(pState);
-      Ipp64u lenLo = HASH_LENLO(pState);
-      Ipp64u lenHi = HASH_LENHI(pState);
-      lenLo += (Ipp64u)len;
-      if(lenLo < HASH_LENLO(pState)) lenHi++;
+        int idx      = HASH_BUFFIDX(pState);
+        Ipp64u lenLo = HASH_LENLO(pState);
+        Ipp64u lenHi = HASH_LENHI(pState);
+        lenLo += (Ipp64u)len;
+        if (lenLo < HASH_LENLO(pState))
+            lenHi++;
 
-      /* if internal buffer is not empty */
-      if(idx) {
-         procLen = IPP_MIN(len, (msgBlkSize-idx));
-         CopyBlock(pSrc, HASH_BUFF(pState)+idx, procLen);
-         idx += procLen;
+        /* if internal buffer is not empty */
+        if (idx) {
+            procLen = IPP_MIN(len, (msgBlkSize - idx));
+            CopyBlock(pSrc, HASH_BUFF(pState) + idx, procLen);
+            idx += procLen;
 
-         /* process complete message block  */
-         if(msgBlkSize==idx) {
-            hashFunc(HASH_VALUE(pState), HASH_BUFF(pState), msgBlkSize);
-            idx = 0;
-         }
+            /* process complete message block  */
+            if (msgBlkSize == idx) {
+                hashFunc(HASH_VALUE(pState), HASH_BUFF(pState), msgBlkSize);
+                idx = 0;
+            }
 
-         /* update message pointer and length */
-         pSrc += procLen;
-         len  -= procLen;
-      }
+            /* update message pointer and length */
+            pSrc += procLen;
+            len -= procLen;
+        }
 
-      /* process main part of the input*/
-      procLen = msgBlkSize * (int)(len / msgBlkSize);
-      if(procLen) {
-         hashFunc(HASH_VALUE(pState), pSrc, procLen);
-         pSrc += procLen;
-         len  -= procLen;
-      }
+        /* process main part of the input*/
+        procLen = msgBlkSize * (int)(len / msgBlkSize);
+        if (procLen) {
+            hashFunc(HASH_VALUE(pState), pSrc, procLen);
+            pSrc += procLen;
+            len -= procLen;
+        }
 
-      /* store the rest of input in the buffer */
-      if(len) {
-         CopyBlock(pSrc, HASH_BUFF(pState), len);
-         idx += len;
-      }
+        /* store the rest of input in the buffer */
+        if (len) {
+            CopyBlock(pSrc, HASH_BUFF(pState), len);
+            idx += len;
+        }
 
-      /* update length of processed message */
-      HASH_LENLO(pState) = lenLo;
-      HASH_LENHI(pState) = lenHi;
-      HASH_BUFFIDX(pState) = idx;
-   }
+        /* update length of processed message */
+        HASH_LENLO(pState)   = lenLo;
+        HASH_LENHI(pState)   = lenHi;
+        HASH_BUFFIDX(pState) = idx;
+    }
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

@@ -22,7 +22,7 @@
 #include "hash/sha3/shake256/pcpshake256_stuff.h"
 
 /*
-//    Name: ippsHashStateMethodSet_SHAKE256
+// Name: ippsHashStateMethodSet_SHAKE256
 //
 // Purpose: Setup SHAKE256 method inside the hash state.
 //
@@ -32,37 +32,38 @@
 //    ippStsNoErr             no errors
 //
 */
-IPPFUN( IppStatus, ippsHashStateMethodSet_SHAKE256, (IppsHashState_rmf* pState, IppsHashMethod* pMethod, int digestBitsize) )
+/* clang-format off */
+IPPFUN(IppStatus, ippsHashStateMethodSet_SHAKE256, (IppsHashState_rmf* pState,
+                                                    IppsHashMethod* pMethod,
+                                                    int digestBitsize))
+/* clang-format on */
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pMethod);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pState, pMethod);
 
-   HASH_METHOD(pState) = pMethod;
+    HASH_METHOD(pState) = pMethod;
 
-   if(digestBitsize > 0 && (digestBitsize % 8) == 0) {
-      pMethod->hashAlgId     = ippHashAlg_SHAKE256;
-      pMethod->hashLen       = digestBitsize / 8,
-      pMethod->msgBlkSize    = MBS_SHAKE256;
-      pMethod->msgLenRepSize = 0;
-      pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
-      pMethod->hashInit      = sha3_hashInit;
-      pMethod->hashUpdate    = shake256_hashUpdate;
-      pMethod->hashOctStr    = sha3_hashOctString;
-      pMethod->msgLenRep     = NULL;
+    if (digestBitsize > 0 && (digestBitsize % 8) == 0) {
+        pMethod->hashAlgId = ippHashAlg_SHAKE256;
+        pMethod->hashLen = digestBitsize / 8, pMethod->msgBlkSize = MBS_SHAKE256;
+        pMethod->msgLenRepSize = 0;
+        pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
+        pMethod->hashInit      = sha3_hashInit;
+        pMethod->hashUpdate    = shake256_hashUpdate;
+        pMethod->hashOctStr    = sha3_hashOctString;
+        pMethod->msgLenRep     = NULL;
 
-      return ippStsNoErr;
-   }
-   else {
-      pMethod->hashAlgId     = ippHashAlg_Unknown;
-      pMethod->hashLen       = 0,
-      pMethod->msgBlkSize    = 0;
-      pMethod->msgLenRepSize = 0;
-      pMethod->stateLen      = 0;
-      pMethod->hashInit      = NULL;
-      pMethod->hashUpdate    = NULL;
-      pMethod->hashOctStr    = NULL;
-      pMethod->msgLenRep     = NULL;
+        return ippStsNoErr;
+    } else {
+        pMethod->hashAlgId = ippHashAlg_Unknown;
+        pMethod->hashLen = 0, pMethod->msgBlkSize = 0;
+        pMethod->msgLenRepSize = 0;
+        pMethod->stateLen      = 0;
+        pMethod->hashInit      = NULL;
+        pMethod->hashUpdate    = NULL;
+        pMethod->hashOctStr    = NULL;
+        pMethod->msgLenRep     = NULL;
 
-      return ippStsOutOfRangeErr;
-   }
+        return ippStsOutOfRangeErr;
+    }
 }

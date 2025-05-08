@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     General Functionality
-// 
+//
 //  Contents:
 //        ippsHashPack()
 //
@@ -52,20 +52,20 @@
 //    bufSize     size of the destination buffer
 //
 *F*/
-IPPFUN(IppStatus, ippsHashPack,(const IppsHashState* pState, Ipp8u* pBuffer, int bufSize))
+IPPFUN(IppStatus, ippsHashPack, (const IppsHashState* pState, Ipp8u* pBuffer, int bufSize))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pBuffer);
-   /* test the context */
-   IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
-   /* test buffer length */
-   IPP_BADARG_RET((int)(sizeof(IppsHashState))>bufSize, ippStsNoMemErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pState, pBuffer);
+    /* test the context */
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+    /* test buffer length */
+    IPP_BADARG_RET((int)(sizeof(IppsHashState)) > bufSize, ippStsNoMemErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
 
-   CopyBlock(pState, pBuffer, sizeof(IppsHashState));
-   IppsHashState* pCopy = (IppsHashState*)pBuffer;
-   HASH_RESET_ID(pCopy, idCtxHash);
+    CopyBlock(pState, pBuffer, sizeof(IppsHashState));
+    IppsHashState* pCopy = (IppsHashState*)pBuffer;
+    HASH_RESET_ID(pCopy, idCtxHash);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

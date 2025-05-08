@@ -23,8 +23,8 @@
 #if !defined(_PCP_SHAKE128_STUFF_H)
 #define _PCP_SHAKE128_STUFF_H
 
-IPP_OWN_DEFN (static void, shake128_hashUpdate, (void* pHash, const Ipp8u* pMsg, int msgLen))
-{ 
+IPP_OWN_DEFN(static void, shake128_hashUpdate, (void* pHash, const Ipp8u* pMsg, int msgLen))
+{
     int block_size = MBS_SHAKE128;
     UpdateSHA3(pHash, pMsg, msgLen, &block_size);
 }

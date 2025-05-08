@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SHA256
-// 
+//
 //  Contents:
 //        ippsHashMethodSet_SHA224()
 //
@@ -43,20 +43,20 @@
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashMethodSet_SHA224, (IppsHashMethod* pMethod) )
+IPPFUN(IppStatus, ippsHashMethodSet_SHA224, (IppsHashMethod * pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   pMethod->hashAlgId     = ippHashAlg_SHA224;
-   pMethod->hashLen       = IPP_SHA224_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA256;
-   pMethod->msgLenRepSize = MLR_SHA256;
-   pMethod->stateLen      = IPP_SHA224_STATE_BYTESIZE;
-   pMethod->hashInit      = sha224_hashInit;
-   pMethod->hashUpdate    = sha256_hashUpdate;
-   pMethod->hashOctStr    = sha224_hashOctString;
-   pMethod->msgLenRep     = sha256_msgRep;
+    pMethod->hashAlgId     = ippHashAlg_SHA224;
+    pMethod->hashLen       = IPP_SHA224_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA256;
+    pMethod->msgLenRepSize = MLR_SHA256;
+    pMethod->stateLen      = IPP_SHA224_STATE_BYTESIZE;
+    pMethod->hashInit      = sha224_hashInit;
+    pMethod->hashUpdate    = sha256_hashUpdate;
+    pMethod->hashOctStr    = sha224_hashOctString;
+    pMethod->msgLenRep     = sha256_msgRep;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

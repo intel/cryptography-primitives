@@ -32,22 +32,25 @@
 //    ippStsNoErr             no errors
 //
 */
-IPPFUN( IppStatus, ippsHashStateMethodSet_SHA3_224, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+/* clang-format off */
+IPPFUN(IppStatus, ippsHashStateMethodSet_SHA3_224, (IppsHashState_rmf* pState,
+                                                    IppsHashMethod* pMethod))
+/* clang-format on */
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pMethod);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pState, pMethod);
 
-   HASH_METHOD(pState) = pMethod;
+    HASH_METHOD(pState) = pMethod;
 
-   pMethod->hashAlgId     = ippHashAlg_SHA3_224;
-   pMethod->hashLen       = IPP_SHA3_224_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA3_224;
-   pMethod->msgLenRepSize = 0;
-   pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
-   pMethod->hashInit      = sha3_hashInit;
-   pMethod->hashUpdate    = sha3_224_hashUpdate;
-   pMethod->hashOctStr    = sha3_hashOctString;
-   pMethod->msgLenRep     = NULL;
+    pMethod->hashAlgId     = ippHashAlg_SHA3_224;
+    pMethod->hashLen       = IPP_SHA3_224_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA3_224;
+    pMethod->msgLenRepSize = 0;
+    pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
+    pMethod->hashInit      = sha3_hashInit;
+    pMethod->hashUpdate    = sha3_224_hashUpdate;
+    pMethod->hashOctStr    = sha3_hashOctString;
+    pMethod->msgLenRep     = NULL;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

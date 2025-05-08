@@ -21,7 +21,7 @@
 #include "pcptool.h"
 #include "hash/sha3/shake128/pcpshake128_stuff.h"
 
-/* 
+/*
 //    Name: ippsHashMethod_SHAKE128
 //
 // Purpose: Return SHAKE128 method.
@@ -32,31 +32,31 @@
 //
 */
 
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHAKE128, (int digestBitsize) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SHAKE128, (int digestBitsize))
 {
-   IPP_BADARG_RET(digestBitsize <= 0, NULL);
-   /* test if digestBitsize is not byte aligned */
-   IPP_BADARG_RET(digestBitsize % 8, NULL);
+    IPP_BADARG_RET(digestBitsize <= 0, NULL);
+    /* test if digestBitsize is not byte aligned */
+    IPP_BADARG_RET(digestBitsize % 8, NULL);
 
-   static IppsHashMethod method = {
-      ippHashAlg_SHAKE128,
-      0,
-      MBS_SHAKE128,
-      0,
-      IPP_SHA3_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL
-   };
+    /* clang-format off */
+    static IppsHashMethod method = { ippHashAlg_SHAKE128,
+                                     0,
+                                     MBS_SHAKE128,
+                                     0,
+                                     IPP_SHA3_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
+    /* clang-format on */
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashLen    = digestBitsize / 8; 
-   method.hashInit   = sha3_hashInit;
-   method.hashUpdate = shake128_hashUpdate;
-   method.hashOctStr = sha3_hashOctString;
-   method.msgLenRep  = NULL;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashLen    = digestBitsize / 8;
+    method.hashInit   = sha3_hashInit;
+    method.hashUpdate = shake128_hashUpdate;
+    method.hashOctStr = sha3_hashOctString;
+    method.msgLenRep  = NULL;
 
-   return &method;
+    return &method;
 }

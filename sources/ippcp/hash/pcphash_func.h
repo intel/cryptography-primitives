@@ -35,93 +35,93 @@
 // hash alg default processing functions and opt argument
 */
 static cpHashProc cpHashProcFunc[] = {
-   (cpHashProc)NULL,
+    (cpHashProc)NULL,
 
-   #if defined(_ENABLE_ALG_SHA1_)
-      #if(_SHA_NI_ENABLING_==_FEATURE_ON_)
-         UpdateSHA1ni,
-      #else
-         UpdateSHA1,
-      #endif
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_SHA1_)
+#if (_SHA_NI_ENABLING_ == _FEATURE_ON_)
+    UpdateSHA1ni,
+#else
+    UpdateSHA1,
+#endif
+#else
+    NULL,
+#endif
 
-   #if defined(_ENABLE_ALG_SHA256_)
-      #if(_SHA_NI_ENABLING_==_FEATURE_ON_)
-         UpdateSHA256ni,
-      #else
-         UpdateSHA256,
-      #endif
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_SHA256_)
+#if (_SHA_NI_ENABLING_ == _FEATURE_ON_)
+    UpdateSHA256ni,
+#else
+    UpdateSHA256,
+#endif
+#else
+    NULL,
+#endif
 
-   #if defined(_ENABLE_ALG_SHA224_)
-      #if(_SHA_NI_ENABLING_==_FEATURE_ON_)
-         UpdateSHA256ni,
-      #else
-         UpdateSHA256,
-      #endif
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_SHA224_)
+#if (_SHA_NI_ENABLING_ == _FEATURE_ON_)
+    UpdateSHA256ni,
+#else
+    UpdateSHA256,
+#endif
+#else
+    NULL,
+#endif
 
-   #if defined(_ENABLE_ALG_SHA512_)
-      #if(_SHA512_ENABLING_==_FEATURE_ON_)
-         UpdateSHA512ni,
-      #else
-         UpdateSHA512,
-      #endif
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_SHA512_)
+#if (_SHA512_ENABLING_ == _FEATURE_ON_)
+    UpdateSHA512ni,
+#else
+    UpdateSHA512,
+#endif
+#else
+    NULL,
+#endif
 
-   #if defined(_ENABLE_ALG_SHA384_)
-      #if(_SHA512_ENABLING_==_FEATURE_ON_)
-         UpdateSHA512ni,
-      #else
-         UpdateSHA512,
-      #endif
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_SHA384_)
+#if (_SHA512_ENABLING_ == _FEATURE_ON_)
+    UpdateSHA512ni,
+#else
+    UpdateSHA512,
+#endif
+#else
+    NULL,
+#endif
 
-   #if defined(_ENABLE_ALG_MD5_)
-      UpdateMD5,
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_MD5_)
+    UpdateMD5,
+#else
+    NULL,
+#endif
 
-   #if defined(_ENABLE_ALG_SM3_)
-      #if(_SM3_ENABLING_==_FEATURE_ON_)
-         UpdateSM3ni,
-      #else
-         UpdateSM3,
-      #endif
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_SM3_)
+#if (_SM3_ENABLING_ == _FEATURE_ON_)
+    UpdateSM3ni,
+#else
+    UpdateSM3,
+#endif
+#else
+    NULL,
+#endif
 
-   #if defined(_ENABLE_ALG_SHA512_224_)
-      #if(_SHA512_ENABLING_==_FEATURE_ON_)
-         UpdateSHA512ni,
-      #else
-         UpdateSHA512,
-      #endif
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_SHA512_224_)
+#if (_SHA512_ENABLING_ == _FEATURE_ON_)
+    UpdateSHA512ni,
+#else
+    UpdateSHA512,
+#endif
+#else
+    NULL,
+#endif
 
-   #if defined(_ENABLE_ALG_SHA512_256_)
-      #if(_SHA512_ENABLING_==_FEATURE_ON_)
-         UpdateSHA512ni,
-      #else
-         UpdateSHA512,
-      #endif
-   #else
-      NULL,
-   #endif
+#if defined(_ENABLE_ALG_SHA512_256_)
+#if (_SHA512_ENABLING_ == _FEATURE_ON_)
+    UpdateSHA512ni,
+#else
+    UpdateSHA512,
+#endif
+#else
+    NULL,
+#endif
 };
 
 #endif /* _PCP_HASH_FUNC_H */

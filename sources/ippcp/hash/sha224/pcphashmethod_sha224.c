@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SHA256
-// 
+//
 //  Contents:
 //        ippsHashMethod_SHA224()
 //
@@ -42,26 +42,24 @@
 //
 *F*/
 
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA224, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA224, (void))
 {
-   static IppsHashMethod method = {
-      ippHashAlg_SHA224,
-      IPP_SHA224_DIGEST_BITSIZE/8,
-      MBS_SHA256,
-      MLR_SHA256,
-      IPP_SHA224_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL
-   };
+    static IppsHashMethod method = { ippHashAlg_SHA224,
+                                     IPP_SHA224_DIGEST_BITSIZE / 8,
+                                     MBS_SHA256,
+                                     MLR_SHA256,
+                                     IPP_SHA224_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashInit   = sha224_hashInit;
-   method.hashUpdate = sha256_hashUpdate;
-   method.hashOctStr = sha224_hashOctString;
-   method.msgLenRep  = sha256_msgRep;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashInit   = sha224_hashInit;
+    method.hashUpdate = sha256_hashUpdate;
+    method.hashOctStr = sha224_hashOctString;
+    method.msgLenRep  = sha256_msgRep;
 
-   return &method;
+    return &method;
 }

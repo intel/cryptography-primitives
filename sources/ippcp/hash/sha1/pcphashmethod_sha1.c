@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SHA1
-// 
+//
 //  Contents:
 //        ippsHashMethod_SHA1()
 //
@@ -41,24 +41,22 @@
 //          Pointer to SHA1 hash-method.
 //
 *F*/
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA1, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA1, (void))
 {
-   static IppsHashMethod method = {
-      ippHashAlg_SHA1,
-      IPP_SHA1_DIGEST_BITSIZE/8,
-      MBS_SHA1,
-      MLR_SHA1,
-      IPP_SHA1_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL
-   };
+    static IppsHashMethod method = { ippHashAlg_SHA1,
+                                     IPP_SHA1_DIGEST_BITSIZE / 8,
+                                     MBS_SHA1,
+                                     MLR_SHA1,
+                                     IPP_SHA1_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
 
-   method.hashInit   = sha1_hashInit;
-   method.hashUpdate = sha1_hashUpdate;
-   method.hashOctStr = sha1_hashOctString;
-   method.msgLenRep  = sha1_msgRep;
+    method.hashInit   = sha1_hashInit;
+    method.hashUpdate = sha1_hashUpdate;
+    method.hashOctStr = sha1_hashOctString;
+    method.msgLenRep  = sha1_msgRep;
 
-   return &method;
+    return &method;
 }

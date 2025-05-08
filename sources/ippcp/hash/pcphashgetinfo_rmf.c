@@ -46,15 +46,15 @@
 //    pMethod    Pointer to the IppsHashMethod
 //
 *F*/
-IPPFUN(IppStatus, ippsHashMethodGetInfo,(IppsHashInfo* pInfo, const IppsHashMethod* pMethod))
+IPPFUN(IppStatus, ippsHashMethodGetInfo, (IppsHashInfo * pInfo, const IppsHashMethod* pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pInfo, pMethod);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pInfo, pMethod);
 
-   pInfo->hashSize = pMethod->hashLen;
-   pInfo->msgBlockSize = pMethod->msgBlkSize;
+    pInfo->hashSize     = pMethod->hashLen;
+    pInfo->msgBlockSize = pMethod->msgBlkSize;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }
 
 /*F*
@@ -75,14 +75,14 @@ IPPFUN(IppStatus, ippsHashMethodGetInfo,(IppsHashInfo* pInfo, const IppsHashMeth
 //    pState     Pointer to the state context
 //
 *F*/
-IPPFUN(IppStatus, ippsHashGetInfo_rmf,(IppsHashInfo* pInfo, const IppsHashState_rmf* pState))
+IPPFUN(IppStatus, ippsHashGetInfo_rmf, (IppsHashInfo * pInfo, const IppsHashState_rmf* pState))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pInfo, pState);
-   IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pInfo, pState);
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
 
-   pInfo->hashSize = HASH_METHOD(pState)->hashLen;
-   pInfo->msgBlockSize = HASH_METHOD(pState)->msgBlkSize;
+    pInfo->hashSize     = HASH_METHOD(pState)->hashLen;
+    pInfo->msgBlockSize = HASH_METHOD(pState)->msgBlkSize;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashUnpack_rmf()
 //
@@ -46,18 +46,18 @@
 //    pState      pointer hash state
 //
 *F*/
-IPPFUN(IppStatus, ippsHashUnpack_rmf,(const Ipp8u* pBuffer, IppsHashState_rmf* pState))
+IPPFUN(IppStatus, ippsHashUnpack_rmf, (const Ipp8u* pBuffer, IppsHashState_rmf* pState))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pBuffer);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pState, pBuffer);
 
-   int context_size = 0;
-   ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pState));
-   CopyBlock(pBuffer, pState, context_size);
-   HASH_SET_ID(pState, idCtxHash);
+    int context_size = 0;
+    ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pState));
+    CopyBlock(pBuffer, pState, context_size);
+    HASH_SET_ID(pState, idCtxHash);
 
-   /* setup pointers to buffer and hash */
-   HASH_SETUP_POINTERS(pState);
+    /* setup pointers to buffer and hash */
+    HASH_SETUP_POINTERS(pState);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

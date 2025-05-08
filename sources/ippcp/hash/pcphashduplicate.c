@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     General Functionality
-// 
+//
 //  Contents:
 //        ippsHashDuplicate()
 //
@@ -54,17 +54,17 @@
 //    pDstState may to be uninitialized by ippsHashInit()
 //
 *F*/
-IPPFUN(IppStatus, ippsHashDuplicate,(const IppsHashState* pSrcState, IppsHashState* pDstState))
+IPPFUN(IppStatus, ippsHashDuplicate, (const IppsHashState* pSrcState, IppsHashState* pDstState))
 {
-   /* test state pointers */
-   IPP_BAD_PTR2_RET(pSrcState, pDstState);
-   /* test states ID */
-   IPP_BADARG_RET(!HASH_VALID_ID(pSrcState, idCtxHash), ippStsContextMatchErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pSrcState)), ippStsNotSupportedModeErr);
-   /* copy state */
-   CopyBlock(pSrcState, pDstState, sizeof(IppsHashState));
-   HASH_SET_ID(pDstState, idCtxHash);
+    /* test state pointers */
+    IPP_BAD_PTR2_RET(pSrcState, pDstState);
+    /* test states ID */
+    IPP_BADARG_RET(!HASH_VALID_ID(pSrcState, idCtxHash), ippStsContextMatchErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pSrcState)), ippStsNotSupportedModeErr);
+    /* copy state */
+    CopyBlock(pSrcState, pDstState, sizeof(IppsHashState));
+    HASH_SET_ID(pDstState, idCtxHash);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SM3
-// 
+//
 //  Contents:
 //        ippsHashMethodSet_SM3_TT()
 //
@@ -43,28 +43,27 @@
 //    ippStsNoErr             no errors
 //
 *F*/
-IPPFUN( IppStatus, ippsHashMethodSet_SM3_TT, (IppsHashMethod* pMethod) )
+IPPFUN(IppStatus, ippsHashMethodSet_SM3_TT, (IppsHashMethod * pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   pMethod->hashAlgId     = ippHashAlg_SM3;
-   pMethod->hashLen       = IPP_SM3_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SM3;
-   pMethod->msgLenRepSize = MLR_SM3;
-   pMethod->stateLen      = IPP_SM3_STATE_BYTESIZE;
-   pMethod->hashInit      = sm3_hashInit;
-#if (_SM3_ENABLING_==_FEATURE_TICKTOCK_ || _SM3_ENABLING_==_FEATURE_ON_)
-   if (IsFeatureEnabled(ippCPUID_AVX2SM3)) {
-      pMethod->hashUpdate = sm3_hashUpdate_ni;
-   }
-   else
+    pMethod->hashAlgId     = ippHashAlg_SM3;
+    pMethod->hashLen       = IPP_SM3_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SM3;
+    pMethod->msgLenRepSize = MLR_SM3;
+    pMethod->stateLen      = IPP_SM3_STATE_BYTESIZE;
+    pMethod->hashInit      = sm3_hashInit;
+#if (_SM3_ENABLING_ == _FEATURE_TICKTOCK_ || _SM3_ENABLING_ == _FEATURE_ON_)
+    if (IsFeatureEnabled(ippCPUID_AVX2SM3)) {
+        pMethod->hashUpdate = sm3_hashUpdate_ni;
+    } else
 #endif
-   {
-      pMethod->hashUpdate  = sm3_hashUpdate;
-   }
-   pMethod->hashOctStr    = sm3_hashOctString;
-   pMethod->msgLenRep     = sm3_msgRep;
+    {
+        pMethod->hashUpdate = sm3_hashUpdate;
+    }
+    pMethod->hashOctStr = sm3_hashOctString;
+    pMethod->msgLenRep  = sm3_msgRep;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

@@ -22,7 +22,7 @@
 #include "hash/sha3/sha3-256/pcpsha3_256_stuff.h"
 
 /*
-//    Name: ippsHashStateMethodSet_SHA3_256
+// Name: ippsHashStateMethodSet_SHA3_256
 //
 // Purpose: Setup SHA3_256 method inside the hash state.
 //
@@ -31,22 +31,25 @@
 //    ippStsNoErr             no errors
 //
 */
-IPPFUN( IppStatus, ippsHashStateMethodSet_SHA3_256, (IppsHashState_rmf* pState, IppsHashMethod* pMethod) )
+/* clang-format off */
+IPPFUN(IppStatus, ippsHashStateMethodSet_SHA3_256, (IppsHashState_rmf* pState,
+                                                    IppsHashMethod* pMethod))
+/* clang-format on */
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pState, pMethod);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pState, pMethod);
 
-   HASH_METHOD(pState) = pMethod;
+    HASH_METHOD(pState) = pMethod;
 
-   pMethod->hashAlgId     = ippHashAlg_SHA3_256;
-   pMethod->hashLen       = IPP_SHA3_256_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA3_256;
-   pMethod->msgLenRepSize = 0;
-   pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
-   pMethod->hashInit      = sha3_hashInit;
-   pMethod->hashUpdate    = sha3_256_hashUpdate;
-   pMethod->hashOctStr    = sha3_hashOctString;
-   pMethod->msgLenRep     = NULL;
+    pMethod->hashAlgId     = ippHashAlg_SHA3_256;
+    pMethod->hashLen       = IPP_SHA3_256_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA3_256;
+    pMethod->msgLenRepSize = 0;
+    pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
+    pMethod->hashInit      = sha3_hashInit;
+    pMethod->hashUpdate    = sha3_256_hashUpdate;
+    pMethod->hashOctStr    = sha3_hashOctString;
+    pMethod->msgLenRep     = NULL;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

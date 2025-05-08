@@ -43,20 +43,20 @@
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashMethodSet_SHA384, (IppsHashMethod* pMethod) )
+IPPFUN(IppStatus, ippsHashMethodSet_SHA384, (IppsHashMethod * pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   pMethod->hashAlgId     = ippHashAlg_SHA384;
-   pMethod->hashLen       = IPP_SHA384_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA512;
-   pMethod->msgLenRepSize = MLR_SHA512;
-   pMethod->stateLen      = IPP_SHA384_STATE_BYTESIZE;
-   pMethod->hashInit      = sha512_384_hashInit;
-   pMethod->hashUpdate    = sha512_hashUpdate;
-   pMethod->hashOctStr    = sha512_384_hashOctString;
-   pMethod->msgLenRep     = sha512_msgRep;
+    pMethod->hashAlgId     = ippHashAlg_SHA384;
+    pMethod->hashLen       = IPP_SHA384_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA512;
+    pMethod->msgLenRepSize = MLR_SHA512;
+    pMethod->stateLen      = IPP_SHA384_STATE_BYTESIZE;
+    pMethod->hashInit      = sha512_384_hashInit;
+    pMethod->hashUpdate    = sha512_hashUpdate;
+    pMethod->hashOctStr    = sha512_384_hashOctString;
+    pMethod->msgLenRep     = sha512_msgRep;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

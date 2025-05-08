@@ -55,87 +55,88 @@
 *F*/
 __IPPCP_INLINE int IsExceedMsgLen(Ipp64u maxLo, Ipp64u maxHi, Ipp64u lenLo, Ipp64u lenHi)
 {
-   int isExceed = lenLo > maxLo;
-   isExceed = (lenHi+(Ipp64u)isExceed) > maxHi;
-   return isExceed;
+    int isExceed = lenLo > maxLo;
+    isExceed     = (lenHi + (Ipp64u)isExceed) > maxHi;
+    return isExceed;
 }
 
-IPPFUN(IppStatus, ippsHashUpdate,(const Ipp8u* pSrc, int len, IppsHashState* pState))
+IPPFUN(IppStatus, ippsHashUpdate, (const Ipp8u* pSrc, int len, IppsHashState* pState))
 {
-   /* test state pointer and ID */
-   IPP_BAD_PTR1_RET(pState);
-   /* test the context */
-   IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
-   /* test input length */
-   IPP_BADARG_RET((len<0 && pSrc), ippStsLengthErr);
-   /* test source pointer */
-   IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
+    /* test state pointer and ID */
+    IPP_BAD_PTR1_RET(pState);
+    /* test the context */
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
+    /* test input length */
+    IPP_BADARG_RET((len < 0 && pSrc), ippStsLengthErr);
+    /* test source pointer */
+    IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(HASH_ALG_ID(pState)), ippStsNotSupportedModeErr);
 
-   /* handle non empty input */
-   if(len) {
-      const cpHashAttr* pAttr = &cpHashAlgAttr[HASH_ALG_ID(pState)];
+    /* handle non empty input */
+    if (len) {
+        const cpHashAttr* pAttr = &cpHashAlgAttr[HASH_ALG_ID(pState)];
 
-      /* test if size of message is being processed not exceeded yet */
-      Ipp64u lenLo = HASH_LENLO(pState);
-      Ipp64u lenHi = HASH_LENHI(pState);
-      lenLo += (Ipp64u)len;
-      if(lenLo < HASH_LENLO(pState)) lenHi++;
-      if(IsExceedMsgLen(pAttr->msgLenMax[0],pAttr->msgLenMax[1], lenLo,lenHi))
-         IPP_ERROR_RET(ippStsLengthErr);
+        /* test if size of message is being processed not exceeded yet */
+        Ipp64u lenLo = HASH_LENLO(pState);
+        Ipp64u lenHi = HASH_LENHI(pState);
+        lenLo += (Ipp64u)len;
+        if (lenLo < HASH_LENLO(pState))
+            lenHi++;
+        if (IsExceedMsgLen(pAttr->msgLenMax[0], pAttr->msgLenMax[1], lenLo, lenHi))
+            IPP_ERROR_RET(ippStsLengthErr);
 
-      else {
-         cpHashProc hashFunc = HASH_FUNC(pState);    /* processing function */
-         const void* pParam = HASH_FUNC_PAR(pState); /* and its addition params */
-         int mbs = pAttr->msgBlkSize;              /* data block size */
+        else {
+            cpHashProc hashFunc = HASH_FUNC(pState);     /* processing function */
+            const void* pParam  = HASH_FUNC_PAR(pState); /* and its addition params */
+            int mbs             = pAttr->msgBlkSize;     /* data block size */
 
-         /*
+            /*
          // processing
          */
-         {
-            int procLen;
+            {
+                int procLen;
 
-            /* test if internal buffer is not empty */
-            int n = HASH_BUFFIDX(pState);
-            if(n) {
-               procLen = IPP_MIN(len, (mbs-n));
-               CopyBlock(pSrc, HASH_BUFF(pState)+n, procLen);
-               HASH_BUFFIDX(pState) = n += procLen;
+                /* test if internal buffer is not empty */
+                int n = HASH_BUFFIDX(pState);
+                if (n) {
+                    procLen = IPP_MIN(len, (mbs - n));
+                    CopyBlock(pSrc, HASH_BUFF(pState) + n, procLen);
+                    HASH_BUFFIDX(pState) = n += procLen;
 
-               /* block processing */
-               if(mbs==n) {
-                  hashFunc(HASH_VALUE(pState), HASH_BUFF(pState), mbs, pParam);
-                  HASH_BUFFIDX(pState) = 0;
-               }
+                    /* block processing */
+                    if (mbs == n) {
+                        hashFunc(HASH_VALUE(pState), HASH_BUFF(pState), mbs, pParam);
+                        HASH_BUFFIDX(pState) = 0;
+                    }
 
-               /* update message pointer and length */
-               pSrc += procLen;
-               len  -= procLen;
+                    /* update message pointer and length */
+                    pSrc += procLen;
+                    len -= procLen;
+                }
+
+                /* main processing part */
+                procLen = len & ~(mbs - 1);
+                if (procLen) {
+                    hashFunc(HASH_VALUE(pState), pSrc, procLen, pParam);
+                    pSrc += procLen;
+                    len -= procLen;
+                }
+
+                /* rest of input message */
+                if (len) {
+                    CopyBlock(pSrc, HASH_BUFF(pState), len);
+                    HASH_BUFFIDX(pState) += len;
+                }
             }
 
-            /* main processing part */
-            procLen = len & ~(mbs-1);
-            if(procLen) {
-               hashFunc(HASH_VALUE(pState), pSrc, procLen, pParam);
-               pSrc += procLen;
-               len  -= procLen;
-            }
+            /* update length of processed message */
+            HASH_LENLO(pState) = lenLo;
+            HASH_LENHI(pState) = lenHi;
 
-            /* rest of input message */
-            if(len) {
-               CopyBlock(pSrc, HASH_BUFF(pState), len);
-               HASH_BUFFIDX(pState) += len;
-            }
-         }
+            return ippStsNoErr;
+        }
+    }
 
-         /* update length of processed message */
-         HASH_LENLO(pState) = lenLo;
-         HASH_LENHI(pState) = lenHi;
-
-         return ippStsNoErr;
-      }
-   }
-
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

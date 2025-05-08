@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SM3
-// 
+//
 //  Contents:
 //     cpFinalizeSM3()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -33,23 +33,28 @@
 #include "pcptool.h"
 #include "hash/sm3/pcpsm3stuff.h"
 
-IPP_OWN_DEFN (void, cpFinalizeSM3, (DigestSHA1 pHash, const Ipp8u* inpBuffer, int inpLen, Ipp64u processedMsgLen))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpFinalizeSM3, (DigestSHA1 pHash,
+                                   const Ipp8u* inpBuffer,
+                                   int inpLen,
+                                   Ipp64u processedMsgLen))
+/* clang-format on */
 {
-   /* local buffer and it length */
-   Ipp8u buffer[MBS_SM3*2];
-   int bufferLen = inpLen < (MBS_SM3-(int)MLR_SM3)? MBS_SM3 : MBS_SM3*2; 
+    /* local buffer and it length */
+    Ipp8u buffer[MBS_SM3 * 2];
+    int bufferLen = inpLen < (MBS_SM3 - (int)MLR_SM3) ? MBS_SM3 : MBS_SM3 * 2;
 
-   /* copy rest of message into internal buffer */
-   CopyBlock(inpBuffer, buffer, inpLen);
+    /* copy rest of message into internal buffer */
+    CopyBlock(inpBuffer, buffer, inpLen);
 
-   /* pad message */
-   buffer[inpLen++] = 0x80;
-   PadBlock(0, buffer+inpLen, (cpSize)(bufferLen-inpLen-(int)MLR_SM3));
+    /* pad message */
+    buffer[inpLen++] = 0x80;
+    PadBlock(0, buffer + inpLen, (cpSize)(bufferLen - inpLen - (int)MLR_SM3));
 
-   /* put processed message length in bits */
-   processedMsgLen = ENDIANNESS64(processedMsgLen<<3);
-   ((Ipp64u*)(buffer+bufferLen))[-1] = processedMsgLen;
+    /* put processed message length in bits */
+    processedMsgLen                     = ENDIANNESS64(processedMsgLen << 3);
+    ((Ipp64u*)(buffer + bufferLen))[-1] = processedMsgLen;
 
-   /* complete hash computation */
-   UpdateSM3(pHash, buffer, bufferLen, sm3_cnt);
+    /* complete hash computation */
+    UpdateSM3(pHash, buffer, bufferLen, sm3_cnt);
 }

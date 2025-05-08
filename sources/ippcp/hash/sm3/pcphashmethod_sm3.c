@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to SM3
-// 
+//
 //  Contents:
 //        ippsHashMethod_SM3()
 //
@@ -33,7 +33,7 @@
 #include "hash/sm3/pcpsm3stuff.h"
 
 /*F*
-//    Name: ippsHashMethod_SM3
+// Name: ippsHashMethod_SM3
 //
 // Purpose: Return SM3 method.
 //
@@ -41,26 +41,24 @@
 //          Pointer to SM3 hash-method.
 //
 *F*/
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SM3, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SM3, (void))
 {
-   static IppsHashMethod method = {
-      ippHashAlg_SM3,
-      IPP_SM3_DIGEST_BITSIZE/8,
-      MBS_SM3,
-      MLR_SM3,
-      IPP_SM3_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL
-   };
+    static IppsHashMethod method = { ippHashAlg_SM3,
+                                     IPP_SM3_DIGEST_BITSIZE / 8,
+                                     MBS_SM3,
+                                     MLR_SM3,
+                                     IPP_SM3_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashInit   = sm3_hashInit;
-   method.hashUpdate = sm3_hashUpdate;
-   method.hashOctStr = sm3_hashOctString;
-   method.msgLenRep  = sm3_msgRep;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashInit   = sm3_hashInit;
+    method.hashUpdate = sm3_hashUpdate;
+    method.hashOctStr = sm3_hashOctString;
+    method.msgLenRep  = sm3_msgRep;
 
-   return &method;
+    return &method;
 }

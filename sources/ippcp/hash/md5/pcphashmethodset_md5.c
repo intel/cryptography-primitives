@@ -14,15 +14,15 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Digesting message according to MD5
 //     (derived from the RSA Data Security, Inc. MD5 Message-Digest Algorithm)
-// 
+//
 //     Equivalent code is available from RFC 1321.
-// 
+//
 //  Contents:
 //        ippsHashMethodSet_MD5()
 //
@@ -45,20 +45,20 @@
 //    ippStsNoErr             no errors
 //
 *F*/
-IPPFUN( IppStatus, ippsHashMethodSet_MD5, (IppsHashMethod* pMethod) )
+IPPFUN(IppStatus, ippsHashMethodSet_MD5, (IppsHashMethod * pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   pMethod->hashAlgId     = ippHashAlg_MD5;
-   pMethod->hashLen       = IPP_MD5_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_MD5;
-   pMethod->msgLenRepSize = MLR_MD5;
-   pMethod->stateLen      = IPP_MD5_STATE_BYTESIZE;
-   pMethod->hashInit      = md5_hashInit;
-   pMethod->hashUpdate    = md5_hashUpdate;
-   pMethod->hashOctStr    = md5_hashOctString;
-   pMethod->msgLenRep     = md5_msgRep;
+    pMethod->hashAlgId     = ippHashAlg_MD5;
+    pMethod->hashLen       = IPP_MD5_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_MD5;
+    pMethod->msgLenRepSize = MLR_MD5;
+    pMethod->stateLen      = IPP_MD5_STATE_BYTESIZE;
+    pMethod->hashInit      = md5_hashInit;
+    pMethod->hashUpdate    = md5_hashUpdate;
+    pMethod->hashOctStr    = md5_hashOctString;
+    pMethod->msgLenRep     = md5_msgRep;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

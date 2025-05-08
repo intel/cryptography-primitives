@@ -46,15 +46,15 @@
 //    algID    hash alg ID
 //
 *F*/
-IPP_OWN_DEFN (int, cpReInitHash, (IppsHashState* pCtx, IppHashAlgId algID))
+IPP_OWN_DEFN(int, cpReInitHash, (IppsHashState * pCtx, IppHashAlgId algID))
 {
-   int hashIvSize = cpHashIvSize(algID);
-   const Ipp8u* iv = cpHashIV[algID];
+    int hashIvSize  = cpHashIvSize(algID);
+    const Ipp8u* iv = cpHashIV[algID];
 
-   HASH_LENLO(pCtx) = CONST_64(0);
-   HASH_LENHI(pCtx) = CONST_64(0);
-   HASH_BUFFIDX(pCtx) = 0;
-   CopyBlock(iv, HASH_VALUE(pCtx), hashIvSize);
+    HASH_LENLO(pCtx)   = CONST_64(0);
+    HASH_LENHI(pCtx)   = CONST_64(0);
+    HASH_BUFFIDX(pCtx) = 0;
+    CopyBlock(iv, HASH_VALUE(pCtx), hashIvSize);
 
-   return hashIvSize;
+    return hashIvSize;
 }

@@ -29,44 +29,44 @@
 
 
 /* message block size */
-#define MBS_SHA1       (64)           /* SHA1 message block size (bytes) */
-#define MBS_SHA256     (64)           /* SHA256 and SHA224               */
-#define MBS_SHA224     (64)           /* SHA224                          */
-#define MBS_SHA512     (128)          /* SHA512 and SHA384               */
-#define MBS_SHA384     (128)          /* SHA384                          */
-#define MBS_MD5        (64)           /* MD5                             */
-#define MBS_SM3        (64)           /* SM3                             */
-#define MBS_SHA3_224   (144)          /* SHA3_224                        */
-#define MBS_SHA3_256   (136)          /* SHA3_256                        */
-#define MBS_SHA3_384   (104)          /* SHA3_384                        */
-#define MBS_SHA3_512   (72)           /* SHA3_512                        */
-#define MBS_SHAKE128   (168)          /* SHAKE128                        */
-#define MBS_SHAKE256   (136)          /* SHAKE256                        */
-#define MBS_HASH_MAX   (MBS_SHAKE128) /* max message block size (bytes)  */
+#define MBS_SHA1     (64)                             /* SHA1 message block size (bytes) */
+#define MBS_SHA256   (64)                             /* SHA256 and SHA224               */
+#define MBS_SHA224   (64)                             /* SHA224                          */
+#define MBS_SHA512   (128)                            /* SHA512 and SHA384               */
+#define MBS_SHA384   (128)                            /* SHA384                          */
+#define MBS_MD5      (64)                             /* MD5                             */
+#define MBS_SM3      (64)                             /* SM3                             */
+#define MBS_SHA3_224 (144)                            /* SHA3_224                        */
+#define MBS_SHA3_256 (136)                            /* SHA3_256                        */
+#define MBS_SHA3_384 (104)                            /* SHA3_384                        */
+#define MBS_SHA3_512 (72)                             /* SHA3_512                        */
+#define MBS_SHAKE128 (168)                            /* SHAKE128                        */
+#define MBS_SHAKE256 (136)                            /* SHAKE256                        */
+#define MBS_HASH_MAX (MBS_SHAKE128)                   /* max message block size (bytes)  */
 
-#define MAX_HASH_SIZE (IPP_SHA512_DIGEST_BITSIZE/8)   /* hash of the max len (bytes) */
+#define MAX_HASH_SIZE (IPP_SHA512_DIGEST_BITSIZE / 8) /* hash of the max len (bytes) */
 
 /* size of the state (bytes) */
-#define IPP_SHA1_STATE_BYTESIZE        20
-#define IPP_SHA256_STATE_BYTESIZE      32
-#define IPP_SHA224_STATE_BYTESIZE      32
-#define IPP_SHA384_STATE_BYTESIZE      64
-#define IPP_SHA512_STATE_BYTESIZE      64
-#define IPP_MD5_STATE_BYTESIZE         16
-#define IPP_SM3_STATE_BYTESIZE         32
-#define IPP_SHA512_224_STATE_BYTESIZE  64
-#define IPP_SHA512_256_STATE_BYTESIZE  64
-#define IPP_SHA3_STATE_BYTESIZE        200  
-#define IPP_HASH_STATE_BYTESIZE_MAX    (IPP_SHA3_STATE_BYTESIZE)
+#define IPP_SHA1_STATE_BYTESIZE       20
+#define IPP_SHA256_STATE_BYTESIZE     32
+#define IPP_SHA224_STATE_BYTESIZE     32
+#define IPP_SHA384_STATE_BYTESIZE     64
+#define IPP_SHA512_STATE_BYTESIZE     64
+#define IPP_MD5_STATE_BYTESIZE        16
+#define IPP_SM3_STATE_BYTESIZE        32
+#define IPP_SHA512_224_STATE_BYTESIZE 64
+#define IPP_SHA512_256_STATE_BYTESIZE 64
+#define IPP_SHA3_STATE_BYTESIZE       200
+#define IPP_HASH_STATE_BYTESIZE_MAX   (IPP_SHA3_STATE_BYTESIZE)
 
 /* size of processed message length representation (bytes) */
-#define MLR_SHA1     (sizeof(Ipp64u))
-#define MLR_SHA256   (sizeof(Ipp64u))
-#define MLR_SHA224   (sizeof(Ipp64u))
-#define MLR_SHA512   (sizeof(Ipp64u)*2)
-#define MLR_SHA384   (sizeof(Ipp64u)*2)
-#define MLR_MD5      (sizeof(Ipp64u))
-#define MLR_SM3      (sizeof(Ipp64u))
+#define MLR_SHA1   (sizeof(Ipp64u))
+#define MLR_SHA256 (sizeof(Ipp64u))
+#define MLR_SHA224 (sizeof(Ipp64u))
+#define MLR_SHA512 (sizeof(Ipp64u) * 2)
+#define MLR_SHA384 (sizeof(Ipp64u) * 2)
+#define MLR_MD5    (sizeof(Ipp64u))
+#define MLR_SM3    (sizeof(Ipp64u))
 
 /* hold some old definition for a purpose */
 typedef Ipp32u DigestSHA1[5];   /* SHA1 digest   */
@@ -77,98 +77,99 @@ typedef Ipp64u DigestSHA512[8]; /* SHA512 digest */
 typedef Ipp32u DigestMD5[4];    /* MD5 digest */
 typedef Ipp32u DigestSM3[8];    /* SM3 digest */
 
-#define HASH_ALIGNMENT     ((int)(sizeof(void*)))
-#define   SHA1_ALIGNMENT   HASH_ALIGNMENT
-#define SHA224_ALIGNMENT   HASH_ALIGNMENT
-#define SHA256_ALIGNMENT   HASH_ALIGNMENT
-#define SHA384_ALIGNMENT   HASH_ALIGNMENT
-#define SHA512_ALIGNMENT   HASH_ALIGNMENT
-#define    MD5_ALIGNMENT   HASH_ALIGNMENT
-#define    SM3_ALIGNMENT   HASH_ALIGNMENT
+#define HASH_ALIGNMENT   ((int)(sizeof(void*)))
+#define SHA1_ALIGNMENT   HASH_ALIGNMENT
+#define SHA224_ALIGNMENT HASH_ALIGNMENT
+#define SHA256_ALIGNMENT HASH_ALIGNMENT
+#define SHA384_ALIGNMENT HASH_ALIGNMENT
+#define SHA512_ALIGNMENT HASH_ALIGNMENT
+#define MD5_ALIGNMENT    HASH_ALIGNMENT
+#define SM3_ALIGNMENT    HASH_ALIGNMENT
 
 
 struct _cpSHA1 {
-   Ipp32u      idCtx;      /* SHA1 identifier         */
-   int         msgBuffIdx; /* buffer entry            */
-   Ipp64u      msgLenLo;   /* message length (bytes)  */
-   Ipp8u       msgBuffer[MBS_SHA1]; /* buffer         */
-   DigestSHA1  msgHash;    /* intermediate hash       */
+    Ipp32u idCtx;              /* SHA1 identifier         */
+    int msgBuffIdx;            /* buffer entry            */
+    Ipp64u msgLenLo;           /* message length (bytes)  */
+    Ipp8u msgBuffer[MBS_SHA1]; /* buffer         */
+    DigestSHA1 msgHash;        /* intermediate hash       */
 };
 
 struct _cpSHA256 {
-   Ipp32u       idCtx;        /* SHA224 identifier    */
-   int          msgBuffIdx;   /* buffer entry         */
-   Ipp64u       msgLenLo;     /* message length       */
-   Ipp8u        msgBuffer[MBS_SHA256]; /* buffer      */
-   DigestSHA256 msgHash;      /* intermediate hash    */
+    Ipp32u idCtx;                /* SHA224 identifier    */
+    int msgBuffIdx;              /* buffer entry         */
+    Ipp64u msgLenLo;             /* message length       */
+    Ipp8u msgBuffer[MBS_SHA256]; /* buffer      */
+    DigestSHA256 msgHash;        /* intermediate hash    */
 };
 
 struct _cpSHA512 {
-   Ipp32u       idCtx;        /* SHA384 identifier    */
-   int          msgBuffIdx;   /* buffer entry         */
-   Ipp64u       msgLenLo;     /* message length       */
-   Ipp64u       msgLenHi;     /* message length       */
-   Ipp8u        msgBuffer[MBS_SHA512]; /* buffer      */
-   DigestSHA512 msgHash;      /* intermediate hash    */
+    Ipp32u idCtx;                /* SHA384 identifier    */
+    int msgBuffIdx;              /* buffer entry         */
+    Ipp64u msgLenLo;             /* message length       */
+    Ipp64u msgLenHi;             /* message length       */
+    Ipp8u msgBuffer[MBS_SHA512]; /* buffer      */
+    DigestSHA512 msgHash;        /* intermediate hash    */
 };
 
 struct _cpMD5 {
-   Ipp32u       idCtx;        /* MD5 identifier       */
-   int          msgBuffIdx;   /* buffer entry         */
-   Ipp64u       msgLenLo;     /* message length       */
-   Ipp8u        msgBuffer[MBS_MD5]; /* buffer         */
-   DigestMD5    msgHash;      /* intermediate hash    */
+    Ipp32u idCtx;             /* MD5 identifier       */
+    int msgBuffIdx;           /* buffer entry         */
+    Ipp64u msgLenLo;          /* message length       */
+    Ipp8u msgBuffer[MBS_MD5]; /* buffer         */
+    DigestMD5 msgHash;        /* intermediate hash    */
 };
 
 struct _cpSM3 {
-   Ipp32u       idCtx;        /* SM3    identifier    */
-   int          msgBuffIdx;   /* buffer entry         */
-   Ipp64u       msgLenLo;     /* message length       */
-   Ipp8u        msgBuffer[MBS_SM3]; /* buffer         */
-   DigestSM3    msgHash;      /* intermediate hash    */
+    Ipp32u idCtx;             /* SM3    identifier    */
+    int msgBuffIdx;           /* buffer entry         */
+    Ipp64u msgLenLo;          /* message length       */
+    Ipp8u msgBuffer[MBS_SM3]; /* buffer         */
+    DigestSM3 msgHash;        /* intermediate hash    */
 };
 
 
 /* hash alg attributes */
 typedef struct _cpHashAttr {
-   int         ivSize;        /* attr: length (bytes) of initial value cpHashIV */
-   int         hashSize;      /* attr: length (bytes) of hash */
-   int         msgBlkSize;    /* attr: length (bytes) of message block */
-   int         msgLenRepSize; /* attr: length (bytes) in representation of processed message length */
-   Ipp64u      msgLenMax[2];  /* attr: max message length (bytes) (low high) */
+    int ivSize;          /* attr: length (bytes) of initial value cpHashIV */
+    int hashSize;        /* attr: length (bytes) of hash */
+    int msgBlkSize;      /* attr: length (bytes) of message block */
+    int msgLenRepSize;   /* attr: length (bytes) in representation of processed message length */
+    Ipp64u msgLenMax[2]; /* attr: max message length (bytes) (low high) */
 } cpHashAttr;
 
 /* hash value */
-typedef Ipp64u cpHash[IPP_HASH_STATE_BYTESIZE_MAX/sizeof(Ipp64u)]; /* hash value */
+typedef Ipp64u cpHash[IPP_HASH_STATE_BYTESIZE_MAX / sizeof(Ipp64u)]; /* hash value */
 
 /* hash update function */
-IPP_OWN_FUNPTR (void, cpHashProc, (void* pHash, const Ipp8u* pMsg, int msgLen, const void* pParam))
+IPP_OWN_FUNPTR(void, cpHashProc, (void* pHash, const Ipp8u* pMsg, int msgLen, const void* pParam))
 
 /* generalized hash context */
 struct _cpHashCtx {
-   Ipp32u      idCtx;                     /* hash identifier   */
-   IppHashAlgId   algID;                  /* hash algorithm ID */
-   Ipp64u      msgLenLo;                  /* processed message:*/
-   Ipp64u      msgLenHi;                  /*           length  */
-   cpHashProc  hashProc;                  /* hash update func  */
-   const void* pParam;                    /* hashProc's params */
-   cpHash      msgHash;                   /* intermadiate hash */
-   int         msgBuffIdx;                /* buffer entry      */
-   Ipp8u       msgBuffer[MBS_HASH_MAX];   /* buffer            */
+    Ipp32u idCtx;                  /* hash identifier   */
+    IppHashAlgId algID;            /* hash algorithm ID */
+    Ipp64u msgLenLo;               /* processed message:*/
+    Ipp64u msgLenHi;               /*           length  */
+    cpHashProc hashProc;           /* hash update func  */
+    const void* pParam;            /* hashProc's params */
+    cpHash msgHash;                /* intermadiate hash */
+    int msgBuffIdx;                /* buffer entry      */
+    Ipp8u msgBuffer[MBS_HASH_MAX]; /* buffer            */
 };
 
 /* accessors */
-#define HASH_SET_ID(stt,ctxid)      ((stt)->idCtx = (Ipp32u)(ctxid) ^ (Ipp32u)IPP_UINT_PTR(stt))
-#define HASH_RESET_ID(stt,ctxid)    ((stt)->idCtx = (Ipp32u)(ctxid))
-#define HASH_ALG_ID(stt)            ((stt)->algID)
-#define HASH_LENLO(stt)             ((stt)->msgLenLo)
-#define HASH_LENHI(stt)             ((stt)->msgLenHi)
-#define HASH_FUNC(stt)              ((stt)->hashProc)
-#define HASH_FUNC_PAR(stt)          ((stt)->pParam)
-#define HASH_VALUE(stt)             ((stt)->msgHash)
-#define HASH_BUFFIDX(stt)           ((stt)->msgBuffIdx)
-#define HASH_BUFF(stt)              ((stt)->msgBuffer)
-#define HASH_VALID_ID(stt,ctxId)    ((((stt)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((stt))) == (Ipp32u)(ctxId))
+#define HASH_SET_ID(stt, ctxid)   ((stt)->idCtx = (Ipp32u)(ctxid) ^ (Ipp32u)IPP_UINT_PTR(stt))
+#define HASH_RESET_ID(stt, ctxid) ((stt)->idCtx = (Ipp32u)(ctxid))
+#define HASH_ALG_ID(stt)          ((stt)->algID)
+#define HASH_LENLO(stt)           ((stt)->msgLenLo)
+#define HASH_LENHI(stt)           ((stt)->msgLenHi)
+#define HASH_FUNC(stt)            ((stt)->hashProc)
+#define HASH_FUNC_PAR(stt)        ((stt)->pParam)
+#define HASH_VALUE(stt)           ((stt)->msgHash)
+#define HASH_BUFFIDX(stt)         ((stt)->msgBuffIdx)
+#define HASH_BUFF(stt)            ((stt)->msgBuffer)
+#define HASH_VALID_ID(stt, ctxId) \
+    ((((stt)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((stt))) == (Ipp32u)(ctxId))
 
 /* initial hash values */
 extern const Ipp32u SHA1_IV[];
@@ -201,80 +202,80 @@ extern const Ipp8u* cpHashIV[];
 extern const cpHashAttr cpHashAlgAttr[];
 
 /* IV size helper */
-__IPPCP_INLINE int cpHashIvSize(IppHashAlgId algID)
-{ return cpHashAlgAttr[algID].ivSize; }
+__IPPCP_INLINE int cpHashIvSize(IppHashAlgId algID) { return cpHashAlgAttr[algID].ivSize; }
 
 /* hash size helper */
-__IPPCP_INLINE int cpHashSize(IppHashAlgId algID)
-{ return cpHashAlgAttr[algID].hashSize; }
+__IPPCP_INLINE int cpHashSize(IppHashAlgId algID) { return cpHashAlgAttr[algID].hashSize; }
 
 /* message block size helper */
-__IPPCP_INLINE int cpHashMBS(IppHashAlgId algID)
-{ return cpHashAlgAttr[algID].msgBlkSize; }
+__IPPCP_INLINE int cpHashMBS(IppHashAlgId algID) { return cpHashAlgAttr[algID].msgBlkSize; }
 
 /* maps algID into enabled IppHashAlgId value */
 __IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
 {
-   /* maps algID into the valid range */
-   algID = (((int)ippHashAlg_Unknown < (int)algID) && ((int)algID < (int)ippHashAlg_MaxNo))? algID : ippHashAlg_Unknown;
-   return cpEnabledHashAlgID[algID];
+    /* maps algID into the valid range */
+    algID = (((int)ippHashAlg_Unknown < (int)algID) && ((int)algID < (int)ippHashAlg_MaxNo))
+                ? algID
+                : ippHashAlg_Unknown;
+    return cpEnabledHashAlgID[algID];
 }
 
 /* check if algID is from SHA3 family */
 __IPPCP_INLINE IppBool cpIsSHA3AlgID(IppHashAlgId algID)
 {
-   if(algID == ippHashAlg_SHA3_224 || algID == ippHashAlg_SHA3_256 || algID == ippHashAlg_SHA3_384 ||
-      algID == ippHashAlg_SHA3_512 || algID == ippHashAlg_SHAKE128 || algID == ippHashAlg_SHAKE256)
-         return ippTrue;
-   return ippFalse;
+    if (algID == ippHashAlg_SHA3_224 || algID == ippHashAlg_SHA3_256 ||
+        algID == ippHashAlg_SHA3_384 || algID == ippHashAlg_SHA3_512 ||
+        algID == ippHashAlg_SHAKE128 || algID == ippHashAlg_SHAKE256)
+        return ippTrue;
+    return ippFalse;
 }
 
 /* check if algID is SHAKE128 or SHAKE256 */
 __IPPCP_INLINE IppBool cpIsSHAKEAlgID(IppHashAlgId algID)
 {
-   if(algID == ippHashAlg_SHAKE128 || algID == ippHashAlg_SHAKE256)
-         return ippTrue;
-   return ippFalse;
+    if (algID == ippHashAlg_SHAKE128 || algID == ippHashAlg_SHAKE256)
+        return ippTrue;
+    return ippFalse;
 }
 
 /* common functions */
 #define cpComputeDigest OWNAPI(cpComputeDigest)
-   IPP_OWN_DECL (void, cpComputeDigest, (Ipp8u* pHashTag, int hashTagLen, const IppsHashState* pCtx))
+IPP_OWN_DECL(void, cpComputeDigest, (Ipp8u * pHashTag, int hashTagLen, const IppsHashState* pCtx))
 
 /* processing functions */
-#define UpdateSHA1   OWNAPI(UpdateSHA1)
-   IPP_OWN_DECL (void, UpdateSHA1, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#define UpdateSHA1 OWNAPI(UpdateSHA1)
+IPP_OWN_DECL(void, UpdateSHA1, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #define UpdateSHA256 OWNAPI(UpdateSHA256)
-   IPP_OWN_DECL (void, UpdateSHA256, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+IPP_OWN_DECL(void, UpdateSHA256, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 
 #define UpdateSHA512 OWNAPI(UpdateSHA512)
-   IPP_OWN_DECL (void, UpdateSHA512, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+IPP_OWN_DECL(void, UpdateSHA512, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #if (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_) || (_SHA512_ENABLING_ == _FEATURE_ON_)
-   #define UpdateSHA512ni OWNAPI(UpdateSHA512ni)
-      IPP_OWN_DECL (void, UpdateSHA512ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#define UpdateSHA512ni OWNAPI(UpdateSHA512ni)
+IPP_OWN_DECL(void, UpdateSHA512ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #endif
 
-#define UpdateMD5    OWNAPI(UpdateMD5)
-   IPP_OWN_DECL (void, UpdateMD5, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
-#define UpdateSM3    OWNAPI(UpdateSM3)
-   IPP_OWN_DECL (void, UpdateSM3, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#define UpdateMD5 OWNAPI(UpdateMD5)
+IPP_OWN_DECL(void, UpdateMD5, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#define UpdateSM3 OWNAPI(UpdateSM3)
+IPP_OWN_DECL(void, UpdateSM3, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 
 #if (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_) || (_SHA_NI_ENABLING_ == _FEATURE_ON_)
-   #define UpdateSHA1ni   OWNAPI(UpdateSHA1ni)
-      IPP_OWN_DECL (void, UpdateSHA1ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
-   #define UpdateSHA256ni OWNAPI(UpdateSHA256ni)
-      IPP_OWN_DECL (void, UpdateSHA256ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#define UpdateSHA1ni OWNAPI(UpdateSHA1ni)
+IPP_OWN_DECL(void, UpdateSHA1ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#define UpdateSHA256ni OWNAPI(UpdateSHA256ni)
+IPP_OWN_DECL(void, UpdateSHA256ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #endif
 
 #if (_SM3_ENABLING_ == _FEATURE_TICKTOCK_) || (_SM3_ENABLING_ == _FEATURE_ON_)
-#define UpdateSM3ni    OWNAPI(UpdateSM3ni)
-   IPP_OWN_DECL (void, UpdateSM3ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#define UpdateSM3ni OWNAPI(UpdateSM3ni)
+IPP_OWN_DECL(void, UpdateSM3ni, (void* pHash, const Ipp8u* mblk, int mlen, const void* pParam))
 #endif
 
 /* general methods */
 #define cpInitHash OWNAPI(cpInitHash)
-   IPP_OWN_DECL (int, cpInitHash, (IppsHashState* pCtx, IppHashAlgId algID))
+IPP_OWN_DECL(int, cpInitHash, (IppsHashState * pCtx, IppHashAlgId algID))
 #define cpReInitHash OWNAPI(cpReInitHash)
-   IPP_OWN_DECL (int, cpReInitHash, (IppsHashState* pCtx, IppHashAlgId algID))
+IPP_OWN_DECL(int, cpReInitHash, (IppsHashState * pCtx, IppHashAlgId algID))
 
 #endif /* _PCP_HASH_H */

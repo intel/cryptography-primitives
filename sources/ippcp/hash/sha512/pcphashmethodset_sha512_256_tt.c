@@ -44,25 +44,25 @@
 //
 *F*/
 
-IPPFUN( IppStatus, ippsHashMethodSet_SHA512_256_TT, (IppsHashMethod* pMethod) )
+IPPFUN(IppStatus, ippsHashMethodSet_SHA512_256_TT, (IppsHashMethod * pMethod))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   pMethod->hashAlgId     = ippHashAlg_SHA512_256;
-   pMethod->hashLen       = IPP_SHA256_DIGEST_BITSIZE/8;
-   pMethod->msgBlkSize    = MBS_SHA512;
-   pMethod->msgLenRepSize = MLR_SHA512;
-   pMethod->stateLen      = IPP_SHA512_STATE_BYTESIZE;
-   pMethod->hashInit      = sha512_256_hashInit;
-   pMethod->hashUpdate    = sha512_hashUpdate;
-   pMethod->hashOctStr    = sha512_256_hashOctString;
-   pMethod->msgLenRep     = sha512_msgRep;
+    pMethod->hashAlgId     = ippHashAlg_SHA512_256;
+    pMethod->hashLen       = IPP_SHA256_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA512;
+    pMethod->msgLenRepSize = MLR_SHA512;
+    pMethod->stateLen      = IPP_SHA512_STATE_BYTESIZE;
+    pMethod->hashInit      = sha512_256_hashInit;
+    pMethod->hashUpdate    = sha512_hashUpdate;
+    pMethod->hashOctStr    = sha512_256_hashOctString;
+    pMethod->msgLenRep     = sha512_msgRep;
 
-#if (_SHA512_ENABLING_==_FEATURE_TICKTOCK_ || _SHA512_ENABLING_==_FEATURE_ON_)
-   if(IsFeatureEnabled(ippCPUID_AVX2SHA512))
-      pMethod->hashUpdate = sha512_hashUpdate_ni;
+#if (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA512_ENABLING_ == _FEATURE_ON_)
+    if (IsFeatureEnabled(ippCPUID_AVX2SHA512))
+        pMethod->hashUpdate = sha512_hashUpdate_ni;
 #endif
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

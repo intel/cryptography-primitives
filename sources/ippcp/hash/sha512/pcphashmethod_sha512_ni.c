@@ -42,30 +42,28 @@
 //
 *F*/
 
-IPPFUN( const IppsHashMethod*, ippsHashMethod_SHA512_NI, (void) )
+IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA512_NI, (void))
 {
-#if (_SHA512_ENABLING_==_FEATURE_TICKTOCK_ || _SHA512_ENABLING_==_FEATURE_ON_)
-   static IppsHashMethod method = {
-      ippHashAlg_SHA512,
-      IPP_SHA512_DIGEST_BITSIZE/8,
-      MBS_SHA512,
-      MLR_SHA512,
-      IPP_SHA512_STATE_BYTESIZE,
-      NULL,
-      NULL,
-      NULL,
-      NULL
-   };
+#if (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA512_ENABLING_ == _FEATURE_ON_)
+    static IppsHashMethod method = { ippHashAlg_SHA512,
+                                     IPP_SHA512_DIGEST_BITSIZE / 8,
+                                     MBS_SHA512,
+                                     MLR_SHA512,
+                                     IPP_SHA512_STATE_BYTESIZE,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
 
-   // don't merge `method` initialization with function pointers assignment
-   // to prevent relocations (indirect calls) to be generated in the binary
-   method.hashInit   = sha512_hashInit;
-   method.hashUpdate = sha512_hashUpdate_ni;
-   method.hashOctStr = sha512_hashOctString;
-   method.msgLenRep  = sha512_msgRep;
+    // don't merge `method` initialization with function pointers assignment
+    // to prevent relocations (indirect calls) to be generated in the binary
+    method.hashInit   = sha512_hashInit;
+    method.hashUpdate = sha512_hashUpdate_ni;
+    method.hashOctStr = sha512_hashOctString;
+    method.msgLenRep  = sha512_msgRep;
 
-   return &method;
+    return &method;
 #else
-   return NULL;
+    return NULL;
 #endif
 }

@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     Generalized Functionality
-// 
+//
 //  Contents:
 //        ippsHashDuplicate_rmf()
 //
@@ -51,21 +51,24 @@
 //    pDstState may to be uninitialized by ippsHashInit_rmf()
 //
 *F*/
-IPPFUN(IppStatus, ippsHashDuplicate_rmf,(const IppsHashState_rmf* pSrcState, IppsHashState_rmf* pDstState))
+/* clang-format off */
+IPPFUN(IppStatus, ippsHashDuplicate_rmf, (const IppsHashState_rmf* pSrcState,
+                                          IppsHashState_rmf* pDstState))
+/* clang-format on */
 {
-   /* test state pointers */
-   IPP_BAD_PTR2_RET(pSrcState, pDstState);
-   /* test states ID */
-   IPP_BADARG_RET(!HASH_VALID_ID(pSrcState,idCtxHash), ippStsContextMatchErr);
+    /* test state pointers */
+    IPP_BAD_PTR2_RET(pSrcState, pDstState);
+    /* test states ID */
+    IPP_BADARG_RET(!HASH_VALID_ID(pSrcState, idCtxHash), ippStsContextMatchErr);
 
-   /* copy state */
-   int context_size = 0;
-   ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pSrcState));
-   CopyBlock(pSrcState, pDstState, context_size);
-   HASH_SET_ID(pDstState, idCtxHash);
+    /* copy state */
+    int context_size = 0;
+    ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pSrcState));
+    CopyBlock(pSrcState, pDstState, context_size);
+    HASH_SET_ID(pDstState, idCtxHash);
 
-   /* setup pointers to buffer and hash */
-   HASH_SETUP_POINTERS(pDstState);
+    /* setup pointers to buffer and hash */
+    HASH_SETUP_POINTERS(pDstState);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }
