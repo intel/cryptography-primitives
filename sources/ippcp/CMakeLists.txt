@@ -176,7 +176,7 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 message(STATUS "Assembler version string .............. " ${NASM_VERSION_VERBOSE})
-string(REGEX MATCH "([0-9]+\\.[0-9]+\\.[0-9]+)" DETECTED_NASM_VERSION ${NASM_VERSION_VERBOSE})
+string(REGEX MATCH "([0-9]+\\.[0-9]+(\\.[0-9]+)?(rc[0-9]*)?)" DETECTED_NASM_VERSION ${NASM_VERSION_VERBOSE})
 message(STATUS "Assembler version ..................... " ${DETECTED_NASM_VERSION})
 set(REQUIRED_NASM_VERSION "2.16.02")
 if(${DETECTED_NASM_VERSION} VERSION_LESS ${REQUIRED_NASM_VERSION})
