@@ -42,12 +42,12 @@
 //    pSize       pointer to the size of CCM (in bytes)
 //
 *F*/
-IPPFUN(IppStatus, ippsSMS4_CCMGetSize,(int * pSize))
+IPPFUN(IppStatus, ippsSMS4_CCMGetSize, (int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = cpSizeofCtx_SMS4CCM();
+    *pSize = cpSizeofCtx_SMS4CCM();
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

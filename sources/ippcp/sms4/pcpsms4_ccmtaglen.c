@@ -46,17 +46,17 @@
 //    pCtx        pointer to the CCM context
 //
 *F*/
-IPPFUN(IppStatus, ippsSMS4_CCMTagLen,(int tagLen, IppsSMS4_CCMState* pCtx))
+IPPFUN(IppStatus, ippsSMS4_CCMTagLen, (int tagLen, IppsSMS4_CCMState* pCtx))
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!VALID_SMS4CCM_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!VALID_SMS4CCM_ID(pCtx), ippStsContextMatchErr);
 
-   /* test tag length */
-   IPP_BADARG_RET(tagLen>MBS_SMS4 || tagLen<4 || tagLen&1, ippStsLengthErr);
+    /* test tag length */
+    IPP_BADARG_RET(tagLen > MBS_SMS4 || tagLen < 4 || tagLen & 1, ippStsLengthErr);
 
-   /* init for new message */
-   SMS4CCM_TAGLEN(pCtx) = (Ipp32u)tagLen;
+    /* init for new message */
+    SMS4CCM_TAGLEN(pCtx) = (Ipp32u)tagLen;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

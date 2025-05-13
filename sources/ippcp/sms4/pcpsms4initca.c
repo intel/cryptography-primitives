@@ -53,20 +53,19 @@
 //    if pKey==NULL, then SMS4 initialized by zero value key
 //
 *F*/
-IPPFUN(IppStatus, ippsSMS4Init,(const Ipp8u* pKey, int keyLen,
-                                IppsSMS4Spec* pCtx, int ctxSize))
+IPPFUN(IppStatus, ippsSMS4Init, (const Ipp8u* pKey, int keyLen, IppsSMS4Spec* pCtx, int ctxSize))
 {
-   /* test context pointer */
-   IPP_BAD_PTR1_RET(pCtx);
+    /* test context pointer */
+    IPP_BAD_PTR1_RET(pCtx);
 
-   /* test available size of context buffer */
-   IPP_BADARG_RET(ctxSize<cpSizeofCtx_SMS4(), ippStsMemAllocErr);
+    /* test available size of context buffer */
+    IPP_BADARG_RET(ctxSize < cpSizeofCtx_SMS4(), ippStsMemAllocErr);
 
-   /* make sure in legal keyLen */
-   IPP_BADARG_RET(keyLen<16, ippStsLengthErr);
+    /* make sure in legal keyLen */
+    IPP_BADARG_RET(keyLen < 16, ippStsLengthErr);
 
-   /* setup context ID */
-   SMS4_SET_ID(pCtx);
-   /* compute round keys */
-   return ippsSMS4SetKey(pKey, keyLen, pCtx);
+    /* setup context ID */
+    SMS4_SET_ID(pCtx);
+    /* compute round keys */
+    return ippsSMS4SetKey(pKey, keyLen, pCtx);
 }

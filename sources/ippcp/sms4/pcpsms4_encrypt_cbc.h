@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        cpEncryptSMS4_cbc()
 //
@@ -31,6 +31,11 @@
 #define _PCP_SMS4_ENCRYPT_CBC_H
 
 #define cpEncryptSMS4_cbc OWNAPI(cpEncryptSMS4_cbc)
-    IPP_OWN_DECL (void, cpEncryptSMS4_cbc, (const Ipp8u* pIV, const Ipp8u* pSrc, Ipp8u* pDst, int dataLen, const IppsSMS4Spec* pCtx))
-
+/* clang-format off */
+IPP_OWN_DECL(void, cpEncryptSMS4_cbc, (const Ipp8u* pIV,
+                                       const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int dataLen,
+                                       const IppsSMS4Spec* pCtx))
+/* clang-format on */
 #endif /* #if !defined _PCP_SMS4_ENCRYPT_CBC_H */

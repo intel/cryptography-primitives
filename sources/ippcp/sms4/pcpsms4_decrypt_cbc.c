@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        cpDecryptSMS4_cbc()
 //
@@ -43,27 +43,33 @@
 //    pCtx        pointer to the SMS4 context
 //
 *F*/
-IPP_OWN_DEFN (void, cpDecryptSMS4_cbc, (const Ipp8u* pIV, const Ipp8u* pSrc, Ipp8u* pDst, int dataLen, const IppsSMS4Spec* pCtx))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpDecryptSMS4_cbc, (const Ipp8u* pIV,
+                                       const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int dataLen,
+                                       const IppsSMS4Spec* pCtx))
+/* clang-format on */
 {
-   const Ipp32u* pRoundKeys = SMS4_DRK(pCtx);
+    const Ipp32u* pRoundKeys = SMS4_DRK(pCtx);
 
-   __ALIGN16 Ipp32u TMP[2*(MBS_SMS4/sizeof(Ipp32u))];
+    __ALIGN16 Ipp32u TMP[2 * (MBS_SMS4 / sizeof(Ipp32u))];
 
-   /*
+    /*
       iv           size = MBS_SMS4/sizeof(Ipp32u)
       tmp          size = MBS_SMS4/sizeof(Ipp32u)
    */
 
-   Ipp32u*          iv = TMP;
-   Ipp32u*          tmp = TMP + (MBS_SMS4/sizeof(Ipp32u));
+    Ipp32u* iv  = TMP;
+    Ipp32u* tmp = TMP + (MBS_SMS4 / sizeof(Ipp32u));
 
-   /* copy IV */
-   CopyBlock16(pIV, iv);
+    /* copy IV */
+    CopyBlock16(pIV, iv);
 
-   /* do decryption */
-   #if (_IPP32E>=_IPP32E_L9)
-   if (IsFeatureEnabled(ippCPUID_AVX2SM4)) { /* can be optimized further */
-         for(; dataLen>0; dataLen-=MBS_SMS4, pSrc+=MBS_SMS4, pDst+=MBS_SMS4) {
+/* do decryption */
+#if (_IPP32E >= _IPP32E_L9)
+    if (IsFeatureEnabled(ippCPUID_AVX2SM4)) { /* can be optimized further */
+        for (; dataLen > 0; dataLen -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4) {
             cpSMS4_ECB_ni((Ipp8u*)tmp, (Ipp8u*)pSrc, pRoundKeys);
             tmp[0] ^= iv[0];
             tmp[1] ^= iv[1];
@@ -73,44 +79,43 @@ IPP_OWN_DEFN (void, cpDecryptSMS4_cbc, (const Ipp8u* pIV, const Ipp8u* pSrc, Ipp
             CopyBlock16(pSrc, iv);
 
             CopyBlock16(tmp, pDst);
-         }
-   }
-   else
-   #endif
-   #if (_IPP32E>=_IPP32E_K1)
-   #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920)
-   if (IsFeatureEnabled(ippCPUID_AVX512GFNI)) {
-      int processedLen = cpSMS4_CBC_dec_gfni512(pDst, pSrc, dataLen, pRoundKeys, (Ipp8u*)iv);
-      pSrc += processedLen;
-      pDst += processedLen;
-      dataLen -= processedLen;
-   }
-   else
-   #endif /* #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920) */
-   #endif /* (_IPP32E>=_IPP32E_K1) */
-   #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   if(IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES)) {
-      int processedLen = cpSMS4_CBC_dec_aesni(pDst, pSrc, dataLen, pRoundKeys, (Ipp8u*)iv);
-      pSrc += processedLen;
-      pDst += processedLen;
-      dataLen -= processedLen;
-   }
-   #endif
+        }
+    } else
+#endif
+#if (_IPP32E >= _IPP32E_K1)
+#if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || !defined(_MSC_VER) || \
+    (_MSC_VER >= 1920)
+        if (IsFeatureEnabled(ippCPUID_AVX512GFNI)) {
+        int processedLen = cpSMS4_CBC_dec_gfni512(pDst, pSrc, dataLen, pRoundKeys, (Ipp8u*)iv);
+        pSrc += processedLen;
+        pDst += processedLen;
+        dataLen -= processedLen;
+    } else
+#endif /* #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920) */
+#endif /* (_IPP32E>=_IPP32E_K1) */
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+        if (IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES)) {
+        int processedLen = cpSMS4_CBC_dec_aesni(pDst, pSrc, dataLen, pRoundKeys, (Ipp8u*)iv);
+        pSrc += processedLen;
+        pDst += processedLen;
+        dataLen -= processedLen;
+    }
+#endif
 
-   for(; dataLen>0; dataLen-=MBS_SMS4, pSrc+=MBS_SMS4, pDst+=MBS_SMS4) {
+    for (; dataLen > 0; dataLen -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4) {
 
-      cpSMS4_Cipher((Ipp8u*)tmp, (Ipp8u*)pSrc, pRoundKeys);
+        cpSMS4_Cipher((Ipp8u*)tmp, (Ipp8u*)pSrc, pRoundKeys);
 
-      tmp[0] ^= iv[0];
-      tmp[1] ^= iv[1];
-      tmp[2] ^= iv[2];
-      tmp[3] ^= iv[3];
+        tmp[0] ^= iv[0];
+        tmp[1] ^= iv[1];
+        tmp[2] ^= iv[2];
+        tmp[3] ^= iv[3];
 
-      CopyBlock16(pSrc, iv);
+        CopyBlock16(pSrc, iv);
 
-      CopyBlock16(tmp, pDst);
-   }
+        CopyBlock16(tmp, pDst);
+    }
 
-   /* clear secret data */
-   PurgeBlock(TMP, sizeof(TMP));
+    /* clear secret data */
+    PurgeBlock(TMP, sizeof(TMP));
 }

@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        ippsSMS4DecryptOFB()
 //
@@ -54,24 +54,29 @@
 //    pCtx        pointer to the SMS4 context
 //    pIV         pointer to the initialization vector
 *F*/
-IPPFUN(IppStatus, ippsSMS4DecryptOFB,(const Ipp8u* pSrc, Ipp8u* pDst, int len, int ofbBlkSize,
-                                      const IppsSMS4Spec* pCtx,
-                                      Ipp8u* pIV))
+/* clang-format off */
+IPPFUN(IppStatus, ippsSMS4DecryptOFB, (const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int len,
+                                       int ofbBlkSize,
+                                       const IppsSMS4Spec* pCtx,
+                                       Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source, target buffers and initialization pointers */
-   IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test OFB value */
-   IPP_BADARG_RET(((1>ofbBlkSize) || (MBS_SMS4<ofbBlkSize)), ippStsOFBSizeErr);
-   /* test stream integrity */
-   IPP_BADARG_RET((len%ofbBlkSize), ippStsUnderRunErr);
+    /* test source, target buffers and initialization pointers */
+    IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test OFB value */
+    IPP_BADARG_RET(((1 > ofbBlkSize) || (MBS_SMS4 < ofbBlkSize)), ippStsOFBSizeErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len % ofbBlkSize), ippStsUnderRunErr);
 
-   cpProcessSMS4_ofb8(pSrc, pDst, len, ofbBlkSize, pCtx, pIV);
-   return ippStsNoErr;
+    cpProcessSMS4_ofb8(pSrc, pDst, len, ofbBlkSize, pCtx, pIV);
+    return ippStsNoErr;
 }

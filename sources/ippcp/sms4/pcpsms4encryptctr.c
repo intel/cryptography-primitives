@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        ippsSMS4EncryptCTR()
 //
@@ -56,10 +56,14 @@
 //    counter will updated on return
 //
 *F*/
-
-IPPFUN(IppStatus, ippsSMS4EncryptCTR,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
+/* clang-format off */
+IPPFUN(IppStatus, ippsSMS4EncryptCTR,(const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
                                       const IppsSMS4Spec* pCtx,
-                                      Ipp8u* pCtrValue, int ctrNumBitSize))
+                                      Ipp8u* pCtrValue,
+                                      int ctrNumBitSize))
+/* clang-format on */
 {
-   return cpProcessSMS4_ctr(pSrc, pDst, len, pCtx, pCtrValue, ctrNumBitSize);
+    return cpProcessSMS4_ctr(pSrc, pDst, len, pCtx, pCtrValue, ctrNumBitSize);
 }

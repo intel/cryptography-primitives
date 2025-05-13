@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        cpProcessSMS4_ofb8()
 //
@@ -31,6 +31,13 @@
 #define _PCP_SMS4_PROCESS_OFB8_H
 
 #define cpProcessSMS4_ofb8 OWNAPI(cpProcessSMS4_ofb8)
-    IPP_OWN_DECL (void, cpProcessSMS4_ofb8, (const Ipp8u *pSrc, Ipp8u *pDst, int dataLen, int ofbBlkSize, const IppsSMS4Spec* pCtx, Ipp8u* pIV))
+/* clang-format off */
+IPP_OWN_DECL(void, cpProcessSMS4_ofb8, (const Ipp8u* pSrc,
+                                        Ipp8u* pDst,
+                                        int dataLen,
+                                        int ofbBlkSize,
+                                        const IppsSMS4Spec* pCtx,
+                                        Ipp8u* pIV))
+/* clang-format on */
 
 #endif /* #if !defined _PCP_SMS4_PROCESS_OFB8_H */

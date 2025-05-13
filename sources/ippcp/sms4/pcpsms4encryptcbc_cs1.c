@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        ippsSMS4EncryptCBC_CS1()
 //
@@ -58,44 +58,48 @@
 //   penultimate (ciphertext) block C*[n-2] = MSB(C[n-2], tail), C[n-2] = ENC(P[n-2])
 //   and last (ciphertext) block C[n-1] = ENC(ZeroPad(P[n-1], tail))
 *F*/
-IPPFUN(IppStatus, ippsSMS4EncryptCBC_CS1,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                                          const IppsSMS4Spec* pCtx,
-                                          const Ipp8u* pIV))
+/* clang-format off */
+IPPFUN(IppStatus, ippsSMS4EncryptCBC_CS1, (const Ipp8u* pSrc,
+                                           Ipp8u* pDst,
+                                           int len,
+                                           const IppsSMS4Spec* pCtx,
+                                           const Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source, target buffers and initialization pointers */
-   IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<MBS_SMS4), ippStsLengthErr);
+    /* test source, target buffers and initialization pointers */
+    IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < MBS_SMS4), ippStsLengthErr);
 
-   {
-      int tail = len & (MBS_SMS4-1); /* length of the last partial block */
-      len -= tail;
+    {
+        int tail = len & (MBS_SMS4 - 1); /* length of the last partial block */
+        len -= tail;
 
-      /* encryption of complete blocks */
-      cpEncryptSMS4_cbc(pIV, pSrc, pDst, len, pCtx);
-      pSrc += len;
-      pDst += len;
+        /* encryption of complete blocks */
+        cpEncryptSMS4_cbc(pIV, pSrc, pDst, len, pCtx);
+        pSrc += len;
+        pDst += len;
 
-      if(tail) {
-         Ipp8u lastIV[MBS_SMS4];
-         int n;
+        if (tail) {
+            Ipp8u lastIV[MBS_SMS4];
+            int n;
 
-         CopyBlock16(pDst-MBS_SMS4, lastIV);
-         for(n=0; n<tail; n++)
-            lastIV[n] ^= pSrc[n];
+            CopyBlock16(pDst - MBS_SMS4, lastIV);
+            for (n = 0; n < tail; n++)
+                lastIV[n] ^= pSrc[n];
 
-         /* encrypt last padded block */
-         cpSMS4_Cipher(pDst-MBS_SMS4+tail, lastIV, SMS4_RK(pCtx));
+            /* encrypt last padded block */
+            cpSMS4_Cipher(pDst - MBS_SMS4 + tail, lastIV, SMS4_RK(pCtx));
 
-         /* clear secret data */
-         PurgeBlock(lastIV, sizeof(lastIV));
-      }
+            /* clear secret data */
+            PurgeBlock(lastIV, sizeof(lastIV));
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

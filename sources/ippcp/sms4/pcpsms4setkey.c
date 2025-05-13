@@ -39,21 +39,22 @@
 *F*/
 static void cpSMS4_SetRoundKeys(Ipp32u* pRounKey, const Ipp8u* pKey)
 {
-   __ALIGN16 Ipp32u K[4 + SMS4_ROUND_KEYS_NUM];
-   K[0] = SMS4_FK[0]^HSTRING_TO_U32(pKey);
-   K[1] = SMS4_FK[1]^HSTRING_TO_U32(pKey+sizeof(Ipp32u));
-   K[2] = SMS4_FK[2]^HSTRING_TO_U32(pKey+sizeof(Ipp32u)*2);
-   K[3] = SMS4_FK[3]^HSTRING_TO_U32(pKey+sizeof(Ipp32u)*3);
+    __ALIGN16 Ipp32u K[4 + SMS4_ROUND_KEYS_NUM];
+    K[0] = SMS4_FK[0] ^ HSTRING_TO_U32(pKey);
+    K[1] = SMS4_FK[1] ^ HSTRING_TO_U32(pKey + sizeof(Ipp32u));
+    K[2] = SMS4_FK[2] ^ HSTRING_TO_U32(pKey + sizeof(Ipp32u) * 2);
+    K[3] = SMS4_FK[3] ^ HSTRING_TO_U32(pKey + sizeof(Ipp32u) * 3);
 
-   {
-      int nr;
-      for(nr=0; nr < SMS4_ROUND_KEYS_NUM; nr++) {
-         pRounKey[nr] = K[4+nr] = K[nr] ^ cpExpKeyMix_SMS4(K[nr+1]^K[nr+2]^K[nr+3]^SMS4_CK[nr]);
-      }
-   }
+    {
+        int nr;
+        for (nr = 0; nr < SMS4_ROUND_KEYS_NUM; nr++) {
+            pRounKey[nr] = K[4 + nr] =
+                K[nr] ^ cpExpKeyMix_SMS4(K[nr + 1] ^ K[nr + 2] ^ K[nr + 3] ^ SMS4_CK[nr]);
+        }
+    }
 
-   /* clear secret data */
-   PurgeBlock(K, sizeof(K));
+    /* clear secret data */
+    PurgeBlock(K, sizeof(K));
 }
 
 /*F*
@@ -77,42 +78,42 @@ static void cpSMS4_SetRoundKeys(Ipp32u* pRounKey, const Ipp8u* pKey)
 //
 *F*/
 
-IPPFUN(IppStatus, ippsSMS4SetKey,(const Ipp8u* pKey, int keyLen, IppsSMS4Spec* pCtx))
+IPPFUN(IppStatus, ippsSMS4SetKey, (const Ipp8u* pKey, int keyLen, IppsSMS4Spec* pCtx))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pCtx);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pCtx);
 
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
 
-   /* make sure in legal keyLen */
-   IPP_BADARG_RET(keyLen<16, ippStsLengthErr);
+    /* make sure in legal keyLen */
+    IPP_BADARG_RET(keyLen < 16, ippStsLengthErr);
 
-   {
-      __ALIGN16 Ipp8u defaultKey[MBS_SMS4] = {0};
-      const Ipp8u* pSecretKey = pKey? pKey : defaultKey;
+    {
+        __ALIGN16 Ipp8u defaultKey[MBS_SMS4] = { 0 };
+        const Ipp8u* pSecretKey              = pKey ? pKey : defaultKey;
 
-      /* set encryption round keys */
-      #if (_IPP32E>=_IPP32E_L9)
-      if(IsFeatureEnabled(ippCPUID_AVX2SM4))
-         cpSMS4_SetRoundKeys_ni(SMS4_RK(pCtx), pSecretKey);
-      else
-      #endif
-      #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-      if(IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES))
-         cpSMS4_SetRoundKeys_aesni(SMS4_RK(pCtx), pSecretKey);
-      else
-      #endif
-         cpSMS4_SetRoundKeys(SMS4_RK(pCtx), pSecretKey);
+/* set encryption round keys */
+#if (_IPP32E >= _IPP32E_L9)
+        if (IsFeatureEnabled(ippCPUID_AVX2SM4))
+            cpSMS4_SetRoundKeys_ni(SMS4_RK(pCtx), pSecretKey);
+        else
+#endif
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+            if (IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES))
+            cpSMS4_SetRoundKeys_aesni(SMS4_RK(pCtx), pSecretKey);
+        else
+#endif
+            cpSMS4_SetRoundKeys(SMS4_RK(pCtx), pSecretKey);
 
-      /* set deccryption round keys */
-      {
-         int n;
-         for(n=0; n < SMS4_ROUND_KEYS_NUM; n++) {
-            SMS4_DRK(pCtx)[n] = SMS4_RK(pCtx)[SMS4_ROUND_KEYS_NUM - n-1];
-         }
-      }
+        /* set deccryption round keys */
+        {
+            int n;
+            for (n = 0; n < SMS4_ROUND_KEYS_NUM; n++) {
+                SMS4_DRK(pCtx)[n] = SMS4_RK(pCtx)[SMS4_ROUND_KEYS_NUM - n - 1];
+            }
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

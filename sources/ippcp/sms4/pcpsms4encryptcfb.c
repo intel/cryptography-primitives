@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        ippsSMS4EncryptCFB()
 //
@@ -54,71 +54,75 @@
 //    pIV         pointer to the initialization vector
 //
 *F*/
-IPPFUN(IppStatus, ippsSMS4EncryptCFB,(const Ipp8u* pSrc, Ipp8u* pDst, int len, int cfbBlkSize,
+/* clang-format off */
+IPPFUN(IppStatus, ippsSMS4EncryptCFB,(const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
+                                      int cfbBlkSize,
                                       const IppsSMS4Spec* pCtx,
                                       const Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source, target buffers and initialization pointers */
-   IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test CFB value */
-   IPP_BADARG_RET(((1>cfbBlkSize) || (MBS_SMS4<cfbBlkSize)), ippStsCFBSizeErr);
+    /* test source, target buffers and initialization pointers */
+    IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test CFB value */
+    IPP_BADARG_RET(((1 > cfbBlkSize) || (MBS_SMS4 < cfbBlkSize)), ippStsCFBSizeErr);
 
-   /* test stream integrity */
-   IPP_BADARG_RET((len%cfbBlkSize), ippStsUnderRunErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len % cfbBlkSize), ippStsUnderRunErr);
 
-   {
-      __ALIGN16 Ipp32u TMP[3*MBS_SMS4];
+    {
+        __ALIGN16 Ipp32u TMP[3 * MBS_SMS4];
 
-      /*
+        /*
          tmpInp     size = 2*MBS_SMS4
          tmpOut     size = MBS_SMS4
       */
 
-      Ipp32u*     tmpInp = TMP;
-      Ipp32u*     tmpOut = TMP + 2*MBS_SMS4;
+        Ipp32u* tmpInp = TMP;
+        Ipp32u* tmpOut = TMP + 2 * MBS_SMS4;
 
-      /* read IV */
-      CopyBlock16(pIV, tmpInp);
+        /* read IV */
+        CopyBlock16(pIV, tmpInp);
 
-      /* encrypt data block-by-block of cfbLen each */
-      while(len>=cfbBlkSize) {
-         int n;
+        /* encrypt data block-by-block of cfbLen each */
+        while (len >= cfbBlkSize) {
+            int n;
 
-         /* encryption */
-         cpSMS4_Cipher((Ipp8u*)tmpOut, (Ipp8u*)tmpInp, SMS4_RK(pCtx));
+            /* encryption */
+            cpSMS4_Cipher((Ipp8u*)tmpOut, (Ipp8u*)tmpInp, SMS4_RK(pCtx));
 
-         /* store output and put feedback into the input buffer (tmpInp) */
-         if( cfbBlkSize==MBS_SMS4 && pSrc!=pDst) {
-            tmpInp[0] = ((Ipp32u*)pDst)[0] = tmpOut[0]^((Ipp32u*)pSrc)[0];
-            tmpInp[1] = ((Ipp32u*)pDst)[1] = tmpOut[1]^((Ipp32u*)pSrc)[1];
-            tmpInp[2] = ((Ipp32u*)pDst)[2] = tmpOut[2]^((Ipp32u*)pSrc)[2];
-            tmpInp[3] = ((Ipp32u*)pDst)[3] = tmpOut[3]^((Ipp32u*)pSrc)[3];
-         }
-         else {
-            for(n=0; n<cfbBlkSize; n++) {
-               pDst[n] = (Ipp8u)( ((Ipp8u*)tmpOut)[n] ^ pSrc[n] );
-               ((Ipp8u*)tmpInp)[MBS_SMS4+n] = pDst[n];
+            /* store output and put feedback into the input buffer (tmpInp) */
+            if (cfbBlkSize == MBS_SMS4 && pSrc != pDst) {
+                tmpInp[0] = ((Ipp32u*)pDst)[0] = tmpOut[0] ^ ((Ipp32u*)pSrc)[0];
+                tmpInp[1] = ((Ipp32u*)pDst)[1] = tmpOut[1] ^ ((Ipp32u*)pSrc)[1];
+                tmpInp[2] = ((Ipp32u*)pDst)[2] = tmpOut[2] ^ ((Ipp32u*)pSrc)[2];
+                tmpInp[3] = ((Ipp32u*)pDst)[3] = tmpOut[3] ^ ((Ipp32u*)pSrc)[3];
+            } else {
+                for (n = 0; n < cfbBlkSize; n++) {
+                    pDst[n]                        = (Ipp8u)(((Ipp8u*)tmpOut)[n] ^ pSrc[n]);
+                    ((Ipp8u*)tmpInp)[MBS_SMS4 + n] = pDst[n];
+                }
+
+                /* shift input buffer (tmpInp) for the next CFB operation */
+                CopyBlock16((Ipp8u*)tmpInp + cfbBlkSize, tmpInp);
             }
 
-            /* shift input buffer (tmpInp) for the next CFB operation */
-            CopyBlock16((Ipp8u*)tmpInp+cfbBlkSize, tmpInp);
-         }
+            pSrc += cfbBlkSize;
+            pDst += cfbBlkSize;
+            len -= cfbBlkSize;
+        }
 
-         pSrc += cfbBlkSize;
-         pDst += cfbBlkSize;
-         len -= cfbBlkSize;
-      }
+        /* clear secret data */
+        PurgeBlock(TMP, sizeof(TMP));
 
-      /* clear secret data */
-      PurgeBlock(TMP, sizeof(TMP));
-
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

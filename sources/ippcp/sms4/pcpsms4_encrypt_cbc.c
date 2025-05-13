@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        cpEncryptSMS4_cbc()
 //
@@ -44,29 +44,35 @@
 //    pCtx        pointer to the SMS4 context
 //
 *F*/
-IPP_OWN_DEFN (void, cpEncryptSMS4_cbc, (const Ipp8u* pIV, const Ipp8u* pSrc, Ipp8u* pDst, int dataLen, const IppsSMS4Spec* pCtx))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpEncryptSMS4_cbc, (const Ipp8u* pIV,
+                                       const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int dataLen,
+                                       const IppsSMS4Spec* pCtx))
+/* clang-format on */
 {
-   const Ipp32u* pRoundKeys = SMS4_RK(pCtx);
+    const Ipp32u* pRoundKeys = SMS4_RK(pCtx);
 
-   /* read IV */
-   __ALIGN16 Ipp32u iv[MBS_SMS4/sizeof(Ipp32u)];
-   CopyBlock16(pIV, iv);
+    /* read IV */
+    __ALIGN16 Ipp32u iv[MBS_SMS4 / sizeof(Ipp32u)];
+    CopyBlock16(pIV, iv);
 
-   /* do encryption */
-   for(; dataLen>0; dataLen-=MBS_SMS4, pSrc+=MBS_SMS4, pDst+=MBS_SMS4) {
-      iv[0] ^= ((Ipp32u*)pSrc)[0];
-      iv[1] ^= ((Ipp32u*)pSrc)[1];
-      iv[2] ^= ((Ipp32u*)pSrc)[2];
-      iv[3] ^= ((Ipp32u*)pSrc)[3];
+    /* do encryption */
+    for (; dataLen > 0; dataLen -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4) {
+        iv[0] ^= ((Ipp32u*)pSrc)[0];
+        iv[1] ^= ((Ipp32u*)pSrc)[1];
+        iv[2] ^= ((Ipp32u*)pSrc)[2];
+        iv[3] ^= ((Ipp32u*)pSrc)[3];
 
-      cpSMS4_Cipher(pDst, (Ipp8u*)iv, pRoundKeys);
+        cpSMS4_Cipher(pDst, (Ipp8u*)iv, pRoundKeys);
 
-      iv[0] = ((Ipp32u*)pDst)[0];
-      iv[1] = ((Ipp32u*)pDst)[1];
-      iv[2] = ((Ipp32u*)pDst)[2];
-      iv[3] = ((Ipp32u*)pDst)[3];
-   }
+        iv[0] = ((Ipp32u*)pDst)[0];
+        iv[1] = ((Ipp32u*)pDst)[1];
+        iv[2] = ((Ipp32u*)pDst)[2];
+        iv[3] = ((Ipp32u*)pDst)[3];
+    }
 
-   /* clear secret data */
-   PurgeBlock(iv, sizeof(iv));
+    /* clear secret data */
+    PurgeBlock(iv, sizeof(iv));
 }

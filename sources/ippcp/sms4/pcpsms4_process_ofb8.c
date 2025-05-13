@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        cpProcessSMS4_ofb8()
 //
@@ -41,40 +41,46 @@
 //    pCtx        pointer to the AES context
 //    pIV         pointer to the initialization vector
 */
-IPP_OWN_DEFN (void, cpProcessSMS4_ofb8, (const Ipp8u *pSrc, Ipp8u *pDst, int dataLen, int ofbBlkSize, const IppsSMS4Spec* pCtx, Ipp8u* pIV))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpProcessSMS4_ofb8, (const Ipp8u* pSrc,
+                                        Ipp8u* pDst,
+                                        int dataLen,
+                                        int ofbBlkSize,
+                                        const IppsSMS4Spec* pCtx,
+                                        Ipp8u* pIV))
+/* clang-format on */
 {
-   __ALIGN16 Ipp32u tmpInpOut[2*MBS_SMS4/sizeof(Ipp32u)];
+    __ALIGN16 Ipp32u tmpInpOut[2 * MBS_SMS4 / sizeof(Ipp32u)];
 
-   CopyBlock16(pIV, tmpInpOut);
+    CopyBlock16(pIV, tmpInpOut);
 
-   while(dataLen>=ofbBlkSize) {
-      /* block-by-block processing */
-      cpSMS4_Cipher((Ipp8u*)tmpInpOut+MBS_SMS4, (Ipp8u*)tmpInpOut, SMS4_RK(pCtx));
+    while (dataLen >= ofbBlkSize) {
+        /* block-by-block processing */
+        cpSMS4_Cipher((Ipp8u*)tmpInpOut + MBS_SMS4, (Ipp8u*)tmpInpOut, SMS4_RK(pCtx));
 
-      /* store output and shift inpBuffer for the next OFB operation */
-      if(ofbBlkSize==MBS_SMS4) {
-         ((Ipp32u*)pDst)[0] = tmpInpOut[0+MBS_SMS4/sizeof(Ipp32u)]^((Ipp32u*)pSrc)[0];
-         ((Ipp32u*)pDst)[1] = tmpInpOut[1+MBS_SMS4/sizeof(Ipp32u)]^((Ipp32u*)pSrc)[1];
-         ((Ipp32u*)pDst)[2] = tmpInpOut[2+MBS_SMS4/sizeof(Ipp32u)]^((Ipp32u*)pSrc)[2];
-         ((Ipp32u*)pDst)[3] = tmpInpOut[3+MBS_SMS4/sizeof(Ipp32u)]^((Ipp32u*)pSrc)[3];
-         tmpInpOut[0] = tmpInpOut[0+MBS_SMS4/sizeof(Ipp32u)];
-         tmpInpOut[1] = tmpInpOut[1+MBS_SMS4/sizeof(Ipp32u)];
-         tmpInpOut[2] = tmpInpOut[2+MBS_SMS4/sizeof(Ipp32u)];
-         tmpInpOut[3] = tmpInpOut[3+MBS_SMS4/sizeof(Ipp32u)];
-      }
-      else {
-         XorBlock(pSrc, tmpInpOut+MBS_SMS4/sizeof(Ipp32u), pDst, ofbBlkSize);
-         CopyBlock16((Ipp8u*)tmpInpOut+ofbBlkSize, tmpInpOut);
-      }
+        /* store output and shift inpBuffer for the next OFB operation */
+        if (ofbBlkSize == MBS_SMS4) {
+            ((Ipp32u*)pDst)[0] = tmpInpOut[0 + MBS_SMS4 / sizeof(Ipp32u)] ^ ((Ipp32u*)pSrc)[0];
+            ((Ipp32u*)pDst)[1] = tmpInpOut[1 + MBS_SMS4 / sizeof(Ipp32u)] ^ ((Ipp32u*)pSrc)[1];
+            ((Ipp32u*)pDst)[2] = tmpInpOut[2 + MBS_SMS4 / sizeof(Ipp32u)] ^ ((Ipp32u*)pSrc)[2];
+            ((Ipp32u*)pDst)[3] = tmpInpOut[3 + MBS_SMS4 / sizeof(Ipp32u)] ^ ((Ipp32u*)pSrc)[3];
+            tmpInpOut[0]       = tmpInpOut[0 + MBS_SMS4 / sizeof(Ipp32u)];
+            tmpInpOut[1]       = tmpInpOut[1 + MBS_SMS4 / sizeof(Ipp32u)];
+            tmpInpOut[2]       = tmpInpOut[2 + MBS_SMS4 / sizeof(Ipp32u)];
+            tmpInpOut[3]       = tmpInpOut[3 + MBS_SMS4 / sizeof(Ipp32u)];
+        } else {
+            XorBlock(pSrc, tmpInpOut + MBS_SMS4 / sizeof(Ipp32u), pDst, ofbBlkSize);
+            CopyBlock16((Ipp8u*)tmpInpOut + ofbBlkSize, tmpInpOut);
+        }
 
-      pSrc += ofbBlkSize;
-      pDst += ofbBlkSize;
-      dataLen -= ofbBlkSize;
-   }
+        pSrc += ofbBlkSize;
+        pDst += ofbBlkSize;
+        dataLen -= ofbBlkSize;
+    }
 
-   /* update pIV */
-   CopyBlock16((Ipp8u*)tmpInpOut, pIV);
-   
-   /* clear secret data */
-   PurgeBlock(tmpInpOut, sizeof(tmpInpOut));
+    /* update pIV */
+    CopyBlock16((Ipp8u*)tmpInpOut, pIV);
+
+    /* clear secret data */
+    PurgeBlock(tmpInpOut, sizeof(tmpInpOut));
 }

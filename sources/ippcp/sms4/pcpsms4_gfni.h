@@ -34,42 +34,51 @@
 #include "owndefs.h"
 #include "owncp.h"
 
-#if (_IPP32E>=_IPP32E_K1)
+#if (_IPP32E >= _IPP32E_K1)
 
-#if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920)
+#if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || !defined(_MSC_VER) || \
+    (_MSC_VER >= 1920)
 
-static __ALIGN64 Ipp8u swapBytes[] = { 3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12,
-                                      3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12,
-                                      3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12,
-                                      3,2,1,0, 7,6,5,4, 11,10,9,8, 15,14,13,12 };
+static __ALIGN64 Ipp8u swapBytes[] = { 3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12,
+                                       3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12,
+                                       3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12,
+                                       3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12 };
 /*
 // Not used in current pipeline
 static __ALIGN32 Ipp8u permMask256[] = {0x00,0x00,0x00,0x00, 0x04,0x00,0x00,0x00, 0x01,0x00,0x00,0x00, 0x05,0x00,0x00,0x00,
                                         0x02,0x00,0x00,0x00, 0x06,0x00,0x00,0x00, 0x03,0x00,0x00,0x00, 0x07,0x00,0x00,0x00};
 */
 
-static __ALIGN64 Ipp8u permMask_in[]  = {0,0x00,0x00,0x00, 4,0x00,0x00,0x00, 8,0x00,0x00,0x00, 12,0x00,0x00,0x00,
-                                         1,0x00,0x00,0x00, 5,0x00,0x00,0x00, 9,0x00,0x00,0x00, 13,0x00,0x00,0x00,
-                                         2,0x00,0x00,0x00, 6,0x00,0x00,0x00, 10,0x00,0x00,0x00, 14,0x00,0x00,0x00,
-                                         3,0x00,0x00,0x00, 7,0x00,0x00,0x00, 11,0x00,0x00,0x00, 15,0x00,0x00,0x00 };
+static __ALIGN64 Ipp8u permMask_in[] = {
+    0, 0x00, 0x00, 0x00, 4, 0x00, 0x00, 0x00, 8,  0x00, 0x00, 0x00, 12, 0x00, 0x00, 0x00,
+    1, 0x00, 0x00, 0x00, 5, 0x00, 0x00, 0x00, 9,  0x00, 0x00, 0x00, 13, 0x00, 0x00, 0x00,
+    2, 0x00, 0x00, 0x00, 6, 0x00, 0x00, 0x00, 10, 0x00, 0x00, 0x00, 14, 0x00, 0x00, 0x00,
+    3, 0x00, 0x00, 0x00, 7, 0x00, 0x00, 0x00, 11, 0x00, 0x00, 0x00, 15, 0x00, 0x00, 0x00
+};
 
-static __ALIGN64 Ipp8u permMask_out[] = {12,0x00,0x00,0x00, 8,0x00,0x00,0x00, 4,0x00,0x00,0x00, 0,0x00,0x00,0x00,
-                                         13,0x00,0x00,0x00, 9,0x00,0x00,0x00, 5,0x00,0x00,0x00, 1,0x00,0x00,0x00,
-                                         14,0x00,0x00,0x00, 10,0x00,0x00,0x00, 6,0x00,0x00,0x00, 2,0x00,0x00,0x00,
-                                         15,0x00,0x00,0x00, 11,0x00,0x00,0x00, 7,0x00,0x00,0x00, 3,0x00,0x00,0x00};
+static __ALIGN64 Ipp8u permMask_out[] = {
+    12, 0x00, 0x00, 0x00, 8,  0x00, 0x00, 0x00, 4, 0x00, 0x00, 0x00, 0, 0x00, 0x00, 0x00,
+    13, 0x00, 0x00, 0x00, 9,  0x00, 0x00, 0x00, 5, 0x00, 0x00, 0x00, 1, 0x00, 0x00, 0x00,
+    14, 0x00, 0x00, 0x00, 10, 0x00, 0x00, 0x00, 6, 0x00, 0x00, 0x00, 2, 0x00, 0x00, 0x00,
+    15, 0x00, 0x00, 0x00, 11, 0x00, 0x00, 0x00, 7, 0x00, 0x00, 0x00, 3, 0x00, 0x00, 0x00
+};
 
-static __ALIGN64 Ipp8u affineIn[] = { 0x52,0xBC,0x2D,0x02,0x9E,0x25,0xAC,0x34, 0x52,0xBC,0x2D,0x02,0x9E,0x25,0xAC,0x34,
-                                    0x52,0xBC,0x2D,0x02,0x9E,0x25,0xAC,0x34, 0x52,0xBC,0x2D,0x02,0x9E,0x25,0xAC,0x34,
-                                    0x52,0xBC,0x2D,0x02,0x9E,0x25,0xAC,0x34, 0x52,0xBC,0x2D,0x02,0x9E,0x25,0xAC,0x34,
-                                    0x52,0xBC,0x2D,0x02,0x9E,0x25,0xAC,0x34, 0x52,0xBC,0x2D,0x02,0x9E,0x25,0xAC,0x34 };
-static __ALIGN64 Ipp8u affineOut[] = { 0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7, 0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7,
-                                       0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7, 0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7,
-                                       0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7, 0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7,
-                                       0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7, 0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7 };
+static __ALIGN64 Ipp8u affineIn[] = {
+    0x52, 0xBC, 0x2D, 0x02, 0x9E, 0x25, 0xAC, 0x34, 0x52, 0xBC, 0x2D, 0x02, 0x9E, 0x25, 0xAC, 0x34,
+    0x52, 0xBC, 0x2D, 0x02, 0x9E, 0x25, 0xAC, 0x34, 0x52, 0xBC, 0x2D, 0x02, 0x9E, 0x25, 0xAC, 0x34,
+    0x52, 0xBC, 0x2D, 0x02, 0x9E, 0x25, 0xAC, 0x34, 0x52, 0xBC, 0x2D, 0x02, 0x9E, 0x25, 0xAC, 0x34,
+    0x52, 0xBC, 0x2D, 0x02, 0x9E, 0x25, 0xAC, 0x34, 0x52, 0xBC, 0x2D, 0x02, 0x9E, 0x25, 0xAC, 0x34
+};
+static __ALIGN64 Ipp8u affineOut[] = {
+    0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d, 0xd7, 0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d, 0xd7,
+    0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d, 0xd7, 0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d, 0xd7,
+    0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d, 0xd7, 0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d, 0xd7,
+    0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d, 0xd7, 0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d, 0xd7
+};
 
-#define M512(mem)    (*((__m512i*)(mem)))
-#define M256(mem)    (*((__m256i*)(mem)))
-#define M128(mem)    (*((__m128i*)(mem)))
+#define M512(mem) (*((__m512i*)(mem)))
+#define M256(mem) (*((__m256i*)(mem)))
+#define M128(mem) (*((__m128i*)(mem)))
 
 /*
 //
@@ -94,9 +103,9 @@ static __ALIGN64 Ipp8u affineOut[] = { 0x19,0x8b,0x6c,0x1e,0x51,0x8e,0x2d,0xd7, 
 
 __FORCEINLINE __m512i sBox512(__m512i block)
 {
-   block = _mm512_gf2p8affine_epi64_epi8(block, M512(affineIn), 0x65);
-   block = _mm512_gf2p8affineinv_epi64_epi8(block, M512(affineOut), 0xd3);
-   return block;
+    block = _mm512_gf2p8affine_epi64_epi8(block, M512(affineIn), 0x65);
+    block = _mm512_gf2p8affineinv_epi64_epi8(block, M512(affineOut), 0xd3);
+    return block;
 }
 
 /*
@@ -112,10 +121,9 @@ __FORCEINLINE __m256i sBox256(__m256i block)
 
 __FORCEINLINE __m128i sBox128(__m128i block)
 {
-   block = _mm_gf2p8affine_epi64_epi8(block, M128(affineIn), 0x65);
-   block = _mm_gf2p8affineinv_epi64_epi8(block, M128(affineOut), 0xd3);
-   return block;
-
+    block = _mm_gf2p8affine_epi64_epi8(block, M128(affineIn), 0x65);
+    block = _mm_gf2p8affineinv_epi64_epi8(block, M128(affineOut), 0xd3);
+    return block;
 }
 
 /*
@@ -124,13 +132,13 @@ __FORCEINLINE __m128i sBox128(__m128i block)
 
 __FORCEINLINE __m512i L512(__m512i x)
 {
-   __m512i rolled0 = _mm512_rol_epi32(x, 2);
-   __m512i rolled1 = _mm512_rol_epi32(x, 10);
-   __m512i temp    = _mm512_xor_si512(rolled0, rolled1);
-   __m512i rolled2 = _mm512_rol_epi32(x, 18);
-   __m512i rolled3 = _mm512_rol_epi32(x, 24);
-   __m512i res     = _mm512_ternarylogic_epi32(temp, rolled2, rolled3, 0x96);
-   return  res;
+    __m512i rolled0 = _mm512_rol_epi32(x, 2);
+    __m512i rolled1 = _mm512_rol_epi32(x, 10);
+    __m512i temp    = _mm512_xor_si512(rolled0, rolled1);
+    __m512i rolled2 = _mm512_rol_epi32(x, 18);
+    __m512i rolled3 = _mm512_rol_epi32(x, 24);
+    __m512i res     = _mm512_ternarylogic_epi32(temp, rolled2, rolled3, 0x96);
+    return res;
 }
 
 /*
@@ -153,13 +161,13 @@ __FORCEINLINE __m256i L256(__m256i x)
 
 __FORCEINLINE __m128i L128(__m128i x)
 {
-   __m128i rolled0 = _mm_rol_epi32(x, 2);
-   __m128i rolled1 = _mm_rol_epi32(x, 10);
-   __m128i temp    = _mm_xor_si128(rolled1, rolled0);
-   __m128i rolled2 = _mm_rol_epi32(x, 18);
-   __m128i rolled3 = _mm_rol_epi32(x, 24);
-   __m128i res     = _mm_ternarylogic_epi32(temp, rolled2, rolled3, 0x96);
-   return  res;
+    __m128i rolled0 = _mm_rol_epi32(x, 2);
+    __m128i rolled1 = _mm_rol_epi32(x, 10);
+    __m128i temp    = _mm_xor_si128(rolled1, rolled0);
+    __m128i rolled2 = _mm_rol_epi32(x, 18);
+    __m128i rolled3 = _mm_rol_epi32(x, 24);
+    __m128i res     = _mm_ternarylogic_epi32(temp, rolled2, rolled3, 0x96);
+    return res;
 }
 
 
@@ -171,21 +179,21 @@ __FORCEINLINE __m128i L128(__m128i x)
 // inp: T0, T1, T2, T3
 // out: K0, K1, K2, K3
 */
-#define TRANSPOSE_INP_512(K0,K1,K2,K3, T0,T1,T2,T3) \
-   (K0) = _mm512_unpacklo_epi32(T0, T1); \
-   (K1) = _mm512_unpacklo_epi32(T2, T3); \
-   (K2) = _mm512_unpackhi_epi32(T0, T1); \
-   (K3) = _mm512_unpackhi_epi32(T2, T3); \
-   \
-   (T0) = _mm512_unpacklo_epi64(K0, K1); \
-   (T1) = _mm512_unpacklo_epi64(K2, K3); \
-   (T2) = _mm512_unpackhi_epi64(K0, K1); \
-   (T3) = _mm512_unpackhi_epi64(K2, K3); \
-   \
-   (K2) = _mm512_permutexvar_epi32(M512(permMask_in), T1); \
-   (K1) = _mm512_permutexvar_epi32(M512(permMask_in), T2); \
-   (K3) = _mm512_permutexvar_epi32(M512(permMask_in), T3); \
-   (K0) = _mm512_permutexvar_epi32(M512(permMask_in), T0)
+#define TRANSPOSE_INP_512(K0, K1, K2, K3, T0, T1, T2, T3)   \
+    (K0) = _mm512_unpacklo_epi32(T0, T1);                   \
+    (K1) = _mm512_unpacklo_epi32(T2, T3);                   \
+    (K2) = _mm512_unpackhi_epi32(T0, T1);                   \
+    (K3) = _mm512_unpackhi_epi32(T2, T3);                   \
+                                                            \
+    (T0) = _mm512_unpacklo_epi64(K0, K1);                   \
+    (T1) = _mm512_unpacklo_epi64(K2, K3);                   \
+    (T2) = _mm512_unpackhi_epi64(K0, K1);                   \
+    (T3) = _mm512_unpackhi_epi64(K2, K3);                   \
+                                                            \
+    (K2) = _mm512_permutexvar_epi32(M512(permMask_in), T1); \
+    (K1) = _mm512_permutexvar_epi32(M512(permMask_in), T2); \
+    (K3) = _mm512_permutexvar_epi32(M512(permMask_in), T3); \
+    (K0) = _mm512_permutexvar_epi32(M512(permMask_in), T0)
 
 /*
 // inp: T0, T1, T2, T3
@@ -211,16 +219,16 @@ __FORCEINLINE __m128i L128(__m128i x)
    K0 = _mm256_permutevar8x32_epi32(T0, M256(permMask256))
 */
 
-#define TRANSPOSE_INP_128(K0,K1,K2,K3, T) \
-   (T)  = _mm_unpacklo_epi32(K0, K1); \
-   (K1) = _mm_unpackhi_epi32(K0, K1); \
-   (K0) = _mm_unpacklo_epi32(K2, K3); \
-   (K3) = _mm_unpackhi_epi32(K2, K3); \
-   \
-   (K2) = _mm_unpacklo_epi64(K1, K3); \
-   (K3) = _mm_unpackhi_epi64(K1, K3); \
-   (K1) = _mm_unpackhi_epi64(T,  K0); \
-   (K0) = _mm_unpacklo_epi64(T,  K0)
+#define TRANSPOSE_INP_128(K0, K1, K2, K3, T) \
+    (T)  = _mm_unpacklo_epi32(K0, K1);       \
+    (K1) = _mm_unpackhi_epi32(K0, K1);       \
+    (K0) = _mm_unpacklo_epi32(K2, K3);       \
+    (K3) = _mm_unpackhi_epi32(K2, K3);       \
+                                             \
+    (K2) = _mm_unpacklo_epi64(K1, K3);       \
+    (K3) = _mm_unpackhi_epi64(K1, K3);       \
+    (K1) = _mm_unpackhi_epi64(T, K0);        \
+    (K0) = _mm_unpacklo_epi64(T, K0)
 
 /*
 // TRANSPOSE_OUT
@@ -231,23 +239,23 @@ __FORCEINLINE __m128i L128(__m128i x)
 // out: T0, T1, T2, T3
 */
 
-#define TRANSPOSE_OUT_512(T0,T1,T2,T3, K0,K1,K2,K3) \
-   (T0) = _mm512_shuffle_i32x4(K0, K1, 0x44); \
-   (T1) = _mm512_shuffle_i32x4(K0, K1, 0xee); \
-   (T2) = _mm512_shuffle_i32x4(K2, K3, 0x44); \
-   (T3) = _mm512_shuffle_i32x4(K2, K3, 0xee); \
-   \
-   (K0) = _mm512_shuffle_i32x4(T0, T2, 0x88); \
-   (K1) = _mm512_shuffle_i32x4(T0, T2, 0xdd); \
-   (K2) = _mm512_shuffle_i32x4(T1, T3, 0x88); \
-   (K3) = _mm512_shuffle_i32x4(T1, T3, 0xdd); \
-   \
-   (K0) = _mm512_permutexvar_epi32(M512(permMask_out), K0);\
-   (K1) = _mm512_permutexvar_epi32(M512(permMask_out), K1);\
-   (K2) = _mm512_permutexvar_epi32(M512(permMask_out), K2);\
-   (K3) = _mm512_permutexvar_epi32(M512(permMask_out), K3);\
-   \
-(T0)=(K0),(T1)=(K1),(T2)=(K2),(T3)=(K3)
+#define TRANSPOSE_OUT_512(T0, T1, T2, T3, K0, K1, K2, K3)    \
+    (T0) = _mm512_shuffle_i32x4(K0, K1, 0x44);               \
+    (T1) = _mm512_shuffle_i32x4(K0, K1, 0xee);               \
+    (T2) = _mm512_shuffle_i32x4(K2, K3, 0x44);               \
+    (T3) = _mm512_shuffle_i32x4(K2, K3, 0xee);               \
+                                                             \
+    (K0) = _mm512_shuffle_i32x4(T0, T2, 0x88);               \
+    (K1) = _mm512_shuffle_i32x4(T0, T2, 0xdd);               \
+    (K2) = _mm512_shuffle_i32x4(T1, T3, 0x88);               \
+    (K3) = _mm512_shuffle_i32x4(T1, T3, 0xdd);               \
+                                                             \
+    (K0) = _mm512_permutexvar_epi32(M512(permMask_out), K0); \
+    (K1) = _mm512_permutexvar_epi32(M512(permMask_out), K1); \
+    (K2) = _mm512_permutexvar_epi32(M512(permMask_out), K2); \
+    (K3) = _mm512_permutexvar_epi32(M512(permMask_out), K3); \
+                                                             \
+    (T0) = (K0), (T1) = (K1), (T2) = (K2), (T3) = (K3)
 
 
 /*
@@ -274,17 +282,17 @@ __FORCEINLINE __m128i L128(__m128i x)
    T3 = _mm256_permute2x128_si256(K1, K3, 0x31)
 */
 
-#define TRANSPOSE_OUT_128(K0,K1,K2,K3, T) \
-   (T)  = _mm_unpacklo_epi32(K1, K0); \
-   (K0) = _mm_unpackhi_epi32(K1, K0); \
-   (K1) = _mm_unpacklo_epi32(K3, K2); \
-   (K3) = _mm_unpackhi_epi32(K3, K2); \
-   \
-   (K2) = _mm_unpackhi_epi64(K1,  T); \
-   (T)  = _mm_unpacklo_epi64(K1,  T); \
-   (K1) = _mm_unpacklo_epi64(K3, K0); \
-   (K0) = _mm_unpackhi_epi64(K3, K0); \
-   (K3) = (T)
+#define TRANSPOSE_OUT_128(K0, K1, K2, K3, T) \
+    (T)  = _mm_unpacklo_epi32(K1, K0);       \
+    (K0) = _mm_unpackhi_epi32(K1, K0);       \
+    (K1) = _mm_unpacklo_epi32(K3, K2);       \
+    (K3) = _mm_unpackhi_epi32(K3, K2);       \
+                                             \
+    (K2) = _mm_unpackhi_epi64(K1, T);        \
+    (T)  = _mm_unpacklo_epi64(K1, T);        \
+    (K1) = _mm_unpacklo_epi64(K3, K0);       \
+    (K0) = _mm_unpackhi_epi64(K3, K0);       \
+    (K3) = (T)
 
 //#define PR(X) printf("%08u %08u %08u %08u | %08u %08u %08u %08u | %08u %08u %08u %08u | %08u %08u %08u %08u\n",\
 //         X.m512i_u32[0], X.m512i_u32[1], X.m512i_u32[2],\

@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        ippsSMS4DecryptECB()
 //
@@ -50,53 +50,55 @@
 //    pCtx        pointer to the SMS4 context
 //
 *F*/
-IPPFUN(IppStatus, ippsSMS4DecryptECB,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                                      const IppsSMS4Spec* pCtx))
+/* clang-format off */
+IPPFUN(IppStatus, ippsSMS4DecryptECB, (const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int len,
+                                       const IppsSMS4Spec* pCtx))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source and target buffer pointers */
-   IPP_BAD_PTR2_RET(pSrc, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test stream integrity */
-   IPP_BADARG_RET((len&(MBS_SMS4-1)), ippStsUnderRunErr);
+    /* test source and target buffer pointers */
+    IPP_BAD_PTR2_RET(pSrc, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len & (MBS_SMS4 - 1)), ippStsUnderRunErr);
 
-   /* do encryption */
-   #if (_IPP32E>=_IPP32E_L9)
-   if (IsFeatureEnabled(ippCPUID_AVX2SM4)) { /* can be optimized further */
-         for(; len>0; len-=MBS_SMS4, pSrc+=MBS_SMS4, pDst+=MBS_SMS4) {
+/* do encryption */
+#if (_IPP32E >= _IPP32E_L9)
+    if (IsFeatureEnabled(ippCPUID_AVX2SM4)) { /* can be optimized further */
+        for (; len > 0; len -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4) {
             cpSMS4_ECB_ni(pDst, pSrc, SMS4_DRK(pCtx));
-         }
-   }
-   else
-   #endif
-   #if (_IPP32E>=_IPP32E_K1)
-   #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920)
-   if (IsFeatureEnabled(ippCPUID_AVX512GFNI)) {
-      int processedLen = cpSMS4_ECB_gfni512(pDst, pSrc, len, SMS4_DRK(pCtx));
-      pSrc += processedLen;
-      pDst += processedLen;
-      len -= processedLen;
-   }
-   else
-   #endif /* #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920)) */
-   #endif /* (_IPP32E>=_IPP32E_K1) */
-   #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   if(IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES)) {
-      int processedLen = cpSMS4_ECB_aesni(pDst, pSrc, len, SMS4_DRK(pCtx));
-      pSrc += processedLen;
-      pDst += processedLen;
-      len -= processedLen;
-   }
-   else
-   #endif
+        }
+    } else
+#endif
+#if (_IPP32E >= _IPP32E_K1)
+#if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || !defined(_MSC_VER) || \
+    (_MSC_VER >= 1920)
+        if (IsFeatureEnabled(ippCPUID_AVX512GFNI)) {
+        int processedLen = cpSMS4_ECB_gfni512(pDst, pSrc, len, SMS4_DRK(pCtx));
+        pSrc += processedLen;
+        pDst += processedLen;
+        len -= processedLen;
+    } else
+#endif /* #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920)) */
+#endif /* (_IPP32E>=_IPP32E_K1) */
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+        if (IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES)) {
+        int processedLen = cpSMS4_ECB_aesni(pDst, pSrc, len, SMS4_DRK(pCtx));
+        pSrc += processedLen;
+        pDst += processedLen;
+        len -= processedLen;
+    } else
+#endif
 
-   for(; len>0; len-=MBS_SMS4, pSrc+=MBS_SMS4, pDst+=MBS_SMS4)
-      cpSMS4_Cipher(pDst, pSrc, SMS4_DRK(pCtx));
+        for (; len > 0; len -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4)
+            cpSMS4_Cipher(pDst, pSrc, SMS4_DRK(pCtx));
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

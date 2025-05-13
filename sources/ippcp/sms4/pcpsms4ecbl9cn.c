@@ -31,14 +31,14 @@
 #include "sms4/pcpsms4.h"
 #include "pcptool.h"
 
-#if (_IPP>=_IPP_H9) || (_IPP32E>=_IPP32E_L9)
+#if (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
 
 #include "sms4/pcpsms4_l9cn.h"
 
-IPP_OWN_DEFN (int, cpSMS4_ECB_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey))
+IPP_OWN_DEFN(int, cpSMS4_ECB_aesni, (Ipp8u * pOut, const Ipp8u* pInp, int len, const Ipp32u* pRKey))
 {
-   __ALIGN16 __m256i TMP[16];
-   /*
+    __ALIGN16 __m256i TMP[16];
+    /*
       TMP[ 0] = T0
       TMP[ 1] = T1
       TMP[ 2] = T2
@@ -57,166 +57,167 @@ IPP_OWN_DEFN (int, cpSMS4_ECB_aesni, (Ipp8u* pOut, const Ipp8u* pInp, int len, c
       TMP[15] = Q3
    */
 
-   int processedLen = len -(len % (24*MBS_SMS4));
-   int n;
-   for(n=0; n<processedLen; n+=(24*MBS_SMS4), pInp+=(24*MBS_SMS4), pOut+=(24*MBS_SMS4)) {
-      int itr;
+    int processedLen = len - (len % (24 * MBS_SMS4));
+    int n;
+    for (n = 0; n < processedLen;
+         n += (24 * MBS_SMS4), pInp += (24 * MBS_SMS4), pOut += (24 * MBS_SMS4)) {
+        int itr;
 
-      TMP[0] = _mm256_loadu_si256((__m256i*)(pInp));
-      TMP[1] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*2));
-      TMP[2] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*4));
-      TMP[3] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*6));
-      TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
-      TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
-      TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
-      TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
-      TRANSPOSE_INP(TMP[4],TMP[5],TMP[6],TMP[7], TMP[0],TMP[1],TMP[2],TMP[3]);
+        TMP[0] = _mm256_loadu_si256((__m256i*)(pInp));
+        TMP[1] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 2));
+        TMP[2] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 4));
+        TMP[3] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 6));
+        TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
+        TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
+        TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
+        TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
+        TRANSPOSE_INP(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
 
-      TMP[0] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*8));
-      TMP[1] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*10));
-      TMP[2] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*12));
-      TMP[3] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*14));
-      TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
-      TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
-      TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
-      TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
-      TRANSPOSE_INP(TMP[8],TMP[9],TMP[10],TMP[11], TMP[0],TMP[1],TMP[2],TMP[3]);
+        TMP[0] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 8));
+        TMP[1] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 10));
+        TMP[2] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 12));
+        TMP[3] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 14));
+        TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
+        TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
+        TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
+        TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
+        TRANSPOSE_INP(TMP[8], TMP[9], TMP[10], TMP[11], TMP[0], TMP[1], TMP[2], TMP[3]);
 
-      TMP[0] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*16));
-      TMP[1] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*18));
-      TMP[2] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*20));
-      TMP[3] = _mm256_loadu_si256((__m256i*)(pInp+MBS_SMS4*22));
-      TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
-      TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
-      TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
-      TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
-      TRANSPOSE_INP(TMP[12],TMP[13],TMP[14],TMP[15], TMP[0],TMP[1],TMP[2],TMP[3]);
+        TMP[0] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 16));
+        TMP[1] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 18));
+        TMP[2] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 20));
+        TMP[3] = _mm256_loadu_si256((__m256i*)(pInp + MBS_SMS4 * 22));
+        TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
+        TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
+        TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
+        TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
+        TRANSPOSE_INP(TMP[12], TMP[13], TMP[14], TMP[15], TMP[0], TMP[1], TMP[2], TMP[3]);
 
-      for(itr=0; itr<8; itr++, pRKey+=4) {
-         /* initial xors */
-         TMP[2] = TMP[1] = TMP[0] = _mm256_set1_epi32((Ipp32s)pRKey[0]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[5]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[6]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[7]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[9]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[10]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[11]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[13]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[14]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[15]);
-         /* Sbox */
-         TMP[0] = sBox(TMP[0]);
-         TMP[1] = sBox(TMP[1]);
-         TMP[2] = sBox(TMP[2]);
-         /* Sbox done, now L */
-         TMP[4]  = _mm256_xor_si256(_mm256_xor_si256(TMP[4], TMP[0]), L(TMP[0]));
-         TMP[8]  = _mm256_xor_si256(_mm256_xor_si256(TMP[8], TMP[1]), L(TMP[1]));
-         TMP[12] = _mm256_xor_si256(_mm256_xor_si256(TMP[12], TMP[2]), L(TMP[2]));
+        for (itr = 0; itr < 8; itr++, pRKey += 4) {
+            /* initial xors */
+            TMP[2] = TMP[1] = TMP[0] = _mm256_set1_epi32((Ipp32s)pRKey[0]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[5]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[6]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[7]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[9]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[10]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[11]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[13]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[14]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[15]);
+            /* Sbox */
+            TMP[0] = sBox(TMP[0]);
+            TMP[1] = sBox(TMP[1]);
+            TMP[2] = sBox(TMP[2]);
+            /* Sbox done, now L */
+            TMP[4]  = _mm256_xor_si256(_mm256_xor_si256(TMP[4], TMP[0]), L(TMP[0]));
+            TMP[8]  = _mm256_xor_si256(_mm256_xor_si256(TMP[8], TMP[1]), L(TMP[1]));
+            TMP[12] = _mm256_xor_si256(_mm256_xor_si256(TMP[12], TMP[2]), L(TMP[2]));
 
-         /* initial xors */
-         TMP[2] = TMP[1] = TMP[0] = _mm256_set1_epi32((Ipp32s)pRKey[1]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[6]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[7]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[4]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[10]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[11]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[8]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[14]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[15]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[12]);
-         /* Sbox */
-         TMP[0] = sBox(TMP[0]);
-         TMP[1] = sBox(TMP[1]);
-         TMP[2] = sBox(TMP[2]);
-         /* Sbox done, now L */
-         TMP[5]  = _mm256_xor_si256(_mm256_xor_si256(TMP[5], TMP[0]), L(TMP[0]));
-         TMP[9]  = _mm256_xor_si256(_mm256_xor_si256(TMP[9], TMP[1]), L(TMP[1]));
-         TMP[13] = _mm256_xor_si256(_mm256_xor_si256(TMP[13], TMP[2]), L(TMP[2]));
+            /* initial xors */
+            TMP[2] = TMP[1] = TMP[0] = _mm256_set1_epi32((Ipp32s)pRKey[1]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[6]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[7]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[4]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[10]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[11]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[8]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[14]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[15]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[12]);
+            /* Sbox */
+            TMP[0] = sBox(TMP[0]);
+            TMP[1] = sBox(TMP[1]);
+            TMP[2] = sBox(TMP[2]);
+            /* Sbox done, now L */
+            TMP[5]  = _mm256_xor_si256(_mm256_xor_si256(TMP[5], TMP[0]), L(TMP[0]));
+            TMP[9]  = _mm256_xor_si256(_mm256_xor_si256(TMP[9], TMP[1]), L(TMP[1]));
+            TMP[13] = _mm256_xor_si256(_mm256_xor_si256(TMP[13], TMP[2]), L(TMP[2]));
 
-         /* initial xors */
-         TMP[2] = TMP[1] = TMP[0] = _mm256_set1_epi32((Ipp32s)pRKey[2]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[7]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[4]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[5]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[11]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[8]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[9]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[15]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[12]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[13]);
-         /* Sbox */
-         TMP[0] = sBox(TMP[0]);
-         TMP[1] = sBox(TMP[1]);
-         TMP[2] = sBox(TMP[2]);
-         /* Sbox done, now L */
-         TMP[6]  = _mm256_xor_si256(_mm256_xor_si256(TMP[6], TMP[0]), L(TMP[0]));
-         TMP[10] = _mm256_xor_si256(_mm256_xor_si256(TMP[10], TMP[1]), L(TMP[1]));
-         TMP[14] = _mm256_xor_si256(_mm256_xor_si256(TMP[14], TMP[2]), L(TMP[2]));
+            /* initial xors */
+            TMP[2] = TMP[1] = TMP[0] = _mm256_set1_epi32((Ipp32s)pRKey[2]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[7]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[4]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[5]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[11]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[8]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[9]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[15]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[12]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[13]);
+            /* Sbox */
+            TMP[0] = sBox(TMP[0]);
+            TMP[1] = sBox(TMP[1]);
+            TMP[2] = sBox(TMP[2]);
+            /* Sbox done, now L */
+            TMP[6]  = _mm256_xor_si256(_mm256_xor_si256(TMP[6], TMP[0]), L(TMP[0]));
+            TMP[10] = _mm256_xor_si256(_mm256_xor_si256(TMP[10], TMP[1]), L(TMP[1]));
+            TMP[14] = _mm256_xor_si256(_mm256_xor_si256(TMP[14], TMP[2]), L(TMP[2]));
 
-         /* initial xors */
-         TMP[2] = TMP[1] = TMP[0] = _mm256_set1_epi32((Ipp32s)pRKey[3]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[4]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[5]);
-         TMP[0] = _mm256_xor_si256(TMP[0], TMP[6]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[8]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[9]);
-         TMP[1] = _mm256_xor_si256(TMP[1], TMP[10]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[12]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[13]);
-         TMP[2] = _mm256_xor_si256(TMP[2], TMP[14]);
-         /* Sbox */
-         TMP[0] = sBox(TMP[0]);
-         TMP[1] = sBox(TMP[1]);
-         TMP[2] = sBox(TMP[2]);
-         /* Sbox done, now L */
-         TMP[7]  = _mm256_xor_si256(_mm256_xor_si256(TMP[7], TMP[0]), L(TMP[0]));
-         TMP[11] = _mm256_xor_si256(_mm256_xor_si256(TMP[11], TMP[1]), L(TMP[1]));
-         TMP[15] = _mm256_xor_si256(_mm256_xor_si256(TMP[15], TMP[2]), L(TMP[2]));
-      }
+            /* initial xors */
+            TMP[2] = TMP[1] = TMP[0] = _mm256_set1_epi32((Ipp32s)pRKey[3]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[4]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[5]);
+            TMP[0]                   = _mm256_xor_si256(TMP[0], TMP[6]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[8]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[9]);
+            TMP[1]                   = _mm256_xor_si256(TMP[1], TMP[10]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[12]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[13]);
+            TMP[2]                   = _mm256_xor_si256(TMP[2], TMP[14]);
+            /* Sbox */
+            TMP[0] = sBox(TMP[0]);
+            TMP[1] = sBox(TMP[1]);
+            TMP[2] = sBox(TMP[2]);
+            /* Sbox done, now L */
+            TMP[7]  = _mm256_xor_si256(_mm256_xor_si256(TMP[7], TMP[0]), L(TMP[0]));
+            TMP[11] = _mm256_xor_si256(_mm256_xor_si256(TMP[11], TMP[1]), L(TMP[1]));
+            TMP[15] = _mm256_xor_si256(_mm256_xor_si256(TMP[15], TMP[2]), L(TMP[2]));
+        }
 
-      pRKey -= 32;
+        pRKey -= 32;
 
-      TRANSPOSE_OUT(TMP[0],TMP[1],TMP[2],TMP[3], TMP[4],TMP[5],TMP[6],TMP[7]);
-      TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
-      TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
-      TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
-      TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
-      _mm256_storeu_si256((__m256i*)(pOut), TMP[0]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*2), TMP[1]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*4), TMP[2]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*6), TMP[3]);
+        TRANSPOSE_OUT(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
+        TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
+        TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
+        TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
+        TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
+        _mm256_storeu_si256((__m256i*)(pOut), TMP[0]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 2), TMP[1]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 4), TMP[2]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 6), TMP[3]);
 
-      TRANSPOSE_OUT(TMP[0],TMP[1],TMP[2],TMP[3], TMP[8],TMP[9],TMP[10],TMP[11]);
-      TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
-      TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
-      TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
-      TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*8), TMP[0]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*10), TMP[1]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*12), TMP[2]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*14), TMP[3]);
+        TRANSPOSE_OUT(TMP[0], TMP[1], TMP[2], TMP[3], TMP[8], TMP[9], TMP[10], TMP[11]);
+        TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
+        TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
+        TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
+        TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 8), TMP[0]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 10), TMP[1]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 12), TMP[2]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 14), TMP[3]);
 
-      TRANSPOSE_OUT(TMP[0],TMP[1],TMP[2],TMP[3], TMP[12],TMP[13],TMP[14],TMP[15]);
-      TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
-      TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
-      TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
-      TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*16), TMP[0]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*18), TMP[1]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*20), TMP[2]);
-      _mm256_storeu_si256((__m256i*)(pOut+MBS_SMS4*22), TMP[3]);
-   }
+        TRANSPOSE_OUT(TMP[0], TMP[1], TMP[2], TMP[3], TMP[12], TMP[13], TMP[14], TMP[15]);
+        TMP[0] = _mm256_shuffle_epi8(TMP[0], M256(swapBytes));
+        TMP[1] = _mm256_shuffle_epi8(TMP[1], M256(swapBytes));
+        TMP[2] = _mm256_shuffle_epi8(TMP[2], M256(swapBytes));
+        TMP[3] = _mm256_shuffle_epi8(TMP[3], M256(swapBytes));
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 16), TMP[0]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 18), TMP[1]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 20), TMP[2]);
+        _mm256_storeu_si256((__m256i*)(pOut + MBS_SMS4 * 22), TMP[3]);
+    }
 
-   len -= processedLen;
-   if(len)
-      processedLen += cpSMS4_ECB_aesni_x12(pOut, pInp, len, pRKey);
+    len -= processedLen;
+    if (len)
+        processedLen += cpSMS4_ECB_aesni_x12(pOut, pInp, len, pRKey);
 
-   /* clear secret data */
-   for(Ipp32u i = 0; i < sizeof(TMP)/sizeof(TMP[0]); i++){
-      TMP[i] = _mm256_setzero_si256(); //_mm256_xor_si256(TMP[i],TMP[i]);
-   }
+    /* clear secret data */
+    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
+        TMP[i] = _mm256_setzero_si256(); //_mm256_xor_si256(TMP[i],TMP[i]);
+    }
 
-   return processedLen;
+    return processedLen;
 }
 
 #endif /* _IPP_G9, _IPP32E_L9 */

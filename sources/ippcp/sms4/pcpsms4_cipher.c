@@ -31,53 +31,52 @@
 
 static void cpSMS4_ECB_gpr_x1(Ipp8u* otxt, const Ipp8u* itxt, const Ipp32u* pRoundKeys)
 {
-   __ALIGN16 Ipp32u buff[4 + SMS4_ROUND_KEYS_NUM];
-   buff[0] = HSTRING_TO_U32(itxt);
-   buff[1] = HSTRING_TO_U32(itxt+sizeof(Ipp32u));
-   buff[2] = HSTRING_TO_U32(itxt+sizeof(Ipp32u)*2);
-   buff[3] = HSTRING_TO_U32(itxt+sizeof(Ipp32u)*3);
-   {
-      int nr;
-      for(nr=0; nr < SMS4_ROUND_KEYS_NUM; nr++) {
-         buff[4+nr] = buff[nr] ^ cpCipherMix_SMS4(buff[nr+1]^buff[nr+2]^buff[nr+3]^pRoundKeys[nr]);
-      }
-   }
-   U32_TO_HSTRING(otxt,                  buff[4 + SMS4_ROUND_KEYS_NUM - 1]);
-   U32_TO_HSTRING(otxt+sizeof(Ipp32u),   buff[4 + SMS4_ROUND_KEYS_NUM - 2]);
-   U32_TO_HSTRING(otxt+sizeof(Ipp32u)*2, buff[4 + SMS4_ROUND_KEYS_NUM - 3]);
-   U32_TO_HSTRING(otxt+sizeof(Ipp32u)*3, buff[4 + SMS4_ROUND_KEYS_NUM - 4]);
+    __ALIGN16 Ipp32u buff[4 + SMS4_ROUND_KEYS_NUM];
+    buff[0] = HSTRING_TO_U32(itxt);
+    buff[1] = HSTRING_TO_U32(itxt + sizeof(Ipp32u));
+    buff[2] = HSTRING_TO_U32(itxt + sizeof(Ipp32u) * 2);
+    buff[3] = HSTRING_TO_U32(itxt + sizeof(Ipp32u) * 3);
+    {
+        int nr;
+        for (nr = 0; nr < SMS4_ROUND_KEYS_NUM; nr++) {
+            buff[4 + nr] = buff[nr] ^ cpCipherMix_SMS4(buff[nr + 1] ^ buff[nr + 2] ^ buff[nr + 3] ^
+                                                       pRoundKeys[nr]);
+        }
+    }
+    U32_TO_HSTRING(otxt, buff[4 + SMS4_ROUND_KEYS_NUM - 1]);
+    U32_TO_HSTRING(otxt + sizeof(Ipp32u), buff[4 + SMS4_ROUND_KEYS_NUM - 2]);
+    U32_TO_HSTRING(otxt + sizeof(Ipp32u) * 2, buff[4 + SMS4_ROUND_KEYS_NUM - 3]);
+    U32_TO_HSTRING(otxt + sizeof(Ipp32u) * 3, buff[4 + SMS4_ROUND_KEYS_NUM - 4]);
 
-   /* clear secret data */
-   PurgeBlock(buff, sizeof(buff));
+    /* clear secret data */
+    PurgeBlock(buff, sizeof(buff));
 }
 
-IPP_OWN_DEFN (void, cpSMS4_Cipher, (Ipp8u* otxt, const Ipp8u* itxt, const Ipp32u* pRoundKeys))
+IPP_OWN_DEFN(void, cpSMS4_Cipher, (Ipp8u * otxt, const Ipp8u* itxt, const Ipp32u* pRoundKeys))
 {
-   #if (_IPP32E>=_IPP32E_L9)
-   if (IsFeatureEnabled(ippCPUID_AVX2SM4)){
-      cpSMS4_ECB_ni(otxt, itxt, pRoundKeys);
-      return;
-   }
-   else
-   #endif
-   #if (_IPP32E>=_IPP32E_K1)
-   #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920)
-   if (IsFeatureEnabled(ippCPUID_AVX512GFNI)){
-      cpSMS4_ECB_gfni_x1(otxt, itxt, pRoundKeys);
-      return;
-   }
-   else
-   #endif /* #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920) */
-   #endif
-   #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   if(IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES)){
-      cpSMS4_ECB_aesni_x1(otxt, itxt, pRoundKeys);
-      return;
-   }  
-   else
-   #endif
-   {
-      cpSMS4_ECB_gpr_x1(otxt, itxt, pRoundKeys);
-      return;
-   }
+#if (_IPP32E >= _IPP32E_L9)
+    if (IsFeatureEnabled(ippCPUID_AVX2SM4)) {
+        cpSMS4_ECB_ni(otxt, itxt, pRoundKeys);
+        return;
+    } else
+#endif
+#if (_IPP32E >= _IPP32E_K1)
+#if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || !defined(_MSC_VER) || \
+    (_MSC_VER >= 1920)
+        if (IsFeatureEnabled(ippCPUID_AVX512GFNI)) {
+        cpSMS4_ECB_gfni_x1(otxt, itxt, pRoundKeys);
+        return;
+    } else
+#endif /* #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920) */
+#endif
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+        if (IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES)) {
+        cpSMS4_ECB_aesni_x1(otxt, itxt, pRoundKeys);
+        return;
+    } else
+#endif
+    {
+        cpSMS4_ECB_gpr_x1(otxt, itxt, pRoundKeys);
+        return;
+    }
 }

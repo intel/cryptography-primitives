@@ -44,14 +44,14 @@
 //    pCtx      pointer to the CCM context
 //
 *F*/
-IPPFUN(IppStatus, ippsSMS4_CCMMessageLen,(Ipp64u msgLen, IppsSMS4_CCMState* pCtx))
+IPPFUN(IppStatus, ippsSMS4_CCMMessageLen, (Ipp64u msgLen, IppsSMS4_CCMState* pCtx))
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!VALID_SMS4CCM_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!VALID_SMS4CCM_ID(pCtx), ippStsContextMatchErr);
 
-   /* init for new message */
-   SMS4CCM_MSGLEN(pCtx) = msgLen;
+    /* init for new message */
+    SMS4CCM_MSGLEN(pCtx) = msgLen;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

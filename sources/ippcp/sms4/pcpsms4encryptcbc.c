@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SMS4 encryption/decryption
-// 
+//
 //  Contents:
 //        ippsSMS4EncryptCBC()
 //
@@ -53,25 +53,28 @@
 //    pIV         pointer to the initialization vector
 //
 *F*/
-
-IPPFUN(IppStatus, ippsSMS4EncryptCBC,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
+/* clang-format off */
+IPPFUN(IppStatus, ippsSMS4EncryptCBC,(const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
                                       const IppsSMS4Spec* pCtx,
                                       const Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_SMS4_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source, target buffers and initialization pointers */
-   IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test stream integrity */
-   IPP_BADARG_RET((len&(MBS_SMS4-1)), ippStsUnderRunErr);
+    /* test source, target buffers and initialization pointers */
+    IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len & (MBS_SMS4 - 1)), ippStsUnderRunErr);
 
-   /* do encryption */
-   cpEncryptSMS4_cbc(pIV, pSrc, pDst, len, pCtx);
+    /* do encryption */
+    cpEncryptSMS4_cbc(pIV, pSrc, pDst, len, pCtx);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }
