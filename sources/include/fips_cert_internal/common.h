@@ -43,39 +43,39 @@
 #include <stdlib.h>
 
 // Internal memory management - free resource
-#define MEMORY_FREE(pBuffer, memMgmFlag) \
-    if (1 == internalMemMgm) {           \
-        free((void*)pBuffer);            \
-        pBuffer = NULL;                  \
+#define MEMORY_FREE(in_pBuffer, in_memMgmFlag) \
+    if (1 == in_memMgmFlag) {                  \
+        free((void*)in_pBuffer);               \
+        in_pBuffer = NULL;                     \
     }
 // If buffer is NULL, allocate memory
-#define BUF_CHECK_NULL_AND_ALLOC(pBuffer, memMgmFlag, size, ret_sts) \
-    if (NULL == pBuffer) {                                           \
-        IPP_BADARG_RET((0 == size), ret_sts)                         \
-        memMgmFlag = 1;                                              \
-        pBuffer    = malloc((size_t)size);                           \
+#define BUF_CHECK_NULL_AND_ALLOC(in_pBuffer, in_memMgmFlag, size, ret_sts) \
+    if (NULL == in_pBuffer) {                                              \
+        IPP_BADARG_RET((0 == size), ret_sts)                               \
+        in_memMgmFlag = 1;                                                 \
+        in_pBuffer    = malloc((size_t)size);                              \
     }
 #else
 // No memory management inside the test
-#define MEMORY_FREE(pBuffer, memMgmFlag) (void)internalMemMgm;
+#define MEMORY_FREE(in_pBuffer, in_memMgmFlag) (void)in_memMgmFlag;
 // Return bad sts if buffer is NULL - we cannot allocate memory
 // IPPCP_SELFTEST_USE_MALLOC is not defined)
-#define BUF_CHECK_NULL_AND_ALLOC(pBuffer, memMgmFlag, size, ret_sts) \
-    (void)internalMemMgm;                                            \
-    IPP_BADARG_RET((NULL == pBuffer), ret_sts);
+#define BUF_CHECK_NULL_AND_ALLOC(in_pBuffer, in_memMgmFlag, size, ret_sts) \
+    (void)in_memMgmFlag;                                                   \
+    IPP_BADARG_RET((NULL == in_pBuffer), ret_sts);
 
 #endif
 
-#define MEMORY_FREE_2(pBuffer1, pBuffer2, memMgmFlag) \
-    {                                                 \
-        MEMORY_FREE(pBuffer1, memMgmFlag)             \
-        MEMORY_FREE(pBuffer2, memMgmFlag)             \
+#define MEMORY_FREE_2(in_pBuffer1, in_pBuffer2, in_memMgmFlag) \
+    {                                                          \
+        MEMORY_FREE(in_pBuffer1, in_memMgmFlag)                \
+        MEMORY_FREE(in_pBuffer2, in_memMgmFlag)                \
     }
-#define MEMORY_FREE_3(pBuffer1, pBuffer2, pBuffer3, memMgmFlag) \
-    {                                                           \
-        MEMORY_FREE(pBuffer1, memMgmFlag)                       \
-        MEMORY_FREE(pBuffer2, memMgmFlag)                       \
-        MEMORY_FREE(pBuffer3, memMgmFlag)                       \
+#define MEMORY_FREE_3(in_pBuffer1, in_pBuffer2, in_pBuffer3, in_memMgmFlag) \
+    {                                                                       \
+        MEMORY_FREE(in_pBuffer1, in_memMgmFlag)                             \
+        MEMORY_FREE(in_pBuffer2, in_memMgmFlag)                             \
+        MEMORY_FREE(in_pBuffer3, in_memMgmFlag)                             \
     }
 
 /**

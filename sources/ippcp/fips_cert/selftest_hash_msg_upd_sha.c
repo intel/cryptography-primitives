@@ -159,13 +159,13 @@ IPPFUN(fips_test_status, fips_selftest_ippsHashUpdate_rmf, (IppHashAlgId hashAlg
 
     BUF_CHECK_NULL_AND_ALLOC(pBuffer,
                              internalMemMgm,
-                             (ctx_size + hash_method_size + IPPCP_HASH_ALIGNMENT),
+                             (ctx_size + hash_method_size),
                              IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR)
 
 
     Ipp32u locHashByteSize    = 0;
     Ipp8u* md                 = NULL;
-    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer + ctx_size + IPPCP_HASH_ALIGNMENT);
+    IppsHashMethod* locMethod = (IppsHashMethod*)(pBuffer + ctx_size);
 
     sts = selftestSetTestingMethod(hashAlgId, locMethod, &locHashByteSize, &md);
     if (sts != ippStsNoErr) {

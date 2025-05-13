@@ -198,7 +198,7 @@ IPPFUN(fips_test_status,
         int gfpECBuffSize = 0;
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_GFpEC_buff(&gfpECBuffSize, pGFpBuff);
         if (sts != ippStsNoErr) {
-            MEMORY_FREE(pGFpBuff)
+            MEMORY_FREE(pGFpBuff, internalMemMgm)
             return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
         }
         pGFpECBuff = malloc((size_t)gfpECBuffSize);
@@ -209,7 +209,7 @@ IPPFUN(fips_test_status,
                                                                       pGFpBuff,
                                                                       pGFpECBuff);
         if (sts != ippStsNoErr) {
-            MEMORY_FREE_2(pGFpBuff, pGFpECBuff)
+            MEMORY_FREE_2(pGFpBuff, pGFpECBuff, internalMemMgm)
             return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
         }
         pDataBuff = malloc((size_t)dataBuffSize);
@@ -223,14 +223,14 @@ IPPFUN(fips_test_status,
     IppsGFpState* pGF = (IppsGFpState*)(IPP_ALIGNED_PTR(pGFpBuff, IPPCP_GFP_ALIGNMENT));
     sts               = ippsGFpInitFixed(primeBitSize, ippsGFpMethod_p256r1(), pGF);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     /* Init GFpEC context */
     IppsGFpECState* pEC = (IppsGFpECState*)(IPP_ALIGNED_PTR(pGFpECBuff, IPPCP_GFP_ALIGNMENT));
     sts                 = ippsGFpECInitStd256r1(pGF, pEC);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -240,13 +240,13 @@ IPPFUN(fips_test_status,
     int sByteSize;
     sts = ippsBigNumGetSize(ordWordSize, &sByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnS = (IppsBigNumState*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts = ippcp_init_set_bn(bnS, ordWordSize, ippBigNumPOS, (const Ipp32u*)msg_digest, ordWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += sByteSize;
@@ -254,13 +254,13 @@ IPPFUN(fips_test_status,
     int rByteSize;
     sts = ippsBigNumGetSize(ordWordSize, &rByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnR = (IppsBigNumState*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts = ippcp_init_set_bn(bnR, ordWordSize, ippBigNumPOS, (const Ipp32u*)msg_digest, ordWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += rByteSize;
@@ -269,7 +269,7 @@ IPPFUN(fips_test_status,
     int msgCtxByteSize;
     sts = ippsBigNumGetSize(msgWordSize, &msgCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnMsgDigest =
@@ -280,7 +280,7 @@ IPPFUN(fips_test_status,
                             (const Ipp32u*)msg_digest,
                             msgWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += msgCtxByteSize;
@@ -289,7 +289,7 @@ IPPFUN(fips_test_status,
     int regKeyCtxByteSize;
     sts = ippsBigNumGetSize(primeWordSize, &regKeyCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnRegPrivate =
@@ -300,7 +300,7 @@ IPPFUN(fips_test_status,
                             (const Ipp32u*)d,
                             primeWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += regKeyCtxByteSize;
@@ -308,7 +308,7 @@ IPPFUN(fips_test_status,
     int ephKeyCtxByteSize;
     sts = ippsBigNumGetSize(primeWordSize, &ephKeyCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnEphPrivate =
@@ -319,7 +319,7 @@ IPPFUN(fips_test_status,
                             (const Ipp32u*)k,
                             primeWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += ephKeyCtxByteSize;
@@ -327,7 +327,7 @@ IPPFUN(fips_test_status,
     int scratchSize;
     sts = ippsGFpECScratchBufferSize(2, pEC, &scratchSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     Ipp8u* pScratchBuffer = pLocDataBuff;
@@ -335,7 +335,7 @@ IPPFUN(fips_test_status,
     /* RSA Signature Generation */
     sts = ippsGFpECSignDSA(bnMsgDigest, bnRegPrivate, bnEphPrivate, bnR, bnS, pEC, pScratchBuffer);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -355,7 +355,7 @@ IPPFUN(fips_test_status,
         test_result = IPPCP_ALGO_SELFTEST_KAT_ERR;
     }
 
-    MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+    MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
     return test_result;
 }
 
@@ -383,7 +383,7 @@ IPPFUN(fips_test_status,
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_GFpEC_buff(&gfpECBuffSize, pGFpBuff);
 
         if (sts != ippStsNoErr) {
-            MEMORY_FREE(pGFpBuff)
+            MEMORY_FREE(pGFpBuff, internalMemMgm)
             return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
         }
         pGFpECBuff       = malloc((size_t)gfpECBuffSize);
@@ -393,7 +393,7 @@ IPPFUN(fips_test_status,
                                                                       pGFpBuff,
                                                                       pGFpECBuff);
         if (sts != ippStsNoErr) {
-            MEMORY_FREE_2(pGFpBuff, pGFpECBuff)
+            MEMORY_FREE_2(pGFpBuff, pGFpECBuff, internalMemMgm)
             return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
         }
         pDataBuff = malloc((size_t)dataBuffSize);
@@ -407,7 +407,7 @@ IPPFUN(fips_test_status,
     IppsGFpState* pGF = (IppsGFpState*)(IPP_ALIGNED_PTR(pGFpBuff, IPPCP_GFP_ALIGNMENT));
     sts               = ippsGFpInitFixed(primeBitSize, ippsGFpMethod_p256r1(), pGF);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -415,7 +415,7 @@ IPPFUN(fips_test_status,
     IppsGFpECState* pEC = (IppsGFpECState*)(IPP_ALIGNED_PTR(pGFpECBuff, IPPCP_GFP_ALIGNMENT));
     sts                 = ippsGFpECInitStd256r1(pGF, pEC);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -425,13 +425,13 @@ IPPFUN(fips_test_status,
     int sByteSize;
     sts = ippsBigNumGetSize(ordWordSize, &sByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnS = (IppsBigNumState*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts = ippcp_init_set_bn(bnS, ordWordSize, ippBigNumPOS, (const Ipp32u*)s, ordWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += sByteSize;
@@ -439,13 +439,13 @@ IPPFUN(fips_test_status,
     int rByteSize;
     sts = ippsBigNumGetSize(ordWordSize, &rByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnR = (IppsBigNumState*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts = ippcp_init_set_bn(bnR, ordWordSize, ippBigNumPOS, (const Ipp32u*)r, ordWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += rByteSize;
@@ -454,7 +454,7 @@ IPPFUN(fips_test_status,
     int msgCtxByteSize;
     sts = ippsBigNumGetSize(msgWordSize, &msgCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnMsgDigest =
@@ -465,7 +465,7 @@ IPPFUN(fips_test_status,
                             (const Ipp32u*)msg_digest,
                             msgWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += msgCtxByteSize;
@@ -474,7 +474,7 @@ IPPFUN(fips_test_status,
     int regKeyCtxByteSize;
     sts = ippsBigNumGetSize(primeWordSize, &regKeyCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnRegPrivate =
@@ -485,7 +485,7 @@ IPPFUN(fips_test_status,
                             (const Ipp32u*)d,
                             primeWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += regKeyCtxByteSize;
@@ -494,21 +494,21 @@ IPPFUN(fips_test_status,
     int pubKeyCtxByteSize;
     sts = ippsGFpECPointGetSize(pEC, &pubKeyCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsGFpECPoint* regPublic =
         (IppsGFpECPoint*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts = ippsGFpECPointInit(NULL, NULL, regPublic, pEC);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += pubKeyCtxByteSize;
 
     sts = ippsGFpECPublicKey(bnRegPrivate, regPublic, pEC, pLocDataBuff);
     if (ippStsNoErr != sts) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -520,7 +520,7 @@ IPPFUN(fips_test_status,
         test_result = IPPCP_ALGO_SELFTEST_KAT_ERR;
     }
 
-    MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+    MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
     return test_result;
 }
 
@@ -555,7 +555,7 @@ IPPFUN(fips_test_status,
         int gfpECBuffSize = 0;
         sts = fips_selftest_ippsGFpECSignVerifyDSA_get_size_GFpEC_buff(&gfpECBuffSize, pGFpBuff);
         if (sts != ippStsNoErr) {
-            MEMORY_FREE(pGFpBuff)
+            MEMORY_FREE(pGFpBuff, internalMemMgm)
             return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
         }
         pGFpECBuff       = malloc((size_t)gfpECBuffSize);
@@ -565,7 +565,7 @@ IPPFUN(fips_test_status,
                                                                       pGFpBuff,
                                                                       pGFpECBuff);
         if (sts != ippStsNoErr) {
-            MEMORY_FREE_2(pGFpBuff, pGFpECBuff)
+            MEMORY_FREE_2(pGFpBuff, pGFpECBuff, internalMemMgm)
             return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
         }
         pDataBuff = malloc((size_t)dataBuffSize);
@@ -579,7 +579,7 @@ IPPFUN(fips_test_status,
     IppsGFpState* pGF = (IppsGFpState*)(IPP_ALIGNED_PTR(pGFpBuff, IPPCP_GFP_ALIGNMENT));
     sts               = ippsGFpInitFixed(primeBitSize, ippsGFpMethod_p256r1(), pGF);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -587,7 +587,7 @@ IPPFUN(fips_test_status,
     IppsGFpECState* pEC = (IppsGFpECState*)(IPP_ALIGNED_PTR(pGFpECBuff, IPPCP_GFP_ALIGNMENT));
     sts                 = ippsGFpECInitStd256r1(pGF, pEC);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -597,13 +597,13 @@ IPPFUN(fips_test_status,
     int sByteSize;
     sts = ippsBigNumGetSize(ordWordSize, &sByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnS = (IppsBigNumState*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts = ippcp_init_set_bn(bnS, ordWordSize, ippBigNumPOS, (const Ipp32u*)msg_digest, ordWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += sByteSize;
@@ -611,13 +611,13 @@ IPPFUN(fips_test_status,
     int rByteSize;
     sts = ippsBigNumGetSize(ordWordSize, &rByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnR = (IppsBigNumState*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts = ippcp_init_set_bn(bnR, ordWordSize, ippBigNumPOS, (const Ipp32u*)msg_digest, ordWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += rByteSize;
@@ -626,7 +626,7 @@ IPPFUN(fips_test_status,
     int msgCtxByteSize;
     sts = ippsBigNumGetSize(msgWordSize, &msgCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnMsgDigest =
@@ -637,7 +637,7 @@ IPPFUN(fips_test_status,
                             (const Ipp32u*)msg_digest,
                             msgWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += msgCtxByteSize;
@@ -646,13 +646,13 @@ IPPFUN(fips_test_status,
     int prngCtxByteSize;
     sts = ippsPRNGGetSize(&prngCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsPRNGState* pRand = (IppsPRNGState*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts                  = ippsPRNGInit(160, pRand);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += prngCtxByteSize;
@@ -660,7 +660,7 @@ IPPFUN(fips_test_status,
     int regKeyCtxByteSize;
     sts = ippsBigNumGetSize(primeWordSize, &regKeyCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* regPrivate =
@@ -671,12 +671,12 @@ IPPFUN(fips_test_status,
                             (const Ipp32u*)msg_digest,
                             primeWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     sts = ippsGFpECPrivateKey(regPrivate, pEC, ippsPRNGen, pRand);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += regKeyCtxByteSize;
@@ -684,7 +684,7 @@ IPPFUN(fips_test_status,
     int pubKeyCtxByteSize;
     sts = ippsGFpECPointGetSize(pEC, &pubKeyCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -693,21 +693,21 @@ IPPFUN(fips_test_status,
         (IppsGFpECPoint*)(IPP_ALIGNED_PTR(pLocDataBuff, IPPCP_GFP_ALIGNMENT));
     sts = ippsGFpECPointInit(NULL, NULL, regPublic, pEC);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += pubKeyCtxByteSize;
 
     sts = ippsGFpECPublicKey(regPrivate, regPublic, pEC, pLocDataBuff);
     if (ippStsNoErr != sts) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
     int ephKeyCtxByteSize;
     sts = ippsBigNumGetSize(primeWordSize, &ephKeyCtxByteSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     IppsBigNumState* bnEphPrivate =
@@ -718,12 +718,12 @@ IPPFUN(fips_test_status,
                             (const Ipp32u*)msg_digest,
                             primeWordSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     sts = ippsGFpECPrivateKey(bnEphPrivate, pEC, ippsPRNGen, pRand);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocDataBuff += ephKeyCtxByteSize;
@@ -731,7 +731,7 @@ IPPFUN(fips_test_status,
     int scratchSize;
     sts = ippsGFpECScratchBufferSize(2, pEC, &scratchSize);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     Ipp8u* pScratchBuffer = pLocDataBuff;
@@ -739,7 +739,7 @@ IPPFUN(fips_test_status,
     /* RSA Signature Generation */
     sts = ippsGFpECSignDSA(bnMsgDigest, regPrivate, bnEphPrivate, bnR, bnS, pEC, pScratchBuffer);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+        MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -751,7 +751,7 @@ IPPFUN(fips_test_status,
         test_result = IPPCP_ALGO_SELFTEST_KAT_ERR;
     }
 
-    MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, memMgmFlag)
+    MEMORY_FREE_3(pGFpBuff, pGFpECBuff, pDataBuff, internalMemMgm)
     return test_result;
 }
 

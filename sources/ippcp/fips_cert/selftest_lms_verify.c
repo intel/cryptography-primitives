@@ -227,7 +227,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u * pBuffer))
     int pubKeySize;
     sts = ippsLMSPublicKeyStateGetSize(&pubKeySize, lmsAlgTypePk);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE(pBuffer, memMgmFlag)
+        MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocBuffer                     = (IPP_ALIGNED_PTR(pLocBuffer, IPPCP_HASH_ALIGNMENT));
@@ -238,7 +238,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u * pBuffer))
     int sigBuffSize = 0;
     sts             = ippsLMSSignatureStateGetSize(&sigBuffSize, lmsAlgTypePk);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE(pBuffer, memMgmFlag)
+        MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocBuffer                        = (IPP_ALIGNED_PTR(pLocBuffer, IPPCP_HASH_ALIGNMENT));
@@ -249,7 +249,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u * pBuffer))
     int buffSize;
     sts = ippsLMSBufferGetSize(&buffSize, msgByteLen, lmsAlgTypePk);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE(pBuffer, memMgmFlag)
+        MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
     pLocBuffer            = (IPP_ALIGNED_PTR(pLocBuffer, IPPCP_HASH_ALIGNMENT));
@@ -259,7 +259,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u * pBuffer))
     /* Initialize the public key */
     sts = ippsLMSSetPublicKeyState(lmsAlgTypePk, pI, pK, pPubKey);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE(pBuffer, memMgmFlag)
+        MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -270,7 +270,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u * pBuffer))
 
     sts = ippsLMSSetSignatureState(lmsAlgTypeSig, q, pC, pY, pAuthPath, pSignature);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE(pBuffer, memMgmFlag)
+        MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -278,7 +278,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u * pBuffer))
     int is_valid = 0;
     sts          = ippsLMSVerify(pMsg, msgByteLen, pSignature, &is_valid, pPubKey, pScratchBuffer);
     if (sts != ippStsNoErr) {
-        MEMORY_FREE(pBuffer, memMgmFlag)
+        MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
 
@@ -287,7 +287,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u * pBuffer))
         test_result = IPPCP_ALGO_SELFTEST_KAT_ERR;
     }
 
-    MEMORY_FREE(pBuffer, memMgmFlag)
+    MEMORY_FREE(pBuffer, internalMemMgm)
     return test_result;
 }
 
