@@ -25,56 +25,58 @@
 #include "gfpec/ecnist/ifma_ecpoint_p256.h"
 #include "gfpec/ecnist/ifma_arith_method.h"
 
-IPP_OWN_DEFN(int, gfec_SharedSecretDH_nistp256_avx512, (IppsGFpECPoint * pR,
-                                                        const IppsGFpECPoint *pP,
-                                                        const BNU_CHUNK_T *pScalar,
+/* clang-format off */
+IPP_OWN_DEFN(int, gfec_SharedSecretDH_nistp256_avx512, (IppsGFpECPoint* pR,
+                                                        const IppsGFpECPoint* pP,
+                                                        const BNU_CHUNK_T* pScalar,
                                                         int scalarLen,
-                                                        IppsGFpECState *pEC,
-                                                        Ipp8u *pScratchBuffer))
+                                                        IppsGFpECState* pEC,
+                                                        Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   FIX_BNU(pScalar, scalarLen);
-   {
-      IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
+    FIX_BNU(pScalar, scalarLen);
+    {
+        IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
 
-      gsModEngine *pME = GFP_PMA(ECP_GFP(pEC));
+        gsModEngine* pME = GFP_PMA(ECP_GFP(pEC));
 
-      const int orderBits = ECP_ORDBITSIZE(pEC);
-      const int orderLen  = BITS_BNU_CHUNK(orderBits);
+        const int orderBits = ECP_ORDBITSIZE(pEC);
+        const int orderLen  = BITS_BNU_CHUNK(orderBits);
 
-      ifmaArithMethod *pmeth = (ifmaArithMethod *)GFP_METHOD_ALT(pME);
+        ifmaArithMethod* pmeth = (ifmaArithMethod*)GFP_METHOD_ALT(pME);
 
-      ifma_export from_radix52 = pmeth->export_to64;
+        ifma_export from_radix52 = pmeth->export_to64;
 
-      /* Mod engine (mod p) */
-      ifma_decode p_from_mont = pmeth->decode;
+        /* Mod engine (mod p) */
+        ifma_decode p_from_mont = pmeth->decode;
 
-      /* Copy scalar */
-      BNU_CHUNK_T *pExtendedScalar = cpGFpGetPool(2, pME);
-      cpGFpElementCopyPad(pExtendedScalar, orderLen + 1, pScalar, scalarLen);
+        /* Copy scalar */
+        BNU_CHUNK_T* pExtendedScalar = cpGFpGetPool(2, pME);
+        cpGFpElementCopyPad(pExtendedScalar, orderLen + 1, pScalar, scalarLen);
 
-      __ALIGN64 P256_POINT_IFMA P52, R52;
-      BNU_CHUNK_T *pPool = cpGFpGetPool(3, pME);
+        __ALIGN64 P256_POINT_IFMA P52, R52;
+        BNU_CHUNK_T* pPool = cpGFpGetPool(3, pME);
 
-      /* Convert point coordinates to a new Montgomery domain */
-      recode_point_to_mont52(&P52, ECP_POINT_DATA(pP), pPool, pmeth, pME);
+        /* Convert point coordinates to a new Montgomery domain */
+        recode_point_to_mont52(&P52, ECP_POINT_DATA(pP), pPool, pmeth, pME);
 
-      ifma_ec_nistp256_mul_point(&R52, &P52, (Ipp8u *)pExtendedScalar, orderBits);
+        ifma_ec_nistp256_mul_point(&R52, &P52, (Ipp8u*)pExtendedScalar, orderBits);
 
 
-      /* Check if the point - point to infinity */
-      const mask8 is_zero_z = is_zero_i64(R52.z);
-      int finite_point      = ((mask8)0xFF != is_zero_z);
+        /* Check if the point - point to infinity */
+        const mask8 is_zero_z = is_zero_i64(R52.z);
+        int finite_point      = ((mask8)0xFF != is_zero_z);
 
-      /* Get X affine coordinate */
-      ifma_ec_nistp256_get_affine_coords(&(R52.x), NULL, &R52);
+        /* Get X affine coordinate */
+        ifma_ec_nistp256_get_affine_coords(&(R52.x), NULL, &R52);
 
-      R52.x = p_from_mont(R52.x);
-      from_radix52(ECP_POINT_X(pR), R52.x);
+        R52.x = p_from_mont(R52.x);
+        from_radix52(ECP_POINT_X(pR), R52.x);
 
-      cpGFpReleasePool(5, pME);
+        cpGFpReleasePool(5, pME);
 
-      return finite_point;
-   }
+        return finite_point;
+    }
 }
 
 #endif // IPP32E >= _IPP32E_K1

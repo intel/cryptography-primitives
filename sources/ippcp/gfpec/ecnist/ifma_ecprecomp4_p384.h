@@ -27,21 +27,23 @@
 #include "gfpec/ecnist/ifma_ecpoint_p384.h"
 
 #define BASE_POINT_WIN_SIZE (4)
-#define BASE_POINT_N_ENTRY (1 << ((BASE_POINT_WIN_SIZE)-1))
+#define BASE_POINT_N_ENTRY  (1 << ((BASE_POINT_WIN_SIZE)-1))
 
 #define OPERAND_BITSIZE (384)
-#define LEN52_P384 (NUMBER_OF_DIGITS(OPERAND_BITSIZE, DIGIT_SIZE))
+#define LEN52_P384      (NUMBER_OF_DIGITS(OPERAND_BITSIZE, DIGIT_SIZE))
 
 /* P384 affine point */
 typedef struct {
-   BNU_CHUNK_T X[LEN52_P384];
-   BNU_CHUNK_T Y[LEN52_P384];
+    BNU_CHUNK_T X[LEN52_P384];
+    BNU_CHUNK_T Y[LEN52_P384];
 } P384_POINT_AFFINE_IFMA_MEM;
 
-extern const __ALIGN64 P384_POINT_AFFINE_IFMA_MEM ifma_ec_nistp384r1_bp_precomp[97][BASE_POINT_N_ENTRY];
+extern const __ALIGN64 P384_POINT_AFFINE_IFMA_MEM
+    ifma_ec_nistp384r1_bp_precomp[97][BASE_POINT_N_ENTRY];
 
 #if !defined(_DISABLE_ECP_384R1_HARDCODED_BP_TBL_)
 
+/* clang-format off */
 const __ALIGN64 P384_POINT_AFFINE_IFMA_MEM ifma_ec_nistp384r1_bp_precomp[][BASE_POINT_N_ENTRY] = {
     {
         /* digit=0 [{1,2,3,..,}]*([2^0]*G)  */
@@ -1110,17 +1112,16 @@ const __ALIGN64 P384_POINT_AFFINE_IFMA_MEM ifma_ec_nistp384r1_bp_precomp[][BASE_
         {{0x000bddf9aa596a1d, 0x0008952c04b79c0e, 0x00099a2770f3fa4a, 0x00044bf1911b3184, 0x0006bb897d318407, 0x000e9de5dd13f080, 0x00052b376dc8b81d, 0x00000000000c996b}, {0x00047f465159b51f, 0x00041d91e47b224a, 0x0009b71ad19e642b, 0x000c167eface7572, 0x0001d4805ed6a441, 0x0003fd6654eb9588, 0x0005778fc93daf3f, 0x00000000000cc570}},
         {{0x0000b16f46a35f8c, 0x00065a630c20c4e5, 0x0001f4362772ed03, 0x000aca10c0dec6cd, 0x000ba9e2f55428c8, 0x000bbb1705d34bb5, 0x000f6e8e81b4f732, 0x000000000008363b}, {0x000ca7950547e910, 0x000969603fe028be, 0x00047954fea1ddef, 0x000bb8efc191d12e, 0x0005dba97347c0da, 0x000656aaaf0e463b, 0x000cf0b7f7c207a8, 0x000000000003f08d}},
     }};
+/* clang-format on */
 
 #endif /* #if !defined(_DISABLE_ECP_384R1_HARDCODED_BP_TBL_) */
 
-IPP_OWN_DEFN(const cpPrecompAP *, gfpec_precom_nistP384r1_radix52_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_nistP384r1_radix52_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */ 4,
-      /* select function */ p384r1_select_ap_w4_ifma,
-      /* precomputed data */ (BNU_CHUNK_T *)ifma_ec_nistp384r1_bp_precomp
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 4,
+                             /* select function */ p384r1_select_ap_w4_ifma,
+                             /* precomputed data */ (BNU_CHUNK_T*)ifma_ec_nistp384r1_bp_precomp };
+    return &t;
 }
 
 #endif // (_IPP32E >= _IPP32E_K1)

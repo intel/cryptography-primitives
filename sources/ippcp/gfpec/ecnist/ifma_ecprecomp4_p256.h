@@ -27,10 +27,10 @@
 #include "gfpec/pcpgfpecstuff.h"
 
 #define BASE_POINT_WIN_SIZE (4)
-#define BASE_POINT_N_ENTRY (1 << ((BASE_POINT_WIN_SIZE)-1))
+#define BASE_POINT_N_ENTRY  (1 << ((BASE_POINT_WIN_SIZE)-1))
 
 #define OPERAND_BITSIZE (256)
-#define LEN52_P256 (NUMBER_OF_DIGITS(OPERAND_BITSIZE, DIGIT_SIZE))
+#define LEN52_P256      (NUMBER_OF_DIGITS(OPERAND_BITSIZE, DIGIT_SIZE))
 
 /* P256 affine point */
 typedef struct {
@@ -41,7 +41,7 @@ typedef struct {
 extern const __ALIGN64 P256_POINT_AFFINE_IFMA_MEM ifma_ec_nistp256r1_bp_precomp[64][BASE_POINT_N_ENTRY];
 
 #if !defined(_DISABLE_ECP_256R1_HARDCODED_BP_TBL_)
-
+/* clang-format off */
 /* Montgomery coefficient R = 2^(6*52) mod p */
 const __ALIGN64 P256_POINT_AFFINE_IFMA_MEM ifma_ec_nistp256r1_bp_precomp[][BASE_POINT_N_ENTRY] = {
     { /* digit=0 (1,2,..,8)*(2^{0})*G */
@@ -695,6 +695,8 @@ const __ALIGN64 P256_POINT_AFFINE_IFMA_MEM ifma_ec_nistp256r1_bp_precomp[][BASE_
         {{0x0004ef0fb7992ec5,0x000237355dbd4b3d,0x0007914aabfa41db,0x0003654621f87992,0x00002b7c7dfd2d83},{0x000c21100586c6db,0x000ded8f1bfb12a4,0x0008223d7b6ca10c,0x000b4b5146ab877e,0x000069c991a7978e}},
     }
 };
+
+/* clang-format on */
 
 #endif /* #if !defined(_DISABLE_ECP_256R1_HARDCODED_BP_TBL_) */
 

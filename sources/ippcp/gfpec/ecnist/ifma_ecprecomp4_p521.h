@@ -27,20 +27,23 @@
 #include "gfpec/ecnist/ifma_ecpoint_p521.h"
 
 #define BASE_POINT_WIN_SIZE (4)
-#define BASE_POINT_N_ENTRY (1 << ((BASE_POINT_WIN_SIZE)-1))
+#define BASE_POINT_N_ENTRY  (1 << ((BASE_POINT_WIN_SIZE)-1))
 
 #define OPERAND_BITSIZE (521)
-#define LEN52_P521 (NUMBER_OF_DIGITS(OPERAND_BITSIZE, DIGIT_SIZE))
+#define LEN52_P521      (NUMBER_OF_DIGITS(OPERAND_BITSIZE, DIGIT_SIZE))
 
 /* P521 affine point */
 typedef struct {
-   BNU_CHUNK_T x[P521R1_NUM_CHUNK][P521R1_LENFE521_52];
-   BNU_CHUNK_T y[P521R1_NUM_CHUNK][P521R1_LENFE521_52];
+    BNU_CHUNK_T x[P521R1_NUM_CHUNK][P521R1_LENFE521_52];
+    BNU_CHUNK_T y[P521R1_NUM_CHUNK][P521R1_LENFE521_52];
 } P521_POINT_AFFINE_IFMA_MEM;
 
-extern const __ALIGN64 P521_POINT_AFFINE_IFMA_MEM ifma_ec_nistp521r1_bp_precomp[131][BASE_POINT_N_ENTRY];
+extern const __ALIGN64 P521_POINT_AFFINE_IFMA_MEM
+    ifma_ec_nistp521r1_bp_precomp[131][BASE_POINT_N_ENTRY];
 
 #if !defined(_DISABLE_ECP_521R1_HARDCODED_BP_TBL_)
+
+/* clang-format off */
 
 const __ALIGN64 P521_POINT_AFFINE_IFMA_MEM ifma_ec_nistp521r1_bp_precomp[][BASE_POINT_N_ENTRY] = {
     {/* digit=0 [{1,2,3,..,}]*([2^0]*G)  */
@@ -1355,16 +1358,16 @@ const __ALIGN64 P521_POINT_AFFINE_IFMA_MEM ifma_ec_nistp521r1_bp_precomp[][BASE_
     }
 };
 
+/* clang-format on */
+
 #endif /* #if !defined(_DISABLE_ECP_521R1_HARDCODED_BP_TBL_) */
 
-IPP_OWN_DEFN(const cpPrecompAP *, gfpec_precom_nistP521r1_radix52_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_nistP521r1_radix52_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */ 4,
-      /* select function */ NULL,
-      /* precomputed data */ (BNU_CHUNK_T *)ifma_ec_nistp521r1_bp_precomp
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 4,
+                             /* select function */ NULL,
+                             /* precomputed data */ (BNU_CHUNK_T*)ifma_ec_nistp521r1_bp_precomp };
+    return &t;
 }
 
 #endif // (_IPP32E >= _IPP32E_K1)

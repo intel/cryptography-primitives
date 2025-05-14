@@ -26,95 +26,41 @@
  * in 2^52 radix
  */
 static const __ALIGN64 Ipp64u p521_x1[P521R1_NUM_CHUNK][P521R1_LENFE521_52] = {
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x0000000000000001,
-     0x0000000000000000 }
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x0000000000000001, 0x0000000000000000}
 };
 /* 2*p */
 static const __ALIGN64 Ipp64u p521_x2[P521R1_NUM_CHUNK][P521R1_LENFE521_52] = {
-   { 0x000FFFFFFFFFFFFE,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x0000000000000003,
-     0x0000000000000000 }
+    {0x000FFFFFFFFFFFFE, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x0000000000000003, 0x0000000000000000}
 };
 /* 4*p */
 static const __ALIGN64 Ipp64u p521_x4[P521R1_NUM_CHUNK][P521R1_LENFE521_52] = {
-   { 0x000FFFFFFFFFFFFC,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x0000000000000007,
-     0x0000000000000000 }
+    {0x000FFFFFFFFFFFFC, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x0000000000000007, 0x0000000000000000}
 };
 /* 6*p */
 static const __ALIGN64 Ipp64u p521_x6[P521R1_NUM_CHUNK][P521R1_LENFE521_52] = {
-   { 0x000FFFFFFFFFFFFA,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000000000000000B,
-     0x0000000000000000 }
+    {0x000FFFFFFFFFFFFA, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000000000000000B, 0x0000000000000000}
 };
 /* 8*p */
 static const __ALIGN64 Ipp64u p521_x8[P521R1_NUM_CHUNK][P521R1_LENFE521_52] = {
-   { 0x000FFFFFFFFFFFF8,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF },
-   { 0x000FFFFFFFFFFFFF,
-     0x000FFFFFFFFFFFFF,
-     0x000000000000000F,
-     0x0000000000000000 }
+    {0x000FFFFFFFFFFFF8, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF},
+    {0x000FFFFFFFFFFFFF, 0x000FFFFFFFFFFFFF, 0x000000000000000F, 0x0000000000000000}
 };
 /* Montgomery(1)
  * r = 2^(P521_LEN52*DIGIT_SIZE) mod p521
  */
 static const __ALIGN64 Ipp64u P521R1_R52[P521R1_NUM_CHUNK][P521R1_LENFE521_52] = {
-   { 0x0008000000000000,
-     0x0000000000000000,
-     0x0000000000000000,
-     0x0000000000000000 },
-   { 0x0000000000000000,
-     0x0000000000000000,
-     0x0000000000000000,
-     0x0000000000000000 },
-   { 0x0000000000000000,
-     0x0000000000000000,
-     0x0000000000000000,
-     0x0000000000000000 }
+    {0x0008000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000},
+    {0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000},
+    {0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000}
 };
 
 /**
@@ -133,7 +79,13 @@ IPP_OWN_DECL(void, ifma_norm52_p521, (fe521 pr[], const fe521 a))
  * \param[out] pr2 ptr second value (in radix 2^52)
  * \param[in]  a2  value second (52 radix or more)
  */
-IPP_OWN_DECL(void, ifma_norm52_dual_p521, (fe521 pr1[], const fe521 a1, fe521 pr2[], const fe521 a2))
+
+/* clang-format off */
+IPP_OWN_DECL(void, ifma_norm52_dual_p521, (fe521 pr1[],
+                                           const fe521 a1,
+                                           fe521 pr2[],
+                                           const fe521 a2))
+/* clang-format on */
 
 /**
  * \brief
@@ -151,7 +103,12 @@ IPP_OWN_DECL(void, ifma_lnorm52_p521, (fe521 pr[], const fe521 a))
  * \param[out] pr2 ptr second value (in radix 2^52)
  * \param[in]  a2  value second (52 radix or more)
  */
-IPP_OWN_DECL(void, ifma_lnorm52_dual_p521, (fe521 pr1[], const fe521 a1, fe521 pr2[], const fe521 a2))
+/* clang-format off */
+IPP_OWN_DECL(void, ifma_lnorm52_dual_p521, (fe521 pr1[],
+                                            const fe521 a1,
+                                            fe521 pr2[],
+                                            const fe521 a2))
+/* clang-format on */
 
 /**
  * \brief
@@ -172,7 +129,14 @@ IPP_OWN_DECL(void, ifma_amm52_p521, (fe521 pr[], const fe521 a, const fe521 b))
  * \param[in]  a2  value first  (in radix 2^52)
  * \param[in]  b2  value second (in radix 2^52)
  */
-IPP_OWN_DECL(void, ifma_amm52_dual_p521, (fe521 pr1[], const fe521 a1, const fe521 b1, fe521 pr2[], const fe521 a2, const fe521 b2))
+/* clang-format off */
+IPP_OWN_DECL(void, ifma_amm52_dual_p521, (fe521 pr1[],
+                                          const fe521 a1,
+                                          const fe521 b1,
+                                          fe521 pr2[],
+                                          const fe521 a2,
+                                          const fe521 b2))
+/* clang-format on */
 
 /**
  * \brief
@@ -249,16 +213,16 @@ IPP_OWN_DECL(void, ifma_ams52_p521, (fe521 pr[], const fe521 a))
 IPP_OWN_DECL(void, ifma_ams52_dual_p521, (fe521 pr1[], const fe521 a1, fe521 pr2[], const fe521 a2))
 
 /* R = (A + B) */
-#define fe521_add_no_red(R, A, B)                           \
-   FE521_LO(R)  = m256_add_i64(FE521_LO(A), FE521_LO(B));   \
-   FE521_MID(R) = m256_add_i64(FE521_MID(A), FE521_MID(B)); \
-   FE521_HI(R)  = m256_add_i64(FE521_HI(A), FE521_HI(B))
+#define fe521_add_no_red(R, A, B)                            \
+    FE521_LO(R)  = m256_add_i64(FE521_LO(A), FE521_LO(B));   \
+    FE521_MID(R) = m256_add_i64(FE521_MID(A), FE521_MID(B)); \
+    FE521_HI(R)  = m256_add_i64(FE521_HI(A), FE521_HI(B))
 
 /* R = (A - B) */
-#define fe521_sub_no_red(R, A, B)                           \
-   FE521_LO(R)  = m256_sub_i64(FE521_LO(A), FE521_LO(B));   \
-   FE521_MID(R) = m256_sub_i64(FE521_MID(A), FE521_MID(B)); \
-   FE521_HI(R)  = m256_sub_i64(FE521_HI(A), FE521_HI(B))
+#define fe521_sub_no_red(R, A, B)                            \
+    FE521_LO(R)  = m256_sub_i64(FE521_LO(A), FE521_LO(B));   \
+    FE521_MID(R) = m256_sub_i64(FE521_MID(A), FE521_MID(B)); \
+    FE521_HI(R)  = m256_sub_i64(FE521_HI(A), FE521_HI(B))
 
 #endif // (_IPP32E >= _IPP32E_K1)
 

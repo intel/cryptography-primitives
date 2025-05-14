@@ -13,6 +13,7 @@
 *.obj
 .idea
 __pycache__/
+.cryptovenv/
 
 _build
 .vscode

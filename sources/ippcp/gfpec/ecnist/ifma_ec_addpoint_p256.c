@@ -24,36 +24,38 @@
 #include "gfpec/ecnist/ifma_arith_method.h"
 #include "gfpec/ecnist/ifma_ecpoint_p256.h"
 
+/* clang-format off */
 IPP_OWN_DEFN(IppsGFpECPoint*, gfec_AddPoint_nistp256_avx512, (IppsGFpECPoint* pR,
                                                               const IppsGFpECPoint* pP,
                                                               const IppsGFpECPoint* pQ,
                                                               IppsGFpECState* pEC))
+/* clang-format on */
 {
-   gsModEngine *pME = GFP_PMA(ECP_GFP(pEC));
-   ifmaArithMethod *pmeth = (ifmaArithMethod *)GFP_METHOD_ALT(pME);
+    gsModEngine* pME       = GFP_PMA(ECP_GFP(pEC));
+    ifmaArithMethod* pmeth = (ifmaArithMethod*)GFP_METHOD_ALT(pME);
 
-   __ALIGN64 P256_POINT_IFMA P, R;
+    __ALIGN64 P256_POINT_IFMA P, R;
 
-   BNU_CHUNK_T *pPool = cpGFpGetPool(3, pME);
+    BNU_CHUNK_T* pPool = cpGFpGetPool(3, pME);
 
-   recode_point_to_mont52(&P, ECP_POINT_DATA(pP), pPool, pmeth, pME);
+    recode_point_to_mont52(&P, ECP_POINT_DATA(pP), pPool, pmeth, pME);
 
-   if (pP == pQ) {
-      ifma_ec_nistp256_dbl_point(&R, &P);
-   } else {
-      __ALIGN64 P256_POINT_IFMA Q;
+    if (pP == pQ) {
+        ifma_ec_nistp256_dbl_point(&R, &P);
+    } else {
+        __ALIGN64 P256_POINT_IFMA Q;
 
-      recode_point_to_mont52(&Q, ECP_POINT_DATA(pQ), pPool, pmeth, pME);
+        recode_point_to_mont52(&Q, ECP_POINT_DATA(pQ), pPool, pmeth, pME);
 
-      ifma_ec_nistp256_add_point(&R, &P, &Q);
-   }
+        ifma_ec_nistp256_add_point(&R, &P, &Q);
+    }
 
-   recode_point_to_mont64(pR, &R, pPool, pmeth, pME);
+    recode_point_to_mont64(pR, &R, pPool, pmeth, pME);
 
-   cpGFpReleasePool(3, pME);
+    cpGFpReleasePool(3, pME);
 
-   ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
-   return pR;
+    ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
+    return pR;
 }
 
 #endif // (_IPP32E >= _IPP32E_K1)

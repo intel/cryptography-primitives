@@ -51,7 +51,14 @@ IPP_OWN_DECL(m512, ifma_amm52_p256, (const m512 a, const m512 b))
  * \param[in]  a2  first  value (in radix 2^52)
  * \param[in]  b2  second value (in radix 2^52)
  */
-IPP_OWN_DECL(void, ifma_amm52_dual_p256, (m512 *r1, const m512 a1, const m512 b1, m512 *r2, const m512 a2, const m512 b2))
+/* clang-format off */
+ IPP_OWN_DECL(void, ifma_amm52_dual_p256, (m512* r1,
+                                           const m512 a1,
+                                           const m512 b1,
+                                           m512* r2,
+                                           const m512 a2,
+                                           const m512 b2))
+/* clang-format on */
 
 /**
  * \brief
@@ -63,10 +70,7 @@ IPP_OWN_DECL(void, ifma_amm52_dual_p256, (m512 *r1, const m512 a1, const m512 b1
  *
  * \param[in]  a   value (in radix 2^52)
  */
-__IPPCP_INLINE IPP_OWN_DEFN(m512, ifma_ams52_p256, (const m512 a))
-{
-   return ifma_amm52_p256(a, a);
-}
+__IPPCP_INLINE IPP_OWN_DEFN(m512, ifma_ams52_p256, (const m512 a)) { return ifma_amm52_p256(a, a); }
 
 /**
  * \brief
@@ -78,10 +82,15 @@ __IPPCP_INLINE IPP_OWN_DEFN(m512, ifma_ams52_p256, (const m512 a))
  * \param[out] r2
  * \param[in]  a2  value (in radix 2^52)
  */
-__IPPCP_INLINE IPP_OWN_DEFN(void, ifma_ams52_dual_p256, (m512 * r1, const m512 a1, m512 *r2, const m512 a2))
+/* clang-format off */
+__IPPCP_INLINE IPP_OWN_DEFN(void, ifma_ams52_dual_p256, (m512* r1,
+                                                         const m512 a1,
+                                                         m512* r2,
+                                                         const m512 a2))
+/* clang-format on */
 {
-   ifma_amm52_dual_p256(r1, a1, a1, r2, a2, a2);
-   return;
+    ifma_amm52_dual_p256(r1, a1, a1, r2, a2, a2);
+    return;
 }
 
 /**
@@ -145,7 +154,7 @@ IPP_OWN_DECL(m512, ifma_frommont52_p256, (const m512 a))
  *
  * \param[in] pa   pointer to array of 4 64-bit chunks
  */
-IPP_OWN_DECL(m512, convert_radix_to_52x5, (const Ipp64u *pa))
+IPP_OWN_DECL(m512, convert_radix_to_52x5, (const Ipp64u* pa))
 
 /**
  * \brief

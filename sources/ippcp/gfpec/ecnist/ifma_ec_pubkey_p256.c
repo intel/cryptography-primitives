@@ -25,50 +25,53 @@
 #include "gfpec/ecnist/ifma_arith_p256.h"
 #include "gfpec/ecnist/ifma_arith_method.h"
 
-IPP_OWN_DEFN(IppsGFpECPoint*, gfec_PubKey_nist256_avx512, (IppsGFpECPoint * pR,
+/* clang-format off */
+IPP_OWN_DEFN(IppsGFpECPoint*, gfec_PubKey_nist256_avx512, (IppsGFpECPoint* pR,
                                                            const BNU_CHUNK_T* pScalar,
-                                                           int scalarLen, IppsGFpECState* pEC,
+                                                           int scalarLen,
+                                                           IppsGFpECState* pEC,
                                                            Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   FIX_BNU(pScalar, scalarLen);
-   {
-      IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
+    FIX_BNU(pScalar, scalarLen);
+    {
+        IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
 
-      gsModEngine *pME = GFP_PMA(ECP_GFP(pEC));
-      gsModEngine *nME = ECP_MONT_R(pEC);
+        gsModEngine* pME = GFP_PMA(ECP_GFP(pEC));
+        gsModEngine* nME = ECP_MONT_R(pEC);
 
-      const int orderBits = ECP_ORDBITSIZE(pEC);
-      const int orderLen  = BITS_BNU_CHUNK(orderBits);
+        const int orderBits = ECP_ORDBITSIZE(pEC);
+        const int orderLen  = BITS_BNU_CHUNK(orderBits);
 
-      ifmaArithMethod *pmeth = (ifmaArithMethod *)GFP_METHOD_ALT(pME);
+        ifmaArithMethod* pmeth = (ifmaArithMethod*)GFP_METHOD_ALT(pME);
 
-      BNU_CHUNK_T *pPool = cpGFpGetPool(5, nME);
-      BNU_CHUNK_T *pExtendedScalar = pPool;
-      BNU_CHUNK_T *pPointPool = pExtendedScalar + 2 * GFP_FELEN(pME);
+        BNU_CHUNK_T* pPool           = cpGFpGetPool(5, nME);
+        BNU_CHUNK_T* pExtendedScalar = pPool;
+        BNU_CHUNK_T* pPointPool      = pExtendedScalar + 2 * GFP_FELEN(pME);
 
-      /* Copy scalar */
-      cpGFpElementCopyPad(pExtendedScalar, orderLen + 1, pScalar, scalarLen);
+        /* Copy scalar */
+        cpGFpElementCopyPad(pExtendedScalar, orderLen + 1, pScalar, scalarLen);
 
-      __ALIGN64 P256_POINT_IFMA R;
-      R.x = R.y = R.z = setzero_i64();
+        __ALIGN64 P256_POINT_IFMA R;
+        R.x = R.y = R.z = setzero_i64();
 
-      if (ECP_PREMULBP(pEC)) {
-         ifma_ec_nistp256_mul_pointbase(&R, (Ipp8u *)pExtendedScalar, orderBits);
-      } else {
-         /* Convert base point to a new Montgomery domain */
-         __ALIGN64 P256_POINT_IFMA G52;
-         recode_point_to_mont52(&G52, ECP_G(pEC), pPointPool /* 3 elem */, pmeth, pME);
+        if (ECP_PREMULBP(pEC)) {
+            ifma_ec_nistp256_mul_pointbase(&R, (Ipp8u*)pExtendedScalar, orderBits);
+        } else {
+            /* Convert base point to a new Montgomery domain */
+            __ALIGN64 P256_POINT_IFMA G52;
+            recode_point_to_mont52(&G52, ECP_G(pEC), pPointPool /* 3 elem */, pmeth, pME);
 
-         ifma_ec_nistp256_mul_point(&R, &G52, (Ipp8u *)pExtendedScalar, orderBits);
-      }
+            ifma_ec_nistp256_mul_point(&R, &G52, (Ipp8u*)pExtendedScalar, orderBits);
+        }
 
-      recode_point_to_mont64(pR, &R, pPointPool /* 3 elem */, pmeth, pME);
+        recode_point_to_mont64(pR, &R, pPointPool /* 3 elem */, pmeth, pME);
 
-      cpGFpReleasePool(5, nME);
+        cpGFpReleasePool(5, nME);
 
-      ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
-      return pR;
-   }
+        ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
+        return pR;
+    }
 }
 
 #endif // (_IPP32E >= _IPP32E_K1)

@@ -24,121 +24,123 @@
 #include "gfpec/ecnist/ifma_arith_method.h"
 #include "gfpec/ecnist/ifma_ecpoint_p256.h"
 
+/* clang-format off */
 IPP_OWN_DEFN(IppECResult, gfec_VerifyDSA_nistp256_avx512, (const IppsBigNumState* pMsgDigest,
                                                            const IppsGFpECPoint* pRegPublic,
                                                            const IppsBigNumState* pSignR,
                                                            const IppsBigNumState* pSignS,
                                                            IppsGFpECState* pEC,
                                                            Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
+    IPP_UNREFERENCED_PARAMETER(pScratchBuffer);
 
-   IppECResult verifyResult = ippECInvalidSignature;
+    IppECResult verifyResult = ippECInvalidSignature;
 
-   gsModEngine *pME = GFP_PMA(ECP_GFP(pEC));
-   gsModEngine *nME = ECP_MONT_R(pEC);
+    gsModEngine* pME = GFP_PMA(ECP_GFP(pEC));
+    gsModEngine* nME = ECP_MONT_R(pEC);
 
-   const int orderBits = ECP_ORDBITSIZE(pEC);
-   const int orderLen  = BITS_BNU_CHUNK(orderBits);
+    const int orderBits = ECP_ORDBITSIZE(pEC);
+    const int orderLen  = BITS_BNU_CHUNK(orderBits);
 
-   ifmaArithMethod *pmeth = (ifmaArithMethod *)GFP_METHOD_ALT(pME);
-   ifmaArithMethod *nmeth = (ifmaArithMethod *)GFP_METHOD_ALT(nME);
+    ifmaArithMethod* pmeth = (ifmaArithMethod*)GFP_METHOD_ALT(pME);
+    ifmaArithMethod* nmeth = (ifmaArithMethod*)GFP_METHOD_ALT(nME);
 
-   ifma_import to_radix52   = pmeth->import_to52;
-   ifma_export from_radix52 = pmeth->export_to64;
+    ifma_import to_radix52   = pmeth->import_to52;
+    ifma_export from_radix52 = pmeth->export_to64;
 
-   /* Mod engine (mod p) */
-   ifma_decode p_from_mont    = pmeth->decode;
+    /* Mod engine (mod p) */
+    ifma_decode p_from_mont = pmeth->decode;
 
-   /* Mod engine (mod n - subgroup order) */
-   ifma_encode n_to_mont    = nmeth->encode;
-   ifma_decode n_from_mont  = nmeth->decode;
-   ifma_mul    n_mul        = nmeth->mul;
-   ifma_inv n_inv           = nmeth->inv;
-   ifma_red n_red           = nmeth->red;
+    /* Mod engine (mod n - subgroup order) */
+    ifma_encode n_to_mont   = nmeth->encode;
+    ifma_decode n_from_mont = nmeth->decode;
+    ifma_mul n_mul          = nmeth->mul;
+    ifma_inv n_inv          = nmeth->inv;
+    ifma_red n_red          = nmeth->red;
 
-   /* Convert input parameters to 2^52 radix */
-   m512 msg, signR, signS;
-   msg = signR = signS = setzero_i64();
+    /* Convert input parameters to 2^52 radix */
+    m512 msg, signR, signS;
+    msg = signR = signS = setzero_i64();
 
-   const int elemLen = GFP_FELEN(pME);
+    const int elemLen = GFP_FELEN(pME);
 
-   BNU_CHUNK_T* pPool = cpGFpGetPool(3, pME);
-   BNU_CHUNK_T *pBufMsg   = pPool;
-   BNU_CHUNK_T *pBufSignR = pPool + elemLen;
-   BNU_CHUNK_T *pBufSignS = pPool + 2 * elemLen;
+    BNU_CHUNK_T* pPool     = cpGFpGetPool(3, pME);
+    BNU_CHUNK_T* pBufMsg   = pPool;
+    BNU_CHUNK_T* pBufSignR = pPool + elemLen;
+    BNU_CHUNK_T* pBufSignS = pPool + 2 * elemLen;
 
-   ZEXPAND_COPY_BNU(pBufMsg, orderLen, BN_NUMBER(pMsgDigest), BN_SIZE(pMsgDigest));
-   ZEXPAND_COPY_BNU(pBufSignR, orderLen, BN_NUMBER(pSignR), BN_SIZE(pSignR));
-   ZEXPAND_COPY_BNU(pBufSignS, orderLen, BN_NUMBER(pSignS), BN_SIZE(pSignS));
+    ZEXPAND_COPY_BNU(pBufMsg, orderLen, BN_NUMBER(pMsgDigest), BN_SIZE(pMsgDigest));
+    ZEXPAND_COPY_BNU(pBufSignR, orderLen, BN_NUMBER(pSignR), BN_SIZE(pSignR));
+    ZEXPAND_COPY_BNU(pBufSignS, orderLen, BN_NUMBER(pSignS), BN_SIZE(pSignS));
 
-   msg   = to_radix52((Ipp64u *)pBufMsg);
-   msg   = n_red(msg); /* reduce just in case */
-   signR = to_radix52((Ipp64u *)pBufSignR);
-   signS = to_radix52((Ipp64u *)pBufSignS);
+    msg   = to_radix52((Ipp64u*)pBufMsg);
+    msg   = n_red(msg); /* reduce just in case */
+    signR = to_radix52((Ipp64u*)pBufSignR);
+    signS = to_radix52((Ipp64u*)pBufSignS);
 
-   /* Convert public point to proper Montgomery domain and 2^52 radix */
-   __ALIGN64 P256_POINT_IFMA pubKey;
-   recode_point_to_mont52(&pubKey, ECP_POINT_DATA(pRegPublic), pPool /* 3 elem */, pmeth, pME);
+    /* Convert public point to proper Montgomery domain and 2^52 radix */
+    __ALIGN64 P256_POINT_IFMA pubKey;
+    recode_point_to_mont52(&pubKey, ECP_POINT_DATA(pRegPublic), pPool /* 3 elem */, pmeth, pME);
 
-   m512 h, h1, h2;
+    m512 h, h1, h2;
 
-   /* h = (signS)^(-1) */
-   h = n_to_mont(signS);
-   h = n_inv(h);
+    /* h = (signS)^(-1) */
+    h = n_to_mont(signS);
+    h = n_inv(h);
 
-   /* h1 = msg*h,  h2 = signR*h */
-   h1 = n_to_mont(msg);
-   h2 = n_to_mont(signR);
+    /* h1 = msg*h,  h2 = signR*h */
+    h1 = n_to_mont(msg);
+    h2 = n_to_mont(signR);
 
-   h1 = n_mul(h1, h);
-   h2 = n_mul(h2, h);
+    h1 = n_mul(h1, h);
+    h2 = n_mul(h2, h);
 
-   h1 = n_from_mont(h1);
-   h2 = n_from_mont(h2);
+    h1 = n_from_mont(h1);
+    h2 = n_from_mont(h2);
 
-   BNU_CHUNK_T *pExtendedH1 = cpGFpGetPool(2, pME);
-   BNU_CHUNK_T *pExtendedH2 = cpGFpGetPool(2, pME);
-   BNU_CHUNK_T *pH1         = cpGFpGetPool(1, pME);
-   BNU_CHUNK_T *pH2         = cpGFpGetPool(1, pME);
+    BNU_CHUNK_T* pExtendedH1 = cpGFpGetPool(2, pME);
+    BNU_CHUNK_T* pExtendedH2 = cpGFpGetPool(2, pME);
+    BNU_CHUNK_T* pH1         = cpGFpGetPool(1, pME);
+    BNU_CHUNK_T* pH2         = cpGFpGetPool(1, pME);
 
-   from_radix52((Ipp64u *)pH1, h1);
-   from_radix52((Ipp64u *)pH2, h2);
-   cpGFpElementCopyPad(pExtendedH1, orderLen + 1, pH1, orderLen);
-   cpGFpElementCopyPad(pExtendedH2, orderLen + 1, pH2, orderLen);
+    from_radix52((Ipp64u*)pH1, h1);
+    from_radix52((Ipp64u*)pH2, h2);
+    cpGFpElementCopyPad(pExtendedH1, orderLen + 1, pH1, orderLen);
+    cpGFpElementCopyPad(pExtendedH2, orderLen + 1, pH2, orderLen);
 
-   cpGFpReleasePool(2, pME);    /* pH1, pH2 */
+    cpGFpReleasePool(2, pME); /* pH1, pH2 */
 
-   __ALIGN64 P256_POINT_IFMA P;
+    __ALIGN64 P256_POINT_IFMA P;
 
-   /* P = h1*basePoint + h2*pubKey */
-   ifma_ec_nistp256_mul_point(&pubKey, &pubKey, (Ipp8u *)pExtendedH2, orderBits);
+    /* P = h1*basePoint + h2*pubKey */
+    ifma_ec_nistp256_mul_point(&pubKey, &pubKey, (Ipp8u*)pExtendedH2, orderBits);
 
-   if (ECP_PREMULBP(pEC)) {
-      ifma_ec_nistp256_mul_pointbase(&P, (Ipp8u *)pExtendedH1, orderBits);
-   } else {
-      /* Convert base point to a new Montgomery domain */
-      __ALIGN64 P256_POINT_IFMA G52;
-      recode_point_to_mont52(&G52, ECP_G(pEC), pPool /* 3 elem */, pmeth, pME);
+    if (ECP_PREMULBP(pEC)) {
+        ifma_ec_nistp256_mul_pointbase(&P, (Ipp8u*)pExtendedH1, orderBits);
+    } else {
+        /* Convert base point to a new Montgomery domain */
+        __ALIGN64 P256_POINT_IFMA G52;
+        recode_point_to_mont52(&G52, ECP_G(pEC), pPool /* 3 elem */, pmeth, pME);
 
-      ifma_ec_nistp256_mul_point(&P, &G52, (Ipp8u *)pExtendedH1, orderBits);
-   }
+        ifma_ec_nistp256_mul_point(&P, &G52, (Ipp8u*)pExtendedH1, orderBits);
+    }
 
-   ifma_ec_nistp256_add_point(&P, &P, &pubKey);
+    ifma_ec_nistp256_add_point(&P, &P, &pubKey);
 
-   /* Get X in affine coordinates */
-   ifma_ec_nistp256_get_affine_coords(&(P.x), NULL, &P);
+    /* Get X in affine coordinates */
+    ifma_ec_nistp256_get_affine_coords(&(P.x), NULL, &P);
 
-   P.x = p_from_mont(P.x);
-   P.x = n_red(P.x);
+    P.x = p_from_mont(P.x);
+    P.x = n_red(P.x);
 
-   const mask8 mask_ok = cmp_i64_mask(P.x, signR, _MM_CMPINT_EQ);
-   if ((mask8)0xFF == mask_ok)
-      verifyResult = ippECValid;
+    const mask8 mask_ok = cmp_i64_mask(P.x, signR, _MM_CMPINT_EQ);
+    if ((mask8)0xFF == mask_ok)
+        verifyResult = ippECValid;
 
-   cpGFpReleasePool(7, pME);
+    cpGFpReleasePool(7, pME);
 
-   return verifyResult;
+    return verifyResult;
 }
 
 #endif // (_IPP32E >= _IPP32E_K1)

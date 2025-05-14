@@ -28,21 +28,23 @@
 
 
 #define BASE_POINT_WIN_SIZE (7)
-#define BASE_POINT_N_ENTRY (1 << ((BASE_POINT_WIN_SIZE)-1))
+#define BASE_POINT_N_ENTRY  (1 << ((BASE_POINT_WIN_SIZE)-1))
 
 #define OPERAND_BITSIZE (256)
-#define LEN52_P256 (NUMBER_OF_DIGITS(OPERAND_BITSIZE, DIGIT_SIZE))
+#define LEN52_P256      (NUMBER_OF_DIGITS(OPERAND_BITSIZE, DIGIT_SIZE))
 
 /* P256 affine point */
 typedef struct {
-   BNU_CHUNK_T X[LEN52_P256];
-   BNU_CHUNK_T Y[LEN52_P256];
+    BNU_CHUNK_T X[LEN52_P256];
+    BNU_CHUNK_T Y[LEN52_P256];
 } P256_POINT_AFFINE_IFMA_MEM;
 
-extern const __ALIGN64 P256_POINT_AFFINE_IFMA_MEM ifma_ec_nistp256r1_bp_precomp[37][BASE_POINT_N_ENTRY];
+extern const __ALIGN64 P256_POINT_AFFINE_IFMA_MEM
+    ifma_ec_nistp256r1_bp_precomp[37][BASE_POINT_N_ENTRY];
 
 #if !defined(_DISABLE_ECP_256R1_HARDCODED_BP_TBL_)
 
+/* clang-format off */
 /* Montgomery coefficient R = 2^(6*52) mod p */
 const __ALIGN64 P256_POINT_AFFINE_IFMA_MEM ifma_ec_nistp256r1_bp_precomp[][BASE_POINT_N_ENTRY] = {
     {
@@ -2525,17 +2527,16 @@ const __ALIGN64 P256_POINT_AFFINE_IFMA_MEM ifma_ec_nistp256r1_bp_precomp[][BASE_
         {{ 0x0004af860fe1d658, 0x0005c3a43228d831, 0x00003626b989c96b, 0x000ceba2924ae1c3, 0x0000c45b79310a64 }, { 0x0002ceb1de0d0667, 0x00088613f714aa18, 0x000d68a9c780c9b4, 0x000a36f94f51865a, 0x0000055e19d4f0d9 }},
     },
 };
+/* clang-format on */
 
 #endif /* #if !defined(_DISABLE_ECP_256R1_HARDCODED_BP_TBL_) */
 
-IPP_OWN_DEFN(const cpPrecompAP *, gfpec_precom_nistP256r1_radix52_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_nistP256r1_radix52_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */ 7,
-      /* select function */ p256r1_select_ap_w7_ifma,
-      /* precomputed data */ (BNU_CHUNK_T *)ifma_ec_nistp256r1_bp_precomp
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 7,
+                             /* select function */ p256r1_select_ap_w7_ifma,
+                             /* precomputed data */ (BNU_CHUNK_T*)ifma_ec_nistp256r1_bp_precomp };
+    return &t;
 }
 
 #endif // (_IPP32E >= _IPP32E_K1)
