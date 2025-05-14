@@ -38,7 +38,7 @@ IPP_OWN_DEFN(int, cpInitHash, (IppsHashState * pCtx, IppHashAlgId algID))
     HASH_FUNC(pCtx) = cpHashProcFunc[algID];
 
 /* update processing function if Intel® Secure Hash Algorithm - New Instructions (Intel® SHA-NI) enabled */
-#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+#if (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_ == _FEATURE_ON_)
     if (IsFeatureEnabled(ippCPUID_SHA)) {
 
 #if defined(_ENABLE_ALG_SHA1_)
@@ -53,7 +53,7 @@ IPP_OWN_DEFN(int, cpInitHash, (IppsHashState * pCtx, IppHashAlgId algID))
     }
 #endif
 
-#if (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
+#if (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA512_ENABLING_ == _FEATURE_ON_)
 /* update processing function if Intel® SHA512 instructions enabled */
 #if defined(_ENABLE_ALG_SHA512_) || defined(_ENABLE_ALG_SHA384_) || \
     defined(_ENABLE_ALG_SHA512_224_) || defined(_ENABLE_ALG_SHA512_256_)

@@ -28,7 +28,6 @@
 
 %if (_ENABLE_ALG_SHA512_)
 %if (_SHA512_ENABLING_ == _FEATURE_ON_) || (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_)
-%if (_IPP >= _IPP_H9)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -274,6 +273,5 @@ align IPP_ALIGN_FACTOR
         ret
 ENDFUNC UpdateSHA512ni
 
-%endif    ;; _IPP >= _IPP_H9
 %endif    ;; _FEATURE_ON_ / _FEATURE_TICKTOCK_
 %endif    ;; _ENABLE_ALG_SHA512_

@@ -28,8 +28,7 @@
 %include "pcpvariant.inc"
 
 %if (_ENABLE_ALG_SHA512_)
-%if (_ENABLE_ALG_SHA512_ == _FEATURE_ON_) || (_ENABLE_ALG_SHA512_ == _FEATURE_TICKTOCK_)
-%if (_IPP32E >= _IPP32E_L9 )
+%if (_SHA512_ENABLING_ == _FEATURE_ON_) || (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -271,6 +270,5 @@ align IPP_ALIGN_FACTOR
    ret
 ENDFUNC UpdateSHA512ni
 
-%endif    ;; _IPP32E_L9 and above
-%endif    ;;  %if (_ENABLE_ALG_SHA512_ == _FEATURE_ON_) || (_ENABLE_ALG_SHA512_ == _FEATURE_TICKTOCK_)
+%endif    ;;  %if (_SHA512_ENABLING_ == _FEATURE_ON_) || (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_)
 %endif    ;; _ENABLE_ALG_SHA512_
