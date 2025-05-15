@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Set XMSS Public Key State" href="xmss-set-pub-key-state.html" />
-    <link rel="prev" title="Get Size Of XMSS Signature State" href="xmss-sig-get-size.html" /> 
+    <link rel="prev" title="Get Size Of XMSS Keys and Signature States" href="xmss-key-sig-get-size.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -701,6 +701,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../deprecated-functions.html">Deprecated Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-2-0">Deprecated since Intel® Cryptography Primitives Library 1.2.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-0-0">Deprecated since Intel® Cryptography Primitives Library 1.0.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-integrated-performance-primitives-cryptography-intel-ipp-cryptography-2020-update1">Deprecated since Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2020 Update1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-ipp-cryptography-9-0">Deprecated since Intel® IPP Cryptography 9.0</a></li>
@@ -744,13 +745,16 @@
              
   <section id="get-size-of-temporary-buffer">
 <span id="xmss-buffer-get-size"></span><h1>Get Size Of Temporary Buffer<a class="headerlink" href="#get-size-of-temporary-buffer" title="Link to this heading"></a></h1>
-<p>Get the size for the temporary buffer that is required for
-the <code class="docutils literal notranslate"><span class="pre">ippsXMSSVerify</span></code> function (bytes).</p>
+<p>Get the size for the temporary buffer (bytes).</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading"></a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSBufferGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span>
-<span class="w">                                 </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">maxMessageLength</span><span class="p">,</span>
-<span class="w">                                 </span><span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSBufferGetSize</span><span class="w">       </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">maxMessageLength</span><span class="p">,</span><span class="w"> </span><span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSKeyGenBufferGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSSignBufferGetSize</span><span class="w">   </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">maxMessageLength</span><span class="p">,</span><span class="w"> </span><span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSVerifyBufferGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">maxMessageLength</span><span class="p">,</span><span class="w"> </span><span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -763,7 +767,7 @@ the <code class="docutils literal notranslate"><span class="pre">ippsXMSSVerify<
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>pSize</p></td>
-<td><p>Pointer to the signature state size.</p></td>
+<td><p>Pointer to the state size.</p></td>
 </tr>
 <tr class="row-even"><td><p>maxMessageLength</p></td>
 <td><p>Maximum length of the message that needs to be verified.
@@ -778,8 +782,16 @@ See <a class="reference internal" href="xmss-enum.html#xmss-enum"><span class="s
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
-<p>This function gets the size of the temporary buffer.
-The result is stored to <code class="docutils literal notranslate"><span class="pre">*pSize</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsXMSSBufferGetSize</span></code> is deprecated. Please refer to
+<a class="reference internal" href="../deprecated-functions.html#appendix-b-deprecated-functions"><span class="std std-ref">Deprecated Functions</span></a>
+section for the recommendations for transition.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ippsXMSSKeyGenBufferGetSize</span></code> gets the size of the temporary buffer required for <code class="docutils literal notranslate"><span class="pre">ippsXMSSKeyGen</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsXMSSSignBufferGetSize</span></code> gets the size of the temporary buffer required for <code class="docutils literal notranslate"><span class="pre">ippsXMSSSign</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsXMSSVerifyBufferGetSize</span></code> gets the size of the temporary buffer required for <code class="docutils literal notranslate"><span class="pre">ippsXMSSVerify</span></code>.</p>
+<p>The result is stored to <code class="docutils literal notranslate"><span class="pre">*pSize</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Get Size Of XMSS Signature State &mdash; Documentation for Intel® oneAPI Programming Guide</title>
+  <title>XMSS Signature Generation &mdash; Documentation for Intel® oneAPI Programming Guide</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -20,8 +20,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Get Size Of Temporary Buffer" href="xmss-buffer-get-size.html" />
-    <link rel="prev" title="Get Size Of XMSS Public Key" href="xmss-pub-key-get-size.html" /> 
+    <link rel="next" title="XMSS Verification" href="xmss-verify.html" />
+    <link rel="prev" title="XMSS Key Generation" href="xmss-key-gen.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -701,6 +701,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../deprecated-functions.html">Deprecated Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-2-0">Deprecated since Intel® Cryptography Primitives Library 1.2.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-0-0">Deprecated since Intel® Cryptography Primitives Library 1.0.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-integrated-performance-primitives-cryptography-intel-ipp-cryptography-2020-update1">Deprecated since Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2020 Update1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-ipp-cryptography-9-0">Deprecated since Intel® IPP Cryptography 9.0</a></li>
@@ -733,7 +734,7 @@
           <li class="breadcrumb-item"><a href="../public-key-cryptography-functions.html">Public Key Cryptography Functions</a></li>
           <li class="breadcrumb-item"><a href="../post-quantum-functions.html">Post-quantum Functions</a></li>
           <li class="breadcrumb-item"><a href="xmss-index.html">XMSS</a></li>
-      <li class="breadcrumb-item active">Get Size Of XMSS Signature State</li>
+      <li class="breadcrumb-item active">XMSS Signature Generation</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -742,12 +743,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="get-size-of-xmss-signature-state">
-<span id="xmss-sig-get-size"></span><h1>Get Size Of XMSS Signature State<a class="headerlink" href="#get-size-of-xmss-signature-state" title="Link to this heading"></a></h1>
-<p>Get the XMSS signature state size (bytes).</p>
+  <section id="xmss-signature-generation">
+<span id="xmss-sign"></span><h1>XMSS Signature Generation<a class="headerlink" href="#xmss-signature-generation" title="Link to this heading"></a></h1>
+<p>Performs the XMSS signature generation.</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading"></a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSSignatureStateGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSSign</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="o">*</span><span class="w"> </span><span class="n">pMsg</span><span class="p">,</span>
+<span class="w">                        </span><span class="k">const</span><span class="w"> </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">msgLen</span><span class="p">,</span>
+<span class="w">                        </span><span class="n">IppsXMSSPrivateKeyState</span><span class="o">*</span><span class="w"> </span><span class="n">pPrvKey</span><span class="p">,</span>
+<span class="w">                        </span><span class="n">IppsXMSSSignatureState</span><span class="o">*</span><span class="w"> </span><span class="n">pSign</span><span class="p">,</span>
+<span class="w">                        </span><span class="n">Ipp8u</span><span class="o">*</span><span class="w"> </span><span class="n">pBuffer</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -759,20 +764,31 @@
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p>pSize</p></td>
-<td><p>Pointer to the signature state size.</p></td>
+<tr class="row-odd"><td><p>pMsg</p></td>
+<td><p>Pointer to the array of messages that are signed.</p></td>
 </tr>
-<tr class="row-even"><td><p>OIDAlgo</p></td>
-<td><p>XMSS Algorithm ID. It defines a set of XMSS parameters.
-See <a class="reference internal" href="xmss-enum.html#xmss-enum"><span class="std std-ref">Supported XMSS Algorithms</span></a> for more information.</p></td>
+<tr class="row-even"><td><p>msgLen</p></td>
+<td><p>Message length.</p></td>
+</tr>
+<tr class="row-odd"><td><p>pPrvKey</p></td>
+<td><p>Pointer to the initialized <code class="docutils literal notranslate"><span class="pre">IppsXMSSPrivateKeyState</span></code> context.
+Size is greater or equal to the value returned by <code class="docutils literal notranslate"><span class="pre">ippsXMSSPrivateKeyStateGetSize</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>pSign</p></td>
+<td><p>Pointer to the <code class="docutils literal notranslate"><span class="pre">IppsXMSSSignatureState</span></code> context.
+Size is greater or equal to the value returned by <code class="docutils literal notranslate"><span class="pre">ippsXMSSSignatureStateGetSize</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>pBuffer</p></td>
+<td><p>Pointer to the temporary buffer. Size is greater or equal to
+the value returned by <code class="docutils literal notranslate"><span class="pre">ippsXMSSSignBufferGetSize</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
-<p>This function gets the size of the signature state that is defined by <code class="docutils literal notranslate"><span class="pre">OIDAlgo</span></code>.
-The result is stored to <code class="docutils literal notranslate"><span class="pre">*pSize</span></code>.</p>
+<p>This function signs the message with the XMSS algorithm.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pSign</span></code> is an output parameter.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>
@@ -788,10 +804,15 @@ You need to enable the <code class="docutils literal notranslate"><span class="p
 <td><p>Indicates no error. All single operations executed without errors. Any other value indicates an error or warning.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsNullPtrErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">pSize</span></code> is a NULL pointer.</p></td>
+<td><p>Any of the input parameters is a NULL pointer.</p></td>
 </tr>
-<tr class="row-odd"><td><p>ippStsBadArgErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">OIDAlgo</span> <span class="pre">&lt;</span> <span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">OIDAlgo</span> <span class="pre">&gt;</span> <span class="pre">the</span> <span class="pre">maximum</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">IppsXMSSAlgo</span></code>.</p></td>
+<tr class="row-odd"><td><p>ippStsLengthErr</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">msgLen</span> <span class="pre">&lt;</span> <span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">msgLen</span> <span class="pre">&lt;</span> <span class="pre">IPP_MAX_32S</span> <span class="pre">-</span> <span class="pre">(n</span> <span class="pre">+</span> <span class="pre">5</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">+</span> <span class="pre">len</span> <span class="pre">+</span> <span class="pre">key_gen_size)</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">n</span></code>, <code class="docutils literal notranslate"><span class="pre">len</span></code> are WOTS+ parameters`` and <code class="docutils literal notranslate"><span class="pre">key_gen_size</span></code> is
+the value returned by <code class="docutils literal notranslate"><span class="pre">ippsXMSSKeyGenBufferGetSize</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>ippStsOutOfRangeErr</p></td>
+<td><p>Index of the current secret key is greater than the number of secret keys.</p></td>
 </tr>
 </tbody>
 </table>

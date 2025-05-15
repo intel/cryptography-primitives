@@ -20,7 +20,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="XMSS Verification" href="xmss-verify.html" />
+    <link rel="next" title="XMSS Key Generation" href="xmss-key-gen.html" />
     <link rel="prev" title="Post-quantum Functions" href="../post-quantum-functions.html" /> 
 </head>
 
@@ -701,6 +701,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../deprecated-functions.html">Deprecated Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-2-0">Deprecated since Intel® Cryptography Primitives Library 1.2.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-0-0">Deprecated since Intel® Cryptography Primitives Library 1.0.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-integrated-performance-primitives-cryptography-intel-ipp-cryptography-2020-update1">Deprecated since Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2020 Update1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-ipp-cryptography-9-0">Deprecated since Intel® IPP Cryptography 9.0</a></li>
@@ -744,17 +745,55 @@
   <section id="xmss">
 <span id="xmss-index"></span><h1>XMSS<a class="headerlink" href="#xmss" title="Link to this heading"></a></h1>
 <p>Functions such as <a class="reference external" href="https://www.rfc-editor.org/info/rfc8391">XMSS</a>
-signature verification and special
+key generation, signing, signature verification and special
 functions like getters and setters that are required to call algorithms have been implemented.</p>
-<section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p class="notetiphead rubric">Important</p>
+<p>XMSS is a stateful algorithm, so users are responsible for storing memory
+for signatures, private keys, and public keys. It is especially important that
+the private key state memory is protected on the user’s side.
+See more details in <a class="reference external" href="https://csrc.nist.gov/pubs/sp/800/208/final">NIST SP 800-208</a>.</p>
+</div>
+<section id="example-1-key-generation-and-signing">
+<h2>Example 1. Key Generation and Signing<a class="headerlink" href="#example-1-key-generation-and-signing" title="Link to this heading"></a></h2>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define IPPCP_PREVIEW_XMSS</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ippcp.h&quot;</span>
 
 <span class="p">...</span>
 
 <span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">alg_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IppsXMSSAlgo</span><span class="o">::</span><span class="n">XMSS_SHA2_16_256</span><span class="p">;</span>
-<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSize</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSKeyGenBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSizeKeyGen</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSSignBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSizeSign</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSVerifyBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSizeVerify</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSPrivateKeyStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">privKeySize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSPublicKeyStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pubKeySize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSSignatureStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">signSize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSInitKeyPair</span><span class="p">(</span><span class="n">alg_id</span><span class="p">,</span><span class="w"> </span><span class="n">pPrvKey</span><span class="p">,</span><span class="w"> </span><span class="n">pPubKey</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSInitSignature</span><span class="p">(</span><span class="n">alg_id</span><span class="p">,</span><span class="w"> </span><span class="n">pSignature</span><span class="p">);</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSKeyGen</span><span class="p">(</span><span class="n">pPrvKey</span><span class="p">,</span><span class="w"> </span><span class="n">pPubKey</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">pScratchKeyGenBuffer</span><span class="p">);</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSSign</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">pPrvKey</span><span class="p">,</span><span class="w"> </span><span class="n">pSignature</span><span class="p">,</span><span class="w"> </span><span class="n">pScratchSignBuffer</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">is_valid</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSVerify</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">pSignature</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">is_valid</span><span class="p">,</span><span class="w"> </span><span class="n">pPubKey</span><span class="p">,</span><span class="w"> </span><span class="n">pScratchVerifyBuffer</span><span class="p">);</span>
+
+<span class="p">...</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2-verification">
+<h2>Example 2. Verification<a class="headerlink" href="#example-2-verification" title="Link to this heading"></a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define IPPCP_PREVIEW_XMSS</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ippcp.h&quot;</span>
+
+<span class="p">...</span>
+
+<span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">alg_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IppsXMSSAlgo</span><span class="o">::</span><span class="n">XMSS_SHA2_16_256</span><span class="p">;</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSVerifyBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSize</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
 
 <span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsXMSSPublicKeyStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ippcpPubKeySize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
 
@@ -772,13 +811,16 @@ functions like getters and setters that are required to call algorithms have bee
 </div>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="xmss-key-gen.html">XMSS Key Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xmss-sign.html">XMSS Signature Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xmss-verify.html">XMSS Verification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xmss-enum.html">Supported XMSS Algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="xmss-pub-key-get-size.html">Get Size Of XMSS Public Key</a></li>
-<li class="toctree-l1"><a class="reference internal" href="xmss-sig-get-size.html">Get Size Of XMSS Signature State</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xmss-key-sig-get-size.html">Get Size Of XMSS Keys and Signature States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xmss-buffer-get-size.html">Get Size Of Temporary Buffer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xmss-set-pub-key-state.html">Set XMSS Public Key State</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xmss-set-sig-state.html">Set XMSS Signature State</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xmss-init-key-state.html">Initialize XMSS Key Pair State</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xmss-init-sig-state.html">Initialize XMSS Signature State</a></li>
 </ul>
 </div>
 </section>

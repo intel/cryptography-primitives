@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Get Size Of XMSS Public Key &mdash; Documentation for Intel® oneAPI Programming Guide</title>
+  <title>Initialize XMSS Signature State &mdash; Documentation for Intel® oneAPI Programming Guide</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -20,8 +20,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Get Size Of XMSS Signature State" href="xmss-sig-get-size.html" />
-    <link rel="prev" title="Supported XMSS Algorithms" href="xmss-enum.html" /> 
+    <link rel="next" title="LMS" href="../lms/index.html" />
+    <link rel="prev" title="Initialize XMSS Key Pair State" href="xmss-init-key-state.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -701,6 +701,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../deprecated-functions.html">Deprecated Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-2-0">Deprecated since Intel® Cryptography Primitives Library 1.2.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-0-0">Deprecated since Intel® Cryptography Primitives Library 1.0.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-integrated-performance-primitives-cryptography-intel-ipp-cryptography-2020-update1">Deprecated since Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2020 Update1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-ipp-cryptography-9-0">Deprecated since Intel® IPP Cryptography 9.0</a></li>
@@ -733,7 +734,7 @@
           <li class="breadcrumb-item"><a href="../public-key-cryptography-functions.html">Public Key Cryptography Functions</a></li>
           <li class="breadcrumb-item"><a href="../post-quantum-functions.html">Post-quantum Functions</a></li>
           <li class="breadcrumb-item"><a href="xmss-index.html">XMSS</a></li>
-      <li class="breadcrumb-item active">Get Size Of XMSS Public Key</li>
+      <li class="breadcrumb-item active">Initialize XMSS Signature State</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -742,12 +743,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="get-size-of-xmss-public-key">
-<span id="xmss-pub-key-get-size"></span><h1>Get Size Of XMSS Public Key<a class="headerlink" href="#get-size-of-xmss-public-key" title="Link to this heading"></a></h1>
-<p>Get the XMSS public key state size (bytes).</p>
+  <section id="initialize-xmss-signature-state">
+<span id="xmss-init-sig-state"></span><h1>Initialize XMSS Signature State<a class="headerlink" href="#initialize-xmss-signature-state" title="Link to this heading"></a></h1>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading"></a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSPublicKeyStateGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsXMSSInitSignature</span><span class="w"> </span><span class="p">(</span><span class="n">IppsXMSSAlgo</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">,</span><span class="w"> </span><span class="n">IppsXMSSSignatureState</span><span class="o">*</span><span class="w"> </span><span class="n">pSign</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -759,20 +759,41 @@
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
 <table class="docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p>pSize</p></td>
-<td><p>Pointer to the signature state size.</p></td>
-</tr>
-<tr class="row-even"><td><p>OIDAlgo</p></td>
+<tr class="row-odd"><td><p>OIDAlgo</p></td>
 <td><p>XMSS Algorithm ID. It defines a set of XMSS parameters.
 See <a class="reference internal" href="xmss-enum.html#xmss-enum"><span class="std std-ref">Supported XMSS Algorithms</span></a> for more information.</p></td>
+</tr>
+<tr class="row-even"><td><p>pSign</p></td>
+<td><p>Pointer to the <code class="docutils literal notranslate"><span class="pre">IppsXMSSSignatureState</span></code> context.
+Size is greater or equal to the value returned by <code class="docutils literal notranslate"><span class="pre">ippsXMSSSignatureStateGetSize</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
-<p>This function gets the size of the public key state that is defined by <code class="docutils literal notranslate"><span class="pre">OIDAlgo</span></code>.
-The result is stored to <code class="docutils literal notranslate"><span class="pre">*pSize</span></code>.</p>
+<p>This function initializes the XMSS signature state.
+The scheme of the signature is shown below:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">+---------------------------------+</span>
+<span class="o">|</span><span class="w">                                 </span><span class="o">|</span>
+<span class="o">|</span><span class="w">          </span><span class="n">index</span><span class="w"> </span><span class="n">idx_sig</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">bytes</span>
+<span class="o">|</span><span class="w">                                 </span><span class="o">|</span>
+<span class="o">+---------------------------------+</span>
+<span class="o">|</span><span class="w">                                 </span><span class="o">|</span>
+<span class="o">|</span><span class="w">          </span><span class="n">randomness</span><span class="w"> </span><span class="n">r</span><span class="w">           </span><span class="o">|</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="n">bytes</span>
+<span class="o">|</span><span class="w">                                 </span><span class="o">|</span>
+<span class="o">+---------------------------------+</span>
+<span class="o">|</span><span class="w">                                 </span><span class="o">|</span>
+<span class="o">|</span><span class="w">     </span><span class="n">WOTS</span><span class="o">+</span><span class="w"> </span><span class="n">signature</span><span class="w"> </span><span class="n">sig_ots</span><span class="w">     </span><span class="o">|</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="n">bytes</span>
+<span class="o">|</span><span class="w">                                 </span><span class="o">|</span>
+<span class="o">+---------------------------------+</span>
+<span class="o">|</span><span class="w">                                 </span><span class="o">|</span>
+<span class="o">|</span><span class="w">        </span><span class="n">authorization</span><span class="w"> </span><span class="n">path</span><span class="w">       </span><span class="o">|</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="n">bytes</span>
+<span class="o">|</span><span class="w">                                 </span><span class="o">|</span>
+<span class="o">+---------------------------------+</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">n</span></code>, <code class="docutils literal notranslate"><span class="pre">len</span></code> are WOTS+ parameters, <code class="docutils literal notranslate"><span class="pre">h</span></code> is the XMSS tree height.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>
@@ -788,7 +809,7 @@ You need to enable the <code class="docutils literal notranslate"><span class="p
 <td><p>Indicates no error. All single operations executed without errors. Any other value indicates an error or warning.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsNullPtrErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">pSize</span></code> is a NULL pointer.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pSign</span></code> is a NULL pointer.</p></td>
 </tr>
 <tr class="row-odd"><td><p>ippStsBadArgErr</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">OIDAlgo</span> <span class="pre">&lt;</span> <span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">OIDAlgo</span> <span class="pre">&gt;</span> <span class="pre">the</span> <span class="pre">maximum</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">IppsXMSSAlgo</span></code>.</p></td>

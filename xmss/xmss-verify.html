@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Supported XMSS Algorithms" href="xmss-enum.html" />
-    <link rel="prev" title="XMSS" href="xmss-index.html" /> 
+    <link rel="prev" title="XMSS Signature Generation" href="xmss-sign.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -701,6 +701,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../deprecated-functions.html">Deprecated Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-2-0">Deprecated since Intel® Cryptography Primitives Library 1.2.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-cryptography-primitives-library-1-0-0">Deprecated since Intel® Cryptography Primitives Library 1.0.0</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-integrated-performance-primitives-cryptography-intel-ipp-cryptography-2020-update1">Deprecated since Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2020 Update1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../deprecated-functions.html#deprecated-since-intel-ipp-cryptography-9-0">Deprecated since Intel® IPP Cryptography 9.0</a></li>
@@ -772,20 +773,18 @@
 </tr>
 <tr class="row-odd"><td><p>pSign</p></td>
 <td><p>Pointer to the <code class="docutils literal notranslate"><span class="pre">IppsXMSSSignatureState</span></code> context for each verification operation.
-Size is greater or equal to the value returned by
-the <a class="reference internal" href="xmss-sig-get-size.html#xmss-sig-get-size"><span class="std std-ref">ippsXMSSSignatureStateGetSize</span></a> function.</p></td>
+Size is greater or equal to the value returned by <code class="docutils literal notranslate"><span class="pre">ippsXMSSSignatureStateGetSize</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p>pIsSignValid</p></td>
 <td><p>Pointer to the verification result.</p></td>
 </tr>
 <tr class="row-odd"><td><p>pKey</p></td>
 <td><p>Pointer to the <code class="docutils literal notranslate"><span class="pre">IppsXMSSPublicKeyState</span></code> context for each verification operation.
-Size is greater or equal to the value returned by
-the <a class="reference internal" href="xmss-pub-key-get-size.html#xmss-pub-key-get-size"><span class="std std-ref">ippsXMSSPublicKeyStateGetSize</span></a> function.</p></td>
+Size is greater or equal to the value returned by <code class="docutils literal notranslate"><span class="pre">ippsXMSSPublicKeyStateGetSize</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p>pBuffer</p></td>
 <td><p>Pointer to the temporary buffer. Size is greater or equal to
-the value returned by the <a class="reference internal" href="xmss-buffer-get-size.html#xmss-buffer-get-size"><span class="std std-ref">ippsXMSSBufferGetSize</span></a> function.</p></td>
+the value returned by <code class="docutils literal notranslate"><span class="pre">ippsXMSSVerifyBufferGetSize</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
