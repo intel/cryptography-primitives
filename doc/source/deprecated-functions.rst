@@ -10,6 +10,18 @@ targeted to be removed in future releases. If an application created with a prev
 version calls a function listed here, then the source code must be modified.
 The tables also specify the corresponding functions or workaround to replace the deprecated functions.
 
+Deprecated since Intel® Cryptography Primitives Library 1.2.0
+-------------------------------------------------------------
+
+Deprecation related to preview features:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Functionality
+     - Substitution or Workaround
+   * - ippsXMSSBufferGetSize
+     - ippsXMSSVerifyBufferGetSize
 
 Deprecated since Intel® Cryptography Primitives Library 1.0.0
 -------------------------------------------------------------

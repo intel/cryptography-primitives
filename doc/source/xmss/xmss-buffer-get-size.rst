@@ -3,17 +3,20 @@
 Get Size Of Temporary Buffer
 ============================
 
-Get the size for the temporary buffer that is required for
-the ``ippsXMSSVerify`` function (bytes).
+Get the size for the temporary buffer (bytes).
 
 Syntax
 ------
 
 .. code:: cpp
 
-    IppStatus ippsXMSSBufferGetSize (Ipp32s* pSize,
-                                     Ipp32s maxMessageLength,
-                                     IppsXMSSAlgo OIDAlgo);
+    IppStatus ippsXMSSBufferGetSize       (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo);
+
+    IppStatus ippsXMSSKeyGenBufferGetSize (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo);
+
+    IppStatus ippsXMSSSignBufferGetSize   (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo);
+
+    IppStatus ippsXMSSVerifyBufferGetSize (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo);
 
 Include Files
 -------------
@@ -27,7 +30,7 @@ Parameters
    :header-rows: 0
 
    * -     pSize
-     -  Pointer to the signature state size.
+     -  Pointer to the state size.
    * -     maxMessageLength
      -  Maximum length of the message that needs to be verified.
         It can be the maximum of all messages' length that can potentially be passed to the verification function.
@@ -38,7 +41,18 @@ Parameters
 Description
 -----------
 
-This function gets the size of the temporary buffer.
+.. note::
+
+   ``ippsXMSSBufferGetSize`` is deprecated. Please refer to
+   :ref:`Deprecated Functions <appendix-b-deprecated-functions>`
+   section for the recommendations for transition.
+
+``ippsXMSSKeyGenBufferGetSize`` gets the size of the temporary buffer required for ``ippsXMSSKeyGen``.
+
+``ippsXMSSSignBufferGetSize`` gets the size of the temporary buffer required for ``ippsXMSSSign``.
+
+``ippsXMSSVerifyBufferGetSize`` gets the size of the temporary buffer required for ``ippsXMSSVerify``.
+
 The result is stored to ``*pSize``.
 
 .. note::

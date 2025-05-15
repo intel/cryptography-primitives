@@ -1270,7 +1270,7 @@ IPPAPI(IppStatus, ippsXMSSPrivateKeyStateGetSize, (Ipp32s* pSize, IppsXMSSAlgo O
 IPPAPI(IppStatus, ippsXMSSPublicKeyStateGetSize, (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
 IPPAPI(IppStatus, ippsXMSSSignatureStateGetSize, (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
 
-IPPAPI(IppStatus, ippsXMSSInitSignature, (IppsXMSSAlgo OIDAlgo, IppsXMSSSignatureState* pState))
+IPPAPI(IppStatus, ippsXMSSInitSignature, (IppsXMSSAlgo OIDAlgo, IppsXMSSSignatureState* pSign))
 IPPAPI(IppStatus, ippsXMSSInitKeyPair, (IppsXMSSAlgo OIDAlgo,
                                         IppsXMSSPrivateKeyState* pPrvKey,
                                         IppsXMSSPublicKeyState* pPubKey))
@@ -1287,10 +1287,10 @@ IPPAPI(IppStatus, ippsXMSSSetSignatureState, (IppsXMSSAlgo OIDAlgo,
                                               IppsXMSSSignatureState* pState))
 
 IPPAPI(IppStatus, ippsXMSSKeyGen, (IppsXMSSPrivateKeyState* pPrvKey,
-                                          IppsXMSSPublicKeyState* pPubKey,
-                                          IppBitSupplier rndFunc,
-                                          void* pRndParam,
-                                          Ipp8u* pBuffer))
+                                   IppsXMSSPublicKeyState* pPubKey,
+                                   IppBitSupplier rndFunc,
+                                   void* pRndParam,
+                                   Ipp8u* pBuffer))
 IPPAPI(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
                                  const Ipp32s msgLen,
                                  IppsXMSSPrivateKeyState* pPrvKey,

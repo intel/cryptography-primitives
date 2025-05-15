@@ -1,19 +1,14 @@
-.. _xmss-set-sig-state:
+.. _xmss-init-sig-state:
 
-Set XMSS Signature State
-========================
+Initialize XMSS Signature State
+===============================
 
 Syntax
 ------
 
 .. code:: cpp
 
-    IppStatus ippsXMSSSetSignatureState (IppsXMSSAlgo OIDAlgo,
-                                         Ipp32u idx,
-                                         const Ipp8u* r,
-                                         const Ipp8u* pOTSSign,
-                                         const Ipp8u* pAuthPath,
-                                         IppsXMSSSignatureState* pState);
+    IppStatus ippsXMSSInitSignature (IppsXMSSAlgo OIDAlgo, IppsXMSSSignatureState* pSign);
 
 Include Files
 -------------
@@ -29,21 +24,14 @@ Parameters
    * -     OIDAlgo
      -  XMSS Algorithm ID. It defines a set of XMSS parameters.
         See :ref:`Supported XMSS Algorithms <xmss-enum>` for more information.
-   * -     idx
-     -  Index of the XMSS tree leaf.
-   * -     r
-     -  Pointer to the XMSS signature randomness variable.
-   * -     pOTSSign
-     -  Pointer to the WOTS signature.
-   * -     pAuthPath
-     -  Pointer to the XMSS authorization path.
-   * -     pState
-     -  Pointer to the XMSS signature state.
+   * -     pSign
+     -  Pointer to the ``IppsXMSSSignatureState`` context.
+        Size is greater or equal to the value returned by ``ippsXMSSSignatureStateGetSize``.
 
 Description
 -----------
 
-This function sets the XMSS signature state.
+This function initializes the XMSS signature state.
 The scheme of the signature is shown below:
 
 .. code:: cpp
@@ -85,6 +73,6 @@ Return Values
    * -     ippStsNoErr
      -     Indicates no error. All single operations executed without errors. Any other value indicates an error or warning.
    * -     ippStsNullPtrErr
-     -     Any of the input parameters is a NULL pointer.
+     -     ``pSign`` is a NULL pointer.
    * -     ippStsBadArgErr
      -     ``OIDAlgo < 1`` or ``OIDAlgo > the maximum value for IppsXMSSAlgo``.

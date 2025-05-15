@@ -34,17 +34,15 @@ Parameters
      -  Message length.
    * -     pSign
      -  Pointer to the ``IppsXMSSSignatureState`` context for each verification operation.
-        Size is greater or equal to the value returned by
-        the :ref:`ippsXMSSSignatureStateGetSize <xmss-sig-get-size>` function.
+        Size is greater or equal to the value returned by ``ippsXMSSSignatureStateGetSize``.
    * -     pIsSignValid
      -  Pointer to the verification result.
    * -     pKey
      -  Pointer to the ``IppsXMSSPublicKeyState`` context for each verification operation.
-        Size is greater or equal to the value returned by
-        the :ref:`ippsXMSSPublicKeyStateGetSize <xmss-pub-key-get-size>` function.
+        Size is greater or equal to the value returned by ``ippsXMSSPublicKeyStateGetSize``.
    * -     pBuffer
      -  Pointer to the temporary buffer. Size is greater or equal to
-        the value returned by the :ref:`ippsXMSSBufferGetSize <xmss-buffer-get-size>` function.
+        the value returned by ``ippsXMSSVerifyBufferGetSize``.
 
 Description
 -----------
