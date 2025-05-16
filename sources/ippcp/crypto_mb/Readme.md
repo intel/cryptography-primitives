@@ -4,6 +4,7 @@ Currently, the library provides optimized version of the following algorithms:
 1. RSA, ECDSA, ECDH, x25519, SM2 multi-buffer algorithms based on Intel® Advanced Vector Extensions 512 (Intel® AVX-512) integer fused multiply-add (IFMA) operations. This CPU feature is introduced with Intel® Microarchitecture Code Named Ice Lake.
 2. SM4 based on Intel(R) Advanced Vector Extensions 512 (Intel(R) AVX-512) GFNI instructions.
 3. SM3 based on Intel® Advanced Vector Extensions 512 (Intel® AVX-512) instructions.
+4. RSA, ECDSA(p256) and ECDH(p256) multi-buffer algorithms based Intel® Advanced Vector Extensions 2 (Intel® AVX2) with Intel® AVX-IFMA. Target CPU Code Name is Sierra Forest.
 
 ## Multiple Buffers Processing Overview
 
@@ -18,22 +19,24 @@ Multi-buffer processing collects up to eight RSA operations. Each request is com
 This library consists of highly-optimized kernels taking advantage of Intel’s multi-buffer processing and Intel® AVX-512 instruction set.
 
 ## Software Requirements
+> **NOTE:** The tools configurations specified below are tested by Intel or known to work; other configurations may or may not work and are not recommended.
 
 ### Common tools
 
 - CMake\* 3.18 or higher
 - The Netwide Assembler (NASM) 2.16.02\*
-- OpenSSL\* 3.0.8 or higher **OR** BoringSSL* [45cf810d](https://github.com/google/boringssl/archive/45cf810dbdbd767f09f8cb0b0fcccd342c39041f.tar.gz) **OR** Tongsuo* 8.3.3
+- OpenSSL\* 3.0.8 or higher **OR** BoringSSL* [0.20250114.0](https://github.com/google/boringssl/releases/tag/0.20250114.0) **OR** Tongsuo* 8.3.3
 
 ### Linux* OS
 - [Common tools](#common-tools)
 - Intel® oneAPI DPC++/C++ Compiler latest for Linux\* OS
 - GCC 8.5
-- GCC 11.4
-- GCC 14.1
+- GCC 11.5
+- GCC 14.2
 - Clang 9.0
 - Clang 12.0
 - Clang 16.0
+- Clang 18.1
 - GNU binutils 2.32
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
 
@@ -43,7 +46,7 @@ This library consists of highly-optimized kernels taking advantage of Intel’s 
 - [Common tools](#common-tools)
 - Intel® oneAPI DPC++/C++ Compiler latest for Windows\* OS
 - Microsoft Visual C++ Compiler\* version 19.29 provided by Microsoft Visual Studio\* 2019 version 16.11
-- Microsoft Visual C++ Compiler\* version 19.30 provided by Microsoft Visual Studio\* 2022 version 17.11
+- Microsoft Visual C++ Compiler\* version 19.43 provided by Microsoft Visual Studio\* 2022 version 17.13
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.21 or higher is required to build using Microsoft Visual Studio\* 2022.
 
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.

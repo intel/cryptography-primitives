@@ -22,22 +22,25 @@
 
 
 ## Software Requirements
+> **NOTE:** The tools configurations specified below are tested by Intel or known to work; other configurations may or may not work and are not recommended.
+
 ### Common tools
 - [CMake\*](https://cmake.org/download) 3.18 or higher
-- Python 3.8.1
+- Python 3.12.0
 - The Netwide Assembler (NASM) 2.16.02
-- OpenSSL\* 3.0.8 or higher **OR** BoringSSL* [45cf810d](https://github.com/google/boringssl/archive/45cf810dbdbd767f09f8cb0b0fcccd342c39041f.tar.gz) **OR** Tongsuo* 8.3.3
+- OpenSSL\* 3.0.8 or higher **OR** BoringSSL* [0.20250114.0](https://github.com/google/boringssl/releases/tag/0.20250114.0) **OR** Tongsuo* 8.3.3
 
 
 ### Linux* OS
 - [Common tools](#common-tools)
 - Intel® oneAPI DPC++/C++ Compiler latest for Linux\* OS
 - GCC 8.5
-- GCC 11.4
-- GCC 14.1
+- GCC 11.5
+- GCC 14.2
 - Clang 9.0
 - Clang 12.0
 - Clang 16.0
+- Clang 18.1
 - GNU binutils 2.32
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
 
@@ -45,7 +48,7 @@
 - [Common tools](#common-tools)
 - Intel® oneAPI DPC++/C++ Compiler latest for Windows\* OS
 - Microsoft Visual C++ Compiler\* version 19.29 provided by Microsoft Visual Studio\* 2019 version 16.11
-- Microsoft Visual C++ Compiler\* version 19.30 provided by Microsoft Visual Studio\* 2022 version 17.11
+- Microsoft Visual C++ Compiler\* version 19.43 provided by Microsoft Visual Studio\* 2022 version 17.13
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.21 or higher is required to build using Microsoft Visual Studio\* 2022.
 
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
