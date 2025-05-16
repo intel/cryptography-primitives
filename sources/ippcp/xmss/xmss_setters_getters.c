@@ -349,7 +349,7 @@ IPPFUN(IppStatus, ippsXMSSKeyGenBufferGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDA
     Ipp32s n = params.n;
     Ipp32s len = params.len;
 
-    *pSize = (h + 1) * (n + 1) + 2 * len * n + 7 * n;
+    *pSize = (h + 1) * (n + 1) + 2 * len * n + 7 * n + ADRS_SIZE;
     return status;
 }
 

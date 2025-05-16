@@ -25,6 +25,8 @@
  *    out      resulted array of bytes
  */
 
+#define ADRS_SIZE 32
+
 __IPPCP_INLINE void cp_to_byte(Ipp8u* out, Ipp32s outlen, Ipp32u in)
 {
     /* Iterate over out in decreasing order, for big-endianness. */

@@ -89,13 +89,13 @@ IPPFUN(IppStatus, ippsXMSSSign,( const Ipp8u* pMsg,
 // +-----------------------------------------------------+
 // | keyAndMask                                 (32 bits)|
 // +-----------------------------------------------------+
-    Ipp8u adrs[32] = { 0, 0, 0, 0,             //  0; 4
-                       0, 0, 0, 0, 0, 0, 0, 0, //  4; 12
-                       0, 0, 0, 0,             // 12; 16
-                       0, 0, 0, 0,             // 16; 20
-                       0, 0, 0, 0,             // 20; 24
-                       0, 0, 0, 0,             // 24; 28
-                       0, 0, 0, 0              // 28; 32
+    Ipp8u adrs[ADRS_SIZE] = { 0, 0, 0, 0,             //  0; 4
+                              0, 0, 0, 0, 0, 0, 0, 0, //  4; 12
+                              0, 0, 0, 0,             // 12; 16
+                              0, 0, 0, 0,             // 16; 20
+                              0, 0, 0, 0,             // 20; 24
+                              0, 0, 0, 0,             // 24; 28
+                              0, 0, 0, 0              // 28; 32
     };
     // idx
     pSign->idx = pPrvKey->idx;
@@ -133,7 +133,7 @@ IPPFUN(IppStatus, ippsXMSSSign,( const Ipp8u* pMsg,
     }
 
     // pOTSSign
-    cp_to_byte(adrs, 32, 0);
+    cp_to_byte(adrs, ADRS_SIZE, 0);
     cp_xmss_set_tree_type(adrs, /*OTS hash*/ 0);
     cp_xmss_set_ots_address(adrs, /*setOTSAddress*/ pPrvKey->idx);
     retCode = cp_xmss_WOTS_sign(pMsg_, pPrvKey->pSecretSeed, pSign->pOTSSign, pPrvKey->pPublicSeed, adrs, temp_buf, &params);

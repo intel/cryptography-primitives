@@ -117,7 +117,7 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_ltree, (Ipp8u* pk, Ipp8u* seed, Ipp8u* adrs, Ipp
  * We furthermore assume that the height of a node is stored alongside
  * a node’s value (an n-byte string) on the stack.
  *
- * temp_buf size is (h + 1) * (n + 1) + 2 * len * n + 7 * n bytes at least.
+ * temp_buf size is (h + 1) * (n + 1) + 2 * len * n + 7 * n + 32 bytes at least.
  *
  */
 IPP_OWN_DEFN(IppStatus, cp_xmss_tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeyState* pSecretKey, Ipp8u* adrs,
@@ -135,16 +135,16 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeySt
     // Note: there is no overflow since the maximum value for h is 20 according to the Spec
     for(Ipp32u i = 0; i < (Ipp32u)(1 << h); ++i) {
         // generate OTS public key
-        cp_to_byte(adrs, 32, 0);
+        cp_to_byte(adrs, ADRS_SIZE, 0);
         cp_xmss_set_tree_type(adrs, /*OTS hash*/ 0);
         cp_xmss_set_ots_address(adrs, i);
         node = stack + (h + 1) * n; // size: len * n
         temp_node = node + len_n;
-        retCode = cp_xmss_WOTS_genPK(pSecretKey->pSecretSeed, node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n
+        retCode = cp_xmss_WOTS_genPK(pSecretKey->pSecretSeed, node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n + 32
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         // call ltree
-        cp_to_byte(adrs, 32, 0);
+        cp_to_byte(adrs, ADRS_SIZE, 0);
         cp_xmss_set_tree_type(adrs, /*L-tree*/ 1);
         cp_xmss_set_ltree_address(adrs, i);
         retCode = cp_xmss_ltree(node, pSecretKey->pPublicSeed, adrs, temp_node, params); // size: 7 * n
@@ -155,7 +155,7 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_tree_hash, (Ipp8u isKeyGen, IppsXMSSPrivateKeySt
         }
 
         // calculate a root of sub-tree
-        cp_to_byte(adrs, 32, 0);
+        cp_to_byte(adrs, ADRS_SIZE, 0);
         cp_xmss_set_tree_type(adrs, /*hash tree*/ 2);
         cp_xmss_set_tree_height(adrs, 0);
         cp_xmss_set_tree_index_32(adrs, i);

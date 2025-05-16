@@ -67,7 +67,7 @@ IPP_OWN_DEFN(void, cp_xmss_base_w, (const Ipp8u* X, Ipp32s out_len, Ipp8u* basew
  *    key          n-byte key for the hash function
  *    msg          byte array
  *    msgLen       length of msg
- *    temp_buf     temporary memory (size is 3 * n bytes at least)
+ *    temp_buf     temporary memory (size is 2 * n + msgLen bytes at least)
  *    params       WOTS parameters (w, log2_w, n, len, len_1, hash_method)
  *
  * Output parameters:
@@ -91,10 +91,9 @@ IPP_OWN_DEFN(IppStatus, cp_do_xmss_hash, (Ipp32u padding_id, const Ipp8u* key,
  * Hash(toByte(3, n) || key || msg)
  *
  * Input parameters:
- *    padding_id   32-byte value that is used as a padding value for a hash function
  *    key          n-byte key for the hash function
  *    msg          32-byte array
- *    temp_buf     temporary memory (size is 3 * n bytes at least)
+ *    temp_buf     temporary memory (size is 2 * n + 32 bytes at least)
  *    params       WOTS parameters (w, log2_w, n, len, len_1, hash_method)
  *
  * Output parameters:
@@ -102,7 +101,29 @@ IPP_OWN_DEFN(IppStatus, cp_do_xmss_hash, (Ipp32u padding_id, const Ipp8u* key,
  */
 
 IPP_OWN_DEFN(IppStatus, cp_xmss_prf, (const Ipp8u* key, const Ipp8u* msg, Ipp8u* out, Ipp8u* temp_buf, const cpWOTSParams* params)) {
-    return cp_do_xmss_hash(/*prf function padding id*/ 3, key, msg, /*bit size of index*/32, out, temp_buf, params);
+    return cp_do_xmss_hash(/*prf function padding id*/ 3, key, msg, /*byte size of index*/ADRS_SIZE, out, temp_buf, params);
+}
+
+/*
+ * Generates pseudorandom output of length n from an n-byte key and a 32-byte index
+ * using hash functions for key generation only as follows
+ * Hash(toByte(4, n) || key || msg)
+ *
+ * Input parameters:
+ *    key          n-byte key for the hash function
+ *    msg          byte array
+ *    msgLen       length of msg
+ *    temp_buf     temporary memory (size is 2 * n + msgLen bytes at least)
+ *    params       WOTS parameters (w, log2_w, n, len, len_1, hash_method)
+ *
+ * Output parameters:
+ *    out          resulted n-byte array
+ */
+
+IPP_OWN_DEFN(IppStatus, cp_xmss_prf_keygen, (const Ipp8u* key, const Ipp8u* msg,
+                                             Ipp32s msgLen, Ipp8u* out,
+                                             Ipp8u* temp_buf, const cpWOTSParams* params)) {
+    return cp_do_xmss_hash(/*prf_keygen function padding id*/ 4, key, msg, msgLen, out, temp_buf, params);
 }
 
 /*
@@ -148,6 +169,7 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_chain, (Ipp8u* X, Ipp8u i, Ipp8u s, Ipp8u* pSeed
         retCode = cp_do_xmss_hash(/*F function padding id*/ 0, key, out, params->n, out, temp_buf + params->n, params);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
+    cp_xmss_set_hash_address(adrs, 0);
     return retCode;
 }
 
@@ -217,16 +239,38 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_WOTS_pkFromSig, (const Ipp8u* M, Ipp8u* sig, Ipp
 
 IPP_OWN_DEFN(IppStatus, cp_xmss_rand_num, (Ipp8u* out, Ipp32s byteSize,
                 IppBitSupplier rndFunc, void* pRndParam)) {
+
+    int bitSize = byteSize * /*bit size of 1 byte*/ 8;
     if(rndFunc == NULL) {
-        return ippsPRNGenRDRAND((Ipp32u *)out, byteSize * /*bit size of 1 byte*/ 8, pRndParam);
+        return ippsPRNGenRDRAND((Ipp32u *)out, bitSize, pRndParam);
     }
-    return rndFunc((Ipp32u *)out, byteSize * /*bit size of 1 byte*/ 8, pRndParam);
+    return rndFunc((Ipp32u *)out, bitSize, pRndParam);
+}
+
+/*
+ * Generates the WOTS+ secret key.
+ *
+ * temp_buf size is (n + 32 + 2 * n + n + 32 = 4 * n + 64) bytes at least.
+ *
+ * Output parameters:
+ *    out   resulted n bytes array that contains WOTS+ secret key
+ *
+ */
+IPP_OWN_DEFN(IppStatus, cp_xmss_WOTS_genSK, (Ipp8u* pSecretSeed,
+                                             Ipp8u* pPublicSeed, Ipp8u* adrs, Ipp8u* out,
+                                             Ipp8u* temp_buf, const cpWOTSParams* params)) {
+    Ipp32s n = params->n;
+    Ipp8u* temp_for_prf = temp_buf + (n + ADRS_SIZE);
+    // sk[i] = PRFkeygen(S_XMSS, SEED || ADRS);
+    CopyBlock(pPublicSeed, temp_buf, n);
+    CopyBlock(adrs, temp_buf + n, ADRS_SIZE);
+    return cp_xmss_prf_keygen(pSecretSeed, temp_buf, n + ADRS_SIZE, out, temp_for_prf, params);
 }
 
 /*
  * Generates the WOTS+ public key.
  *
- * temp_buf size is (7 * n) bytes at least.
+ * temp_buf size is (7 * n + 32) bytes at least.
  *
  * Output parameters:
  *    pPublicKey   resulted len * n bytes array that contains WOTS+ public key
@@ -238,22 +282,20 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_WOTS_genPK, (Ipp8u* pSecretSeed, Ipp8u* pPublicK
     Ipp32s n = params->n;
     Ipp32s len = params->len;
     Ipp8u* sk = temp_buf;
-    Ipp8u* i_32 = temp_buf + n;
     for (Ipp32s i = 0; i < len; i++ ) {
         // generate secret key from secret seed
-        cp_to_byte(i_32, n, (Ipp32u)i);
-        retCode = cp_xmss_prf(pSecretSeed, i_32, sk, temp_buf + 2 * n, params);
+        cp_xmss_set_chain_address(adrs, (Ipp8u)i);
+        retCode = cp_xmss_WOTS_genSK(pSecretSeed, pPublicSeed, adrs, sk, temp_buf + n, params); // 4 * n + 64
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         // chaining
-        cp_xmss_set_chain_address(adrs, (Ipp8u)i);
         retCode = cp_xmss_chain(sk,
                         (Ipp8u) 0,
                         (Ipp8u) (params->w - 1),
                         pPublicSeed,
                         adrs,
                         pPublicKey + (i * n),
-                        temp_buf + 2 * n, params
+                        temp_buf + n, params
                     );
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
@@ -295,22 +337,21 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_WOTS_sign, (const Ipp8u* M, Ipp8u* pSecretSeed, 
     cp_xmss_base_w(msg + len, len_2, msg + len_1, params);
 
     Ipp8u* sk = temp_buf + len;
-    Ipp8u* i_32 = temp_buf + (len + n);
-    for (Ipp32s i = 0; i < len; i++ ) {
+    for (Ipp32s i = 0; i < len; i++) {
         // generate secret key from secret seed
-        cp_to_byte(i_32, n, (Ipp32u)i);
-        retCode = cp_xmss_prf(pSecretSeed, i_32, sk, temp_buf + (len + 2 * n), params);
+        // sk[j] = PRFkeygen(S_XMSS, SEED || ADRS);
+        cp_xmss_set_chain_address(adrs, (Ipp8u)i);
+        retCode = cp_xmss_WOTS_genSK(pSecretSeed, pPublicSeed, adrs, sk, sk + n, params); // 4 * n + 64
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
         // chaining
-        cp_xmss_set_chain_address(adrs, (Ipp8u)i);
         retCode = cp_xmss_chain(sk,
                         (Ipp8u) 0,
                         msg[i],
                         pPublicSeed,
                         adrs,
                         pSignature  + (i * n),
-                        temp_buf + (len + 2 * n), params
+                        sk + n, params
                     );
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }

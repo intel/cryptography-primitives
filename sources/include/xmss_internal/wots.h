@@ -61,6 +61,17 @@ IPP_OWN_DECL(IppStatus, cp_xmss_prf, (const Ipp8u* key,
                                       const cpWOTSParams* params))
 /* clang-format on */
 
+
+#define cp_xmss_prf_keygen OWNAPI(cp_xmss_prf_keygen)
+IPP_OWN_DECL(IppStatus,
+             cp_xmss_prf_keygen,
+             (const Ipp8u* key,
+              const Ipp8u* msg,
+              Ipp32s msgLen,
+              Ipp8u* out,
+              Ipp8u* temp_buf,
+              const cpWOTSParams* params))
+
 #define cp_xmss_chain OWNAPI(cp_xmss_chain)
 /* clang-format off */
 IPP_OWN_DECL(IppStatus, cp_xmss_chain, (Ipp8u* X,
@@ -92,6 +103,16 @@ IPP_OWN_DECL(IppStatus, cp_xmss_rand_num, (Ipp8u* out,
                                            void* pRndParam))
 /* clang-format on */
 
+#define cp_xmss_WOTS_genSK OWNAPI(cp_xmss_WOTS_genSK)
+/* clang-format off */
+IPP_OWN_DECL(IppStatus, cp_xmss_WOTS_genSK, (Ipp8u* pSecretSeed,
+                                             Ipp8u* pPublicSeed,
+                                             Ipp8u* adrs,
+                                             Ipp8u* out,
+                                             Ipp8u* pubSeed_adrs,
+                                             const cpWOTSParams* params))
+
+/* clang-format on */
 #define cp_xmss_WOTS_genPK OWNAPI(cp_xmss_WOTS_genPK)
 /* clang-format off */
 IPP_OWN_DECL(IppStatus, cp_xmss_WOTS_genPK, (Ipp8u* pSecretSeed,
