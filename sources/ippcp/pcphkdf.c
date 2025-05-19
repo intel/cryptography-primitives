@@ -101,7 +101,7 @@ IPPFUN(IppStatus,
 
         // Expand key okm = HKDF-Expand(PRK, info, L)
 
-        // Calculate T1 = hash(info | 1)
+        // Calculate T1 = hmac_hash(info | 1)
         int tmsg_len = info_len + 1;
         CopyBlock(info, &tmsg[0], info_len);
         tmsg[info_len] = 1;
@@ -114,7 +114,7 @@ IPPFUN(IppStatus,
         int okm_left       = okm_len - okm_update_len;
         CopyBlock(tmsg, okm, okm_update_len);
 
-        // Calculate Tn = hash(T(n-1) | info | i)
+        // Calculate Tn = hmac_hash(T(n-1) | info | i)
         CopyBlock(info, &tmsg[hash_len], info_len);
         tmsg_len = hash_len + info_len + 1;
 
@@ -130,6 +130,9 @@ IPPFUN(IppStatus,
         }
 
     exit:
+        PurgeBlock(prk, sizeof(prk));
+        PurgeBlock(tmsg, sizeof(tmsg));
+
         return sts;
     }
 }
