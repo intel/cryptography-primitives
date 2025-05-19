@@ -15,7 +15,7 @@
 *************************************************************************/
 
 #include <internal/ecnist/ifma_ecpoint_p256.h>
-#include <internal/rsa/ifma_rsa_arith.h>
+#include <internal/common/memory_clear.h>
 #include <internal/ecnist/ifma_ecprecomp4_p256.h>
 
 #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
@@ -375,6 +375,11 @@ static void MB_FUNC_NAME(extract_point_)(P256_POINT* r, const P256_POINT tbl[], 
     MB_FUNC_NAME(mov_FE256_)(r->Z, R.Z);
 }
 
+/*
+ * Computes point r = [scalar]p
+ *
+ * Important: input point p must not be a secret value.
+ */
 void MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(P256_POINT* r,
                                                const P256_POINT* p,
                                                const U64 scalar[])

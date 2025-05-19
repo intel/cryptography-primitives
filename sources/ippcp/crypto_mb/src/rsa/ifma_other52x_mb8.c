@@ -17,6 +17,7 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_math.h>
 #include <internal/rsa/ifma_rsa_arith.h>
+#include <internal/common/memory_clear.h>
 
 #include <assert.h>
 
@@ -26,19 +27,6 @@
 #define BITSIZE_2048 (2048)
 
 #if (_MBX >= _MBX_K1)
-
-__NOINLINE
-void zero_mb8(int64u (*out)[8], int len)
-{
-#if defined(__GNUC__)
-    // Avoid dead code elimination for GNU compilers
-    ASM("");
-#endif
-    __m512i T = _mm512_setzero_si512();
-    int i;
-    for (i = 0; i < len; i++)
-        _mm512_storeu_si512(out[i], T);
-}
 
 void copy_mb8(int64u out[][8], const int64u inp[][8], int len)
 {
@@ -2445,21 +2433,6 @@ __MBX_INLINE __m256d _mm256_cvtepu64_pd_wrapper(__m256i A)
     const __m128d h = _mm_unpacklo_pd(hi0, hi1);
 
     return _mm256_insertf128_pd(_mm256_castpd128_pd256(l), h, 1);
-}
-
-__NOINLINE
-void zero_mb4(void* out, int len)
-{
-#if defined(__GNUC__)
-    // Avoid dead code elimination for GNU compilers
-    ASM("");
-#endif
-    const __m256i T = _mm256_setzero_si256();
-    __m256i* p_out  = (__m256i*)out;
-    int i;
-
-    for (i = 0; i < len; i++)
-        _mm256_storeu_si256(p_out++, T);
 }
 
 void copy_mb4(int64u out[][4], const int64u inp[][4], int len)

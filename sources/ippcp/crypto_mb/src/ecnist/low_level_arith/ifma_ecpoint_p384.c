@@ -15,7 +15,7 @@
 *************************************************************************/
 
 #include <internal/ecnist/ifma_ecpoint_p384.h>
-#include <internal/rsa/ifma_rsa_arith.h>
+#include <internal/common/memory_clear.h>
 
 #if (_MBX >= _MBX_K1)
 
@@ -377,6 +377,11 @@ static void MB_FUNC_NAME(extract_point_)(P384_POINT* r, const P384_POINT tbl[], 
     MB_FUNC_NAME(mov_FE384_)(r->Z, R.Z);
 }
 
+/*
+ * Computes point r = [scalar]p
+ *
+ * Important: input point p must not be a secret value.
+ */
 void MB_FUNC_NAME(ifma_ec_nistp384_mul_point_)(P384_POINT* r,
                                                const P384_POINT* p,
                                                const U64 scalar[])

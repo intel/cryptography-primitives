@@ -19,7 +19,7 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_cvt52.h>
 #include <internal/ecnist/ifma_ecpoint_p521.h>
-#include <internal/rsa/ifma_rsa_arith.h>
+#include <internal/common/memory_clear.h>
 
 #if (_MBX >= _MBX_K1)
 

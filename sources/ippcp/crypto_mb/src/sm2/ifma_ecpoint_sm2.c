@@ -15,7 +15,7 @@
 *************************************************************************/
 
 #include <internal/sm2/ifma_ecpoint_sm2.h>
-#include <internal/rsa/ifma_rsa_arith.h>
+#include <internal/common/memory_clear.h>
 #include <internal/sm2/ifma_arith_sm2.h>
 
 #if (_MBX >= _MBX_K1)
@@ -372,6 +372,11 @@ static void MB_FUNC_NAME(extract_point_)(SM2_POINT* r, const SM2_POINT tbl[], U6
     MB_FUNC_NAME(mov_FESM2_)(r->Z, R.Z);
 }
 
+/*
+ * Computes point r = [scalar]p
+ *
+ * Important: input point p must not be a secret value.
+ */
 void MB_FUNC_NAME(ifma_ec_sm2_mul_point_)(SM2_POINT* r, const SM2_POINT* p, const U64 scalar[])
 {
     /* pre-computed table */

@@ -19,7 +19,6 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_cvt52.h>
 #include <internal/sm2/ifma_ecpoint_sm2.h>
-#include <internal/rsa/ifma_rsa_arith.h>
 
 #ifndef BN_OPENSSL_DISABLE
 #include <openssl/bn.h>

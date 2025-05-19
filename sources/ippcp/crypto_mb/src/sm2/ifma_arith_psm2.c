@@ -15,6 +15,7 @@
 *************************************************************************/
 
 #include <internal/sm2/ifma_arith_sm2.h>
+#include <internal/common/memory_clear.h>
 
 #if (_MBX >= _MBX_K1)
 
@@ -281,6 +282,13 @@ void MB_FUNC_NAME(ifma_aminv52_psm2_)(U64 r[], const U64 z[])
     sqr_psm2_x32(r, r);
     /* z ^ FFFFFFFE FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF 00000000 FFFFFFFF FFFFFFFD */
     mul_psm2(r, r, D);
+
+    /* Clear the temporary buffers with the powers of the input z (z can be a secret value) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])tmp1, sizeof(tmp1) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])tmp2, sizeof(tmp2) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])D, sizeof(D) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])E, sizeof(E) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])F, sizeof(F) / sizeof(U64));
 }
 
 void MB_FUNC_NAME(ifma_reduce52_psm2_)(U64 R[], const U64 A[])

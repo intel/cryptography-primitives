@@ -15,6 +15,7 @@
 *************************************************************************/
 
 #include <internal/ecnist/ifma_arith_p384.h>
+#include <internal/common/memory_clear.h>
 
 #if (_MBX >= _MBX_K1)
 
@@ -400,6 +401,13 @@ void MB_FUNC_NAME(ifma_aminv52_p384_)(U64 r[], const U64 z[])
         = z^xFFFFFFFFFFFFFFFF.FFFFFFFFFFFFFFFF.FFFFFFFFFFFFFFFFF.FFFFFFFFFFFFFFFE.FFFFFFFF00000000.00000000FFFFFFFD */
     fe52_sqr_pwr(v, v, 64);
     fe52_mul(r, v, zD);
+
+    /* Clear the temporary buffers with the powers of the input z (z can be a secret value) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])u, sizeof(u) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])v, sizeof(v) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])zD, sizeof(zD) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])zE, sizeof(zE) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])zF, sizeof(zF) / sizeof(U64));
 }
 
 /*=====================================================================

@@ -15,6 +15,7 @@
 *************************************************************************/
 
 #include <internal/ecnist/ifma_arith_p256.h>
+#include <internal/common/memory_clear.h>
 
 #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
 
@@ -387,6 +388,16 @@ void MB_FUNC_NAME(ifma_aminv52_p256_)(U64 r[], const U64 z[])
 
     /* r = tmp1*tmp2 = z^(2^256 - 2^224 + 2^192) * z^(2^96 - 3) = z^(2^256 - 2^224 + 2^192 + 2^96 - 3) */
     mul_p256(r, tmp1, tmp2);
+
+    /* Clear the temporary buffers with the powers of the input z (z can be a secret value) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])tmp1, sizeof(tmp1) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])tmp2, sizeof(tmp2) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e2, sizeof(e2) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e4, sizeof(e4) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e8, sizeof(e8) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e16, sizeof(e16) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e32, sizeof(e32) / sizeof(U64));
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e64, sizeof(e64) / sizeof(U64));
 }
 
 /*=====================================================================

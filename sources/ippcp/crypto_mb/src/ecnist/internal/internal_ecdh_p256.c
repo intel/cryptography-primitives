@@ -19,7 +19,7 @@
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_cvt52.h>
 #include <internal/ecnist/ifma_ecpoint_p256.h>
-#include <internal/rsa/ifma_rsa_arith.h>
+#include <internal/common/memory_clear.h>
 
 #ifndef BN_OPENSSL_DISABLE
 #include <openssl/bn.h>
@@ -61,7 +61,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdh_)(int8u* pa_shared_key[MB_WIDTH],
                                       MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
-        /* Сlear copy of the secret keys */
+        /* Clear copy of the secret keys */
         MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
         return status;
     }
@@ -88,12 +88,12 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdh_)(int8u* pa_shared_key[MB_WIDTH],
     status |= MBX_STS_BY_MASK_GENERIC(status, not_on_curve_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
-        /* Сlear copy of the secret keys */
+        /* Clear copy of the secret keys */
         MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
         return status;
     }
 
-    /* Сompute R = [secretz]*P */
+    /* Compute R = [secretz]*P */
     P256_POINT R;
     MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(&R, &P, secretz);
 
@@ -158,7 +158,7 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
                                       MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
-        /* Сlear copy of the secret keys */
+        /* Clear copy of the secret keys */
         MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
         return status;
     }
@@ -187,12 +187,12 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
     status |= MBX_STS_BY_MASK_GENERIC(status, not_on_curve_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
     if (!MBX_IS_ANY_OK_STS(status)) {
-        /* Сlear copy of the secret keys */
+        /* Clear copy of the secret keys */
         MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
         return status;
     }
 
-    /* Сompute R = [secretz]*P */
+    /* Compute R = [secretz]*P */
     P256_POINT R;
     MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(&R, &P, secretz);
 

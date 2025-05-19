@@ -27,6 +27,7 @@
 
 #include <immintrin.h>
 #include <internal/common/ifma_defs.h>
+#include <internal/common/memory_clear.h>
 
 #if (SIMD_LEN == 512)
 /* clang-format off */

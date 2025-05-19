@@ -15,6 +15,7 @@
 *************************************************************************/
 
 #include <internal/ecnist/ifma_arith_p256.h>
+#include <internal/common/memory_clear.h>
 
 #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
 
@@ -132,6 +133,9 @@ void MB_FUNC_NAME(ifma_aminv52_n256_)(U64 r[], const U64 z[])
         if (lo)
             mul_n256(r, r, pwr_z_Tbl[lo]);
     }
+
+    /* Clear the table with the powers of the input z (z can be a secret value) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])pwr_z_Tbl, sizeof(pwr_z_Tbl) / sizeof(U64));
 }
 
 /*=====================================================================

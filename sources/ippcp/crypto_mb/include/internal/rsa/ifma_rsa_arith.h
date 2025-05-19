@@ -149,8 +149,7 @@ EXTERN_C void AMS52x79_diagonal_mb8(int64u* out_mb8,
                                     const int64u* inpM_mb8,
                                     const int64u* k0_mb8);
 
-// clear/copy mb8 buffer
-EXTERN_C void zero_mb8(int64u (*redOut)[8], int len);
+/* Copy mb8 buffer */
 EXTERN_C void copy_mb8(int64u out[][8], const int64u inp[][8], int len);
 
 // other 2^52 radix arith functions
@@ -427,8 +426,7 @@ EXTERN_C void AMS5x52x40_diagonal_mb4(int64u* out_mb4,
                                       const int64u* inpM_mb4,
                                       const int64u* k0_mb4);
 
-// clear/copy mb8 buffer
-EXTERN_C void zero_mb4(void* redOut, int len);
+/* Copy mb4 buffer */
 EXTERN_C void copy_mb4(int64u out[][4], const int64u inp[][4], int len);
 
 // other 2^52 radix arith functions

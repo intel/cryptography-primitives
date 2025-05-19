@@ -15,6 +15,7 @@
 *************************************************************************/
 
 #include <internal/sm2/ifma_arith_sm2.h>
+#include <internal/common/memory_clear.h>
 
 #if (_MBX >= _MBX_K1)
 
@@ -127,6 +128,9 @@ void MB_FUNC_NAME(ifma_aminv52_nsm2_)(U64 r[], const U64 z[])
         if (lo)
             mul_nsm2(r, r, pwr_z_Tbl[lo]);
     }
+
+    /* Clear the table with the powers of the input z (z can be a secret value) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])pwr_z_Tbl, sizeof(pwr_z_Tbl) / sizeof(U64));
 }
 
 /*=====================================================================

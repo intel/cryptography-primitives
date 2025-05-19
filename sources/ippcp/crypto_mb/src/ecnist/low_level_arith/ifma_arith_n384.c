@@ -15,6 +15,7 @@
 *************************************************************************/
 
 #include <internal/ecnist/ifma_arith_p384.h>
+#include <internal/common/memory_clear.h>
 
 #if (_MBX >= _MBX_K1)
 
@@ -408,6 +409,9 @@ void MB_FUNC_NAME(ifma_aminv52_n384_)(U64 r[], const U64 z[])
     fe52_sqr_pwr(v, v, 64 * 3);
     /* r = z^(0xFFFFFFFFFFFFFFFF.FFFFFFFFFFFFFFFF.FFFFFFFFFFFFFFFF.c7634d81f4372ddf.581a0db248b0a77a.ecec196accc52973) */
     fe52_mul(r, v, lexp);
+
+    /* Clear the table with the powers of the input z (z can be a secret value) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])pwr_z_Tbl, sizeof(pwr_z_Tbl) / sizeof(U64));
 }
 
 /*=====================================================================
