@@ -56,7 +56,7 @@ IPPFUN(IppStatus, ippsHashPack_rmf, (const IppsHashState_rmf* pState, Ipp8u* pBu
     IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
 
     int context_size = 0;
-    ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pState));
+    ippsHashGetSizeOptimal_rmf(&context_size, HASH_METHOD(pState));
 
     /* test buffer length */
     IPP_BADARG_RET(context_size > bufSize, ippStsNoMemErr);

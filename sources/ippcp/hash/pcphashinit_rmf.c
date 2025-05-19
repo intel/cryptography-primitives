@@ -51,7 +51,7 @@ IPPFUN(IppStatus, ippsHashInit_rmf, (IppsHashState_rmf * pState, const IppsHashM
     /* test ctx pointers */
     IPP_BAD_PTR2_RET(pState, pMethod);
     int size = 0;
-    ippsOptimalHashGetSize_rmf(&size, pMethod);
+    ippsHashGetSizeOptimal_rmf(&size, pMethod);
     PadBlock(0, pState, size);
     HASH_METHOD(pState) = pMethod;
     HASH_SET_ID(pState, idCtxHash);

@@ -74,7 +74,7 @@ IPPFUN(IppStatus, ippsHashGetTag_rmf, (Ipp8u * pTag, int tagLen, const IppsHashS
 
         /* calculate the rest of hash if any and put it to user's buffer */
         int digestLenProcessed = 0;
-        hash_squeeze(pTag, hash, method, method->hashLen, &digestLenProcessed);
+        cp_hash_squeeze(pTag, hash, method, method->hashLen, &digestLenProcessed);
 
         return ippStsNoErr;
     }

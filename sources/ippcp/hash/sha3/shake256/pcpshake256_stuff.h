@@ -23,10 +23,10 @@
 #if !defined(_PCP_SHAKE256_STUFF_H)
 #define _PCP_SHAKE256_STUFF_H
 
-IPP_OWN_DEFN(static void, shake256_hashUpdate, (void* pHash, const Ipp8u* pMsg, int msgLen))
+IPP_OWN_DEFN(static void, cp_shake256_hashUpdate, (void* pHash, const Ipp8u* pMsg, int msgLen))
 {
     int block_size = MBS_SHAKE256;
-    UpdateSHA3(pHash, pMsg, msgLen, &block_size);
+    cpUpdateSHA3(pHash, pMsg, msgLen, &block_size);
 }
 
 #endif /* _PCP_SHAKE256_STUFF_H */

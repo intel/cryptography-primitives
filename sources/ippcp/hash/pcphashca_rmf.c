@@ -78,4 +78,7 @@ IPP_OWN_DEFN(void, cpFinalize_rmf, (DigestSHA512 pHash,
 
     /* complete hash computation */
     method->hashUpdate(pHash, buffer, bufferLen);
+
+    // zeroization
+    PurgeBlock(buffer, bufferLen);
 }

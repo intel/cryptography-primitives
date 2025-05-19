@@ -224,7 +224,7 @@ EXTERN (ippsHashMethod_SHAKE128)
 EXTERN (ippsHashMethod_SHAKE256)
 EXTERN (ippsHashMethodGetInfo)
 EXTERN (ippsHashGetSize_rmf)
-EXTERN (ippsOptimalHashGetSize_rmf)
+EXTERN (ippsHashGetSizeOptimal_rmf)
 EXTERN (ippsHashInit_rmf)
 EXTERN (ippsHashPack_rmf)
 EXTERN (ippsHashUnpack_rmf)
@@ -794,7 +794,7 @@ VERSION {
    ippsHashMethod_SHAKE256;
    ippsHashMethodGetInfo;
    ippsHashGetSize_rmf;
-   ippsOptimalHashGetSize_rmf;
+   ippsHashGetSizeOptimal_rmf;
    ippsHashInit_rmf;
    ippsHashPack_rmf;
    ippsHashUnpack_rmf;

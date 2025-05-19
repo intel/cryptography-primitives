@@ -65,7 +65,7 @@ IPPFUN(IppStatus, ippsHashFinal_rmf, (Ipp8u * pMD, IppsHashState_rmf* pState))
 
         /* calculate the rest of hash if any and put it to user's buffer */
         int digestLenProcessed = 0;
-        hash_squeeze(pMD, HASH_VALUE(pState), method, method->hashLen, &digestLenProcessed);
+        cp_hash_squeeze(pMD, HASH_VALUE(pState), method, method->hashLen, &digestLenProcessed);
 
         /* re-init hash value */
         HASH_BUFFIDX(pState) = 0;

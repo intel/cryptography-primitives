@@ -81,7 +81,7 @@ IPPFUN(IppStatus, ippsHashMessage_rmf, (const Ipp8u* pMsg,
 
         /* calculate the rest of hash if any and put it to user's buffer */
         int digestLenProcessed = 0;
-        hash_squeeze(pMD, hash, pMethod, pMethod->hashLen, &digestLenProcessed);
+        cp_hash_squeeze(pMD, hash, pMethod, pMethod->hashLen, &digestLenProcessed);
 
         return ippStsNoErr;
     }

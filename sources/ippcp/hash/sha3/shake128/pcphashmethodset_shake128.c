@@ -42,9 +42,9 @@ IPPFUN(IppStatus, ippsHashMethodSet_SHAKE128, (IppsHashMethod * pMethod, int dig
         pMethod->hashLen = digestBitsize / 8, pMethod->msgBlkSize = MBS_SHAKE128;
         pMethod->msgLenRepSize = 0;
         pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
-        pMethod->hashInit      = sha3_hashInit;
-        pMethod->hashUpdate    = shake128_hashUpdate;
-        pMethod->hashOctStr    = sha3_hashOctString;
+        pMethod->hashInit      = cp_sha3_hashInit;
+        pMethod->hashUpdate    = cp_shake128_hashUpdate;
+        pMethod->hashOctStr    = cp_sha3_hashOctString;
         pMethod->msgLenRep     = NULL;
 
         return ippStsNoErr;

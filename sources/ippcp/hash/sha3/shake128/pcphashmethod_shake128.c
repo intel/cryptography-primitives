@@ -53,9 +53,9 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHAKE128, (int digestBitsize))
     // don't merge `method` initialization with function pointers assignment
     // to prevent relocations (indirect calls) to be generated in the binary
     method.hashLen    = digestBitsize / 8;
-    method.hashInit   = sha3_hashInit;
-    method.hashUpdate = shake128_hashUpdate;
-    method.hashOctStr = sha3_hashOctString;
+    method.hashInit   = cp_sha3_hashInit;
+    method.hashUpdate = cp_shake128_hashUpdate;
+    method.hashOctStr = cp_sha3_hashOctString;
     method.msgLenRep  = NULL;
 
     return &method;

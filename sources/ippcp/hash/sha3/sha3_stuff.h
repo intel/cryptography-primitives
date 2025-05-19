@@ -32,16 +32,16 @@
 
 #define KECCAK_ROUNDS 24
 
-#define keccak_kernel OWNAPI(keccak_kernel)
-IPP_OWN_DECL(void, keccak_kernel, (Ipp64u state[25]))
+#define cp_keccak_kernel OWNAPI(cp_keccak_kernel)
+IPP_OWN_DECL(void, cp_keccak_kernel, (Ipp64u state[25]))
 
-#define UpdateSHA3 OWNAPI(UpdateSHA3)
-IPP_OWN_DECL(void, UpdateSHA3, (void* uniHash, const Ipp8u* mblk, int mlen, const void* pParam))
+#define cpUpdateSHA3 OWNAPI(cpUpdateSHA3)
+IPP_OWN_DECL(void, cpUpdateSHA3, (void* uniHash, const Ipp8u* mblk, int mlen, const void* pParam))
 
-#define sha3_hashInit OWNAPI(sha3_hashInit)
-IPP_OWN_DECL(void, sha3_hashInit, (void* pHash))
+#define cp_sha3_hashInit OWNAPI(cp_sha3_hashInit)
+IPP_OWN_DECL(void, cp_sha3_hashInit, (void* pHash))
 
-#define sha3_hashOctString OWNAPI(sha3_hashOctString)
-IPP_OWN_DECL(void, sha3_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
+#define cp_sha3_hashOctString OWNAPI(cp_sha3_hashOctString)
+IPP_OWN_DECL(void, cp_sha3_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
 
 #endif /* #if !defined(_SHA3_STUFF_H) */

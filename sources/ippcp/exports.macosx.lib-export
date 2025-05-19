@@ -218,7 +218,7 @@ _ippsHashMethod_SHAKE128
 _ippsHashMethod_SHAKE256
 _ippsHashMethodGetInfo
 _ippsHashGetSize_rmf
-_ippsOptimalHashGetSize_rmf
+_ippsHashGetSizeOptimal_rmf
 _ippsHashInit_rmf
 _ippsHashPack_rmf
 _ippsHashUnpack_rmf

@@ -23,7 +23,7 @@
 //
 //  Contents:
 //        ippsHashGetSize_rmf()
-//        ippsOptimalHashGetSize_rmf()
+//        ippsHashGetSizeOptimal_rmf()
 //
 */
 
@@ -55,7 +55,7 @@ IPPFUN(IppStatus, ippsHashGetSize_rmf, (int* pSize))
 }
 
 /*F*
-//    Name: ippsOptimalHashGetSize_rmf
+//    Name: ippsHashGetSizeOptimal_rmf
 //
 // Purpose: Returns size (bytes) of hash state depending on method.
 //
@@ -68,7 +68,7 @@ IPPFUN(IppStatus, ippsHashGetSize_rmf, (int* pSize))
 //    pMethod     pointer to hash method state
 //
 *F*/
-IPPFUN(IppStatus, ippsOptimalHashGetSize_rmf, (int* pSize, const IppsHashMethod* pMethod))
+IPPFUN(IppStatus, ippsHashGetSizeOptimal_rmf, (int* pSize, const IppsHashMethod* pMethod))
 {
     /* test pointers */
     IPP_BAD_PTR2_RET(pSize, pMethod);

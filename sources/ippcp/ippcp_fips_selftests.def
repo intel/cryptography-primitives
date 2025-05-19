@@ -226,7 +226,7 @@ ippsHashMethod_SHAKE128
 ippsHashMethod_SHAKE256
 ippsHashMethodGetInfo
 ippsHashGetSize_rmf
-ippsOptimalHashGetSize_rmf
+ippsHashGetSizeOptimal_rmf
 ippsHashInit_rmf
 ippsHashPack_rmf
 ippsHashUnpack_rmf

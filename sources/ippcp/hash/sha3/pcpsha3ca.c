@@ -21,15 +21,16 @@
 //     SHA3 Family General Functionality
 //
 //  Contents:
-//     keccak_kernel()
-//     UpdateSHA3()
-//     sha3_hashInit()
-//     sha3_hashOctString()
+//     cp_keccak_kernel()
+//     cpUpdateSHA3()
+//     cp_sha3_hashInit()
+//     cp_sha3_hashOctString()
 //
 */
 
 #include "hash/sha3/sha3_stuff.h"
 
+// FIPS PUB 202 - SHA3 Standard, Algorithm 5: rc(t)
 static const Ipp64u KECCAK_ROUND_CONSTANTS[KECCAK_ROUNDS] = {
     0x0000000000000001ULL, 0x0000000000008082ULL, 0x800000000000808aULL, 0x8000000080008000ULL,
     0x000000000000808bULL, 0x0000000080000001ULL, 0x8000000080008081ULL, 0x8000000000008009ULL,
@@ -53,7 +54,7 @@ static const Ipp64u KECCAK_RHO_OFFSETS[5 * 5] = {
 /* clang-format on */
 
 // Left-rotates a 64-bit lane by a specified amount
-__IPPCP_INLINE Ipp64u rotl64(Ipp64u lane, Ipp64u bits)
+__IPPCP_INLINE Ipp64u cp_rotl64(Ipp64u lane, Ipp64u bits)
 {
     // reduce rotation to max 63 bits to avoid losing bits
     bits %= 64;
@@ -61,7 +62,7 @@ __IPPCP_INLINE Ipp64u rotl64(Ipp64u lane, Ipp64u bits)
     return (lane << bits) | (lane >> (64 - bits));
 }
 
-IPP_OWN_DEFN(void, keccak_kernel, (Ipp64u state[5 * 5]))
+IPP_OWN_DEFN(void, cp_keccak_kernel, (Ipp64u state[5 * 5]))
 {
 
     for (int round = 0; round < KECCAK_ROUNDS; round++) {
@@ -80,7 +81,7 @@ IPP_OWN_DEFN(void, keccak_kernel, (Ipp64u state[5 * 5]))
             for (int i = 0; i < (5 * 5); i++) {
                 Ipp64u sheet_before        = sheet_xor[(i - 1 + 5) % 5];
                 Ipp64u sheet_after         = sheet_xor[(i + 1) % 5];
-                Ipp64u rotated_sheet_after = rotl64(sheet_after, 1);
+                Ipp64u rotated_sheet_after = cp_rotl64(sheet_after, 1);
 
                 state[i] = state[i] ^ sheet_before ^ rotated_sheet_after;
             }
@@ -88,7 +89,7 @@ IPP_OWN_DEFN(void, keccak_kernel, (Ipp64u state[5 * 5]))
 
         // FIPS PUB 202 - SHA-3 Standard, 3.2.2 Specification of rho
         for (int i = 0; i < (5 * 5); i++) {
-            state[i] = rotl64(state[i], KECCAK_RHO_OFFSETS[i]);
+            state[i] = cp_rotl64(state[i], KECCAK_RHO_OFFSETS[i]);
         }
 
         // FIPS PUB 202 - SHA-3 Standard, 3.2.3 Specification of pi
@@ -143,7 +144,7 @@ IPP_OWN_DEFN(void, keccak_kernel, (Ipp64u state[5 * 5]))
     }
 }
 
-IPP_OWN_DEFN(void, UpdateSHA3, (void* uniHash, const Ipp8u* mblk, int mlen, const void* pParam))
+IPP_OWN_DEFN(void, cpUpdateSHA3, (void* uniHash, const Ipp8u* mblk, int mlen, const void* pParam))
 {
     int i;
     int* block_size = (int*)pParam;
@@ -152,16 +153,16 @@ IPP_OWN_DEFN(void, UpdateSHA3, (void* uniHash, const Ipp8u* mblk, int mlen, cons
         for (i = 0; i < *block_size / 8; i++) {
             ((Ipp64u*)uniHash)[i] ^= ((Ipp64u*)mblk)[i];
         }
-        keccak_kernel(uniHash);
+        cp_keccak_kernel(uniHash);
         mblk += *block_size;
         mlen -= *block_size;
     }
 }
 
-IPP_OWN_DEFN(void, sha3_hashInit, (void* pHash)) { PadBlock(0, pHash, IPP_SHA3_STATE_BYTESIZE); }
+IPP_OWN_DEFN(void, cp_sha3_hashInit, (void* pHash)) { PadBlock(0, pHash, IPP_SHA3_STATE_BYTESIZE); }
 
 /* cut hash */
-IPP_OWN_DEFN(void, sha3_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
+IPP_OWN_DEFN(void, cp_sha3_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
 {
     CopyBlock(pHashVal, pMD, hashSize);
 }

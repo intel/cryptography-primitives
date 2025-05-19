@@ -63,7 +63,7 @@ IPPFUN(IppStatus, ippsHashDuplicate_rmf, (const IppsHashState_rmf* pSrcState,
 
     /* copy state */
     int context_size = 0;
-    ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pSrcState));
+    ippsHashGetSizeOptimal_rmf(&context_size, HASH_METHOD(pSrcState));
     CopyBlock(pSrcState, pDstState, context_size);
     HASH_SET_ID(pDstState, idCtxHash);
 

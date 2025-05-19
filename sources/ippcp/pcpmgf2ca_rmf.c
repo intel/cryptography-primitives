@@ -73,7 +73,7 @@ IPPFUN(IppStatus, ippsMGF2_rmf,(const Ipp8u* pSeed, int seedLen, Ipp8u* pMask, i
 
       /* check if enough memory is allocated for the context */
       int contextSize = 0;
-      ippsOptimalHashGetSize_rmf(&contextSize, pMethod);
+      ippsHashGetSizeOptimal_rmf(&contextSize, pMethod);
       IPP_BADARG_RET((MAX_HASH_RMF_CONTEXT_SIZE < contextSize), ippStsMemAllocErr);
 
       int i, outLen;

@@ -52,7 +52,7 @@ IPPFUN(IppStatus, ippsHashUnpack_rmf, (const Ipp8u* pBuffer, IppsHashState_rmf* 
     IPP_BAD_PTR2_RET(pState, pBuffer);
 
     int context_size = 0;
-    ippsOptimalHashGetSize_rmf(&context_size, HASH_METHOD(pState));
+    ippsHashGetSizeOptimal_rmf(&context_size, HASH_METHOD(pState));
     CopyBlock(pBuffer, pState, context_size);
     HASH_SET_ID(pState, idCtxHash);
 

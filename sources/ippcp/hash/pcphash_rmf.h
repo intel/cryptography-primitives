@@ -93,11 +93,11 @@ IPP_OWN_DECL(void, cpFinalize_rmf, (DigestSHA512 pHash,
 *  digestLenProcessed - (input/output) size of hash that was already squeezed (in bytes)
 *  digestLenProcessed < pMethod->msgBlkSize
 */
-void static hash_squeeze(Ipp8u* pMD,
-                         Ipp64u* hash,
-                         const IppsHashMethod* pMethod,
-                         int digestLen,
-                         int* digestLenProcessed)
+void static cp_hash_squeeze(Ipp8u* pMD,
+                            Ipp64u* hash,
+                            const IppsHashMethod* pMethod,
+                            int digestLen,
+                            int* digestLenProcessed)
 {
 
     Ipp8u* pMD_tmp   = pMD;
@@ -115,7 +115,7 @@ void static hash_squeeze(Ipp8u* pMD,
 
     if (cpIsSHAKEAlgID(pMethod->hashAlgId)) {
         while (digestLen > 0) {
-            keccak_kernel(hash);
+            cp_keccak_kernel(hash);
             msgBlkSize = pMethod->msgBlkSize;
             pMethod->hashOctStr(pMD_tmp, hash, IPP_MIN(digestLen, msgBlkSize));
             pMD_tmp += IPP_MIN(digestLen, msgBlkSize);

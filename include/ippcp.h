@@ -559,7 +559,7 @@ IPPAPI( IppStatus, ippsHashStateMethodSet_SHAKE128,    (IppsHashState_rmf* pStat
 IPPAPI( IppStatus, ippsHashStateMethodSet_SHAKE256,    (IppsHashState_rmf* pState, IppsHashMethod* pMethod, int digestBitsize) )
 
 IPPAPI(IppStatus, ippsHashGetSize_rmf,(int* pSize))
-IPPAPI(IppStatus, ippsOptimalHashGetSize_rmf,(int* pSize, const IppsHashMethod* pMethod))
+IPPAPI(IppStatus, ippsHashGetSizeOptimal_rmf,(int* pSize, const IppsHashMethod* pMethod))
 IPPAPI(IppStatus, ippsHashInit_rmf,(IppsHashState_rmf* pState, const IppsHashMethod* pMethod))
 
 IPPAPI(IppStatus, ippsHashPack_rmf,(const IppsHashState_rmf* pState, Ipp8u* pBuffer, int bufSize))

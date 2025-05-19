@@ -59,7 +59,7 @@ IPPFUN(IppStatus, ippsGFpECESInit_SM2, (IppsGFpECState* pEC, IppsECESState_SM2* 
 
       {
          int sm3size;
-         ippsOptimalHashGetSize_rmf(&sm3size, ippsHashMethod_SM3());
+         ippsHashGetSizeOptimal_rmf(&sm3size, ippsHashMethod_SM3());
 
          ECES_SM2_SET_ID(pState);
          pState->sharedSecretLen = BITS2WORD8_SIZE(pEC->pGF->pGFE->modBitLen) * 2;
