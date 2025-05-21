@@ -773,6 +773,12 @@ parameters.</p>
 <p>const IppStatus ippsHashMethodSet_SM3(IppsHashMethod* pMethod);</p>
 <p>const IppStatus ippsHashMethodSet_SM3_NI(IppsHashMethod* pMethod);</p>
 <p>const IppStatus ippsHashMethodSet_SM3_TT(IppsHashMethod* pMethod);</p>
+<p>const IppStatus ippsHashMethodSet_SHA3_224(IppsHashMethod* pMethod);</p>
+<p>const IppStatus ippsHashMethodSet_SHA3_256(IppsHashMethod* pMethod);</p>
+<p>const IppStatus ippsHashMethodSet_SHA3_384(IppsHashMethod* pMethod);</p>
+<p>const IppStatus ippsHashMethodSet_SHA3_512(IppsHashMethod* pMethod);</p>
+<p>const IppStatus ippsHashMethodSet_SHAKE128(IppsHashMethod* pMethod, int digestBitsize);</p>
+<p>const IppStatus ippsHashMethodSet_SHAKE256(IppsHashMethod* pMethod, int digestBitsize);</p>
 </section>
 <section id="include-files">
 <h2>Include Files<a class="headerlink" href="#include-files" title="Link to this heading"></a></h2>
@@ -784,6 +790,9 @@ parameters.</p>
 <tbody>
 <tr class="row-odd"><td><p>IppsHashMethod*</p></td>
 <td><p>Pointer to the uninitialized hash method.</p></td>
+</tr>
+<tr class="row-even"><td><p>digestBitsize</p></td>
+<td><p>The size of output digest in bits. Should be positive multiple of 8 integer.</p></td>
 </tr>
 </tbody>
 </table>
@@ -814,6 +823,9 @@ particular hash algorithm. Use these functionsin calls to
 </tr>
 <tr class="row-even"><td><p>ippStsNullPtrErr</p></td>
 <td><p>Indicates an error condition if any of the specified pointers is NULL.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippStsOutOfRangeErr</p></td>
+<td><p>Indicates an error condition if digestBitsize is not positive multiple of 8 integer.</p></td>
 </tr>
 </tbody>
 </table>

@@ -768,6 +768,12 @@
 <p>IppStatus ippsHashStateMethodSet_SHA512_224(IppsHashState_rmf* pState, IppsHashMethod* pMethod)</p>
 <p>IppStatus ippsHashStateMethodSet_SHA512_224_NI(IppsHashState_rmf* pState, IppsHashMethod* pMethod)</p>
 <p>IppStatus ippsHashStateMethodSet_SHA512_224_TT(IppsHashState_rmf* pState, IppsHashMethod* pMethod)</p>
+<p>IppStatus ippsHashStateMethodSet_SHA3_224(IppsHashState_rmf* pState, IppsHashMethod* pMethod)</p>
+<p>IppStatus ippsHashStateMethodSet_SHA3_256(IppsHashState_rmf* pState, IppsHashMethod* pMethod)</p>
+<p>IppStatus ippsHashStateMethodSet_SHA3_384(IppsHashState_rmf* pState, IppsHashMethod* pMethod)</p>
+<p>IppStatus ippsHashStateMethodSet_SHA3_512(IppsHashState_rmf* pState, IppsHashMethod* pMethod)</p>
+<p>IppStatus ippsHashStateMethodSet_SHAKE128(IppsHashState_rmf* pState, IppsHashMethod* pMethod, int digestBitsize)</p>
+<p>IppStatus ippsHashStateMethodSet_SHAKE256(IppsHashState_rmf* pState, IppsHashMethod* pMethod, int digestBitsize)</p>
 </section>
 <section id="include-files">
 <h2>Include Files<a class="headerlink" href="#include-files" title="Link to this heading"></a></h2>
@@ -782,6 +788,9 @@
 </tr>
 <tr class="row-even"><td><p>pMethod</p></td>
 <td><p>Pointer to the method for the update of the context.</p></td>
+</tr>
+<tr class="row-odd"><td><p>digestBitsize</p></td>
+<td><p>The size of output digest in bits. Should be positive multiple of 8 integer.</p></td>
 </tr>
 </tbody>
 </table>
@@ -805,6 +814,9 @@
 </tr>
 <tr class="row-even"><td><p>ippStsNullPtrErr</p></td>
 <td><p>Indicates an error condition if any of the specified pointers are NULL.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippStsOutOfRangeErr</p></td>
+<td><p>Indicates an error condition if digestBitsize is not positive multiple of 8 integer.</p></td>
 </tr>
 </tbody>
 </table>

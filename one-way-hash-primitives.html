@@ -762,6 +762,7 @@ original hash value.</p>
 section describes functions that implement the following hash algorithms
 for streaming messages: MD5 <a class="reference internal" href="bibliography.html#term-RFC-1321"><span class="xref std std-term">RFC 1321</span></a>,
 SHA-1, SHA-224, SHA-256, SHA-384, SHA-512 <a class="reference internal" href="bibliography.html#term-FIPS-PUB-180-2"><span class="xref std std-term">FIPS PUB 180-2</span></a>,
+SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE128, SHAKE256 <a class="reference internal" href="bibliography.html#term-FIPS-PUB-202"><span class="xref std std-term">FIPS PUB 202</span></a>,
 and SM3 <a class="reference internal" href="bibliography.html#term-SM3"><span class="xref std std-term">SM3</span></a>.
 These algorithms are widely used in enterprise applications nowadays.</p>
 <p>Subsequent sections describe <a class="reference internal" href="hash-functions-for-non-streaming-messages.html#hash-functions-for-non-streaming-messages"><span class="std std-ref">Hash Functions for Non-Streaming
@@ -816,8 +817,29 @@ hash algorithm as shown in the table below.</p>
 <tr class="row-even"><td><p>ippHashAlg_SM3</p></td>
 <td><p>SM3</p></td>
 </tr>
+<tr class="row-odd"><td><p>ippHashAlg_SHA3_224*</p></td>
+<td><p>SHA3-224</p></td>
+</tr>
+<tr class="row-even"><td><p>ippHashAlg_SHA3_256*</p></td>
+<td><p>SHA3-256</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippHashAlg_SHA3_384*</p></td>
+<td><p>SHA3-384</p></td>
+</tr>
+<tr class="row-even"><td><p>ippHashAlg_SHA3_512*</p></td>
+<td><p>SHA3-512</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippHashAlg_SHAKE128*</p></td>
+<td><p>SHAKE128</p></td>
+</tr>
+<tr class="row-even"><td><p>ippHashAlg_SHAKE256*</p></td>
+<td><p>SHAKE256</p></td>
+</tr>
 </tbody>
 </table>
+<p><cite>* - supported by reduced memory footprint functions only. The support of the SHA3 family
+algorithm was added only for reduced memory footprint(_rmf) functions, the functionality
+of the deprecated API was not extended.</cite></p>
 <section id="reduced-memory-footprint-functions">
 <h2>Reduced Memory Footprint Functions<a class="headerlink" href="#reduced-memory-footprint-functions" title="Link to this heading"></a></h2>
 <p>When your application uses the IppHashAlgId enumerator, it gets linked
@@ -923,6 +945,24 @@ non-dynamically dispatched IppsHashMethod structures.</p>
 </tr>
 <tr class="row-even"><td><p>ippsHashMethod_SM3_TT</p></td>
 <td><p>SM3 (using the Intel® SM3 instruction set if it is available at run time)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippsHashMethod_SHA3_224</p></td>
+<td><p>SHA3_224 (without the Intel® SHA-NI instruction set)</p></td>
+</tr>
+<tr class="row-even"><td><p>ippsHashMethod_SHA3_256</p></td>
+<td><p>SHA3_256 (without the Intel® SHA-NI instruction set)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippsHashMethod_SHA3_384</p></td>
+<td><p>SHA3_384 (without the Intel® SHA-NI instruction set)</p></td>
+</tr>
+<tr class="row-even"><td><p>ippsHashMethod_SHA3_512</p></td>
+<td><p>SHA3_512 (without the Intel® SHA-NI instruction set)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippsHashMethod_SHAKE128</p></td>
+<td><p>SHAKE128 (without the Intel® SHA-NI instruction set)</p></td>
+</tr>
+<tr class="row-even"><td><p>ippsHashMethod_SHAKE256</p></td>
+<td><p>SHAKE256 (without the Intel® SHA-NI instruction set)</p></td>
 </tr>
 </tbody>
 </table>

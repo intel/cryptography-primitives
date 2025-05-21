@@ -772,10 +772,26 @@
 <p>const IppsHashMethod* ippsHashMethod_SM3(void);</p>
 <p>const IppsHashMethod* ippsHashMethod_SM3_NI(void);</p>
 <p>const IppsHashMethod* ippsHashMethod_SM3_TT(void);</p>
+<p>const IppsHashMethod* ippsHashMethod_SHA3_224(void);</p>
+<p>const IppsHashMethod* ippsHashMethod_SHA3_256(void);</p>
+<p>const IppsHashMethod* ippsHashMethod_SHA3_384(void);</p>
+<p>const IppsHashMethod* ippsHashMethod_SHA3_512(void);</p>
+<p>const IppsHashMethod* ippsHashMethod_SHAKE128(int digestBitsize);</p>
+<p>const IppsHashMethod* ippsHashMethod_SHAKE256(int digestBitsize);</p>
 </section>
 <section id="include-files">
 <h2>Include Files<a class="headerlink" href="#include-files" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">ippcp.h</span></code></p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>digestBitsize</p></td>
+<td><p>The size of output digest in bits. Should be positive multiple of 8 integer.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
@@ -799,6 +815,9 @@ for an explanation of the values returned by the HashMethod functions.</p>
 <tbody>
 <tr class="row-odd"><td><p>const ippsHashMethod*</p></td>
 <td><p>Pointer to the particular hash method.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NULL</span></code></p></td>
+<td><p>digestBitsize is not positive multiple of 8 integer.</p></td>
 </tr>
 </tbody>
 </table>
