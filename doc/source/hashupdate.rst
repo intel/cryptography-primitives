@@ -90,6 +90,8 @@ Return Values
 
            * The length of the input data stream is less than zero.
            * The length of the totally processed stream (including the current update request) exceeds the limit defined by the particular hash algorithm.
+   * -     ippStsNotSupportedModeErr
+     -     Indicates an error condition if the provided hash algorithm identifier is not supported.
 
 
 

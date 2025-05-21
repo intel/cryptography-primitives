@@ -85,11 +85,38 @@ const IppsHashMethod\* ippsHashMethod_SM3_NI(void);
 const IppsHashMethod\* ippsHashMethod_SM3_TT(void);
 
 
+const IppsHashMethod\* ippsHashMethod_SHA3_224(void);
+
+const IppsHashMethod\* ippsHashMethod_SHA3_256(void);
+
+const IppsHashMethod\* ippsHashMethod_SHA3_384(void);
+
+const IppsHashMethod\* ippsHashMethod_SHA3_512(void);
+
+
+const IppsHashMethod\* ippsHashMethod_SHAKE128(int digestBitsize);
+
+const IppsHashMethod\* ippsHashMethod_SHAKE256(int digestBitsize);
+
 Include Files
 -------------
 
 
 ``ippcp.h``
+
+
+
+Parameters
+----------
+
+
+.. list-table::
+   :header-rows: 0
+
+   * -      digestBitsize
+     -  The size of output digest in bits. Should be positive multiple of 8 integer.
+
+
 
 
 Description
@@ -122,6 +149,8 @@ Return Values
 
    * -     const ippsHashMethod\*
      -  Pointer to the particular hash method.
+   * -     ``NULL``
+     -  digestBitsize is not positive multiple of 8 integer.
 
 
 

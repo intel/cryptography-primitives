@@ -50,6 +50,18 @@ IppStatus ippsHashStateMethodSet_SHA512_224_NI(IppsHashState_rmf* pState, IppsHa
 
 IppStatus ippsHashStateMethodSet_SHA512_224_TT(IppsHashState_rmf* pState, IppsHashMethod* pMethod)
 
+IppStatus ippsHashStateMethodSet_SHA3_224(IppsHashState_rmf* pState, IppsHashMethod* pMethod)
+
+IppStatus ippsHashStateMethodSet_SHA3_256(IppsHashState_rmf* pState, IppsHashMethod* pMethod)
+
+IppStatus ippsHashStateMethodSet_SHA3_384(IppsHashState_rmf* pState, IppsHashMethod* pMethod)
+
+IppStatus ippsHashStateMethodSet_SHA3_512(IppsHashState_rmf* pState, IppsHashMethod* pMethod)
+
+IppStatus ippsHashStateMethodSet_SHAKE128(IppsHashState_rmf* pState, IppsHashMethod* pMethod, int digestBitsize)
+
+IppStatus ippsHashStateMethodSet_SHAKE256(IppsHashState_rmf* pState, IppsHashMethod* pMethod, int digestBitsize)
+
 Include Files
 -------------
 
@@ -66,6 +78,8 @@ Parameters
      - Pointer to the ``IppsHashState_rmf`` context being updated. 
    * - pMethod
      - Pointer to the method for the update of the context.
+   * - digestBitsize
+     - The size of output digest in bits. Should be positive multiple of 8 integer.
 		 
 	  
 Description
@@ -90,5 +104,7 @@ Return Values
      - Indicates no errors. Any other value indicates an error or warning.
    * - ippStsNullPtrErr
      - Indicates an error condition if any of the specified pointers are NULL.
+   * - ippStsOutOfRangeErr     
+     - Indicates an error condition if digestBitsize is not positive multiple of 8 integer.
  
 

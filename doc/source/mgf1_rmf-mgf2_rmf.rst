@@ -81,6 +81,10 @@ Return Values
      -  Indicates an error condition if any of the specified pointers is NULL
    * -     ippStsLengthErr   
      -  Indicates an error condition if any of the specified lengths is negative or zero.
+   * -     ippStsNotSupportedModeErr
+     -  Indicates an error condition if the provided hash algorithm identifier is not supported.
+   * -     ippStsMemAllocErr
+     -  An internal functional error. If this output status appears, update to the latest version of the library or contact `Intel <https://github.com/intel/cryptography-primitives/issues>`_.
 
 
 

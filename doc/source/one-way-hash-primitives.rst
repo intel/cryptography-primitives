@@ -33,6 +33,7 @@ The :ref:`Hash Functions <hash-functions>`
 section describes functions that implement the following hash algorithms
 for streaming messages: MD5 :term:`RFC 1321 <[RFC 1321]>`,
 SHA-1, SHA-224, SHA-256, SHA-384, SHA-512 :term:`FIPS PUB 180-2 <[FIPS PUB 180-2]>`,
+SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE128, SHAKE256 :term:`FIPS PUB 202 <[FIPS PUB 202]>`,
 and SM3 :term:`SM3 <[SM3]>`.
 These algorithms are widely used in enterprise applications nowadays.
 
@@ -81,8 +82,24 @@ hash algorithm as shown in the table below.
      -     MD5
    * -      ippHashAlg_SM3
      -     SM3
+   * -     ippHashAlg_SHA3_224*
+     -     SHA3-224
+   * -     ippHashAlg_SHA3_256*
+     -     SHA3-256
+   * -     ippHashAlg_SHA3_384*
+     -     SHA3-384
+   * -     ippHashAlg_SHA3_512*
+     -     SHA3-512
+   * -     ippHashAlg_SHAKE128*
+     -     SHAKE128
+   * -     ippHashAlg_SHAKE256*
+     -     SHAKE256
 
 
+
+`* - supported by reduced memory footprint functions only. The support of the SHA3 family 
+algorithm was added only for reduced memory footprint(_rmf) functions, the functionality 
+of the deprecated API was not extended.`
 
 
 Reduced Memory Footprint Functions
@@ -169,6 +186,18 @@ the syntax.
      -      SM3 (using the SM3 instruction set)
    * -      ippsHashMethod_SM3_TT
      -      SM3 (using the Intel® SM3 instruction set if it is available at run time)
+   * -      ippsHashMethod_SHA3_224
+     -      SHA3_224 (without the Intel® SHA-NI instruction set)
+   * -      ippsHashMethod_SHA3_256
+     -      SHA3_256 (without the Intel® SHA-NI instruction set)
+   * -      ippsHashMethod_SHA3_384
+     -      SHA3_384 (without the Intel® SHA-NI instruction set)
+   * -      ippsHashMethod_SHA3_512
+     -      SHA3_512 (without the Intel® SHA-NI instruction set)
+   * -      ippsHashMethod_SHAKE128
+     -      SHAKE128 (without the Intel® SHA-NI instruction set)
+   * -      ippsHashMethod_SHAKE256
+     -      SHAKE256 (without the Intel® SHA-NI instruction set)
 
 
 

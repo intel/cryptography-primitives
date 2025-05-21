@@ -111,6 +111,15 @@ to you in using cryptography functions of Intel® Cryptography Primitives Librar
       198*. The Key-Hash Message Authentication Code (HMAC), July 2008.
       Available from http://csrc.nist.gov/publications/.
 
+
+   .. _fips-pub-202:
+
+   [FIPS PUB 202]
+      *Federal Information Processing Standards Publications, FIPS PUB
+      202*. SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions, August 2015.
+      Available from http://csrc.nist.gov/publications/.
+
+
    .. _ieee-p1363a:
 
    [IEEE P1363A]

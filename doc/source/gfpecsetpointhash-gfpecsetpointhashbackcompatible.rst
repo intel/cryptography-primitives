@@ -104,6 +104,10 @@ Return Values
      -  Indicates an error condition if msgLen is negative.
    * -     ippStsQuadraticNonResidueErr
      -  Indicates an error condition if the square of the ``Y``-coordinate of the point is a quadratic non-residue modulo ``p``.
+   * -     ippStsNotSupportedModeErr
+     -  Indicates an error condition if the provided hash algorithm identifier is not supported.
+   * -     ippStsMemAllocErr
+     -  An internal functional error. If this output status appears, update to the latest version of the library or contact `Intel <https://github.com/intel/cryptography-primitives/issues>`_.
 
 
 
