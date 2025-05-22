@@ -25,7 +25,7 @@
 #define MAX_HKDF_INFO_SIZE (128)
 
 /*F*
-//    Name: ippsHKDF_expand
+//    Name: ippsHKDF
 //
 // Purpose: HMAC-based Extract-and-Expand Key Derivation Function (HKDF).
 //
@@ -52,7 +52,7 @@
 //
 *F*/
 IPPFUN(IppStatus,
-       ippsHKDF_expand,
+       ippsHKDF,
        (const Ipp8u* ikm,
         int ikm_len,
         Ipp8u* okm,

@@ -75,7 +75,7 @@
 |           ippsGFpSqrt             |                                           -                                         |
 |           ippsGFpSub              |                                           -                                         |
 |         ippsGFpSub_PE             |                                           -                                         |
-|        ippsHKDF_expand            | Different hashes: sha1, sha256, sha224, sha384, sha512, sha512-256, sha512-224, sm3 |
+|            ippsHKDF               | Different hashes: sha1, sha256, sha224, sha384, sha512, sha512-256, sha512-224, sm3 |
 |       ippsHMACInit_rmf            | Different hashes: sha1, sha256, sha224, sha384, sha512, sha512-256, sha512-224, sm3 |
 |        ippsRSA_Decrypt            |    Different key types and key length: key type 1, 512 bits; key type 2, 512 bits   |
 |     ippsRSADecrypt_OAEP           |    Different key types and key length: key type 1, 512 bits; key type 2, 512 bits   |

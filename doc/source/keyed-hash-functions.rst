@@ -95,4 +95,4 @@ functions transform it to a position-independent form and vice versa:
    hmac_final
    hmac_gettag
    hmac_message
-   hkdf_expand
+   hkdf

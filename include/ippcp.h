@@ -630,11 +630,12 @@ IPPAPI(IppStatus, ippsHMACMessage_rmf,(const Ipp8u* pMsg, int msgLen,
                                        Ipp8u* pMD, int mdLen,
                                        const IppsHashMethod* pMethod))
 
-IPPAPI(IppStatus, ippsHKDF_expand,(const Ipp8u* ikm, int ikmLen,
-                                   Ipp8u* okm, int okmLen,
-                                   const Ipp8u* salt, int saltLen,
-                                   const Ipp8u* info, int infoLen,
-                                   const IppsHashMethod* pMethod))
+/* HMAC-based Extract-and-Expand Key Derivation Function (HKDF) */
+IPPAPI(IppStatus, ippsHKDF,(const Ipp8u* ikm, int ikmLen,
+                            Ipp8u* okm, int okmLen,
+                            const Ipp8u* salt, int saltLen,
+                            const Ipp8u* info, int infoLen,
+                            const IppsHashMethod* pMethod))
 
 /*
 // =========================================================
