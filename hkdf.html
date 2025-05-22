@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HKDF_expand &mdash; Documentation for Intel® oneAPI Programming Guide</title>
+  <title>HKDF &mdash; Documentation for Intel® oneAPI Programming Guide</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -734,7 +734,7 @@
           <li class="breadcrumb-item"><a href="data-authentication-primitive-functions.html">Data Authentication Primitive Functions</a></li>
           <li class="breadcrumb-item"><a href="message-authentication-functions.html">Message Authentication Functions</a></li>
           <li class="breadcrumb-item"><a href="keyed-hash-functions.html">Keyed Hash Functions</a></li>
-      <li class="breadcrumb-item active">HKDF_expand</li>
+      <li class="breadcrumb-item active">HKDF</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -743,13 +743,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="hkdf-expand">
-<span id="id1"></span><h1>HKDF_expand<a class="headerlink" href="#hkdf-expand" title="Link to this heading"></a></h1>
+  <section id="hkdf">
+<span id="id1"></span><h1>HKDF<a class="headerlink" href="#hkdf" title="Link to this heading"></a></h1>
 <p>Computes the output key material from input key material, salt, info,
 and hash method per the HKDF standard.</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading"></a></h2>
-<p>IppStatus ippsHKDF_expand(const Ipp8u* ikm, int ikmLen, Ipp8u* okm,
+<p>IppStatus ippsHKDF(const Ipp8u* ikm, int ikmLen, Ipp8u* okm,
 int okmLen, const Ipp8u* salt, int saltLen, const Ipp8u* info, int
 infoLen, const IppsHashMethod* pMethod);</p>
 </section>
