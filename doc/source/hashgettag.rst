@@ -84,6 +84,8 @@ Return Values
      -  Indicates an error condition if tagLen < 1 or tagLen exceeds the maximal length of a particular digest.
    * -     ippStsContextMatchErr
      -  Indicates an error condition if the context parameter does not match the operation.
+   * -     ippStsNotSupportedModeErr
+     -  Indicates an error condition if the provided hash algorithm identifier is not supported.
 
 
 

@@ -86,6 +86,19 @@ const IppStatus ippsHashMethodSet_SM3_NI(IppsHashMethod\* pMethod);
 const IppStatus ippsHashMethodSet_SM3_TT(IppsHashMethod\* pMethod);
 
 
+const IppStatus ippsHashMethodSet_SHA3_224(IppsHashMethod\* pMethod);
+
+const IppStatus ippsHashMethodSet_SHA3_256(IppsHashMethod\* pMethod);
+
+const IppStatus ippsHashMethodSet_SHA3_384(IppsHashMethod\* pMethod);
+
+const IppStatus ippsHashMethodSet_SHA3_512(IppsHashMethod\* pMethod);
+
+
+const IppStatus ippsHashMethodSet_SHAKE128(IppsHashMethod\* pMethod, int digestBitsize);
+
+const IppStatus ippsHashMethodSet_SHAKE256(IppsHashMethod\* pMethod, int digestBitsize);
+
 Include Files
 -------------
 
@@ -102,6 +115,8 @@ Parameters
 
    * -      IppsHashMethod\*
      -  Pointer to the uninitialized hash method.
+   * -      digestBitsize
+     -  The size of output digest in bits. Should be positive multiple of 8 integer.
 
 
 
@@ -139,6 +154,8 @@ Return Values
      -  Indicates no errors. Any other value indicates an error or warning.
    * -      ippStsNullPtrErr
      -  Indicates an error condition if any of the specified pointers is NULL.
+   * -      ippStsOutOfRangeErr     
+     -  Indicates an error condition if digestBitsize is not positive multiple of 8 integer.
 
 
 

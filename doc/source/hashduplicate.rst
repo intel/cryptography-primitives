@@ -76,6 +76,8 @@ Return Values
      -     Indicates an error condition if any of the specified pointers is NULL.
    * -     ippStsContextMatchErr
      -     Indicates an error condition if any of the context parameters does not match the operation.
+   * -     ippStsNotSupportedModeErr
+     -     Indicates an error condition if the provided hash algorithm identifier is not supported.
 
 
 

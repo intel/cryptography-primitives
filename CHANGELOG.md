@@ -7,6 +7,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Added support for HKDF, Hashed Message Authentication Code (HMAC)-based key derivation function as defined by RFC-5869.
 - Added key and signature generations for the eXtended Merkle Signature Scheme (XMSS) algorithm.
 - Minimal supported BoringSSL version was increased to [0.20250114.0](https://github.com/google/boringssl/releases/tag/0.20250114.0) tag.
+- Added support for SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE128 and SHAKE256 hash algorithms as defined by FIPS PUB 202.
 
 ## Intel(R) Cryptography Primitives Library 1.1.0
 

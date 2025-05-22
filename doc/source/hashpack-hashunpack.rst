@@ -102,6 +102,8 @@ Return Values
      -     Indicates an error condition in a ippsHashPack_rmf call if the context parameter does not match the operation.
    * -     ippStsNoMem
      -     Indicates an error condition if the value of bufferSize is less than the size of the IppsHashState_rmf context.
+   * -     ippStsNotSupportedModeErr
+     -     Indicates an error condition if the provided hash algorithm identifier is not supported.
 
 
 

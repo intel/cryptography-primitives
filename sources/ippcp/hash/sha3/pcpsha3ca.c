@@ -59,6 +59,8 @@ __IPPCP_INLINE Ipp64u cp_rotl64(Ipp64u lane, Ipp64u bits)
     // reduce rotation to max 63 bits to avoid losing bits
     bits %= 64;
 
+    if (bits == 0)
+        return lane;
     return (lane << bits) | (lane >> (64 - bits));
 }
 
@@ -88,7 +90,7 @@ IPP_OWN_DEFN(void, cp_keccak_kernel, (Ipp64u state[5 * 5]))
         }
 
         // FIPS PUB 202 - SHA-3 Standard, 3.2.2 Specification of rho
-        for (int i = 0; i < (5 * 5); i++) {
+        for (int i = 1; i < (5 * 5); i++) {
             state[i] = cp_rotl64(state[i], KECCAK_RHO_OFFSETS[i]);
         }
 

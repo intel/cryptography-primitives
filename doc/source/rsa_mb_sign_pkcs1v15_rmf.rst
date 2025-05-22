@@ -125,6 +125,8 @@ Return Values
      -     Indicates a mismatch between types of private keys or exponents ``e`` in public keys.
    * -     ippStsContextMatchErr
      -     No valid keys were found.
+   * -     ippStsNotSupportedModeErr
+     -     Indicates an error condition if the provided hash algorithm identifier is not supported.
 
 
 .. rubric:: Related Information
