@@ -1,7 +1,7 @@
-.. _hkdf_expand:
+.. _hkdf:
 
 
-HKDF_expand
+HKDF
 ===========
 
 
@@ -13,7 +13,7 @@ Syntax
 ------
 
 
-IppStatus ippsHKDF_expand(const Ipp8u\* ikm, int ikmLen, Ipp8u\* okm,
+IppStatus ippsHKDF(const Ipp8u\* ikm, int ikmLen, Ipp8u\* okm,
 int okmLen, const Ipp8u\* salt, int saltLen, const Ipp8u\* info, int
 infoLen, const IppsHashMethod\* pMethod);
 

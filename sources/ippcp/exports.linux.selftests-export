@@ -497,7 +497,7 @@ EXTERN (ippsLMSPublicKeyStateGetSize)
 EXTERN (ippsLMSSetPublicKeyState)
 EXTERN (ippsLMSSetSignatureState)
 EXTERN (ippsLMSVerify)
-EXTERN (ippsHKDF_expand)
+EXTERN (ippsHKDF)
 EXTERN (ippsXMSSKeyGenBufferGetSize)
 EXTERN (ippsXMSSSignBufferGetSize)
 EXTERN (ippsXMSSPrivateKeyStateGetSize)
@@ -1067,7 +1067,7 @@ VERSION {
    ippsLMSSetPublicKeyState;
    ippsLMSSetSignatureState;
    ippsLMSVerify;
-   ippsHKDF_expand;
+   ippsHKDF;
    ippsXMSSKeyGenBufferGetSize;
    ippsXMSSSignBufferGetSize;
    ippsXMSSPrivateKeyStateGetSize;

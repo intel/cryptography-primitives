@@ -499,7 +499,7 @@ ippsLMSPublicKeyStateGetSize
 ippsLMSSetPublicKeyState
 ippsLMSSetSignatureState
 ippsLMSVerify
-ippsHKDF_expand
+ippsHKDF
 ippsXMSSKeyGenBufferGetSize
 ippsXMSSSignBufferGetSize
 ippsXMSSPrivateKeyStateGetSize

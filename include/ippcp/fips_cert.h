@@ -239,7 +239,7 @@ enum FIPS_IPPCP_FUNC {
     GFpECESEncrypt_SM2,
     GFpECESDecrypt_SM2,
     GFpECESFinal_SM2,
-    HKDF_expand,
+    HKDF,
     XMSSVerify,
     XMSSKeyGen,
     XMSSSign
