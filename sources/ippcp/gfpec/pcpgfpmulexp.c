@@ -64,69 +64,92 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpMultiExp,(const IppsGFpElement* const ppElmA[], const IppsBigNumState* const ppE[], int nItems,
-                                    IppsGFpElement* pR, IppsGFpState* pGFp,
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpMultiExp, (const IppsGFpElement* const ppElmA[],
+                                    const IppsBigNumState* const ppE[],
+                                    int nItems,
+                                    IppsGFpElement* pR,
+                                    IppsGFpState* pGFp,
                                     Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(ppElmA, ppE);
+    IPP_BAD_PTR2_RET(ppElmA, ppE);
 
-   if(nItems==1)
-      return ippsGFpExp(ppElmA[0], ppE[0], pR, pGFp, pScratchBuffer);
+    if (nItems == 1)
+        return ippsGFpExp(ppElmA[0], ppE[0], pR, pGFp, pScratchBuffer);
 
-   else {
-      /* test number of exponents */
-      IPP_BADARG_RET(1>nItems || nItems>IPP_MAX_EXPONENT_NUM, ippStsBadArgErr);
+    else {
+        /* test number of exponents */
+        IPP_BADARG_RET(1 > nItems || nItems > IPP_MAX_EXPONENT_NUM, ippStsBadArgErr);
 
-      IPP_BAD_PTR2_RET(pR, pGFp);
+        IPP_BAD_PTR2_RET(pR, pGFp);
 
-      IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-      IPP_BADARG_RET( !GFPE_VALID_ID(pR), ippStsContextMatchErr );
-      {
-         int n;
+        IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+        IPP_BADARG_RET(!GFPE_VALID_ID(pR), ippStsContextMatchErr);
+        {
+            int n;
 
-         gsModEngine* pGFE = GFP_PMA(pGFp);
-         IPP_BADARG_RET( GFPE_ROOM(pR)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+            gsModEngine* pGFE = GFP_PMA(pGFp);
+            IPP_BADARG_RET(GFPE_ROOM(pR) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-         /* test all ppElmA[] and ppE[] pairs */
-         for(n=0; n<nItems; n++) {
-            const IppsGFpElement* pElmA = ppElmA[n];
-            const IppsBigNumState* pE = ppE[n];
-            IPP_BAD_PTR2_RET(pElmA, pE);
+            /* test all ppElmA[] and ppE[] pairs */
+            for (n = 0; n < nItems; n++) {
+                const IppsGFpElement* pElmA = ppElmA[n];
+                const IppsBigNumState* pE   = ppE[n];
+                IPP_BAD_PTR2_RET(pElmA, pE);
 
-            IPP_BADARG_RET( !GFPE_VALID_ID(pElmA), ippStsContextMatchErr );
-            IPP_BADARG_RET( !BN_VALID_ID(pE), ippStsContextMatchErr );
+                IPP_BADARG_RET(!GFPE_VALID_ID(pElmA), ippStsContextMatchErr);
+                IPP_BADARG_RET(!BN_VALID_ID(pE), ippStsContextMatchErr);
 
-            IPP_BADARG_RET( (GFPE_ROOM(pElmA)!=GFP_FELEN(pGFE)) || (GFPE_ROOM(pR)!=GFP_FELEN(pGFE)), ippStsOutOfRangeErr);
-         }
-
-         if(NULL==pScratchBuffer) {
-            mod_mul mulF = GFP_METHOD(pGFE)->mul;
-
-            BNU_CHUNK_T* pTmpR = cpGFpGetPool(1, pGFE);
-            //tbcd: temporary excluded: assert(NULL!=pTmpR);
-
-            cpGFpxExp(GFPE_DATA(pR), GFPE_DATA(ppElmA[0]), BN_NUMBER(ppE[0]), BN_SIZE(ppE[0]), pGFE, 0);
-            for(n=1; n<nItems; n++) {
-               cpGFpxExp(pTmpR, GFPE_DATA(ppElmA[n]), BN_NUMBER(ppE[n]), BN_SIZE(ppE[n]), pGFE, 0);
-               mulF(GFPE_DATA(pR), GFPE_DATA(pR), pTmpR, pGFE);
+                IPP_BADARG_RET((GFPE_ROOM(pElmA) != GFP_FELEN(pGFE)) ||
+                                   (GFPE_ROOM(pR) != GFP_FELEN(pGFE)),
+                               ippStsOutOfRangeErr);
             }
 
-            cpGFpReleasePool(1, pGFE);
-         }
+            if (NULL == pScratchBuffer) {
+                mod_mul mulF = GFP_METHOD(pGFE)->mul;
 
-         else {
-            const BNU_CHUNK_T* ppAdata[IPP_MAX_EXPONENT_NUM];
-            const BNU_CHUNK_T* ppEdata[IPP_MAX_EXPONENT_NUM];
-            int nsEdataLen[IPP_MAX_EXPONENT_NUM];
-            for(n=0; n<nItems; n++) {
-               ppAdata[n] = GFPE_DATA(ppElmA[n]);
-               ppEdata[n] = BN_NUMBER(ppE[n]);
-               nsEdataLen[n] = BN_SIZE(ppE[n]);
+                BNU_CHUNK_T* pTmpR = cpGFpGetPool(1, pGFE);
+                //tbcd: temporary excluded: assert(NULL!=pTmpR);
+
+                cpGFpxExp(GFPE_DATA(pR),
+                          GFPE_DATA(ppElmA[0]),
+                          BN_NUMBER(ppE[0]),
+                          BN_SIZE(ppE[0]),
+                          pGFE,
+                          0);
+                for (n = 1; n < nItems; n++) {
+                    cpGFpxExp(pTmpR,
+                              GFPE_DATA(ppElmA[n]),
+                              BN_NUMBER(ppE[n]),
+                              BN_SIZE(ppE[n]),
+                              pGFE,
+                              0);
+                    mulF(GFPE_DATA(pR), GFPE_DATA(pR), pTmpR, pGFE);
+                }
+
+                cpGFpReleasePool(1, pGFE);
             }
-            cpGFpxMultiExp(GFPE_DATA(pR), ppAdata, ppEdata, nsEdataLen, nItems, pGFE, pScratchBuffer);
-         }
 
-         return ippStsNoErr;
-      }
-   }
+            else {
+                const BNU_CHUNK_T* ppAdata[IPP_MAX_EXPONENT_NUM];
+                const BNU_CHUNK_T* ppEdata[IPP_MAX_EXPONENT_NUM];
+                int nsEdataLen[IPP_MAX_EXPONENT_NUM];
+                for (n = 0; n < nItems; n++) {
+                    ppAdata[n]    = GFPE_DATA(ppElmA[n]);
+                    ppEdata[n]    = BN_NUMBER(ppE[n]);
+                    nsEdataLen[n] = BN_SIZE(ppE[n]);
+                }
+                cpGFpxMultiExp(GFPE_DATA(pR),
+                               ppAdata,
+                               ppEdata,
+                               nsEdataLen,
+                               nItems,
+                               pGFE,
+                               pScratchBuffer);
+            }
+
+            return ippStsNoErr;
+        }
+    }
 }

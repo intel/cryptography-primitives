@@ -28,15 +28,20 @@
 #include "gfpec/pcpgfpxstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxAdd_GFE, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pGroundB, gsModEngine* pGFEx))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxAdd_GFE, (BNU_CHUNK_T* pR,
+                                           const BNU_CHUNK_T* pA,
+                                           const BNU_CHUNK_T* pGroundB,
+                                           gsModEngine* pGFEx))
+/* clang-format on */
 {
-   gsModEngine* pGroundGFE = GFP_PARENT(pGFEx);
-   mod_add addF = MOD_METHOD(pGroundGFE)->add;
+    gsModEngine* pGroundGFE = GFP_PARENT(pGFEx);
+    mod_add addF            = MOD_METHOD(pGroundGFE)->add;
 
-   if(pR != pA) {
-      int groundElemLen = GFP_FELEN(pGroundGFE);
-      int deg = GFP_EXTDEGREE(pGFEx);
-      cpGFpElementCopy(pR+groundElemLen, pA+groundElemLen, groundElemLen*(deg-1));
-   }
-   return addF(pR, pA, pGroundB, pGroundGFE);
+    if (pR != pA) {
+        int groundElemLen = GFP_FELEN(pGroundGFE);
+        int deg           = GFP_EXTDEGREE(pGFEx);
+        cpGFpElementCopy(pR + groundElemLen, pA + groundElemLen, groundElemLen * (deg - 1));
+    }
+    return addF(pR, pA, pGroundB, pGroundGFE);
 }

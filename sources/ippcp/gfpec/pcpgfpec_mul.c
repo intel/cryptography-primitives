@@ -32,80 +32,88 @@
 #include "pcpmask_ct.h"
 
 
-IPP_OWN_DEFN (void, gfec_point_mul, (BNU_CHUNK_T* pRdata, const BNU_CHUNK_T* pPdata, const Ipp8u* pScalar8, int scalarBitSize, IppsGFpECState* pEC, Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPP_OWN_DEFN(void, gfec_point_mul, (BNU_CHUNK_T* pRdata,
+                                    const BNU_CHUNK_T* pPdata,
+                                    const Ipp8u* pScalar8,
+                                    int scalarBitSize,
+                                    IppsGFpECState* pEC,
+                                    Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   int pointLen = ECP_POINTLEN(pEC);
+    int pointLen = ECP_POINTLEN(pEC);
 
-   /* optimal size of window */
-   const int window_size = 5;
+    /* optimal size of window */
+    const int window_size = 5;
 
-   /* aligned pre-computed table */
-   BNU_CHUNK_T* pTable = (BNU_CHUNK_T*)IPP_ALIGNED_PTR(pScratchBuffer, CACHE_LINE_SIZE);
-   setupTable(pTable, pPdata, pEC);
+    /* aligned pre-computed table */
+    BNU_CHUNK_T* pTable = (BNU_CHUNK_T*)IPP_ALIGNED_PTR(pScratchBuffer, CACHE_LINE_SIZE);
+    setupTable(pTable, pPdata, pEC);
 
-   {
-      IppsGFpState* pGF = ECP_GFP(pEC);
-      gsModEngine* pGFE = GFP_PMA(pGF);
-      int elemLen = GFP_FELEN(pGFE);
+    {
+        IppsGFpState* pGF = ECP_GFP(pEC);
+        gsModEngine* pGFE = GFP_PMA(pGF);
+        int elemLen       = GFP_FELEN(pGFE);
 
-      mod_neg negF = GFP_METHOD(pGFE)->neg;
+        mod_neg negF = GFP_METHOD(pGFE)->neg;
 
-      BNU_CHUNK_T* pHy = cpGFpGetPool(1, pGFE);
+        BNU_CHUNK_T* pHy = cpGFpGetPool(1, pGFE);
 
-      BNU_CHUNK_T* pTdata = cpEcGFpGetPool(1, pEC); /* points from the pool */
-      BNU_CHUNK_T* pHdata = cpEcGFpGetPool(1, pEC);
+        BNU_CHUNK_T* pTdata = cpEcGFpGetPool(1, pEC); /* points from the pool */
+        BNU_CHUNK_T* pHdata = cpEcGFpGetPool(1, pEC);
 
-      int wvalue;
-      Ipp8u digit, sign;
-      int mask = (1<<(window_size+1)) -1;
-      int bit = scalarBitSize-(scalarBitSize%window_size);
+        int wvalue;
+        Ipp8u digit, sign;
+        int mask = (1 << (window_size + 1)) - 1;
+        int bit  = scalarBitSize - (scalarBitSize % window_size);
 
-      /* first window */
-      if(bit) {
-         wvalue = *((Ipp16u*)&pScalar8[(bit-1)/8]);
-         wvalue = (wvalue>> ((bit-1)%8)) & mask;
-      }
-      else
-         wvalue = 0;
-      booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-      gsScrambleGet_sscm(pTdata, pointLen, pTable, digit-1, 5-1);
+        /* first window */
+        if (bit) {
+            wvalue = *((Ipp16u*)&pScalar8[(bit - 1) / 8]);
+            wvalue = (wvalue >> ((bit - 1) % 8)) & mask;
+        } else
+            wvalue = 0;
+        booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+        gsScrambleGet_sscm(pTdata, pointLen, pTable, digit - 1, 5 - 1);
 
-      for(bit-=window_size; bit>=window_size; bit-=window_size) {
-         gfec_point_double(pTdata, pTdata, pEC); /* probably it's better to have separate calls */
-         gfec_point_double(pTdata, pTdata, pEC); /* instead of gfec_point_double_k() */
-         gfec_point_double(pTdata, pTdata, pEC);
-         gfec_point_double(pTdata, pTdata, pEC);
-         gfec_point_double(pTdata, pTdata, pEC);
+        for (bit -= window_size; bit >= window_size; bit -= window_size) {
+            gfec_point_double(pTdata,
+                              pTdata,
+                              pEC); /* probably it's better to have separate calls */
+            gfec_point_double(pTdata, pTdata, pEC); /* instead of gfec_point_double_k() */
+            gfec_point_double(pTdata, pTdata, pEC);
+            gfec_point_double(pTdata, pTdata, pEC);
+            gfec_point_double(pTdata, pTdata, pEC);
 
-         wvalue = *((Ipp16u*)&pScalar8[(bit-1)/8]);
-         wvalue = (wvalue>> ((bit-1)%8)) & mask;
-         booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-         gsScrambleGet_sscm(pHdata, pointLen, pTable, digit-1, 5-1);
+            wvalue = *((Ipp16u*)&pScalar8[(bit - 1) / 8]);
+            wvalue = (wvalue >> ((bit - 1) % 8)) & mask;
+            booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+            gsScrambleGet_sscm(pHdata, pointLen, pTable, digit - 1, 5 - 1);
 
-         negF(pHy, pHdata+elemLen, pGFE);
-         cpMaskedReplace_ct(pHdata+elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
-         gfec_point_add(pTdata, pTdata, pHdata, pEC);
-      }
+            negF(pHy, pHdata + elemLen, pGFE);
+            cpMaskedReplace_ct(pHdata + elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
+            gfec_point_add(pTdata, pTdata, pHdata, pEC);
+        }
 
-      /* last window */
-      gfec_point_double(pTdata, pTdata, pEC);
-      gfec_point_double(pTdata, pTdata, pEC);
-      gfec_point_double(pTdata, pTdata, pEC);
-      gfec_point_double(pTdata, pTdata, pEC);
-      gfec_point_double(pTdata, pTdata, pEC);
+        /* last window */
+        gfec_point_double(pTdata, pTdata, pEC);
+        gfec_point_double(pTdata, pTdata, pEC);
+        gfec_point_double(pTdata, pTdata, pEC);
+        gfec_point_double(pTdata, pTdata, pEC);
+        gfec_point_double(pTdata, pTdata, pEC);
 
-      wvalue = *((Ipp16u*)&pScalar8[0]);
-      wvalue = (wvalue << 1) & mask;
-      booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-      gsScrambleGet_sscm(pHdata, pointLen, pTable, digit-1, 5-1);
+        wvalue = *((Ipp16u*)&pScalar8[0]);
+        wvalue = (wvalue << 1) & mask;
+        booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+        gsScrambleGet_sscm(pHdata, pointLen, pTable, digit - 1, 5 - 1);
 
-      negF(pHy, pHdata+elemLen, pGFE);
-      cpMaskedReplace_ct(pHdata+elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
-      gfec_point_add(pTdata, pTdata, pHdata, pEC);
+        negF(pHy, pHdata + elemLen, pGFE);
+        cpMaskedReplace_ct(pHdata + elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
+        gfec_point_add(pTdata, pTdata, pHdata, pEC);
 
-      cpGFpElementCopy(pRdata, pTdata, pointLen);
+        cpGFpElementCopy(pRdata, pTdata, pointLen);
 
-      cpEcGFpReleasePool(2, pEC);
-      cpGFpReleasePool(1, pGFE);
-   }
+        cpEcGFpReleasePool(2, pEC);
+        cpGFpReleasePool(1, pGFE);
+    }
 }

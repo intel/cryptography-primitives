@@ -29,32 +29,34 @@
 #include "gfpec/pcpeccp.h"
 
 
-IPP_OWN_DEFN (int, cpGFpECGetSize, (int basicDeg, int basicElmBitSize))
+IPP_OWN_DEFN(int, cpGFpECGetSize, (int basicDeg, int basicElmBitSize))
 {
-   int ctxSize = 0;
-   int elemLen = basicDeg*BITS_BNU_CHUNK(basicElmBitSize);
+    int ctxSize = 0;
+    int elemLen = basicDeg * BITS_BNU_CHUNK(basicElmBitSize);
 
-   int maxOrderBits = 1+ basicDeg*basicElmBitSize;
-   #if defined(_LEGACY_ECCP_SUPPORT_)
-   int maxOrderLen = BITS_BNU_CHUNK(maxOrderBits);
-   #endif
+    int maxOrderBits = 1 + basicDeg * basicElmBitSize;
+#if defined(_LEGACY_ECCP_SUPPORT_)
+    int maxOrderLen = BITS_BNU_CHUNK(maxOrderBits);
+#endif
 
-   int modEngineCtxSize;
-   if(ippStsNoErr==gsModEngineGetSize(maxOrderBits, MONT_DEFAULT_POOL_LENGTH, &modEngineCtxSize)) {
+    int modEngineCtxSize;
+    if (ippStsNoErr ==
+        gsModEngineGetSize(maxOrderBits, MONT_DEFAULT_POOL_LENGTH, &modEngineCtxSize)) {
 
-      ctxSize = (Ipp32s)sizeof(IppsGFpECState)
-               +elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* EC coeff    A */
-               +elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* EC coeff    B */
-               +elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* generator G.x */
-               +elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* generator G.y */
-               +elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* generator G.z */
-               +modEngineCtxSize               /* mont engine (R) */
-               +elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* cofactor */
-               #if defined(_LEGACY_ECCP_SUPPORT_)
-               +2*elemLen*3*(Ipp32s)sizeof(BNU_CHUNK_T)    /* regular and ephemeral public  keys */
-               +2*maxOrderLen*(Ipp32s)sizeof(BNU_CHUNK_T)  /* regular and ephemeral private keys */
-               #endif
-               +elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)*3*EC_POOL_SIZE;
-   }
-   return ctxSize;
+        ctxSize =
+            (Ipp32s)sizeof(IppsGFpECState) +
+            elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)           /* EC coeff    A */
+            + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)         /* EC coeff    B */
+            + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)         /* generator G.x */
+            + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)         /* generator G.y */
+            + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)         /* generator G.z */
+            + modEngineCtxSize                              /* mont engine (R) */
+            + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)         /* cofactor */
+#if defined(_LEGACY_ECCP_SUPPORT_)
+            + 2 * elemLen * 3 * (Ipp32s)sizeof(BNU_CHUNK_T) /* regular and ephemeral public  keys */
+            + 2 * maxOrderLen * (Ipp32s)sizeof(BNU_CHUNK_T) /* regular and ephemeral private keys */
+#endif
+            + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T) * 3 * EC_POOL_SIZE;
+    }
+    return ctxSize;
 }

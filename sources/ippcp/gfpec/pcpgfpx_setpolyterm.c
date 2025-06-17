@@ -28,8 +28,14 @@
 #include "gfpec/pcpgfpxstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxSetPolyTerm, (BNU_CHUNK_T* pE, int deg, const BNU_CHUNK_T* pDataA, int nsA, gsModEngine* pGFEx))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxSetPolyTerm, (BNU_CHUNK_T* pE,
+                                               int deg,
+                                               const BNU_CHUNK_T* pDataA,
+                                               int nsA,
+                                               gsModEngine* pGFEx))
+/* clang-format on */
 {
-   pE += deg * GFP_FELEN(pGFEx);
-   return cpGFpxSet(pE, pDataA, nsA, pGFEx);
+    pE += deg * GFP_FELEN(pGFEx);
+    return cpGFpxSet(pE, pDataA, nsA, pGFEx);
 }

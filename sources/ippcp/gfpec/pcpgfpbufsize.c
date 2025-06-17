@@ -51,28 +51,34 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpScratchBufferSize,(int nExponents, int ExpBitSize, const IppsGFpState* pGFp, int* pBufferSize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpScratchBufferSize, (int nExponents,
+                                             int ExpBitSize,
+                                             const IppsGFpState* pGFp,
+                                             int* pBufferSize))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pGFp, pBufferSize);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pGFp, pBufferSize);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( 0>=nExponents ||nExponents>IPP_MAX_EXPONENT_NUM, ippStsBadArgErr);
-   IPP_BADARG_RET( 0>=ExpBitSize, ippStsBadArgErr);
+    IPP_BADARG_RET(0 >= nExponents || nExponents > IPP_MAX_EXPONENT_NUM, ippStsBadArgErr);
+    IPP_BADARG_RET(0 >= ExpBitSize, ippStsBadArgErr);
 
-   /* gres 06/10/2019: ExpBirSize=BNU_CHUNK_BITS*n -- meet CTE implementation */
-   ExpBitSize = ((ExpBitSize + BNU_CHUNK_BITS-1)/BNU_CHUNK_BITS) * BNU_CHUNK_BITS;
-   {
-      int elmDataSize = GFP_FELEN(GFP_PMA(pGFp))*(Ipp32s)sizeof(BNU_CHUNK_T);
+    /* gres 06/10/2019: ExpBirSize=BNU_CHUNK_BITS*n -- meet CTE implementation */
+    ExpBitSize = ((ExpBitSize + BNU_CHUNK_BITS - 1) / BNU_CHUNK_BITS) * BNU_CHUNK_BITS;
+    {
+        int elmDataSize = GFP_FELEN(GFP_PMA(pGFp)) * (Ipp32s)sizeof(BNU_CHUNK_T);
 
-      /* get window_size */
-      int w = (nExponents==1)? cpGFpGetOptimalWinSize(ExpBitSize) : /* use optimal window size, if single-scalar operation */
-                               nExponents;                          /* or pseudo-oprimal if multi-scalar operation */
+        /* get window_size */
+        /* use optimal window size, if single-scalar operation */
+        /* or pseudo-oprimal if multi-scalar operation */
+        int w = (nExponents == 1) ? cpGFpGetOptimalWinSize(ExpBitSize) : nExponents;
 
-      /* number of table entries */
-      int nPrecomputed = 1<<w;
+        /* number of table entries */
+        int nPrecomputed = 1 << w;
 
-      *pBufferSize = elmDataSize*nPrecomputed + (CACHE_LINE_SIZE-1);
+        *pBufferSize = elmDataSize * nPrecomputed + (CACHE_LINE_SIZE - 1);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

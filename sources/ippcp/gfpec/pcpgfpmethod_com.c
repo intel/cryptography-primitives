@@ -33,15 +33,9 @@
 //           operations over GF(q). Arbitrary modulus q.
 *F*/
 
-IPPFUN( const IppsGFpMethod*, ippsGFpMethod_pArb, (void) )
+IPPFUN(const IppsGFpMethod*, ippsGFpMethod_pArb, (void))
 {
-   static IppsGFpMethod method = {
-      cpID_Prime,
-      0,
-      NULL,
-      NULL,
-      NULL
-   };
-      method.arith = gsArithGFp();
-   return &method;
+    static IppsGFpMethod method = { cpID_Prime, 0, NULL, NULL, NULL };
+    method.arith                = gsArithGFp();
+    return &method;
 }

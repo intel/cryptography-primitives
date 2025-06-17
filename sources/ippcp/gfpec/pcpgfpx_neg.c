@@ -28,18 +28,18 @@
 #include "gfpec/pcpgfpxstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxNeg, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFEx))
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxNeg, (BNU_CHUNK_T * pR, const BNU_CHUNK_T* pA, gsModEngine* pGFEx))
 {
-   gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
-   int basicElemLen = GFP_FELEN(pBasicGFE);
-   int basicDeg = cpGFpBasicDegreeExtension(pGFEx);
+    gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
+    int basicElemLen       = GFP_FELEN(pBasicGFE);
+    int basicDeg           = cpGFpBasicDegreeExtension(pGFEx);
 
-   BNU_CHUNK_T* pTmp = pR;
-   int deg;
-   for(deg=0; deg<basicDeg; deg++) {
-      GFP_METHOD(pBasicGFE)->neg(pTmp, pA, pBasicGFE);
-      pTmp += basicElemLen;
-      pA += basicElemLen;
-   }
-   return pR;
+    BNU_CHUNK_T* pTmp = pR;
+    int deg;
+    for (deg = 0; deg < basicDeg; deg++) {
+        GFP_METHOD(pBasicGFE)->neg(pTmp, pA, pBasicGFE);
+        pTmp += basicElemLen;
+        pA += basicElemLen;
+    }
+    return pR;
 }

@@ -33,37 +33,42 @@
 #include "pcptool.h"
 
 
-IPP_OWN_DEFN (IppStatus, cpGFpSetGFp, (const BNU_CHUNK_T* pPrime, int primeBitSize, const IppsGFpMethod* method, IppsGFpState* pGF))
+/* clang-format off */
+IPP_OWN_DEFN(IppStatus, cpGFpSetGFp, (const BNU_CHUNK_T* pPrime,
+                                      int primeBitSize,
+                                      const IppsGFpMethod* method,
+                                      IppsGFpState* pGF))
+/* clang-format on */
 {
-   gsModEngine* pGFE = GFP_PMA(pGF);
+    gsModEngine* pGFE = GFP_PMA(pGF);
 
-   int primeLen = BITS_BNU_CHUNK(primeBitSize);
+    int primeLen = BITS_BNU_CHUNK(primeBitSize);
 
-   /* arithmetic methods */
-   GFP_METHOD(pGFE) = method->arith;
-   pGFE->method_alt = method->arith_alt;
+    /* arithmetic methods */
+    GFP_METHOD(pGFE) = method->arith;
+    pGFE->method_alt = method->arith_alt;
 
-   /* store modulus */
-   COPY_BNU(GFP_MODULUS(pGFE), pPrime, primeLen);
+    /* store modulus */
+    COPY_BNU(GFP_MODULUS(pGFE), pPrime, primeLen);
 
-   /* montgomery factor */
-   GFP_MNT_FACTOR(pGFE) = gsMontFactor(GFP_MODULUS(pGFE)[0]);
+    /* montgomery factor */
+    GFP_MNT_FACTOR(pGFE) = gsMontFactor(GFP_MODULUS(pGFE)[0]);
 
-   /* montgomery identity (R) */
-   ZEXPAND_BNU(GFP_MNT_R(pGFE), 0, primeLen);
-   GFP_MNT_R(pGFE)[primeLen] = 1;
-   cpMod_BNU(GFP_MNT_R(pGFE), primeLen+1, GFP_MODULUS(pGFE), primeLen);
+    /* montgomery identity (R) */
+    ZEXPAND_BNU(GFP_MNT_R(pGFE), 0, primeLen);
+    GFP_MNT_R(pGFE)[primeLen] = 1;
+    cpMod_BNU(GFP_MNT_R(pGFE), primeLen + 1, GFP_MODULUS(pGFE), primeLen);
 
-   /* montgomery domain converter (RR) */
-   ZEXPAND_BNU(GFP_MNT_RR(pGFE), 0, primeLen);
-   COPY_BNU(GFP_MNT_RR(pGFE)+primeLen, GFP_MNT_R(pGFE), primeLen);
-   cpMod_BNU(GFP_MNT_RR(pGFE), 2*primeLen, GFP_MODULUS(pGFE), primeLen);
+    /* montgomery domain converter (RR) */
+    ZEXPAND_BNU(GFP_MNT_RR(pGFE), 0, primeLen);
+    COPY_BNU(GFP_MNT_RR(pGFE) + primeLen, GFP_MNT_R(pGFE), primeLen);
+    cpMod_BNU(GFP_MNT_RR(pGFE), 2 * primeLen, GFP_MODULUS(pGFE), primeLen);
 
-   /* half of modulus */
-   cpLSR_BNU(GFP_HMODULUS(pGFE), GFP_MODULUS(pGFE), primeLen, 1);
+    /* half of modulus */
+    cpLSR_BNU(GFP_HMODULUS(pGFE), GFP_MODULUS(pGFE), primeLen, 1);
 
-   /* set qnr value */
-   cpGFEqnr(pGFE);
+    /* set qnr value */
+    cpGFEqnr(pGFE);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

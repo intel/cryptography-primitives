@@ -67,99 +67,103 @@
 //    pScratchBuffer pointer to buffer (2 mul_point operation)
 //
 *F*/
+
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECVerifyNR,(const IppsBigNumState* pMsgDigest,
                                      const IppsGFpECPoint* pRegPublic,
-                                     const IppsBigNumState* pSignR, const IppsBigNumState* pSignS,
+                                     const IppsBigNumState* pSignR,
+                                     const IppsBigNumState* pSignS,
                                      IppECResult* pResult,
                                      IppsGFpECState* pEC,
                                      Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IppsGFpState*  pGF;
-   gsModEngine* pGFE;
+    IppsGFpState* pGF;
+    gsModEngine* pGFE;
 
-   /* EC context and buffer */
-   IPP_BAD_PTR2_RET(pEC, pScratchBuffer);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    /* EC context and buffer */
+    IPP_BAD_PTR2_RET(pEC, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   pGF = ECP_GFP(pEC);
-   pGFE = GFP_PMA(pGF);
-   IPP_BADARG_RET(1<GFP_EXTDEGREE(pGFE), ippStsNotSupportedModeErr);
+    pGF  = ECP_GFP(pEC);
+    pGFE = GFP_PMA(pGF);
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(pGFE), ippStsNotSupportedModeErr);
 
-   /* test message representative */
-   IPP_BAD_PTR1_RET(pMsgDigest);
-   IPP_BADARG_RET(!BN_VALID_ID(pMsgDigest), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pMsgDigest), ippStsMessageErr);
+    /* test message representative */
+    IPP_BAD_PTR1_RET(pMsgDigest);
+    IPP_BADARG_RET(!BN_VALID_ID(pMsgDigest), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pMsgDigest), ippStsMessageErr);
 
-   /* test regular public key */
-   IPP_BAD_PTR1_RET(pRegPublic);
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pRegPublic), ippStsContextMatchErr );
-   IPP_BADARG_RET( ECP_POINT_FELEN(pRegPublic)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+    /* test regular public key */
+    IPP_BAD_PTR1_RET(pRegPublic);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pRegPublic), ippStsContextMatchErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pRegPublic) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-   /* test signature */
-   IPP_BAD_PTR2_RET(pSignR, pSignS);
-   IPP_BADARG_RET(!BN_VALID_ID(pSignR), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pSignS), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pSignR), ippStsRangeErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pSignS), ippStsRangeErr);
+    /* test signature */
+    IPP_BAD_PTR2_RET(pSignR, pSignS);
+    IPP_BADARG_RET(!BN_VALID_ID(pSignR), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pSignS), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pSignR), ippStsRangeErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pSignS), ippStsRangeErr);
 
-   /* test result */
-   IPP_BAD_PTR1_RET(pResult);
+    /* test result */
+    IPP_BAD_PTR1_RET(pResult);
 
-   {
-      IppECResult vResult = ippECInvalidSignature;
+    {
+        IppECResult vResult = ippECInvalidSignature;
 
-      gsModEngine* pMontR = ECP_MONT_R(pEC);
-      BNU_CHUNK_T* pOrder = MOD_MODULUS(pMontR);
-      int orderLen = MOD_LEN(pMontR);
+        gsModEngine* pMontR = ECP_MONT_R(pEC);
+        BNU_CHUNK_T* pOrder = MOD_MODULUS(pMontR);
+        int orderLen        = MOD_LEN(pMontR);
 
-      /* test message: msg<order */
-      IPP_BADARG_RET((0<=cpCmp_BNU(BN_NUMBER(pMsgDigest), BN_SIZE(pMsgDigest), pOrder, orderLen)), ippStsMessageErr);
+        /* test message: msg<order */
+        IPP_BADARG_RET(
+            (0 <= cpCmp_BNU(BN_NUMBER(pMsgDigest), BN_SIZE(pMsgDigest), pOrder, orderLen)),
+            ippStsMessageErr);
 
-      /* test signature value */
-      if(!cpEqu_BNU_CHUNK(BN_NUMBER(pSignR), BN_SIZE(pSignR), 0) &&
-         !cpEqu_BNU_CHUNK(BN_NUMBER(pSignS), BN_SIZE(pSignS), 0) &&
-         0>cpCmp_BNU(BN_NUMBER(pSignR), BN_SIZE(pSignR), pOrder, orderLen) &&
-         0>cpCmp_BNU(BN_NUMBER(pSignS), BN_SIZE(pSignS), pOrder, orderLen)) {
+        /* test signature value */
+        if (!cpEqu_BNU_CHUNK(BN_NUMBER(pSignR), BN_SIZE(pSignR), 0) &&
+            !cpEqu_BNU_CHUNK(BN_NUMBER(pSignS), BN_SIZE(pSignS), 0) &&
+            0 > cpCmp_BNU(BN_NUMBER(pSignR), BN_SIZE(pSignR), pOrder, orderLen) &&
+            0 > cpCmp_BNU(BN_NUMBER(pSignS), BN_SIZE(pSignS), pOrder, orderLen)) {
 
-         int elmLen = GFP_FELEN(pGFE);
-         int pelmLen = GFP_PELEN(pGFE);
+            int elmLen  = GFP_FELEN(pGFE);
+            int pelmLen = GFP_PELEN(pGFE);
 
-         BNU_CHUNK_T* h1 = cpGFpGetPool(3, pGFE);
-         BNU_CHUNK_T* h2 = h1+pelmLen;
-         BNU_CHUNK_T* f  = h2+pelmLen;
+            BNU_CHUNK_T* h1 = cpGFpGetPool(3, pGFE);
+            BNU_CHUNK_T* h2 = h1 + pelmLen;
+            BNU_CHUNK_T* f  = h2 + pelmLen;
 
-         IppsGFpECPoint P;
-         cpEcGFpInitPoint(&P, cpEcGFpGetPool(1, pEC),0, pEC);
+            IppsGFpECPoint P;
+            cpEcGFpInitPoint(&P, cpEcGFpGetPool(1, pEC), 0, pEC);
 
-         /* P = [d]BasePoint + [c]publicKey */
-         ZEXPAND_COPY_BNU(h1, orderLen, BN_NUMBER(pSignS),BN_SIZE(pSignS));
-         ZEXPAND_COPY_BNU(h2, orderLen, BN_NUMBER(pSignR),BN_SIZE(pSignR));
-         gfec_BasePointProduct(&P,
-                               h1, orderLen, pRegPublic, h2, orderLen,
-                               pEC, pScratchBuffer);
+            /* P = [d]BasePoint + [c]publicKey */
+            ZEXPAND_COPY_BNU(h1, orderLen, BN_NUMBER(pSignS), BN_SIZE(pSignS));
+            ZEXPAND_COPY_BNU(h2, orderLen, BN_NUMBER(pSignR), BN_SIZE(pSignR));
+            gfec_BasePointProduct(&P, h1, orderLen, pRegPublic, h2, orderLen, pEC, pScratchBuffer);
 
-         /* check that P!=O */
-         if( !gfec_IsPointAtInfinity(&P)) {
-            /* get P.X */
-            gfec_GetPoint(h1, NULL, &P, pEC);
-            /* x = int(P.x) mod order */
-            GFP_METHOD(pGFE)->decode(h1, h1, pGFE);
-            elmLen = cpMod_BNU(h1, elmLen, pOrder, orderLen);
-            cpGFpElementPad(h1+elmLen, orderLen-elmLen, 0);
+            /* check that P!=O */
+            if (!gfec_IsPointAtInfinity(&P)) {
+                /* get P.X */
+                gfec_GetPoint(h1, NULL, &P, pEC);
+                /* x = int(P.x) mod order */
+                GFP_METHOD(pGFE)->decode(h1, h1, pGFE);
+                elmLen = cpMod_BNU(h1, elmLen, pOrder, orderLen);
+                cpGFpElementPad(h1 + elmLen, orderLen - elmLen, 0);
 
-            /* and recover msg f = (signC -x) mod order */
-            ZEXPAND_COPY_BNU(f, orderLen, BN_NUMBER(pMsgDigest),BN_SIZE(pMsgDigest));
-            cpModSub_BNU(h1, h2, h1, pOrder, orderLen, h2);
-            if(GFP_EQ(f, h1, orderLen))
-               vResult = ippECValid;
-         }
+                /* and recover msg f = (signC -x) mod order */
+                ZEXPAND_COPY_BNU(f, orderLen, BN_NUMBER(pMsgDigest), BN_SIZE(pMsgDigest));
+                cpModSub_BNU(h1, h2, h1, pOrder, orderLen, h2);
+                if (GFP_EQ(f, h1, orderLen))
+                    vResult = ippECValid;
+            }
 
-         cpEcGFpReleasePool(1, pEC);
-         cpGFpReleasePool(3, pGFE);
-      }
+            cpEcGFpReleasePool(1, pEC);
+            cpGFpReleasePool(3, pGFE);
+        }
 
-      *pResult = vResult;
-      return ippStsNoErr;
-   }
+        *pResult = vResult;
+        return ippStsNoErr;
+    }
 }

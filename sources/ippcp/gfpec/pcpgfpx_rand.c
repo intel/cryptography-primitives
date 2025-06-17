@@ -29,23 +29,28 @@
 #include "gsscramble.h"
 
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxRand, (BNU_CHUNK_T* pR, gsModEngine* pGFEx, IppBitSupplier rndFunc, void* pRndParam))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxRand, (BNU_CHUNK_T* pR,
+                                        gsModEngine* pGFEx,
+                                        IppBitSupplier rndFunc,
+                                        void* pRndParam))
+/* clang-format on */
 {
-   if( GFP_IS_BASIC(pGFEx) )
-      return cpGFpRand(pR, pGFEx, rndFunc, pRndParam);
+    if (GFP_IS_BASIC(pGFEx))
+        return cpGFpRand(pR, pGFEx, rndFunc, pRndParam);
 
-   else {
-      gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
-      int basicElemLen = GFP_FELEN(pBasicGFE);
-      int basicDeg = cpGFpBasicDegreeExtension(pGFEx);
+    else {
+        gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
+        int basicElemLen       = GFP_FELEN(pBasicGFE);
+        int basicDeg           = cpGFpBasicDegreeExtension(pGFEx);
 
-      BNU_CHUNK_T* pTmp = pR;
-      int deg;
-      for(deg=0; deg<basicDeg; deg++) {
-         if(NULL == cpGFpRand(pTmp, pBasicGFE, rndFunc, pRndParam))
-            break;
-         pTmp += basicElemLen;
-      }
-      return deg==basicDeg? pR : NULL;
-   }
+        BNU_CHUNK_T* pTmp = pR;
+        int deg;
+        for (deg = 0; deg < basicDeg; deg++) {
+            if (NULL == cpGFpRand(pTmp, pBasicGFE, rndFunc, pRndParam))
+                break;
+            pTmp += basicElemLen;
+        }
+        return deg == basicDeg ? pR : NULL;
+    }
 }

@@ -61,31 +61,37 @@
 //    pGFpMethod     pointer to the basic arithmetic methods
 //    pGFpx          pointer to Finite Field context is being initialized
 *F*/
-IPPFUN(IppStatus, ippsGFpxInitBinomial,(const IppsGFpState* pGroundGF, int extDeg,
-                                        const IppsGFpElement* pGroundElm,
-                                        const IppsGFpMethod* pGFpMethod,
-                                        IppsGFpState* pGFpx))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpxInitBinomial, (const IppsGFpState* pGroundGF,
+                                         int extDeg,
+                                         const IppsGFpElement* pGroundElm,
+                                         const IppsGFpMethod* pGFpMethod,
+                                         IppsGFpState* pGFpx))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pGFpx, pGroundGF, pGroundElm, pGFpMethod);
+    IPP_BAD_PTR4_RET(pGFpx, pGroundGF, pGroundElm, pGFpMethod);
 
-   IPP_BADARG_RET( !GFP_VALID_ID(pGroundGF), ippStsContextMatchErr );
+    IPP_BADARG_RET(!GFP_VALID_ID(pGroundGF), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( !GFPE_VALID_ID(pGroundElm), ippStsContextMatchErr );
-   IPP_BADARG_RET(GFPE_ROOM(pGroundElm)!=GFP_FELEN(GFP_PMA(pGroundGF)), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pGroundElm), ippStsContextMatchErr);
+    IPP_BADARG_RET(GFPE_ROOM(pGroundElm) != GFP_FELEN(GFP_PMA(pGroundGF)), ippStsOutOfRangeErr);
 
-   IPP_BADARG_RET( extDeg<IPP_MIN_GF_EXTDEG || extDeg>IPP_MAX_GF_EXTDEG, ippStsBadArgErr);
+    IPP_BADARG_RET(extDeg < IPP_MIN_GF_EXTDEG || extDeg > IPP_MAX_GF_EXTDEG, ippStsBadArgErr);
 
-   /* test method is binomial based */
-   IPP_BADARG_RET(cpID_Binom != (pGFpMethod->modulusID & cpID_Binom), ippStsBadArgErr);
+    /* test method is binomial based */
+    IPP_BADARG_RET(cpID_Binom != (pGFpMethod->modulusID & cpID_Binom), ippStsBadArgErr);
 
-   /* test if method assumes fixed degree extension */
-   IPP_BADARG_RET(pGFpMethod->modulusBitDeg && (extDeg!=pGFpMethod->modulusBitDeg), ippStsBadArgErr);
+    /* test if method assumes fixed degree extension */
+    IPP_BADARG_RET(pGFpMethod->modulusBitDeg && (extDeg != pGFpMethod->modulusBitDeg),
+                   ippStsBadArgErr);
 
-   /* init context */
-   InitGFpxCtx(pGroundGF, extDeg, pGFpMethod, pGFpx);
+    /* init context */
+    InitGFpxCtx(pGroundGF, extDeg, pGFpMethod, pGFpx);
 
-   /* store low-order coefficient of irresucible into the context */
-   cpGFpElementCopy(GFP_MODULUS(GFP_PMA(pGFpx)), GFPE_DATA(pGroundElm), GFP_FELEN(GFP_PMA(pGroundGF)));
+    /* store low-order coefficient of irresucible into the context */
+    cpGFpElementCopy(GFP_MODULUS(GFP_PMA(pGFpx)),
+                     GFPE_DATA(pGroundElm),
+                     GFP_FELEN(GFP_PMA(pGroundGF)));
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

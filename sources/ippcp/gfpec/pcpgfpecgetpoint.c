@@ -62,23 +62,26 @@
 //    Is not a fact that computed point belongs to BP-related subgroup BP
 //
 *F*/
-
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECGetPoint,(const IppsGFpECPoint* pPoint,
-                                           IppsGFpElement* pX, IppsGFpElement* pY,
+                                           IppsGFpElement* pX,
+                                           IppsGFpElement* pY,
                                            IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pPoint, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pPoint, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( pX && !GFPE_VALID_ID(pX), ippStsContextMatchErr );
-   IPP_BADARG_RET( pY && !GFPE_VALID_ID(pY), ippStsContextMatchErr );
+    IPP_BADARG_RET(pX && !GFPE_VALID_ID(pX), ippStsContextMatchErr);
+    IPP_BADARG_RET(pY && !GFPE_VALID_ID(pY), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( pX && GFPE_ROOM(pX)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET( pY && GFPE_ROOM(pY)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET( ECP_POINT_FELEN(pPoint)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(pX && GFPE_ROOM(pX) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(pY && GFPE_ROOM(pY) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pPoint) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))),
+                   ippStsOutOfRangeErr);
 
-   /* returns (X,Y) == (0,0) if Point is at infinity */
-   gfec_GetPoint((pX)? GFPE_DATA(pX):NULL, (pY)? GFPE_DATA(pY):NULL, pPoint, pEC);
-   return ippStsNoErr;
+    /* returns (X,Y) == (0,0) if Point is at infinity */
+    gfec_GetPoint((pX) ? GFPE_DATA(pX) : NULL, (pY) ? GFPE_DATA(pY) : NULL, pPoint, pEC);
+    return ippStsNoErr;
 }

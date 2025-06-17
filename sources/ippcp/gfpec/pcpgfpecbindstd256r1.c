@@ -34,31 +34,32 @@ static IppStatus cpGFpECBindGxyTbl(const BNU_CHUNK_T* pPrime,
                                    const cpPrecompAP* preComp,
                                    IppsGFpECState* pEC)
 {
-   IppsGFpState *pGF = ECP_GFP(pEC);
-   gsModEngine *pGFE = GFP_PMA(pGF);
-   Ipp32u elemLen    = (Ipp32u)GFP_FELEN(pGFE);
+    IppsGFpState* pGF = ECP_GFP(pEC);
+    gsModEngine* pGFE = GFP_PMA(pGF);
+    Ipp32u elemLen    = (Ipp32u)GFP_FELEN(pGFE);
 
-   /* test if GF is prime GF */
-   IPP_BADARG_RET(!GFP_IS_BASIC(pGFE), ippStsBadArgErr);
-   /* test underlying prime value*/
-   IPP_BADARG_RET(cpCmp_BNU(pPrime, (cpSize)elemLen, GFP_MODULUS(pGFE), (cpSize)elemLen), ippStsBadArgErr);
+    /* test if GF is prime GF */
+    IPP_BADARG_RET(!GFP_IS_BASIC(pGFE), ippStsBadArgErr);
+    /* test underlying prime value*/
+    IPP_BADARG_RET(cpCmp_BNU(pPrime, (cpSize)elemLen, GFP_MODULUS(pGFE), (cpSize)elemLen),
+                   ippStsBadArgErr);
 
-   {
-      BNU_CHUNK_T *pbp_ec = ECP_G(pEC);
-      int cmpFlag;
-      BNU_CHUNK_T *pbp_tbl = cpEcGFpGetPool(1, pEC);
+    {
+        BNU_CHUNK_T* pbp_ec = ECP_G(pEC);
+        int cmpFlag;
+        BNU_CHUNK_T* pbp_tbl = cpEcGFpGetPool(1, pEC);
 
-      selectAP select_affine_point = preComp->select_affine_point;
-      const BNU_CHUNK_T *pTbl      = preComp->pTbl;
-      select_affine_point(pbp_tbl, pTbl, 1);
+        selectAP select_affine_point = preComp->select_affine_point;
+        const BNU_CHUNK_T* pTbl      = preComp->pTbl;
+        select_affine_point(pbp_tbl, pTbl, 1);
 
-      /* check if EC's and G-table's Base Point is the same */
-      cmpFlag = cpCmp_BNU(pbp_ec, (cpSize)elemLen * 2, pbp_tbl, (cpSize)elemLen * 2);
+        /* check if EC's and G-table's Base Point is the same */
+        cmpFlag = cpCmp_BNU(pbp_ec, (cpSize)elemLen * 2, pbp_tbl, (cpSize)elemLen * 2);
 
-      cpEcGFpReleasePool(1, pEC);
+        cpEcGFpReleasePool(1, pEC);
 
-      return cmpFlag ? ippStsBadArgErr : ippStsNoErr;
-   }
+        return cmpFlag ? ippStsBadArgErr : ippStsNoErr;
+    }
 }
 
 /*F*
@@ -82,28 +83,28 @@ static IppStatus cpGFpECBindGxyTbl(const BNU_CHUNK_T* pPrime,
 
 IPPFUN(IppStatus, ippsGFpECBindGxyTblStd256r1, (IppsGFpECState * pEC))
 {
-   IPP_BAD_PTR1_RET(pEC);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BAD_PTR1_RET(pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
 #if (_IPP32E >= _IPP32E_K1)
-   if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
-      /* ModulusId as well as IFMA-based GF(p) method are assigned in
+    if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
+        /* ModulusId as well as IFMA-based GF(p) method are assigned in
        * ippsGFpECInitStd* function. If modulusId is not set (i.e. GFp method is
        * not IFMA-based), then bind regular table (not for IFMA implementation).
        */
-      if (ECP_MODULUS_ID(pEC) == cpID_PrimeP256r1) {
-         ECP_PREMULBP(pEC) = gfpec_precom_nistP256r1_radix52_fun();
-         return ippStsNoErr;
-      }
-   }
+        if (ECP_MODULUS_ID(pEC) == cpID_PrimeP256r1) {
+            ECP_PREMULBP(pEC) = gfpec_precom_nistP256r1_radix52_fun();
+            return ippStsNoErr;
+        }
+    }
 #endif
 
-   const cpPrecompAP *precomp = gfpec_precom_nistP256r1_fun();
-   IppStatus sts              = cpGFpECBindGxyTbl(secp256r1_p, precomp, pEC);
+    const cpPrecompAP* precomp = gfpec_precom_nistP256r1_fun();
+    IppStatus sts              = cpGFpECBindGxyTbl(secp256r1_p, precomp, pEC);
 
-   /* setup pre-computed g-table and point access function */
-   if (ippStsNoErr == sts)
-      ECP_PREMULBP(pEC) = precomp;
+    /* setup pre-computed g-table and point access function */
+    if (ippStsNoErr == sts)
+        ECP_PREMULBP(pEC) = precomp;
 
-   return sts;
+    return sts;
 }

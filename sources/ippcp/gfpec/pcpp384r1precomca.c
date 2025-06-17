@@ -30,21 +30,22 @@
 #define LEN_P384        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
 
 /* P384 affine point */
-typedef struct{
-   BNU_CHUNK_T X[LEN_P384];
-   BNU_CHUNK_T Y[LEN_P384];
+typedef struct {
+    BNU_CHUNK_T X[LEN_P384];
+    BNU_CHUNK_T Y[LEN_P384];
 } P384_POINT_AFFINE;
 
 extern const __ALIGN64 P384_POINT_AFFINE ec_p384r1_precomputed[77][16];
 
 
-#if defined ( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 #if !defined(_DISABLE_ECP_384R1_HARDCODED_BP_TBL_)
 /* see ippcp_baseptbl.cpp test for generation details */
 
 const __ALIGN64 P384_POINT_AFFINE ec_p384r1_precomputed[77][16] = {
-/* digit=0 base_pwr=2^0 */
+  /* digit=0 base_pwr=2^0 */
+  /* clang-format off */
 {
    {{LL(0x49c0b528,0x3dd07566),LL(0xa0d6ce38,0x20e378e2),LL(0x541b4d6e,0x879c3afc),LL(0x59a30eff,0x64548684),LL(0x614ede2b,0x812ff723),LL(0x299e1513,0x4d3aadc2)}, {LL(0x4b03a4fe,0x23043dad),LL(0x7bb4a9ac,0xa1bfa8bf),LL(0x2e83b050,0x8bade756),LL(0x68f4ffd9,0xc6c35219),LL(0x3969a840,0xdd800226),LL(0x5a15c5e9,0x2b78abc2)}},
    {{LL(0x783dde91,0xc8229e55),LL(0x022b53f0,0x8e6c8f2e),LL(0xff9d48a1,0x3504e6f0),LL(0xf0687f50,0xda821495),LL(0x2de4b506,0x9c90a4fd),LL(0x427460c3,0xdb93b776)}, {LL(0x3140bfda,0x42ea8463),LL(0xc2aaccd8,0xe8e8e4a8),LL(0xdc588258,0x15e4f18b),LL(0x5172bad9,0x09f1fe41),LL(0x00b0e684,0x070d4309),LL(0x123df0c2,0xe34947f7)}},
@@ -1507,17 +1508,16 @@ const __ALIGN64 P384_POINT_AFFINE ec_p384r1_precomputed[77][16] = {
    {{LL(0x1ca459ed,0x5bfa10cd),LL(0x6dcf56bf,0x593f085a),LL(0xc0579c3e,0xe6f0ad9b),LL(0x2527c1ad,0xc11c95a2),LL(0xcf1cb8b3,0x7cfa71e1),LL(0x1d6dc79d,0xedcff833)}, {LL(0x432521c9,0x581c4bbe),LL(0x144e11a0,0xbf620096),LL(0xbe3a107b,0x54c38b71),LL(0xe2606ec0,0xed555e37),LL(0xd721d034,0x3fb148b8),LL(0x0091bc90,0x79d53dad)}},
    {{LL(0x08d1be5d,0xcf17f9dc),LL(0xafdfeb23,0xb55de4c8),LL(0xe437b29c,0xa69454ff),LL(0xe27ee9e2,0x6628d789),LL(0xee3af03b,0x56e3b975),LL(0x2f532d62,0x0083fe9c)}, {LL(0xe63e7511,0xcae15213),LL(0x86ed849c,0xdb5384f3),LL(0xfa4d825f,0x902ba959),LL(0x5ae17566,0xbad700d5),LL(0x14c82eb4,0x16b2c5dc),LL(0x36708ea7,0xa4b057a7)}},
 }
+  /* clang-format on */
 };
 #endif /* _DISABLE_ECP_384R1_HARDCODED_BP_TBL_ */
-#endif  /* _IPP_DATA */
+#endif /* _IPP_DATA */
 
 
-IPP_OWN_DEFN (const cpPrecompAP*, gfpec_precom_nistP384r1_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_nistP384r1_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */                  5,
-      /* select function */    p384r1_select_ap_w5,
-      /* precomputed data */   (BNU_CHUNK_T*)ec_p384r1_precomputed
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 5,
+                             /* select function */ p384r1_select_ap_w5,
+                             /* precomputed data */ (BNU_CHUNK_T*)ec_p384r1_precomputed };
+    return &t;
 }

@@ -29,22 +29,27 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpSetOctString, (BNU_CHUNK_T* pElm, const Ipp8u* pStr, int strSize, gsModEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpSetOctString, (BNU_CHUNK_T* pElm,
+                                               const Ipp8u* pStr,
+                                               int strSize,
+                                               gsModEngine* pGFE))
+/* clang-format on */
 {
-   int elemLen = GFP_FELEN(pGFE);
+    int elemLen = GFP_FELEN(pGFE);
 
-   if((int)(elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)) < strSize)
-      return NULL;
+    if ((int)(elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)) < strSize)
+        return NULL;
 
-   {
-      BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
-      //tbcd: temporary excluded: assert(pTmp !=NULL);
-      {
-         int nsTmp = cpFromOctStr_BNU(pTmp, pStr, strSize);
-         BNU_CHUNK_T* ret = cpGFpSet(pElm, pTmp, nsTmp, pGFE);
+    {
+        BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
+        //tbcd: temporary excluded: assert(pTmp !=NULL);
+        {
+            int nsTmp        = cpFromOctStr_BNU(pTmp, pStr, strSize);
+            BNU_CHUNK_T* ret = cpGFpSet(pElm, pTmp, nsTmp, pGFE);
 
-         cpGFpReleasePool(1, pGFE);
-         return ret==NULL? NULL : pElm;
-      }
-   }
+            cpGFpReleasePool(1, pGFE);
+            return ret == NULL ? NULL : pElm;
+        }
+    }
 }

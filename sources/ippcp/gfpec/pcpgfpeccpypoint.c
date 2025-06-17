@@ -57,18 +57,20 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECCpyPoint,(const IppsGFpECPoint* pA,
-                                           IppsGFpECPoint* pR,
-                                           IppsGFpECState* pEC))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECCpyPoint, (const IppsGFpECPoint* pA,
+                                      IppsGFpECPoint* pR,
+                                      IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pA, pR, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pA), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pR), ippStsContextMatchErr );
+    IPP_BAD_PTR3_RET(pA, pR, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pR), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( ECP_POINT_FELEN(pA)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET( ECP_POINT_FELEN(pR)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pA) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pR) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
 
-   gfec_CopyPoint(pR, pA, GFP_FELEN(GFP_PMA(ECP_GFP(pEC))));
-   return ippStsNoErr;
+    gfec_CopyPoint(pR, pA, GFP_FELEN(GFP_PMA(ECP_GFP(pEC))));
+    return ippStsNoErr;
 }

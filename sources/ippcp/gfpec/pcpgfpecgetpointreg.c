@@ -58,49 +58,51 @@
 //    pX, pY      Pointers to the X and Y coordinates of a point on the elliptic curve
 //
 *F*/
-
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECGetPointRegular,(const IppsGFpECPoint* pPoint,
-                                                  IppsBigNumState* pX, IppsBigNumState* pY,
+                                                  IppsBigNumState* pX,
+                                                  IppsBigNumState* pY,
                                                   IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IppsGFpState*  pGF;
-   gsModEngine* pGFE;
+    IppsGFpState* pGF;
+    gsModEngine* pGFE;
 
-   IPP_BAD_PTR2_RET(pPoint, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pPoint, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr);
 
-   pGF = ECP_GFP(pEC);
-   pGFE = GFP_PMA(pGF);
+    pGF  = ECP_GFP(pEC);
+    pGFE = GFP_PMA(pGF);
 
-   if(pX) {
-      IPP_BADARG_RET(!BN_VALID_ID(pX), ippStsContextMatchErr );
-      IPP_BADARG_RET(BN_ROOM(pX)*BNU_CHUNK_BITS<GFP_FEBITLEN(pGFE), ippStsOutOfRangeErr);
-   }
-   if(pY) {
-      IPP_BADARG_RET(!BN_VALID_ID(pY), ippStsContextMatchErr );
-      IPP_BADARG_RET(BN_ROOM(pY)*BNU_CHUNK_BITS<GFP_FEBITLEN(pGFE), ippStsOutOfRangeErr);
-   }
+    if (pX) {
+        IPP_BADARG_RET(!BN_VALID_ID(pX), ippStsContextMatchErr);
+        IPP_BADARG_RET(BN_ROOM(pX) * BNU_CHUNK_BITS < GFP_FEBITLEN(pGFE), ippStsOutOfRangeErr);
+    }
+    if (pY) {
+        IPP_BADARG_RET(!BN_VALID_ID(pY), ippStsContextMatchErr);
+        IPP_BADARG_RET(BN_ROOM(pY) * BNU_CHUNK_BITS < GFP_FEBITLEN(pGFE), ippStsOutOfRangeErr);
+    }
 
-   {
-      int elmLen = GFP_FELEN(pGFE);
-      BNU_CHUNK_T* x = cpGFpGetPool(2, pGFE);
-      BNU_CHUNK_T* y = x + elmLen;
+    {
+        int elmLen     = GFP_FELEN(pGFE);
+        BNU_CHUNK_T* x = cpGFpGetPool(2, pGFE);
+        BNU_CHUNK_T* y = x + elmLen;
 
-      /* returns (X,Y) == (0,0) if Point is at infinity */
-      gfec_GetPoint((pX)? x:NULL, (pY)? y:NULL, pPoint, pEC);
+        /* returns (X,Y) == (0,0) if Point is at infinity */
+        gfec_GetPoint((pX) ? x : NULL, (pY) ? y : NULL, pPoint, pEC);
 
-      /* convert into refular domain */
-      if(pX) {
-         GFP_METHOD(pGFE)->decode(x, x, pGFE);
-         ippsSet_BN(ippBigNumPOS, GFP_FELEN32(pGFE), (Ipp32u*)x, pX);
-      }
-      if(pY) {
-         GFP_METHOD(pGFE)->decode(y, y, pGFE);
-         ippsSet_BN(ippBigNumPOS, GFP_FELEN32(pGFE), (Ipp32u*)y, pY);
-      }
+        /* convert into refular domain */
+        if (pX) {
+            GFP_METHOD(pGFE)->decode(x, x, pGFE);
+            ippsSet_BN(ippBigNumPOS, GFP_FELEN32(pGFE), (Ipp32u*)x, pX);
+        }
+        if (pY) {
+            GFP_METHOD(pGFE)->decode(y, y, pGFE);
+            ippsSet_BN(ippBigNumPOS, GFP_FELEN32(pGFE), (Ipp32u*)y, pY);
+        }
 
-      cpGFpReleasePool(2, pGFE);
-      return ippStsNoErr;
-   }
+        cpGFpReleasePool(2, pGFE);
+        return ippStsNoErr;
+    }
 }

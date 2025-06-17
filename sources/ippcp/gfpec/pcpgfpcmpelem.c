@@ -57,36 +57,40 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpCmpElement,(const IppsGFpElement* pA, const IppsGFpElement* pB,
-                                     int* pResult,
-                                     const IppsGFpState* pGFp))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpCmpElement, (const IppsGFpElement* pA,
+                                      const IppsGFpElement* pB,
+                                      int* pResult,
+                                      const IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pA, pB, pResult, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pB), ippStsContextMatchErr );
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( (GFPE_ROOM(pA)!=GFP_FELEN(pGFE)) || (GFPE_ROOM(pB)!=GFP_FELEN(pGFE)), ippStsOutOfRangeErr);
-      {
-         BNU_CHUNK_T* a = cpGFpGetPool(2, pGFE);
-         BNU_CHUNK_T* b = a + GFP_PELEN(pGFE);
+    IPP_BAD_PTR4_RET(pA, pB, pResult, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pB), ippStsContextMatchErr);
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET((GFPE_ROOM(pA) != GFP_FELEN(pGFE)) || (GFPE_ROOM(pB) != GFP_FELEN(pGFE)),
+                       ippStsOutOfRangeErr);
+        {
+            BNU_CHUNK_T* a = cpGFpGetPool(2, pGFE);
+            BNU_CHUNK_T* b = a + GFP_PELEN(pGFE);
 
-         GFP_METHOD(pGFE)->decode(a, GFPE_DATA(pA), pGFE);
-         GFP_METHOD(pGFE)->decode(b, GFPE_DATA(pB), pGFE);
+            GFP_METHOD(pGFE)->decode(a, GFPE_DATA(pA), pGFE);
+            GFP_METHOD(pGFE)->decode(b, GFPE_DATA(pB), pGFE);
 
-         ZEXPAND_BNU(a, GFP_FELEN(pGFE), GFP_PELEN(pGFE));
-         ZEXPAND_BNU(b, GFP_FELEN(pGFE), GFP_PELEN(pGFE));
+            ZEXPAND_BNU(a, GFP_FELEN(pGFE), GFP_PELEN(pGFE));
+            ZEXPAND_BNU(b, GFP_FELEN(pGFE), GFP_PELEN(pGFE));
 
-         int flag = cpCmp_BNU(a, GFP_PELEN(pGFE), b, GFP_PELEN(pGFE));
-         if( GFP_IS_BASIC(pGFE) )
-            *pResult = (0==flag)? IPP_IS_EQ : (0<flag)? IPP_IS_GT : IPP_IS_LT;
-         else
-            *pResult = (0==flag)? IPP_IS_EQ : IPP_IS_NE;
+            int flag = cpCmp_BNU(a, GFP_PELEN(pGFE), b, GFP_PELEN(pGFE));
+            if (GFP_IS_BASIC(pGFE))
+                *pResult = (0 == flag) ? IPP_IS_EQ : (0 < flag) ? IPP_IS_GT : IPP_IS_LT;
+            else
+                *pResult = (0 == flag) ? IPP_IS_EQ : IPP_IS_NE;
 
-         cpGFpReleasePool(2, pGFE);
+            cpGFpReleasePool(2, pGFE);
 
-         return ippStsNoErr;
-      }
-   }
+            return ippStsNoErr;
+        }
+    }
 }

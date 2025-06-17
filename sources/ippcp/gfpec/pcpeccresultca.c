@@ -40,27 +40,46 @@
 //
 *F*/
 
-IPPFUN( const char*, ippsECCGetResultString, (IppECResult code))
+IPPFUN(const char*, ippsECCGetResultString, (IppECResult code))
 {
-   switch(code) {
-   case ippECValid:           return "Validation pass successfully";
-   case ippECCompositeBase:   return "Finite Field produced by Composite";
-   case ippECComplicatedBase: return "Too much non-zero terms in the polynomial";
-   case ippECIsZeroDiscriminant: return "Zero discriminamt";
-   case ippECCompositeOrder:     return "Composite Base Point order";
-   case ippECInvalidOrder:       return "Invalid Base Point order";
-   case ippECIsWeakMOV:          return "EC cover by MOV Reduction Test";
-   case ippECIsWeakSSSA:         return "EC cover by SS-SA Reduction Test";
-   case ippECIsSupersingular:    return "EC is supersingular curve";
-   case ippECInvalidPrivateKey:  return "Invalid Private Key";
-   case ippECInvalidPublicKey:   return "Invalid Public Key";
-   case ippECInvalidKeyPair:     return "Invalid Key Pair";
-   case ippECPointOutOfGroup:    return "Point is out of group";
-   case ippECPointIsAtInfinite:  return "Point at Infinity";
-   case ippECPointIsNotValid:    return "Invalid EC Point";
-   case ippECPointIsEqual:       return "Points are equal";
-   case ippECPointIsNotEqual:    return "Points are different";
-   case ippECInvalidSignature:   return "Invalid Signature";
-   default:                      return "Unknown ECC result";
-   }
+    switch (code) {
+    case ippECValid:
+        return "Validation pass successfully";
+    case ippECCompositeBase:
+        return "Finite Field produced by Composite";
+    case ippECComplicatedBase:
+        return "Too much non-zero terms in the polynomial";
+    case ippECIsZeroDiscriminant:
+        return "Zero discriminamt";
+    case ippECCompositeOrder:
+        return "Composite Base Point order";
+    case ippECInvalidOrder:
+        return "Invalid Base Point order";
+    case ippECIsWeakMOV:
+        return "EC cover by MOV Reduction Test";
+    case ippECIsWeakSSSA:
+        return "EC cover by SS-SA Reduction Test";
+    case ippECIsSupersingular:
+        return "EC is supersingular curve";
+    case ippECInvalidPrivateKey:
+        return "Invalid Private Key";
+    case ippECInvalidPublicKey:
+        return "Invalid Public Key";
+    case ippECInvalidKeyPair:
+        return "Invalid Key Pair";
+    case ippECPointOutOfGroup:
+        return "Point is out of group";
+    case ippECPointIsAtInfinite:
+        return "Point at Infinity";
+    case ippECPointIsNotValid:
+        return "Invalid EC Point";
+    case ippECPointIsEqual:
+        return "Points are equal";
+    case ippECPointIsNotEqual:
+        return "Points are different";
+    case ippECInvalidSignature:
+        return "Invalid Signature";
+    default:
+        return "Unknown ECC result";
+    }
 }

@@ -30,20 +30,21 @@
 #define LEN_P192        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
 
 /* P192 affine point */
-typedef struct{
-   BNU_CHUNK_T X[LEN_P192];
-   BNU_CHUNK_T Y[LEN_P192];
+typedef struct {
+    BNU_CHUNK_T X[LEN_P192];
+    BNU_CHUNK_T Y[LEN_P192];
 } P192_POINT_AFFINE;
 
 extern const __ALIGN64 P192_POINT_AFFINE ec_p192r1_precomputed[28][64];
 
 
-#if defined ( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 #if !defined(_DISABLE_ECP_192R1_HARDCODED_BP_TBL_)
 /* see ippcp_baseptbl.cpp test for generation details */
 
 const __ALIGN64 P192_POINT_AFFINE ec_p192r1_precomputed[28][64] = {
+  /* clang-format off */
 /* digit=0 base_pwr=2^0 */
 {
    {{LL(0x332fa108,0x0d8cb30c),LL(0x76d12909,0x8a4bd3f7),LL(0xf3d218f7,0x954cc8f9)}, {LL(0x1e422289,0x7b12a337),LL(0x8966f05e,0xde22b524),LL(0x6aeda84d,0x6a293d83)}},
@@ -1920,17 +1921,16 @@ const __ALIGN64 P192_POINT_AFFINE ec_p192r1_precomputed[28][64] = {
    {{LL(0x8d6f8ca1,0xeb6c9c82),LL(0xb9d65ec1,0xc57e3312),LL(0x0f121596,0x8b4328c3)}, {LL(0x067036a8,0x1affe768),LL(0xe3091467,0x42586aa8),LL(0x30b7ad74,0x12de5d18)}},
    {{LL(0x34933969,0x06705f70),LL(0x7267ab88,0x4ce99cd6),LL(0x1f916ab1,0x2bc4cfb9)}, {LL(0xcd9b8de7,0xe458fea7),LL(0xedafc50a,0x59778ef8),LL(0x86ea0de9,0x58651c07)}},
 }
+  /* clang-format on */
 };
 #endif /* _DISABLE_ECP_192R1_HARDCODED_BP_TBL_ */
-#endif  /* _IPP_DATA */
+#endif /* _IPP_DATA */
 
 
-IPP_OWN_DEFN (const cpPrecompAP*, gfpec_precom_nistP192r1_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_nistP192r1_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */                  7,
-      /* select function */    p192r1_select_ap_w7,
-      /* precomputed data */   (BNU_CHUNK_T*)ec_p192r1_precomputed
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 7,
+                             /* select function */ p192r1_select_ap_w7,
+                             /* precomputed data */ (BNU_CHUNK_T*)ec_p192r1_precomputed };
+    return &t;
 }

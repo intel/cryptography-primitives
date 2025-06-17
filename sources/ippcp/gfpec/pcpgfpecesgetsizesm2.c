@@ -44,18 +44,20 @@
 //    pSize           Pointer to write a SM2 algorithm state size
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECESGetSize_SM2, (const IppsGFpECState* pEC, int* pSize)) {
-   IPP_BAD_PTR2_RET(pEC, pSize);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!pEC->subgroup, ippStsContextMatchErr);
-   IPP_BADARG_RET(1 < pEC->pGF->pGFE->extdegree, ippStsNotSupportedModeErr);
+IPPFUN(IppStatus, ippsGFpECESGetSize_SM2, (const IppsGFpECState* pEC, int* pSize))
+{
+    IPP_BAD_PTR2_RET(pEC, pSize);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!pEC->subgroup, ippStsContextMatchErr);
+    IPP_BADARG_RET(1 < pEC->pGF->pGFE->extdegree, ippStsNotSupportedModeErr);
 
-   {
-      int sm3size;
-      ippsHashGetSizeOptimal_rmf(&sm3size, ippsHashMethod_SM3());
+    {
+        int sm3size;
+        ippsHashGetSizeOptimal_rmf(&sm3size, ippsHashMethod_SM3());
 
-      *pSize = (Ipp32s)sizeof(IppsECESState_SM2) + sm3size * 2 + BITS2WORD8_SIZE(pEC->pGF->pGFE->modBitLen) * 2;
-   }
+        *pSize = (Ipp32s)sizeof(IppsECESState_SM2) + sm3size * 2 +
+                 BITS2WORD8_SIZE(pEC->pGF->pGFE->modBitLen) * 2;
+    }
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

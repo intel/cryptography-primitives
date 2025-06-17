@@ -58,22 +58,24 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECTstPoint,(const IppsGFpECPoint* pP,
-                                     IppECResult* pResult,
-                                     IppsGFpECState* pEC))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECTstPoint, (const IppsGFpECPoint* pP,
+                                      IppECResult* pResult,
+                                      IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pP, pResult, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pP), ippStsContextMatchErr );
+    IPP_BAD_PTR3_RET(pP, pResult, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pP), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( ECP_POINT_FELEN(pP)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pP) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
 
-   if( gfec_IsPointAtInfinity(pP) )
-      *pResult = ippECPointIsAtInfinite;
-   else if( !gfec_IsPointOnCurve(pP, pEC) )
-      *pResult = ippECPointIsNotValid;
-   else
-      *pResult = ippECValid;
+    if (gfec_IsPointAtInfinity(pP))
+        *pResult = ippECPointIsAtInfinite;
+    else if (!gfec_IsPointOnCurve(pP, pEC))
+        *pResult = ippECPointIsNotValid;
+    else
+        *pResult = ippECValid;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

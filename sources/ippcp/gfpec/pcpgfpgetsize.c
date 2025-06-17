@@ -47,11 +47,11 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpGetSize,(int feBitSize, int* pSize))
+IPPFUN(IppStatus, ippsGFpGetSize, (int feBitSize, int* pSize))
 {
-   IPP_BAD_PTR1_RET(pSize);
-   IPP_BADARG_RET((feBitSize < 2) || (feBitSize > GFP_MAX_BITSIZE), ippStsSizeErr);
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET((feBitSize < 2) || (feBitSize > GFP_MAX_BITSIZE), ippStsSizeErr);
 
-   *pSize = cpGFpGetSize(feBitSize, feBitSize+BITSIZE(BNU_CHUNK_T), GFP_POOL_SIZE);
-   return ippStsNoErr;
+    *pSize = cpGFpGetSize(feBitSize, feBitSize + BITSIZE(BNU_CHUNK_T), GFP_POOL_SIZE);
+    return ippStsNoErr;
 }

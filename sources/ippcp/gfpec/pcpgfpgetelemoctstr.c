@@ -58,33 +58,39 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpGetElementOctString,(const IppsGFpElement* pA, Ipp8u* pStr, int strSize, IppsGFpState* pGFp))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpGetElementOctString,(const IppsGFpElement* pA,
+                                              Ipp8u* pStr,
+                                              int strSize,
+                                              IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pStr, pA, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-   IPP_BADARG_RET( 0>=strSize, ippStsSizeErr );
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( GFPE_ROOM(pA)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-      {
-         gsModEngine* pBasicGFE = cpGFpBasic(pGFE);
-         int basicDeg = cpGFpBasicDegreeExtension(pGFE);
-         int basicElemLen = GFP_FELEN(pBasicGFE);
-         int basicSize = BITS2WORD8_SIZE(BITSIZE_BNU(GFP_MODULUS(pBasicGFE),GFP_FELEN(pBasicGFE)));
+    IPP_BAD_PTR3_RET(pStr, pA, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(0 >= strSize, ippStsSizeErr);
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET(GFPE_ROOM(pA) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        {
+            gsModEngine* pBasicGFE = cpGFpBasic(pGFE);
+            int basicDeg           = cpGFpBasicDegreeExtension(pGFE);
+            int basicElemLen       = GFP_FELEN(pBasicGFE);
+            int basicSize =
+                BITS2WORD8_SIZE(BITSIZE_BNU(GFP_MODULUS(pBasicGFE), GFP_FELEN(pBasicGFE)));
 
-         BNU_CHUNK_T* pDataElm = GFPE_DATA(pA);
-         int deg, error;
-         for(deg=0, error=0; deg<basicDeg && !error; deg++) {
-            int size = IPP_MIN(strSize, basicSize);
-            error = (NULL == cpGFpGetOctString(pStr, size, pDataElm, pBasicGFE));
+            BNU_CHUNK_T* pDataElm = GFPE_DATA(pA);
+            int deg, error;
+            for (deg = 0, error = 0; deg < basicDeg && !error; deg++) {
+                int size = IPP_MIN(strSize, basicSize);
+                error    = (NULL == cpGFpGetOctString(pStr, size, pDataElm, pBasicGFE));
 
-            pDataElm += basicElemLen;
-            pStr += size;
-            strSize -= size;
-         }
+                pDataElm += basicElemLen;
+                pStr += size;
+                strSize -= size;
+            }
 
-         return error ? ippStsSizeErr : ippStsNoErr;
-      }
-   }
+            return error ? ippStsSizeErr : ippStsNoErr;
+        }
+    }
 }

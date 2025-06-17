@@ -30,21 +30,13 @@
 */
 static gsModMethod* gsPolyArith(void)
 {
-   static gsModMethod m = {
-      cpGFpxEncode_com,
-      cpGFpxDecode_com,
-      cpGFpxMul_com,
-      cpGFpxSqr_com,
-      NULL,
-      cpGFpxAdd_com,
-      cpGFpxSub_com,
-      cpGFpxNeg_com,
-      cpGFpxDiv2_com,
-      cpGFpxMul2_com,
-      cpGFpxMul3_com,
-      //cpGFpxInv
-   };
-   return &m;
+    static gsModMethod m = {
+        cpGFpxEncode_com, cpGFpxDecode_com, cpGFpxMul_com, cpGFpxSqr_com,  NULL,
+        cpGFpxAdd_com,    cpGFpxSub_com,    cpGFpxNeg_com, cpGFpxDiv2_com, cpGFpxMul2_com,
+        cpGFpxMul3_com,
+        //cpGFpxInv
+    };
+    return &m;
 }
 
 /*F*
@@ -59,15 +51,9 @@ static gsModMethod* gsPolyArith(void)
 //
 *F*/
 
-IPPFUN( const IppsGFpMethod*, ippsGFpxMethod_com, (void) )
+IPPFUN(const IppsGFpMethod*, ippsGFpxMethod_com, (void))
 {
-   static IppsGFpMethod method = {
-      cpID_Poly,
-      0,
-      NULL,
-      NULL,
-      NULL
-   };
-   method.arith = gsPolyArith();
-   return &method;
+    static IppsGFpMethod method = { cpID_Poly, 0, NULL, NULL, NULL };
+    method.arith                = gsPolyArith();
+    return &method;
 }

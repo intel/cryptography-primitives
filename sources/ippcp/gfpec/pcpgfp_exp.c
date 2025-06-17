@@ -28,9 +28,15 @@
 #include "gfpec/pcpgfpstuff.h"
 
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpExp, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pE, int nsE, gsModEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpExp, (BNU_CHUNK_T* pR,
+                                      const BNU_CHUNK_T* pA,
+                                      const BNU_CHUNK_T* pE,
+                                      int nsE,
+                                      gsModEngine* pGFE))
+/* clang-format on */
 {
-   int elemLen = GFP_FELEN(pGFE);
-   cpMontExpBin_BNU(pR, pA,cpFix_BNU(pA, elemLen), pE,cpFix_BNU(pE, nsE), pGFE);
-   return pR;
+    int elemLen = GFP_FELEN(pGFE);
+    cpMontExpBin_BNU(pR, pA, cpFix_BNU(pA, elemLen), pE, cpFix_BNU(pE, nsE), pGFE);
+    return pR;
 }

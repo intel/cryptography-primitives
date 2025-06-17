@@ -71,16 +71,21 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECMakePoint,(const IppsGFpElement* pX, IppsGFpECPoint* pPoint, IppsGFpECState* pEC))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECMakePoint, (const IppsGFpElement* pX,
+                                       IppsGFpECPoint* pPoint,
+                                       IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pX, pPoint, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFP_IS_BASIC(GFP_PMA(ECP_GFP(pEC))), ippStsBadArgErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pX), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr );
+    IPP_BAD_PTR3_RET(pX, pPoint, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFP_IS_BASIC(GFP_PMA(ECP_GFP(pEC))), ippStsBadArgErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pX), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( GFPE_ROOM(pX)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET( ECP_POINT_FELEN(pPoint)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(GFPE_ROOM(pX) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pPoint) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))),
+                   ippStsOutOfRangeErr);
 
-   return gfec_MakePoint(pPoint, GFPE_DATA(pX), pEC)? ippStsNoErr : ippStsQuadraticNonResidueErr;
+    return gfec_MakePoint(pPoint, GFPE_DATA(pX), pEC) ? ippStsNoErr : ippStsQuadraticNonResidueErr;
 }

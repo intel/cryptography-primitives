@@ -50,12 +50,12 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpElementGetSize,(const IppsGFpState* pGFp, int* pElementSize))
+IPPFUN(IppStatus, ippsGFpElementGetSize, (const IppsGFpState* pGFp, int* pElementSize))
 {
-   IPP_BAD_PTR2_RET(pElementSize, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pElementSize, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
 
-   *pElementSize = (Ipp32s)sizeof(IppsGFpElement)
-                  +GFP_FELEN(GFP_PMA(pGFp))*(Ipp32s)sizeof(BNU_CHUNK_T);
-   return ippStsNoErr;
+    *pElementSize =
+        (Ipp32s)sizeof(IppsGFpElement) + GFP_FELEN(GFP_PMA(pGFp)) * (Ipp32s)sizeof(BNU_CHUNK_T);
+    return ippStsNoErr;
 }

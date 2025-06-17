@@ -61,49 +61,53 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECAddPoint,(const IppsGFpECPoint* pP, const IppsGFpECPoint* pQ, IppsGFpECPoint* pR,
-                  IppsGFpECState* pEC))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECAddPoint, (const IppsGFpECPoint* pP,
+                                      const IppsGFpECPoint* pQ,
+                                      IppsGFpECPoint* pR,
+                                      IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pP, pQ, pR, pEC);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_POINT_VALID_ID(pP), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_POINT_VALID_ID(pQ), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_POINT_VALID_ID(pR), ippStsContextMatchErr);
+    IPP_BAD_PTR4_RET(pP, pQ, pR, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pP), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pQ), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pR), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(ECP_POINT_FELEN(pP) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET(ECP_POINT_FELEN(pQ) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET(ECP_POINT_FELEN(pR) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pP) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pQ) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pR) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
 
 #if (_IPP32E >= _IPP32E_K1)
-   if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
-      switch (ECP_MODULUS_ID(pEC)) {
-      case cpID_PrimeP256r1: {
-         gfec_AddPoint_nistp256_avx512(pR, pP, pQ, pEC);
-         return ippStsNoErr;
-      }
-      case cpID_PrimeP384r1: {
-         gfec_AddPoint_nistp384_avx512(pR, pP, pQ, pEC);
-         return ippStsNoErr;
-      }
-      case cpID_PrimeP521r1: {
-         gfec_AddPoint_nistp521_avx512(pR, pP, pQ, pEC);
-         return ippStsNoErr;
-      }
-      case cpID_PrimeTPM_SM2: {
-         gfec_AddPoint_sm2_avx512(pR, pP, pQ, pEC);
-         return ippStsNoErr;
-      }
-      default:
-         /* Go to default implementation below */
-         break;
-      }
-   }   /* no else */
+    if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
+        switch (ECP_MODULUS_ID(pEC)) {
+        case cpID_PrimeP256r1: {
+            gfec_AddPoint_nistp256_avx512(pR, pP, pQ, pEC);
+            return ippStsNoErr;
+        }
+        case cpID_PrimeP384r1: {
+            gfec_AddPoint_nistp384_avx512(pR, pP, pQ, pEC);
+            return ippStsNoErr;
+        }
+        case cpID_PrimeP521r1: {
+            gfec_AddPoint_nistp521_avx512(pR, pP, pQ, pEC);
+            return ippStsNoErr;
+        }
+        case cpID_PrimeTPM_SM2: {
+            gfec_AddPoint_sm2_avx512(pR, pP, pQ, pEC);
+            return ippStsNoErr;
+        }
+        default:
+            /* Go to default implementation below */
+            break;
+        }
+    }  /* no else */
 #endif // (_IPP32E >= _IPP32E_K1)
 
-   if (pP == pQ)
-      gfec_DblPoint(pR, pP, pEC);
-   else
-      gfec_AddPoint(pR, pP, pQ, pEC);
+    if (pP == pQ)
+        gfec_DblPoint(pR, pP, pEC);
+    else
+        gfec_AddPoint(pR, pP, pQ, pEC);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

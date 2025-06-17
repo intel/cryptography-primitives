@@ -33,9 +33,10 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-#if(_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7)
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7)
 
 /* arithmetic over P-521r1 NIST modulus */
+/* clang-format off */
 #define p521r1_add OWNAPI(p521r1_add)
    IPP_OWN_DECL (BNU_CHUNK_T*, p521r1_add, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, gsEngine* pGFE))
 #define p521r1_sub OWNAPI(p521r1_sub)
@@ -48,8 +49,9 @@
    IPP_OWN_DECL (BNU_CHUNK_T*, p521r1_mul_by_2, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE))
 #define p521r1_mul_by_3  OWNAPI(p521r1_mul_by_3)
    IPP_OWN_DECL (BNU_CHUNK_T*, p521r1_mul_by_3, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE))
+/* clang-format on */
 
-#if(_IPP_ARCH ==_IPP_ARCH_EM64T)
+#if (_IPP_ARCH == _IPP_ARCH_EM64T)
 //BNU_CHUNK_T* p521r1_to_mont  (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE);
 //BNU_CHUNK_T* p521r1_mont_back(BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE);
 //BNU_CHUNK_T* p521r1_mul_montl(BNU_CHUNK_T* res, const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, gsEngine* pGFE);
@@ -59,13 +61,15 @@
 #endif
 
 #define p521r1_mred OWNAPI(p521r1_mred)
-   IPP_OWN_DECL (BNU_CHUNK_T*, p521r1_mred, (BNU_CHUNK_T* res, BNU_CHUNK_T* product))
+IPP_OWN_DECL(BNU_CHUNK_T*, p521r1_mred, (BNU_CHUNK_T * res, BNU_CHUNK_T* product))
 
-#if(_IPP_ARCH ==_IPP_ARCH_IA32)
+#if (_IPP_ARCH == _IPP_ARCH_IA32)
+/* clang-format off */
 #define p521r1_mul_mont_slm OWNAPI(p521r1_mul_mont_slm)
    IPP_OWN_DECL (BNU_CHUNK_T*, p521r1_mul_mont_slm, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, gsEngine* pGFE))
 #define p521r1_sqr_mont_slm OWNAPI(p521r1_sqr_mont_slm)
    IPP_OWN_DECL (BNU_CHUNK_T*, p521r1_sqr_mont_slm, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE))
+/* clang-format on */
 #endif
 
 #define OPERAND_BITSIZE (521)
@@ -74,28 +78,38 @@
 /*
 // multiplicative methods
 */
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p521r1_mul_montl, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pGFE))
+
+/* clang-format off */
+IPP_OWN_DEFN(static BNU_CHUNK_T*, p521r1_mul_montl, (BNU_CHUNK_T* pR,
+                                                     const BNU_CHUNK_T* pA,
+                                                     const BNU_CHUNK_T* pB,
+                                                     gsEngine* pGFE))
+/* clang-format on */
 {
-   BNU_CHUNK_T* product = cpGFpGetPool(2, pGFE);
-   //tbcd: temporary excluded: assert(NULL!=product);
+    BNU_CHUNK_T* product = cpGFpGetPool(2, pGFE);
+    //tbcd: temporary excluded: assert(NULL!=product);
 
-   cpMul_BNU_school(product, pA,LEN_P521, pB,LEN_P521);
-   p521r1_mred(pR, product);
+    cpMul_BNU_school(product, pA, LEN_P521, pB, LEN_P521);
+    p521r1_mred(pR, product);
 
-   cpGFpReleasePool(2, pGFE);
-   return pR;
+    cpGFpReleasePool(2, pGFE);
+    return pR;
 }
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p521r1_sqr_montl, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(static BNU_CHUNK_T*, p521r1_sqr_montl, (BNU_CHUNK_T* pR,
+                                                     const BNU_CHUNK_T* pA,
+                                                     gsEngine* pGFE))
+/* clang-format on */
 {
-   BNU_CHUNK_T* product = cpGFpGetPool(2, pGFE);
-   //tbcd: temporary excluded: assert(NULL!=product);
+    BNU_CHUNK_T* product = cpGFpGetPool(2, pGFE);
+    //tbcd: temporary excluded: assert(NULL!=product);
 
-   cpSqr_BNU_school(product, pA,LEN_P521);
-   p521r1_mred(pR, product);
+    cpSqr_BNU_school(product, pA, LEN_P521);
+    p521r1_mred(pR, product);
 
-   cpGFpReleasePool(2, pGFE);
-   return pR;
+    cpGFpReleasePool(2, pGFE);
+    return pR;
 }
 
 
@@ -103,47 +117,67 @@ IPP_OWN_DEFN (static BNU_CHUNK_T*, p521r1_sqr_montl, (BNU_CHUNK_T* pR, const BNU
 // Montgomery domain conversion constants
 */
 static BNU_CHUNK_T RR[] = {
-#if(_IPP_ARCH == _IPP_ARCH_EM64T)
-   0x0000000000000000,0x0000400000000000,0x0000000000000000,
-   0x0000000000000000,0x0000000000000000,0x0000000000000000,
-   0x0000000000000000,0x0000000000000000,0x0000000000000000};
-#elif(_IPP_ARCH == _IPP_ARCH_IA32)
-   0x00000000,0x00004000,0x00000000,0x00000000,0x00000000,0x00000000,
-   0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,
-   0x00000000,0x00000000,0x00000000,0x00000000,0x00000000};
+#if (_IPP_ARCH == _IPP_ARCH_EM64T)
+    0x0000000000000000, 0x0000400000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000,
+    0x0000000000000000, 0x0000000000000000, 0x0000000000000000
+};
+#elif (_IPP_ARCH == _IPP_ARCH_IA32)
+    0x00000000, 0x00004000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
+};
 #endif
 
 static BNU_CHUNK_T one[] = {
-#if(_IPP_ARCH == _IPP_ARCH_EM64T)
-   1,0,0,0,0,0,0,0,0};
-#elif(_IPP_ARCH == _IPP_ARCH_IA32)
-   1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+#if (_IPP_ARCH == _IPP_ARCH_EM64T)
+    1, 0, 0, 0, 0, 0, 0, 0, 0
+};
+#elif (_IPP_ARCH == _IPP_ARCH_IA32)
+    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
 #endif
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p521r1_to_mont, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(static BNU_CHUNK_T*, p521r1_to_mont, (BNU_CHUNK_T* pR,
+                                                   const BNU_CHUNK_T* pA,
+                                                   gsEngine* pGFE))
+/* clang-format on */
 {
-   return p521r1_mul_montl(pR, pA, (BNU_CHUNK_T*)RR, pGFE);
+    return p521r1_mul_montl(pR, pA, (BNU_CHUNK_T*)RR, pGFE);
 }
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p521r1_mont_back, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(static BNU_CHUNK_T*, p521r1_mont_back, (BNU_CHUNK_T* pR,
+                                                     const BNU_CHUNK_T* pA,
+                                                     gsEngine* pGFE))
+/* clang-format on */
 {
-   return p521r1_mul_montl(pR, pA, (BNU_CHUNK_T*)one, pGFE);
+    return p521r1_mul_montl(pR, pA, (BNU_CHUNK_T*)one, pGFE);
 }
 
-#if (_ADCOX_NI_ENABLING_==_FEATURE_ON_) || (_ADCOX_NI_ENABLING_==_FEATURE_TICKTOCK_)
+#if (_ADCOX_NI_ENABLING_ == _FEATURE_ON_) || (_ADCOX_NI_ENABLING_ == _FEATURE_TICKTOCK_)
 //BNU_CHUNK_T* p521r1_mul_montx(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pGFE)
 //BNU_CHUNK_T* p521r1_sqr_montx(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pGFE)
 #endif
 
-#if(_IPP_ARCH ==_IPP_ARCH_IA32)
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p521r1_to_mont_slm, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+#if (_IPP_ARCH == _IPP_ARCH_IA32)
+/* clang-format off */
+IPP_OWN_DEFN(static BNU_CHUNK_T*, p521r1_to_mont_slm, (BNU_CHUNK_T* pR,
+                                                       const BNU_CHUNK_T* pA,
+                                                       gsEngine* pGFE))
+/* clang-format on */
 {
-   return p521r1_mul_mont_slm(pR, pA, (BNU_CHUNK_T*)RR, pGFE);
+    return p521r1_mul_mont_slm(pR, pA, (BNU_CHUNK_T*)RR, pGFE);
 }
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p521r1_mont_back_slm, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(static BNU_CHUNK_T*, p521r1_mont_back_slm, (BNU_CHUNK_T* pR,
+                                                         const BNU_CHUNK_T* pA,
+                                                         gsEngine* pGFE))
+/* clang-format on */
 {
-   return p521r1_mul_mont_slm(pR, pA, (BNU_CHUNK_T*)one, pGFE);
+    return p521r1_mul_mont_slm(pR, pA, (BNU_CHUNK_T*)one, pGFE);
 }
 #endif /* _IPP_ARCH ==_IPP_ARCH_IA32*/
 
@@ -151,32 +185,33 @@ IPP_OWN_DEFN (static BNU_CHUNK_T*, p521r1_mont_back_slm, (BNU_CHUNK_T* pR, const
 // return specific gf p521r1 arith methods,
 //    p521r1 = 2^521 -1 (NIST P521r1)
 */
-static gsModMethod* gsArithGF_p521r1 (void)
+static gsModMethod* gsArithGF_p521r1(void)
 {
-   static gsModMethod m = {
-      p521r1_to_mont,
-      p521r1_mont_back,
-      p521r1_mul_montl,
-      p521r1_sqr_montl,
-      NULL,
-      p521r1_add,
-      p521r1_sub,
-      p521r1_neg,
-      p521r1_div_by_2,
-      p521r1_mul_by_2,
-      p521r1_mul_by_3,
-   };
+    /* clang-format off */
+    static gsModMethod m = { p521r1_to_mont,
+                             p521r1_mont_back,
+                             p521r1_mul_montl,
+                             p521r1_sqr_montl,
+                             NULL,
+                             p521r1_add,
+                             p521r1_sub,
+                             p521r1_neg,
+                             p521r1_div_by_2,
+                             p521r1_mul_by_2,
+                             p521r1_mul_by_3,
+    };
+    /* clang-format on */
 
-   #if(_IPP_ARCH==_IPP_ARCH_IA32)
-   if(IsFeatureEnabled(ippCPUID_SSSE3|ippCPUID_MOVBE) && !IsFeatureEnabled(ippCPUID_AVX)) {
-      m.mul = p521r1_mul_mont_slm;
-      m.sqr = p521r1_sqr_mont_slm;
-      m.encode = p521r1_to_mont_slm;
-      m.decode = p521r1_mont_back_slm;
-   }
-   #endif
+#if (_IPP_ARCH == _IPP_ARCH_IA32)
+    if (IsFeatureEnabled(ippCPUID_SSSE3 | ippCPUID_MOVBE) && !IsFeatureEnabled(ippCPUID_AVX)) {
+        m.mul    = p521r1_mul_mont_slm;
+        m.sqr    = p521r1_sqr_mont_slm;
+        m.encode = p521r1_to_mont_slm;
+        m.decode = p521r1_mont_back_slm;
+    }
+#endif
 
-   return &m;
+    return &m;
 }
 #endif /* (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7) */
 
@@ -190,29 +225,23 @@ static gsModMethod* gsArithGF_p521r1 (void)
 //           operations over GF(q). q = 2^521 - 1
 *F*/
 
-IPPFUN( const IppsGFpMethod*, ippsGFpMethod_p521r1, (void) )
+IPPFUN(const IppsGFpMethod*, ippsGFpMethod_p521r1, (void))
 {
-   static IppsGFpMethod method = {
-      cpID_PrimeP521r1,
-      521,
-      secp521r1_p,
-      NULL,
-      NULL
-   };
+    static IppsGFpMethod method = { cpID_PrimeP521r1, 521, secp521r1_p, NULL, NULL };
 
 #if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7)
-   method.arith = gsArithGF_p521r1();
+    method.arith = gsArithGF_p521r1();
 #else
-   method.arith = gsArithGFp();
+    method.arith = gsArithGFp();
 #endif
 
 #if (_IPP32E >= _IPP32E_K1)
-   if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
-      method.arith_alt = gsArithGF_p521r1_avx512();
-   }
+    if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
+        method.arith_alt = gsArithGF_p521r1_avx512();
+    }
 #endif
 
-   return &method;
+    return &method;
 }
 
 #undef LEN_P521

@@ -30,42 +30,45 @@
 #include "gfpec/pcpgfpecstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (int, gfec_MakePoint, (IppsGFpECPoint* pPoint, const BNU_CHUNK_T* pElm, IppsGFpECState* pEC))
+/* clang-format off */
+IPP_OWN_DEFN(int, gfec_MakePoint, (IppsGFpECPoint* pPoint,
+                                   const BNU_CHUNK_T* pElm,
+                                   IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IppsGFpState* pGF = ECP_GFP(pEC);
-   gsModEngine* pGFE = GFP_PMA(pGF);
-   int elemLen = GFP_FELEN(pGFE);
+    IppsGFpState* pGF = ECP_GFP(pEC);
+    gsModEngine* pGFE = GFP_PMA(pGF);
+    int elemLen       = GFP_FELEN(pGFE);
 
-   mod_mul mulF = GFP_METHOD(pGFE)->mul;
-   mod_sqr sqrF = GFP_METHOD(pGFE)->sqr;
-   mod_add addF = GFP_METHOD(pGFE)->add;
+    mod_mul mulF = GFP_METHOD(pGFE)->mul;
+    mod_sqr sqrF = GFP_METHOD(pGFE)->sqr;
+    mod_add addF = GFP_METHOD(pGFE)->add;
 
-   BNU_CHUNK_T* pX = ECP_POINT_X(pPoint);
-   BNU_CHUNK_T* pY = ECP_POINT_Y(pPoint);
-   BNU_CHUNK_T* pZ = ECP_POINT_Z(pPoint);
+    BNU_CHUNK_T* pX = ECP_POINT_X(pPoint);
+    BNU_CHUNK_T* pY = ECP_POINT_Y(pPoint);
+    BNU_CHUNK_T* pZ = ECP_POINT_Z(pPoint);
 
-   /* set x-coordinate */
-   cpGFpElementCopy(pX, pElm, elemLen);
+    /* set x-coordinate */
+    cpGFpElementCopy(pX, pElm, elemLen);
 
-   /* T = X^3 + A*X + B */
-   sqrF(pY, pX, pGFE);
-   mulF(pY, pY, pX, pGFE);
-   if(ECP_SPECIFIC(pEC)!=ECP_EPID2) {
-      mulF(pZ, ECP_A(pEC), pX, pGFE);
-      addF(pY, pY, pZ, pGFE);
-   }
-   addF(pY, pY, ECP_B(pEC), pGFE);
+    /* T = X^3 + A*X + B */
+    sqrF(pY, pX, pGFE);
+    mulF(pY, pY, pX, pGFE);
+    if (ECP_SPECIFIC(pEC) != ECP_EPID2) {
+        mulF(pZ, ECP_A(pEC), pX, pGFE);
+        addF(pY, pY, pZ, pGFE);
+    }
+    addF(pY, pY, ECP_B(pEC), pGFE);
 
-   /* set z-coordinate =1 */
-   cpGFpElementCopyPad(pZ, elemLen, GFP_MNT_R(pGFE), elemLen);
+    /* set z-coordinate =1 */
+    cpGFpElementCopyPad(pZ, elemLen, GFP_MNT_R(pGFE), elemLen);
 
-   /* Y = sqrt(Y) */
-   if( cpGFpSqrt(pY, pY, pGFE) ) {
-      ECP_POINT_FLAGS(pPoint) = ECP_AFFINE_POINT | ECP_FINITE_POINT;
-      return 1;
-   }
-   else {
-      gfec_SetPointAtInfinity(pPoint);
-      return 0;
-   }
+    /* Y = sqrt(Y) */
+    if (cpGFpSqrt(pY, pY, pGFE)) {
+        ECP_POINT_FLAGS(pPoint) = ECP_AFFINE_POINT | ECP_FINITE_POINT;
+        return 1;
+    } else {
+        gfec_SetPointAtInfinity(pPoint);
+        return 0;
+    }
 }

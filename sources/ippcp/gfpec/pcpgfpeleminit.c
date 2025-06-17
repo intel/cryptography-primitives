@@ -59,19 +59,24 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpElementInit,(const Ipp32u* pA, int lenA, IppsGFpElement* pR, IppsGFpState* pGFp))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpElementInit, (const Ipp32u* pA,
+                                       int lenA,
+                                       IppsGFpElement* pR,
+                                       IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pR, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pR, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(0>lenA, ippStsSizeErr);
+    IPP_BADARG_RET(0 > lenA, ippStsSizeErr);
 
-   {
-      int elemLen = GFP_FELEN(GFP_PMA(pGFp));
+    {
+        int elemLen = GFP_FELEN(GFP_PMA(pGFp));
 
-      Ipp8u* ptr = (Ipp8u*)pR;
-      ptr += sizeof(IppsGFpElement);
-      cpGFpElementConstruct(pR, (BNU_CHUNK_T*)ptr, elemLen);
-      return ippsGFpSetElement(pA, lenA, pR, pGFp);
-   }
+        Ipp8u* ptr = (Ipp8u*)pR;
+        ptr += sizeof(IppsGFpElement);
+        cpGFpElementConstruct(pR, (BNU_CHUNK_T*)ptr, elemLen);
+        return ippsGFpSetElement(pA, lenA, pR, pGFp);
+    }
 }

@@ -59,27 +59,27 @@
 */
 __IPPCP_INLINE BNU_CHUNK_T* cpFq2Mul_xi(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx)
 {
-   gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
-   mod_mul addF = GFP_METHOD(pGroundGFE)->add;
-   mod_sub subF = GFP_METHOD(pGroundGFE)->sub;
+    gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
+    mod_mul addF         = GFP_METHOD(pGroundGFE)->add;
+    mod_sub subF         = GFP_METHOD(pGroundGFE)->sub;
 
-   int termLen = GFP_FELEN(pGroundGFE);
-   BNU_CHUNK_T* t0 = cpGFpGetPool(2, pGroundGFE);
-   BNU_CHUNK_T* t1 = t0+termLen;
+    int termLen     = GFP_FELEN(pGroundGFE);
+    BNU_CHUNK_T* t0 = cpGFpGetPool(2, pGroundGFE);
+    BNU_CHUNK_T* t1 = t0 + termLen;
 
-   const BNU_CHUNK_T* pA0 = pA;
-   const BNU_CHUNK_T* pA1 = pA+termLen;
-   BNU_CHUNK_T* pR0 = pR;
-   BNU_CHUNK_T* pR1 = pR+termLen;
+    const BNU_CHUNK_T* pA0 = pA;
+    const BNU_CHUNK_T* pA1 = pA + termLen;
+    BNU_CHUNK_T* pR0       = pR;
+    BNU_CHUNK_T* pR1       = pR + termLen;
 
-   //tbcd: temporary excluded: assert(NULL!=t0);
-   addF(t0, pA0, pA0, pGroundGFE);
-   addF(t1, pA0, pA1, pGroundGFE);
-   subF(pR0, t0, pA1, pGroundGFE);
-   addF(pR1, t1, pA1, pGroundGFE);
+    //tbcd: temporary excluded: assert(NULL!=t0);
+    addF(t0, pA0, pA0, pGroundGFE);
+    addF(t1, pA0, pA1, pGroundGFE);
+    subF(pR0, t0, pA1, pGroundGFE);
+    addF(pR1, t1, pA1, pGroundGFE);
 
-   cpGFpReleasePool(2, pGroundGFE);
-   return pR;
+    cpGFpReleasePool(2, pGroundGFE);
+    return pR;
 }
 
 /*
@@ -92,7 +92,7 @@ __IPPCP_INLINE BNU_CHUNK_T* cpFq2Mul_xi(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, 
 */
 static BNU_CHUNK_T* cpGFpxMul_G0(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx)
 {
-   gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
-   BNU_CHUNK_T* pGFpolynomial = GFP_MODULUS(pGFEx); /* g(x) = t^d + g0 */
-   return GFP_METHOD(pGroundGFE)->mul(pR, pA, pGFpolynomial, pGroundGFE);
+    gsEngine* pGroundGFE       = GFP_PARENT(pGFEx);
+    BNU_CHUNK_T* pGFpolynomial = GFP_MODULUS(pGFEx); /* g(x) = t^d + g0 */
+    return GFP_METHOD(pGroundGFE)->mul(pR, pA, pGFpolynomial, pGroundGFE);
 }

@@ -46,20 +46,26 @@
 //    pState          Pointer to a SM2 algorithm state
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECESDecrypt_SM2, (const Ipp8u* pInput, Ipp8u* pOutput, int dataLen, IppsECESState_SM2* pState)) {
-   IPP_BAD_PTR3_RET(pInput, pOutput, pState);
-   IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
-   /* a shared secret should be computed and the process should not be finished by getTag */
-   IPP_BADARG_RET(pState->state != ECESAlgoProcessing, ippStsIncompleteContextErr);
-   IPP_BADARG_RET(dataLen < 0, ippStsSizeErr);
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECESDecrypt_SM2, (const Ipp8u* pInput,
+                                           Ipp8u* pOutput,
+                                           int dataLen,
+                                           IppsECESState_SM2* pState))
+/* clang-format on */
+{
+    IPP_BAD_PTR3_RET(pInput, pOutput, pState);
+    IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
+    /* a shared secret should be computed and the process should not be finished by getTag */
+    IPP_BADARG_RET(pState->state != ECESAlgoProcessing, ippStsIncompleteContextErr);
+    IPP_BADARG_RET(dataLen < 0, ippStsSizeErr);
 
-   {
-      int i;
-      for (i = 0; i < dataLen; ++i) {
-         pOutput[i] = pInput[i] ^ cpECES_SM2KdfNextByte(pState);
-      }
-   }
-   ippsHashUpdate_rmf(pOutput, dataLen, pState->pTagHasher);
+    {
+        int i;
+        for (i = 0; i < dataLen; ++i) {
+            pOutput[i] = pInput[i] ^ cpECES_SM2KdfNextByte(pState);
+        }
+    }
+    ippsHashUpdate_rmf(pOutput, dataLen, pState->pTagHasher);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

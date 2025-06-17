@@ -47,14 +47,14 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECGetSize,(const IppsGFpState* pGFp, int* pSize))
+IPPFUN(IppStatus, ippsGFpECGetSize, (const IppsGFpState* pGFp, int* pSize))
 {
-   IPP_BAD_PTR2_RET(pGFp, pSize);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pGFp, pSize);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
 
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      *pSize = cpGFpECGetSize(cpGFpBasicDegreeExtension(pGFE), GFP_FEBITLEN(cpGFpBasic(pGFE)));
-      return ippStsNoErr;
-   }
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        *pSize = cpGFpECGetSize(cpGFpBasicDegreeExtension(pGFE), GFP_FEBITLEN(cpGFpBasic(pGFE)));
+        return ippStsNoErr;
+    }
 }

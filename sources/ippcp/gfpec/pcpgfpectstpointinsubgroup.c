@@ -58,33 +58,41 @@
 //    pScratchBuffer  Pointer to the scratch buffer
 //
 *F*/
+
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECTstPointInSubgroup,(const IppsGFpECPoint* pP,
                                                IppECResult* pResult,
                                                IppsGFpECState* pEC,
                                                Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pP, pResult, pEC, pScratchBuffer);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pP), ippStsContextMatchErr );
+    IPP_BAD_PTR4_RET(pP, pResult, pEC, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pP), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( ECP_POINT_FELEN(pP)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pP) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
 
-   {
-      IppECResult tstResult;
-      ippsGFpECTstPoint(pP, &tstResult, pEC);
+    {
+        IppECResult tstResult;
+        ippsGFpECTstPoint(pP, &tstResult, pEC);
 
-      if(ippECValid==tstResult) {
-         IppsGFpECPoint T;
-         cpEcGFpInitPoint(&T, cpEcGFpGetPool(1, pEC),0, pEC);
+        if (ippECValid == tstResult) {
+            IppsGFpECPoint T;
+            cpEcGFpInitPoint(&T, cpEcGFpGetPool(1, pEC), 0, pEC);
 
-         gfec_MulPoint(&T, pP, MOD_MODULUS(ECP_MONT_R(pEC)), BITS_BNU_CHUNK(ECP_ORDBITSIZE(pEC)), /*0,*/ pEC, pScratchBuffer);
-         tstResult = gfec_IsPointAtInfinity(&T)? ippECValid : ippECPointOutOfGroup;
+            gfec_MulPoint(&T,
+                          pP,
+                          MOD_MODULUS(ECP_MONT_R(pEC)),
+                          BITS_BNU_CHUNK(ECP_ORDBITSIZE(pEC)),
+                          /*0,*/ pEC,
+                          pScratchBuffer);
+            tstResult = gfec_IsPointAtInfinity(&T) ? ippECValid : ippECPointOutOfGroup;
 
-         cpEcGFpReleasePool(1, pEC);
-      }
-      *pResult = tstResult;
+            cpEcGFpReleasePool(1, pEC);
+        }
+        *pResult = tstResult;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

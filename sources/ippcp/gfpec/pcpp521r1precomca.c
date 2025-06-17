@@ -30,22 +30,24 @@
 #define LEN_P521        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
 
 /* P521 affine point */
-typedef struct{
-   BNU_CHUNK_T X[LEN_P521];
-   BNU_CHUNK_T Y[LEN_P521];
+typedef struct {
+    BNU_CHUNK_T X[LEN_P521];
+    BNU_CHUNK_T Y[LEN_P521];
 } P521_POINT_AFFINE;
 
 extern const __ALIGN64 P521_POINT_AFFINE ec_p521r1_precomputed[105][16];
 
 
-#if defined ( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 #if !defined(_DISABLE_ECP_521R1_HARDCODED_BP_TBL_)
 /* see ippcp_baseptbl.cpp test for generation details */
 
-#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64) || (_IPP_ARCH == _IPP_ARCH_LRB) || (_IPP_ARCH == _IPP_ARCH_LRB2))
+#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64) || \
+     (_IPP_ARCH == _IPP_ARCH_LRB) || (_IPP_ARCH == _IPP_ARCH_LRB2))
 const __ALIGN64 P521_POINT_AFFINE ec_p521r1_precomputed[105][16] = {
-/* digit=0 base_pwr=2^0 */
+    /* digit=0 base_pwr=2^0 */
+    /* clang-format off */
 {
    {{LL(0x81adc101,0xb331a163),LL(0x18e172de,0x4dfcbf3f),LL(0xe0c2b521,0x6f19a459),LL(0x93d17fd4,0x947f0ee0),LL(0x3bf7f3ac,0xdd50a5af),LL(0xb035a69e,0x90fc1457),LL(0x9c829fda,0x214e3240),LL(0xb311cada,0xe6cf1f65),L_(0x00000074)}, {LL(0x5a9e268e,0x28460e4a),LL(0x3b4fe8b3,0x20445f4a),LL(0x43513961,0xb09a9e38),LL(0x809fd683,0x2062a85c),LL(0x4caf7a13,0x164bf739),LL(0x8b939f33,0x340bd7de),LL(0x24abcda2,0xeccc7aa2),LL(0xda163e8d,0x022e452f),L_(0x000001e0)}},
    {{LL(0x640909df,0x1e90cf08),LL(0x99dd36bc,0xb3fa1f1c),LL(0xb26b07ec,0xa0e797d1),LL(0x1d1ae2d7,0x83d50825),LL(0x6d377aaa,0x4bd9d902),LL(0x82ebb4df,0x1a96372a),LL(0xcd8e6603,0x3a3a0193),LL(0x40a46141,0x3417e594),L_(0x0000013f)}, {LL(0x31fe1b6c,0x813d2ee3),LL(0x6b30fa0d,0x7b8df1ab),LL(0x4af6e07a,0x7a757e5f),LL(0xd4cd1924,0xb5c9c9bf),LL(0xef4f928f,0xddd9f1bb),LL(0x4c836216,0xa05590d1),LL(0x3e26d4bb,0x5ae35a88),LL(0x777769f8,0x8053f9f6),L_(0x00000133)}},
@@ -2043,7 +2045,7 @@ const __ALIGN64 P521_POINT_AFFINE ec_p521r1_precomputed[105][16] = {
 };
 #else
 const __ALIGN64 P521_POINT_AFFINE ec_p521r1_precomputed[105][16] = {
-/* digit=0 base_pwr=2^0 */
+  /* digit=0 base_pwr=2^0 */
 {
    {{LL(0xb331a163,0x18e172de),LL(0x4dfcbf3f,0xe0c2b521),LL(0x6f19a459,0x93d17fd4),LL(0x947f0ee0,0x3bf7f3ac),LL(0xdd50a5af,0xb035a69e),LL(0x90fc1457,0x9c829fda),LL(0x214e3240,0xb311cada),LL(0xe6cf1f65,0x5b820274),L_(0x00000103)}, {LL(0x28460e4a,0x3b4fe8b3),LL(0x20445f4a,0x43513961),LL(0xb09a9e38,0x809fd683),LL(0x2062a85c,0x4caf7a13),LL(0x164bf739,0x8b939f33),LL(0x340bd7de,0x24abcda2),LL(0xeccc7aa2,0xda163e8d),LL(0x022e452f,0x3c4d1de0),L_(0x000000b5)}},
    {{LL(0x1e90cf08,0x99dd36bc),LL(0xb3fa1f1c,0xb26b07ec),LL(0xa0e797d1,0x1d1ae2d7),LL(0x83d50825,0x6d377aaa),LL(0x4bd9d902,0x82ebb4df),LL(0x1a96372a,0xcd8e6603),LL(0x3a3a0193,0x40a46141),LL(0x3417e594,0x1213bf3f),L_(0x000000c8)}, {LL(0x813d2ee3,0x6b30fa0d),LL(0x7b8df1ab,0x4af6e07a),LL(0x7a757e5f,0xd4cd1924),LL(0xb5c9c9bf,0xef4f928f),LL(0xddd9f1bb,0x4c836216),LL(0xa05590d1,0x3e26d4bb),LL(0x5ae35a88,0x777769f8),LL(0x8053f9f6,0xfc36d933),L_(0x00000063)}},
@@ -4038,19 +4040,18 @@ const __ALIGN64 P521_POINT_AFFINE ec_p521r1_precomputed[105][16] = {
    {{LL(0x0eeb045d,0xac240867),LL(0x98145c00,0xe7ce6952),LL(0xb5d0c780,0x315dd662),LL(0x189fc413,0x41646f48),LL(0x4392d048,0xc963ad1a),LL(0x1e77199f,0xebc649ee),LL(0x83e1f918,0xcd6ca624),LL(0x13b6a99b,0x4108f969),L_(0x0000011b)}, {LL(0x2108af54,0x0b55c26f),LL(0x3989bd71,0xe0f27726),LL(0x1e5e0053,0x5c7e0958),LL(0xa8452157,0xf8e7b504),LL(0xb64d38bf,0xf180ac5c),LL(0x8c8c65f5,0x32a84a9b),LL(0x8f00c232,0x898ca7ed),LL(0x1a1639de,0xe79d8696),L_(0x00000150)}},
    {{LL(0x6746f213,0xe1073527),LL(0xa966b0a8,0x3ad14203),LL(0x5bc4272f,0x39620db2),LL(0xbcd33a93,0xe5eae695),LL(0x26bac2fb,0x0e4497dc),LL(0xb7d647bd,0x3a195407),LL(0x7f7ed906,0x899ce3f6),LL(0xadd76129,0x2e49d8f3),L_(0x000000be)}, {LL(0x333eb7cb,0x51de1b18),LL(0x8e185580,0xa269b8e8),LL(0x486cd055,0x3555823a),LL(0x6689b4be,0xaa52baba),LL(0xcd8d6ffd,0xd072a45c),LL(0x9cba9f57,0xba53f86f),LL(0x74a8d5fb,0x16481f57),LL(0x10747d58,0x457baa10),L_(0x000001af)}},
 }
+    /* clang-format on */
 };
 #endif
 
 #endif /* _DISABLE_ECP_521R1_HARDCODED_BP_TBL_ */
-#endif  /* _IPP_DATA */
+#endif /* _IPP_DATA */
 
 
-IPP_OWN_DEFN (const cpPrecompAP*, gfpec_precom_nistP521r1_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_nistP521r1_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */                  5,
-      /* select function */    p521r1_select_ap_w5,
-      /* precomputed data */   (BNU_CHUNK_T*)ec_p521r1_precomputed
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 5,
+                             /* select function */ p521r1_select_ap_w5,
+                             /* precomputed data */ (BNU_CHUNK_T*)ec_p521r1_precomputed };
+    return &t;
 }

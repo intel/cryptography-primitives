@@ -32,10 +32,11 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-#if(_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7)
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7)
 
 /* arithmetic over P-256r1 NIST modulus */
 #define p256r1_add OWNAPI(p256r1_add)
+/* clang-format off */
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_add, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, gsEngine* pGFE))
 #define p256r1_sub OWNAPI(p256r1_sub)
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_sub, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, gsEngine* pGFE))
@@ -48,7 +49,7 @@
 #define p256r1_mul_by_3  OWNAPI(p256r1_mul_by_3)
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_mul_by_3, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE))
 
-#if(_IPP_ARCH ==_IPP_ARCH_EM64T)
+#if (_IPP_ARCH == _IPP_ARCH_EM64T)
 #define p256r1_mul_montl OWNAPI(p256r1_mul_montl)
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_mul_montl, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, gsEngine* pGFE))
 #define p256r1_mul_montx OWNAPI(p256r1_mul_montx)
@@ -61,15 +62,18 @@
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_to_mont, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE))
 #define p256r1_mont_back OWNAPI(p256r1_mont_back)
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_mont_back, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE))
+/* clang-format on */
 #endif
 
-#if(_IPP_ARCH ==_IPP_ARCH_IA32)
+#if (_IPP_ARCH == _IPP_ARCH_IA32)
+/* clang-format off */
 #define p256r1_mul_mont_slm OWNAPI(p256r1_mul_mont_slm)
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_mul_mont_slm, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, gsEngine* pGFE))
 #define p256r1_sqr_mont_slm OWNAPI(p256r1_sqr_mont_slm)
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_sqr_mont_slm, (BNU_CHUNK_T* res, const BNU_CHUNK_T* a, gsEngine* pGFE))
 #define p256r1_mred OWNAPI(p256r1_mred)
    IPP_OWN_DECL (BNU_CHUNK_T*, p256r1_mred, (BNU_CHUNK_T* res, BNU_CHUNK_T* product))
+/* clang-format on */
 #endif
 
 #define OPERAND_BITSIZE (256)
@@ -78,60 +82,83 @@
 /*
 // ia32 multiplicative methods
 */
-#if (_IPP_ARCH ==_IPP_ARCH_IA32)
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_mul_montl, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pGFE))
+#if (_IPP_ARCH == _IPP_ARCH_IA32)
+/* clang-format off */
+IPP_OWN_DEFN(static BNU_CHUNK_T*, p256r1_mul_montl, (BNU_CHUNK_T* pR,
+                                                     const BNU_CHUNK_T* pA,
+                                                     const BNU_CHUNK_T* pB,
+                                                     gsEngine* pGFE))
+/* clang-format on */
 {
-   BNU_CHUNK_T* product = cpGFpGetPool(2, pGFE);
-   //tbcd: temporary excluded: assert(NULL!=product);
+    BNU_CHUNK_T* product = cpGFpGetPool(2, pGFE);
+    //tbcd: temporary excluded: assert(NULL!=product);
 
-   cpMulAdc_BNU_school(product, pA,LEN_P256, pB,LEN_P256);
-   p256r1_mred(pR, product);
+    cpMulAdc_BNU_school(product, pA, LEN_P256, pB, LEN_P256);
+    p256r1_mred(pR, product);
 
-   cpGFpReleasePool(2, pGFE);
-   return pR;
+    cpGFpReleasePool(2, pGFE);
+    return pR;
 }
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_sqr_montl, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(static BNU_CHUNK_T*, p256r1_sqr_montl, (BNU_CHUNK_T* pR,
+                                                     const BNU_CHUNK_T* pA,
+                                                     gsEngine* pGFE))
+/* clang-format on */
 {
-   BNU_CHUNK_T* product = cpGFpGetPool(2, pGFE);
-   //tbcd: temporary excluded: assert(NULL!=product);
+    BNU_CHUNK_T* product = cpGFpGetPool(2, pGFE);
+    //tbcd: temporary excluded: assert(NULL!=product);
 
-   cpSqrAdc_BNU_school(product, pA,LEN_P256);
-   p256r1_mred(pR, product);
+    cpSqrAdc_BNU_school(product, pA, LEN_P256);
+    p256r1_mred(pR, product);
 
-   cpGFpReleasePool(2, pGFE);
-   return pR;
+    cpGFpReleasePool(2, pGFE);
+    return pR;
 }
 
 
 /*
 // Montgomery domain conversion constants
 */
-static BNU_CHUNK_T RR[] = {
-   0x00000003,0x00000000, 0xffffffff,0xfffffffb,
-   0xfffffffe,0xffffffff, 0xfffffffd,0x00000004};
+static BNU_CHUNK_T RR[] = { 0x00000003, 0x00000000, 0xffffffff, 0xfffffffb,
+                            0xfffffffe, 0xffffffff, 0xfffffffd, 0x00000004 };
 
-static BNU_CHUNK_T one[] = {
-   1,0,0,0,0,0,0,0};
+static BNU_CHUNK_T one[] = { 1, 0, 0, 0, 0, 0, 0, 0 };
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_to_mont, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_to_mont, (BNU_CHUNK_T* pR,
+                                                    const BNU_CHUNK_T* pA,
+                                                    gsEngine* pGFE))
+/* clang-format on */
 {
-   return p256r1_mul_montl(pR, pA, (BNU_CHUNK_T*)RR, pGFE);
+    return p256r1_mul_montl(pR, pA, (BNU_CHUNK_T*)RR, pGFE);
 }
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_mont_back, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_mont_back, (BNU_CHUNK_T* pR,
+                                                      const BNU_CHUNK_T* pA,
+                                                      gsEngine* pGFE))
+/* clang-format on */
 {
-   return p256r1_mul_montl(pR, pA, (BNU_CHUNK_T*)one, pGFE);
+    return p256r1_mul_montl(pR, pA, (BNU_CHUNK_T*)one, pGFE);
 }
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_to_mont_slm, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_to_mont_slm, (BNU_CHUNK_T* pR,
+                                                        const BNU_CHUNK_T* pA,
+                                                        gsEngine* pGFE))
+/* clang-format on */
 {
-   return p256r1_mul_mont_slm(pR, pA, (BNU_CHUNK_T*)RR, pGFE);
+    return p256r1_mul_mont_slm(pR, pA, (BNU_CHUNK_T*)RR, pGFE);
 }
 
-IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_mont_back_slm, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_mont_back_slm, (BNU_CHUNK_T* pR,
+                                                          const BNU_CHUNK_T* pA,
+                                                          gsEngine* pGFE))
+/* clang-format on */
 {
-   return p256r1_mul_mont_slm(pR, pA, (BNU_CHUNK_T*)one, pGFE);
+    return p256r1_mul_mont_slm(pR, pA, (BNU_CHUNK_T*)one, pGFE);
 }
 #endif /* _IPP >= _IPP_P8 */
 
@@ -139,39 +166,41 @@ IPP_OWN_DEFN (static BNU_CHUNK_T*, p256r1_mont_back_slm, (BNU_CHUNK_T* pR, const
 // return specific gf p256r1 arith methods,
 //    p256r1 = 2^256 -2^224 +2^192 +2^96 -1 (NIST P256r1)
 */
-static gsModMethod* gsArithGF_p256r1 (void)
+static gsModMethod* gsArithGF_p256r1(void)
 {
-   static gsModMethod m = {
-      p256r1_to_mont,
-      p256r1_mont_back,
-      p256r1_mul_montl,
-      p256r1_sqr_montl,
-      NULL,
-      p256r1_add,
-      p256r1_sub,
-      p256r1_neg,
-      p256r1_div_by_2,
-      p256r1_mul_by_2,
-      p256r1_mul_by_3,
-   };
+    /* clang-format off */
+    static gsModMethod m = { p256r1_to_mont,
+                             p256r1_mont_back,
+                             p256r1_mul_montl,
+                             p256r1_sqr_montl,
+                             NULL,
+                             p256r1_add,
+                             p256r1_sub,
+                             p256r1_neg,
+                             p256r1_div_by_2,
+                             p256r1_mul_by_2,
+                             p256r1_mul_by_3,
+    };
+    /* clang-format on */
 
-   #if(_IPP_ARCH==_IPP_ARCH_EM64T) && ((_ADCOX_NI_ENABLING_==_FEATURE_ON_) || (_ADCOX_NI_ENABLING_==_FEATURE_TICKTOCK_))
-   if(IsFeatureEnabled(ippCPUID_ADCOX)) {
-      m.mul = p256r1_mul_montx;
-      m.sqr = p256r1_sqr_montx;
-   }
-   #endif
+#if (_IPP_ARCH == _IPP_ARCH_EM64T) && \
+    ((_ADCOX_NI_ENABLING_ == _FEATURE_ON_) || (_ADCOX_NI_ENABLING_ == _FEATURE_TICKTOCK_))
+    if (IsFeatureEnabled(ippCPUID_ADCOX)) {
+        m.mul = p256r1_mul_montx;
+        m.sqr = p256r1_sqr_montx;
+    }
+#endif
 
-   #if(_IPP_ARCH==_IPP_ARCH_IA32)
-   if(IsFeatureEnabled(ippCPUID_SSSE3|ippCPUID_MOVBE) && !IsFeatureEnabled(ippCPUID_AVX)) {
-      m.mul = p256r1_mul_mont_slm;
-      m.sqr = p256r1_sqr_mont_slm;
-      m.encode = p256r1_to_mont_slm;
-      m.decode = p256r1_mont_back_slm;
-   }
-   #endif
+#if (_IPP_ARCH == _IPP_ARCH_IA32)
+    if (IsFeatureEnabled(ippCPUID_SSSE3 | ippCPUID_MOVBE) && !IsFeatureEnabled(ippCPUID_AVX)) {
+        m.mul    = p256r1_mul_mont_slm;
+        m.sqr    = p256r1_sqr_mont_slm;
+        m.encode = p256r1_to_mont_slm;
+        m.decode = p256r1_mont_back_slm;
+    }
+#endif
 
-   return &m;
+    return &m;
 }
 #endif /* (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7) */
 
@@ -185,29 +214,23 @@ static gsModMethod* gsArithGF_p256r1 (void)
 //           operations over GF(q). q = 2^256 - 2^224 + 2^192 + 2^96 - 1
 *F*/
 
-IPPFUN( const IppsGFpMethod*, ippsGFpMethod_p256r1, (void) )
+IPPFUN(const IppsGFpMethod*, ippsGFpMethod_p256r1, (void))
 {
-   static IppsGFpMethod method = {
-      cpID_PrimeP256r1,
-      256,
-      secp256r1_p,
-      NULL,
-      NULL
-   };
+    static IppsGFpMethod method = { cpID_PrimeP256r1, 256, secp256r1_p, NULL, NULL };
 
 #if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7)
-   method.arith = gsArithGF_p256r1();
+    method.arith = gsArithGF_p256r1();
 #else
-   method.arith = gsArithGFp();
+    method.arith = gsArithGFp();
 #endif
 
 #if (_IPP32E >= _IPP32E_K1)
-   if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
-      method.arith_alt = gsArithGF_p256r1_avx512();
-   }
+    if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
+        method.arith_alt = gsArithGF_p256r1_avx512();
+    }
 #endif
 
-   return &method;
+    return &method;
 }
 
 #undef LEN_P256

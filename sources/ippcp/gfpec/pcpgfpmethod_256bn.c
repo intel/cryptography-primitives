@@ -33,20 +33,14 @@
 //           0xFFFFFFFFFFFCF0CD46E5F25EEE71A49F0CDC65FB12980A82D3292DDBAED33013
 *F*/
 
-IPPFUN( const IppsGFpMethod*, ippsGFpMethod_p256bn, (void) )
+IPPFUN(const IppsGFpMethod*, ippsGFpMethod_p256bn, (void))
 {
-   static IppsGFpMethod method = {
-      cpID_Prime,
-      256,
-      tpmBN_p256p_p,
-      NULL,
-      NULL
-   };
+    static IppsGFpMethod method = { cpID_Prime, 256, tpmBN_p256p_p, NULL, NULL };
 
-   #if(_IPP32E >= _IPP32E_M7)
-   method.arith = gsArithGF_p256();
-   #else
-   method.arith = gsArithGFp();
-   #endif
-   return &method;
+#if (_IPP32E >= _IPP32E_M7)
+    method.arith = gsArithGF_p256();
+#else
+    method.arith = gsArithGFp();
+#endif
+    return &method;
 }

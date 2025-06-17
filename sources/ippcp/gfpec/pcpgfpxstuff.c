@@ -28,28 +28,26 @@
 #include "gfpec/pcpgfpxstuff.h"
 #include "gsscramble.h"
 
-static int div_upper(int a, int d)
-{
-   return (a+d-1)/d;
-}
+static int div_upper(int a, int d) { return (a + d - 1) / d; }
 
 static int getNumOperations(int bitsize, int w)
 {
-   int n_overhead = (1<<w) -1;
-   int n_ops = div_upper(bitsize, w) + n_overhead;
-   return n_ops;
+    int n_overhead = (1 << w) - 1;
+    int n_ops      = div_upper(bitsize, w) + n_overhead;
+    return n_ops;
 }
 
-IPP_OWN_DEFN (int, cpGFpGetOptimalWinSize, (int bitsize))
+IPP_OWN_DEFN(int, cpGFpGetOptimalWinSize, (int bitsize))
 {
-   int w_opt = 1;
-   int n_opt = getNumOperations(bitsize, w_opt);
-   int w_trial;
-   for(w_trial=w_opt+1; w_trial<=IPP_MAX_EXPONENT_NUM; w_trial++) {
-      int n_trial = getNumOperations(bitsize, w_trial);
-      if(n_trial>=n_opt) break;
-      w_opt = w_trial;
-      n_opt = n_trial;
-   }
-   return w_opt;
+    int w_opt = 1;
+    int n_opt = getNumOperations(bitsize, w_opt);
+    int w_trial;
+    for (w_trial = w_opt + 1; w_trial <= IPP_MAX_EXPONENT_NUM; w_trial++) {
+        int n_trial = getNumOperations(bitsize, w_trial);
+        if (n_trial >= n_opt)
+            break;
+        w_opt = w_trial;
+        n_opt = n_trial;
+    }
+    return w_opt;
 }

@@ -79,173 +79,199 @@
 //    pScratchBuffer pointer to buffer (1 mul_point operation)
 //
 *F*/
+
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECSignDSA,(const IppsBigNumState* pMsgDigest,
                                     const IppsBigNumState* pRegPrivate,
                                     IppsBigNumState* pEphPrivate,
-                                    IppsBigNumState* pSignR, IppsBigNumState* pSignS,
+                                    IppsBigNumState* pSignR,
+                                    IppsBigNumState* pSignS,
                                     IppsGFpECState* pEC,
                                     Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IppsGFpState*  pGF;
-   gsModEngine* pMontP;
+    IppsGFpState* pGF;
+    gsModEngine* pMontP;
 
-   /* EC context and buffer */
-   IPP_BAD_PTR2_RET(pEC, pScratchBuffer);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    /* EC context and buffer */
+    IPP_BAD_PTR2_RET(pEC, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   pGF = ECP_GFP(pEC);
-   pMontP = GFP_PMA(pGF);
-   IPP_BADARG_RET(1<GFP_EXTDEGREE(pMontP), ippStsNotSupportedModeErr);
+    pGF    = ECP_GFP(pEC);
+    pMontP = GFP_PMA(pGF);
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(pMontP), ippStsNotSupportedModeErr);
 
-   /* test message representative */
-   IPP_BAD_PTR1_RET(pMsgDigest);
-   IPP_BADARG_RET(!BN_VALID_ID(pMsgDigest), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pMsgDigest), ippStsMessageErr);
-   /* make sure bisize(pMsgDigest) <= bitsiz(order) */
-   IPP_BADARG_RET(ECP_ORDBITSIZE(pEC) < cpBN_bitsize(pMsgDigest), ippStsMessageErr);
+    /* test message representative */
+    IPP_BAD_PTR1_RET(pMsgDigest);
+    IPP_BADARG_RET(!BN_VALID_ID(pMsgDigest), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pMsgDigest), ippStsMessageErr);
+    /* make sure bisize(pMsgDigest) <= bitsiz(order) */
+    IPP_BADARG_RET(ECP_ORDBITSIZE(pEC) < cpBN_bitsize(pMsgDigest), ippStsMessageErr);
 
-   /* test signature */
-   IPP_BAD_PTR2_RET(pSignR, pSignS);
-   IPP_BADARG_RET(!BN_VALID_ID(pSignR), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pSignS), ippStsContextMatchErr);
-   IPP_BADARG_RET((BN_ROOM(pSignR)*BITSIZE(BNU_CHUNK_T)<ECP_ORDBITSIZE(pEC)), ippStsRangeErr);
-   IPP_BADARG_RET((BN_ROOM(pSignS)*BITSIZE(BNU_CHUNK_T)<ECP_ORDBITSIZE(pEC)), ippStsRangeErr);
+    /* test signature */
+    IPP_BAD_PTR2_RET(pSignR, pSignS);
+    IPP_BADARG_RET(!BN_VALID_ID(pSignR), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pSignS), ippStsContextMatchErr);
+    IPP_BADARG_RET((BN_ROOM(pSignR) * BITSIZE(BNU_CHUNK_T) < ECP_ORDBITSIZE(pEC)), ippStsRangeErr);
+    IPP_BADARG_RET((BN_ROOM(pSignS) * BITSIZE(BNU_CHUNK_T) < ECP_ORDBITSIZE(pEC)), ippStsRangeErr);
 
-   /* test private keys */
-   IPP_BAD_PTR2_RET(pRegPrivate, pEphPrivate);
+    /* test private keys */
+    IPP_BAD_PTR2_RET(pRegPrivate, pEphPrivate);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pRegPrivate), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pRegPrivate), ippStsInvalidPrivateKey);
+    IPP_BADARG_RET(!BN_VALID_ID(pRegPrivate), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pRegPrivate), ippStsInvalidPrivateKey);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pEphPrivate), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pEphPrivate), ippStsEphemeralKeyErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pEphPrivate), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pEphPrivate), ippStsEphemeralKeyErr);
 
-   {
-      gsModEngine* pMontR = ECP_MONT_R(pEC);
-      BNU_CHUNK_T* pOrder = MOD_MODULUS(pMontR);
-      int ordLen = MOD_LEN(pMontR);
+    {
+        gsModEngine* pMontR = ECP_MONT_R(pEC);
+        BNU_CHUNK_T* pOrder = MOD_MODULUS(pMontR);
+        int ordLen          = MOD_LEN(pMontR);
 
-      BNU_CHUNK_T* dataC = BN_NUMBER(pSignR);
-      BNU_CHUNK_T* dataD = BN_NUMBER(pSignS);
-      BNU_CHUNK_T* buffF = BN_BUFFER(pSignR);
-      BNU_CHUNK_T* buffT = BN_BUFFER(pSignS);
+        BNU_CHUNK_T* dataC = BN_NUMBER(pSignR);
+        BNU_CHUNK_T* dataD = BN_NUMBER(pSignS);
+        BNU_CHUNK_T* buffF = BN_BUFFER(pSignR);
+        BNU_CHUNK_T* buffT = BN_BUFFER(pSignS);
 
-      BNU_CHUNK_T* pPriData = BN_NUMBER(pRegPrivate);
-      int priLen = BN_SIZE(pRegPrivate);
+        BNU_CHUNK_T* pPriData = BN_NUMBER(pRegPrivate);
+        int priLen            = BN_SIZE(pRegPrivate);
 
-      BNU_CHUNK_T* pEphData = BN_NUMBER(pEphPrivate);
-      int ephLen = BN_SIZE(pEphPrivate);
+        BNU_CHUNK_T* pEphData = BN_NUMBER(pEphPrivate);
+        int ephLen            = BN_SIZE(pEphPrivate);
 
-      BNU_CHUNK_T* pMsgData = BN_NUMBER(pMsgDigest);
-      int msgLen = BN_SIZE(pMsgDigest);
+        BNU_CHUNK_T* pMsgData = BN_NUMBER(pMsgDigest);
+        int msgLen            = BN_SIZE(pMsgDigest);
 
-      /* test value of private keys: 0 < regPrivate < order, 0 < ephPrivate < order */
-      IPP_BADARG_RET(cpEqu_BNU_CHUNK(pPriData, priLen, 0) ||
-                  0<=cpCmp_BNU(pPriData, priLen, pOrder, ordLen), ippStsInvalidPrivateKey);
-      IPP_BADARG_RET(cpEqu_BNU_CHUNK(pEphData, ephLen, 0) ||
-                  0<=cpCmp_BNU(pEphData, ephLen, pOrder, ordLen), ippStsEphemeralKeyErr);
+        /* test value of private keys: 0 < regPrivate < order, 0 < ephPrivate < order */
+        IPP_BADARG_RET(cpEqu_BNU_CHUNK(pPriData, priLen, 0) ||
+                           0 <= cpCmp_BNU(pPriData, priLen, pOrder, ordLen),
+                       ippStsInvalidPrivateKey);
+        IPP_BADARG_RET(cpEqu_BNU_CHUNK(pEphData, ephLen, 0) ||
+                           0 <= cpCmp_BNU(pEphData, ephLen, pOrder, ordLen),
+                       ippStsEphemeralKeyErr);
 
-      IppStatus sts = ippStsEphemeralKeyErr;
+        IppStatus sts = ippStsEphemeralKeyErr;
 
 #if (_IPP32E >= _IPP32E_K1)
-      if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
-         switch (ECP_MODULUS_ID(pEC)) {
+        if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
+            switch (ECP_MODULUS_ID(pEC)) {
             case cpID_PrimeP256r1: {
-               sts = gfec_SignDSA_nistp256_avx512(pMsgDigest, pRegPrivate, pEphPrivate, pSignR, pSignS, pEC, pScratchBuffer);
-               goto exit;
-               break;
+                sts = gfec_SignDSA_nistp256_avx512(pMsgDigest,
+                                                   pRegPrivate,
+                                                   pEphPrivate,
+                                                   pSignR,
+                                                   pSignS,
+                                                   pEC,
+                                                   pScratchBuffer);
+                goto exit;
+                break;
             }
             case cpID_PrimeP384r1: {
-               sts = gfec_SignDSA_nistp384_avx512(pMsgDigest, pRegPrivate, pEphPrivate, pSignR, pSignS, pEC, pScratchBuffer);
-               goto exit;
-               break;
+                sts = gfec_SignDSA_nistp384_avx512(pMsgDigest,
+                                                   pRegPrivate,
+                                                   pEphPrivate,
+                                                   pSignR,
+                                                   pSignS,
+                                                   pEC,
+                                                   pScratchBuffer);
+                goto exit;
+                break;
             }
             case cpID_PrimeP521r1: {
-               sts = gfec_SignDSA_nistp521_avx512(pMsgDigest, pRegPrivate, pEphPrivate, pSignR, pSignS, pEC, pScratchBuffer);
-               goto exit;
-               break;
+                sts = gfec_SignDSA_nistp521_avx512(pMsgDigest,
+                                                   pRegPrivate,
+                                                   pEphPrivate,
+                                                   pSignR,
+                                                   pSignS,
+                                                   pEC,
+                                                   pScratchBuffer);
+                goto exit;
+                break;
             }
             default:
-               /* Go to default implementation below */
-               break;
-         }
-      } /* no else */
-#endif // (_IPP32E >= _IPP32E_K1)
-      {
-         int elmLen = GFP_FELEN(pMontP);
-         int ns;
+                /* Go to default implementation below */
+                break;
+            }
+        } /* no else */
+#endif    // (_IPP32E >= _IPP32E_K1)
+        {
+            int elmLen = GFP_FELEN(pMontP);
+            int ns;
 
-         /* compute ephemeral public key */
-         IppsGFpECPoint ephPublic;
-         cpEcGFpInitPoint(&ephPublic, cpEcGFpGetPool(1, pEC), 0, pEC);
-         gfec_MulBasePoint(&ephPublic,
-                           BN_NUMBER(pEphPrivate), BN_SIZE(pEphPrivate),
-                           pEC, pScratchBuffer);
+            /* compute ephemeral public key */
+            IppsGFpECPoint ephPublic;
+            cpEcGFpInitPoint(&ephPublic, cpEcGFpGetPool(1, pEC), 0, pEC);
+            gfec_MulBasePoint(&ephPublic,
+                              BN_NUMBER(pEphPrivate),
+                              BN_SIZE(pEphPrivate),
+                              pEC,
+                              pScratchBuffer);
 
-         /*
+            /*
          // signR = int(ephPublic.x) (mod order)
          */
-         {
-            BNU_CHUNK_T* buffer = gsModPoolAlloc(pMontP, 1);
-            IPP_BAD_PTR1_RET(buffer); // buffer can be NULL, stop processing
-            gfec_GetPoint(buffer, NULL, &ephPublic, pEC);
-            GFP_METHOD(pMontP)->decode(buffer, buffer, pMontP);
-            ns = cpMod_BNU(buffer, elmLen, pOrder, ordLen);
-            cpGFpElementCopyPad(dataC, ordLen, buffer, ns);
-            gsModPoolFree(pMontP, 1);
-         }
-         cpEcGFpReleasePool(1, pEC);
+            {
+                BNU_CHUNK_T* buffer = gsModPoolAlloc(pMontP, 1);
+                IPP_BAD_PTR1_RET(buffer); // buffer can be NULL, stop processing
+                gfec_GetPoint(buffer, NULL, &ephPublic, pEC);
+                GFP_METHOD(pMontP)->decode(buffer, buffer, pMontP);
+                ns = cpMod_BNU(buffer, elmLen, pOrder, ordLen);
+                cpGFpElementCopyPad(dataC, ordLen, buffer, ns);
+                gsModPoolFree(pMontP, 1);
+            }
+            cpEcGFpReleasePool(1, pEC);
 
-         if(!GFP_IS_ZERO(dataC, ordLen)) {
-            /*
+            if (!GFP_IS_ZERO(dataC, ordLen)) {
+                /*
             // signS = (1/ephPrivate)*(pMsgDigest + private*signR) (mod order)
             */
 
-            /* copy and expand message is being signed and reduce just in case */
-            ZEXPAND_COPY_BNU(buffF, ordLen, pMsgData, msgLen);
-            cpModSub_BNU(buffF, buffF, pOrder, pOrder, ordLen, buffT);
+                /* copy and expand message is being signed and reduce just in case */
+                ZEXPAND_COPY_BNU(buffF, ordLen, pMsgData, msgLen);
+                cpModSub_BNU(buffF, buffF, pOrder, pOrder, ordLen, buffT);
 
-            /* private representation in Montgomery domain */
-            ZEXPAND_COPY_BNU(dataD, ordLen, pPriData, priLen);
-            GFP_METHOD(pMontR)->encode(dataD, dataD, pMontR);
+                /* private representation in Montgomery domain */
+                ZEXPAND_COPY_BNU(dataD, ordLen, pPriData, priLen);
+                GFP_METHOD(pMontR)->encode(dataD, dataD, pMontR);
 
-            /* (private*signX) in regular domain */
-            GFP_METHOD(pMontR)->mul(dataD, dataD, dataC, pMontR);
+                /* (private*signX) in regular domain */
+                GFP_METHOD(pMontR)->mul(dataD, dataD, dataC, pMontR);
 
-            /* pMsgDigest + private*signX */
-            cpModAdd_BNU(dataD, dataD, buffF, pOrder, ordLen, buffT);
+                /* pMsgDigest + private*signX */
+                cpModAdd_BNU(dataD, dataD, buffF, pOrder, ordLen, buffT);
 
-            if(!GFP_IS_ZERO(dataD, ordLen)) {
-               /* (1/ephPrivate) in Montgomery domain */
-               ZEXPAND_COPY_BNU(buffT, ordLen, pEphData, ephLen);
-               gs_mont_inv(buffT, buffT, pMontR, alm_mont_inv_ct);
+                if (!GFP_IS_ZERO(dataD, ordLen)) {
+                    /* (1/ephPrivate) in Montgomery domain */
+                    ZEXPAND_COPY_BNU(buffT, ordLen, pEphData, ephLen);
+                    gs_mont_inv(buffT, buffT, pMontR, alm_mont_inv_ct);
 
-               /* (1/ephPrivate)*(pMsgDigest + private*signS) */
-               GFP_METHOD(pMontR)->mul(dataD, dataD, buffT, pMontR);
+                    /* (1/ephPrivate)*(pMsgDigest + private*signS) */
+                    GFP_METHOD(pMontR)->mul(dataD, dataD, buffT, pMontR);
 
-               /* signR */
-               ns = ordLen;
-               FIX_BNU(dataC, ns);
-               BN_SIGN(pSignR) = ippBigNumPOS;
-               BN_SIZE(pSignR) = ns;
-               /* signS */
-               ns = ordLen;
-               FIX_BNU(dataD, ns);
-               BN_SIGN(pSignS) = ippBigNumPOS;
-               BN_SIZE(pSignS) = ns;
+                    /* signR */
+                    ns = ordLen;
+                    FIX_BNU(dataC, ns);
+                    BN_SIGN(pSignR) = ippBigNumPOS;
+                    BN_SIZE(pSignR) = ns;
+                    /* signS */
+                    ns = ordLen;
+                    FIX_BNU(dataD, ns);
+                    BN_SIGN(pSignS) = ippBigNumPOS;
+                    BN_SIZE(pSignS) = ns;
 
-               sts = ippStsNoErr;
+                    sts = ippStsNoErr;
+                }
             }
-         }
-      }
+        }
 
 #if (_IPP32E >= _IPP32E_K1)
-exit:
+    exit:
 #endif
-      /* clear ephemeral private key */
-      cpBN_zero(pEphPrivate);
+        /* clear ephemeral private key */
+        cpBN_zero(pEphPrivate);
 
-      return sts;
-   }
+        return sts;
+    }
 }

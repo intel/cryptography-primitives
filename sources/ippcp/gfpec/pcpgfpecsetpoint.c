@@ -60,25 +60,29 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECSetPoint,(const IppsGFpElement* pX, const IppsGFpElement* pY,
-                                           IppsGFpECPoint* pPoint,
-                                           IppsGFpECState* pEC))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECSetPoint,(const IppsGFpElement* pX,
+                                     const IppsGFpElement* pY,
+                                     IppsGFpECPoint* pPoint,
+                                     IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pPoint, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pPoint, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr);
 
-   IPP_BAD_PTR2_RET(pX, pY);
-   IPP_BADARG_RET( !GFPE_VALID_ID(pX), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pY), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pX, pY);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pX), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pY), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( GFPE_ROOM(pX)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET( GFPE_ROOM(pY)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET( ECP_POINT_FELEN(pPoint)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(GFPE_ROOM(pX) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(GFPE_ROOM(pY) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pPoint) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))),
+                   ippStsOutOfRangeErr);
 
-   if(gfec_SetPoint(ECP_POINT_DATA(pPoint), GFPE_DATA(pX), GFPE_DATA(pY), pEC))
-      ECP_POINT_FLAGS(pPoint) = ECP_AFFINE_POINT | ECP_FINITE_POINT;
-   else
-      ECP_POINT_FLAGS(pPoint) = 0;
-   return ippStsNoErr;
+    if (gfec_SetPoint(ECP_POINT_DATA(pPoint), GFPE_DATA(pX), GFPE_DATA(pY), pEC))
+        ECP_POINT_FLAGS(pPoint) = ECP_AFFINE_POINT | ECP_FINITE_POINT;
+    else
+        ECP_POINT_FLAGS(pPoint) = 0;
+    return ippStsNoErr;
 }

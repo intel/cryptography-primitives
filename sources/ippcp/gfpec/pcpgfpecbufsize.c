@@ -48,23 +48,28 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECScratchBufferSize,(int nScalars, const IppsGFpECState* pEC, int* pBufferSize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECScratchBufferSize, (int nScalars,
+                                               const IppsGFpECState* pEC,
+                                               int* pBufferSize))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pEC, pBufferSize);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pEC, pBufferSize);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( (0>=nScalars)||(nScalars>IPP_MAX_EXPONENT_NUM), ippStsBadArgErr);
+    IPP_BADARG_RET((0 >= nScalars) || (nScalars > IPP_MAX_EXPONENT_NUM), ippStsBadArgErr);
 
-   {
-      /* select constant size of window */
-      const int w = 5;
-      /* number of table entries */
-      const int nPrecomputed = 1<<(w-1);  /* because of signed digit representation of scalar is uses */
+    {
+        /* select constant size of window */
+        const int w = 5;
+        /* number of table entries */
+        /* because of signed digit representation of scalar is uses */
+        const int nPrecomputed = 1 << (w - 1);
 
-      int pointDataSize = ECP_POINTLEN(pEC)*(Ipp32s)sizeof(BNU_CHUNK_T);
+        int pointDataSize = ECP_POINTLEN(pEC) * (Ipp32s)sizeof(BNU_CHUNK_T);
 
-      *pBufferSize = nScalars * pointDataSize*nPrecomputed + CACHE_LINE_SIZE;
+        *pBufferSize = nScalars * pointDataSize * nPrecomputed + CACHE_LINE_SIZE;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

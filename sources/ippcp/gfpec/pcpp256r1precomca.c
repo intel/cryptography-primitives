@@ -30,20 +30,21 @@
 #define LEN_P256        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
 
 /* P256 affine point */
-typedef struct{
-   BNU_CHUNK_T X[LEN_P256];
-   BNU_CHUNK_T Y[LEN_P256];
+typedef struct {
+    BNU_CHUNK_T X[LEN_P256];
+    BNU_CHUNK_T Y[LEN_P256];
 } P256_POINT_AFFINE;
 
 extern const __ALIGN64 P256_POINT_AFFINE ec_p256r1_precomputed[37][64];
 
 
-#if defined( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 #if !defined(_DISABLE_ECP_256R1_HARDCODED_BP_TBL_)
 /* see ippcp_baseptbl.cpp test for generation details */
 
 const __ALIGN64 P256_POINT_AFFINE ec_p256r1_precomputed[37][64] = {
+  /* clang-format off */
 /* digit=0 base_pwr=2^0 */
 {
    {{LL(0x18a9143c,0x79e730d4),LL(0x5fedb601,0x75ba95fc),LL(0x77622510,0x79fb732b),LL(0xa53755c6,0x18905f76)}, {LL(0xce95560a,0xddf25357),LL(0xba19e45c,0x8b4ab8e4),LL(0xdd21f325,0xd2e88688),LL(0x25885d85,0x8571ff18)}},
@@ -2523,17 +2524,16 @@ const __ALIGN64 P256_POINT_AFFINE ec_p256r1_precomputed[37][64] = {
    {{LL(0x2a849870,0x4d33dd99),LL(0x41576335,0xa716964b),LL(0x179be0e5,0xff5e3a9b),LL(0x83b13632,0x5b9d6b1b)}, {LL(0xa52f313b,0x3b8bd7d4),LL(0x637a4660,0xc9dd95a0),LL(0x0b3e218f,0x30035962),LL(0xc7b28a3c,0xce1481a3)}},
    {{LL(0x43228d83,0xab41b43a),LL(0x4ad63f99,0x24ae1c30),LL(0x46a51229,0x8e525f1a),LL(0xcd26d2b4,0x14af860f)}, {LL(0x3f714aa1,0xd6baef61),LL(0xeb78795e,0xf51865ad),LL(0xe6a9d694,0xd3e21fce),LL(0x8a37b527,0x82ceb1dd)}},
 }
+  /* clang-format on */
 };
 #endif /* _DISABLE_ECP_256R1_HARDCODED_BP_TBL_ */
-#endif  /* _IPP_DATA */
+#endif /* _IPP_DATA */
 
 
-IPP_OWN_DEFN (const cpPrecompAP*, gfpec_precom_nistP256r1_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_nistP256r1_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */                  7,
-      /* select function */    p256r1_select_ap_w7,
-      /* precomputed data */   (BNU_CHUNK_T*)ec_p256r1_precomputed
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 7,
+                             /* select function */ p256r1_select_ap_w7,
+                             /* precomputed data */ (BNU_CHUNK_T*)ec_p256r1_precomputed };
+    return &t;
 }

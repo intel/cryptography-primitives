@@ -44,17 +44,22 @@
 //    pState           Pointer to a state to get pPublicKeySize from
 //
 *F*/
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECESGetBuffersSize_SM2, (int* pPublicKeySize,
-   int* pMaximumTagSize, const IppsECESState_SM2* pState)) {
-   IPP_BADARG_RET(pPublicKeySize == NULL && pMaximumTagSize == NULL && pState == NULL, ippStsNullPtrErr);
+                                                  int* pMaximumTagSize,
+                                                  const IppsECESState_SM2* pState))
+/* clang-format on */
+{
+    IPP_BADARG_RET(pPublicKeySize == NULL && pMaximumTagSize == NULL && pState == NULL,
+                   ippStsNullPtrErr);
 
-   if (pMaximumTagSize)
-      *pMaximumTagSize = IPP_SM3_DIGEST_BITSIZE / BYTESIZE;
-   if (pPublicKeySize) {
-      IPP_BAD_PTR1_RET(pState);
-      IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
-      *pPublicKeySize = pState->sharedSecretLen;
-   }
+    if (pMaximumTagSize)
+        *pMaximumTagSize = IPP_SM3_DIGEST_BITSIZE / BYTESIZE;
+    if (pPublicKeySize) {
+        IPP_BAD_PTR1_RET(pState);
+        IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
+        *pPublicKeySize = pState->sharedSecretLen;
+    }
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

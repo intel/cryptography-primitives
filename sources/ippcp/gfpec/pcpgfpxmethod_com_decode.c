@@ -25,19 +25,23 @@
 #include "gfpec/pcpgfpxmethod_com.h"
 
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxDecode_com, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxDecode_com, (BNU_CHUNK_T* pR,
+                                              const BNU_CHUNK_T* pA,
+                                              gsEngine* pGFEx))
+/* clang-format on */
 {
-   gsEngine* pBasicGFE = cpGFpBasic(pGFEx);
-   mod_decode decodeF = GFP_METHOD(pBasicGFE)->decode;
-   int basicElemLen = GFP_FELEN(pBasicGFE);
-   int basicDeg = cpGFpBasicDegreeExtension(pGFEx);
+    gsEngine* pBasicGFE = cpGFpBasic(pGFEx);
+    mod_decode decodeF  = GFP_METHOD(pBasicGFE)->decode;
+    int basicElemLen    = GFP_FELEN(pBasicGFE);
+    int basicDeg        = cpGFpBasicDegreeExtension(pGFEx);
 
-   BNU_CHUNK_T* pTmp = pR;
-   int deg;
-   for(deg=0; deg<basicDeg; deg++) {
-      decodeF(pTmp, pA, pBasicGFE);
-      pTmp += basicElemLen;
-      pA += basicElemLen;
-   }
-   return pR;
+    BNU_CHUNK_T* pTmp = pR;
+    int deg;
+    for (deg = 0; deg < basicDeg; deg++) {
+        decodeF(pTmp, pA, pBasicGFE);
+        pTmp += basicElemLen;
+        pA += basicElemLen;
+    }
+    return pR;
 }

@@ -31,53 +31,60 @@
 #include "gsscramble.h"
 
 
-#if ( ECP_PROJECTIVE_COORD == JACOBIAN )
+#if (ECP_PROJECTIVE_COORD == JACOBIAN)
 /* returns 1/0 if point is finite/infinite */
-IPP_OWN_DEFN (int, gfec_GetPoint, (BNU_CHUNK_T* pX, BNU_CHUNK_T* pY, const IppsGFpECPoint* pPoint, IppsGFpECState* pEC))
+/* clang-format off */
+IPP_OWN_DEFN(int, gfec_GetPoint, (BNU_CHUNK_T* pX,
+                                  BNU_CHUNK_T* pY,
+                                  const IppsGFpECPoint* pPoint,
+                                  IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IppsGFpState* pGF = ECP_GFP(pEC);
-   gsModEngine* pGFE = GFP_PMA(pGF);
-   int elemLen = GFP_FELEN(pGFE);
+    IppsGFpState* pGF = ECP_GFP(pEC);
+    gsModEngine* pGFE = GFP_PMA(pGF);
+    int elemLen       = GFP_FELEN(pGFE);
 
-   if( !IS_ECP_FINITE_POINT(pPoint) ) {
-      if(pX) cpGFpElementPad(pX, elemLen, 0);
-      if(pY) cpGFpElementPad(pY, elemLen, 0);
-      return 0;
-   }
+    if (!IS_ECP_FINITE_POINT(pPoint)) {
+        if (pX)
+            cpGFpElementPad(pX, elemLen, 0);
+        if (pY)
+            cpGFpElementPad(pY, elemLen, 0);
+        return 0;
+    }
 
-   /* affine point (1==Z) */
-   if( IS_ECP_AFFINE_POINT(pPoint) ) {
-      if(pX)
-         cpGFpElementCopy(pX, ECP_POINT_X(pPoint), elemLen);
-      if(pY)
-         cpGFpElementCopy(pY, ECP_POINT_Y(pPoint), elemLen);
-      return 1;
-   }
+    /* affine point (1==Z) */
+    if (IS_ECP_AFFINE_POINT(pPoint)) {
+        if (pX)
+            cpGFpElementCopy(pX, ECP_POINT_X(pPoint), elemLen);
+        if (pY)
+            cpGFpElementCopy(pY, ECP_POINT_Y(pPoint), elemLen);
+        return 1;
+    }
 
-   /* projective point (1!=Z) */
-   {
-      mod_mul mulF = GFP_METHOD(pGFE)->mul;
-      mod_sqr sqrF = GFP_METHOD(pGFE)->sqr;
+    /* projective point (1!=Z) */
+    {
+        mod_mul mulF = GFP_METHOD(pGFE)->mul;
+        mod_sqr sqrF = GFP_METHOD(pGFE)->sqr;
 
-      /* T = (1/Z)*(1/Z) */
-      BNU_CHUNK_T* pT    = cpGFpGetPool(1, pGFE);
-      BNU_CHUNK_T* pZinv = cpGFpGetPool(1, pGFE);
-      BNU_CHUNK_T* pU = cpGFpGetPool(1, pGFE);
-      cpGFpxInv(pZinv, ECP_POINT_Z(pPoint), pGFE);
-      sqrF(pT, pZinv, pGFE);
+        /* T = (1/Z)*(1/Z) */
+        BNU_CHUNK_T* pT    = cpGFpGetPool(1, pGFE);
+        BNU_CHUNK_T* pZinv = cpGFpGetPool(1, pGFE);
+        BNU_CHUNK_T* pU    = cpGFpGetPool(1, pGFE);
+        cpGFpxInv(pZinv, ECP_POINT_Z(pPoint), pGFE);
+        sqrF(pT, pZinv, pGFE);
 
-      if(pX) {
-         mulF(pU, ECP_POINT_X(pPoint), pT, pGFE);
-         cpGFpElementCopy(pX, pU, elemLen);
-      }
-      if(pY) {
-         mulF(pT, pZinv, pT, pGFE);
-         mulF(pU, ECP_POINT_Y(pPoint), pT, pGFE);
-         cpGFpElementCopy(pY, pU, elemLen);
-      }
+        if (pX) {
+            mulF(pU, ECP_POINT_X(pPoint), pT, pGFE);
+            cpGFpElementCopy(pX, pU, elemLen);
+        }
+        if (pY) {
+            mulF(pT, pZinv, pT, pGFE);
+            mulF(pU, ECP_POINT_Y(pPoint), pT, pGFE);
+            cpGFpElementCopy(pY, pU, elemLen);
+        }
 
-      cpGFpReleasePool(3, pGFE);
-      return 1;
-   }
+        cpGFpReleasePool(3, pGFE);
+        return 1;
+    }
 }
 #endif

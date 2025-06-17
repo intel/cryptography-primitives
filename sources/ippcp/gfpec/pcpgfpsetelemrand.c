@@ -57,16 +57,21 @@
 //    rndFunc      Pseudorandom number generator.
 //    pRndParam    Pointer to the context of the pseudorandom number generator.
 *F*/
-IPPFUN(IppStatus, ippsGFpSetElementRandom,(IppsGFpElement* pR, IppsGFpState* pGFp,
-                                           IppBitSupplier rndFunc, void* pRndParam))
-{
-   IPP_BAD_PTR3_RET(pR, pGFp, rndFunc);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pR), ippStsContextMatchErr );
 
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( GFPE_ROOM(pR)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-      return cpGFpxRand(GFPE_DATA(pR), pGFE, rndFunc, pRndParam)? ippStsNoErr : ippStsErr;
-   }
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpSetElementRandom, (IppsGFpElement* pR,
+                                            IppsGFpState* pGFp,
+                                            IppBitSupplier rndFunc,
+                                            void* pRndParam))
+/* clang-format on */
+{
+    IPP_BAD_PTR3_RET(pR, pGFp, rndFunc);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pR), ippStsContextMatchErr);
+
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET(GFPE_ROOM(pR) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        return cpGFpxRand(GFPE_DATA(pR), pGFE, rndFunc, pRndParam) ? ippStsNoErr : ippStsErr;
+    }
 }

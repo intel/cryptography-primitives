@@ -96,59 +96,65 @@ IPPFUN(IppStatus, ippsGFpECMulPoint,(const IppsGFpECPoint* pP,
    }
 }
 #endif
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECMulPoint, (const IppsGFpECPoint* pP,
-   const IppsBigNumState* pN,
-   IppsGFpECPoint* pR,
-   IppsGFpECState* pEC,
-   Ipp8u* pScratchBuffer))
+                                      const IppsBigNumState* pN,
+                                      IppsGFpECPoint* pR,
+                                      IppsGFpECState* pEC,
+                                      Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pP, pR, pEC, pScratchBuffer);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   //IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    IPP_BAD_PTR4_RET(pP, pR, pEC, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    //IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(!ECP_POINT_VALID_ID(pP), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_POINT_VALID_ID(pR), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pP), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pR), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(ECP_POINT_FELEN(pP) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET(ECP_POINT_FELEN(pR) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pP) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pR) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
 
-   IPP_BAD_PTR1_RET(pN);
-   IPP_BADARG_RET(!BN_VALID_ID(pN), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pN), ippStsBadArgErr);
+    IPP_BAD_PTR1_RET(pN);
+    IPP_BADARG_RET(!BN_VALID_ID(pN), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pN), ippStsBadArgErr);
 
-   {
-      BNU_CHUNK_T *pScalar = BN_NUMBER(pN);
-      int scalarLen        = BN_SIZE(pN);
-      IPP_BADARG_RET(0 < cpCmp_BNU(pScalar, scalarLen, MOD_MODULUS(ECP_MONT_R(pEC)), MOD_LEN(ECP_MONT_R(pEC))), ippStsBadArgErr);
+    {
+        BNU_CHUNK_T* pScalar = BN_NUMBER(pN);
+        int scalarLen        = BN_SIZE(pN);
+        IPP_BADARG_RET(0 < cpCmp_BNU(pScalar,
+                                     scalarLen,
+                                     MOD_MODULUS(ECP_MONT_R(pEC)),
+                                     MOD_LEN(ECP_MONT_R(pEC))),
+                       ippStsBadArgErr);
 
 #if (_IPP32E >= _IPP32E_K1)
-      if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
-         switch (ECP_MODULUS_ID(pEC)) {
-         case cpID_PrimeP256r1: {
-            gfec_MulPoint_nistp256_avx512(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
-            return ippStsNoErr;
-         }
-         case cpID_PrimeP384r1: {
-            gfec_MulPoint_nistp384_avx512(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
-            return ippStsNoErr;
-         }
-         case cpID_PrimeP521r1: {
-            gfec_MulPoint_nistp521_avx512(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
-            return ippStsNoErr;
-         }
-         case cpID_PrimeTPM_SM2: {
-            gfec_MulPoint_sm2_avx512(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
-            return ippStsNoErr;
-         }
-         default:
-            /* Go to default implementation below */
-            break;
-         }
-      } /* no else */
-#endif  // (_IPP32E >= _IPP32E_K1)
+        if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
+            switch (ECP_MODULUS_ID(pEC)) {
+            case cpID_PrimeP256r1: {
+                gfec_MulPoint_nistp256_avx512(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
+                return ippStsNoErr;
+            }
+            case cpID_PrimeP384r1: {
+                gfec_MulPoint_nistp384_avx512(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
+                return ippStsNoErr;
+            }
+            case cpID_PrimeP521r1: {
+                gfec_MulPoint_nistp521_avx512(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
+                return ippStsNoErr;
+            }
+            case cpID_PrimeTPM_SM2: {
+                gfec_MulPoint_sm2_avx512(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
+                return ippStsNoErr;
+            }
+            default:
+                /* Go to default implementation below */
+                break;
+            }
+        } /* no else */
+#endif    // (_IPP32E >= _IPP32E_K1)
 
-      gfec_MulPoint(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
+        gfec_MulPoint(pR, pP, pScalar, scalarLen, pEC, pScratchBuffer);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

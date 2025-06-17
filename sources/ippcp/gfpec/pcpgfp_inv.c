@@ -27,10 +27,10 @@
 #include "pcpbn.h"
 #include "gfpec/pcpgfpstuff.h"
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpInv, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE))
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpInv, (BNU_CHUNK_T * pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE))
 {
-   GFP_METHOD(pGFE)->decode(pR, pA, pGFE);
-   /* gs_mont_inv(pR, pR, pGFE, alm_mont_inv); */
-   gs_mont_inv(pR, pR, pGFE, alm_mont_inv_ct); /* switch on CTE internal function */
-   return pR;
+    GFP_METHOD(pGFE)->decode(pR, pA, pGFE);
+    /* gs_mont_inv(pR, pR, pGFE, alm_mont_inv); */
+    gs_mont_inv(pR, pR, pGFE, alm_mont_inv_ct); /* switch on CTE internal function */
+    return pR;
 }

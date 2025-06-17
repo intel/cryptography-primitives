@@ -32,28 +32,28 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-IPP_OWN_DEFN (void, cpGFEqnr, (gsModEngine* pGFE))
+IPP_OWN_DEFN(void, cpGFEqnr, (gsModEngine * pGFE))
 {
-   BNU_CHUNK_T* pQnr = GFP_QNR(pGFE);
+    BNU_CHUNK_T* pQnr = GFP_QNR(pGFE);
 
-   int elemLen = GFP_FELEN(pGFE);
-   BNU_CHUNK_T* e = cpGFpGetPool(3, pGFE);
-   BNU_CHUNK_T* t = e+elemLen;
-   BNU_CHUNK_T* p1 = t+elemLen;
-   //tbcd: temporary excluded: assert(NULL!=e);
+    int elemLen     = GFP_FELEN(pGFE);
+    BNU_CHUNK_T* e  = cpGFpGetPool(3, pGFE);
+    BNU_CHUNK_T* t  = e + elemLen;
+    BNU_CHUNK_T* p1 = t + elemLen;
+    //tbcd: temporary excluded: assert(NULL!=e);
 
-   cpGFpElementCopyPad(p1, elemLen, GFP_MNT_R(pGFE), elemLen);
+    cpGFpElementCopyPad(p1, elemLen, GFP_MNT_R(pGFE), elemLen);
 
-   /* (modulus-1)/2 */
-   cpLSR_BNU(e, GFP_MODULUS(pGFE), elemLen, 1);
+    /* (modulus-1)/2 */
+    cpLSR_BNU(e, GFP_MODULUS(pGFE), elemLen, 1);
 
-   /* find a non-square g, where g^{(modulus-1)/2} = -1 */
-   cpGFpElementCopy(pQnr, p1, elemLen);
-   do {
-      cpGFpAdd(pQnr, pQnr, p1, pGFE);
-      cpGFpExp(t, pQnr, e, elemLen, pGFE);
-      cpGFpNeg(t, t, pGFE);
-   } while( !GFP_EQ(p1, t, elemLen) );
+    /* find a non-square g, where g^{(modulus-1)/2} = -1 */
+    cpGFpElementCopy(pQnr, p1, elemLen);
+    do {
+        cpGFpAdd(pQnr, pQnr, p1, pGFE);
+        cpGFpExp(t, pQnr, e, elemLen, pGFE);
+        cpGFpNeg(t, t, pGFE);
+    } while (!GFP_EQ(p1, t, elemLen));
 
-   cpGFpReleasePool(3, pGFE);
+    cpGFpReleasePool(3, pGFE);
 }

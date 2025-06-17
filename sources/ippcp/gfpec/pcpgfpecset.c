@@ -54,45 +54,47 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECSet,(const IppsGFpElement* pA,
-                                const IppsGFpElement* pB,
-                                IppsGFpECState* pEC))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECSet, (const IppsGFpElement* pA,
+                                 const IppsGFpElement* pB,
+                                 IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
+    IPP_BAD_PTR1_RET(pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
-   IPP_BAD_PTR2_RET(pA, pB);
-   IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pB), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pA, pB);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pB), ippStsContextMatchErr);
 
-   {
-      gsModEngine* pGFE = GFP_PMA(ECP_GFP(pEC));
-      int elemLen = GFP_FELEN(pGFE);
+    {
+        gsModEngine* pGFE = GFP_PMA(ECP_GFP(pEC));
+        int elemLen       = GFP_FELEN(pGFE);
 
-      IPP_BADARG_RET( GFPE_ROOM(pA)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-      IPP_BADARG_RET( GFPE_ROOM(pB)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        IPP_BADARG_RET(GFPE_ROOM(pA) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        IPP_BADARG_RET(GFPE_ROOM(pB) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-      /* copy A */
-      cpGFpElementPad(ECP_A(pEC), elemLen, 0);
-      cpGFpElementCopy(ECP_A(pEC), GFPE_DATA(pA), elemLen);
-      /* and set up A-specific (a==0 or a==-3) if is */
-      if(GFP_IS_ZERO(ECP_A(pEC), elemLen))
-         ECP_SPECIFIC(pEC) = ECP_EPID2;
+        /* copy A */
+        cpGFpElementPad(ECP_A(pEC), elemLen, 0);
+        cpGFpElementCopy(ECP_A(pEC), GFPE_DATA(pA), elemLen);
+        /* and set up A-specific (a==0 or a==-3) if is */
+        if (GFP_IS_ZERO(ECP_A(pEC), elemLen))
+            ECP_SPECIFIC(pEC) = ECP_EPID2;
 
-      cpGFpElementSetChunk(ECP_B(pEC), elemLen, 3);
-      GFP_METHOD(pGFE)->encode(ECP_B(pEC), ECP_B(pEC), pGFE);
-      GFP_METHOD(pGFE)->add(ECP_B(pEC), ECP_A(pEC), ECP_B(pEC), pGFE);
-      if(GFP_IS_ZERO(ECP_B(pEC), elemLen))
-         ECP_SPECIFIC(pEC) = ECP_STD;
+        cpGFpElementSetChunk(ECP_B(pEC), elemLen, 3);
+        GFP_METHOD(pGFE)->encode(ECP_B(pEC), ECP_B(pEC), pGFE);
+        GFP_METHOD(pGFE)->add(ECP_B(pEC), ECP_A(pEC), ECP_B(pEC), pGFE);
+        if (GFP_IS_ZERO(ECP_B(pEC), elemLen))
+            ECP_SPECIFIC(pEC) = ECP_STD;
 
-      /* copy B */
-      cpGFpElementPad(ECP_B(pEC), elemLen, 0);
-      cpGFpElementCopy(ECP_B(pEC), GFPE_DATA(pB), elemLen);
-      /* and set type of affine infinity representation:
+        /* copy B */
+        cpGFpElementPad(ECP_B(pEC), elemLen, 0);
+        cpGFpElementCopy(ECP_B(pEC), GFPE_DATA(pB), elemLen);
+        /* and set type of affine infinity representation:
       // (0,1) if B==0
       // (0,0) if B!=0 */
-      ECP_INFINITY(pEC) = GFP_IS_ZERO(ECP_B(pEC), elemLen);
+        ECP_INFINITY(pEC) = GFP_IS_ZERO(ECP_B(pEC), elemLen);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

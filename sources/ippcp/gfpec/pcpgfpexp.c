@@ -59,21 +59,26 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpExp,(const IppsGFpElement* pA, const IppsBigNumState* pE,
-                                    IppsGFpElement* pR, IppsGFpState* pGFp,
-                                    Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpExp,(const IppsGFpElement* pA,
+                              const IppsBigNumState* pE,
+                              IppsGFpElement* pR,
+                              IppsGFpState* pGFp,
+                              Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pA, pE, pR, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pR), ippStsContextMatchErr );
+    IPP_BAD_PTR4_RET(pA, pE, pR, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pR), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( !BN_VALID_ID(pE), ippStsContextMatchErr );
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( (GFPE_ROOM(pA)!=GFP_FELEN(pGFE)) || (GFPE_ROOM(pR)!=GFP_FELEN(pGFE)), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pE), ippStsContextMatchErr);
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET((GFPE_ROOM(pA) != GFP_FELEN(pGFE)) || (GFPE_ROOM(pR) != GFP_FELEN(pGFE)),
+                       ippStsOutOfRangeErr);
 
-      cpGFpxExp(GFPE_DATA(pR), GFPE_DATA(pA), BN_NUMBER(pE), BN_SIZE(pE), pGFE, pScratchBuffer);
-      return ippStsNoErr;
-   }
+        cpGFpxExp(GFPE_DATA(pR), GFPE_DATA(pA), BN_NUMBER(pE), BN_SIZE(pE), pGFE, pScratchBuffer);
+        return ippStsNoErr;
+    }
 }

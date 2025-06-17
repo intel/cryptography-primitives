@@ -29,21 +29,26 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpSet, (BNU_CHUNK_T* pElm, const BNU_CHUNK_T* pDataA, int nsA, gsModEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpSet, (BNU_CHUNK_T* pElm,
+                                      const BNU_CHUNK_T* pDataA,
+                                      int nsA,
+                                      gsModEngine* pGFE))
+/* clang-format on */
 {
-   const BNU_CHUNK_T* pModulus = GFP_MODULUS(pGFE);
-   int elemLen = GFP_FELEN(pGFE);
+    const BNU_CHUNK_T* pModulus = GFP_MODULUS(pGFE);
+    int elemLen                 = GFP_FELEN(pGFE);
 
-   if(0 <= cpCmp_BNU(pDataA, nsA, pModulus, elemLen))
-      return NULL;
-   else {
-      BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
-      //tbcd: temporary excluded: assert(pTmp !=NULL);
+    if (0 <= cpCmp_BNU(pDataA, nsA, pModulus, elemLen))
+        return NULL;
+    else {
+        BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
+        //tbcd: temporary excluded: assert(pTmp !=NULL);
 
-      ZEXPAND_COPY_BNU(pTmp, elemLen, pDataA, nsA);
-      GFP_METHOD(pGFE)->encode(pElm, pTmp, pGFE);
+        ZEXPAND_COPY_BNU(pTmp, elemLen, pDataA, nsA);
+        GFP_METHOD(pGFE)->encode(pElm, pTmp, pGFE);
 
-      cpGFpReleasePool(1, pGFE);
-      return pElm;
-   }
+        cpGFpReleasePool(1, pGFE);
+        return pElm;
+    }
 }

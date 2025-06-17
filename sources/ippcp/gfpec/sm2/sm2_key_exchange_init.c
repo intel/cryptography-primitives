@@ -87,17 +87,17 @@ IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_Init, (IppsGFpECKeyExchangeSM2State* p
 
         /* set Za (user id hash) */
         EC_SM2_KEY_EXCH_USER_ID_HASH_USER_A(pKE) = ptr;
-        PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
+        PadBlock(0, ptr, IPP_SM3_DIGEST_BYTESIZE);
         ptr += IPP_SM3_DIGEST_BYTESIZE;
 
         /* set Zb (user id hash) */
         EC_SM2_KEY_EXCH_USER_ID_HASH_USER_B(pKE) = ptr;
-        PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
+        PadBlock(0, ptr, IPP_SM3_DIGEST_BYTESIZE);
         ptr += IPP_SM3_DIGEST_BYTESIZE;
 
         /* set Precompute Hash */
         EC_SM2_KEY_EXCH_PRECOM_HASH(pKE) = ptr;
-        PurgeBlock(ptr, IPP_SM3_DIGEST_BYTESIZE);
+        PadBlock(0, ptr, IPP_SM3_DIGEST_BYTESIZE);
         ptr += IPP_SM3_DIGEST_BYTESIZE;
 
         /* set Point(X,Y) */

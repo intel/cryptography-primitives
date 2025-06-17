@@ -25,6 +25,7 @@
 #include "owncp.h"
 #include "gfpec/pcpgfpstuff.h"
 
+/* clang-format off */
 #define cpGFpxAdd_com OWNAPI(cpGFpxAdd_com)
     IPP_OWN_DECL (BNU_CHUNK_T*, cpGFpxAdd_com, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pGFEx))
 #define cpGFpxSub_com OWNAPI(cpGFpxSub_com)
@@ -48,5 +49,6 @@
     IPP_OWN_DECL (BNU_CHUNK_T*, cpGFpxEncode_com, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx))
 #define cpGFpxDecode_com OWNAPI(cpGFpxDecode_com)
     IPP_OWN_DECL (BNU_CHUNK_T*, cpGFpxDecode_com, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx))
+/* clang-format on */
 
 #endif /* _CP_GFP_METHOD_COM_H */

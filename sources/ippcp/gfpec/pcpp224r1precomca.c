@@ -30,22 +30,24 @@
 #define LEN_P224        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
 
 /* P192 affine point */
-typedef struct{
-   BNU_CHUNK_T X[LEN_P224];
-   BNU_CHUNK_T Y[LEN_P224];
+typedef struct {
+    BNU_CHUNK_T X[LEN_P224];
+    BNU_CHUNK_T Y[LEN_P224];
 } P224_POINT_AFFINE;
 
 extern const __ALIGN64 P224_POINT_AFFINE ec_p224r1_precomputed[33][64];
 
 
-#if defined ( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 #if !defined(_DISABLE_ECP_224R1_HARDCODED_BP_TBL_)
 /* see ippcp_baseptbl.cpp test for generation details */
 
-#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64) || (_IPP_ARCH == _IPP_ARCH_LRB) || (_IPP_ARCH == _IPP_ARCH_LRB2))
+#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64) || \
+     (_IPP_ARCH == _IPP_ARCH_LRB) || (_IPP_ARCH == _IPP_ARCH_LRB2))
 const __ALIGN64 P224_POINT_AFFINE ec_p224r1_precomputed[33][64] = {
-/* digit=0 base_pwr=2^0 */
+    /* digit=0 base_pwr=2^0 */
+    /* clang-format off */
 {
    {{LL(0x6d0a4aea,0xbc905226),LL(0x6018bfaa,0x85259736),LL(0xf96bec05,0x6dd3af9b),L_(0xa21b5e60)}, {LL(0xeff3ede8,0x2edca1e5),LL(0x05335a6b,0xf8cd672b),LL(0x03dfe878,0xaea9c5ae),L_(0x614786f1)}},
    {{LL(0xe722ff54,0x4ca9a1ec),LL(0x5650df9b,0xd704f84f),LL(0x2a0f1689,0x10c911f7),L_(0xcafb50f5)}, {LL(0x95a24e5e,0x02aac79b),LL(0xc90ae186,0x518c11b1),LL(0x76cc101a,0x0c84ced0),L_(0x5cabb880)}},
@@ -4470,19 +4472,18 @@ const __ALIGN64 P224_POINT_AFFINE ec_p224r1_precomputed[33][64] = {
    {{LL(0xc3a1a863,0xfe8ceef6),LL(0x42e96299,0x0469540a),LL(0xd231a2a4,0x0828f4c0),L_(0x7c0edcf4)}, {LL(0x2c034efb,0x1744d906),LL(0x92393260,0x2a85a8d6),LL(0x28f5775a,0x58717292),L_(0x37693735)}},
    {{LL(0xf12dc792,0xbcc5e464),LL(0xfee1ef55,0xb881c818),LL(0x2bfca9a4,0x7e60531f),L_(0xed54d832)}, {LL(0x28ea4ef0,0x9ef6ada6),LL(0xb9564865,0xf56fbcf0),LL(0x534e2057,0x9857c41f),L_(0x2750bbe8)}},
 }
+    /* clang-format on */
 };
 #endif
 
 #endif /* _DISABLE_ECP_224R1_HARDCODED_BP_TBL_ */
-#endif  /* _IPP_DATA */
+#endif /* _IPP_DATA */
 
 
-IPP_OWN_DEFN (const cpPrecompAP*, gfpec_precom_nistP224r1_fun, (void))
+IPP_OWN_DEFN(const cpPrecompAP*, gfpec_precom_nistP224r1_fun, (void))
 {
-   static cpPrecompAP t = {
-      /* w */                  7,
-      /* select function */    p224r1_select_ap_w7,
-      /* precomputed data */   (BNU_CHUNK_T*)ec_p224r1_precomputed
-   };
-   return &t;
+    static cpPrecompAP t = { /* w */ 7,
+                             /* select function */ p224r1_select_ap_w7,
+                             /* precomputed data */ (BNU_CHUNK_T*)ec_p224r1_precomputed };
+    return &t;
 }

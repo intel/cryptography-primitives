@@ -45,19 +45,19 @@
 //    pInfo    pointer to finite field infon
 //    pGFp     Pointer to the context of the finite field.
 *F*/
-IPPFUN(IppStatus, ippsGFpGetInfo,(IppsGFpInfo* pInfo, const IppsGFpState* pGFp))
+IPPFUN(IppStatus, ippsGFpGetInfo, (IppsGFpInfo * pInfo, const IppsGFpState* pGFp))
 {
-   IPP_BAD_PTR2_RET(pGFp, pInfo);
+    IPP_BAD_PTR2_RET(pGFp, pInfo);
 
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
 
-   {
-      gsModEngine* pGFpx = GFP_PMA(pGFp);     /* current */
-      gsModEngine* pGFpBasic = cpGFpBasic(pGFpx); /* basic */
-      pInfo->parentGFdegree = MOD_EXTDEG(pGFpx);               /* parent extension */
-      pInfo->basicGFdegree = cpGFpBasicDegreeExtension(pGFpx); /* total basic extension */
-      pInfo->basicElmBitSize = GFP_FEBITLEN(pGFpBasic);             /* basic bitsise */
+    {
+        gsModEngine* pGFpx     = GFP_PMA(pGFp);                    /* current */
+        gsModEngine* pGFpBasic = cpGFpBasic(pGFpx);                /* basic */
+        pInfo->parentGFdegree  = MOD_EXTDEG(pGFpx);                /* parent extension */
+        pInfo->basicGFdegree   = cpGFpBasicDegreeExtension(pGFpx); /* total basic extension */
+        pInfo->basicElmBitSize = GFP_FEBITLEN(pGFpBasic);          /* basic bitsise */
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

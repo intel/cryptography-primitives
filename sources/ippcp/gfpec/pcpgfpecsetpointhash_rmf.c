@@ -75,88 +75,101 @@
 //    Is not a fact that computed point belongs to BP-related subgroup BP
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECSetPointHash_rmf,(Ipp32u hdr, const Ipp8u* pMsg, int msgLen, IppsGFpECPoint* pPoint,
-                                             IppsGFpECState* pEC, const IppsHashMethod* pMethod,
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECSetPointHash_rmf,(Ipp32u hdr,
+                                             const Ipp8u* pMsg,
+                                             int msgLen,
+                                             IppsGFpECPoint* pPoint,
+                                             IppsGFpECState* pEC,
+                                             const IppsHashMethod* pMethod,
                                              Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IppsGFpState*  pGF;
-   gsModEngine* pGFE;
+    IppsGFpState* pGF;
+    gsModEngine* pGFE;
 
-   /* test method pointer */
-   IPP_BAD_PTR1_RET(pMethod);
+    /* test method pointer */
+    IPP_BAD_PTR1_RET(pMethod);
 
-   /* test message length */
-   IPP_BADARG_RET((msgLen<0), ippStsLengthErr);
-   /* test message pointer */
-   IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
+    /* test message length */
+    IPP_BADARG_RET((msgLen < 0), ippStsLengthErr);
+    /* test message pointer */
+    IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
 
-   IPP_BAD_PTR3_RET(pPoint, pEC, pScratchBuffer);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
+    IPP_BAD_PTR3_RET(pPoint, pEC, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
-   pGF = ECP_GFP(pEC);
-   pGFE = GFP_PMA(pGF);
+    pGF  = ECP_GFP(pEC);
+    pGFE = GFP_PMA(pGF);
 
-   IPP_BADARG_RET( !GFP_IS_BASIC(pGFE), ippStsBadArgErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr );
+    IPP_BADARG_RET(!GFP_IS_BASIC(pGFE), ippStsBadArgErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( ECP_POINT_FELEN(pPoint)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pPoint) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
-   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
+    IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
-   {
-      int elemLen = GFP_FELEN(pGFE);
-      BNU_CHUNK_T* pModulus = GFP_MODULUS(pGFE);
+    {
+        int elemLen           = GFP_FELEN(pGFE);
+        BNU_CHUNK_T* pModulus = GFP_MODULUS(pGFE);
 
-      Ipp8u md[IPP_SHA512_DIGEST_BITSIZE/BYTESIZE];
-      int hashLen = pMethod->hashLen;
-      BNU_CHUNK_T hashVal[BITS_BNU_CHUNK(IPP_SHA512_DIGEST_BITSIZE)+1];
-      int hashValLen;
+        Ipp8u md[IPP_SHA512_DIGEST_BITSIZE / BYTESIZE];
+        int hashLen = pMethod->hashLen;
+        BNU_CHUNK_T hashVal[BITS_BNU_CHUNK(IPP_SHA512_DIGEST_BITSIZE) + 1];
+        int hashValLen;
 
-      /* check if enough memory is allocated for the context */
-      int contextSize = 0;
-      ippsHashGetSizeOptimal_rmf(&contextSize, pMethod);
-      IPP_BADARG_RET((MAX_HASH_RMF_CONTEXT_SIZE < contextSize), ippStsMemAllocErr);
+        /* check if enough memory is allocated for the context */
+        int contextSize = 0;
+        ippsHashGetSizeOptimal_rmf(&contextSize, pMethod);
+        IPP_BADARG_RET((MAX_HASH_RMF_CONTEXT_SIZE < contextSize), ippStsMemAllocErr);
 
-      __ALIGN64 Ipp8u hashCtxMem[MAX_HASH_RMF_CONTEXT_SIZE];
-      IppsHashState_rmf* hashCtx = (IppsHashState_rmf*)hashCtxMem;
-      ippsHashInit_rmf(hashCtx, pMethod);
+        __ALIGN64 Ipp8u hashCtxMem[MAX_HASH_RMF_CONTEXT_SIZE];
+        IppsHashState_rmf* hashCtx = (IppsHashState_rmf*)hashCtxMem;
+        ippsHashInit_rmf(hashCtx, pMethod);
 
-      {
-         BNU_CHUNK_T* pPoolElm = cpGFpGetPool(1, pGFE);
+        {
+            BNU_CHUNK_T* pPoolElm = cpGFpGetPool(1, pGFE);
 
-         /* convert hdr => hdrStr */
-         BNU_CHUNK_T locHdr = (BNU_CHUNK_T)hdr;
-         Ipp8u hdrOctStr[sizeof(hdr/*locHdr*/)];
-         cpToOctStr_BNU(hdrOctStr, sizeof(hdrOctStr), &locHdr, 1);
+            /* convert hdr => hdrStr */
+            BNU_CHUNK_T locHdr = (BNU_CHUNK_T)hdr;
+            Ipp8u hdrOctStr[sizeof(hdr /*locHdr*/)];
+            cpToOctStr_BNU(hdrOctStr, sizeof(hdrOctStr), &locHdr, 1);
 
-         /* compute md = hash(hrd||msg) */
-         ippsHashUpdate_rmf(hdrOctStr, sizeof(hdrOctStr), hashCtx);
-         ippsHashUpdate_rmf(pMsg, msgLen, hashCtx);
-         ippsHashFinal_rmf(md, hashCtx);
+            /* compute md = hash(hrd||msg) */
+            ippsHashUpdate_rmf(hdrOctStr, sizeof(hdrOctStr), hashCtx);
+            ippsHashUpdate_rmf(pMsg, msgLen, hashCtx);
+            ippsHashFinal_rmf(md, hashCtx);
 
-         /* convert hash into the integer */
-         hashValLen = cpFromOctStr_BNU(hashVal, md, hashLen);
-         hashValLen = cpMod_BNU(hashVal, hashValLen, pModulus, elemLen);
-         cpGFpSet(pPoolElm, hashVal, hashValLen, pGFE);
+            /* convert hash into the integer */
+            hashValLen = cpFromOctStr_BNU(hashVal, md, hashLen);
+            hashValLen = cpMod_BNU(hashVal, hashValLen, pModulus, elemLen);
+            cpGFpSet(pPoolElm, hashVal, hashValLen, pGFE);
 
-         if( gfec_MakePoint(pPoint, pPoolElm, pEC)) {
-            /* choose even y-coordinate of the point (see SafeID Specs v2) */
-            BNU_CHUNK_T* pY = ECP_POINT_Y(pPoint);
-            GFP_METHOD(pGFE)->decode(pPoolElm, pY, pGFE); /* due to P(X,Y,Z=1) just decode Y->y */
-            if(pPoolElm[0] & 1)
-               cpGFpNeg(pY, pY, pGFE);
+            if (gfec_MakePoint(pPoint, pPoolElm, pEC)) {
+                /* choose even y-coordinate of the point (see SafeID Specs v2) */
+                BNU_CHUNK_T* pY = ECP_POINT_Y(pPoint);
+                GFP_METHOD(pGFE)->decode(pPoolElm,
+                                         pY,
+                                         pGFE); /* due to P(X,Y,Z=1) just decode Y->y */
+                if (pPoolElm[0] & 1)
+                    cpGFpNeg(pY, pY, pGFE);
 
-            /* update point if cofactor>1 */
-            if(ECP_SUBGROUP(pEC))
-                gfec_MulPoint(pPoint, pPoint, ECP_COFACTOR(pEC), GFP_FELEN(pGFE), /*0,*/ pEC, pScratchBuffer);
+                /* update point if cofactor>1 */
+                if (ECP_SUBGROUP(pEC))
+                    gfec_MulPoint(pPoint,
+                                  pPoint,
+                                  ECP_COFACTOR(pEC),
+                                  GFP_FELEN(pGFE),
+                                  /*0,*/ pEC,
+                                  pScratchBuffer);
 
-            cpGFpReleasePool(1, pGFE);
-            return ippStsNoErr;
-         }
-      }
+                cpGFpReleasePool(1, pGFE);
+                return ippStsNoErr;
+            }
+        }
 
-      cpGFpReleasePool(1, pGFE);
-      return ippStsQuadraticNonResidueErr;
-   }
+        cpGFpReleasePool(1, pGFE);
+        return ippStsQuadraticNonResidueErr;
+    }
 }

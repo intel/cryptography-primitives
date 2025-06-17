@@ -30,28 +30,36 @@
 #include "gfpec/pcpgfpecstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (IppsGFpECPoint*, gfec_MulBasePoint, (IppsGFpECPoint* pR, const BNU_CHUNK_T* pScalar, int scalarLen, IppsGFpECState* pEC, Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPP_OWN_DEFN(IppsGFpECPoint*, gfec_MulBasePoint, (IppsGFpECPoint* pR,
+                                                  const BNU_CHUNK_T* pScalar,
+                                                  int scalarLen,
+                                                  IppsGFpECState* pEC,
+                                                  Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   FIX_BNU(pScalar, scalarLen);
-   {
-      gsModEngine* pGForder = ECP_MONT_R(pEC);
+    FIX_BNU(pScalar, scalarLen);
+    {
+        gsModEngine* pGForder = ECP_MONT_R(pEC);
 
-      BNU_CHUNK_T* pTmpScalar = cpGFpGetPool(1, pGForder); /* length of scalar does not exceed length of order */
-      int orderBits = MOD_BITSIZE(pGForder);
-      int orderLen  = MOD_LEN(pGForder);
-      cpGFpElementCopyPad(pTmpScalar,orderLen+1, pScalar,scalarLen);
+        /* length of scalar does not exceed length of order */
+        BNU_CHUNK_T* pTmpScalar = cpGFpGetPool(1, pGForder);
+        int orderBits           = MOD_BITSIZE(pGForder);
+        int orderLen            = MOD_LEN(pGForder);
+        cpGFpElementCopyPad(pTmpScalar, orderLen + 1, pScalar, scalarLen);
 
-      if(ECP_PREMULBP(pEC))
-         gfec_base_point_mul(ECP_POINT_X(pR),
-                             (Ipp8u*)pTmpScalar, orderBits,
-                             pEC);
-      else
-         gfec_point_mul(ECP_POINT_X(pR), ECP_G(pEC),
-                        (Ipp8u*)pTmpScalar, orderBits,
-                        pEC, pScratchBuffer);
-      cpGFpReleasePool(1, pGForder);
+        if (ECP_PREMULBP(pEC))
+            gfec_base_point_mul(ECP_POINT_X(pR), (Ipp8u*)pTmpScalar, orderBits, pEC);
+        else
+            gfec_point_mul(ECP_POINT_X(pR),
+                           ECP_G(pEC),
+                           (Ipp8u*)pTmpScalar,
+                           orderBits,
+                           pEC,
+                           pScratchBuffer);
+        cpGFpReleasePool(1, pGForder);
 
-      ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR)? 0 : ECP_FINITE_POINT;
-      return pR;
-   }
+        ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
+        return pR;
+    }
 }

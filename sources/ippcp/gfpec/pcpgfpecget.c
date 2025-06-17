@@ -52,34 +52,36 @@
 //    pEC        Pointer to the context of the elliptic curve
 //
 *F*/
-
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECGet,(IppsGFpState** const ppGFp,
-                                IppsGFpElement* pA, IppsGFpElement* pB,
+                                IppsGFpElement* pA,
+                                IppsGFpElement* pB,
                                 const IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
+    IPP_BAD_PTR1_RET(pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
-   {
-      const IppsGFpState* pGF = ECP_GFP(pEC);
-      gsModEngine* pGFE = GFP_PMA(pGF);
-      Ipp32u elementSize = (Ipp32u)GFP_FELEN(pGFE);
+    {
+        const IppsGFpState* pGF = ECP_GFP(pEC);
+        gsModEngine* pGFE       = GFP_PMA(pGF);
+        Ipp32u elementSize      = (Ipp32u)GFP_FELEN(pGFE);
 
-      if(ppGFp) {
-         *ppGFp = (IppsGFpState*)pGF;
-      }
+        if (ppGFp) {
+            *ppGFp = (IppsGFpState*)pGF;
+        }
 
-      if(pA) {
-         IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-         IPP_BADARG_RET( GFPE_ROOM(pA)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-         cpGFpElementCopy(GFPE_DATA(pA), ECP_A(pEC), (cpSize)elementSize);
-      }
-      if(pB) {
-         IPP_BADARG_RET( !GFPE_VALID_ID(pB), ippStsContextMatchErr );
-         IPP_BADARG_RET( GFPE_ROOM(pB)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-         cpGFpElementCopy(GFPE_DATA(pB), ECP_B(pEC), (cpSize)elementSize);
-      }
+        if (pA) {
+            IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+            IPP_BADARG_RET(GFPE_ROOM(pA) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+            cpGFpElementCopy(GFPE_DATA(pA), ECP_A(pEC), (cpSize)elementSize);
+        }
+        if (pB) {
+            IPP_BADARG_RET(!GFPE_VALID_ID(pB), ippStsContextMatchErr);
+            IPP_BADARG_RET(GFPE_ROOM(pB) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+            cpGFpElementCopy(GFPE_DATA(pB), ECP_B(pEC), (cpSize)elementSize);
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

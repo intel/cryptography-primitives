@@ -29,16 +29,21 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpGet, (BNU_CHUNK_T* pDataA, int nsA, const BNU_CHUNK_T* pElm, gsModEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpGet, (BNU_CHUNK_T* pDataA,
+                                      int nsA,
+                                      const BNU_CHUNK_T* pElm,
+                                      gsModEngine* pGFE))
+/* clang-format on */
 {
-   int elemLen = GFP_FELEN(pGFE);
+    int elemLen = GFP_FELEN(pGFE);
 
-   BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
-   //tbcd: temporary excluded: assert(pTmp !=NULL);
+    BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
+    //tbcd: temporary excluded: assert(pTmp !=NULL);
 
-   GFP_METHOD(pGFE)->decode(pTmp, pElm, pGFE);
-   ZEXPAND_COPY_BNU(pDataA, nsA, pTmp, elemLen);
+    GFP_METHOD(pGFE)->decode(pTmp, pElm, pGFE);
+    ZEXPAND_COPY_BNU(pDataA, nsA, pTmp, elemLen);
 
-   cpGFpReleasePool(1, pGFE);
-   return pDataA;
+    cpGFpReleasePool(1, pGFE);
+    return pDataA;
 }

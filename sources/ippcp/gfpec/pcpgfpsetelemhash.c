@@ -61,40 +61,48 @@
 //    pGFp     pointer to Finite Field context
 //    hashID   applied hash algorithm ID
 *F*/
-IPPFUN(IppStatus, ippsGFpSetElementHash,(const Ipp8u* pMsg, int msgLen, IppsGFpElement* pElm, IppsGFpState* pGFp, IppHashAlgId hashID))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpSetElementHash, (const Ipp8u* pMsg,
+                                          int msgLen,
+                                          IppsGFpElement* pElm,
+                                          IppsGFpState* pGFp,
+                                          IppHashAlgId hashID))
+/* clang-format on */
 {
-   /* get algorithm id */
-   hashID = cpValidHashAlg(hashID);
-   IPP_BADARG_RET(ippHashAlg_Unknown==hashID, ippStsNotSupportedModeErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(hashID), ippStsNotSupportedModeErr);
+    /* get algorithm id */
+    hashID = cpValidHashAlg(hashID);
+    IPP_BADARG_RET(ippHashAlg_Unknown == hashID, ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(hashID), ippStsNotSupportedModeErr);
 
-   /* test message length and pointer */
-   IPP_BADARG_RET((msgLen<0), ippStsLengthErr);
-   IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
+    /* test message length and pointer */
+    IPP_BADARG_RET((msgLen < 0), ippStsLengthErr);
+    IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
 
-   IPP_BAD_PTR2_RET(pElm, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr);
-   IPP_BADARG_RET( !GFPE_VALID_ID(pElm), ippStsContextMatchErr);
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( !GFP_IS_BASIC(pGFE), ippStsBadArgErr);
-      IPP_BADARG_RET( GFPE_ROOM(pElm)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+    IPP_BAD_PTR2_RET(pElm, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pElm), ippStsContextMatchErr);
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET(!GFP_IS_BASIC(pGFE), ippStsBadArgErr);
+        IPP_BADARG_RET(GFPE_ROOM(pElm) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-      {
-         Ipp8u md[MAX_HASH_SIZE];
-         BNU_CHUNK_T hashVal[(MAX_HASH_SIZE*8)/BITSIZE(BNU_CHUNK_T)+1]; /* +1 to meet cpMod_BNU() implementation specific */
-         IppStatus sts = ippsHashMessage(pMsg, msgLen, md, hashID);
+        {
+            Ipp8u md[MAX_HASH_SIZE];
+            BNU_CHUNK_T hashVal[(MAX_HASH_SIZE * 8) / BITSIZE(BNU_CHUNK_T) +
+                                1]; /* +1 to meet cpMod_BNU() implementation specific */
+            IppStatus sts = ippsHashMessage(pMsg, msgLen, md, hashID);
 
-         if(ippStsNoErr==sts) {
-            int elemLen = GFP_FELEN(pGFE);
-            int hashLen = cpHashAlgAttr[hashID].hashSize;
-            int hashValLen = cpFromOctStr_BNU(hashVal, md, hashLen);
-            hashValLen = cpMod_BNU(hashVal, hashValLen, GFP_MODULUS(pGFE), elemLen);
-            cpGFpSet(GFPE_DATA(pElm), hashVal, hashValLen, pGFE);
-         }
+            if (ippStsNoErr == sts) {
+                int elemLen    = GFP_FELEN(pGFE);
+                int hashLen    = cpHashAlgAttr[hashID].hashSize;
+                int hashValLen = cpFromOctStr_BNU(hashVal, md, hashLen);
+                hashValLen     = cpMod_BNU(hashVal, hashValLen, GFP_MODULUS(pGFE), elemLen);
+                cpGFpSet(GFPE_DATA(pElm), hashVal, hashValLen, pGFE);
+            }
 
-         return sts;
-      }
-   }
+            return sts;
+        }
+    }
 }

@@ -31,51 +31,59 @@
 #include "gsscramble.h"
 
 static int gfec_IsAffinePointAtInfinity(int ecInfinity,
-                           const BNU_CHUNK_T* pX, const BNU_CHUNK_T* pY,
-                           const IppsGFpState* pGF)
+                                        const BNU_CHUNK_T* pX,
+                                        const BNU_CHUNK_T* pY,
+                                        const IppsGFpState* pGF)
 {
-   gsModEngine* pGFE = GFP_PMA(pGF);
-   int elmLen = GFP_FELEN(pGFE);
+    gsModEngine* pGFE = GFP_PMA(pGF);
+    int elmLen        = GFP_FELEN(pGFE);
 
-   int atInfinity = GFP_IS_ZERO(pX,elmLen);
+    int atInfinity = GFP_IS_ZERO(pX, elmLen);
 
-   BNU_CHUNK_T* tmpY = cpGFpGetPool(1, pGFE);
+    BNU_CHUNK_T* tmpY = cpGFpGetPool(1, pGFE);
 
-   /* set tmpY either:
+    /* set tmpY either:
    // 0,       if ec.b !=0
    // mont(1)  if ec.b ==0
    */
-   cpGFpElementPad(tmpY, elmLen, 0);
-   if(ecInfinity) {
-      gsModEngine* pBasicGFE = cpGFpBasic(pGFE);
-      int basicElmLen = GFP_FELEN(pBasicGFE);
-      BNU_CHUNK_T* mont1 = GFP_MNT_R(pBasicGFE);
-      cpGFpElementCopyPad(tmpY, elmLen, mont1, basicElmLen);
-   }
+    cpGFpElementPad(tmpY, elmLen, 0);
+    if (ecInfinity) {
+        gsModEngine* pBasicGFE = cpGFpBasic(pGFE);
+        int basicElmLen        = GFP_FELEN(pBasicGFE);
+        BNU_CHUNK_T* mont1     = GFP_MNT_R(pBasicGFE);
+        cpGFpElementCopyPad(tmpY, elmLen, mont1, basicElmLen);
+    }
 
-   /* check if (x,y) represents point at infinity */
-   atInfinity &= GFP_EQ(pY, tmpY, elmLen);
+    /* check if (x,y) represents point at infinity */
+    atInfinity &= GFP_EQ(pY, tmpY, elmLen);
 
-   cpGFpReleasePool(1, pGFE);
-   return atInfinity;
+    cpGFpReleasePool(1, pGFE);
+    return atInfinity;
 }
 
 /* returns: 1/0 if set up finite/infinite point */
-IPP_OWN_DEFN (int, gfec_SetPoint, (BNU_CHUNK_T* pPointData, const BNU_CHUNK_T* pX, const BNU_CHUNK_T* pY, IppsGFpECState* pEC))
+/* clang-format off */
+IPP_OWN_DEFN(int, gfec_SetPoint, (BNU_CHUNK_T* pPointData,
+                                  const BNU_CHUNK_T* pX,
+                                  const BNU_CHUNK_T* pY,
+                                  IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IppsGFpState* pGF = ECP_GFP(pEC);
-   gsModEngine* pGFE = GFP_PMA(pGF);
-   int elmLen = GFP_FELEN(pGFE);
+    IppsGFpState* pGF = ECP_GFP(pEC);
+    gsModEngine* pGFE = GFP_PMA(pGF);
+    int elmLen        = GFP_FELEN(pGFE);
 
-   int finite_point= !gfec_IsAffinePointAtInfinity(ECP_INFINITY(pEC), pX, pY, pGF);
-   if(finite_point) {
-      gsModEngine* pBasicGFE = cpGFpBasic(pGFE);
-      cpGFpElementCopy(pPointData, pX, elmLen);
-      cpGFpElementCopy(pPointData+elmLen, pY, elmLen);
-      cpGFpElementCopyPad(pPointData+elmLen*2, elmLen, GFP_MNT_R(pBasicGFE), GFP_FELEN(pBasicGFE));
-   }
-   else
-      cpGFpElementPad(pPointData, 3*elmLen, 0);
+    int finite_point = !gfec_IsAffinePointAtInfinity(ECP_INFINITY(pEC), pX, pY, pGF);
+    if (finite_point) {
+        gsModEngine* pBasicGFE = cpGFpBasic(pGFE);
+        cpGFpElementCopy(pPointData, pX, elmLen);
+        cpGFpElementCopy(pPointData + elmLen, pY, elmLen);
+        cpGFpElementCopyPad(pPointData + elmLen * 2,
+                            elmLen,
+                            GFP_MNT_R(pBasicGFE),
+                            GFP_FELEN(pBasicGFE));
+    } else
+        cpGFpElementPad(pPointData, 3 * elmLen, 0);
 
-   return finite_point;
+    return finite_point;
 }

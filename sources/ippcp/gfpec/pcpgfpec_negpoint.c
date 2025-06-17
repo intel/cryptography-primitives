@@ -31,13 +31,17 @@
 #include "gsscramble.h"
 
 
-IPP_OWN_DEFN (IppsGFpECPoint*, gfec_NegPoint, (IppsGFpECPoint* pR, const IppsGFpECPoint* pP, IppsGFpECState* pEC))
+/* clang-format off */
+IPP_OWN_DEFN(IppsGFpECPoint*, gfec_NegPoint, (IppsGFpECPoint* pR,
+                                              const IppsGFpECPoint* pP,
+                                              IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IppsGFpState* pGF = ECP_GFP(pEC);
-   gsModEngine* pGFE = GFP_PMA(pGF);
-   int elmLen = GFP_FELEN(pGFE);
-   if(pR!=pP)
-      gfec_CopyPoint(pR, pP, elmLen);
-   GFP_METHOD(pGFE)->neg(ECP_POINT_Y(pR), ECP_POINT_Y(pP), pGFE);
-   return pR;
+    IppsGFpState* pGF = ECP_GFP(pEC);
+    gsModEngine* pGFE = GFP_PMA(pGF);
+    int elmLen        = GFP_FELEN(pGFE);
+    if (pR != pP)
+        gfec_CopyPoint(pR, pP, elmLen);
+    GFP_METHOD(pGFE)->neg(ECP_POINT_Y(pR), ECP_POINT_Y(pP), pGFE);
+    return pR;
 }

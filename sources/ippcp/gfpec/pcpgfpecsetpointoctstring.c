@@ -48,41 +48,47 @@
 //    pEC      EC ctx
 //
 *F*/
+
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECSetPointOctString, (const Ipp8u* pStr,
-   int strLen, IppsGFpECPoint* pPoint, IppsGFpECState* pEC)) {
-   IPP_BAD_PTR3_RET(pPoint, pEC, pStr);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+                                               int strLen,
+                                               IppsGFpECPoint* pPoint,
+                                               IppsGFpECState* pEC))
+/* clang-format on */
+{
+    IPP_BAD_PTR3_RET(pPoint, pEC, pStr);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
-   {
-      gsModEngine* pGFE = pEC->pGF->pGFE;
-      IppsGFpInfo gfi;
-      ippsGFpGetInfo(&gfi, pEC->pGF);
+    {
+        gsModEngine* pGFE = pEC->pGF->pGFE;
+        IppsGFpInfo gfi;
+        ippsGFpGetInfo(&gfi, pEC->pGF);
 
-      {
-         int elemLenBits = gfi.basicGFdegree * gfi.basicElmBitSize;
-         int elemLenBytes = BITS2WORD8_SIZE(elemLenBits);
-         int elemLenChunks = BITS_BNU_CHUNK(elemLenBits);
-         IPP_BADARG_RET(strLen != elemLenBytes * 2, ippStsSizeErr);
+        {
+            int elemLenBits   = gfi.basicGFdegree * gfi.basicElmBitSize;
+            int elemLenBytes  = BITS2WORD8_SIZE(elemLenBits);
+            int elemLenChunks = BITS_BNU_CHUNK(elemLenBits);
+            IPP_BADARG_RET(strLen != elemLenBytes * 2, ippStsSizeErr);
 
-         {
-            IppStatus ret;
-            IppsGFpElement ptX, ptY;
-            cpGFpElementConstruct(&ptX, cpGFpGetPool(1, pGFE), elemLenChunks);
-            cpGFpElementConstruct(&ptY, cpGFpGetPool(1, pGFE), elemLenChunks);
+            {
+                IppStatus ret;
+                IppsGFpElement ptX, ptY;
+                cpGFpElementConstruct(&ptX, cpGFpGetPool(1, pGFE), elemLenChunks);
+                cpGFpElementConstruct(&ptY, cpGFpGetPool(1, pGFE), elemLenChunks);
 
-            ret = ippsGFpSetElementOctString(pStr, elemLenBytes, &ptX, pEC->pGF);
-            if (ippStsNoErr == ret) {
-               pStr += elemLenBytes;
-               ret = ippsGFpSetElementOctString(pStr, elemLenBytes, &ptY, pEC->pGF);
+                ret = ippsGFpSetElementOctString(pStr, elemLenBytes, &ptX, pEC->pGF);
+                if (ippStsNoErr == ret) {
+                    pStr += elemLenBytes;
+                    ret = ippsGFpSetElementOctString(pStr, elemLenBytes, &ptY, pEC->pGF);
+                }
+                if (ippStsNoErr == ret) {
+                    ret = ippsGFpECSetPoint(&ptX, &ptY, pPoint, pEC);
+                }
+
+                cpGFpReleasePool(2, pGFE); /* release ptX and ptY from the pool */
+
+                return ret;
             }
-            if (ippStsNoErr == ret) {
-               ret = ippsGFpECSetPoint(&ptX, &ptY, pPoint, pEC);
-            }
-
-            cpGFpReleasePool(2, pGFE); /* release ptX and ptY from the pool */
-
-            return ret;
-         }
-      }
-   }
+        }
+    }
 }

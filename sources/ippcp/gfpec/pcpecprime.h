@@ -33,17 +33,17 @@
 /*
 // Recommended (NIST's) underlying EC Primes
 */
-extern const BNU_CHUNK_T secp112r1_p[]; // (2^128 -3)/76439
-extern const BNU_CHUNK_T secp112r2_p[]; // (2^128 -3)/76439
-extern const BNU_CHUNK_T secp128r1_p[]; // 2^128 -2^97 -1
-extern const BNU_CHUNK_T secp128r2_p[]; // 2^128 -2^97 -1
-extern const BNU_CHUNK_T secp160r1_p[]; // 2^160 -2^31 -1
-extern const BNU_CHUNK_T secp160r2_p[]; // 2^160 -2^32 -2^14 -2^12 -2^9 -2^8 -2^7 -2^2 -1
-extern const BNU_CHUNK_T secp192r1_p[]; // 2^192 -2^64 -1
-extern const BNU_CHUNK_T secp224r1_p[]; // 2^224 -2^96 +1
-extern const BNU_CHUNK_T secp256r1_p[]; // 2^256 -2^224 +2^192 +2^96 -1
-extern const BNU_CHUNK_T secp384r1_p[]; // 2^384 -2^128 -2^96 +2^32 -1
-extern const BNU_CHUNK_T secp521r1_p[]; // 2^521 -1
+extern const BNU_CHUNK_T secp112r1_p[];   // (2^128 -3)/76439
+extern const BNU_CHUNK_T secp112r2_p[];   // (2^128 -3)/76439
+extern const BNU_CHUNK_T secp128r1_p[];   // 2^128 -2^97 -1
+extern const BNU_CHUNK_T secp128r2_p[];   // 2^128 -2^97 -1
+extern const BNU_CHUNK_T secp160r1_p[];   // 2^160 -2^31 -1
+extern const BNU_CHUNK_T secp160r2_p[];   // 2^160 -2^32 -2^14 -2^12 -2^9 -2^8 -2^7 -2^2 -1
+extern const BNU_CHUNK_T secp192r1_p[];   // 2^192 -2^64 -1
+extern const BNU_CHUNK_T secp224r1_p[];   // 2^224 -2^96 +1
+extern const BNU_CHUNK_T secp256r1_p[];   // 2^256 -2^224 +2^192 +2^96 -1
+extern const BNU_CHUNK_T secp384r1_p[];   // 2^384 -2^128 -2^96 +2^32 -1
+extern const BNU_CHUNK_T secp521r1_p[];   // 2^521 -1
 
 extern const BNU_CHUNK_T tpmBN_p256p_p[]; // TPM BN_P256
 
@@ -52,4 +52,4 @@ extern const BNU_CHUNK_T tpmBN_p256p_p[]; // TPM BN_P256
 */
 extern const BNU_CHUNK_T tpmSM2_p256_p[]; // TPM SM2_P256
 
-#endif /* _PCP_ECPRIME_H */
+#endif                                    /* _PCP_ECPRIME_H */

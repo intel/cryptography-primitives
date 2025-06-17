@@ -60,75 +60,86 @@
 //    Is not a fact that computed point belongs to BP-related subgroup BP
 //
 *F*/
-
-IPPFUN(IppStatus, ippsGFpECSetPointRandom,(IppsGFpECPoint* pPoint, IppsGFpECState* pEC,
-                                           IppBitSupplier rndFunc, void* pRndParam,
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECSetPointRandom,(IppsGFpECPoint* pPoint,
+                                           IppsGFpECState* pEC,
+                                           IppBitSupplier rndFunc,
+                                           void* pRndParam,
                                            Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IppsGFpState*  pGF;
-   gsModEngine* pGFE;
+    IppsGFpState* pGF;
+    gsModEngine* pGFE;
 
-   IPP_BAD_PTR3_RET(pPoint, pEC, pScratchBuffer);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr );
+    IPP_BAD_PTR3_RET(pPoint, pEC, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr);
 
-   pGF = ECP_GFP(pEC);
-   pGFE = GFP_PMA(pGF);
+    pGF  = ECP_GFP(pEC);
+    pGFE = GFP_PMA(pGF);
 
-   IPP_BADARG_RET( ECP_POINT_FELEN(pPoint)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pPoint) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-   IPP_BAD_PTR2_RET(rndFunc, pRndParam);
+    IPP_BAD_PTR2_RET(rndFunc, pRndParam);
 
-   {
-      int internal_err;
+    {
+        int internal_err;
 
-      if( GFP_IS_BASIC(pGFE) ) {
-         BNU_CHUNK_T* pElm = cpGFpGetPool(1, pGFE);
+        if (GFP_IS_BASIC(pGFE)) {
+            BNU_CHUNK_T* pElm = cpGFpGetPool(1, pGFE);
 
-         do { /* get random X */
-            internal_err = NULL==cpGFpRand(pElm, pGFE, rndFunc, pRndParam);
-         } while( !internal_err && !gfec_MakePoint(pPoint, pElm, pEC) );
+            do { /* get random X */
+                internal_err = NULL == cpGFpRand(pElm, pGFE, rndFunc, pRndParam);
+            } while (!internal_err && !gfec_MakePoint(pPoint, pElm, pEC));
 
-         cpGFpReleasePool(1, pGFE);
+            cpGFpReleasePool(1, pGFE);
 
-         /* R = [cofactor]R */
-         if(!internal_err && ECP_SUBGROUP(pEC)) {
-            BNU_CHUNK_T* pCofactor = ECP_COFACTOR(pEC);
-            int cofactorLen = GFP_FELEN(pGFE);
-            if(!GFP_IS_ONE(pCofactor, cofactorLen))
-               gfec_MulPoint(pPoint, pPoint, ECP_COFACTOR(pEC), GFP_FELEN(pGFE), /*0,*/ pEC, pScratchBuffer);
-         }
-      }
-
-      else {
-         IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
-         {
-            /* number of bits being generated */
-            int generatedBits = ECP_ORDBITSIZE(pEC) + GFP_RAND_ADD_BITS;
-            int generatedLen = BITS_BNU_CHUNK(generatedBits);
-
-            /* allocate random exponent */
-            int poolElements = (generatedLen + GFP_PELEN(pGFE) -1) / GFP_PELEN(pGFE);
-            BNU_CHUNK_T* pExp = cpGFpGetPool(poolElements, pGFE);
-
-            /* setup copy of the base point */
-            IppsGFpECPoint G;
-            cpEcGFpInitPoint(&G, ECP_G(pEC),ECP_AFFINE_POINT|ECP_FINITE_POINT, pEC);
-
-            /* get random bits */
-            internal_err = ippStsNoErr != rndFunc((Ipp32u*)pExp, generatedBits, pRndParam);
-
-            if(!internal_err) {
-               /* reduce with respect to order value */
-               int nsE = cpMod_BNU(pExp, generatedLen, MOD_MODULUS(ECP_MONT_R(pEC)), BITS_BNU_CHUNK(ECP_ORDBITSIZE(pEC)));
-               /* compute random point */
-               gfec_MulPoint(pPoint, &G, pExp, nsE, pEC, pScratchBuffer);
+            /* R = [cofactor]R */
+            if (!internal_err && ECP_SUBGROUP(pEC)) {
+                BNU_CHUNK_T* pCofactor = ECP_COFACTOR(pEC);
+                int cofactorLen        = GFP_FELEN(pGFE);
+                if (!GFP_IS_ONE(pCofactor, cofactorLen))
+                    gfec_MulPoint(pPoint,
+                                  pPoint,
+                                  ECP_COFACTOR(pEC),
+                                  GFP_FELEN(pGFE),
+                                  /*0,*/ pEC,
+                                  pScratchBuffer);
             }
+        }
 
-            cpGFpReleasePool(poolElements, pGFE);
-         }
-      }
+        else {
+            IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+            {
+                /* number of bits being generated */
+                int generatedBits = ECP_ORDBITSIZE(pEC) + GFP_RAND_ADD_BITS;
+                int generatedLen  = BITS_BNU_CHUNK(generatedBits);
 
-      return internal_err? ippStsErr : ippStsNoErr;
-   }
+                /* allocate random exponent */
+                int poolElements  = (generatedLen + GFP_PELEN(pGFE) - 1) / GFP_PELEN(pGFE);
+                BNU_CHUNK_T* pExp = cpGFpGetPool(poolElements, pGFE);
+
+                /* setup copy of the base point */
+                IppsGFpECPoint G;
+                cpEcGFpInitPoint(&G, ECP_G(pEC), ECP_AFFINE_POINT | ECP_FINITE_POINT, pEC);
+
+                /* get random bits */
+                internal_err = ippStsNoErr != rndFunc((Ipp32u*)pExp, generatedBits, pRndParam);
+
+                if (!internal_err) {
+                    /* reduce with respect to order value */
+                    int nsE = cpMod_BNU(pExp,
+                                        generatedLen,
+                                        MOD_MODULUS(ECP_MONT_R(pEC)),
+                                        BITS_BNU_CHUNK(ECP_ORDBITSIZE(pEC)));
+                    /* compute random point */
+                    gfec_MulPoint(pPoint, &G, pExp, nsE, pEC, pScratchBuffer);
+                }
+
+                cpGFpReleasePool(poolElements, pGFE);
+            }
+        }
+
+        return internal_err ? ippStsErr : ippStsNoErr;
+    }
 }

@@ -59,18 +59,21 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECCmpPoint,(const IppsGFpECPoint* pP, const IppsGFpECPoint* pQ,
-                                           IppECResult* pResult,
-                                           IppsGFpECState* pEC))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECCmpPoint, (const IppsGFpECPoint* pP,
+                                      const IppsGFpECPoint* pQ,
+                                      IppECResult* pResult,
+                                      IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pP, pQ, pResult, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pP), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pQ), ippStsContextMatchErr );
+    IPP_BAD_PTR4_RET(pP, pQ, pResult, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pP), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pQ), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( ECP_POINT_FELEN(pP)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
-   IPP_BADARG_RET( ECP_POINT_FELEN(pQ)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pP) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pQ) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
 
-   *pResult = gfec_ComparePoint(pP, pQ, pEC)? ippECPointIsEqual : ippECPointIsNotEqual;
-   return ippStsNoErr;
+    *pResult = gfec_ComparePoint(pP, pQ, pEC) ? ippECPointIsEqual : ippECPointIsNotEqual;
+    return ippStsNoErr;
 }

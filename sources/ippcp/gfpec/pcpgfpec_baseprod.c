@@ -31,43 +31,60 @@
 #include "gsscramble.h"
 
 
-IPP_OWN_DEFN (IppsGFpECPoint*, gfec_BasePointProduct, (IppsGFpECPoint* pR, const BNU_CHUNK_T* pScalarG, int scalarGlen, const IppsGFpECPoint* pP, const BNU_CHUNK_T* pScalarP, int scalarPlen, IppsGFpECState* pEC, Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPP_OWN_DEFN(IppsGFpECPoint*, gfec_BasePointProduct, (IppsGFpECPoint * pR,
+                                                      const BNU_CHUNK_T* pScalarG,
+                                                      int scalarGlen,
+                                                      const IppsGFpECPoint* pP,
+                                                      const BNU_CHUNK_T* pScalarP,
+                                                      int scalarPlen,
+                                                      IppsGFpECState* pEC,
+                                                      Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   FIX_BNU(pScalarG, scalarGlen);
-   FIX_BNU(pScalarP, scalarPlen);
+    FIX_BNU(pScalarG, scalarGlen);
+    FIX_BNU(pScalarP, scalarPlen);
 
-   {
-      gsModEngine* pGForder = ECP_MONT_R(pEC);
-      int orderBits = MOD_BITSIZE(pGForder);
-      int orderLen  = MOD_LEN(pGForder);
-      BNU_CHUNK_T* tmpScalarG = cpGFpGetPool(2, pGForder);
-      BNU_CHUNK_T* tmpScalarP = tmpScalarG+orderLen+1;
+    {
+        gsModEngine* pGForder   = ECP_MONT_R(pEC);
+        int orderBits           = MOD_BITSIZE(pGForder);
+        int orderLen            = MOD_LEN(pGForder);
+        BNU_CHUNK_T* tmpScalarG = cpGFpGetPool(2, pGForder);
+        BNU_CHUNK_T* tmpScalarP = tmpScalarG + orderLen + 1;
 
-      cpGFpElementCopyPad(tmpScalarG, orderLen+1, pScalarG,scalarGlen);
-      cpGFpElementCopyPad(tmpScalarP, orderLen+1, pScalarP,scalarPlen);
+        cpGFpElementCopyPad(tmpScalarG, orderLen + 1, pScalarG, scalarGlen);
+        cpGFpElementCopyPad(tmpScalarP, orderLen + 1, pScalarP, scalarPlen);
 
-      if(ECP_PREMULBP(pEC)) {
-         BNU_CHUNK_T* productG = cpEcGFpGetPool(2, pEC);
-         BNU_CHUNK_T* productP = productG+ECP_POINTLEN(pEC);
+        if (ECP_PREMULBP(pEC)) {
+            BNU_CHUNK_T* productG = cpEcGFpGetPool(2, pEC);
+            BNU_CHUNK_T* productP = productG + ECP_POINTLEN(pEC);
 
-         gfec_base_point_mul(productG, (Ipp8u*)tmpScalarG, orderBits, pEC);
-         gfec_point_mul(productP, ECP_POINT_X(pP), (Ipp8u*)tmpScalarP, orderBits, pEC, pScratchBuffer);
-         gfec_point_add(ECP_POINT_X(pR), productG, productP, pEC);
+            gfec_base_point_mul(productG, (Ipp8u*)tmpScalarG, orderBits, pEC);
+            gfec_point_mul(productP,
+                           ECP_POINT_X(pP),
+                           (Ipp8u*)tmpScalarP,
+                           orderBits,
+                           pEC,
+                           pScratchBuffer);
+            gfec_point_add(ECP_POINT_X(pR), productG, productP, pEC);
 
-         cpEcGFpReleasePool(2, pEC);
-      }
+            cpEcGFpReleasePool(2, pEC);
+        }
 
-      else {
-         gfec_point_prod(ECP_POINT_X(pR),
-                         ECP_G(pEC), (Ipp8u*)tmpScalarG,
-                         ECP_POINT_X(pP), (Ipp8u*)tmpScalarP,
-                         orderBits,
-                         pEC, pScratchBuffer);
-      }
+        else {
+            gfec_point_prod(ECP_POINT_X(pR),
+                            ECP_G(pEC),
+                            (Ipp8u*)tmpScalarG,
+                            ECP_POINT_X(pP),
+                            (Ipp8u*)tmpScalarP,
+                            orderBits,
+                            pEC,
+                            pScratchBuffer);
+        }
 
-      cpGFpReleasePool(2, pGForder);
-   }
+        cpGFpReleasePool(2, pGForder);
+    }
 
-   ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR)? 0 : ECP_FINITE_POINT;
-   return pR;
+    ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
+    return pR;
 }

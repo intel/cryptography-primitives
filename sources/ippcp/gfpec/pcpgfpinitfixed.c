@@ -49,26 +49,31 @@
 //    pGFpMethod     pointer to the basic arithmetic methods
 //    pGFp           pointer to Finite Field context is being initialized
 *F*/
-IPPFUN(IppStatus, ippsGFpInitFixed,(int primeBitSize, const IppsGFpMethod* pGFpMethod, IppsGFpState* pGFp))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpInitFixed, (int primeBitSize,
+                                     const IppsGFpMethod* pGFpMethod,
+                                     IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pGFpMethod, pGFp);
+    IPP_BAD_PTR2_RET(pGFpMethod, pGFp);
 
-   /* test method is prime based */
-   IPP_BADARG_RET(cpID_Prime!=(pGFpMethod->modulusID & cpID_Prime), ippStsBadArgErr);
-   /* test if method is not prime based arbitrary */
-   IPP_BADARG_RET(!pGFpMethod->modulus, ippStsBadArgErr);
-   /* size of the underlying prime must be equal to primeBitSize parameter*/
-   IPP_BADARG_RET(pGFpMethod->modulusBitDeg!=primeBitSize, ippStsBadArgErr);
+    /* test method is prime based */
+    IPP_BADARG_RET(cpID_Prime != (pGFpMethod->modulusID & cpID_Prime), ippStsBadArgErr);
+    /* test if method is not prime based arbitrary */
+    IPP_BADARG_RET(!pGFpMethod->modulus, ippStsBadArgErr);
+    /* size of the underlying prime must be equal to primeBitSize parameter*/
+    IPP_BADARG_RET(pGFpMethod->modulusBitDeg != primeBitSize, ippStsBadArgErr);
 
-   {
-      /* init GF */
-      IppStatus sts = cpGFpInitGFp(primeBitSize, pGFp);
+    {
+        /* init GF */
+        IppStatus sts = cpGFpInitGFp(primeBitSize, pGFp);
 
-      /* set up GF engine */
-      if(ippStsNoErr==sts) {
-         cpGFpSetGFp(pGFpMethod->modulus, primeBitSize, pGFpMethod, pGFp);
-      }
+        /* set up GF engine */
+        if (ippStsNoErr == sts) {
+            cpGFpSetGFp(pGFpMethod->modulus, primeBitSize, pGFpMethod, pGFp);
+        }
 
-      return sts;
-   }
+        return sts;
+    }
 }

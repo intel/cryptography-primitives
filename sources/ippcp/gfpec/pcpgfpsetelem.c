@@ -57,32 +57,38 @@
 //    pR          pointer to Finite Field Element context
 //    pGFp        pointer to Finite Field context
 *F*/
-IPPFUN(IppStatus, ippsGFpSetElement,(const Ipp32u* pA, int lenA, IppsGFpElement* pR, IppsGFpState* pGFp))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpSetElement,(const Ipp32u* pA,
+                                     int lenA,
+                                     IppsGFpElement* pR,
+                                     IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pR, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pR), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pR, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pR), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( !pA && (0<lenA), ippStsNullPtrErr);
-   IPP_BADARG_RET( pA && !(0<=lenA && lenA<=GFP_FELEN32(GFP_PMA(pGFp))), ippStsSizeErr );
-   IPP_BADARG_RET( GFPE_ROOM(pR)!=GFP_FELEN(GFP_PMA(pGFp)), ippStsOutOfRangeErr );
+    IPP_BADARG_RET(!pA && (0 < lenA), ippStsNullPtrErr);
+    IPP_BADARG_RET(pA && !(0 <= lenA && lenA <= GFP_FELEN32(GFP_PMA(pGFp))), ippStsSizeErr);
+    IPP_BADARG_RET(GFPE_ROOM(pR) != GFP_FELEN(GFP_PMA(pGFp)), ippStsOutOfRangeErr);
 
-   {
-      IppStatus sts = ippStsNoErr;
+    {
+        IppStatus sts = ippStsNoErr;
 
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      int elemLen = GFP_FELEN(pGFE);
-      BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
-      //tbcd: temporary excluded: assert(NULL!=pTmp);
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        int elemLen       = GFP_FELEN(pGFE);
+        BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
+        //tbcd: temporary excluded: assert(NULL!=pTmp);
 
-      ZEXPAND_BNU(pTmp, 0, elemLen);
-      if(pA && lenA)
-         cpGFpxCopyToChunk(pTmp, pA, lenA, pGFE);
+        ZEXPAND_BNU(pTmp, 0, elemLen);
+        if (pA && lenA)
+            cpGFpxCopyToChunk(pTmp, pA, lenA, pGFE);
 
-      if(!cpGFpxSet(GFPE_DATA(pR), pTmp, elemLen, pGFE))
-         sts = ippStsOutOfRangeErr;
+        if (!cpGFpxSet(GFPE_DATA(pR), pTmp, elemLen, pGFE))
+            sts = ippStsOutOfRangeErr;
 
-      cpGFpReleasePool(1, pGFE);
-      return sts;
-   }
+        cpGFpReleasePool(1, pGFE);
+        return sts;
+    }
 }

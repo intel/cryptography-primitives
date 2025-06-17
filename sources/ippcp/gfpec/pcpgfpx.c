@@ -35,36 +35,42 @@
    need to check after switchng on icl 2018
    */
 /*static*/
-IPP_OWN_DEFN (void, InitGFpxCtx, (const IppsGFpState* pGroundGF, int extDeg, const IppsGFpMethod* method, IppsGFpState* pGFpx))
+/* clang-format off */
+IPP_OWN_DEFN(void, InitGFpxCtx, (const IppsGFpState* pGroundGF,
+                                 int extDeg,
+                                 const IppsGFpMethod* method,
+                                 IppsGFpState* pGFpx))
+/* clang-format on */
 {
-   gsModEngine* pGFEp = GFP_PMA(pGroundGF);
-   int elemLen = extDeg * GFP_FELEN(pGFEp);
-   int elemLen32 = extDeg * GFP_FELEN32(pGFEp);
+    gsModEngine* pGFEp = GFP_PMA(pGroundGF);
+    int elemLen        = extDeg * GFP_FELEN(pGFEp);
+    int elemLen32      = extDeg * GFP_FELEN32(pGFEp);
 
-   Ipp8u* ptr = (Ipp8u*)pGFpx + sizeof(IppsGFpState);
+    Ipp8u* ptr = (Ipp8u*)pGFpx + sizeof(IppsGFpState);
 
-   /* context identifier */
-   GFP_SET_ID(pGFpx);
-   GFP_PMA(pGFpx) = (gsModEngine*)ptr;
-   {
-      gsModEngine* pGFEx = GFP_PMA(pGFpx);
+    /* context identifier */
+    GFP_SET_ID(pGFpx);
+    GFP_PMA(pGFpx) = (gsModEngine*)ptr;
+    {
+        gsModEngine* pGFEx = GFP_PMA(pGFpx);
 
-      /* clear whole context */
-      PadBlock(0, ptr, sizeof(gsModEngine));
-      ptr += sizeof(gsModEngine);
+        /* clear whole context */
+        PadBlock(0, ptr, sizeof(gsModEngine));
+        ptr += sizeof(gsModEngine);
 
-      GFP_PARENT(pGFEx)    = pGFEp;
-      GFP_EXTDEGREE(pGFEx) = extDeg;
-      GFP_FEBITLEN(pGFEx)  = 0;//elemBitLen;
-      GFP_FELEN(pGFEx)     = elemLen;
-      GFP_FELEN32(pGFEx)   = elemLen32;
-      GFP_PELEN(pGFEx)     = elemLen;
-      GFP_METHOD(pGFEx)    = method->arith;
-      GFP_MODULUS(pGFEx)   = (BNU_CHUNK_T*)(ptr);  ptr += elemLen * (Ipp32s)sizeof(BNU_CHUNK_T);  /* field polynomial */
-      GFP_POOL(pGFEx)      = (BNU_CHUNK_T*)(ptr);                                         /* pool */
-      GFP_MAXPOOL(pGFEx)   = GFPX_POOL_SIZE;
-      GFP_USEDPOOL(pGFEx)  = 0;
+        GFP_PARENT(pGFEx)    = pGFEp;
+        GFP_EXTDEGREE(pGFEx) = extDeg;
+        GFP_FEBITLEN(pGFEx)  = 0; //elemBitLen;
+        GFP_FELEN(pGFEx)     = elemLen;
+        GFP_FELEN32(pGFEx)   = elemLen32;
+        GFP_PELEN(pGFEx)     = elemLen;
+        GFP_METHOD(pGFEx)    = method->arith;
+        GFP_MODULUS(pGFEx)   = (BNU_CHUNK_T*)(ptr);
+        ptr += elemLen * (Ipp32s)sizeof(BNU_CHUNK_T); /* field polynomial */
+        GFP_POOL(pGFEx)     = (BNU_CHUNK_T*)(ptr);    /* pool */
+        GFP_MAXPOOL(pGFEx)  = GFPX_POOL_SIZE;
+        GFP_USEDPOOL(pGFEx) = 0;
 
-      cpGFpElementPad(GFP_MODULUS(pGFEx), elemLen, 0);
-   }
+        cpGFpElementPad(GFP_MODULUS(pGFEx), elemLen, 0);
+    }
 }

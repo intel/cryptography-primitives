@@ -29,17 +29,22 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-IPP_OWN_DEFN (Ipp8u*, cpGFpGetOctString, (Ipp8u* pStr, int strSize, const BNU_CHUNK_T* pElm, gsModEngine* pGFE))
+/* clang-format off */
+IPP_OWN_DEFN(Ipp8u*, cpGFpGetOctString, (Ipp8u* pStr,
+                                         int strSize,
+                                         const BNU_CHUNK_T* pElm,
+                                         gsModEngine* pGFE))
+/* clang-format on */
 {
-   int elemLen = GFP_FELEN(pGFE);
-   int error;
+    int elemLen = GFP_FELEN(pGFE);
+    int error;
 
-   BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
-   //tbcd: temporary excluded: assert(pTmp !=NULL);
+    BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
+    //tbcd: temporary excluded: assert(pTmp !=NULL);
 
-   GFP_METHOD(pGFE)->decode(pTmp, pElm, pGFE);
-   error = (0 == cpToOctStr_BNU(pStr, strSize, pTmp, elemLen));
+    GFP_METHOD(pGFE)->decode(pTmp, pElm, pGFE);
+    error = (0 == cpToOctStr_BNU(pStr, strSize, pTmp, elemLen));
 
-   cpGFpReleasePool(1, pGFE);
-   return error ? NULL : pStr;
+    cpGFpReleasePool(1, pGFE);
+    return error ? NULL : pStr;
 }

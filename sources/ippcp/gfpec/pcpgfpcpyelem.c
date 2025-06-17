@@ -55,16 +55,21 @@
 //    pGFp     pointer to Finite Field context
 *F*/
 
-IPPFUN(IppStatus, ippsGFpCpyElement, (const IppsGFpElement* pA, IppsGFpElement* pR, IppsGFpState* pGFp))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpCpyElement, (const IppsGFpElement* pA,
+                                      IppsGFpElement* pR,
+                                      IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pA, pR, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pR), ippStsContextMatchErr );
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( (GFPE_ROOM(pA)!=GFP_FELEN(pGFE)) || (GFPE_ROOM(pR)!=GFP_FELEN(pGFE)), ippStsOutOfRangeErr);
-      cpGFpElementCopy(GFPE_DATA(pR), GFPE_DATA(pA), GFP_FELEN(pGFE));
-      return ippStsNoErr;
-   }
+    IPP_BAD_PTR3_RET(pA, pR, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pR), ippStsContextMatchErr);
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET((GFPE_ROOM(pA) != GFP_FELEN(pGFE)) || (GFPE_ROOM(pR) != GFP_FELEN(pGFE)),
+                       ippStsOutOfRangeErr);
+        cpGFpElementCopy(GFPE_DATA(pR), GFPE_DATA(pA), GFP_FELEN(pGFE));
+        return ippStsNoErr;
+    }
 }

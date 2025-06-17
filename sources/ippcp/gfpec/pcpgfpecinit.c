@@ -56,66 +56,80 @@
 //
 *F*/
 
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECInit,(const IppsGFpState* pGFp,
-                                 const IppsGFpElement* pA, const IppsGFpElement* pB,
+                                 const IppsGFpElement* pA,
+                                 const IppsGFpElement* pB,
                                  IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pGFp, pEC);
+    IPP_BAD_PTR2_RET(pGFp, pEC);
 
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
 
-   {
-      Ipp8u* ptr = (Ipp8u*)pEC;
+    {
+        Ipp8u* ptr = (Ipp8u*)pEC;
 
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      int elemLen = GFP_FELEN(pGFE);
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        int elemLen       = GFP_FELEN(pGFE);
 
-      int maxOrderBits = 1+ cpGFpBasicDegreeExtension(pGFE) * GFP_FEBITLEN(cpGFpBasic(pGFE)); /* Hasse's theorem */
-      #if defined(_LEGACY_ECCP_SUPPORT_)
-      int maxOrdLen = BITS_BNU_CHUNK(maxOrderBits);
-      #endif
+        /* Hasse's theorem */
+        int maxOrderBits = 1 + cpGFpBasicDegreeExtension(pGFE) * GFP_FEBITLEN(cpGFpBasic(pGFE));
+#if defined(_LEGACY_ECCP_SUPPORT_)
+        int maxOrdLen = BITS_BNU_CHUNK(maxOrderBits);
+#endif
 
-      int modEngineCtxSize;
-      gsModEngineGetSize(maxOrderBits, MONT_DEFAULT_POOL_LENGTH, &modEngineCtxSize);
+        int modEngineCtxSize;
+        gsModEngineGetSize(maxOrderBits, MONT_DEFAULT_POOL_LENGTH, &modEngineCtxSize);
 
-      ECP_SET_ID(pEC);
-      ECP_MODULUS_ID(pEC) = cpID_Prime;
-      ECP_GFP(pEC) = (IppsGFpState*)pGFp;
-      ECP_SUBGROUP(pEC) = 0;
-      ECP_POINTLEN(pEC) = elemLen*3;
-      ECP_ORDBITSIZE(pEC) = maxOrderBits;
-      ECP_SPECIFIC(pEC) = ECP_ARB;
+        ECP_SET_ID(pEC);
+        ECP_MODULUS_ID(pEC) = cpID_Prime;
+        ECP_GFP(pEC)        = (IppsGFpState*)pGFp;
+        ECP_SUBGROUP(pEC)   = 0;
+        ECP_POINTLEN(pEC)   = elemLen * 3;
+        ECP_ORDBITSIZE(pEC) = maxOrderBits;
+        ECP_SPECIFIC(pEC)   = ECP_ARB;
 
-      ptr += sizeof(IppsGFpECState);
-      ECP_A(pEC) = (BNU_CHUNK_T*)(ptr);  ptr += elemLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-      ECP_B(pEC) = (BNU_CHUNK_T*)(ptr);  ptr += elemLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-      ECP_G(pEC) = (BNU_CHUNK_T*)(ptr);  ptr += ECP_POINTLEN(pEC)*(Ipp32s)sizeof(BNU_CHUNK_T);
-      ECP_PREMULBP(pEC) = (cpPrecompAP*)NULL;
-      ECP_MONT_R(pEC) = (gsModEngine*)(ptr); ptr += modEngineCtxSize;
-      ECP_COFACTOR(pEC) = (BNU_CHUNK_T*)(ptr); ptr += elemLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-      #if defined(_LEGACY_ECCP_SUPPORT_)
-      ECP_PUBLIC(pEC)   = (BNU_CHUNK_T*)(ptr); ptr += 3*elemLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-      ECP_PUBLIC_E(pEC) = (BNU_CHUNK_T*)(ptr); ptr += 3*elemLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-      ECP_PRIVAT(pEC)   = (BNU_CHUNK_T*)(ptr); ptr += maxOrdLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-      ECP_PRIVAT_E(pEC) = (BNU_CHUNK_T*)(ptr); ptr += maxOrdLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-      ECP_SBUFFER(pEC) = (BNU_CHUNK_T*)0;
-      #endif
-      ECP_POOL(pEC) = (BNU_CHUNK_T*)(ptr);  //ptr += ECP_POINTLEN(pEC)*sizeof(BNU_CHUNK_T)*EC_POOL_SIZE;
+        ptr += sizeof(IppsGFpECState);
+        ECP_A(pEC) = (BNU_CHUNK_T*)(ptr);
+        ptr += elemLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+        ECP_B(pEC) = (BNU_CHUNK_T*)(ptr);
+        ptr += elemLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+        ECP_G(pEC) = (BNU_CHUNK_T*)(ptr);
+        ptr += ECP_POINTLEN(pEC) * (Ipp32s)sizeof(BNU_CHUNK_T);
+        ECP_PREMULBP(pEC) = (cpPrecompAP*)NULL;
+        ECP_MONT_R(pEC)   = (gsModEngine*)(ptr);
+        ptr += modEngineCtxSize;
+        ECP_COFACTOR(pEC) = (BNU_CHUNK_T*)(ptr);
+        ptr += elemLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+#if defined(_LEGACY_ECCP_SUPPORT_)
+        ECP_PUBLIC(pEC) = (BNU_CHUNK_T*)(ptr);
+        ptr += 3 * elemLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+        ECP_PUBLIC_E(pEC) = (BNU_CHUNK_T*)(ptr);
+        ptr += 3 * elemLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+        ECP_PRIVAT(pEC) = (BNU_CHUNK_T*)(ptr);
+        ptr += maxOrdLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+        ECP_PRIVAT_E(pEC) = (BNU_CHUNK_T*)(ptr);
+        ptr += maxOrdLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+        ECP_SBUFFER(pEC) = (BNU_CHUNK_T*)0;
+#endif
+        ECP_POOL(pEC) =
+            (BNU_CHUNK_T*)(ptr); //ptr += ECP_POINTLEN(pEC)*sizeof(BNU_CHUNK_T)*EC_POOL_SIZE;
 
-      cpGFpElementPad(ECP_A(pEC), elemLen, 0);
-      cpGFpElementPad(ECP_B(pEC), elemLen, 0);
-      cpGFpElementPad(ECP_G(pEC), elemLen*3, 0);
-      //gsModEngineInit(ECP_MONT_R(pEC), NULL, maxOrderBits, MONT_DEFAULT_POOL_LENGTH, gsModArithMont());
-      gsModEngineInit(ECP_MONT_R(pEC), NULL, maxOrderBits, MONT_DEFAULT_POOL_LENGTH, NULL);
+        cpGFpElementPad(ECP_A(pEC), elemLen, 0);
+        cpGFpElementPad(ECP_B(pEC), elemLen, 0);
+        cpGFpElementPad(ECP_G(pEC), elemLen * 3, 0);
+        //gsModEngineInit(ECP_MONT_R(pEC), NULL, maxOrderBits, MONT_DEFAULT_POOL_LENGTH, gsModArithMont());
+        gsModEngineInit(ECP_MONT_R(pEC), NULL, maxOrderBits, MONT_DEFAULT_POOL_LENGTH, NULL);
 
-      cpGFpElementPad(ECP_COFACTOR(pEC), elemLen, 0);
+        cpGFpElementPad(ECP_COFACTOR(pEC), elemLen, 0);
 
-      cpGFpElementPad(ECP_POOL(pEC), elemLen*3*EC_POOL_SIZE, 0);
+        cpGFpElementPad(ECP_POOL(pEC), elemLen * 3 * EC_POOL_SIZE, 0);
 
-      /* set up EC if possible */
-      if(pA && pB)
-         return ippsGFpECSet(pA,pB, pEC);
-      else
-         return ippStsNoErr;
-   }
+        /* set up EC if possible */
+        if (pA && pB)
+            return ippsGFpECSet(pA, pB, pEC);
+        else
+            return ippStsNoErr;
+    }
 }

@@ -31,114 +31,120 @@
 #include "gsscramble.h"
 #include "pcpmask_ct.h"
 
-
-IPP_OWN_DEFN (void, gfec_point_prod, (BNU_CHUNK_T* pointR, const BNU_CHUNK_T* pointA, const Ipp8u* scalarA, const BNU_CHUNK_T* pointB, const Ipp8u* scalarB, int scalarBitSize, IppsGFpECState* pEC, Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPP_OWN_DEFN (void, gfec_point_prod, (BNU_CHUNK_T* pointR,
+                                      const BNU_CHUNK_T* pointA,
+                                      const Ipp8u* scalarA,
+                                      const BNU_CHUNK_T* pointB,
+                                      const Ipp8u* scalarB,
+                                      int scalarBitSize,
+                                      IppsGFpECState* pEC,
+                                      Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   int pointLen = ECP_POINTLEN(pEC);
+    int pointLen = ECP_POINTLEN(pEC);
 
-   /* optimal size of window */
-   const int window_size = 5;
-   /* number of table entries */
-   const int tableLen = 1<<(window_size-1);
+    /* optimal size of window */
+    const int window_size = 5;
+    /* number of table entries */
+    const int tableLen = 1 << (window_size - 1);
 
-   /* aligned pre-computed tables */
-   BNU_CHUNK_T* pTableA = (BNU_CHUNK_T*)IPP_ALIGNED_PTR(pScratchBuffer, CACHE_LINE_SIZE);
-   BNU_CHUNK_T* pTableB = pTableA+pointLen*tableLen;
+    /* aligned pre-computed tables */
+    BNU_CHUNK_T* pTableA = (BNU_CHUNK_T*)IPP_ALIGNED_PTR(pScratchBuffer, CACHE_LINE_SIZE);
+    BNU_CHUNK_T* pTableB = pTableA + pointLen * tableLen;
 
-   setupTable(pTableA, pointA, pEC);
-   setupTable(pTableB, pointB, pEC);
+    setupTable(pTableA, pointA, pEC);
+    setupTable(pTableB, pointB, pEC);
 
-   {
-      IppsGFpState* pGF = ECP_GFP(pEC);
-      gsModEngine* pGFE = GFP_PMA(pGF);
-      int elemLen = GFP_FELEN(pGFE);
+    {
+        IppsGFpState* pGF = ECP_GFP(pEC);
+        gsModEngine* pGFE = GFP_PMA(pGF);
+        int elemLen       = GFP_FELEN(pGFE);
 
-      mod_neg negF = GFP_METHOD(pGFE)->neg;
+        mod_neg negF = GFP_METHOD(pGFE)->neg;
 
-      BNU_CHUNK_T* pHy = cpGFpGetPool(1, pGFE);
+        BNU_CHUNK_T* pHy = cpGFpGetPool(1, pGFE);
 
-      BNU_CHUNK_T* pTdata = cpEcGFpGetPool(1, pEC); /* points from the pool */
-      BNU_CHUNK_T* pHdata = cpEcGFpGetPool(1, pEC);
+        BNU_CHUNK_T* pTdata = cpEcGFpGetPool(1, pEC); /* points from the pool */
+        BNU_CHUNK_T* pHdata = cpEcGFpGetPool(1, pEC);
 
-      int wvalue;
-      Ipp8u digit, sign;
-      int mask = (1<<(window_size+1)) -1;
-      int bit = scalarBitSize-(scalarBitSize%window_size);
+        int wvalue;
+        Ipp8u digit, sign;
+        int mask = (1 << (window_size + 1)) - 1;
+        int bit  = scalarBitSize - (scalarBitSize % window_size);
 
-      /* first window */
-      if(bit) {
-         wvalue = *((Ipp16u*)&scalarA[(bit-1)/8]);
-         wvalue = (wvalue>> ((bit-1)%8)) & mask;
-      }
-      else
-         wvalue = 0;
-      booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-      gsScrambleGet_sscm(pTdata, pointLen, pTableA, digit-1, 5-1);
+        /* first window */
+        if (bit) {
+            wvalue = *((Ipp16u*)&scalarA[(bit - 1) / 8]);
+            wvalue = (wvalue >> ((bit - 1) % 8)) & mask;
+        } else
+            wvalue = 0;
+        booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+        gsScrambleGet_sscm(pTdata, pointLen, pTableA, digit - 1, 5 - 1);
 
-      if(bit) {
-         wvalue = *((Ipp16u*)&scalarB[(bit-1)/8]);
-         wvalue = (wvalue>> ((bit-1)%8)) & mask;
-      }
-      else
-         wvalue = 0;
-      booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-      gsScrambleGet_sscm(pHdata, pointLen, pTableB, digit-1, 5-1);
+        if (bit) {
+            wvalue = *((Ipp16u*)&scalarB[(bit - 1) / 8]);
+            wvalue = (wvalue >> ((bit - 1) % 8)) & mask;
+        } else
+            wvalue = 0;
+        booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+        gsScrambleGet_sscm(pHdata, pointLen, pTableB, digit - 1, 5 - 1);
 
-      gfec_point_add(pTdata, pTdata, pHdata, pEC);
+        gfec_point_add(pTdata, pTdata, pHdata, pEC);
 
-      for(bit-=window_size; bit>=window_size; bit-=window_size) {
-         gfec_point_double(pTdata, pTdata, pEC);
-         gfec_point_double(pTdata, pTdata, pEC);
-         gfec_point_double(pTdata, pTdata, pEC);
-         gfec_point_double(pTdata, pTdata, pEC);
-         gfec_point_double(pTdata, pTdata, pEC);
+        for (bit -= window_size; bit >= window_size; bit -= window_size) {
+            gfec_point_double(pTdata, pTdata, pEC);
+            gfec_point_double(pTdata, pTdata, pEC);
+            gfec_point_double(pTdata, pTdata, pEC);
+            gfec_point_double(pTdata, pTdata, pEC);
+            gfec_point_double(pTdata, pTdata, pEC);
 
-         wvalue = *((Ipp16u*)&scalarA[(bit-1)/8]);
-         wvalue = (wvalue>> ((bit-1)%8)) & mask;
-         booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-         gsScrambleGet_sscm(pHdata, pointLen, pTableA, digit-1, 5-1);
+            wvalue = *((Ipp16u*)&scalarA[(bit - 1) / 8]);
+            wvalue = (wvalue >> ((bit - 1) % 8)) & mask;
+            booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+            gsScrambleGet_sscm(pHdata, pointLen, pTableA, digit - 1, 5 - 1);
 
-         negF(pHy, pHdata+elemLen, pGFE);
-         cpMaskedReplace_ct(pHdata+elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
-         gfec_point_add(pTdata, pTdata, pHdata, pEC);
+            negF(pHy, pHdata + elemLen, pGFE);
+            cpMaskedReplace_ct(pHdata + elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
+            gfec_point_add(pTdata, pTdata, pHdata, pEC);
 
-         wvalue = *((Ipp16u*)&scalarB[(bit-1)/8]);
-         wvalue = (wvalue>> ((bit-1)%8)) & mask;
-         booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-         gsScrambleGet_sscm(pHdata, pointLen, pTableB, digit-1, 5-1);
+            wvalue = *((Ipp16u*)&scalarB[(bit - 1) / 8]);
+            wvalue = (wvalue >> ((bit - 1) % 8)) & mask;
+            booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+            gsScrambleGet_sscm(pHdata, pointLen, pTableB, digit - 1, 5 - 1);
 
-         negF(pHy, pHdata+elemLen, pGFE);
-         cpMaskedReplace_ct(pHdata+elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
-         gfec_point_add(pTdata, pTdata, pHdata, pEC);
-      }
-      /* last window */
-      gfec_point_double(pTdata, pTdata, pEC);
-      gfec_point_double(pTdata, pTdata, pEC);
-      gfec_point_double(pTdata, pTdata, pEC);
-      gfec_point_double(pTdata, pTdata, pEC);
-      gfec_point_double(pTdata, pTdata, pEC);
+            negF(pHy, pHdata + elemLen, pGFE);
+            cpMaskedReplace_ct(pHdata + elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
+            gfec_point_add(pTdata, pTdata, pHdata, pEC);
+        }
+        /* last window */
+        gfec_point_double(pTdata, pTdata, pEC);
+        gfec_point_double(pTdata, pTdata, pEC);
+        gfec_point_double(pTdata, pTdata, pEC);
+        gfec_point_double(pTdata, pTdata, pEC);
+        gfec_point_double(pTdata, pTdata, pEC);
 
-      wvalue = *((Ipp16u*)&scalarA[0]);
-      wvalue = (wvalue << 1) & mask;
-      booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-      gsScrambleGet_sscm(pHdata, pointLen, pTableA, digit-1, 5-1);
+        wvalue = *((Ipp16u*)&scalarA[0]);
+        wvalue = (wvalue << 1) & mask;
+        booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+        gsScrambleGet_sscm(pHdata, pointLen, pTableA, digit - 1, 5 - 1);
 
-      negF(pHy, pHdata+elemLen, pGFE);
-      cpMaskedReplace_ct(pHdata+elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
-      gfec_point_add(pTdata, pTdata, pHdata, pEC);
+        negF(pHy, pHdata + elemLen, pGFE);
+        cpMaskedReplace_ct(pHdata + elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
+        gfec_point_add(pTdata, pTdata, pHdata, pEC);
 
-      wvalue = *((Ipp16u*)&scalarB[0]);
-      wvalue = (wvalue << 1) & mask;
-      booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
-      gsScrambleGet_sscm(pHdata, pointLen, pTableB, digit-1, 5-1);
+        wvalue = *((Ipp16u*)&scalarB[0]);
+        wvalue = (wvalue << 1) & mask;
+        booth_recode(&sign, &digit, (Ipp8u)wvalue, window_size);
+        gsScrambleGet_sscm(pHdata, pointLen, pTableB, digit - 1, 5 - 1);
 
-      negF(pHy, pHdata+elemLen, pGFE);
-      cpMaskedReplace_ct(pHdata+elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
-      gfec_point_add(pTdata, pTdata, pHdata, pEC);
+        negF(pHy, pHdata + elemLen, pGFE);
+        cpMaskedReplace_ct(pHdata + elemLen, pHy, elemLen, ~cpIsZero_ct(sign));
+        gfec_point_add(pTdata, pTdata, pHdata, pEC);
 
-      cpGFpElementCopy(pointR, pTdata, pointLen);
+        cpGFpElementCopy(pointR, pTdata, pointLen);
 
-      cpEcGFpReleasePool(2, pEC);
-      cpGFpReleasePool(1, pGFE);
-   }
+        cpEcGFpReleasePool(2, pEC);
+        cpGFpReleasePool(1, pGFE);
+    }
 }

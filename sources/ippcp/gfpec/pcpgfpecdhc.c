@@ -57,84 +57,89 @@
 //    pEC         pointer to the EC context
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECSharedSecretDHC,(const IppsBigNumState* pPrivateA, const IppsGFpECPoint* pPublicB,
-                                            IppsBigNumState* pShare,
-                                            IppsGFpECState* pEC, Ipp8u* pScratchBuffer))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECSharedSecretDHC, (const IppsBigNumState* pPrivateA,
+                                             const IppsGFpECPoint* pPublicB,
+                                             IppsBigNumState* pShare,
+                                             IppsGFpECState* pEC,
+                                             Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IppsGFpState*  pGF;
-   gsModEngine* pGFE;
+    IppsGFpState* pGF;
+    gsModEngine* pGFE;
 
-   /* EC context and buffer */
-   IPP_BAD_PTR2_RET(pEC, pScratchBuffer);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    /* EC context and buffer */
+    IPP_BAD_PTR2_RET(pEC, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   pGF = ECP_GFP(pEC);
-   pGFE = GFP_PMA(pGF);
+    pGF  = ECP_GFP(pEC);
+    pGFE = GFP_PMA(pGF);
 
-   /* test private (own) key */
-   IPP_BAD_PTR1_RET(pPrivateA);
-   IPP_BADARG_RET(!BN_VALID_ID(pPrivateA), ippStsContextMatchErr);
-   /* test if 0 < pPrivateA < Order */
-   IPP_BADARG_RET(0 == gfec_CheckPrivateKey(pPrivateA, pEC), ippStsInvalidPrivateKey);
+    /* test private (own) key */
+    IPP_BAD_PTR1_RET(pPrivateA);
+    IPP_BADARG_RET(!BN_VALID_ID(pPrivateA), ippStsContextMatchErr);
+    /* test if 0 < pPrivateA < Order */
+    IPP_BADARG_RET(0 == gfec_CheckPrivateKey(pPrivateA, pEC), ippStsInvalidPrivateKey);
 
-   /* test public (other party) key */
-   IPP_BAD_PTR1_RET(pPublicB);
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pPublicB), ippStsContextMatchErr );
-   /* test if pPublicB belongs EC */
-   IPP_BADARG_RET(0 == gfec_IsPointOnCurve(pPublicB, pEC), ippStsInvalidPoint);
+    /* test public (other party) key */
+    IPP_BAD_PTR1_RET(pPublicB);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPublicB), ippStsContextMatchErr);
+    /* test if pPublicB belongs EC */
+    IPP_BADARG_RET(0 == gfec_IsPointOnCurve(pPublicB, pEC), ippStsInvalidPoint);
 
-   /* test share key */
-   IPP_BAD_PTR1_RET(pShare);
-   IPP_BADARG_RET(!BN_VALID_ID(pShare), ippStsContextMatchErr);
-   IPP_BADARG_RET((BN_ROOM(pShare)<GFP_FELEN(pGFE)), ippStsRangeErr);
+    /* test share key */
+    IPP_BAD_PTR1_RET(pShare);
+    IPP_BADARG_RET(!BN_VALID_ID(pShare), ippStsContextMatchErr);
+    IPP_BADARG_RET((BN_ROOM(pShare) < GFP_FELEN(pGFE)), ippStsRangeErr);
 
-   BNU_CHUNK_T* pCofactor = ECP_COFACTOR(pEC);
-   int cofactorLen = GFP_FELEN(pGFE);
-   cofactorLen = cpGFpElementLen(pCofactor, cofactorLen);
+    BNU_CHUNK_T* pCofactor = ECP_COFACTOR(pEC);
+    int cofactorLen        = GFP_FELEN(pGFE);
+    cofactorLen            = cpGFpElementLen(pCofactor, cofactorLen);
 
-   /* check if cofactor == 1 */
-   if(GFP_IS_ONE(pCofactor, cofactorLen))
-      return ippsGFpECSharedSecretDH(pPrivateA, pPublicB, pShare, pEC, pScratchBuffer);
+    /* check if cofactor == 1 */
+    if (GFP_IS_ONE(pCofactor, cofactorLen))
+        return ippsGFpECSharedSecretDH(pPrivateA, pPublicB, pShare, pEC, pScratchBuffer);
 
-   {
-      int elmLen = GFP_FELEN(pGFE);
+    {
+        int elmLen = GFP_FELEN(pGFE);
 
-      IppsGFpElement elm;
-      IppsGFpECPoint T;
-      int finite_point;
+        IppsGFpElement elm;
+        IppsGFpECPoint T;
+        int finite_point;
 
-      gsModEngine* montR = ECP_MONT_R(pEC);
-      int nsR = MOD_LEN(montR);
+        gsModEngine* montR = ECP_MONT_R(pEC);
+        int nsR            = MOD_LEN(montR);
 
-      /* compute factored secret F = coFactor*privateA */
-      BNU_CHUNK_T* F = cpGFpGetPool(2, pGFE);
+        /* compute factored secret F = coFactor*privateA */
+        BNU_CHUNK_T* F = cpGFpGetPool(2, pGFE);
 
-      cpMontEnc_BNU_EX(F, BN_NUMBER(pPrivateA), BN_SIZE(pPrivateA), montR);
-      cpMontMul_BNU_EX(F, F, nsR, pCofactor, cofactorLen, montR);
+        cpMontEnc_BNU_EX(F, BN_NUMBER(pPrivateA), BN_SIZE(pPrivateA), montR);
+        cpMontMul_BNU_EX(F, F, nsR, pCofactor, cofactorLen, montR);
 
-      /* T = [F]pPublicB */
-      cpEcGFpInitPoint(&T, cpEcGFpGetPool(1, pEC),0, pEC);
-      gfec_MulPoint(&T, pPublicB, F, nsR, /*ECP_ORDBITSIZE(pEC),*/ pEC, pScratchBuffer);
+        /* T = [F]pPublicB */
+        cpEcGFpInitPoint(&T, cpEcGFpGetPool(1, pEC), 0, pEC);
+        gfec_MulPoint(&T, pPublicB, F, nsR, /*ECP_ORDBITSIZE(pEC),*/ pEC, pScratchBuffer);
 
-      /* share = T.x */
-      cpGFpElementConstruct(&elm, F, elmLen);
-      finite_point = gfec_GetPoint(GFPE_DATA(&elm), NULL, &T, pEC);
-      if(finite_point) {
-         BNU_CHUNK_T* pShareData = BN_NUMBER(pShare);
-         int nsShare = BN_ROOM(pShare);
-         /* share = decode(T.x) */
-         GFP_METHOD(pGFE)->decode(pShareData, GFPE_DATA(&elm), pGFE);
-         cpGFpElementPad(pShareData+elmLen, nsShare-elmLen, 0);
+        /* share = T.x */
+        cpGFpElementConstruct(&elm, F, elmLen);
+        finite_point = gfec_GetPoint(GFPE_DATA(&elm), NULL, &T, pEC);
+        if (finite_point) {
+            BNU_CHUNK_T* pShareData = BN_NUMBER(pShare);
+            int nsShare             = BN_ROOM(pShare);
+            /* share = decode(T.x) */
+            GFP_METHOD(pGFE)->decode(pShareData, GFPE_DATA(&elm), pGFE);
+            cpGFpElementPad(pShareData + elmLen, nsShare - elmLen, 0);
 
-         BN_SIGN(pShare) = ippBigNumPOS;
-         FIX_BNU(pShareData, nsShare);
-         BN_SIZE(pShare) = nsShare;
-      }
+            BN_SIGN(pShare) = ippBigNumPOS;
+            FIX_BNU(pShareData, nsShare);
+            BN_SIZE(pShare) = nsShare;
+        }
 
-      cpGFpReleasePool(2, pGFE);
-      cpEcGFpReleasePool(1, pEC);
+        cpGFpReleasePool(2, pGFE);
+        cpEcGFpReleasePool(1, pEC);
 
-      return finite_point? ippStsNoErr : ippStsShareKeyErr;
-   }
+        return finite_point ? ippStsNoErr : ippStsShareKeyErr;
+    }
 }

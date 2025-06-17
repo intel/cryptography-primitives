@@ -41,15 +41,16 @@
 //    pState   Pointer to a SM2 algorithm state
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECESStart_SM2, (IppsECESState_SM2* pState)) {
-   IPP_BAD_PTR1_RET(pState);
-   IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
-   IPP_BADARG_RET(pState->state != ECESAlgoKeySet, ippStsContextMatchErr);
+IPPFUN(IppStatus, ippsGFpECESStart_SM2, (IppsECESState_SM2 * pState))
+{
+    IPP_BAD_PTR1_RET(pState);
+    IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
+    IPP_BADARG_RET(pState->state != ECESAlgoKeySet, ippStsContextMatchErr);
 
-   ippsHashInit_rmf(pState->pTagHasher, ippsHashMethod_SM3_TT());
-   ippsHashUpdate_rmf(pState->pSharedSecret, pState->sharedSecretLen / 2, pState->pTagHasher);
+    ippsHashInit_rmf(pState->pTagHasher, ippsHashMethod_SM3_TT());
+    ippsHashUpdate_rmf(pState->pSharedSecret, pState->sharedSecretLen / 2, pState->pTagHasher);
 
-   pState->state = ECESAlgoProcessing;
+    pState->state = ECESAlgoProcessing;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

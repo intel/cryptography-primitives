@@ -45,13 +45,13 @@
 //    pEC        Pointer to the context of the elliptic curve being initialized.
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECGetInfo_GF,(IppsGFpInfo* pInfo, const IppsGFpECState* pEC))
+IPPFUN(IppStatus, ippsGFpECGetInfo_GF, (IppsGFpInfo * pInfo, const IppsGFpECState* pEC))
 {
-   IPP_BAD_PTR2_RET(pInfo, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pInfo, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
-   return ippsGFpGetInfo(pInfo, ECP_GFP(pEC));
-   #if 0
+    return ippsGFpGetInfo(pInfo, ECP_GFP(pEC));
+#if 0
    {
       IppsGFpState*  pGF = ECP_GFP(pEC);
       gsModEngine* pGFpx = GFP_PMA(pGF);     /* current */
@@ -62,5 +62,5 @@ IPPFUN(IppStatus, ippsGFpECGetInfo_GF,(IppsGFpInfo* pInfo, const IppsGFpECState*
 
       return ippStsNoErr;
    }
-   #endif
+#endif
 }

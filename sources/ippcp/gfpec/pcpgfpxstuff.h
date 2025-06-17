@@ -27,77 +27,87 @@
 
 
 /* GF(p^d) pool */
-#define GFPX_PESIZE(pGF)   GFP_FELEN((pGF))
-#define GFPX_POOL_SIZE     (14) //(8)   /* Number of temporary variables in pool */
+#define GFPX_PESIZE(pGF) GFP_FELEN((pGF))
+#define GFPX_POOL_SIZE   (14) //(8)   /* Number of temporary variables in pool */
 
 /* address of ground field element inside expanded field element */
-#define GFPX_IDX_ELEMENT(pxe, idx, eleSize) ((pxe)+(eleSize)*(idx))
+#define GFPX_IDX_ELEMENT(pxe, idx, eleSize) ((pxe) + (eleSize) * (idx))
 
 
 __IPPCP_INLINE int degree(const BNU_CHUNK_T* pE, const gsModEngine* pGFEx)
 {
     int groundElemLen = GFP_FELEN(GFP_PARENT(pGFEx));
     int deg;
-    for(deg=GFP_EXTDEGREE(pGFEx)-1; deg>=0; deg--) {
-        if(!GFP_IS_ZERO(pE+groundElemLen*deg, groundElemLen)) break;
+    for (deg = GFP_EXTDEGREE(pGFEx) - 1; deg >= 0; deg--) {
+        if (!GFP_IS_ZERO(pE + groundElemLen * deg, groundElemLen))
+            break;
     }
     return deg;
 }
 
 __IPPCP_INLINE gsModEngine* cpGFpBasic(const gsModEngine* pGFEx)
 {
-   while( !GFP_IS_BASIC(pGFEx) ) {
-      pGFEx = GFP_PARENT(pGFEx);
-   }
-   return (gsModEngine*)pGFEx;
+    while (!GFP_IS_BASIC(pGFEx)) {
+        pGFEx = GFP_PARENT(pGFEx);
+    }
+    return (gsModEngine*)pGFEx;
 }
 __IPPCP_INLINE int cpGFpBasicDegreeExtension(const gsModEngine* pGFEx)
 {
-   int degree = GFP_EXTDEGREE(pGFEx);
-   while( !GFP_IS_BASIC(pGFEx) ) {
-      pGFEx = GFP_PARENT(pGFEx);
-      degree *= GFP_EXTDEGREE(pGFEx);
-   }
-   return degree;
+    int degree = GFP_EXTDEGREE(pGFEx);
+    while (!GFP_IS_BASIC(pGFEx)) {
+        pGFEx = GFP_PARENT(pGFEx);
+        degree *= GFP_EXTDEGREE(pGFEx);
+    }
+    return degree;
 }
 
 /* convert external data (Ipp32u) => internal element (BNU_CHUNK_T) representation
    returns length of element (in BNU_CHUNK_T)
 */
-__IPPCP_INLINE int cpGFpxCopyToChunk(BNU_CHUNK_T* pElm, const Ipp32u* pA, int nsA, const gsModEngine* pGFEx)
+__IPPCP_INLINE int cpGFpxCopyToChunk(BNU_CHUNK_T* pElm,
+                                     const Ipp32u* pA,
+                                     int nsA,
+                                     const gsModEngine* pGFEx)
 {
-   gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
-   int basicExtension = cpGFpBasicDegreeExtension(pGFEx);
-   int basicElmLen32 = GFP_FELEN32(pBasicGFE);
-   int basicElmLen = GFP_FELEN(pBasicGFE);
-   int deg;
-   for(deg=0; deg<basicExtension && nsA>0; deg++, nsA -= basicElmLen32) {
-      int srcLen = IPP_MIN(nsA, basicElmLen32);
-      ZEXPAND_COPY_BNU((Ipp32u*)pElm, basicElmLen*(int)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)), pA,srcLen);
-      pElm += basicElmLen;
-      pA += basicElmLen32;
-   }
-   return basicElmLen*deg;
+    gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
+    int basicExtension     = cpGFpBasicDegreeExtension(pGFEx);
+    int basicElmLen32      = GFP_FELEN32(pBasicGFE);
+    int basicElmLen        = GFP_FELEN(pBasicGFE);
+    int deg;
+    for (deg = 0; deg < basicExtension && nsA > 0; deg++, nsA -= basicElmLen32) {
+        int srcLen = IPP_MIN(nsA, basicElmLen32);
+        ZEXPAND_COPY_BNU((Ipp32u*)pElm,
+                         basicElmLen * (int)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)),
+                         pA,
+                         srcLen);
+        pElm += basicElmLen;
+        pA += basicElmLen32;
+    }
+    return basicElmLen * deg;
 }
 
 /* convert internal element (BNU_CHUNK_T) => external data (Ipp32u) representation
    returns length of data (in Ipp32u)
 */
-__IPPCP_INLINE int cpGFpxCopyFromChunk(Ipp32u* pA, const BNU_CHUNK_T* pElm, const gsModEngine* pGFEx)
+__IPPCP_INLINE int cpGFpxCopyFromChunk(Ipp32u* pA,
+                                       const BNU_CHUNK_T* pElm,
+                                       const gsModEngine* pGFEx)
 {
-   gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
-   int basicExtension = cpGFpBasicDegreeExtension(pGFEx);
-   int basicElmLen32 = GFP_FELEN32(pBasicGFE);
-   int basicElmLen = GFP_FELEN(pBasicGFE);
-   int deg;
-   for(deg=0; deg<basicExtension; deg++) {
-      COPY_BNU(pA, (Ipp32u*)pElm, basicElmLen32);
-      pA += basicElmLen32;
-      pElm += basicElmLen;
-   }
-   return basicElmLen32*deg;
+    gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
+    int basicExtension     = cpGFpBasicDegreeExtension(pGFEx);
+    int basicElmLen32      = GFP_FELEN32(pBasicGFE);
+    int basicElmLen        = GFP_FELEN(pBasicGFE);
+    int deg;
+    for (deg = 0; deg < basicExtension; deg++) {
+        COPY_BNU(pA, (Ipp32u*)pElm, basicElmLen32);
+        pA += basicElmLen32;
+        pElm += basicElmLen;
+    }
+    return basicElmLen32 * deg;
 }
 
+/* clang-format off */
 #define cpGFpxSet  OWNAPI(cpGFpxSet)
    IPP_OWN_DECL (BNU_CHUNK_T*, cpGFpxSet, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pDataA, int nsA, gsModEngine* pGFEx))
 #define cpGFpxRand OWNAPI(cpGFpxRand)
@@ -138,5 +148,7 @@ __IPPCP_INLINE int cpGFpxCopyFromChunk(Ipp32u* pA, const BNU_CHUNK_T* pElm, cons
    IPP_OWN_DECL (BNU_CHUNK_T*, cpGFpxHalve, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFEx))
 #define InitGFpxCtx OWNAPI(InitGFpxCtx)
    IPP_OWN_DECL (void, InitGFpxCtx, (const IppsGFpState* pGroundGF, int extDeg, const IppsGFpMethod* method, IppsGFpState* pGFpx))
+
+/* clang-format on */
 
 #endif /* _PCP_GFPEXT_H_ */

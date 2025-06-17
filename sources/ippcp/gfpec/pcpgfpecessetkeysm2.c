@@ -50,48 +50,61 @@
 //    pEcScratchBuffer  Pointer to a scratch buffer for computations on the EC
 //
 *F*/
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECESSetKey_SM2, (const IppsBigNumState* pPrivate,
-   const IppsGFpECPoint* pPublic, IppsECESState_SM2* pState,
-   IppsGFpECState* pEC, Ipp8u* pEcScratchBuffer)) {
-   IPP_BAD_PTR4_RET(pPrivate, pPublic, pState, pEC);
-   IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!pEC->subgroup, ippStsContextMatchErr);
-   IPP_BADARG_RET(1 < pEC->pGF->pGFE->extdegree, ippStsNotSupportedModeErr);
+                                          const IppsGFpECPoint* pPublic,
+                                          IppsECESState_SM2* pState,
+                                          IppsGFpECState* pEC,
+                                          Ipp8u* pEcScratchBuffer))
+/* clang-format on */
+{
+    IPP_BAD_PTR4_RET(pPrivate, pPublic, pState, pEC);
+    IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!pEC->subgroup, ippStsContextMatchErr);
+    IPP_BADARG_RET(1 < pEC->pGF->pGFE->extdegree, ippStsNotSupportedModeErr);
 
-   {
-      gsModEngine* pGFE = pEC->pGF->pGFE;
-      /* curve element size is not the same */
-      IPP_BADARG_RET(BITS2WORD8_SIZE(pGFE->modBitLen) * 2 != pState->sharedSecretLen, ippStsBadArgErr);
+    {
+        gsModEngine* pGFE = pEC->pGF->pGFE;
+        /* curve element size is not the same */
+        IPP_BADARG_RET(BITS2WORD8_SIZE(pGFE->modBitLen) * 2 != pState->sharedSecretLen,
+                       ippStsBadArgErr);
 
-      {
-         IppStatus multResult;
-         IppsGFpECPoint PT;
-         IppsGFpElement ptX, ptY;
-         int finitePoint = 0;
+        {
+            IppStatus multResult;
+            IppsGFpECPoint PT;
+            IppsGFpElement ptX, ptY;
+            int finitePoint = 0;
 
-         cpEcGFpInitPoint(&PT, cpEcGFpGetPool(1, pEC), 0, pEC);
-         multResult = ippsGFpECMulPoint(pPublic, pPrivate, &PT, pEC, pEcScratchBuffer);
-         if (ippStsNoErr == multResult) {
-            cpGFpElementConstruct(&ptX, cpGFpGetPool(1, pGFE), pGFE->modLen);
-            cpGFpElementConstruct(&ptY, cpGFpGetPool(1, pGFE), pGFE->modLen);
-            finitePoint = gfec_GetPoint(ptX.pData, ptY.pData, &PT, pEC);
-            if (finitePoint) {
-               ippsGFpGetElementOctString(&ptX, pState->pSharedSecret, pState->sharedSecretLen / 2, pEC->pGF);
-               ippsGFpGetElementOctString(&ptY, pState->pSharedSecret + pState->sharedSecretLen / 2, pState->sharedSecretLen / 2, pEC->pGF);
+            cpEcGFpInitPoint(&PT, cpEcGFpGetPool(1, pEC), 0, pEC);
+            multResult = ippsGFpECMulPoint(pPublic, pPrivate, &PT, pEC, pEcScratchBuffer);
+            if (ippStsNoErr == multResult) {
+                cpGFpElementConstruct(&ptX, cpGFpGetPool(1, pGFE), pGFE->modLen);
+                cpGFpElementConstruct(&ptY, cpGFpGetPool(1, pGFE), pGFE->modLen);
+                finitePoint = gfec_GetPoint(ptX.pData, ptY.pData, &PT, pEC);
+                if (finitePoint) {
+                    ippsGFpGetElementOctString(&ptX,
+                                               pState->pSharedSecret,
+                                               pState->sharedSecretLen / 2,
+                                               pEC->pGF);
+                    ippsGFpGetElementOctString(&ptY,
+                                               pState->pSharedSecret + pState->sharedSecretLen / 2,
+                                               pState->sharedSecretLen / 2,
+                                               pEC->pGF);
 
-               pState->kdfCounter = 0;
-               pState->kdfIndex = IPP_SM3_DIGEST_BITSIZE / BYTESIZE; /* will generate a kdf window */
-               pState->wasNonZero = 0;
-               pState->state = ECESAlgoKeySet;
+                    pState->kdfCounter = 0;
+                    pState->kdfIndex =
+                        IPP_SM3_DIGEST_BITSIZE / BYTESIZE; /* will generate a kdf window */
+                    pState->wasNonZero = 0;
+                    pState->state      = ECESAlgoKeySet;
+                }
+                cpGFpReleasePool(2, pGFE); /* release ptX and ptY from the pool */
             }
-            cpGFpReleasePool(2, pGFE); /* release ptX and ptY from the pool */
-         }
-         cpEcGFpReleasePool(1, pEC); /* release PT from the pool */
+            cpEcGFpReleasePool(1, pEC);    /* release PT from the pool */
 
-         if (multResult)
-            return multResult;
-         return finitePoint ? ippStsNoErr : ippStsPointAtInfinity;
-      }
-   }
+            if (multResult)
+                return multResult;
+            return finitePoint ? ippStsNoErr : ippStsPointAtInfinity;
+        }
+    }
 }

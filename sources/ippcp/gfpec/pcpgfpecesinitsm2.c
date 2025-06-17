@@ -46,32 +46,39 @@
 //    avaliableCtxSize Count of available bytes in the context allocation
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECESInit_SM2, (IppsGFpECState* pEC, IppsECESState_SM2* pState, int avaliableCtxSize)) {
-   IPP_BAD_PTR2_RET(pEC, pState);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!pEC->subgroup, ippStsContextMatchErr);
-   IPP_BADARG_RET(1 < pEC->pGF->pGFE->extdegree, ippStsNotSupportedModeErr);
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECESInit_SM2, (IppsGFpECState* pEC,
+                                        IppsECESState_SM2* pState,
+                                        int avaliableCtxSize))
+/* clang-format on */
+{
+    IPP_BAD_PTR2_RET(pEC, pState);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!pEC->subgroup, ippStsContextMatchErr);
+    IPP_BADARG_RET(1 < pEC->pGF->pGFE->extdegree, ippStsNotSupportedModeErr);
 
-   {
-      int realCtxSize;
-      ippsGFpECESGetSize_SM2(pEC, &realCtxSize);
-      IPP_BADARG_RET(avaliableCtxSize < realCtxSize, ippStsSizeErr);
+    {
+        int realCtxSize;
+        ippsGFpECESGetSize_SM2(pEC, &realCtxSize);
+        IPP_BADARG_RET(avaliableCtxSize < realCtxSize, ippStsSizeErr);
 
-      {
-         int sm3size;
-         ippsHashGetSizeOptimal_rmf(&sm3size, ippsHashMethod_SM3());
+        {
+            int sm3size;
+            ippsHashGetSizeOptimal_rmf(&sm3size, ippsHashMethod_SM3());
 
-         ECES_SM2_SET_ID(pState);
-         pState->sharedSecretLen = BITS2WORD8_SIZE(pEC->pGF->pGFE->modBitLen) * 2;
-         pState->pSharedSecret = ((Ipp8u*)pState) + sizeof(IppsECESState_SM2);
-         pState->pKdfHasher = (IppsHashState_rmf*)(((Ipp8u*)pState) + sizeof(IppsECESState_SM2) + pState->sharedSecretLen);
-         pState->pTagHasher = (IppsHashState_rmf*)(((Ipp8u*)pState) + sizeof(IppsECESState_SM2) + pState->sharedSecretLen + sm3size);
+            ECES_SM2_SET_ID(pState);
+            pState->sharedSecretLen = BITS2WORD8_SIZE(pEC->pGF->pGFE->modBitLen) * 2;
+            pState->pSharedSecret   = ((Ipp8u*)pState) + sizeof(IppsECESState_SM2);
+            pState->pKdfHasher = (IppsHashState_rmf*)(((Ipp8u*)pState) + sizeof(IppsECESState_SM2) +
+                                                      pState->sharedSecretLen);
+            pState->pTagHasher = (IppsHashState_rmf*)(((Ipp8u*)pState) + sizeof(IppsECESState_SM2) +
+                                                      pState->sharedSecretLen + sm3size);
 
-         ippsHashInit_rmf(pState->pKdfHasher, ippsHashMethod_SM3_TT());
+            ippsHashInit_rmf(pState->pKdfHasher, ippsHashMethod_SM3_TT());
 
-         pState->state = ECESAlgoInit;
+            pState->state = ECESAlgoInit;
 
-         return ippStsNoErr;
-      }
-   }
+            return ippStsNoErr;
+        }
+    }
 }

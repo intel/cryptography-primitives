@@ -65,55 +65,62 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECSetSubgroup,(const IppsGFpElement* pX, const IppsGFpElement* pY,
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECSetSubgroup,(const IppsGFpElement* pX,
+                                        const IppsGFpElement* pY,
                                         const IppsBigNumState* pOrder,
                                         const IppsBigNumState* pCofactor,
                                         IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
+    IPP_BAD_PTR1_RET(pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
-   IPP_BAD_PTR2_RET(pX, pY);
-   IPP_BADARG_RET( !GFPE_VALID_ID(pX), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pY), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pX, pY);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pX), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pY), ippStsContextMatchErr);
 
-   IPP_BAD_PTR2_RET(pOrder, pCofactor);
-   IPP_BADARG_RET(!BN_VALID_ID(pOrder), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_SIGN(pOrder)!= IppsBigNumPOS, ippStsBadArgErr);
+    IPP_BAD_PTR2_RET(pOrder, pCofactor);
+    IPP_BADARG_RET(!BN_VALID_ID(pOrder), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_SIGN(pOrder) != IppsBigNumPOS, ippStsBadArgErr);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pCofactor), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_SIGN(pCofactor)!= IppsBigNumPOS, ippStsBadArgErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pCofactor), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_SIGN(pCofactor) != IppsBigNumPOS, ippStsBadArgErr);
 
-   {
-      gsModEngine* pGFE = GFP_PMA(ECP_GFP(pEC));
-      int elemLen = GFP_FELEN(pGFE);
+    {
+        gsModEngine* pGFE = GFP_PMA(ECP_GFP(pEC));
+        int elemLen       = GFP_FELEN(pGFE);
 
-      IPP_BADARG_RET( GFPE_ROOM(pX)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-      IPP_BADARG_RET( GFPE_ROOM(pY)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        IPP_BADARG_RET(GFPE_ROOM(pX) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        IPP_BADARG_RET(GFPE_ROOM(pY) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-      gfec_SetPoint(ECP_G(pEC), GFPE_DATA(pX), GFPE_DATA(pY), pEC);
+        gfec_SetPoint(ECP_G(pEC), GFPE_DATA(pX), GFPE_DATA(pY), pEC);
 
-      {
-         int maxOrderBits = 1+ cpGFpBasicDegreeExtension(pGFE) * GFP_FEBITLEN(cpGFpBasic(pGFE));
-         BNU_CHUNK_T* pOrderData = BN_NUMBER(pOrder);
-         int orderLen= BN_SIZE(pOrder);
-         int orderBitSize = BITSIZE_BNU(pOrderData, orderLen);
-         IPP_BADARG_RET(orderBitSize>maxOrderBits, ippStsRangeErr)
+        {
+            int maxOrderBits = 1 + cpGFpBasicDegreeExtension(pGFE) * GFP_FEBITLEN(cpGFpBasic(pGFE));
+            BNU_CHUNK_T* pOrderData = BN_NUMBER(pOrder);
+            int orderLen            = BN_SIZE(pOrder);
+            int orderBitSize        = BITSIZE_BNU(pOrderData, orderLen);
+            IPP_BADARG_RET(orderBitSize > maxOrderBits, ippStsRangeErr)
 
-         /* set actual size of order and re-init engine */
-         ECP_ORDBITSIZE(pEC) = orderBitSize;
-         gsModEngineInit(ECP_MONT_R(pEC),(Ipp32u*)pOrderData, orderBitSize, MONT_DEFAULT_POOL_LENGTH, gsModArithMont());
-      }
+            /* set actual size of order and re-init engine */
+            ECP_ORDBITSIZE(pEC) = orderBitSize;
+            gsModEngineInit(ECP_MONT_R(pEC),
+                            (Ipp32u*)pOrderData,
+                            orderBitSize,
+                            MONT_DEFAULT_POOL_LENGTH,
+                            gsModArithMont());
+        }
 
-      {
-         BNU_CHUNK_T* pCofactorData = BN_NUMBER(pCofactor);
-         int cofactorLen= BN_SIZE(pCofactor);
-         int cofactorBitSize = BITSIZE_BNU(pCofactorData, cofactorLen);
-         IPP_BADARG_RET(cofactorBitSize>elemLen*BITSIZE(BNU_CHUNK_T), ippStsRangeErr)
-         COPY_BNU(ECP_COFACTOR(pEC), pCofactorData, cofactorLen);
-      }
+        {
+            BNU_CHUNK_T* pCofactorData = BN_NUMBER(pCofactor);
+            int cofactorLen            = BN_SIZE(pCofactor);
+            int cofactorBitSize        = BITSIZE_BNU(pCofactorData, cofactorLen);
+            IPP_BADARG_RET(cofactorBitSize > elemLen * BITSIZE(BNU_CHUNK_T), ippStsRangeErr)
+            COPY_BNU(ECP_COFACTOR(pEC), pCofactorData, cofactorLen);
+        }
 
-      ECP_SUBGROUP(pEC) = 1;
-      return ippStsNoErr;
-   }
+        ECP_SUBGROUP(pEC) = 1;
+        return ippStsNoErr;
+    }
 }

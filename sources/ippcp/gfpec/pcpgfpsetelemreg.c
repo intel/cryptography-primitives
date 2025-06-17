@@ -52,11 +52,18 @@
 //    pGFp        pointer to Finite Field context
 *F*/
 
-IPPFUN(IppStatus, ippsGFpSetElementRegular,(const IppsBigNumState* pBN, IppsGFpElement* pR, IppsGFpState* pGFp))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpSetElementRegular, (const IppsBigNumState* pBN,
+                                             IppsGFpElement* pR,
+                                             IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pBN);
-   IPP_BADARG_RET( !BN_VALID_ID(pBN), ippStsContextMatchErr );
-   IPP_BADARG_RET( !BN_POSITIVE(pBN), ippStsOutOfRangeErr);
+    IPP_BAD_PTR1_RET(pBN);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_POSITIVE(pBN), ippStsOutOfRangeErr);
 
-   return ippsGFpSetElement((Ipp32u*)BN_NUMBER(pBN), BITS2WORD32_SIZE( BITSIZE_BNU(BN_NUMBER((pBN)),BN_SIZE((pBN)))), pR, pGFp);
+    return ippsGFpSetElement((Ipp32u*)BN_NUMBER(pBN),
+                             BITS2WORD32_SIZE(BITSIZE_BNU(BN_NUMBER((pBN)), BN_SIZE((pBN)))),
+                             pR,
+                             pGFp);
 }

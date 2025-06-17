@@ -31,20 +31,14 @@
 //           operations over GF(q). Arbitrary 256 bit modulus.
 *F*/
 
-IPPFUN( const IppsGFpMethod*, ippsGFpMethod_p256, (void) )
+IPPFUN(const IppsGFpMethod*, ippsGFpMethod_p256, (void))
 {
-   static IppsGFpMethod method = {
-      cpID_Prime,
-      256,
-      NULL,
-      NULL,
-      NULL
-   };
+    static IppsGFpMethod method = { cpID_Prime, 256, NULL, NULL, NULL };
 
-   #if(_IPP32E >= _IPP32E_M7)
-   method.arith = gsArithGF_p256();
-   #else
-   method.arith = gsArithGFp();
-   #endif
-   return &method;
+#if (_IPP32E >= _IPP32E_M7)
+    method.arith = gsArithGF_p256();
+#else
+    method.arith = gsArithGFp();
+#endif
+    return &method;
 }

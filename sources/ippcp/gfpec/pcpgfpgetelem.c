@@ -57,26 +57,31 @@
 //    pGFp     Pointer to the context of the finite field.
 *F*/
 
-IPPFUN(IppStatus, ippsGFpGetElement, (const IppsGFpElement* pA, Ipp32u* pDataA, int lenA, IppsGFpState* pGFp))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpGetElement, (const IppsGFpElement* pA,
+                                      Ipp32u* pDataA,
+                                      int lenA,
+                                      IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pA, pDataA, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( GFPE_ROOM(pA)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-      IPP_BADARG_RET( !(0<lenA && lenA>=GFP_FELEN32(pGFE)), ippStsSizeErr );
+    IPP_BAD_PTR3_RET(pA, pDataA, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET(GFPE_ROOM(pA) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        IPP_BADARG_RET(!(0 < lenA && lenA >= GFP_FELEN32(pGFE)), ippStsSizeErr);
 
-      {
-         int elemLen = GFP_FELEN(pGFE);
-         BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
-         //tbcd: temporary excluded: assert(NULL!=pTmp);
+        {
+            int elemLen       = GFP_FELEN(pGFE);
+            BNU_CHUNK_T* pTmp = cpGFpGetPool(1, pGFE);
+            //tbcd: temporary excluded: assert(NULL!=pTmp);
 
-         cpGFpxGet(pTmp, elemLen, GFPE_DATA(pA), pGFE);
-         cpGFpxCopyFromChunk(pDataA, pTmp, pGFE);
+            cpGFpxGet(pTmp, elemLen, GFPE_DATA(pA), pGFE);
+            cpGFpxCopyFromChunk(pDataA, pTmp, pGFE);
 
-         cpGFpReleasePool(1, pGFE);
-         return ippStsNoErr;
-      }
-   }
+            cpGFpReleasePool(1, pGFE);
+            return ippStsNoErr;
+        }
+    }
 }

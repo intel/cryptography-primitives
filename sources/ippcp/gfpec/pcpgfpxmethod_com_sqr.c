@@ -26,58 +26,64 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxSqr_com, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxSqr_com, (BNU_CHUNK_T* pR,
+                                           const BNU_CHUNK_T* pA,
+                                           gsEngine* pGFEx))
+/* clang-format on */
 {
-   int extDegree = GFP_EXTDEGREE(pGFEx);
+    int extDegree = GFP_EXTDEGREE(pGFEx);
 
-   BNU_CHUNK_T* pGFpolynomial = GFP_MODULUS(pGFEx);
-   int degR = extDegree-1;
-   int elemLen= GFP_FELEN(pGFEx);
+    BNU_CHUNK_T* pGFpolynomial = GFP_MODULUS(pGFEx);
+    int degR                   = extDegree - 1;
+    int elemLen                = GFP_FELEN(pGFEx);
 
-   int degA = degR;
-   BNU_CHUNK_T* pTmpProduct = cpGFpGetPool(2, pGFEx);
-   BNU_CHUNK_T* pTmpResult = pTmpProduct + GFP_PELEN(pGFEx);
+    int degA                 = degR;
+    BNU_CHUNK_T* pTmpProduct = cpGFpGetPool(2, pGFEx);
+    BNU_CHUNK_T* pTmpResult  = pTmpProduct + GFP_PELEN(pGFEx);
 
-   gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
-   BNU_CHUNK_T* r = cpGFpGetPool(1, pGroundGFE);
-   int groundElemLen = GFP_FELEN(pGroundGFE);
+    gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
+    BNU_CHUNK_T* r       = cpGFpGetPool(1, pGroundGFE);
+    int groundElemLen    = GFP_FELEN(pGroundGFE);
 
-   const BNU_CHUNK_T* pTmpA = GFPX_IDX_ELEMENT(pA, degA, groundElemLen);
+    const BNU_CHUNK_T* pTmpA = GFPX_IDX_ELEMENT(pA, degA, groundElemLen);
 
     //tbcd: temporary excluded: assert(NULL!=pTmpProduct && NULL!=r);
 
-   /* clear temporary */
-   cpGFpElementPad(pTmpProduct, elemLen, 0);
+    /* clear temporary */
+    cpGFpElementPad(pTmpProduct, elemLen, 0);
 
-   /* R = A * A[degA-1] */
-   cpGFpxMul_GFE(pTmpResult, pA, pTmpA, pGFEx);
+    /* R = A * A[degA-1] */
+    cpGFpxMul_GFE(pTmpResult, pA, pTmpA, pGFEx);
 
-   for(degA-=1; degA>=0; degA--) {
-      /* save R[degR-1] */
-      cpGFpElementCopy(r, GFPX_IDX_ELEMENT(pTmpResult, degR, groundElemLen), groundElemLen);
+    for (degA -= 1; degA >= 0; degA--) {
+        /* save R[degR-1] */
+        cpGFpElementCopy(r, GFPX_IDX_ELEMENT(pTmpResult, degR, groundElemLen), groundElemLen);
 
-      { /* R = R * x */
-         int j;
-         for (j=degR; j>=1; j--)
-            cpGFpElementCopy(GFPX_IDX_ELEMENT(pTmpResult, j, groundElemLen), GFPX_IDX_ELEMENT(pTmpResult, j-1, groundElemLen), groundElemLen);
-         cpGFpElementPad(pTmpResult, groundElemLen, 0);
-      }
+        { /* R = R * x */
+            int j;
+            for (j = degR; j >= 1; j--)
+                cpGFpElementCopy(GFPX_IDX_ELEMENT(pTmpResult, j, groundElemLen),
+                                 GFPX_IDX_ELEMENT(pTmpResult, j - 1, groundElemLen),
+                                 groundElemLen);
+            cpGFpElementPad(pTmpResult, groundElemLen, 0);
+        }
 
-      cpGFpxMul_GFE(pTmpProduct, pGFpolynomial, r, pGFEx);
-      GFP_METHOD(pGFEx)->sub(pTmpResult, pTmpResult, pTmpProduct, pGFEx);
+        cpGFpxMul_GFE(pTmpProduct, pGFpolynomial, r, pGFEx);
+        GFP_METHOD(pGFEx)->sub(pTmpResult, pTmpResult, pTmpProduct, pGFEx);
 
-      /* A[degA-i] */
-      pTmpA -= groundElemLen;
-      cpGFpxMul_GFE(pTmpProduct, pA, pTmpA, pGFEx);
-      GFP_METHOD(pGFEx)->add(pTmpResult, pTmpResult, pTmpProduct, pGFEx);
-   }
+        /* A[degA-i] */
+        pTmpA -= groundElemLen;
+        cpGFpxMul_GFE(pTmpProduct, pA, pTmpA, pGFEx);
+        GFP_METHOD(pGFEx)->add(pTmpResult, pTmpResult, pTmpProduct, pGFEx);
+    }
 
-   /* copy result */
-   cpGFpElementCopy(pR, pTmpResult, elemLen);
+    /* copy result */
+    cpGFpElementCopy(pR, pTmpResult, elemLen);
 
-   /* release pools */
-   cpGFpReleasePool(1, pGroundGFE);
-   cpGFpReleasePool(2, pGFEx);
+    /* release pools */
+    cpGFpReleasePool(1, pGroundGFE);
+    cpGFpReleasePool(2, pGFEx);
 
-   return pR;
+    return pR;
 }

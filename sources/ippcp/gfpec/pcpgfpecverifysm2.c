@@ -66,118 +66,132 @@
 //    pScratchBuffer pointer to buffer (2 mul_point operation)
 //
 *F*/
+
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECVerifySM2,(const IppsBigNumState* pMsgDigest,
                                       const IppsGFpECPoint* pRegPublic,
-                                      const IppsBigNumState* pSignR, const IppsBigNumState* pSignS,
+                                      const IppsBigNumState* pSignR,
+                                      const IppsBigNumState* pSignS,
                                       IppECResult* pResult,
                                       IppsGFpECState* pEC,
                                       Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IppsGFpState*  pGF;
-   gsModEngine* pGFE;
+    IppsGFpState* pGF;
+    gsModEngine* pGFE;
 
-   /* EC context and buffer */
-   IPP_BAD_PTR2_RET(pEC, pScratchBuffer);
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    /* EC context and buffer */
+    IPP_BAD_PTR2_RET(pEC, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   pGF = ECP_GFP(pEC);
-   pGFE = GFP_PMA(pGF);
-   IPP_BADARG_RET(1<GFP_EXTDEGREE(pGFE), ippStsNotSupportedModeErr);
+    pGF  = ECP_GFP(pEC);
+    pGFE = GFP_PMA(pGF);
+    IPP_BADARG_RET(1 < GFP_EXTDEGREE(pGFE), ippStsNotSupportedModeErr);
 
-   /* test message representative */
-   IPP_BAD_PTR1_RET(pMsgDigest);
-   IPP_BADARG_RET(!BN_VALID_ID(pMsgDigest), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pMsgDigest), ippStsMessageErr);
-   /* make sure bisize(pMsgDigest) <= bitsiz(order) */
-   IPP_BADARG_RET(ECP_ORDBITSIZE(pEC) < cpBN_bitsize(pMsgDigest), ippStsMessageErr);
+    /* test message representative */
+    IPP_BAD_PTR1_RET(pMsgDigest);
+    IPP_BADARG_RET(!BN_VALID_ID(pMsgDigest), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pMsgDigest), ippStsMessageErr);
+    /* make sure bisize(pMsgDigest) <= bitsiz(order) */
+    IPP_BADARG_RET(ECP_ORDBITSIZE(pEC) < cpBN_bitsize(pMsgDigest), ippStsMessageErr);
 
-   /* test regular public key */
-   IPP_BAD_PTR1_RET(pRegPublic);
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pRegPublic), ippStsContextMatchErr );
-   IPP_BADARG_RET( ECP_POINT_FELEN(pRegPublic)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+    /* test regular public key */
+    IPP_BAD_PTR1_RET(pRegPublic);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pRegPublic), ippStsContextMatchErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pRegPublic) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
 
-   /* test signature */
-   IPP_BAD_PTR2_RET(pSignR, pSignS);
-   IPP_BADARG_RET(!BN_VALID_ID(pSignR), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pSignS), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pSignR), ippStsRangeErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pSignS), ippStsRangeErr);
+    /* test signature */
+    IPP_BAD_PTR2_RET(pSignR, pSignS);
+    IPP_BADARG_RET(!BN_VALID_ID(pSignR), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pSignS), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pSignR), ippStsRangeErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pSignS), ippStsRangeErr);
 
-   /* test result */
-   IPP_BAD_PTR1_RET(pResult);
+    /* test result */
+    IPP_BAD_PTR1_RET(pResult);
 
-   {
-      IppECResult vResult = ippECInvalidSignature;
+    {
+        IppECResult vResult = ippECInvalidSignature;
 
-      gsModEngine* pMontR = ECP_MONT_R(pEC);
-      BNU_CHUNK_T* pOrder = MOD_MODULUS(pMontR);
-      int orderLen = MOD_LEN(pMontR);
+        gsModEngine* pMontR = ECP_MONT_R(pEC);
+        BNU_CHUNK_T* pOrder = MOD_MODULUS(pMontR);
+        int orderLen        = MOD_LEN(pMontR);
 
-      /* test signature value */
-      if(!cpEqu_BNU_CHUNK(BN_NUMBER(pSignR), BN_SIZE(pSignR), 0) &&
-         !cpEqu_BNU_CHUNK(BN_NUMBER(pSignS), BN_SIZE(pSignS), 0) &&
-         0>cpCmp_BNU(BN_NUMBER(pSignR), BN_SIZE(pSignR), pOrder, orderLen) &&
-         0>cpCmp_BNU(BN_NUMBER(pSignS), BN_SIZE(pSignS), pOrder, orderLen)) {
+        /* test signature value */
+        if (!cpEqu_BNU_CHUNK(BN_NUMBER(pSignR), BN_SIZE(pSignR), 0) &&
+            !cpEqu_BNU_CHUNK(BN_NUMBER(pSignS), BN_SIZE(pSignS), 0) &&
+            0 > cpCmp_BNU(BN_NUMBER(pSignR), BN_SIZE(pSignR), pOrder, orderLen) &&
+            0 > cpCmp_BNU(BN_NUMBER(pSignS), BN_SIZE(pSignS), pOrder, orderLen)) {
 
 #if (_IPP32E >= _IPP32E_K1)
-          if (IsFeatureEnabled(ippCPUID_AVX512IFMA) && ECP_MODULUS_ID(pEC) == cpID_PrimeTPM_SM2) {
-            vResult = gfec_Verify_sm2_avx512(pMsgDigest, pRegPublic, pSignR, pSignS, pEC, pScratchBuffer);
-            goto exit;
-          } /* no else */
-#endif      // (_IPP32E >= _IPP32E_K1)
-         {
-            int elmLen = GFP_FELEN(pGFE);
-            int ns;
+            if (IsFeatureEnabled(ippCPUID_AVX512IFMA) && ECP_MODULUS_ID(pEC) == cpID_PrimeTPM_SM2) {
+                vResult = gfec_Verify_sm2_avx512(pMsgDigest,
+                                                 pRegPublic,
+                                                 pSignR,
+                                                 pSignS,
+                                                 pEC,
+                                                 pScratchBuffer);
+                goto exit;
+            } /* no else */
+#endif        // (_IPP32E >= _IPP32E_K1)
+            {
+                int elmLen = GFP_FELEN(pGFE);
+                int ns;
 
-            BNU_CHUNK_T* r = cpGFpGetPool(4, pGFE);
-            BNU_CHUNK_T* s = r+orderLen;
-            BNU_CHUNK_T* t = s+orderLen;
-            BNU_CHUNK_T* f = t+orderLen;
+                BNU_CHUNK_T* r = cpGFpGetPool(4, pGFE);
+                BNU_CHUNK_T* s = r + orderLen;
+                BNU_CHUNK_T* t = s + orderLen;
+                BNU_CHUNK_T* f = t + orderLen;
 
-            /* expand signatire's components */
-            cpGFpElementCopyPad(r, orderLen, BN_NUMBER(pSignR), BN_SIZE(pSignR));
-            cpGFpElementCopyPad(s, orderLen, BN_NUMBER(pSignS), BN_SIZE(pSignS));
+                /* expand signatire's components */
+                cpGFpElementCopyPad(r, orderLen, BN_NUMBER(pSignR), BN_SIZE(pSignR));
+                cpGFpElementCopyPad(s, orderLen, BN_NUMBER(pSignS), BN_SIZE(pSignS));
 
-            /* t = (r+s) mod order */
-            cpModAdd_BNU(t, r, s, pOrder, orderLen, f);
+                /* t = (r+s) mod order */
+                cpModAdd_BNU(t, r, s, pOrder, orderLen, f);
 
-            /* check if t!=0 */
-            if( !cpIsGFpElemEquChunk_ct(t, orderLen, 0) ) {
+                /* check if t!=0 */
+                if (!cpIsGFpElemEquChunk_ct(t, orderLen, 0)) {
 
-               /* P = [s]G +[t]regPublic, t = P.x */
-               IppsGFpECPoint P, G;
-               cpEcGFpInitPoint(&P, cpEcGFpGetPool(1, pEC),0, pEC);
-               cpEcGFpInitPoint(&G, ECP_G(pEC), ECP_AFFINE_POINT|ECP_FINITE_POINT, pEC);
+                    /* P = [s]G +[t]regPublic, t = P.x */
+                    IppsGFpECPoint P, G;
+                    cpEcGFpInitPoint(&P, cpEcGFpGetPool(1, pEC), 0, pEC);
+                    cpEcGFpInitPoint(&G, ECP_G(pEC), ECP_AFFINE_POINT | ECP_FINITE_POINT, pEC);
 
-               gfec_BasePointProduct(&P,
-                                    s, orderLen, pRegPublic, t, orderLen,
-                                    pEC, pScratchBuffer);
+                    gfec_BasePointProduct(&P,
+                                          s,
+                                          orderLen,
+                                          pRegPublic,
+                                          t,
+                                          orderLen,
+                                          pEC,
+                                          pScratchBuffer);
 
-               gfec_GetPoint(t, NULL, &P, pEC);
-               GFP_METHOD(pGFE)->decode(t, t, pGFE);
-               ns = cpMod_BNU(t, elmLen, pOrder, orderLen);
+                    gfec_GetPoint(t, NULL, &P, pEC);
+                    GFP_METHOD(pGFE)->decode(t, t, pGFE);
+                    ns = cpMod_BNU(t, elmLen, pOrder, orderLen);
 
-               cpEcGFpReleasePool(1, pEC);
-               IPP_UNREFERENCED_PARAMETER(ns);
+                    cpEcGFpReleasePool(1, pEC);
+                    IPP_UNREFERENCED_PARAMETER(ns);
+                }
+
+                /* t = (msg+t) mod order */
+                cpGFpElementCopyPad(f, orderLen, BN_NUMBER(pMsgDigest), BN_SIZE(pMsgDigest));
+                cpModSub_BNU(f, f, pOrder, pOrder, orderLen, s);
+                cpModAdd_BNU(t, t, f, pOrder, orderLen, f);
+
+                if (GFP_EQ(t, r, orderLen))
+                    vResult = ippECValid;
+
+                cpGFpReleasePool(4, pGFE);
             }
-
-            /* t = (msg+t) mod order */
-            cpGFpElementCopyPad(f, orderLen, BN_NUMBER(pMsgDigest), BN_SIZE(pMsgDigest));
-            cpModSub_BNU(f, f, pOrder, pOrder, orderLen, s);
-            cpModAdd_BNU(t, t, f, pOrder, orderLen, f);
-
-            if(GFP_EQ(t, r, orderLen))
-               vResult = ippECValid;
-
-            cpGFpReleasePool(4, pGFE);
-         }
-      }
+        }
 
 #if (_IPP32E >= _IPP32E_K1)
-exit:
+    exit:
 #endif
-      *pResult = vResult;
-      return ippStsNoErr;
-   }
+        *pResult = vResult;
+        return ippStsNoErr;
+    }
 }

@@ -30,25 +30,23 @@
 
 #include "gfpec/pcpgfpstuff.h"
 
-#if defined( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 /*
 // Recommended Parameters tpm_BN_p256 (Barreto-Naehrig)
 */
-const BNU_CHUNK_T tpmBN_p256p_p[] = {
-   LL(0xAED33013, 0xD3292DDB), LL(0x12980A82, 0x0CDC65FB), LL(0xEE71A49F, 0x46E5F25E),
-   LL(0xFFFCF0CD, 0xFFFFFFFF)};
-const BNU_CHUNK_T tpmBN_p256p_a[] = {
-   LL(0, 0)};
-const BNU_CHUNK_T tpmBN_p256p_b[] = {
-   LL(3, 0)};
-const BNU_CHUNK_T tpmBN_p256p_gx[] = {
-   LL(1, 0)};
-const BNU_CHUNK_T tpmBN_p256p_gy[] = {
-   LL(2, 0)};
-const BNU_CHUNK_T tpmBN_p256p_r[] = {
-   LL(0xD10B500D, 0xF62D536C), LL(0x1299921A, 0x0CDC65FB), LL(0xEE71A49E, 0x46E5F25E),
-   LL(0xFFFCF0CD, 0xFFFFFFFF)};
-BNU_CHUNK_T tpmBN_p256p_h = 1;
+const BNU_CHUNK_T tpmBN_p256p_p[]  = { LL(0xAED33013, 0xD3292DDB),
+                                       LL(0x12980A82, 0x0CDC65FB),
+                                       LL(0xEE71A49F, 0x46E5F25E),
+                                       LL(0xFFFCF0CD, 0xFFFFFFFF) };
+const BNU_CHUNK_T tpmBN_p256p_a[]  = { LL(0, 0) };
+const BNU_CHUNK_T tpmBN_p256p_b[]  = { LL(3, 0) };
+const BNU_CHUNK_T tpmBN_p256p_gx[] = { LL(1, 0) };
+const BNU_CHUNK_T tpmBN_p256p_gy[] = { LL(2, 0) };
+const BNU_CHUNK_T tpmBN_p256p_r[]  = { LL(0xD10B500D, 0xF62D536C),
+                                       LL(0x1299921A, 0x0CDC65FB),
+                                       LL(0xEE71A49E, 0x46E5F25E),
+                                       LL(0xFFFCF0CD, 0xFFFFFFFF) };
+BNU_CHUNK_T tpmBN_p256p_h          = 1;
 
 #endif /* _IPP_DATA */

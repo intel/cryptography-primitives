@@ -58,63 +58,66 @@
 //
 *F*/
 
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpECGetSubgroup,(IppsGFpState** const ppGFp,
-                                     IppsGFpElement* pX, IppsGFpElement* pY,
-                                     IppsBigNumState* pOrder,
-                                     IppsBigNumState* pCofactor,
-                                     const IppsGFpECState* pEC))
+                                        IppsGFpElement* pX,
+                                        IppsGFpElement* pY,
+                                        IppsBigNumState* pOrder,
+                                        IppsBigNumState* pCofactor,
+                                        const IppsGFpECState* pEC))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    IPP_BAD_PTR1_RET(pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   {
-      const IppsGFpState* pGF = ECP_GFP(pEC);
-      gsModEngine* pGFE = GFP_PMA(pGF);
-      Ipp32u elementSize = (Ipp32u)GFP_FELEN(pGFE);
+    {
+        const IppsGFpState* pGF = ECP_GFP(pEC);
+        gsModEngine* pGFE       = GFP_PMA(pGF);
+        Ipp32u elementSize      = (Ipp32u)GFP_FELEN(pGFE);
 
-      if(ppGFp) {
-         *ppGFp = (IppsGFpState*)pGF;
-      }
+        if (ppGFp) {
+            *ppGFp = (IppsGFpState*)pGF;
+        }
 
-      if(pX) {
-         IPP_BADARG_RET( !GFPE_VALID_ID(pX), ippStsContextMatchErr );
-         IPP_BADARG_RET( GFPE_ROOM(pX)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-         cpGFpElementCopy(GFPE_DATA(pX), ECP_G(pEC), (cpSize)elementSize);
-      }
-      if(pY) {
-         IPP_BADARG_RET( !GFPE_VALID_ID(pY), ippStsContextMatchErr );
-         IPP_BADARG_RET( GFPE_ROOM(pY)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-         cpGFpElementCopy(GFPE_DATA(pY), ECP_G(pEC)+elementSize, (cpSize)elementSize);
-      }
+        if (pX) {
+            IPP_BADARG_RET(!GFPE_VALID_ID(pX), ippStsContextMatchErr);
+            IPP_BADARG_RET(GFPE_ROOM(pX) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+            cpGFpElementCopy(GFPE_DATA(pX), ECP_G(pEC), (cpSize)elementSize);
+        }
+        if (pY) {
+            IPP_BADARG_RET(!GFPE_VALID_ID(pY), ippStsContextMatchErr);
+            IPP_BADARG_RET(GFPE_ROOM(pY) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+            cpGFpElementCopy(GFPE_DATA(pY), ECP_G(pEC) + elementSize, (cpSize)elementSize);
+        }
 
-      if(pOrder) {
-         BNU_CHUNK_T* pOrderData = MOD_MODULUS(ECP_MONT_R(pEC));
-         int orderBitSize = ECP_ORDBITSIZE(pEC);
-         int orderLen = BITS_BNU_CHUNK(orderBitSize);
-         FIX_BNU(pOrderData, orderLen);
+        if (pOrder) {
+            BNU_CHUNK_T* pOrderData = MOD_MODULUS(ECP_MONT_R(pEC));
+            int orderBitSize        = ECP_ORDBITSIZE(pEC);
+            int orderLen            = BITS_BNU_CHUNK(orderBitSize);
+            FIX_BNU(pOrderData, orderLen);
 
-         IPP_BADARG_RET(!BN_VALID_ID(pOrder), ippStsContextMatchErr);
-         IPP_BADARG_RET(BN_ROOM(pOrder) < orderLen, ippStsLengthErr);
+            IPP_BADARG_RET(!BN_VALID_ID(pOrder), ippStsContextMatchErr);
+            IPP_BADARG_RET(BN_ROOM(pOrder) < orderLen, ippStsLengthErr);
 
-         ZEXPAND_COPY_BNU(BN_NUMBER(pOrder), BN_ROOM(pOrder), pOrderData, orderLen);
-         BN_SIZE(pOrder) = orderLen;
-         BN_SIGN(pOrder) = ippBigNumPOS;
-      }
+            ZEXPAND_COPY_BNU(BN_NUMBER(pOrder), BN_ROOM(pOrder), pOrderData, orderLen);
+            BN_SIZE(pOrder) = orderLen;
+            BN_SIGN(pOrder) = ippBigNumPOS;
+        }
 
-      if(pCofactor) {
-         BNU_CHUNK_T* pCofactorData = ECP_COFACTOR(pEC);
-         int cofactorLen = (cpSize)elementSize;
-         FIX_BNU(pCofactorData, cofactorLen);
+        if (pCofactor) {
+            BNU_CHUNK_T* pCofactorData = ECP_COFACTOR(pEC);
+            int cofactorLen            = (cpSize)elementSize;
+            FIX_BNU(pCofactorData, cofactorLen);
 
-         IPP_BADARG_RET(!BN_VALID_ID(pCofactor), ippStsContextMatchErr);
-         IPP_BADARG_RET(BN_ROOM(pCofactor) < cofactorLen, ippStsLengthErr);
+            IPP_BADARG_RET(!BN_VALID_ID(pCofactor), ippStsContextMatchErr);
+            IPP_BADARG_RET(BN_ROOM(pCofactor) < cofactorLen, ippStsLengthErr);
 
-         ZEXPAND_COPY_BNU(BN_NUMBER(pCofactor), BN_ROOM(pCofactor), pCofactorData, cofactorLen);
-         BN_SIZE(pCofactor) = cofactorLen;
-         BN_SIGN(pCofactor) = ippBigNumPOS;
-      }
+            ZEXPAND_COPY_BNU(BN_NUMBER(pCofactor), BN_ROOM(pCofactor), pCofactorData, cofactorLen);
+            BN_SIZE(pCofactor) = cofactorLen;
+            BN_SIGN(pCofactor) = ippBigNumPOS;
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

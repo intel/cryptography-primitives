@@ -30,9 +30,10 @@
 #if !defined(_PCP_GFPMETHOD_256_H_)
 #define _PCP_GFPMETHOD_256_H_
 
-#if(_IPP32E >= _IPP32E_M7)
+#if (_IPP32E >= _IPP32E_M7)
 
 /* arithmetic over arbitrary 256r-bit modulus */
+/* clang-format off */
 #define gf256_add OWNAPI(gf256_add)
    IPP_OWN_DECL (BNU_CHUNK_T*, gf256_add, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, const BNU_CHUNK_T* pModulus))
 #define gf256_sub OWNAPI(gf256_sub)
@@ -45,81 +46,92 @@
    IPP_OWN_DECL (BNU_CHUNK_T*, gf256_sqrm, (BNU_CHUNK_T* pR,const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pModulus, BNU_CHUNK_T  m0))
 #define gf256_div2 OWNAPI(gf256_div2)
    IPP_OWN_DECL (BNU_CHUNK_T*, gf256_div2, (BNU_CHUNK_T* pR,const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pModulus))
+/* clang-format on */
 
 #define OPERAND_BITSIZE (256)
 #define LEN_P256        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
 
-static BNU_CHUNK_T* p256_add(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pGFE)
+static BNU_CHUNK_T* p256_add(BNU_CHUNK_T* pR,
+                             const BNU_CHUNK_T* pA,
+                             const BNU_CHUNK_T* pB,
+                             gsEngine* pGFE)
 {
-   return gf256_add(pR, pA, pB, GFP_MODULUS(pGFE));
+    return gf256_add(pR, pA, pB, GFP_MODULUS(pGFE));
 }
 
-static BNU_CHUNK_T* p256_sub(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pGFE)
+static BNU_CHUNK_T* p256_sub(BNU_CHUNK_T* pR,
+                             const BNU_CHUNK_T* pA,
+                             const BNU_CHUNK_T* pB,
+                             gsEngine* pGFE)
 {
-   return gf256_sub(pR, pA, pB, GFP_MODULUS(pGFE));
+    return gf256_sub(pR, pA, pB, GFP_MODULUS(pGFE));
 }
 
 static BNU_CHUNK_T* p256_neg(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE)
 {
-   return gf256_neg(pR, pA, GFP_MODULUS(pGFE));
+    return gf256_neg(pR, pA, GFP_MODULUS(pGFE));
 }
 
 static BNU_CHUNK_T* p256_div_by_2(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE)
 {
-   return gf256_div2(pR, pA, GFP_MODULUS(pGFE));
+    return gf256_div2(pR, pA, GFP_MODULUS(pGFE));
 }
 
 static BNU_CHUNK_T* p256_mul_by_2(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE)
 {
-   return gf256_add(pR, pA, pA, GFP_MODULUS(pGFE));
+    return gf256_add(pR, pA, pA, GFP_MODULUS(pGFE));
 }
 
 static BNU_CHUNK_T* p256_mul_by_3(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE)
 {
-   BNU_CHUNK_T tmp[LEN_P256];
-   gf256_add(tmp, pA, pA, GFP_MODULUS(pGFE));
-   return gf256_add(pR, tmp, pA, GFP_MODULUS(pGFE));
+    BNU_CHUNK_T tmp[LEN_P256];
+    gf256_add(tmp, pA, pA, GFP_MODULUS(pGFE));
+    return gf256_add(pR, tmp, pA, GFP_MODULUS(pGFE));
 }
 
-static BNU_CHUNK_T* p256_mul_montl(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pGFE)
+static BNU_CHUNK_T* p256_mul_montl(BNU_CHUNK_T* pR,
+                                   const BNU_CHUNK_T* pA,
+                                   const BNU_CHUNK_T* pB,
+                                   gsEngine* pGFE)
 {
-   return gf256_mulm(pR, pA, pB, GFP_MODULUS(pGFE), GFP_MNT_FACTOR(pGFE));
+    return gf256_mulm(pR, pA, pB, GFP_MODULUS(pGFE), GFP_MNT_FACTOR(pGFE));
 }
 
 static BNU_CHUNK_T* p256_sqr_montl(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE)
 {
-   return gf256_sqrm(pR, pA, GFP_MODULUS(pGFE), GFP_MNT_FACTOR(pGFE));
+    return gf256_sqrm(pR, pA, GFP_MODULUS(pGFE), GFP_MNT_FACTOR(pGFE));
 }
 
 static BNU_CHUNK_T* p256_to_mont(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE)
 {
-   return gf256_mulm(pR, pA, GFP_MNT_RR(pGFE), GFP_MODULUS(pGFE), GFP_MNT_FACTOR(pGFE));
+    return gf256_mulm(pR, pA, GFP_MNT_RR(pGFE), GFP_MODULUS(pGFE), GFP_MNT_FACTOR(pGFE));
 }
 
-static BNU_CHUNK_T one[] = {1,0,0,0};
+static BNU_CHUNK_T one[] = { 1, 0, 0, 0 };
 
 static BNU_CHUNK_T* p256_mont_back(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFE)
 {
-   return gf256_mulm(pR, pA, one, GFP_MODULUS(pGFE), GFP_MNT_FACTOR(pGFE));
+    return gf256_mulm(pR, pA, one, GFP_MODULUS(pGFE), GFP_MNT_FACTOR(pGFE));
 }
 
 /* return specific gf p256 arith methods */
 static gsModMethod* gsArithGF_p256(void)
 {
-   static gsModMethod m = {
-      p256_to_mont,
-      p256_mont_back,
-      p256_mul_montl,
-      p256_sqr_montl,
-      NULL,
-      p256_add,
-      p256_sub,
-      p256_neg,
-      p256_div_by_2,
-      p256_mul_by_2,
-      p256_mul_by_3,
-   };
-   return &m;
+    /* clang-format off */
+    static gsModMethod m = { p256_to_mont,
+                             p256_mont_back,
+                             p256_mul_montl,
+                             p256_sqr_montl,
+                             NULL,
+                             p256_add,
+                             p256_sub,
+                             p256_neg,
+                             p256_div_by_2,
+                             p256_mul_by_2,
+                             p256_mul_by_3,
+    };
+    /* clang-format on */
+    return &m;
 }
 #endif /* _IPP32E >= _IPP32E_M7 */
 

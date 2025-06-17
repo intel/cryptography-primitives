@@ -32,16 +32,15 @@
 /* Get context size */
 static int cpGFExGetSize(int elemLen, int pelmLen, int numpe)
 {
-   int ctxSize = 0;
+    int ctxSize = 0;
 
-   /* size of GFp engine */
-   ctxSize = (Ipp32s)sizeof(gsModEngine)
-            + elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* modulus  */
-            + pelmLen*(Ipp32s)sizeof(BNU_CHUNK_T)*numpe; /* pool */
+    /* size of GFp engine */
+    ctxSize = (Ipp32s)sizeof(gsModEngine) + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T) /* modulus  */
+              + pelmLen * (Ipp32s)sizeof(BNU_CHUNK_T) * numpe;                    /* pool */
 
-   ctxSize = (Ipp32s)sizeof(IppsGFpState)   /* size of IppsGFPState*/
-           + ctxSize;               /* GFpx engine */
-   return ctxSize;
+    ctxSize = (Ipp32s)sizeof(IppsGFpState) /* size of IppsGFPState*/
+              + ctxSize;                   /* GFpx engine */
+    return ctxSize;
 }
 
 /*F*
@@ -65,20 +64,20 @@ static int cpGFExGetSize(int elemLen, int pelmLen, int numpe)
 
 IPPFUN(IppStatus, ippsGFpxGetSize, (const IppsGFpState* pGroundGF, int degree, int* pSize))
 {
-   IPP_BAD_PTR2_RET(pGroundGF, pSize);
-   IPP_BADARG_RET( degree<IPP_MIN_GF_EXTDEG || degree >IPP_MAX_GF_EXTDEG, ippStsBadArgErr);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGroundGF), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pGroundGF, pSize);
+    IPP_BADARG_RET(degree < IPP_MIN_GF_EXTDEG || degree > IPP_MAX_GF_EXTDEG, ippStsBadArgErr);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGroundGF), ippStsContextMatchErr);
 
-   #define MAX_GFx_SIZE     (1<<15)  /* max size (bytes) of GF element (32KB) */
-   {
-      int groundElmLen = GFP_FELEN(GFP_PMA(pGroundGF));
-      Ipp64u elmLen64 = (Ipp64u)groundElmLen * (Ipp64u)sizeof(BNU_CHUNK_T) * (Ipp64u)degree;
-      int elemLen = (int)IPP_LODWORD(elmLen64);
-      *pSize = 0;
-      IPP_BADARG_RET(elmLen64> MAX_GFx_SIZE, ippStsBadArgErr);
+#define MAX_GFx_SIZE (1 << 15) /* max size (bytes) of GF element (32KB) */
+    {
+        int groundElmLen = GFP_FELEN(GFP_PMA(pGroundGF));
+        Ipp64u elmLen64  = (Ipp64u)groundElmLen * (Ipp64u)sizeof(BNU_CHUNK_T) * (Ipp64u)degree;
+        int elemLen      = (int)IPP_LODWORD(elmLen64);
+        *pSize           = 0;
+        IPP_BADARG_RET(elmLen64 > MAX_GFx_SIZE, ippStsBadArgErr);
 
-      *pSize = cpGFExGetSize(elemLen, elemLen, GFPX_POOL_SIZE);
-      return ippStsNoErr;
-   }
-   #undef MAX_GFx_SIZE
+        *pSize = cpGFExGetSize(elemLen, elemLen, GFPX_POOL_SIZE);
+        return ippStsNoErr;
+    }
+#undef MAX_GFx_SIZE
 }

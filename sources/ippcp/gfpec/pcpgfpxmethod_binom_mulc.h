@@ -28,29 +28,29 @@
 
 static BNU_CHUNK_T* cpGFpxMul_G0(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pGFEx)
 {
-   gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
-   mod_mul mulF = GFP_METHOD(pGroundGFE)->mul;
+    gsEngine* pGroundGFE = GFP_PARENT(pGFEx);
+    mod_mul mulF         = GFP_METHOD(pGroundGFE)->mul;
 
-   BNU_CHUNK_T* pGFpolynomial = GFP_MODULUS(pGFEx); /* g(x) = t^d + g0 */
+    BNU_CHUNK_T* pGFpolynomial = GFP_MODULUS(pGFEx); /* g(x) = t^d + g0 */
 
-   #if defined GS_DBG
-   BNU_CHUNK_T* arg0 = cpGFpGetPool(1, pGroundGFE);
-   BNU_CHUNK_T* arg1 = cpGFpGetPool(1, pGroundGFE);
-   int groundElemLen = GFP_FELEN(pGroundGFE);
-   #endif
+#if defined GS_DBG
+    BNU_CHUNK_T* arg0 = cpGFpGetPool(1, pGroundGFE);
+    BNU_CHUNK_T* arg1 = cpGFpGetPool(1, pGroundGFE);
+    int groundElemLen = GFP_FELEN(pGroundGFE);
+#endif
 
-   #if defined GS_DBG
-   cpGFpxGet(arg0, groundElemLen, pA, pGroundGFE);
-   cpGFpxGet(arg1, groundElemLen, pGFpolynomial, pGroundGFE);
-   #endif
+#if defined GS_DBG
+    cpGFpxGet(arg0, groundElemLen, pA, pGroundGFE);
+    cpGFpxGet(arg1, groundElemLen, pGFpolynomial, pGroundGFE);
+#endif
 
-   mulF(pR, pA, pGFpolynomial, pGroundGFE);
+    mulF(pR, pA, pGFpolynomial, pGroundGFE);
 
-   #if defined GS_DBG
-   cpGFpReleasePool(2, pGroundGFE);
-   #endif
+#if defined GS_DBG
+    cpGFpReleasePool(2, pGroundGFE);
+#endif
 
-   return pR;
+    return pR;
 }
 
 #endif /* _CP_GFP_METHOD_BINOM_H */

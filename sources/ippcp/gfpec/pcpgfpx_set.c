@@ -28,28 +28,33 @@
 #include "gfpec/pcpgfpxstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxSet, (BNU_CHUNK_T* pE, const BNU_CHUNK_T* pDataA, int nsA, gsModEngine* pGFEx))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxSet, (BNU_CHUNK_T* pE,
+                                       const BNU_CHUNK_T* pDataA,
+                                       int nsA,
+                                       gsModEngine* pGFEx))
+/* clang-format on */
 {
-   if( GFP_IS_BASIC(pGFEx) )
-      return cpGFpSet(pE, pDataA, nsA, pGFEx);
+    if (GFP_IS_BASIC(pGFEx))
+        return cpGFpSet(pE, pDataA, nsA, pGFEx);
 
-   else {
-      gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
-      int basicElemLen = GFP_FELEN(pBasicGFE);
+    else {
+        gsModEngine* pBasicGFE = cpGFpBasic(pGFEx);
+        int basicElemLen       = GFP_FELEN(pBasicGFE);
 
-      BNU_CHUNK_T* pTmpE = pE;
-      int basicDeg = cpGFpBasicDegreeExtension(pGFEx);
+        BNU_CHUNK_T* pTmpE = pE;
+        int basicDeg       = cpGFpBasicDegreeExtension(pGFEx);
 
-      int deg, error;
-      for(deg=0, error=0; deg<basicDeg && !error; deg++) {
-         int pieceA = IPP_MIN(nsA, basicElemLen);
+        int deg, error;
+        for (deg = 0, error = 0; deg < basicDeg && !error; deg++) {
+            int pieceA = IPP_MIN(nsA, basicElemLen);
 
-         error = NULL == cpGFpSet(pTmpE, pDataA, pieceA, pBasicGFE);
-         pTmpE   += basicElemLen;
-         pDataA += pieceA;
-         nsA -= pieceA;
-      }
+            error = NULL == cpGFpSet(pTmpE, pDataA, pieceA, pBasicGFE);
+            pTmpE += basicElemLen;
+            pDataA += pieceA;
+            nsA -= pieceA;
+        }
 
-      return (deg<basicDeg)? NULL : pE;
-   }
+        return (deg < basicDeg) ? NULL : pE;
+    }
 }

@@ -29,36 +29,36 @@
 
 static int factor2(BNU_CHUNK_T* pA, int nsA)
 {
-   int factor = 0;
-   int bits;
+    int factor = 0;
+    int bits;
 
-   int i;
-   for(i=0; i<nsA; i++) {
-      int ntz = cpNTZ_BNU(pA[i]);
-      factor += ntz;
-      if(ntz<BITSIZE(BNU_CHUNK_T))
-         break;
-   }
+    int i;
+    for (i = 0; i < nsA; i++) {
+        int ntz = cpNTZ_BNU(pA[i]);
+        factor += ntz;
+        if (ntz < BITSIZE(BNU_CHUNK_T))
+            break;
+    }
 
-   bits = factor;
-   if(bits >= BITSIZE(BNU_CHUNK_T)) {
-      int nchunk = bits/BITSIZE(BNU_CHUNK_T);
-      cpGFpElementCopyPad(pA, nsA, pA+nchunk, nsA-nchunk);
-      bits %= BITSIZE(BNU_CHUNK_T);
-   }
-   if(bits)
-      cpLSR_BNU(pA, pA, nsA, bits);
+    bits = factor;
+    if (bits >= BITSIZE(BNU_CHUNK_T)) {
+        int nchunk = bits / BITSIZE(BNU_CHUNK_T);
+        cpGFpElementCopyPad(pA, nsA, pA + nchunk, nsA - nchunk);
+        bits %= BITSIZE(BNU_CHUNK_T);
+    }
+    if (bits)
+        cpLSR_BNU(pA, pA, nsA, bits);
 
-   return factor;
+    return factor;
 }
 
 static BNU_CHUNK_T* cpGFpExp2(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, int e, gsModEngine* pGFE)
 {
-   cpGFpElementCopy(pR, pA, GFP_FELEN(pGFE));
-   while(e--) {
-      GFP_METHOD(pGFE)->sqr(pR, pR, pGFE);
-   }
-   return pR;
+    cpGFpElementCopy(pR, pA, GFP_FELEN(pGFE));
+    while (e--) {
+        GFP_METHOD(pGFE)->sqr(pR, pR, pGFE);
+    }
+    return pR;
 }
 
 
@@ -66,82 +66,81 @@ static BNU_CHUNK_T* cpGFpExp2(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, int e, gsM
    0, if a - qnr
    1, if sqrt is found
 */
-IPP_OWN_DEFN (int, cpGFpSqrt, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE))
+IPP_OWN_DEFN(int, cpGFpSqrt, (BNU_CHUNK_T * pR, const BNU_CHUNK_T* pA, gsModEngine* pGFE))
 {
-   int elemLen = GFP_FELEN(pGFE);
-   int poolelementLen = GFP_PELEN(pGFE);
-   int resultFlag = 1;
+    int elemLen        = GFP_FELEN(pGFE);
+    int poolelementLen = GFP_PELEN(pGFE);
+    int resultFlag     = 1;
 
-   /* case A==0 */
-   if( GFP_IS_ZERO(pA, elemLen) )
-      cpGFpElementPad(pR, elemLen, 0);
+    /* case A==0 */
+    if (GFP_IS_ZERO(pA, elemLen))
+        cpGFpElementPad(pR, elemLen, 0);
 
-   /* general case */
-   else {
-      BNU_CHUNK_T* q = cpGFpGetPool(4, pGFE);
-      BNU_CHUNK_T* x = q + poolelementLen;
-      BNU_CHUNK_T* y = x + poolelementLen;
-      BNU_CHUNK_T* z = y + poolelementLen;
+    /* general case */
+    else {
+        BNU_CHUNK_T* q = cpGFpGetPool(4, pGFE);
+        BNU_CHUNK_T* x = q + poolelementLen;
+        BNU_CHUNK_T* y = x + poolelementLen;
+        BNU_CHUNK_T* z = y + poolelementLen;
 
-      int s;
+        int s;
 
-      //tbcd: temporary excluded: assert(q!=NULL);
+        //tbcd: temporary excluded: assert(q!=NULL);
 
-      /* z=1 */
-      GFP_ONE(z, elemLen);
+        /* z=1 */
+        GFP_ONE(z, elemLen);
 
-      /* (modulus-1) = 2^s*q */
-      cpSub_BNU(q, GFP_MODULUS(pGFE), z, elemLen);
-      s = factor2(q, elemLen);
+        /* (modulus-1) = 2^s*q */
+        cpSub_BNU(q, GFP_MODULUS(pGFE), z, elemLen);
+        s = factor2(q, elemLen);
 
-      /*
+        /*
       // initialization
       */
 
-      /* y = qnr^q */
-      cpGFpExp(y, GFP_QNR(pGFE), q,elemLen, pGFE);
-      /* x = a^((q-1)/2) */
-      cpSub_BNU(q, q, z, elemLen);
-      cpLSR_BNU(q, q, elemLen, 1);
-      cpGFpExp(x, pA, q, elemLen, pGFE);
-      /* z = a*x^2 */
-      GFP_METHOD(pGFE)->mul(z, x, x, pGFE);
-      GFP_METHOD(pGFE)->mul(z, pA, z, pGFE);
-      /* R = a*x */
-      GFP_METHOD(pGFE)->mul(pR, pA, x, pGFE);
+        /* y = qnr^q */
+        cpGFpExp(y, GFP_QNR(pGFE), q, elemLen, pGFE);
+        /* x = a^((q-1)/2) */
+        cpSub_BNU(q, q, z, elemLen);
+        cpLSR_BNU(q, q, elemLen, 1);
+        cpGFpExp(x, pA, q, elemLen, pGFE);
+        /* z = a*x^2 */
+        GFP_METHOD(pGFE)->mul(z, x, x, pGFE);
+        GFP_METHOD(pGFE)->mul(z, pA, z, pGFE);
+        /* R = a*x */
+        GFP_METHOD(pGFE)->mul(pR, pA, x, pGFE);
 
-      while( !GFP_EQ(z, MOD_MNT_R(pGFE), elemLen) ) {
-         int m = 0;
-         cpGFpElementCopy(q, z, elemLen);
+        while (!GFP_EQ(z, MOD_MNT_R(pGFE), elemLen)) {
+            int m = 0;
+            cpGFpElementCopy(q, z, elemLen);
 
-         for(m=1; m<s; m++) {
-            GFP_METHOD(pGFE)->mul(q, q, q, pGFE);
-            if( GFP_EQ(q, MOD_MNT_R(pGFE), elemLen) )
-               break;
-         }
+            for (m = 1; m < s; m++) {
+                GFP_METHOD(pGFE)->mul(q, q, q, pGFE);
+                if (GFP_EQ(q, MOD_MNT_R(pGFE), elemLen))
+                    break;
+            }
 
-         if(m==s) {
-            /* A is quadratic non-residue */
-            resultFlag = 0;
-            break;
-         }
-         else {
-            /* exponent reduction */
-            cpGFpExp2(q, y, (s-m-1), pGFE);           /* q = y^(2^(s-m-1)) */
-            GFP_METHOD(pGFE)->mul(y, q, q, pGFE);     /* y = q^2 */
-            GFP_METHOD(pGFE)->mul(pR, q, pR, pGFE);   /* R = q*R */
-            GFP_METHOD(pGFE)->mul(z, y, z, pGFE);     /* z = z*y */
-            s = m;
-         }
-      }
+            if (m == s) {
+                /* A is quadratic non-residue */
+                resultFlag = 0;
+                break;
+            } else {
+                /* exponent reduction */
+                cpGFpExp2(q, y, (s - m - 1), pGFE);     /* q = y^(2^(s-m-1)) */
+                GFP_METHOD(pGFE)->mul(y, q, q, pGFE);   /* y = q^2 */
+                GFP_METHOD(pGFE)->mul(pR, q, pR, pGFE); /* R = q*R */
+                GFP_METHOD(pGFE)->mul(z, y, z, pGFE);   /* z = z*y */
+                s = m;
+            }
+        }
 
-      /* choose smallest between R and (modulus-R) */
-      GFP_METHOD(pGFE)->decode(q, pR, pGFE);
-      if(1 == cpCmp_BNU(q, elemLen, GFP_HMODULUS(pGFE), elemLen))
-         GFP_METHOD(pGFE)->neg(pR, pR, pGFE);
+        /* choose smallest between R and (modulus-R) */
+        GFP_METHOD(pGFE)->decode(q, pR, pGFE);
+        if (1 == cpCmp_BNU(q, elemLen, GFP_HMODULUS(pGFE), elemLen))
+            GFP_METHOD(pGFE)->neg(pR, pR, pGFE);
 
-      cpGFpReleasePool(4, pGFE);
-   }
+        cpGFpReleasePool(4, pGFE);
+    }
 
-   return resultFlag;
+    return resultFlag;
 }

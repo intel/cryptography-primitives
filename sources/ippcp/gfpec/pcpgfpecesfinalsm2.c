@@ -46,27 +46,30 @@
 //    pState          Pointer to a SM2 algorithm state
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECESFinal_SM2, (Ipp8u* pTag, int tagLen, IppsECESState_SM2* pState)) {
-   IPP_BAD_PTR2_RET(pTag, pState);
-   IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
-   /* a shared secret should be computed and the process should not be finished by getTag */
-   IPP_BADARG_RET(pState->state != ECESAlgoProcessing, ippStsIncompleteContextErr);
-   IPP_BADARG_RET(tagLen < 0 || tagLen > IPP_SM3_DIGEST_BITSIZE / BYTESIZE, ippStsSizeErr);
+IPPFUN(IppStatus, ippsGFpECESFinal_SM2, (Ipp8u * pTag, int tagLen, IppsECESState_SM2* pState))
+{
+    IPP_BAD_PTR2_RET(pTag, pState);
+    IPP_BADARG_RET(!VALID_ECES_SM2_ID(pState), ippStsContextMatchErr);
+    /* a shared secret should be computed and the process should not be finished by getTag */
+    IPP_BADARG_RET(pState->state != ECESAlgoProcessing, ippStsIncompleteContextErr);
+    IPP_BADARG_RET(tagLen < 0 || tagLen > IPP_SM3_DIGEST_BITSIZE / BYTESIZE, ippStsSizeErr);
 
-   ippsHashUpdate_rmf(pState->pSharedSecret + pState->sharedSecretLen / 2, pState->sharedSecretLen / 2, pState->pTagHasher);
-   if (tagLen == IPP_SM3_DIGEST_BITSIZE / BYTESIZE) {
-      ippsHashFinal_rmf(pTag, pState->pTagHasher);
-   } else {
-      Ipp8u pFinal[IPP_SM3_DIGEST_BITSIZE / BYTESIZE];
-      int i;
-      ippsHashFinal_rmf(pFinal, pState->pTagHasher);
-      for (i = 0; i < tagLen; ++i) {
-         pTag[i] = pFinal[i];
-      }
-   }
+    ippsHashUpdate_rmf(pState->pSharedSecret + pState->sharedSecretLen / 2,
+                       pState->sharedSecretLen / 2,
+                       pState->pTagHasher);
+    if (tagLen == IPP_SM3_DIGEST_BITSIZE / BYTESIZE) {
+        ippsHashFinal_rmf(pTag, pState->pTagHasher);
+    } else {
+        Ipp8u pFinal[IPP_SM3_DIGEST_BITSIZE / BYTESIZE];
+        int i;
+        ippsHashFinal_rmf(pFinal, pState->pTagHasher);
+        for (i = 0; i < tagLen; ++i) {
+            pTag[i] = pFinal[i];
+        }
+    }
 
-   pState->state = ECESAlgoFinished; /* cannot proceed further due to closing ippsSM3Update */
+    pState->state = ECESAlgoFinished; /* cannot proceed further due to closing ippsSM3Update */
 
-   /* do the operation, but return an error code in 0-case */
-   return pState->wasNonZero ? ippStsNoErr : ippStsShareKeyErr;
+    /* do the operation, but return an error code in 0-case */
+    return pState->wasNonZero ? ippStsNoErr : ippStsShareKeyErr;
 }

@@ -53,14 +53,15 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECSetPointAtInfinity,(IppsGFpECPoint* pPoint, IppsGFpECState* pEC))
+IPPFUN(IppStatus, ippsGFpECSetPointAtInfinity, (IppsGFpECPoint * pPoint, IppsGFpECState* pEC))
 {
-   IPP_BAD_PTR2_RET(pPoint, pEC);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
-   IPP_BADARG_RET( !ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr );
+    IPP_BAD_PTR2_RET(pPoint, pEC);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPoint), ippStsContextMatchErr);
 
-   IPP_BADARG_RET( ECP_POINT_FELEN(pPoint)!=GFP_FELEN(GFP_PMA(ECP_GFP(pEC))), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(ECP_POINT_FELEN(pPoint) != GFP_FELEN(GFP_PMA(ECP_GFP(pEC))),
+                   ippStsOutOfRangeErr);
 
-   gfec_SetPointAtInfinity(pPoint);
-   return ippStsNoErr;
+    gfec_SetPointAtInfinity(pPoint);
+    return ippStsNoErr;
 }

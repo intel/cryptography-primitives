@@ -48,94 +48,104 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsGFpECVerify,(IppECResult* pResult, IppsGFpECState* pEC, Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECVerify, (IppECResult* pResult,
+                                    IppsGFpECState* pEC,
+                                    Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pEC, pResult, pScratchBuffer);
-   IPP_BADARG_RET( !VALID_ECP_ID(pEC), ippStsContextMatchErr );
+    IPP_BAD_PTR3_RET(pEC, pResult, pScratchBuffer);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
 
-   *pResult = ippECValid;
+    *pResult = ippECValid;
 
-   {
-      IppsGFpState* pGF = ECP_GFP(pEC);
-      gsModEngine* pGFE = GFP_PMA(pGF);
-      int elemLen = GFP_FELEN(pGFE);
+    {
+        IppsGFpState* pGF = ECP_GFP(pEC);
+        gsModEngine* pGFE = GFP_PMA(pGF);
+        int elemLen       = GFP_FELEN(pGFE);
 
-      mod_mul mulF = GFP_METHOD(pGFE)->mul;
-      mod_sqr sqrF = GFP_METHOD(pGFE)->sqr;
-      mod_add addF = GFP_METHOD(pGFE)->add;
+        mod_mul mulF = GFP_METHOD(pGFE)->mul;
+        mod_sqr sqrF = GFP_METHOD(pGFE)->sqr;
+        mod_add addF = GFP_METHOD(pGFE)->add;
 
-      /*
+        /*
       // check discriminant ( 4*A^3 + 27*B^2 != 0 mod P)
       */
-      if(ippECValid == *pResult) {
-         BNU_CHUNK_T* pT = cpGFpGetPool(1, pGFE);
-         BNU_CHUNK_T* pU = cpGFpGetPool(1, pGFE);
-         //tbcd: temporary excluded: assert(NULL!=pT && NULL!=pU);
+        if (ippECValid == *pResult) {
+            BNU_CHUNK_T* pT = cpGFpGetPool(1, pGFE);
+            BNU_CHUNK_T* pU = cpGFpGetPool(1, pGFE);
+            //tbcd: temporary excluded: assert(NULL!=pT && NULL!=pU);
 
-         if(ECP_SPECIFIC(pEC)==ECP_EPID2)
-            cpGFpElementPad(pT, elemLen, 0);         /* T = 4*A^3 = 0 */
-         else {
-            addF(pT, ECP_A(pEC), ECP_A(pEC), pGFE);   /* T = 4*A^3 */
-            sqrF(pT, pT, pGFE);
-            mulF(pT, ECP_A(pEC), pT, pGFE);
-         }
+            if (ECP_SPECIFIC(pEC) == ECP_EPID2)
+                cpGFpElementPad(pT, elemLen, 0);        /* T = 4*A^3 = 0 */
+            else {
+                addF(pT, ECP_A(pEC), ECP_A(pEC), pGFE); /* T = 4*A^3 */
+                sqrF(pT, pT, pGFE);
+                mulF(pT, ECP_A(pEC), pT, pGFE);
+            }
 
-         addF(pU, ECP_B(pEC), ECP_B(pEC), pGFE);      /* U = 9*B^2 */
-         addF(pU, pU, ECP_B(pEC), pGFE);
-         sqrF(pU, pU, pGFE);
+            addF(pU, ECP_B(pEC), ECP_B(pEC), pGFE); /* U = 9*B^2 */
+            addF(pU, pU, ECP_B(pEC), pGFE);
+            sqrF(pU, pU, pGFE);
 
-         addF(pT, pU, pT, pGFE);                      /* T += 3*U */
-         addF(pT, pU, pT, pGFE);
-         addF(pT, pU, pT, pGFE);
+            addF(pT, pU, pT, pGFE); /* T += 3*U */
+            addF(pT, pU, pT, pGFE);
+            addF(pT, pU, pT, pGFE);
 
-         *pResult = GFP_IS_ZERO(pT, elemLen)? ippECIsZeroDiscriminant: ippECValid;
+            *pResult = GFP_IS_ZERO(pT, elemLen) ? ippECIsZeroDiscriminant : ippECValid;
 
-         cpGFpReleasePool(2, pGFE);
-      }
+            cpGFpReleasePool(2, pGFE);
+        }
 
-      if(ECP_SUBGROUP(pEC)) {
-         /*
+        if (ECP_SUBGROUP(pEC)) {
+            /*
          // check base point and it order
          */
-         if(ippECValid == *pResult) {
-            IppsGFpECPoint G;
-            cpEcGFpInitPoint(&G, ECP_G(pEC), ECP_AFFINE_POINT|ECP_FINITE_POINT, pEC);
+            if (ippECValid == *pResult) {
+                IppsGFpECPoint G;
+                cpEcGFpInitPoint(&G, ECP_G(pEC), ECP_AFFINE_POINT | ECP_FINITE_POINT, pEC);
 
-            /* check G != infinity */
-            *pResult = gfec_IsPointAtInfinity(&G)? ippECPointIsAtInfinite : ippECValid;
+                /* check G != infinity */
+                *pResult = gfec_IsPointAtInfinity(&G) ? ippECPointIsAtInfinite : ippECValid;
 
-            /* check G lies on EC */
-            if(ippECValid == *pResult)
-               *pResult = gfec_IsPointOnCurve(&G, pEC)? ippECValid : ippECPointIsNotValid;
+                /* check G lies on EC */
+                if (ippECValid == *pResult)
+                    *pResult = gfec_IsPointOnCurve(&G, pEC) ? ippECValid : ippECPointIsNotValid;
 
-            /* check Gorder*G = infinity */
-            if(ippECValid == *pResult) {
-               IppsGFpECPoint T;
-               cpEcGFpInitPoint(&T, cpEcGFpGetPool(1, pEC),0, pEC);
+                /* check Gorder*G = infinity */
+                if (ippECValid == *pResult) {
+                    IppsGFpECPoint T;
+                    cpEcGFpInitPoint(&T, cpEcGFpGetPool(1, pEC), 0, pEC);
 
-               gfec_MulBasePoint(&T, MOD_MODULUS(ECP_MONT_R(pEC)), BITS_BNU_CHUNK(ECP_ORDBITSIZE(pEC)), pEC, pScratchBuffer);
+                    gfec_MulBasePoint(&T,
+                                      MOD_MODULUS(ECP_MONT_R(pEC)),
+                                      BITS_BNU_CHUNK(ECP_ORDBITSIZE(pEC)),
+                                      pEC,
+                                      pScratchBuffer);
 
-               *pResult = gfec_IsPointAtInfinity(&T)? ippECValid : ippECInvalidOrder;
+                    *pResult = gfec_IsPointAtInfinity(&T) ? ippECValid : ippECInvalidOrder;
 
-               cpEcGFpReleasePool(1, pEC);
+                    cpEcGFpReleasePool(1, pEC);
+                }
             }
-         }
 
-         /*
+            /*
          // check order==P
          */
-         if(ippECValid == *pResult) {
-            BNU_CHUNK_T* pPrime = GFP_MODULUS(pGFE);
-            int primeLen = GFP_FELEN(pGFE);
+            if (ippECValid == *pResult) {
+                BNU_CHUNK_T* pPrime = GFP_MODULUS(pGFE);
+                int primeLen        = GFP_FELEN(pGFE);
 
-            gsModEngine* pR = ECP_MONT_R(pEC);
-            BNU_CHUNK_T* pOrder = MOD_MODULUS(pR);
-            int orderLen = MOD_LEN(pR);
+                gsModEngine* pR     = ECP_MONT_R(pEC);
+                BNU_CHUNK_T* pOrder = MOD_MODULUS(pR);
+                int orderLen        = MOD_LEN(pR);
 
-            *pResult = (primeLen==orderLen && GFP_EQ(pPrime, pOrder, primeLen))? ippECIsWeakSSSA : ippECValid;
-         }
-      }
+                *pResult = (primeLen == orderLen && GFP_EQ(pPrime, pOrder, primeLen))
+                               ? ippECIsWeakSSSA
+                               : ippECValid;
+            }
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

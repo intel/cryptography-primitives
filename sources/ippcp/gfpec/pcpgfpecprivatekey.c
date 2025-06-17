@@ -50,45 +50,49 @@
 //    pRndParam   Pointer to the Random Generator context
 //
 *F*/
-IPPFUN(IppStatus, ippsGFpECPrivateKey, (IppsBigNumState* pPrivate, IppsGFpECState* pEC,
-                                        IppBitSupplier rndFunc, void* pRndParam))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsGFpECPrivateKey, (IppsBigNumState* pPrivate,
+                                        IppsGFpECState* pEC,
+                                        IppBitSupplier rndFunc,
+                                        void* pRndParam))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pEC, rndFunc);
+    IPP_BAD_PTR2_RET(pEC, rndFunc);
 
-   IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
-   IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!VALID_ECP_ID(pEC), ippStsContextMatchErr);
+    IPP_BADARG_RET(!ECP_SUBGROUP(pEC), ippStsContextMatchErr);
 
-   /* test private key */
-   IPP_BAD_PTR1_RET(pPrivate);
-   IPP_BADARG_RET(!BN_VALID_ID(pPrivate), ippStsContextMatchErr);
-   IPP_BADARG_RET((BN_ROOM(pPrivate)*BITSIZE(BNU_CHUNK_T)<ECP_ORDBITSIZE(pEC)), ippStsSizeErr);
+    /* test private key */
+    IPP_BAD_PTR1_RET(pPrivate);
+    IPP_BADARG_RET(!BN_VALID_ID(pPrivate), ippStsContextMatchErr);
+    IPP_BADARG_RET((BN_ROOM(pPrivate) * BITSIZE(BNU_CHUNK_T) < ECP_ORDBITSIZE(pEC)), ippStsSizeErr);
 
-   {
-      /* generate random private key X:  0 < X < R */
-      BNU_CHUNK_T* pOrder = MOD_MODULUS(ECP_MONT_R(pEC));
-      int orderBitLen = ECP_ORDBITSIZE(pEC);
-      int orderLen = BITS_BNU_CHUNK(orderBitLen);
+    {
+        /* generate random private key X:  0 < X < R */
+        BNU_CHUNK_T* pOrder = MOD_MODULUS(ECP_MONT_R(pEC));
+        int orderBitLen     = ECP_ORDBITSIZE(pEC);
+        int orderLen        = BITS_BNU_CHUNK(orderBitLen);
 
-      BNU_CHUNK_T* pX = BN_NUMBER(pPrivate);
-      int nsX = BITS_BNU_CHUNK(orderBitLen);
-      BNU_CHUNK_T xMask = MASK_BNU_CHUNK(orderBitLen);
+        BNU_CHUNK_T* pX   = BN_NUMBER(pPrivate);
+        int nsX           = BITS_BNU_CHUNK(orderBitLen);
+        BNU_CHUNK_T xMask = MASK_BNU_CHUNK(orderBitLen);
 
-      IppStatus sts;
-      do {
-         sts = rndFunc((Ipp32u*)pX, orderBitLen, pRndParam);
-         if(ippStsNoErr!=sts)
-            break;
-         pX[nsX-1] &= xMask;
-      } while( (1 == cpEqu_BNU_CHUNK(pX, nsX, 0)) ||
-               (0 <= cpCmp_BNU(pX, nsX, pOrder, orderLen)) );
+        IppStatus sts;
+        do {
+            sts = rndFunc((Ipp32u*)pX, orderBitLen, pRndParam);
+            if (ippStsNoErr != sts)
+                break;
+            pX[nsX - 1] &= xMask;
+        } while ((1 == cpEqu_BNU_CHUNK(pX, nsX, 0)) || (0 <= cpCmp_BNU(pX, nsX, pOrder, orderLen)));
 
-      /* set up private */
-      if(ippStsNoErr==sts) {
-         BN_SIGN(pPrivate) = ippBigNumPOS;
-         FIX_BNU(pX, nsX);
-         BN_SIZE(pPrivate) = nsX;
-      }
+        /* set up private */
+        if (ippStsNoErr == sts) {
+            BN_SIGN(pPrivate) = ippBigNumPOS;
+            FIX_BNU(pX, nsX);
+            BN_SIZE(pPrivate) = nsX;
+        }
 
-      return sts;
-   }
+        return sts;
+    }
 }

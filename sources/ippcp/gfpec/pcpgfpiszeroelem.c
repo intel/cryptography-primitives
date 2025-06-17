@@ -54,20 +54,22 @@
 //
 *F*/
 
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpIsZeroElement,(const IppsGFpElement* pA,
-                                     int* pResult,
-                                     const IppsGFpState* pGFp))
+                                        int* pResult,
+                                        const IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pA, pResult, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( GFPE_ROOM(pA)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-      {
-         int flag = GFP_IS_ZERO(GFPE_DATA(pA), GFP_FELEN(pGFE));
-         *pResult = (1==flag)? IPP_IS_EQ : IPP_IS_NE;
-         return ippStsNoErr;
-      }
-   }
+    IPP_BAD_PTR3_RET(pA, pResult, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET(GFPE_ROOM(pA) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        {
+            int flag = GFP_IS_ZERO(GFPE_DATA(pA), GFP_FELEN(pGFE));
+            *pResult = (1 == flag) ? IPP_IS_EQ : IPP_IS_NE;
+            return ippStsNoErr;
+        }
+    }
 }

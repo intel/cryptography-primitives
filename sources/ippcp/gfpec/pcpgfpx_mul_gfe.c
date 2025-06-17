@@ -28,20 +28,25 @@
 #include "gfpec/pcpgfpxstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxMul_GFE, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pGroundB, gsModEngine* pGFEx))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxMul_GFE, (BNU_CHUNK_T* pR,
+                                           const BNU_CHUNK_T* pA,
+                                           const BNU_CHUNK_T* pGroundB,
+                                           gsModEngine* pGFEx))
+/* clang-format on */
 {
-   gsModEngine* pGroundGFE = GFP_PARENT(pGFEx);
-   mod_mul mulF = MOD_METHOD(pGroundGFE)->mul;
+    gsModEngine* pGroundGFE = GFP_PARENT(pGFEx);
+    mod_mul mulF            = MOD_METHOD(pGroundGFE)->mul;
 
-   int grounfElemLen = GFP_FELEN(pGroundGFE);
+    int grounfElemLen = GFP_FELEN(pGroundGFE);
 
-   BNU_CHUNK_T* pTmp = pR;
+    BNU_CHUNK_T* pTmp = pR;
 
-   int deg;
-   for(deg=0; deg<GFP_EXTDEGREE(pGFEx); deg++) {
-      mulF(pTmp, pA, pGroundB, pGroundGFE);
-      pTmp += grounfElemLen;
-      pA += grounfElemLen;
-   }
-   return pR;
+    int deg;
+    for (deg = 0; deg < GFP_EXTDEGREE(pGFEx); deg++) {
+        mulF(pTmp, pA, pGroundB, pGroundGFE);
+        pTmp += grounfElemLen;
+        pA += grounfElemLen;
+    }
+    return pR;
 }

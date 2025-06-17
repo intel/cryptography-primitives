@@ -29,15 +29,18 @@
 #include "gfpec/pcpgfpecstuff.h"
 
 
-__IPPCP_INLINE IppsBigNumState* cpConstructBN(IppsBigNumState* pBN, cpSize len, BNU_CHUNK_T* pData, BNU_CHUNK_T* pBuffer)
+__IPPCP_INLINE IppsBigNumState* cpConstructBN(IppsBigNumState* pBN,
+                                              cpSize len,
+                                              BNU_CHUNK_T* pData,
+                                              BNU_CHUNK_T* pBuffer)
 {
-   BN_SET_ID(pBN);
-   BN_SIGN(pBN) = ippBigNumPOS;
-   BN_SIZE(pBN) = len;
-   BN_ROOM(pBN) = len;
-   BN_NUMBER(pBN) = pData;
-   BN_BUFFER(pBN) = pBuffer;
-   return pBN;
+    BN_SET_ID(pBN);
+    BN_SIGN(pBN)   = ippBigNumPOS;
+    BN_SIZE(pBN)   = len;
+    BN_ROOM(pBN)   = len;
+    BN_NUMBER(pBN) = pData;
+    BN_BUFFER(pBN) = pBuffer;
+    return pBN;
 }
 
 /*
@@ -49,7 +52,7 @@ extern const BNU_CHUNK_T secp112r1_b[];
 extern const BNU_CHUNK_T secp112r1_gx[];
 extern const BNU_CHUNK_T secp112r1_gy[];
 extern const BNU_CHUNK_T secp112r1_r[];
-extern       BNU_CHUNK_T secp112r1_h;
+extern BNU_CHUNK_T secp112r1_h;
 
 extern const BNU_CHUNK_T secp112r2_p[]; // (2^128 -3)/76439
 extern const BNU_CHUNK_T secp112r2_a[];
@@ -57,7 +60,7 @@ extern const BNU_CHUNK_T secp112r2_b[];
 extern const BNU_CHUNK_T secp112r2_gx[];
 extern const BNU_CHUNK_T secp112r2_gy[];
 extern const BNU_CHUNK_T secp112r2_r[];
-extern       BNU_CHUNK_T secp112r2_h;
+extern BNU_CHUNK_T secp112r2_h;
 
 extern const BNU_CHUNK_T secp128r1_p[]; // 2^128 -2^97 -1
 extern const BNU_CHUNK_T secp128r1_a[];
@@ -65,7 +68,7 @@ extern const BNU_CHUNK_T secp128r1_b[];
 extern const BNU_CHUNK_T secp128r1_gx[];
 extern const BNU_CHUNK_T secp128r1_gy[];
 extern const BNU_CHUNK_T secp128r1_r[];
-extern       BNU_CHUNK_T secp128r1_h;
+extern BNU_CHUNK_T secp128r1_h;
 
 extern const BNU_CHUNK_T* secp128_mx[];
 
@@ -75,7 +78,7 @@ extern const BNU_CHUNK_T secp128r2_b[];
 extern const BNU_CHUNK_T secp128r2_gx[];
 extern const BNU_CHUNK_T secp128r2_gy[];
 extern const BNU_CHUNK_T secp128r2_r[];
-extern       BNU_CHUNK_T secp128r2_h;
+extern BNU_CHUNK_T secp128r2_h;
 
 extern const BNU_CHUNK_T secp160r1_p[]; // 2^160 -2^31 -1
 extern const BNU_CHUNK_T secp160r1_a[];
@@ -83,7 +86,7 @@ extern const BNU_CHUNK_T secp160r1_b[];
 extern const BNU_CHUNK_T secp160r1_gx[];
 extern const BNU_CHUNK_T secp160r1_gy[];
 extern const BNU_CHUNK_T secp160r1_r[];
-extern       BNU_CHUNK_T secp160r1_h;
+extern BNU_CHUNK_T secp160r1_h;
 
 extern const BNU_CHUNK_T secp160r2_p[]; // 2^160 -2^32 -2^14 -2^12 -2^9 -2^8 -2^7 -2^2 -1
 extern const BNU_CHUNK_T secp160r2_a[];
@@ -91,7 +94,7 @@ extern const BNU_CHUNK_T secp160r2_b[];
 extern const BNU_CHUNK_T secp160r2_gx[];
 extern const BNU_CHUNK_T secp160r2_gy[];
 extern const BNU_CHUNK_T secp160r2_r[];
-extern       BNU_CHUNK_T secp160r2_h;
+extern BNU_CHUNK_T secp160r2_h;
 
 extern const BNU_CHUNK_T secp192r1_p[]; // 2^192 -2^64 -1
 extern const BNU_CHUNK_T secp192r1_a[];
@@ -99,7 +102,7 @@ extern const BNU_CHUNK_T secp192r1_b[];
 extern const BNU_CHUNK_T secp192r1_gx[];
 extern const BNU_CHUNK_T secp192r1_gy[];
 extern const BNU_CHUNK_T secp192r1_r[];
-extern       BNU_CHUNK_T secp192r1_h;
+extern BNU_CHUNK_T secp192r1_h;
 
 extern const BNU_CHUNK_T secp224r1_p[]; // 2^224 -2^96 +1
 extern const BNU_CHUNK_T secp224r1_a[];
@@ -107,7 +110,7 @@ extern const BNU_CHUNK_T secp224r1_b[];
 extern const BNU_CHUNK_T secp224r1_gx[];
 extern const BNU_CHUNK_T secp224r1_gy[];
 extern const BNU_CHUNK_T secp224r1_r[];
-extern       BNU_CHUNK_T secp224r1_h;
+extern BNU_CHUNK_T secp224r1_h;
 
 extern const BNU_CHUNK_T secp256r1_p[]; // 2^256 -2^224 +2^192 +2^96 -1
 extern const BNU_CHUNK_T secp256r1_a[];
@@ -115,7 +118,7 @@ extern const BNU_CHUNK_T secp256r1_b[];
 extern const BNU_CHUNK_T secp256r1_gx[];
 extern const BNU_CHUNK_T secp256r1_gy[];
 extern const BNU_CHUNK_T secp256r1_r[];
-extern       BNU_CHUNK_T secp256r1_h;
+extern BNU_CHUNK_T secp256r1_h;
 
 extern const BNU_CHUNK_T secp384r1_p[]; // 2^384 -2^128 -2^96 +2^32 -1
 extern const BNU_CHUNK_T secp384r1_a[];
@@ -123,7 +126,7 @@ extern const BNU_CHUNK_T secp384r1_b[];
 extern const BNU_CHUNK_T secp384r1_gx[];
 extern const BNU_CHUNK_T secp384r1_gy[];
 extern const BNU_CHUNK_T secp384r1_r[];
-extern       BNU_CHUNK_T secp384r1_h;
+extern BNU_CHUNK_T secp384r1_h;
 
 extern const BNU_CHUNK_T secp521r1_p[]; // 2^521 -1
 extern const BNU_CHUNK_T secp521r1_a[];
@@ -131,7 +134,7 @@ extern const BNU_CHUNK_T secp521r1_b[];
 extern const BNU_CHUNK_T secp521r1_gx[];
 extern const BNU_CHUNK_T secp521r1_gy[];
 extern const BNU_CHUNK_T secp521r1_r[];
-extern       BNU_CHUNK_T secp521r1_h;
+extern BNU_CHUNK_T secp521r1_h;
 
 extern const BNU_CHUNK_T tpmBN_p256p_p[]; // TPM BN_P256
 extern const BNU_CHUNK_T tpmBN_p256p_a[];
@@ -139,7 +142,7 @@ extern const BNU_CHUNK_T tpmBN_p256p_b[];
 extern const BNU_CHUNK_T tpmBN_p256p_gx[];
 extern const BNU_CHUNK_T tpmBN_p256p_gy[];
 extern const BNU_CHUNK_T tpmBN_p256p_r[];
-extern       BNU_CHUNK_T tpmBN_p256p_h;
+extern BNU_CHUNK_T tpmBN_p256p_h;
 
 extern const BNU_CHUNK_T tpmSM2_p256_p[]; // TPM SM2_P256
 extern const BNU_CHUNK_T tpmSM2_p256_a[];
@@ -147,7 +150,7 @@ extern const BNU_CHUNK_T tpmSM2_p256_b[];
 extern const BNU_CHUNK_T tpmSM2_p256_gx[];
 extern const BNU_CHUNK_T tpmSM2_p256_gy[];
 extern const BNU_CHUNK_T tpmSM2_p256_r[];
-extern       BNU_CHUNK_T tpmSM2_p256_h;
+extern BNU_CHUNK_T tpmSM2_p256_h;
 
 extern const BNU_CHUNK_T* tpmSM2_p256_p_mx[];
 
@@ -161,25 +164,29 @@ extern const BNU_CHUNK_T h_secp521r1_p[];
 extern const BNU_CHUNK_T h_tpmSM2_p256_p[];
 
 __IPPCP_INLINE BNU_CHUNK_T* cpModAdd_BNU(BNU_CHUNK_T* pR,
-                             const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB,
-                             const BNU_CHUNK_T* pM, int ns,
-                                   BNU_CHUNK_T* pBuffer)
+                                         const BNU_CHUNK_T* pA,
+                                         const BNU_CHUNK_T* pB,
+                                         const BNU_CHUNK_T* pM,
+                                         int ns,
+                                         BNU_CHUNK_T* pBuffer)
 {
-   BNU_CHUNK_T e = cpAdd_BNU(pR, pA, pB, ns);
-   e -= cpSub_BNU(pBuffer, pR, pM, ns);
-   MASKED_COPY_BNU(pR, e, pR, pBuffer, ns);
-   return pR;
+    BNU_CHUNK_T e = cpAdd_BNU(pR, pA, pB, ns);
+    e -= cpSub_BNU(pBuffer, pR, pM, ns);
+    MASKED_COPY_BNU(pR, e, pR, pBuffer, ns);
+    return pR;
 }
 
 __IPPCP_INLINE BNU_CHUNK_T* cpModSub_BNU(BNU_CHUNK_T* pR,
-                             const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB,
-                             const BNU_CHUNK_T* pM, int ns,
-                                   BNU_CHUNK_T* pBuffer)
+                                         const BNU_CHUNK_T* pA,
+                                         const BNU_CHUNK_T* pB,
+                                         const BNU_CHUNK_T* pM,
+                                         int ns,
+                                         BNU_CHUNK_T* pBuffer)
 {
-   BNU_CHUNK_T e = cpSub_BNU(pR, pA, pB, ns);
-   cpAdd_BNU(pBuffer, pR, pM, ns);
-   MASKED_COPY_BNU(pR, (0-e), pBuffer, pR, ns);
-   return pR;
+    BNU_CHUNK_T e = cpSub_BNU(pR, pA, pB, ns);
+    cpAdd_BNU(pBuffer, pR, pM, ns);
+    MASKED_COPY_BNU(pR, (0 - e), pBuffer, pR, ns);
+    return pR;
 }
 
 #endif /* _NEW_PCP_ECCP_H */

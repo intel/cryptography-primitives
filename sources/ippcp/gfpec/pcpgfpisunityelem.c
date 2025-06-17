@@ -54,30 +54,32 @@
 //
 *F*/
 
+/* clang-format off */
 IPPFUN(IppStatus, ippsGFpIsUnityElement,(const IppsGFpElement* pA,
-                                     int* pResult,
-                                     const IppsGFpState* pGFp))
+                                         int* pResult,
+                                         const IppsGFpState* pGFp))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pA, pResult, pGFp);
-   IPP_BADARG_RET( !GFP_VALID_ID(pGFp), ippStsContextMatchErr );
-   IPP_BADARG_RET( !GFPE_VALID_ID(pA), ippStsContextMatchErr );
-   {
-      gsModEngine* pGFE = GFP_PMA(pGFp);
-      IPP_BADARG_RET( GFPE_ROOM(pA)!=GFP_FELEN(pGFE), ippStsOutOfRangeErr);
-      {
-         gsModEngine* pBasicGFE = cpGFpBasic(pGFE);
-         int basicElmLen = GFP_FELEN(pBasicGFE);
-         BNU_CHUNK_T* pUnity = GFP_MNT_R(pBasicGFE);
+    IPP_BAD_PTR3_RET(pA, pResult, pGFp);
+    IPP_BADARG_RET(!GFP_VALID_ID(pGFp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!GFPE_VALID_ID(pA), ippStsContextMatchErr);
+    {
+        gsModEngine* pGFE = GFP_PMA(pGFp);
+        IPP_BADARG_RET(GFPE_ROOM(pA) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+        {
+            gsModEngine* pBasicGFE = cpGFpBasic(pGFE);
+            int basicElmLen        = GFP_FELEN(pBasicGFE);
+            BNU_CHUNK_T* pUnity    = GFP_MNT_R(pBasicGFE);
 
-         int elmLen = GFP_FELEN(pGFE);
-         int flag;
+            int elmLen = GFP_FELEN(pGFE);
+            int flag;
 
-         FIX_BNU(pUnity, basicElmLen);
-         FIX_BNU(GFPE_DATA(pA), elmLen);
+            FIX_BNU(pUnity, basicElmLen);
+            FIX_BNU(GFPE_DATA(pA), elmLen);
 
-         flag = (basicElmLen==elmLen) && (GFP_EQ(GFPE_DATA(pA), pUnity, elmLen));
-         *pResult = (1==flag)? IPP_IS_EQ : IPP_IS_NE;
-         return ippStsNoErr;
-      }
-   }
+            flag     = (basicElmLen == elmLen) && (GFP_EQ(GFPE_DATA(pA), pUnity, elmLen));
+            *pResult = (1 == flag) ? IPP_IS_EQ : IPP_IS_NE;
+            return ippStsNoErr;
+        }
+    }
 }

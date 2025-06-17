@@ -35,23 +35,22 @@
 /*
 // size of GFp engine context (Montgomery)
 */
-IPP_OWN_DEFN (int, cpGFpGetSize, (int feBitSize, int peBitSize, int numpe))
+IPP_OWN_DEFN(int, cpGFpGetSize, (int feBitSize, int peBitSize, int numpe))
 {
-   int ctxSize = 0;
-   int elemLen = BITS_BNU_CHUNK(feBitSize);
-   int pelmLen = BITS_BNU_CHUNK(peBitSize);
+    int ctxSize = 0;
+    int elemLen = BITS_BNU_CHUNK(feBitSize);
+    int pelmLen = BITS_BNU_CHUNK(peBitSize);
 
-   /* size of GFp engine */
-   ctxSize = (Ipp32s)sizeof(gsModEngine)
-            + elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* modulus  */
-            + elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* mont_R   */
-            + elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* mont_R^2 */
-            + elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* half of modulus */
-            + elemLen*(Ipp32s)sizeof(BNU_CHUNK_T)    /* quadratic non-residue */
-            + pelmLen*(Ipp32s)sizeof(BNU_CHUNK_T)*numpe; /* pool */
+    /* size of GFp engine */
+    ctxSize = (Ipp32s)sizeof(gsModEngine) + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T) /* modulus  */
+              + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)                             /* mont_R   */
+              + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)                             /* mont_R^2 */
+              + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)          /* half of modulus */
+              + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)          /* quadratic non-residue */
+              + pelmLen * (Ipp32s)sizeof(BNU_CHUNK_T) * numpe; /* pool */
 
-   ctxSize += sizeof(IppsGFpState);   /* size of IppsGFPState */
-   return ctxSize;
+    ctxSize += sizeof(IppsGFpState);                           /* size of IppsGFPState */
+    return ctxSize;
 }
 
 /*
@@ -59,50 +58,56 @@ IPP_OWN_DEFN (int, cpGFpGetSize, (int feBitSize, int peBitSize, int numpe))
 */
 static void cpGFEInit(gsModEngine* pGFE, int modulusBitSize, int peBitSize, int numpe)
 {
-   int modLen  = BITS_BNU_CHUNK(modulusBitSize);
-   int pelmLen = BITS_BNU_CHUNK(peBitSize);
+    int modLen  = BITS_BNU_CHUNK(modulusBitSize);
+    int pelmLen = BITS_BNU_CHUNK(peBitSize);
 
-   Ipp8u* ptr = (Ipp8u*)pGFE;
+    Ipp8u* ptr = (Ipp8u*)pGFE;
 
-   /* clear whole context */
-   PadBlock(0, ptr, sizeof(gsModEngine));
-   ptr += sizeof(gsModEngine);
+    /* clear whole context */
+    PadBlock(0, ptr, sizeof(gsModEngine));
+    ptr += sizeof(gsModEngine);
 
-   GFP_PARENT(pGFE)    = NULL;
-   GFP_EXTDEGREE(pGFE) = 1;
-   GFP_FEBITLEN(pGFE)  = modulusBitSize;
-   GFP_FELEN(pGFE)     = modLen;
-   GFP_FELEN32(pGFE)   = BITS2WORD32_SIZE(modulusBitSize);
-   GFP_PELEN(pGFE)     = pelmLen;
- //GFP_METHOD(pGFE)    = method;
-   GFP_MODULUS(pGFE)   = (BNU_CHUNK_T*)(ptr);   ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-   GFP_MNT_R(pGFE)     = (BNU_CHUNK_T*)(ptr);   ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-   GFP_MNT_RR(pGFE)    = (BNU_CHUNK_T*)(ptr);   ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-   GFP_HMODULUS(pGFE)  = (BNU_CHUNK_T*)(ptr);   ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-   GFP_QNR(pGFE)       = (BNU_CHUNK_T*)(ptr);   ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T);
-   GFP_POOL(pGFE)      = (BNU_CHUNK_T*)(ptr);/* ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T);*/
-   GFP_MAXPOOL(pGFE)   = numpe;
-   GFP_USEDPOOL(pGFE)  = 0;
+    GFP_PARENT(pGFE)    = NULL;
+    GFP_EXTDEGREE(pGFE) = 1;
+    GFP_FEBITLEN(pGFE)  = modulusBitSize;
+    GFP_FELEN(pGFE)     = modLen;
+    GFP_FELEN32(pGFE)   = BITS2WORD32_SIZE(modulusBitSize);
+    GFP_PELEN(pGFE)     = pelmLen;
+    //GFP_METHOD(pGFE)    = method;
+    GFP_MODULUS(pGFE) = (BNU_CHUNK_T*)(ptr);
+    ptr += modLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+    GFP_MNT_R(pGFE) = (BNU_CHUNK_T*)(ptr);
+    ptr += modLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+    GFP_MNT_RR(pGFE) = (BNU_CHUNK_T*)(ptr);
+    ptr += modLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+    GFP_HMODULUS(pGFE) = (BNU_CHUNK_T*)(ptr);
+    ptr += modLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+    GFP_QNR(pGFE) = (BNU_CHUNK_T*)(ptr);
+    ptr += modLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+    GFP_POOL(pGFE)     = (BNU_CHUNK_T*)(ptr); /* ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T);*/
+    GFP_MAXPOOL(pGFE)  = numpe;
+    GFP_USEDPOOL(pGFE) = 0;
 
-   cpGFpElementPad(GFP_MODULUS(pGFE), modLen, 0);
-   cpGFpElementPad(GFP_MNT_R(pGFE), modLen, 0);
-   cpGFpElementPad(GFP_MNT_RR(pGFE), modLen, 0);
-   cpGFpElementPad(GFP_HMODULUS(pGFE), modLen, 0);
-   cpGFpElementPad(GFP_QNR(pGFE), modLen, 0);
+    cpGFpElementPad(GFP_MODULUS(pGFE), modLen, 0);
+    cpGFpElementPad(GFP_MNT_R(pGFE), modLen, 0);
+    cpGFpElementPad(GFP_MNT_RR(pGFE), modLen, 0);
+    cpGFpElementPad(GFP_HMODULUS(pGFE), modLen, 0);
+    cpGFpElementPad(GFP_QNR(pGFE), modLen, 0);
 }
 
-IPP_OWN_DEFN (IppStatus, cpGFpInitGFp, (int primeBitSize, IppsGFpState* pGF))
+IPP_OWN_DEFN(IppStatus, cpGFpInitGFp, (int primeBitSize, IppsGFpState* pGF))
 {
-   IPP_BADARG_RET((primeBitSize< IPP_MIN_GF_BITSIZE) || (primeBitSize> IPP_MAX_GF_BITSIZE), ippStsSizeErr);
-   IPP_BAD_PTR1_RET(pGF);
+    IPP_BADARG_RET((primeBitSize < IPP_MIN_GF_BITSIZE) || (primeBitSize > IPP_MAX_GF_BITSIZE),
+                   ippStsSizeErr);
+    IPP_BAD_PTR1_RET(pGF);
 
-   {
-      Ipp8u* ptr = (Ipp8u*)pGF;
+    {
+        Ipp8u* ptr = (Ipp8u*)pGF;
 
-      GFP_SET_ID(pGF);
-      GFP_PMA(pGF) = (gsModEngine*)(ptr+sizeof(IppsGFpState));
-      cpGFEInit(GFP_PMA(pGF), primeBitSize, primeBitSize+BITSIZE(BNU_CHUNK_T), GFP_POOL_SIZE);
+        GFP_SET_ID(pGF);
+        GFP_PMA(pGF) = (gsModEngine*)(ptr + sizeof(IppsGFpState));
+        cpGFEInit(GFP_PMA(pGF), primeBitSize, primeBitSize + BITSIZE(BNU_CHUNK_T), GFP_POOL_SIZE);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

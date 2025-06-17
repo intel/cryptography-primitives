@@ -34,30 +34,30 @@
 // select affine point
 */
 #if (_IPP32E < _IPP32E_M7)
-IPP_OWN_DEFN (void, p521r1_select_ap_w5, (BNU_CHUNK_T* pVal, const BNU_CHUNK_T* pTbl, int idx))
+IPP_OWN_DEFN(void, p521r1_select_ap_w5, (BNU_CHUNK_T * pVal, const BNU_CHUNK_T* pTbl, int idx))
 {
-   #define OPERAND_BITSIZE (521)
-   #define LEN_P521        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
-   #define LEN_P521_APOINT (2*LEN_P521)
+#define OPERAND_BITSIZE (521)
+#define LEN_P521        (BITS_BNU_CHUNK(OPERAND_BITSIZE))
+#define LEN_P521_APOINT (2 * LEN_P521)
 
-   const int tblLen = 16;
-   int i;
-   unsigned int n;
+    const int tblLen = 16;
+    int i;
+    unsigned int n;
 
-   /* clear output affine point */
-   for(n=0; n<LEN_P521_APOINT; n++)
-      pVal[n] = 0;
+    /* clear output affine point */
+    for (n = 0; n < LEN_P521_APOINT; n++)
+        pVal[n] = 0;
 
-   /* select point */
-   for(i=1; i<=tblLen; i++) {
-      BNU_CHUNK_T mask = cpIsEqu_ct((BNU_CHUNK_T)i, (BNU_CHUNK_T)idx);
-      for(n=0; n<LEN_P521_APOINT; n++)
-         pVal[n] |= (pTbl[n] & mask);
-      pTbl += LEN_P521_APOINT;
-   }
+    /* select point */
+    for (i = 1; i <= tblLen; i++) {
+        BNU_CHUNK_T mask = cpIsEqu_ct((BNU_CHUNK_T)i, (BNU_CHUNK_T)idx);
+        for (n = 0; n < LEN_P521_APOINT; n++)
+            pVal[n] |= (pTbl[n] & mask);
+        pTbl += LEN_P521_APOINT;
+    }
 
-   #undef OPERAND_BITSIZE
-   #undef LEN_P521
-   #undef P521_POINT_AFFINE
+#undef OPERAND_BITSIZE
+#undef LEN_P521
+#undef P521_POINT_AFFINE
 }
 #endif

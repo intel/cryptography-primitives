@@ -52,23 +52,33 @@ IPP_OWN_DEFN (IppsGFpECPoint*, gfec_MulPoint, (IppsGFpECPoint* pR, const IppsGFp
    }
 }
 #endif
-IPP_OWN_DEFN (IppsGFpECPoint*, gfec_MulPoint, (IppsGFpECPoint* pR, const IppsGFpECPoint* pP, const BNU_CHUNK_T* pScalar, int scalarLen, IppsGFpECState* pEC, Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPP_OWN_DEFN(IppsGFpECPoint*, gfec_MulPoint, (IppsGFpECPoint* pR,
+                                              const IppsGFpECPoint* pP,
+                                              const BNU_CHUNK_T* pScalar,
+                                              int scalarLen,
+                                              IppsGFpECState* pEC,
+                                              Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   FIX_BNU(pScalar, scalarLen);
-   {
-      gsModEngine* pME = GFP_PMA(ECP_GFP(pEC));
+    FIX_BNU(pScalar, scalarLen);
+    {
+        gsModEngine* pME = GFP_PMA(ECP_GFP(pEC));
 
-      BNU_CHUNK_T* pTmpScalar = cpGFpGetPool(2, pME);
-      int orderBits = ECP_ORDBITSIZE(pEC);
-      int orderLen = BITS_BNU_CHUNK(orderBits);
-      cpGFpElementCopyPad(pTmpScalar, orderLen + 1, pScalar, scalarLen);
+        BNU_CHUNK_T* pTmpScalar = cpGFpGetPool(2, pME);
+        int orderBits           = ECP_ORDBITSIZE(pEC);
+        int orderLen            = BITS_BNU_CHUNK(orderBits);
+        cpGFpElementCopyPad(pTmpScalar, orderLen + 1, pScalar, scalarLen);
 
-      gfec_point_mul(ECP_POINT_X(pR), ECP_POINT_X(pP),
-         (Ipp8u*)pTmpScalar, orderBits,
-         pEC, pScratchBuffer);
-      cpGFpReleasePool(2, pME);
+        gfec_point_mul(ECP_POINT_X(pR),
+                       ECP_POINT_X(pP),
+                       (Ipp8u*)pTmpScalar,
+                       orderBits,
+                       pEC,
+                       pScratchBuffer);
+        cpGFpReleasePool(2, pME);
 
-      ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
-      return pR;
-   }
+        ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
+        return pR;
+    }
 }

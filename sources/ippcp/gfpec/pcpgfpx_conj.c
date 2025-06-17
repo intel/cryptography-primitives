@@ -28,14 +28,18 @@
 #include "gfpec/pcpgfpxstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpxConj, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pGFEx))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxConj, (BNU_CHUNK_T* pR,
+                                        const BNU_CHUNK_T* pA,
+                                        gsModEngine* pGFEx))
+/* clang-format on */
 {
-   gsModEngine* pGroundGFE = GFP_PARENT(pGFEx);
-   int groundElemLen = GFP_FELEN(pGroundGFE);
+    gsModEngine* pGroundGFE = GFP_PARENT(pGFEx);
+    int groundElemLen       = GFP_FELEN(pGroundGFE);
 
-   if(pR != pA)
-      cpGFpElementCopy(pR, pA, groundElemLen);
-   MOD_METHOD(pGroundGFE)->neg(pR+groundElemLen, pA+groundElemLen, pGroundGFE);
+    if (pR != pA)
+        cpGFpElementCopy(pR, pA, groundElemLen);
+    MOD_METHOD(pGroundGFE)->neg(pR + groundElemLen, pA + groundElemLen, pGroundGFE);
 
-   return pR;
+    return pR;
 }

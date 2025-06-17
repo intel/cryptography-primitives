@@ -29,27 +29,32 @@
 
 //tbcd: temporary excluded: #include <assert.h>
 
-IPP_OWN_DEFN (BNU_CHUNK_T*, cpGFpRand, (BNU_CHUNK_T* pR, gsModEngine* pGFE, IppBitSupplier rndFunc, void* pRndParam))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpRand, (BNU_CHUNK_T* pR,
+                                       gsModEngine* pGFE,
+                                       IppBitSupplier rndFunc,
+                                       void* pRndParam))
+/* clang-format on */
 {
-   int elemLen = GFP_FELEN(pGFE);
-   int reqBitSize = GFP_FEBITLEN(pGFE)+GFP_RAND_ADD_BITS;
-   int nsR = (reqBitSize +BITSIZE(BNU_CHUNK_T)-1)/BITSIZE(BNU_CHUNK_T);
+    int elemLen    = GFP_FELEN(pGFE);
+    int reqBitSize = GFP_FEBITLEN(pGFE) + GFP_RAND_ADD_BITS;
+    int nsR        = (reqBitSize + BITSIZE(BNU_CHUNK_T) - 1) / BITSIZE(BNU_CHUNK_T);
 
-   int internal_err;
+    int internal_err;
 
-   BNU_CHUNK_T* pPool = cpGFpGetPool(2, pGFE);
-   //tbcd: temporary excluded: assert(pPool!=NULL);
+    BNU_CHUNK_T* pPool = cpGFpGetPool(2, pGFE);
+    //tbcd: temporary excluded: assert(pPool!=NULL);
 
-   cpGFpElementPad(pPool, nsR, 0);
+    cpGFpElementPad(pPool, nsR, 0);
 
-   internal_err = ippStsNoErr != rndFunc((Ipp32u*)pPool, reqBitSize, pRndParam);
+    internal_err = ippStsNoErr != rndFunc((Ipp32u*)pPool, reqBitSize, pRndParam);
 
-   if(!internal_err) {
-      nsR = cpMod_BNU(pPool, nsR, GFP_MODULUS(pGFE), elemLen);
-      cpGFpElementPad(pPool+nsR, elemLen-nsR, 0);
-      GFP_METHOD(pGFE)->encode(pR, pPool, pGFE);
-   }
+    if (!internal_err) {
+        nsR = cpMod_BNU(pPool, nsR, GFP_MODULUS(pGFE), elemLen);
+        cpGFpElementPad(pPool + nsR, elemLen - nsR, 0);
+        GFP_METHOD(pGFE)->encode(pR, pPool, pGFE);
+    }
 
-   cpGFpReleasePool(2, pGFE);
-   return internal_err? NULL : pR;
+    cpGFpReleasePool(2, pGFE);
+    return internal_err ? NULL : pR;
 }
