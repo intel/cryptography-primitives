@@ -40,7 +40,11 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
+/* clang-format off */
+IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize,
+                                         Ipp32s maxMessageLength,
+                                         const IppsLMSAlgoType lmsType))
+/* clang-format on */
 {
     IppStatus ippcpSts = ippStsNoErr;
 
@@ -48,8 +52,8 @@ IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength,
     IPP_BAD_PTR1_RET(pSize);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25,  ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5,   ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
 
 
     /* Set LMOTS and LMS parameters */
@@ -64,9 +68,10 @@ IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength,
     IPP_BADARG_RET(maxMessageLength < 1, ippStsLengthErr);
     // this restriction is needed to avoid overflow of Ipp32s
     // maxMessageLength must be less than    IPP_MAX_32S       - (CP_PK_I_BYTESIZE + q + D_MESG +      C       )
-    IPP_BADARG_RET(maxMessageLength  >  (Ipp32s)((IPP_MAX_32S) - (CP_PK_I_BYTESIZE + 4 +   2    + lmotsParams.n)),
+    IPP_BADARG_RET(maxMessageLength >
+                       (Ipp32s)((IPP_MAX_32S) - (CP_PK_I_BYTESIZE + 4 + 2 + lmotsParams.n)),
                    ippStsLengthErr);
-
+    /* clang-format off */
     /* Calculate the maximum Set LMOTS and LMS parameters */
                       //    pubKey->I   ||  q  ||  D_MESG  ||          C        ||            pMsg
     Ipp32u lenBufQ    = CP_PK_I_BYTESIZE +  4   +     2     +    lmotsParams.n   + (Ipp32u)maxMessageLength;
@@ -76,6 +81,7 @@ IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength,
     Ipp32u lenBufTc   = CP_PK_I_BYTESIZE +     4     +    2    + lmotsParams.n;
                       //    pubKey->I   || node_num/2 || D_INTR ||    path[i]   ||     tmp
     Ipp32u lenBufIntr = CP_PK_I_BYTESIZE +      4      +    2    + lmotsParams.n + lmotsParams.n;
+    /* clang-format on */
 
     *pSize = (Ipp32s)IPP_MAX(IPP_MAX(IPP_MAX(lenBufQ, lenBufTmp), lenBufTc), lenBufIntr);
 
@@ -101,15 +107,15 @@ IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength,
 //
 *F*/
 
-IPPFUN(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
+IPPFUN(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s * pSize, const IppsLMSAlgoType lmsType))
 {
     IppStatus ippcpSts = ippStsNoErr;
 
     IPP_BAD_PTR1_RET(pSize);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25,  ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5,   ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
 
     /* Set LMOTS and LMS parameters */
     cpLMOTSParams lmotsParams;
@@ -119,9 +125,9 @@ IPPFUN(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s* pSize, const IppsLMSAlg
     ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
-    *pSize = (Ipp32s)sizeof(IppsLMSSignatureState)  +
-             (Ipp32s)(lmotsParams.n * lmsParams.h)  + /*_pAuthPath*/
-             (Ipp32s)lmotsParams.n                  + /* C */
+    *pSize = (Ipp32s)sizeof(IppsLMSSignatureState) +
+             (Ipp32s)(lmotsParams.n * lmsParams.h) +  /*_pAuthPath*/
+             (Ipp32s)lmotsParams.n +                  /* C */
              (Ipp32s)(lmotsParams.n * lmotsParams.p); /* Y */
 
     return ippcpSts;
@@ -145,23 +151,22 @@ IPPFUN(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s* pSize, const IppsLMSAlg
 //    lmsType           structure with LMS parameters lmotsOIDAlgo and lmsOIDAlgo
 //
 *F*/
-IPPFUN(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
+IPPFUN(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s * pSize, const IppsLMSAlgoType lmsType))
 {
     IppStatus ippcpSts = ippStsNoErr;
 
     IPP_BAD_PTR1_RET(pSize);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25,  ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5,   ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
 
     /* Set LMS parameters */
     cpLMSParams lmsParams;
     ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
-    *pSize = (Ipp32s)sizeof(IppsLMSPublicKeyState) +
-             (Ipp32s)lmsParams.m; /* T1 */
+    *pSize = (Ipp32s)sizeof(IppsLMSPublicKeyState) + (Ipp32s)lmsParams.m; /* T1 */
 
     return ippcpSts;
 }
@@ -188,17 +193,20 @@ IPPFUN(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s* pSize, const IppsLMSAlg
 //    pState          pointer to the LMS public key state
 //
 *F*/
+/* clang-format off */
 IPPFUN(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType,
-                                             const Ipp8u* pI, const Ipp8u* pK,
+                                             const Ipp8u* pI,
+                                             const Ipp8u* pK,
                                              IppsLMSPublicKeyState* pState))
+/* clang-format on */
 {
     IppStatus ippcpSts = ippStsNoErr;
 
     IPP_BAD_PTR3_RET(pI, pK, pState);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25,  ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5,   ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
 
     /* Set context id to prevent its copying */
     CP_LMS_SET_CTX_ID(pState);
@@ -209,11 +217,11 @@ IPPFUN(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType,
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
     /* Fill in the structure */
-    pState->lmsOIDAlgo = lmsType.lmsOIDAlgo;
+    pState->lmsOIDAlgo   = lmsType.lmsOIDAlgo;
     pState->lmotsOIDAlgo = lmsType.lmotsOIDAlgo;
     CopyBlock(pI, pState->I, CP_PK_I_BYTESIZE);
     // Set pointer to T1 right to the end of the context
-    pState->T1 = (Ipp8u*)pState+sizeof(IppsLMSPublicKeyState);
+    pState->T1 = (Ipp8u*)pState + sizeof(IppsLMSPublicKeyState);
     CopyBlock(pK, pState->T1, (cpSize)lmsParams.m);
 
     return ippcpSts;
@@ -246,18 +254,20 @@ IPPFUN(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType,
 //
 *F*/
 
+/* clang-format off */
 IPPFUN(IppStatus, ippsLMSSetSignatureState, (const IppsLMSAlgoType lmsType,
                                              Ipp32u q,
                                              const Ipp8u* pC,
                                              const Ipp8u* pY,
                                              const Ipp8u* pAuthPath,
                                              IppsLMSSignatureState* pState))
+/* clang-format on */
 {
     IPP_BAD_PTR4_RET(pC, pY, pAuthPath, pState);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25,  ippStsBadArgErr);
-    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5,   ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
 
     IppStatus ippcpSts = ippStsNoErr;
 
@@ -274,27 +284,27 @@ IPPFUN(IppStatus, ippsLMSSetSignatureState, (const IppsLMSAlgoType lmsType,
 
     /* Check q value before set */
     Ipp32u qLimit = 1 << lmsParams.h;
-    IPP_BADARG_RET(q >= qLimit,   ippStsBadArgErr);
+    IPP_BADARG_RET(q >= qLimit, ippStsBadArgErr);
 
-    pState->_q = q;
+    pState->_q          = q;
     pState->_lmsOIDAlgo = lmsType.lmsOIDAlgo;
 
     _cpLMOTSSignatureState* locLMOTSSig = &(pState->_lmotsSig);
-    locLMOTSSig->_lmotsOIDAlgo = lmsType.lmotsOIDAlgo;
+    locLMOTSSig->_lmotsOIDAlgo          = lmsType.lmotsOIDAlgo;
 
     // Copy auth path data
     Ipp32s authPathSize = (Ipp32s)(lmsParams.h * lmotsParams.n);
-    pState->_pAuthPath = (Ipp8u*)pState+sizeof(IppsLMSSignatureState);
+    pState->_pAuthPath  = (Ipp8u*)pState + sizeof(IppsLMSSignatureState);
     CopyBlock(pAuthPath, pState->_pAuthPath, authPathSize);
 
     // Copy C data
-    Ipp32s cSize = (Ipp32s)lmotsParams.n;
-    locLMOTSSig->pC = (Ipp8u*)pState->_pAuthPath+authPathSize;
+    Ipp32s cSize    = (Ipp32s)lmotsParams.n;
+    locLMOTSSig->pC = (Ipp8u*)pState->_pAuthPath + authPathSize;
     CopyBlock(pC, locLMOTSSig->pC, cSize);
 
     // Copy Y data
-    Ipp32s ySize = (Ipp32s)(lmotsParams.n * lmotsParams.p);
-    locLMOTSSig->pY = (Ipp8u*)pState->_pAuthPath+authPathSize+cSize;
+    Ipp32s ySize    = (Ipp32s)(lmotsParams.n * lmotsParams.p);
+    locLMOTSSig->pY = (Ipp8u*)pState->_pAuthPath + authPathSize + cSize;
     CopyBlock(pY, locLMOTSSig->pY, ySize);
 
     return ippcpSts;

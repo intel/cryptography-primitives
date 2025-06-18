@@ -41,12 +41,14 @@
 //    pBuffer        pointer to the temporary memory
 //
 *F*/
-IPPFUN(IppStatus, ippsXMSSVerify,( const Ipp8u* pMsg,
+/* clang-format off */
+IPPFUN(IppStatus, ippsXMSSVerify, (const Ipp8u* pMsg,
                                    const Ipp32s msgLen,
                                    const IppsXMSSSignatureState* pSign,
                                    int* pIsSignValid,
                                    const IppsXMSSPublicKeyState* pKey,
                                    Ipp8u* pBuffer))
+/* clang-format on */
 {
     IppStatus retCode = ippStsNoErr;
 
@@ -63,39 +65,40 @@ IPPFUN(IppStatus, ippsXMSSVerify,( const Ipp8u* pMsg,
     cpWOTSParams params;
     retCode = cp_xmss_set_params(pKey->OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
-    Ipp32s len = params.len;
-    Ipp32s n = params.n;
+    Ipp32s len               = params.len;
+    Ipp32s n                 = params.n;
     const Ipp32s numTempBufs = 10;
     IPP_BADARG_RET(msgLen > (Ipp32s)(IPP_MAX_32S) - (numTempBufs + len) * n, ippStsLengthErr);
 
-// description of internals for OTS Hash / L-tree / Hash tree address is following
-// +-----------------------------------------------------+
-// | layer address                              (32 bits)|
-// +-----------------------------------------------------+
-// | tree address                               (64 bits)|
-// +-----------------------------------------------------+
-// | type = 0 / 1 / 2                           (32 bits)|
-// +-----------------------------------------------------+
-// | OTS address / L-tree address / Padding = 0 (32 bits)|
-// +-----------------------------------------------------+
-// | chain address / tree height                (32 bits)|
-// +-----------------------------------------------------+
-// | hash address / tree index                  (32 bits)|
-// +-----------------------------------------------------+
-// | keyAndMask                                 (32 bits)|
-// +-----------------------------------------------------+
-    Ipp8u adrs[ADRS_SIZE] = { 0, 0, 0, 0,             //  0; 4
-                              0, 0, 0, 0, 0, 0, 0, 0, //  4; 12
-                              0, 0, 0, 0,             // 12; 16
-                              0, 0, 0, 0,             // 16; 20
-                              0, 0, 0, 0,             // 20; 24
-                              0, 0, 0, 0,             // 24; 28
-                              0, 0, 0, 0              // 28; 32
+    // description of internals for OTS Hash / L-tree / Hash tree address is following
+    // +-----------------------------------------------------+
+    // | layer address                              (32 bits)|
+    // +-----------------------------------------------------+
+    // | tree address                               (64 bits)|
+    // +-----------------------------------------------------+
+    // | type = 0 / 1 / 2                           (32 bits)|
+    // +-----------------------------------------------------+
+    // | OTS address / L-tree address / Padding = 0 (32 bits)|
+    // +-----------------------------------------------------+
+    // | chain address / tree height                (32 bits)|
+    // +-----------------------------------------------------+
+    // | hash address / tree index                  (32 bits)|
+    // +-----------------------------------------------------+
+    // | keyAndMask                                 (32 bits)|
+    // +-----------------------------------------------------+
+    Ipp8u adrs[ADRS_SIZE] = {
+        0, 0, 0, 0,             //  0; 4
+        0, 0, 0, 0, 0, 0, 0, 0, //  4; 12
+        0, 0, 0, 0,             // 12; 16
+        0, 0, 0, 0,             // 16; 20
+        0, 0, 0, 0,             // 20; 24
+        0, 0, 0, 0,             // 24; 28
+        0, 0, 0, 0              // 28; 32
     };
 
     Ipp32u idx = pSign->idx;
 
-    Ipp8u* pMsg_ = pBuffer;
+    Ipp8u* pMsg_    = pBuffer;
     Ipp8u* temp_key = pBuffer + n;
     Ipp8u* temp_buf = pBuffer + n + (len * n);
 
@@ -106,14 +109,19 @@ IPPFUN(IppStatus, ippsXMSSVerify,( const Ipp8u* pMsg,
     cp_to_byte(temp_buf + 3 * n, n, idx);
     CopyBlock(pMsg, temp_buf + 4 * n, msgLen);
 
-    retCode = ippsHashMessage_rmf(temp_buf, 4 * n + msgLen, pMsg_,
-        params.hash_method);
+    retCode = ippsHashMessage_rmf(temp_buf, 4 * n + msgLen, pMsg_, params.hash_method);
 
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     cp_xmss_set_ots_address(adrs, idx);
 
     // 1. get ots public key working with msg and ots signature
-    retCode = cp_xmss_WOTS_pkFromSig(pMsg_, pSign->pOTSSign, pKey->pSeed, adrs, temp_key, temp_buf, &params);
+    retCode = cp_xmss_WOTS_pkFromSig(pMsg_,
+                                     pSign->pOTSSign,
+                                     pKey->pSeed,
+                                     adrs,
+                                     temp_key,
+                                     temp_buf,
+                                     &params);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
     cp_xmss_set_tree_type(adrs, /*L-tree*/ 1);
@@ -125,15 +133,14 @@ IPPFUN(IppStatus, ippsXMSSVerify,( const Ipp8u* pMsg,
 
     cp_xmss_set_ots_address(adrs, 0);
 
-    for(Ipp32s i = 0; i < h; ++i){
-        cp_xmss_set_tree_height(adrs, (Ipp8u) i);
+    for (Ipp32s i = 0; i < h; ++i) {
+        cp_xmss_set_tree_height(adrs, (Ipp8u)i);
         // if we are the left child
         if (((pSign->idx / (1 << i)) & 1) == 0) {
             // leaf || auth_path
             CopyBlock(temp_key, temp_buf, n);
             CopyBlock(pSign->pAuthPath + (i * n), temp_buf + n, n);
-        }
-        else {
+        } else {
             // auth_path || leaf
             CopyBlock(pSign->pAuthPath + (i * n), temp_buf, n);
             CopyBlock(temp_key, temp_buf + n, n);
@@ -142,13 +149,19 @@ IPPFUN(IppStatus, ippsXMSSVerify,( const Ipp8u* pMsg,
         idx /= 2;
         cp_xmss_set_tree_index_32(adrs, idx);
 
-        retCode = cp_xmss_rand_hash(temp_buf, temp_buf + n, pKey->pSeed, adrs, temp_key, temp_buf + 2 * n, &params);
+        retCode = cp_xmss_rand_hash(temp_buf,
+                                    temp_buf + n,
+                                    pKey->pSeed,
+                                    adrs,
+                                    temp_key,
+                                    temp_buf + 2 * n,
+                                    &params);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     }
 
     // 3. verify with public key
     BNU_CHUNK_T is_equal = cpIsEquBlock_ct(pKey->pRoot, temp_key, n);
-    if(is_equal) {
+    if (is_equal) {
         *pIsSignValid = 1;
     }
     return retCode;

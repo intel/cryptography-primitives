@@ -38,11 +38,13 @@
 //    pBuffer      pointer to the temporary memory
 //
 *F*/
-IPPFUN(IppStatus, ippsXMSSKeyGen,( IppsXMSSPrivateKeyState* pPrvKey,
+/* clang-format off */
+IPPFUN(IppStatus, ippsXMSSKeyGen, (IppsXMSSPrivateKeyState* pPrvKey,
                                    IppsXMSSPublicKeyState* pPubKey,
                                    IppBitSupplier rndFunc,
                                    void* pRndParam,
                                    Ipp8u* pBuffer))
+/* clang-format on */
 {
     IppStatus retCode = ippStsNoErr;
 
@@ -61,34 +63,35 @@ IPPFUN(IppStatus, ippsXMSSKeyGen,( IppsXMSSPrivateKeyState* pPrvKey,
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     Ipp32s n = params.n;
 
-// description of internals for OTS Hash / L-tree / Hash tree address is following
-// +-----------------------------------------------------+
-// | layer address                              (32 bits)|
-// +-----------------------------------------------------+
-// | tree address                               (64 bits)|
-// +-----------------------------------------------------+
-// | type = 0 / 1 / 2                           (32 bits)|
-// +-----------------------------------------------------+
-// | OTS address / L-tree address / Padding = 0 (32 bits)|
-// +-----------------------------------------------------+
-// | chain address / tree height                (32 bits)|
-// +-----------------------------------------------------+
-// | hash address / tree index                  (32 bits)|
-// +-----------------------------------------------------+
-// | keyAndMask                                 (32 bits)|
-// +-----------------------------------------------------+
-    Ipp8u adrs[ADRS_SIZE] = { 0, 0, 0, 0,             //  0; 4
-                              0, 0, 0, 0, 0, 0, 0, 0, //  4; 12
-                              0, 0, 0, 0,             // 12; 16
-                              0, 0, 0, 0,             // 16; 20
-                              0, 0, 0, 0,             // 20; 24
-                              0, 0, 0, 0,             // 24; 28
-                              0, 0, 0, 0              // 28; 32
+    // description of internals for OTS Hash / L-tree / Hash tree address is following
+    // +-----------------------------------------------------+
+    // | layer address                              (32 bits)|
+    // +-----------------------------------------------------+
+    // | tree address                               (64 bits)|
+    // +-----------------------------------------------------+
+    // | type = 0 / 1 / 2                           (32 bits)|
+    // +-----------------------------------------------------+
+    // | OTS address / L-tree address / Padding = 0 (32 bits)|
+    // +-----------------------------------------------------+
+    // | chain address / tree height                (32 bits)|
+    // +-----------------------------------------------------+
+    // | hash address / tree index                  (32 bits)|
+    // +-----------------------------------------------------+
+    // | keyAndMask                                 (32 bits)|
+    // +-----------------------------------------------------+
+    Ipp8u adrs[ADRS_SIZE] = {
+        0, 0, 0, 0,             //  0; 4
+        0, 0, 0, 0, 0, 0, 0, 0, //  4; 12
+        0, 0, 0, 0,             // 12; 16
+        0, 0, 0, 0,             // 16; 20
+        0, 0, 0, 0,             // 20; 24
+        0, 0, 0, 0,             // 24; 28
+        0, 0, 0, 0              // 28; 32
     };
 
     // fill private key fields
     pPrvKey->idx = 0;
-    retCode = cp_xmss_rand_num(pPrvKey->pSecretSeed, n, rndFunc, pRndParam);
+    retCode      = cp_xmss_rand_num(pPrvKey->pSecretSeed, n, rndFunc, pRndParam);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
     retCode = cp_xmss_rand_num(pPrvKey->pSK_PRF, n, rndFunc, pRndParam);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
@@ -99,7 +102,14 @@ IPPFUN(IppStatus, ippsXMSSKeyGen,( IppsXMSSPrivateKeyState* pPrvKey,
     retCode = ippsXMSSKeyGenBufferGetSize(&pBufferSize, pPrvKey->OIDAlgo);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
-    retCode = cp_xmss_tree_hash(/*isKeyGen*/ 1, pPrvKey, adrs, pPrvKey->pRoot, /*empty*/ 0, pBuffer, h, &params);
+    retCode = cp_xmss_tree_hash(/*isKeyGen*/ 1,
+                                pPrvKey,
+                                adrs,
+                                pPrvKey->pRoot,
+                                /*empty*/ 0,
+                                pBuffer,
+                                h,
+                                &params);
     PurgeBlock(pBuffer, pBufferSize); // zeroize the temporary memory
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 

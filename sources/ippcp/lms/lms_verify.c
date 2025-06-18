@@ -43,11 +43,14 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
+/* clang-format off */
+IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
+                                  const Ipp32s msgLen,
                                   const IppsLMSSignatureState* pSign,
-                                  int*  pIsSignValid,
+                                  int* pIsSignValid,
                                   const IppsLMSPublicKeyState* pKey,
                                   Ipp8u* pBuffer))
+/* clang-format on */
 {
     IppStatus ippcpSts = ippStsNoErr;
 
@@ -57,13 +60,13 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
     IPP_BAD_PTR1_RET(pBuffer)
     /* Check msg length */
     IPP_BADARG_RET(msgLen < 1, ippStsLengthErr)
-    IPP_BADARG_RET( !CP_LMS_VALID_CTX_ID(pSign), ippStsContextMatchErr );
-    IPP_BADARG_RET( !CP_LMS_VALID_CTX_ID(pKey), ippStsContextMatchErr );
+    IPP_BADARG_RET(!CP_LMS_VALID_CTX_ID(pSign), ippStsContextMatchErr);
+    IPP_BADARG_RET(!CP_LMS_VALID_CTX_ID(pKey), ippStsContextMatchErr);
     *pIsSignValid = 0;
 
     /*              Parse public key(Pk)             */
     /* --------------------------------------------- */
-    IppsLMSAlgo lmsTypePk = pKey->lmsOIDAlgo;
+    IppsLMSAlgo lmsTypePk     = pKey->lmsOIDAlgo;
     IppsLMOTSAlgo lmotsTypePk = pKey->lmotsOIDAlgo;
 
     // Set LMOTS and LMS parameters
@@ -81,131 +84,147 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
 
     /*                    Parse signature                   */
     /* ---------------------------------------------------- */
-    Ipp32u q = pSign->_q;
+    Ipp32u q                        = pSign->_q;
     _cpLMOTSSignatureState lmotsSig = pSign->_lmotsSig;
-    IppsLMOTSAlgo lmotsTypeSig = lmotsSig._lmotsOIDAlgo;
-    IppsLMSAlgo lmsTypeSig = pSign->_lmsOIDAlgo;
-    Ipp8u* pAuthPath = pSign->_pAuthPath;
+    IppsLMOTSAlgo lmotsTypeSig      = lmotsSig._lmotsOIDAlgo;
+    IppsLMSAlgo lmsTypeSig          = pSign->_lmsOIDAlgo;
+    Ipp8u* pAuthPath                = pSign->_pAuthPath;
 
     // Check the validity of the parsed signature parameters
     Ipp32u qLimit = 1 << hParam;
-    if((lmsTypePk != lmsTypeSig) || (lmotsTypePk != lmotsTypeSig) || (q >= qLimit))
-    {
+    if ((lmsTypePk != lmsTypeSig) || (lmotsTypePk != lmotsTypeSig) || (q >= qLimit)) {
         return ippStsBadArgErr;
     }
 
     /* Compute LMS pub key candidate (Algorithms 6a and 4b) */
     /* ---------------------------------------------------- */
-    Ipp8u* tmpQBuf = pBuffer;
+    Ipp8u* tmpQBuf    = pBuffer;
     Ipp32u total_size = 0;
     // Buffer's invariant for alg correctness - first 16 bytes is always pubKey->I
-    CopyBlock(pKey->I, tmpQBuf, CP_PK_I_BYTESIZE); total_size+=CP_PK_I_BYTESIZE;
-    cp_to_byte(tmpQBuf+total_size, /*q byteLen*/ 4, q); total_size += /*q byteLen*/ 4;
-    cp_to_byte(tmpQBuf+total_size, /*D_MESG byteLen*/ 2, D_MESG); total_size += /*D_MESG byteLen*/ 2;
-    CopyBlock(lmotsSig.pC, tmpQBuf+total_size, (cpSize)nParam); total_size += nParam;
-    CopyBlock(pMsg, tmpQBuf+total_size, msgLen); total_size += (Ipp32u)msgLen;
+    CopyBlock(pKey->I, tmpQBuf, CP_PK_I_BYTESIZE);
+    total_size += CP_PK_I_BYTESIZE;
+    cp_to_byte(tmpQBuf + total_size, /*q byteLen*/ 4, q);
+    total_size += /*q byteLen*/ 4;
+    cp_to_byte(tmpQBuf + total_size, /*D_MESG byteLen*/ 2, D_MESG);
+    total_size += /*D_MESG byteLen*/ 2;
+    CopyBlock(lmotsSig.pC, tmpQBuf + total_size, (cpSize)nParam);
+    total_size += nParam;
+    CopyBlock(pMsg, tmpQBuf + total_size, msgLen);
+    total_size += (Ipp32u)msgLen;
 
     // Q = H(I || u32str(q) || u16str(D_MESG) || C || message)
-    Ipp8u Q_CksmQ[CP_LMS_MAX_HASH_BYTESIZE+CP_CKSM_BYTESIZE];
+    Ipp8u Q_CksmQ[CP_LMS_MAX_HASH_BYTESIZE + CP_CKSM_BYTESIZE];
     ippcpSts = ippsHashMessage_rmf(tmpQBuf, (int)total_size, Q_CksmQ, lmsParams.hash_method);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
     /* Calculate checksum Cksm(Q) and append it to Q */
     Ipp32u cksmQ = cpCksm(Q_CksmQ, lmotsParams);
-    cp_to_byte(Q_CksmQ+nParam, /*cksmQ byteLen*/2, cksmQ);
+    cp_to_byte(Q_CksmQ + nParam, /*cksmQ byteLen*/ 2, cksmQ);
 
-    Ipp8u z[CP_SIG_MAX_Y_WORDSIZE+1][CP_LMS_MAX_HASH_BYTESIZE];
+    Ipp8u z[CP_SIG_MAX_Y_WORDSIZE + 1][CP_LMS_MAX_HASH_BYTESIZE];
     Ipp8u* pZ = z[0];
 
-    for(Ipp32u i = 0; i < pParam; i++) {
+    for (Ipp32u i = 0; i < pParam; i++) {
         // a = coef(Q || Cksm(Q), i, w)
         Ipp32u a = cpCoef(Q_CksmQ, i, wParam);
         //tmp = y[i]
         Ipp8u tmp[CP_LMS_MAX_HASH_BYTESIZE];
-        CopyBlock(lmotsSig.pY + i*nParam, tmp, (cpSize)nParam);
+        CopyBlock(lmotsSig.pY + i * nParam, tmp, (cpSize)nParam);
 
         // I || u32str(q)
         Ipp8u* tmpBuff = pBuffer;
         // I || u32str(q) || u16str(i)
-        cp_to_byte(tmpBuff+CP_PK_I_BYTESIZE+/*q byteLen*/4,/*i byteLen*/2,i);
-        for(Ipp32u j = a; j < (Ipp32u)((1 << wParam) - 1); j++) {
+        cp_to_byte(tmpBuff + CP_PK_I_BYTESIZE + /*q byteLen*/ 4, /*i byteLen*/ 2, i);
+        for (Ipp32u j = a; j < (Ipp32u)((1 << wParam) - 1); j++) {
             // I || u32str(q) || u16str(i) || u8str(j)
-            cp_to_byte(tmpBuff+CP_PK_I_BYTESIZE+/*q byteLen*/4+/*i byteLen*/2,/*j byteLen*/1,j);
+            cp_to_byte(tmpBuff + CP_PK_I_BYTESIZE + /*q byteLen*/ 4 + /*i byteLen*/ 2,
+                       /*j byteLen*/ 1,
+                       j);
             // I || u32str(q) || u16str(i) || u8str(j) || tmp
-            CopyBlock(tmp, tmpBuff+CP_PK_I_BYTESIZE+/*q byteLen*/4+/*i byteLen*/2+/*j byteLen*/1, (cpSize)nParam);
+            CopyBlock(tmp,
+                      tmpBuff + CP_PK_I_BYTESIZE + /*q byteLen*/ 4 + /*i byteLen*/ 2 +
+                          /*j byteLen*/ 1,
+                      (cpSize)nParam);
             // tmp = H(I || u32str(q) || u16str(i) || u8str(j) || tmp)
             ippcpSts = ippsHashMessage_rmf(tmpBuff,
-                                           (int)(CP_PK_I_BYTESIZE+/*q byteLen*/4+/*i byteLen*/2+/*j byteLen*/1+nParam),
+                                           (int)(CP_PK_I_BYTESIZE + /*q byteLen*/ 4 +
+                                                 /*i byteLen*/ 2 + /*j byteLen*/ 1 + nParam),
                                            tmp,
                                            lmsParams.hash_method);
             IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
         }
-        CopyBlock(tmp, pZ+(i+1)*nParam, (cpSize)nParam);
+        CopyBlock(tmp, pZ + (i + 1) * nParam, (cpSize)nParam);
     }
     //                                              I           u32str(q)   u16str(D_PBLC)
-    Ipp32s zStartOffset = (Ipp32s)(nParam - (CP_PK_I_BYTESIZE +     4     +      2        ));
+    Ipp32s zStartOffset = (Ipp32s)(nParam - (CP_PK_I_BYTESIZE + 4 + 2));
     //                                            I          u16str(D_PBLC)
-    CopyBlock(tmpQBuf, pZ + zStartOffset, CP_PK_I_BYTESIZE +       4       );
+    CopyBlock(tmpQBuf, pZ + zStartOffset, CP_PK_I_BYTESIZE + 4);
     // Conduct operation u16str(D_PBLC)
-    cp_to_byte(pZ + nParam - /*D_PBLC byteLen*/2, /*D_PBLC byteLen*/2, D_PBLC);
+    cp_to_byte(pZ + nParam - /*D_PBLC byteLen*/ 2, /*D_PBLC byteLen*/ 2, D_PBLC);
     // tmp = Kc = H(I || u32str(q) || u16str(D_PBLC) || z[0] || z[1] || ... || z[p-1])
     Ipp8u Kc[CP_LMS_MAX_HASH_BYTESIZE];
-    ippcpSts = ippsHashMessage_rmf(pZ+zStartOffset,
-                                   (int)(pParam*nParam+CP_PK_I_BYTESIZE+/*q byteLen*/4+/*D_PBLC byteLen*/2),
-                                   Kc,
-                                   lmsParams.hash_method);
+    ippcpSts = ippsHashMessage_rmf(
+        pZ + zStartOffset,
+        (int)(pParam * nParam + CP_PK_I_BYTESIZE + /*q byteLen*/ 4 + /*D_PBLC byteLen*/ 2),
+        Kc,
+        lmsParams.hash_method);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
     /*    Compute the candidate LMS root value Tc    */
     /* --------------------------------------------- */
-    Ipp32u node_num = (1 << hParam) + q;
+    Ipp32u node_num  = (1 << hParam) + q;
     Ipp8u* tmpBuffKc = pBuffer;
     // I || u32str(node_num)
-    cp_to_byte(tmpBuffKc+CP_PK_I_BYTESIZE, /*node_num byteLen*/4, node_num);
+    cp_to_byte(tmpBuffKc + CP_PK_I_BYTESIZE, /*node_num byteLen*/ 4, node_num);
     // I || u32str(node_num) || u16str(D_LEAF)
-    cp_to_byte(tmpBuffKc+CP_PK_I_BYTESIZE+/*node_num byteLen*/4, /*D_LEAF byteLen*/2, D_LEAF);
+    cp_to_byte(tmpBuffKc + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4, /*D_LEAF byteLen*/ 2, D_LEAF);
     // I || u32str(node_num) || u16str(D_LEAF) || Kc
-    CopyBlock(Kc, tmpBuffKc+CP_PK_I_BYTESIZE+/*node_num byteLen*/4+/*D_LEAF byteLen*/2, (cpSize)mParam);
+    CopyBlock(Kc,
+              tmpBuffKc + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_LEAF byteLen*/ 2,
+              (cpSize)mParam);
     Ipp8u tmp[CP_LMS_MAX_HASH_BYTESIZE];
-    ippcpSts = ippsHashMessage_rmf(tmpBuffKc,
-                                   (int)(CP_PK_I_BYTESIZE+/*node_num byteLen*/4+/*D_LEAF byteLen*/2+mParam),
-                                   tmp,
-                                   lmsParams.hash_method);
+    ippcpSts = ippsHashMessage_rmf(
+        tmpBuffKc,
+        (int)(CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_LEAF byteLen*/ 2 + mParam),
+        tmp,
+        lmsParams.hash_method);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
-    Ipp32u i = 0;
+    Ipp32u i      = 0;
     Ipp8u* locTmp = pBuffer;
     // I || u32str(node_num/2) || u16str(D_INTR)
-    cp_to_byte(locTmp+CP_PK_I_BYTESIZE+/*node_num byteLen*/4, /*D_INTR byteLen*/2, D_INTR);
+    cp_to_byte(locTmp + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4, /*D_INTR byteLen*/ 2, D_INTR);
     while (node_num > 1) {
         // I || u32str(node_num/2)
-        cp_to_byte(locTmp+CP_PK_I_BYTESIZE, /*node_num byteLen*/4, node_num/2);
+        cp_to_byte(locTmp + CP_PK_I_BYTESIZE, /*node_num byteLen*/ 4, node_num / 2);
 
-        if((node_num & 1) == 1) {
+        if ((node_num & 1) == 1) {
             // I || u32str(node_num/2) || u16str(D_INTR) || path[i]
-            CopyBlock(pAuthPath+i*mParam,
-                      locTmp+CP_PK_I_BYTESIZE+/*node_num byteLen*/4+/*D_INTR byteLen*/2,
+            CopyBlock(pAuthPath + i * mParam,
+                      locTmp + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_INTR byteLen*/ 2,
                       (cpSize)mParam);
             // I || u32str(node_num/2) || u16str(D_INTR) || path[i] || tmp
             CopyBlock(tmp,
-                      locTmp+CP_PK_I_BYTESIZE+/*node_num byteLen*/4+/*D_INTR byteLen*/2+mParam,
+                      locTmp + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_INTR byteLen*/ 2 +
+                          mParam,
                       (cpSize)mParam);
-        }
-        else {
+        } else {
             // I || u32str(node_num/2) || u16str(D_INTR) || tmp
             CopyBlock(tmp,
-                      locTmp+CP_PK_I_BYTESIZE+/*node_num byteLen*/4+/*D_INTR byteLen*/2,
+                      locTmp + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_INTR byteLen*/ 2,
                       (cpSize)mParam);
             // I || u32str(node_num/2) || u16str(D_INTR) || tmp || path[i]
-            CopyBlock(pAuthPath+i*mParam,
-                      locTmp+CP_PK_I_BYTESIZE+/*node_num byteLen*/4+/*D_INTR byteLen*/2+mParam,
+            CopyBlock(pAuthPath + i * mParam,
+                      locTmp + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_INTR byteLen*/ 2 +
+                          mParam,
                       (cpSize)mParam);
         }
 
-        ippcpSts = ippsHashMessage_rmf(locTmp,
-                                       (int)(CP_PK_I_BYTESIZE+/*node_num byteLen*/4+/*D_INTR byteLen*/2+2*mParam),
-                                       tmp,
-                                       lmotsParams.hash_method);
+        ippcpSts = ippsHashMessage_rmf(
+            locTmp,
+            (int)(CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_INTR byteLen*/ 2 + 2 * mParam),
+            tmp,
+            lmotsParams.hash_method);
         IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
         node_num = node_num >> 1;
@@ -215,7 +234,7 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
     /*          Verify with given public key         */
     /* --------------------------------------------- */
     BNU_CHUNK_T is_equal = cpIsEquBlock_ct(pKey->T1, tmp, (int)mParam);
-    if(is_equal) {
+    if (is_equal) {
         *pIsSignValid = 1;
     }
 

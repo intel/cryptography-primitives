@@ -38,11 +38,12 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSSetPublicKeyState,( IppsXMSSAlgo OIDAlgo,
-    const Ipp8u* pRoot,
-    const Ipp8u* pSeed,
-    IppsXMSSPublicKeyState* pState
-))
+/* clang-format off */
+IPPFUN(IppStatus, ippsXMSSSetPublicKeyState, (IppsXMSSAlgo OIDAlgo,
+                                              const Ipp8u* pRoot,
+                                              const Ipp8u* pSeed,
+                                              IppsXMSSPublicKeyState* pState))
+/* clang-format on */
 {
     IPP_BAD_PTR1_RET(pRoot);
     IPP_BAD_PTR1_RET(pSeed);
@@ -52,7 +53,7 @@ IPPFUN(IppStatus, ippsXMSSSetPublicKeyState,( IppsXMSSAlgo OIDAlgo,
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = cp_xmss_set_params(OIDAlgo, &h, &params);
+    status   = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
 
     pState->OIDAlgo = OIDAlgo;
@@ -96,13 +97,14 @@ IPPFUN(IppStatus, ippsXMSSSetPublicKeyState,( IppsXMSSAlgo OIDAlgo,
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSSetSignatureState,( IppsXMSSAlgo OIDAlgo,
-    Ipp32u idx,
-    const Ipp8u* r,
-    const Ipp8u* pOTSSign,
-    const Ipp8u* pAuthPath,
-    IppsXMSSSignatureState* pState
-))
+/* clang-format off */
+IPPFUN(IppStatus, ippsXMSSSetSignatureState, (IppsXMSSAlgo OIDAlgo,
+                                              Ipp32u idx,
+                                              const Ipp8u* r,
+                                              const Ipp8u* pOTSSign,
+                                              const Ipp8u* pAuthPath,
+                                              IppsXMSSSignatureState* pState))
+/* clang-format on */
 {
     IPP_BAD_PTR1_RET(r);
     IPP_BAD_PTR1_RET(pOTSSign);
@@ -113,13 +115,13 @@ IPPFUN(IppStatus, ippsXMSSSetSignatureState,( IppsXMSSAlgo OIDAlgo,
     IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
-    Ipp32s h = 0;
-    status = cp_xmss_set_params(OIDAlgo, &h, &params);
-    Ipp32s n = params.n;
+    Ipp32s h   = 0;
+    status     = cp_xmss_set_params(OIDAlgo, &h, &params);
+    Ipp32s n   = params.n;
     Ipp32s len = params.len;
 
     pState->idx = idx;
-    Ipp8u* ptr = (Ipp8u*)pState;
+    Ipp8u* ptr  = (Ipp8u*)pState;
 
     /* allocate internal contexts */
     ptr += sizeof(IppsXMSSSignatureState);
@@ -155,22 +157,22 @@ IPPFUN(IppStatus, ippsXMSSSetSignatureState,( IppsXMSSAlgo OIDAlgo,
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSSignatureStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
+IPPFUN(IppStatus, ippsXMSSSignatureStateGetSize, (Ipp32s * pSize, IppsXMSSAlgo OIDAlgo))
 {
     IPP_BAD_PTR1_RET(pSize);
     IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
     IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
-    Ipp32s h = 0;
-    status = cp_xmss_set_params(OIDAlgo, &h, &params);
-    Ipp32s n = params.n;
+    Ipp32s h   = 0;
+    status     = cp_xmss_set_params(OIDAlgo, &h, &params);
+    Ipp32s n   = params.n;
     Ipp32s len = params.len;
 
     *pSize = (Ipp32s)sizeof(IppsXMSSSignatureState) +
-        /*r*/n +
-        /*pOTSSign*/len * n +
-        /*pAuthPath*/h * n;
+             /*r*/ n +
+             /*pOTSSign*/ len * n +
+             /*pAuthPath*/ h * n;
     return status;
 }
 
@@ -191,7 +193,7 @@ IPPFUN(IppStatus, ippsXMSSSignatureStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OI
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSPublicKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
+IPPFUN(IppStatus, ippsXMSSPublicKeyStateGetSize, (Ipp32s * pSize, IppsXMSSAlgo OIDAlgo))
 {
     IPP_BAD_PTR1_RET(pSize);
     IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
@@ -199,12 +201,12 @@ IPPFUN(IppStatus, ippsXMSSPublicKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OI
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = cp_xmss_set_params(OIDAlgo, &h, &params);
+    status   = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
 
     *pSize = (Ipp32s)sizeof(IppsXMSSPublicKeyState) +
-        /*pRoot*/n +
-        /*pSeed*/n;
+             /*pRoot*/ n +
+             /*pSeed*/ n;
     return status;
 }
 
@@ -225,7 +227,7 @@ IPPFUN(IppStatus, ippsXMSSPublicKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OI
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSPrivateKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
+IPPFUN(IppStatus, ippsXMSSPrivateKeyStateGetSize, (Ipp32s * pSize, IppsXMSSAlgo OIDAlgo))
 {
     IPP_BAD_PTR1_RET(pSize);
     IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
@@ -233,14 +235,14 @@ IPPFUN(IppStatus, ippsXMSSPrivateKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo O
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = cp_xmss_set_params(OIDAlgo, &h, &params);
+    status   = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
 
     *pSize = (Ipp32s)sizeof(IppsXMSSPrivateKeyState) +
-        /*pSecretSeed*/n +
-        /*pSK_PRF*/n +
-        /*pRoot*/n +
-        /*pPublicSeed*/n;
+             /*pSecretSeed*/ n +
+             /*pSK_PRF*/ n +
+             /*pRoot*/ n +
+             /*pPublicSeed*/ n;
     return status;
 }
 
@@ -264,7 +266,11 @@ IPPFUN(IppStatus, ippsXMSSPrivateKeyStateGetSize,( Ipp32s* pSize, IppsXMSSAlgo O
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+/* clang-format off */
+IPPFUN(IppStatus, ippsXMSSBufferGetSize, (Ipp32s* pSize,
+                                          Ipp32s maxMessageLength,
+                                          IppsXMSSAlgo OIDAlgo))
+/* clang-format on */
 {
     IppStatus status = ippStsNoErr;
 
@@ -281,10 +287,11 @@ IPPFUN(IppStatus, ippsXMSSBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength
 
     const Ipp32s numTempBufs = 10;
 
-    Ipp32s n = params.n;
+    Ipp32s n   = params.n;
     Ipp32s len = params.len;
     // this restriction is needed to avoid overflow of Ipp32s
-    IPP_BADARG_RET(maxMessageLength > (Ipp32s)(IPP_MAX_32S) - (numTempBufs + len) * n, ippStsLengthErr);
+    IPP_BADARG_RET(maxMessageLength > (Ipp32s)(IPP_MAX_32S) - (numTempBufs + len) * n,
+                   ippStsLengthErr);
 
     *pSize = (numTempBufs + len) * n + maxMessageLength;
     return status;
@@ -310,7 +317,11 @@ IPPFUN(IppStatus, ippsXMSSBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSVerifyBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+/* clang-format off */
+IPPFUN(IppStatus, ippsXMSSVerifyBufferGetSize, (Ipp32s* pSize,
+                                                Ipp32s maxMessageLength,
+                                                IppsXMSSAlgo OIDAlgo))
+/* clang-format on */
 {
     return ippsXMSSBufferGetSize(pSize, maxMessageLength, OIDAlgo);
 }
@@ -332,7 +343,7 @@ IPPFUN(IppStatus, ippsXMSSVerifyBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessage
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSKeyGenBufferGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
+IPPFUN(IppStatus, ippsXMSSKeyGenBufferGetSize, (Ipp32s * pSize, IppsXMSSAlgo OIDAlgo))
 {
     IppStatus status = ippStsNoErr;
 
@@ -346,7 +357,7 @@ IPPFUN(IppStatus, ippsXMSSKeyGenBufferGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDA
     status = cp_xmss_set_params(OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != status), status)
 
-    Ipp32s n = params.n;
+    Ipp32s n   = params.n;
     Ipp32s len = params.len;
 
     *pSize = (h + 1) * (n + 1) + 2 * len * n + 7 * n + ADRS_SIZE;
@@ -373,7 +384,11 @@ IPPFUN(IppStatus, ippsXMSSKeyGenBufferGetSize,( Ipp32s* pSize, IppsXMSSAlgo OIDA
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSSignBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+/* clang-format off */
+IPPFUN(IppStatus, ippsXMSSSignBufferGetSize, (Ipp32s* pSize,
+                                              Ipp32s maxMessageLength,
+                                              IppsXMSSAlgo OIDAlgo))
+/* clang-format on */
 {
     IppStatus status = ippStsNoErr;
 
@@ -388,7 +403,7 @@ IPPFUN(IppStatus, ippsXMSSSignBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLe
     status = cp_xmss_set_params(OIDAlgo, &h, &params);
     IPP_BADARG_RET((ippStsNoErr != status), status)
 
-    Ipp32s n = params.n;
+    Ipp32s n   = params.n;
     Ipp32s len = params.len;
 
     Ipp32s key_gen_size;
@@ -396,7 +411,8 @@ IPPFUN(IppStatus, ippsXMSSSignBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLe
     IPP_BADARG_RET((ippStsNoErr != status), status)
 
     // this restriction is needed to avoid overflow of Ipp32s
-    IPP_BADARG_RET(maxMessageLength > (Ipp32s)(IPP_MAX_32S) - (n + 5 * n + len + key_gen_size), ippStsLengthErr);
+    IPP_BADARG_RET(maxMessageLength > (Ipp32s)(IPP_MAX_32S) - (n + 5 * n + len + key_gen_size),
+                   ippStsLengthErr);
 
     *pSize = maxMessageLength + n + 5 * n + len + key_gen_size;
     return status;
@@ -420,9 +436,11 @@ IPPFUN(IppStatus, ippsXMSSSignBufferGetSize,( Ipp32s* pSize, Ipp32s maxMessageLe
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSInitKeyPair,( IppsXMSSAlgo OIDAlgo,
-    IppsXMSSPrivateKeyState* pPrvKey,
-    IppsXMSSPublicKeyState* pPubKey))
+/* clang-format off */
+IPPFUN(IppStatus, ippsXMSSInitKeyPair, (IppsXMSSAlgo OIDAlgo,
+                                        IppsXMSSPrivateKeyState* pPrvKey,
+                                        IppsXMSSPublicKeyState* pPubKey))
+/* clang-format on */
 {
     IPP_BAD_PTR1_RET(pPrvKey);
     IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
@@ -430,30 +448,30 @@ IPPFUN(IppStatus, ippsXMSSInitKeyPair,( IppsXMSSAlgo OIDAlgo,
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
     Ipp32s h = 0;
-    status = cp_xmss_set_params(OIDAlgo, &h, &params);
+    status   = cp_xmss_set_params(OIDAlgo, &h, &params);
     Ipp32s n = params.n;
 
     // init private key state
     pPrvKey->OIDAlgo = OIDAlgo;
-    pPrvKey->idx = 0;
+    pPrvKey->idx     = 0;
 
     Ipp8u* ptr = (Ipp8u*)pPrvKey;
 
     /* allocate internal contexts */
     ptr += sizeof(IppsXMSSPrivateKeyState);
 
-    pPrvKey->pSecretSeed = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)) );
+    pPrvKey->pSecretSeed = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)));
     ptr += n;
 
-    pPrvKey->pSK_PRF = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)) );
+    pPrvKey->pSK_PRF = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)));
     ptr += n;
 
     pPrvKey->pRoot = ptr;
     ptr += n;
 
-    pPrvKey->pPublicSeed = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)) );
+    pPrvKey->pPublicSeed = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)));
 
-    if(pPubKey != NULL) {
+    if (pPubKey != NULL) {
         // init public key state
         pPubKey->OIDAlgo = OIDAlgo;
 
@@ -465,7 +483,7 @@ IPPFUN(IppStatus, ippsXMSSInitKeyPair,( IppsXMSSAlgo OIDAlgo,
         pPubKey->pRoot = ptr;
         ptr += n;
 
-        pPubKey->pSeed = (Ipp8u*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)) );
+        pPubKey->pSeed = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), (int)sizeof(Ipp32u)));
     }
 
     return status;
@@ -488,17 +506,16 @@ IPPFUN(IppStatus, ippsXMSSInitKeyPair,( IppsXMSSAlgo OIDAlgo,
 //
 *F*/
 
-IPPFUN(IppStatus, ippsXMSSInitSignature,( IppsXMSSAlgo OIDAlgo,
-    IppsXMSSSignatureState* pState))
+IPPFUN(IppStatus, ippsXMSSInitSignature, (IppsXMSSAlgo OIDAlgo, IppsXMSSSignatureState* pState))
 {
     IPP_BAD_PTR1_RET(pState);
     IPP_BADARG_RET(OIDAlgo > XMSS_SHA2_20_512, ippStsBadArgErr);
     IPP_BADARG_RET(OIDAlgo < XMSS_SHA2_10_256, ippStsBadArgErr);
     IppStatus status = ippStsNoErr;
     cpWOTSParams params;
-    Ipp32s h = 0;
-    status = cp_xmss_set_params(OIDAlgo, &h, &params);
-    Ipp32s n = params.n;
+    Ipp32s h   = 0;
+    status     = cp_xmss_set_params(OIDAlgo, &h, &params);
+    Ipp32s n   = params.n;
     Ipp32s len = params.len;
 
     pState->idx = 0;
