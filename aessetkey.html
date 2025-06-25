@@ -762,7 +762,7 @@ pCtx);</p>
 <td><p>Pointer to the AES key.</p></td>
 </tr>
 <tr class="row-even"><td><p>keylen</p></td>
-<td><p>Length of the secret key.</p></td>
+<td><p>Length of the secret key (in bytes).</p></td>
 </tr>
 <tr class="row-odd"><td><p>pCtx</p></td>
 <td><p>Pointer to the initialized IppsAESSpec context.</p></td>
@@ -793,6 +793,9 @@ releasing the context.</p>
 </tr>
 <tr class="row-odd"><td><p>ippStsLengthErr</p></td>
 <td><p>Returns an error condition if keyLen is not equal to 16, 24, or 32.</p></td>
+</tr>
+<tr class="row-even"><td><p>ippStsContextMatchErr</p></td>
+<td><p>Returns an error condition if the provided AES state is invalid (for example, not initialized).</p></td>
 </tr>
 </tbody>
 </table>
