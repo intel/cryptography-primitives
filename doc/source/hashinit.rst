@@ -85,7 +85,9 @@ Return Values
    * -     ippStsNoErr
      -     Indicates no error. Any other value indicates an error or warning.
    * -     ippStsNullPtrErr
-     -     Indicates an error condition if any of the specified pointers is NULL.
+     -     Indicates an error condition if any of the specified pointers is NULL or pMethod is not initialized.
+           This return status can also correspond to an internal functional error. If this output status appears,
+           update to the latest version of the library or contact `Intel <https://github.com/intel/cryptography-primitives/issues>`_.
    * -     ippStsNotSupportedModeErr
      -     Indicates an error condition if the hashAlg parameter does not match any value of IppHashAlg listed in table :ref:`Supported Hash Algorithms <one-way-hash-primitives>`.
 

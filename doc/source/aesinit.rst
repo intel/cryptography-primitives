@@ -36,7 +36,7 @@ Parameters
    * - pCtx   
      - Pointer to the buffer being initialized as IppsAESSpec context.
    * - ctxSize   
-     - Available size of the buffer being initialized.
+     - Available size of the buffer being initialized (in bytes).
 
 
 

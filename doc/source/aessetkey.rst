@@ -33,7 +33,7 @@ Parameters
    * - pKey   
      - Pointer to the AES key.
    * - keylen    
-     - Length of the secret key.
+     - Length of the secret key (in bytes).
    * - pCtx   
      - Pointer to the initialized IppsAESSpec context.
 
@@ -69,7 +69,8 @@ Return Values
      - Indicates an error condition if the pCtx pointer is NULL.
    * - ippStsLengthErr   
      - Returns an error condition if keyLen is not equal to 16, 24, or 32.
-
+   * - ippStsContextMatchErr
+     - Returns an error condition if the provided AES state is invalid (for example, not initialized).
 
 .. rubric:: Related Information 
 

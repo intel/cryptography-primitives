@@ -39,6 +39,8 @@
 // Returns:                Reason:
 //    ippStsNullPtrErr           pState == NULL
 //                               pMethod == NULL
+//                               pMethod is not initialized
+//                               An internal functional error, see documentation for more details
 //    ippStsNoErr                no errors
 //
 // Parameters:
@@ -50,14 +52,20 @@ IPPFUN(IppStatus, ippsHashInit_rmf, (IppsHashState_rmf * pState, const IppsHashM
 {
     /* test ctx pointers */
     IPP_BAD_PTR2_RET(pState, pMethod);
-    int size = 0;
-    ippsHashGetSizeOptimal_rmf(&size, pMethod);
-    PadBlock(0, pState, size);
+    /* check that hashInit function inside the pMethod is valid (pMethod was initialized correctly) */
+    IPP_BAD_PTR1_RET(pMethod->hashInit);
+
+    int stateSize = 0;
+    ippsHashGetSizeOptimal_rmf(&stateSize, pMethod);
+    PadBlock(0, pState, stateSize);
     HASH_METHOD(pState) = pMethod;
     HASH_SET_ID(pState, idCtxHash);
 
     /* setup pointers to buffer and hash */
     HASH_SETUP_POINTERS(pState);
+
+    /* check that pointer to the intermediate hash set up correctly */
+    IPP_BAD_PTR2_RET(HASH_VALUE(pState), HASH_BUFF(pState));
 
     pMethod->hashInit(HASH_VALUE(pState));
     return ippStsNoErr;
