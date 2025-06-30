@@ -32,10 +32,18 @@
 #define cpAesGCM_setup_ptrs_and_methods OWNAPI(cpAesGCM_setup_ptrs_and_methods)
 IPP_OWN_DECL(void, cpAesGCM_setup_ptrs_and_methods, (IppsAES_GCMState * pCtx, Ipp64u keyByteLen))
 
+/* clang-format off */
 #define condNoisedGCMEncryption OWNAPI(condNoisedGCMEncryption)
-IPP_OWN_DECL(void, condNoisedGCMEncryption, (const Ipp8u* pSrc, Ipp8u* pDst, int ptxt_len, IppsAES_GCMState* pState))
+IPP_OWN_DECL(void, condNoisedGCMEncryption, (const Ipp8u* pSrc,
+                                             Ipp8u* pDst,
+                                             int ptxt_len,
+                                             IppsAES_GCMState* pState))
 
 #define condNoisedGCMDecryption OWNAPI(condNoisedGCMDecryption)
-IPP_OWN_DECL(void, condNoisedGCMDecryption, (const Ipp8u* pSrc, Ipp8u* pDst, int ptxt_len, IppsAES_GCMState* pState))
+IPP_OWN_DECL(void, condNoisedGCMDecryption, (const Ipp8u* pSrc,
+                                             Ipp8u* pDst,
+                                             int ptxt_len,
+                                             IppsAES_GCMState* pState))
+/* clang-format on */
 
 #endif /* _PCP_AES_GCM_INTERNAL_FUNC_H */

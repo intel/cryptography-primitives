@@ -36,19 +36,21 @@
 // definition of RSA exponentiation (PX/GPR based)
 */
 
-IPP_OWN_DEFN (gsMethod_RSA*, gsMethod_RSA_gpr_private, (void))
+IPP_OWN_DEFN(gsMethod_RSA*, gsMethod_RSA_gpr_private, (void))
 {
-   static gsMethod_RSA m = {
-      MIN_RSA_SIZE, MAX_RSA_SIZE,   /* RSA range */
+    static gsMethod_RSA m = {
+        MIN_RSA_SIZE,
+        MAX_RSA_SIZE, /* RSA range */
 
-      /* private key exponentiation: private, window, gpr */
-      gsMontExpWinBuffer,
-      #if !defined(_USE_WINDOW_EXP_)
-      gsModExpBin_BNU_sscm
-      #else
-      gsModExpWin_BNU_sscm
-      #endif
-      , NULL
-   };
-   return &m;
+        /* private key exponentiation: private, window, gpr */
+        gsMontExpWinBuffer,
+#if !defined(_USE_WINDOW_EXP_)
+        gsModExpBin_BNU_sscm
+#else
+        gsModExpWin_BNU_sscm
+#endif
+        ,
+        NULL
+    };
+    return &m;
 }

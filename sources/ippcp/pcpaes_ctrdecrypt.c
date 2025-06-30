@@ -14,18 +14,18 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES encryption/decryption (CTR mode)
-// 
+//
 //  Contents:
 //        ippsAESDecryptCTR()
 //
 */
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-#pragma warning(disable: 4206) // empty unit
+#pragma warning(disable : 4206) // empty unit
 #endif
 
 #include "owndefs.h"
@@ -63,20 +63,26 @@
 //
 */
 
-IPPFUN(IppStatus, ippsAESDecryptCTR,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                                     const IppsAESSpec* pCtx,
-                                     Ipp8u* pCtrValue, int ctrNumBitSize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAESDecryptCTR, (const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
+                                      const IppsAESSpec* pCtx,
+                                      Ipp8u* pCtrValue,
+                                      int ctrNumBitSize))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
 
-   #if(_IPP32E>=_IPP32E_Y8)
-   if(AES_NI_ENABLED==RIJ_AESNI(pCtx))
-      return ctrNumBitSize==128? cpProcessAES_ctr128(pSrc, pDst, len, pCtx, pCtrValue) :
-                                 cpProcessAES_ctr(pSrc, pDst, len, pCtx, pCtrValue, ctrNumBitSize);
-   else
-      return cpProcessAES_ctr(pSrc, pDst, len, pCtx, pCtrValue, ctrNumBitSize);
-   #else
-   return cpProcessAES_ctr(pSrc, pDst, len, pCtx, pCtrValue, ctrNumBitSize);
-   #endif
+#if (_IPP32E >= _IPP32E_Y8)
+    if (AES_NI_ENABLED == RIJ_AESNI(pCtx))
+        return ctrNumBitSize == 128
+                   ? cpProcessAES_ctr128(pSrc, pDst, len, pCtx, pCtrValue)
+                   : cpProcessAES_ctr(pSrc, pDst, len, pCtx, pCtrValue, ctrNumBitSize);
+    else
+        return cpProcessAES_ctr(pSrc, pDst, len, pCtx, pCtrValue, ctrNumBitSize);
+#else
+    return cpProcessAES_ctr(pSrc, pDst, len, pCtx, pCtrValue, ctrNumBitSize);
+#endif
 }

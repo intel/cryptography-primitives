@@ -44,23 +44,19 @@
 *F*/
 IPPFUN(IppStatus, ippsPrimeGetSize, (int nMaxBits, int* pSize))
 {
-   IPP_BAD_PTR1_RET(pSize);
-   IPP_BADARG_RET(nMaxBits<1, ippStsLengthErr);
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET(nMaxBits < 1, ippStsLengthErr);
 
-   {
-      cpSize len = BITS_BNU_CHUNK(nMaxBits);
-      cpSize montSize;
+    {
+        cpSize len = BITS_BNU_CHUNK(nMaxBits);
+        cpSize montSize;
 
-      gsModEngineGetSize(nMaxBits, MONT_DEFAULT_POOL_LENGTH, &montSize);
+        gsModEngineGetSize(nMaxBits, MONT_DEFAULT_POOL_LENGTH, &montSize);
 
-      *pSize = (Ipp32s)sizeof(IppsPrimeState)
-              +len*(Ipp32s)sizeof(BNU_CHUNK_T)
-              +len*(Ipp32s)sizeof(BNU_CHUNK_T)
-              +len*(Ipp32s)sizeof(BNU_CHUNK_T)
-              +len*(Ipp32s)sizeof(BNU_CHUNK_T)
-              +montSize
-              +PRIME_ALIGNMENT-1;
+        *pSize = (Ipp32s)sizeof(IppsPrimeState) + len * (Ipp32s)sizeof(BNU_CHUNK_T) +
+                 len * (Ipp32s)sizeof(BNU_CHUNK_T) + len * (Ipp32s)sizeof(BNU_CHUNK_T) +
+                 len * (Ipp32s)sizeof(BNU_CHUNK_T) + montSize + PRIME_ALIGNMENT - 1;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

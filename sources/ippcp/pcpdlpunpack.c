@@ -45,13 +45,13 @@
 //    pSize       pointer to the packed spec size
 //
 *F*/
-IPPFUN(IppStatus, ippsDLPUnpack,(const Ipp8u* pBuffer, IppsDLPState* pDL))
+IPPFUN(IppStatus, ippsDLPUnpack, (const Ipp8u* pBuffer, IppsDLPState* pDL))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pDL, pBuffer);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pDL, pBuffer);
 
-   cpUnpackDLPCtx(pBuffer, pDL);
-   DLP_SET_ID(pDL);
-   
-   return ippStsNoErr;
+    cpUnpackDLPCtx(pBuffer, pDL);
+    DLP_SET_ID(pDL);
+
+    return ippStsNoErr;
 }

@@ -46,7 +46,7 @@
 *F*/
 IPPFUN(IppStatus, ippsBigNumInit, (int length, IppsBigNumState* pBN))
 {
-    IPP_BADARG_RET(length<1 || length>BITS2WORD32_SIZE(BN_MAXBITSIZE), ippStsLengthErr);
+    IPP_BADARG_RET(length < 1 || length > BITS2WORD32_SIZE(BN_MAXBITSIZE), ippStsLengthErr);
     IPP_BAD_PTR1_RET(pBN);
 
     {
@@ -56,22 +56,21 @@ IPPFUN(IppStatus, ippsBigNumInit, (int length, IppsBigNumState* pBN))
         cpSize len = INTERNAL_BNU_LENGTH(length);
 
         BN_SIGN(pBN) = ippBigNumPOS;
-        BN_SIZE(pBN) = 1;     /* initial value is zero */
-        BN_ROOM(pBN) = len;   /* close to what has been passed by user */
-
-                              /* reserve one BNU_CHUNK_T more for cpDiv_BNU,
+        BN_SIZE(pBN) = 1;   /* initial value is zero */
+        BN_ROOM(pBN) = len; /* close to what has been passed by user */
+                            /* reserve one BNU_CHUNK_T more for cpDiv_BNU,
                               mul, mont exp operations */
         len++;
 
         ptr += sizeof(IppsBigNumState);
 
         /* allocate buffers */
-        ptr = (Ipp8u*)(IPP_ALIGNED_PTR(ptr, BN_ALIGNMENT));
+        ptr            = (Ipp8u*)(IPP_ALIGNED_PTR(ptr, BN_ALIGNMENT));
         BN_NUMBER(pBN) = (BNU_CHUNK_T*)ptr;
         ptr += len * (Ipp32s)sizeof(BNU_CHUNK_T);
         BN_BUFFER(pBN) = (BNU_CHUNK_T*)(ptr); /* use expanded length here */
 
-                                                                           /* set BN value and buffer to zero */
+                                              /* set BN value and buffer to zero */
         ZEXPAND_BNU(BN_NUMBER(pBN), 0, len);
         ZEXPAND_BNU(BN_BUFFER(pBN), 0, len);
 

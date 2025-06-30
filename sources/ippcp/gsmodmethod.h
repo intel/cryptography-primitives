@@ -25,31 +25,33 @@
 
 typedef struct _gsModEngine gsEngine;
 
+/* clang-format off */
 /* modular arith methods */
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_encode, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_decode, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_red,    (BNU_CHUNK_T* pR,       BNU_CHUNK_T* pA, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_sqr,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_mul,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_add,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_sub,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_neg,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_div2,   (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_mul2,   (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
-IPP_OWN_FUNPTR (BNU_CHUNK_T*, mod_mul3,   (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_encode, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_decode, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_red,    (BNU_CHUNK_T* pR,       BNU_CHUNK_T* pA, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_sqr,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_mul,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_add,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_sub,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_neg,    (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_div2,   (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_mul2,   (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
+IPP_OWN_FUNPTR(BNU_CHUNK_T*, mod_mul3,   (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsEngine* pMA))
+/* clang-format on */
 
 typedef struct _gsModMethod {
-   mod_encode encode;
-   mod_decode decode;
-   mod_mul  mul;
-   mod_sqr  sqr;
-   mod_red  red;
-   mod_add  add;
-   mod_sub  sub;
-   mod_neg  neg;
-   mod_div2 div2;
-   mod_mul2 mul2;
-   mod_mul3 mul3;
+    mod_encode encode;
+    mod_decode decode;
+    mod_mul mul;
+    mod_sqr sqr;
+    mod_red red;
+    mod_add add;
+    mod_sub sub;
+    mod_neg neg;
+    mod_div2 div2;
+    mod_mul2 mul2;
+    mod_mul3 mul3;
 } gsModMethod;
 
 /* These functions should not be used, because they have non-constant execution time, see their safe analogues in pcpmask_ct.h */
@@ -76,25 +78,24 @@ __IPPCP_INLINE void cpMaskMove_gs(BNU_CHUNK_T* dst, const BNU_CHUNK_T* src, int 
 
 /* common available pre-defined methods */
 #define gsModArith OWNAPI(gsModArith)
-   IPP_OWN_DECL (gsModMethod*, gsModArith, (void))
+IPP_OWN_DECL(gsModMethod*, gsModArith, (void))
 
 /* available pre-defined methods for RSA */
 #define gsModArithRSA OWNAPI(gsModArithRSA)
-   IPP_OWN_DECL (gsModMethod*, gsModArithRSA, (void))
+IPP_OWN_DECL(gsModMethod*, gsModArithRSA, (void))
 
 /* available pre-defined methods for ippsMont* */
 #define gsModArithMont OWNAPI(gsModArithMont)
-   IPP_OWN_DECL (gsModMethod*, gsModArithMont, (void))
+IPP_OWN_DECL(gsModMethod*, gsModArithMont, (void))
 
 /* available pre-defined methods for DLP * */
 #define gsModArithDLP OWNAPI(gsModArithDLP)
-   IPP_OWN_DECL (gsModMethod*, gsModArithDLP, (void))
+IPP_OWN_DECL(gsModMethod*, gsModArithDLP, (void))
 
 /* available pre-defined common methods for GF over prime * */
 #define gsArithGFp OWNAPI(gsArithGFp)
-   IPP_OWN_DECL (gsModMethod*, gsArithGFp, (void))
+IPP_OWN_DECL(gsModMethod*, gsArithGFp, (void))
 
 /* ... and etc ... */
 
 #endif /* _GS_MOD_METHOD_H */
-

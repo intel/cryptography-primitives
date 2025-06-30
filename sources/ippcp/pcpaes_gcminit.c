@@ -32,11 +32,11 @@
 #include "pcptool.h"
 #include "pcpaes_gcm_internal_func.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
-#if(_IPP32E>=_IPP32E_K0)
+#if (_IPP32E >= _IPP32E_K0)
 #include "pcpaesauthgcm_avx512.h"
 #include "aes_keyexp.h"
 #else
@@ -63,116 +63,127 @@
 //    ctxSize     available size (in bytes) of buffer above
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_GCMInit,(const Ipp8u* pKey, int keyLen, IppsAES_GCMState* pState, int ctxSize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_GCMInit, (const Ipp8u* pKey,
+                                    int keyLen,
+                                    IppsAES_GCMState* pState,
+                                    int ctxSize))
+/* clang-format on */
 {
-   /* test pCtx pointer */
-   IPP_BAD_PTR1_RET(pState);
+    /* test pCtx pointer */
+    IPP_BAD_PTR1_RET(pState);
 
-   /* test available size of context buffer */
-   IPP_BADARG_RET(ctxSize<cpSizeofCtx_AESGCM(), ippStsMemAllocErr);
+    /* test available size of context buffer */
+    IPP_BADARG_RET(ctxSize < cpSizeofCtx_AESGCM(), ippStsMemAllocErr);
 
-   /* use aligned context */
-   pState = (IppsAES_GCMState*)( IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT) );
+    /* use aligned context */
+    pState = (IppsAES_GCMState*)(IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT));
 
-   /* set and clear GCM context */
-   AESGCM_SET_ID(pState);
-   ippsAES_GCMReset(pState);
+    /* set and clear GCM context */
+    AESGCM_SET_ID(pState);
+    ippsAES_GCMReset(pState);
 
-   /* make sure in legal keyLen */
-   IPP_BADARG_RET(keyLen!=16 && keyLen!=24 && keyLen!=32, ippStsLengthErr);
+    /* make sure in legal keyLen */
+    IPP_BADARG_RET(keyLen != 16 && keyLen != 24 && keyLen != 32, ippStsLengthErr);
 
-   /* Setup pointers to internal data and methods */
-   cpAesGCM_setup_ptrs_and_methods(pState, (Ipp64u)keyLen);
+    /* Setup pointers to internal data and methods */
+    cpAesGCM_setup_ptrs_and_methods(pState, (Ipp64u)keyLen);
 
-#if(_IPP32E>=_IPP32E_K0)
-   AES_GCM_KEY_LEN(pState) = (Ipp64u)keyLen;
+#if (_IPP32E >= _IPP32E_K0)
+    AES_GCM_KEY_LEN(pState) = (Ipp64u)keyLen;
 
-   Ipp8u zeroKey[32] = {0};
-   const Ipp8u* pActualKey = pKey? pKey : zeroKey;
+    Ipp8u zeroKey[32]       = { 0 };
+    const Ipp8u* pActualKey = pKey ? pKey : zeroKey;
 
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-      /* Reset AES noise parameters */
-      cpAESNoiseParams *params = (cpAESNoiseParams *)&AESGCM_NOISE_PARAMS(pState);
+    /* Reset AES noise parameters */
+    cpAESNoiseParams* params = (cpAESNoiseParams*)&AESGCM_NOISE_PARAMS(pState);
 
-      AES_NOISE_RAND(params)       = 0;
-      AES_NOISE_LEVEL(params)      = 0;
+    AES_NOISE_RAND(params)  = 0;
+    AES_NOISE_LEVEL(params) = 0;
 #endif
-   if (IsFeatureEnabled(ippCPUID_AVX512VAES) && IsFeatureEnabled(ippCPUID_AVX512VCLMUL)) {
+    if (IsFeatureEnabled(ippCPUID_AVX512VAES) && IsFeatureEnabled(ippCPUID_AVX512VCLMUL)) {
 
-      switch AES_GCM_KEY_LEN(pState) {
-         case 16:
-            aes_keyexp_128_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
-            aes_gcm_precomp_128_vaes_avx512(&AES_GCM_KEY_DATA(pState));
-            break;
-         case 24:
-            aes_keyexp_192_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
-            aes_gcm_precomp_192_vaes_avx512(&AES_GCM_KEY_DATA(pState));
-            break;
-         case 32:
-            aes_keyexp_256_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
-            aes_gcm_precomp_256_vaes_avx512(&AES_GCM_KEY_DATA(pState));
-            break;
-      }
-   } else {
+        switch
+            AES_GCM_KEY_LEN(pState)
+            {
+            case 16:
+                aes_keyexp_128_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
+                aes_gcm_precomp_128_vaes_avx512(&AES_GCM_KEY_DATA(pState));
+                break;
+            case 24:
+                aes_keyexp_192_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
+                aes_gcm_precomp_192_vaes_avx512(&AES_GCM_KEY_DATA(pState));
+                break;
+            case 32:
+                aes_keyexp_256_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
+                aes_gcm_precomp_256_vaes_avx512(&AES_GCM_KEY_DATA(pState));
+                break;
+            }
+    } else {
 
-      switch AES_GCM_KEY_LEN(pState) {
-         case 16:
-            aes_keyexp_128_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
-            aes_gcm_precomp_128_avx512(&AES_GCM_KEY_DATA(pState));
-            break;
-         case 24:
-            aes_keyexp_192_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
-            aes_gcm_precomp_192_avx512(&AES_GCM_KEY_DATA(pState));
-            break;
-         case 32:
-            aes_keyexp_256_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
-            aes_gcm_precomp_256_avx512(&AES_GCM_KEY_DATA(pState));
-            break;
-      }
-   }
+        switch
+            AES_GCM_KEY_LEN(pState)
+            {
+            case 16:
+                aes_keyexp_128_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
+                aes_gcm_precomp_128_avx512(&AES_GCM_KEY_DATA(pState));
+                break;
+            case 24:
+                aes_keyexp_192_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
+                aes_gcm_precomp_192_avx512(&AES_GCM_KEY_DATA(pState));
+                break;
+            case 32:
+                aes_keyexp_256_enc(pActualKey, &AES_GCM_KEY_DATA(pState));
+                aes_gcm_precomp_256_avx512(&AES_GCM_KEY_DATA(pState));
+                break;
+            }
+    }
 
 #else
 
-   /* init cipher */
-   {
-      IppStatus sts = ippsAESInit(pKey, keyLen, AESGCM_CIPHER(pState), cpSizeofCtx_AES());
-      if(ippStsNoErr!=sts)
-         return sts;
-   }
+    /* init cipher */
+    {
+        IppStatus sts = ippsAESInit(pKey, keyLen, AESGCM_CIPHER(pState), cpSizeofCtx_AES());
+        if (ippStsNoErr != sts)
+            return sts;
+    }
 
-   /* precomputations (for constant multiplier(s)) */
-   {
-      IppsAESSpec* pAES = AESGCM_CIPHER(pState);
-      RijnCipher encoder = RIJ_ENCODER(pAES);
+    /* precomputations (for constant multiplier(s)) */
+    {
+        IppsAESSpec* pAES  = AESGCM_CIPHER(pState);
+        RijnCipher encoder = RIJ_ENCODER(pAES);
 
-      /* multiplier c = Enc({0}) */
-      PadBlock(0, AESGCM_HKEY(pState), BLOCK_SIZE);
-      //encoder((Ipp32u*)AESGCM_HKEY(pState), (Ipp32u*)AESGCM_HKEY(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), (const Ipp32u (*)[256])RIJ_ENC_SBOX(pAES));
-      #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-      encoder(AESGCM_HKEY(pState), AESGCM_HKEY(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox/*NULL*/);
-      #else
-      encoder(AESGCM_HKEY(pState), AESGCM_HKEY(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
-      #endif
-   }
+        /* multiplier c = Enc({0}) */
+        PadBlock(0, AESGCM_HKEY(pState), BLOCK_SIZE);
+//encoder((Ipp32u*)AESGCM_HKEY(pState), (Ipp32u*)AESGCM_HKEY(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), (const Ipp32u (*)[256])RIJ_ENC_SBOX(pAES));
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+        encoder(AESGCM_HKEY(pState),
+                AESGCM_HKEY(pState),
+                RIJ_NR(pAES),
+                RIJ_EKEYS(pAES),
+                RijEncSbox /*NULL*/);
+#else
+        encoder(AESGCM_HKEY(pState), AESGCM_HKEY(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
+#endif
+    }
 
-   #if (_IPP >=_IPP_H9) || (_IPP32E>=_IPP32E_L9)
-      if (IsFeatureEnabled(ippCPUID_AVX2VAES|ippCPUID_AVX2VCLMUL)) {
-         AesGcmPrecompute_avx2_vaes(AESGCM_CPWR(pState), AESGCM_HKEY(pState));
-      }
-      else
-   #endif /* #if (_IPP==_IPP_H9) || (_IPP32E==_IPP32E_L9) */
+#if (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
+    if (IsFeatureEnabled(ippCPUID_AVX2VAES | ippCPUID_AVX2VCLMUL)) {
+        AesGcmPrecompute_avx2_vaes(AESGCM_CPWR(pState), AESGCM_HKEY(pState));
+    } else
+#endif /* #if (_IPP==_IPP_H9) || (_IPP32E==_IPP32E_L9) */
 
-   #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-         if(IsFeatureEnabled(ippCPUID_AES|ippCPUID_CLMUL)) {
-            /* pre-compute reflect(hkey) and hKey<<1, (hKey<<1)^2 and (hKey<<1)^4 powers of hKey */
-            AesGcmPrecompute_avx(AESGCM_CPWR(pState), AESGCM_HKEY(pState));
-         }
-         else
-   #endif /* #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8) */
-         AesGcmPrecompute_table2K(AES_GCM_MTBL(pState), AESGCM_HKEY(pState));
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+        if (IsFeatureEnabled(ippCPUID_AES | ippCPUID_CLMUL)) {
+        /* pre-compute reflect(hkey) and hKey<<1, (hKey<<1)^2 and (hKey<<1)^4 powers of hKey */
+        AesGcmPrecompute_avx(AESGCM_CPWR(pState), AESGCM_HKEY(pState));
+    } else
+#endif /* #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8) */
+        AesGcmPrecompute_table2K(AES_GCM_MTBL(pState), AESGCM_HKEY(pState));
 
 #endif /* #if(_IPP32E>=_IPP32E_K0) */
 
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

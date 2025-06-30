@@ -28,22 +28,34 @@
 /*
 // Montgomery reduction
 */
+/* clang-format off */
 #define cpMontRedAdc_BNU OWNAPI(cpMontRedAdc_BNU)
-    IPP_OWN_DECL (void, cpMontRedAdc_BNU, (BNU_CHUNK_T* pR, BNU_CHUNK_T* pProduct, const BNU_CHUNK_T* pModulus, cpSize nsM, BNU_CHUNK_T m0))
+    IPP_OWN_DECL(void, cpMontRedAdc_BNU, (BNU_CHUNK_T* pR,
+                                          BNU_CHUNK_T* pProduct,
+                                          const BNU_CHUNK_T* pModulus,
+                                          cpSize nsM,
+                                          BNU_CHUNK_T m0))
 #define cpMontRedAdx_BNU OWNAPI(cpMontRedAdx_BNU)
-    IPP_OWN_DECL (void, cpMontRedAdx_BNU, (BNU_CHUNK_T* pR, BNU_CHUNK_T* pProduct, const BNU_CHUNK_T* pModulus, cpSize nsM, BNU_CHUNK_T m0))
+    IPP_OWN_DECL(void, cpMontRedAdx_BNU, (BNU_CHUNK_T* pR,
+                                          BNU_CHUNK_T* pProduct,
+                                          const BNU_CHUNK_T* pModulus,
+                                          cpSize nsM,
+                                          BNU_CHUNK_T m0))
+/* clang-format on */
 
 __IPPCP_INLINE void cpMontRed_BNU_opt(BNU_CHUNK_T* pR,
-                                BNU_CHUNK_T* pProduct,
-                          const BNU_CHUNK_T* pModulus, cpSize nsM, BNU_CHUNK_T m0)
+                                      BNU_CHUNK_T* pProduct,
+                                      const BNU_CHUNK_T* pModulus,
+                                      cpSize nsM,
+                                      BNU_CHUNK_T m0)
 {
-#if(_ADCOX_NI_ENABLING_==_FEATURE_ON_)
-   cpMontRedAdx_BNU(pR, pProduct, pModulus, nsM, m0);
-#elif(_ADCOX_NI_ENABLING_==_FEATURE_TICKTOCK_)
-   IsFeatureEnabled(ippCPUID_ADCOX)? cpMontRedAdx_BNU(pR, pProduct, pModulus, nsM, m0)
-                                   : cpMontRedAdc_BNU(pR, pProduct, pModulus, nsM, m0);
+#if (_ADCOX_NI_ENABLING_ == _FEATURE_ON_)
+    cpMontRedAdx_BNU(pR, pProduct, pModulus, nsM, m0);
+#elif (_ADCOX_NI_ENABLING_ == _FEATURE_TICKTOCK_)
+    IsFeatureEnabled(ippCPUID_ADCOX) ? cpMontRedAdx_BNU(pR, pProduct, pModulus, nsM, m0)
+                                     : cpMontRedAdc_BNU(pR, pProduct, pModulus, nsM, m0);
 #else
-   cpMontRedAdc_BNU(pR, pProduct, pModulus, nsM, m0);
+    cpMontRedAdc_BNU(pR, pProduct, pModulus, nsM, m0);
 #endif
 }
 

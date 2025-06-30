@@ -48,21 +48,23 @@
 //    pH0      pointer to the parameter used into G() function
 //    pCtx     pointer to the context
 *F*/
-IPPFUN(IppStatus, ippsPRNGSetH0,(const IppsBigNumState* pH0, IppsPRNGState* pCtx))
+IPPFUN(IppStatus, ippsPRNGSetH0, (const IppsBigNumState* pH0, IppsPRNGState* pCtx))
 {
-   /* test PRNG context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!RAND_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test PRNG context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!RAND_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   /* test H0 */
-   IPP_BAD_PTR1_RET(pH0);
-   IPP_BADARG_RET(!BN_VALID_ID(pH0), ippStsContextMatchErr);
+    /* test H0 */
+    IPP_BAD_PTR1_RET(pH0);
+    IPP_BADARG_RET(!BN_VALID_ID(pH0), ippStsContextMatchErr);
 
-   {
-      cpSize len = IPP_MIN(5, BN_SIZE(pH0)*((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u))));
-      ZEXPAND_BNU(RAND_T(pCtx), 0, (int)(sizeof(RAND_T(pCtx))/sizeof(BNU_CHUNK_T)));
-      ZEXPAND_COPY_BNU((Ipp32u*)RAND_T(pCtx), (int)(sizeof(RAND_T(pCtx))/(sizeof(Ipp32u))),
-                       (Ipp32u*)BN_NUMBER(pH0), len);
-      return ippStsNoErr;
-   }
+    {
+        cpSize len = IPP_MIN(5, BN_SIZE(pH0) * ((Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u))));
+        ZEXPAND_BNU(RAND_T(pCtx), 0, (int)(sizeof(RAND_T(pCtx)) / sizeof(BNU_CHUNK_T)));
+        ZEXPAND_COPY_BNU((Ipp32u*)RAND_T(pCtx),
+                         (int)(sizeof(RAND_T(pCtx)) / (sizeof(Ipp32u))),
+                         (Ipp32u*)BN_NUMBER(pH0),
+                         len);
+        return ippStsNoErr;
+    }
 }

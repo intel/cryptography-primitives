@@ -34,17 +34,20 @@
 // expBitSize     - (max) sizeof exponent (in bits)
 // modulusBitSize - size of modulus (bits)
 */
-static cpSize cpMontExpScratchBufferSize(cpSize modulusBitSize, cpSize expBitSize, cpSize nExponents)
+static cpSize cpMontExpScratchBufferSize(cpSize modulusBitSize,
+                                         cpSize expBitSize,
+                                         cpSize nExponents)
 {
     /* sizeof table element */
     cpSize elmDataSize = BITS_BNU_CHUNK(modulusBitSize) * (Ipp32s)sizeof(BNU_CHUNK_T);
     /* get window_size */
-    cpSize w = (nExponents == 1) ? cpMontExp_WinSize(expBitSize) : /* use optimal window size, if single-scalar operation */
-        nExponents;                     /* or pseudo-oprimal if multi-scalar operation */
+    cpSize w = (nExponents == 1) ? cpMontExp_WinSize(expBitSize)
+                                 : /* use optimal window size, if single-scalar operation */
+                   nExponents;     /* or pseudo-oprimal if multi-scalar operation */
 
-                                        /* number of table entries */
+                                   /* number of table entries */
     cpSize nPrecomputed = 1 << w;
 
-    cpSize bufferSize = elmDataSize*nPrecomputed + (CACHE_LINE_SIZE - 1);
+    cpSize bufferSize = elmDataSize * nPrecomputed + (CACHE_LINE_SIZE - 1);
     return bufferSize;
 }

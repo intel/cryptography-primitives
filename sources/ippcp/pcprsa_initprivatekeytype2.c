@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_InitPrivateKeyType2()
 //
@@ -57,72 +57,91 @@
 //    keyCtxSize           size of memory associated with key context
 *F*/
 
-IPPFUN(IppStatus, ippsRSA_InitPrivateKeyType2,(int factorPbitSize, int factorQbitSize,
-                                               IppsRSAPrivateKeyState* pKey, int keyCtxSize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSA_InitPrivateKeyType2, (int factorPbitSize,
+                                                int factorQbitSize,
+                                                IppsRSAPrivateKeyState* pKey,
+                                                int keyCtxSize))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET((factorPbitSize<=0) || (factorQbitSize<=0), ippStsBadArgErr);
-   //25.09.2019 gres: IPP_BADARG_RET((factorPbitSize < factorQbitSize), ippStsBadArgErr);
-   IPP_BADARG_RET((MIN_RSA_SIZE>(factorPbitSize+factorQbitSize) || (factorPbitSize+factorQbitSize)>MAX_RSA_SIZE), ippStsNotSupportedModeErr);
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET((factorPbitSize <= 0) || (factorQbitSize <= 0), ippStsBadArgErr);
+    //25.09.2019 gres: IPP_BADARG_RET((factorPbitSize < factorQbitSize), ippStsBadArgErr);
+    IPP_BADARG_RET((MIN_RSA_SIZE > (factorPbitSize + factorQbitSize) ||
+                    (factorPbitSize + factorQbitSize) > MAX_RSA_SIZE),
+                   ippStsNotSupportedModeErr);
 
-   /* test available size of context buffer */
-   IPP_BADARG_RET(keyCtxSize<cpSizeof_RSA_privateKey2(factorPbitSize,factorQbitSize), ippStsMemAllocErr);
+    /* test available size of context buffer */
+    IPP_BADARG_RET(keyCtxSize < cpSizeof_RSA_privateKey2(factorPbitSize, factorQbitSize),
+                   ippStsMemAllocErr);
 
 
-   RSA_PRV_KEY2_SET_ID(pKey);
-   RSA_PRV_KEY_MAXSIZE_N(pKey) = 0;
-   RSA_PRV_KEY_MAXSIZE_D(pKey) = 0;
-   RSA_PRV_KEY_BITSIZE_N(pKey) = 0;
-   RSA_PRV_KEY_BITSIZE_D(pKey) = 0;
-   RSA_PRV_KEY_BITSIZE_P(pKey) = factorPbitSize;
-   RSA_PRV_KEY_BITSIZE_Q(pKey) = factorQbitSize;
+    RSA_PRV_KEY2_SET_ID(pKey);
+    RSA_PRV_KEY_MAXSIZE_N(pKey) = 0;
+    RSA_PRV_KEY_MAXSIZE_D(pKey) = 0;
+    RSA_PRV_KEY_BITSIZE_N(pKey) = 0;
+    RSA_PRV_KEY_BITSIZE_D(pKey) = 0;
+    RSA_PRV_KEY_BITSIZE_P(pKey) = factorPbitSize;
+    RSA_PRV_KEY_BITSIZE_Q(pKey) = factorQbitSize;
 
-   RSA_PRV_KEY_D(pKey) = NULL;
+    RSA_PRV_KEY_D(pKey) = NULL;
 
-   {
-      Ipp8u* ptr = (Ipp8u*)pKey;
+    {
+        Ipp8u* ptr = (Ipp8u*)pKey;
 
-      int factorPlen = BITS_BNU_CHUNK(factorPbitSize);
-      int factorQlen = BITS_BNU_CHUNK(factorQbitSize);
-      int factorPlen32 = BITS2WORD32_SIZE(factorPbitSize);
-      int factorQlen32 = BITS2WORD32_SIZE(factorQbitSize);
-      int rsaModulusLen32 = BITS2WORD32_SIZE(factorPbitSize+factorQbitSize);
-      int montPsize;
-      int montQsize;
-      int montNsize;
-      rsaMontExpGetSize(factorPlen32, &montPsize);
-      rsaMontExpGetSize(factorQlen32, &montQsize);
-      rsaMontExpGetSize(rsaModulusLen32, &montNsize);
+        int factorPlen      = BITS_BNU_CHUNK(factorPbitSize);
+        int factorQlen      = BITS_BNU_CHUNK(factorQbitSize);
+        int factorPlen32    = BITS2WORD32_SIZE(factorPbitSize);
+        int factorQlen32    = BITS2WORD32_SIZE(factorQbitSize);
+        int rsaModulusLen32 = BITS2WORD32_SIZE(factorPbitSize + factorQbitSize);
+        int montPsize;
+        int montQsize;
+        int montNsize;
+        rsaMontExpGetSize(factorPlen32, &montPsize);
+        rsaMontExpGetSize(factorQlen32, &montQsize);
+        rsaMontExpGetSize(rsaModulusLen32, &montNsize);
 
-      /* allocate internal contexts */
-      ptr += sizeof(IppsRSAPrivateKeyState);
+        /* allocate internal contexts */
+        ptr += sizeof(IppsRSAPrivateKeyState);
 
-      RSA_PRV_KEY_DP(pKey) = (BNU_CHUNK_T*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(BNU_CHUNK_T)) );
-      ptr += factorPlen*(Ipp32s)sizeof(BNU_CHUNK_T);
+        RSA_PRV_KEY_DP(pKey) = (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((ptr), (int)sizeof(BNU_CHUNK_T)));
+        ptr += factorPlen * (Ipp32s)sizeof(BNU_CHUNK_T);
 
-      RSA_PRV_KEY_DQ(pKey) = (BNU_CHUNK_T*)(ptr);
-      ptr += factorQlen*(Ipp32s)sizeof(BNU_CHUNK_T);
+        RSA_PRV_KEY_DQ(pKey) = (BNU_CHUNK_T*)(ptr);
+        ptr += factorQlen * (Ipp32s)sizeof(BNU_CHUNK_T);
 
-      RSA_PRV_KEY_INVQ(pKey) = (BNU_CHUNK_T*)(ptr);
-      ptr += factorPlen*(Ipp32s)sizeof(BNU_CHUNK_T);
+        RSA_PRV_KEY_INVQ(pKey) = (BNU_CHUNK_T*)(ptr);
+        ptr += factorPlen * (Ipp32s)sizeof(BNU_CHUNK_T);
 
-      RSA_PRV_KEY_PMONT(pKey) = (gsModEngine*)(ptr);
-      ptr += montPsize;
+        RSA_PRV_KEY_PMONT(pKey) = (gsModEngine*)(ptr);
+        ptr += montPsize;
 
-      RSA_PRV_KEY_QMONT(pKey) = (gsModEngine*)(ptr);
-      ptr += montQsize;
+        RSA_PRV_KEY_QMONT(pKey) = (gsModEngine*)(ptr);
+        ptr += montQsize;
 
-      RSA_PRV_KEY_NMONT(pKey) = (gsModEngine*)(ptr);
-      ptr += montNsize;
+        RSA_PRV_KEY_NMONT(pKey) = (gsModEngine*)(ptr);
+        ptr += montNsize;
 
-      ZEXPAND_BNU(RSA_PRV_KEY_DP(pKey), 0, factorPlen);
-      ZEXPAND_BNU(RSA_PRV_KEY_DQ(pKey), 0, factorQlen);
-      ZEXPAND_BNU(RSA_PRV_KEY_INVQ(pKey), 0, factorPlen);
+        ZEXPAND_BNU(RSA_PRV_KEY_DP(pKey), 0, factorPlen);
+        ZEXPAND_BNU(RSA_PRV_KEY_DQ(pKey), 0, factorQlen);
+        ZEXPAND_BNU(RSA_PRV_KEY_INVQ(pKey), 0, factorPlen);
 
-      gsModEngineInit(RSA_PRV_KEY_PMONT(pKey), 0, factorPbitSize, MOD_ENGINE_RSA_POOL_SIZE, gsModArithRSA());
-      gsModEngineInit(RSA_PRV_KEY_QMONT(pKey), 0, factorQbitSize, MOD_ENGINE_RSA_POOL_SIZE, gsModArithRSA());
-      gsModEngineInit(RSA_PRV_KEY_NMONT(pKey), 0, factorPbitSize+factorQbitSize, MOD_ENGINE_RSA_POOL_SIZE, gsModArithRSA());
+        gsModEngineInit(RSA_PRV_KEY_PMONT(pKey),
+                        0,
+                        factorPbitSize,
+                        MOD_ENGINE_RSA_POOL_SIZE,
+                        gsModArithRSA());
+        gsModEngineInit(RSA_PRV_KEY_QMONT(pKey),
+                        0,
+                        factorQbitSize,
+                        MOD_ENGINE_RSA_POOL_SIZE,
+                        gsModArithRSA());
+        gsModEngineInit(RSA_PRV_KEY_NMONT(pKey),
+                        0,
+                        factorPbitSize + factorQbitSize,
+                        MOD_ENGINE_RSA_POOL_SIZE,
+                        gsModArithRSA());
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

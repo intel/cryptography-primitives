@@ -27,8 +27,8 @@
 #include "pcpaesauthccm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*F*
@@ -51,41 +51,41 @@
 //    pState      pointer to the CCM context
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CCMGetTag,(Ipp8u* pTag, int tagLen, const IppsAES_CCMState* pState))
+IPPFUN(IppStatus, ippsAES_CCMGetTag, (Ipp8u * pTag, int tagLen, const IppsAES_CCMState* pState))
 {
-   /* test pState pointer */
-   IPP_BAD_PTR1_RET(pState);
+    /* test pState pointer */
+    IPP_BAD_PTR1_RET(pState);
 
-   /* test state ID */
-   IPP_BADARG_RET(!VALID_AESCCM_ID(pState), ippStsContextMatchErr);
+    /* test state ID */
+    IPP_BADARG_RET(!VALID_AESCCM_ID(pState), ippStsContextMatchErr);
 
-   /* test tag (pointer and length) */
-   IPP_BAD_PTR1_RET(pTag);
-   IPP_BADARG_RET((Ipp32u)tagLen>AESCCM_TAGLEN(pState) || tagLen<1, ippStsLengthErr);
+    /* test tag (pointer and length) */
+    IPP_BAD_PTR1_RET(pTag);
+    IPP_BADARG_RET((Ipp32u)tagLen > AESCCM_TAGLEN(pState) || tagLen < 1, ippStsLengthErr);
 
-   {
-      Ipp32u flag = (Ipp32u)( AESCCM_LENPRO(pState) &(MBS_RIJ128-1) );
+    {
+        Ipp32u flag = (Ipp32u)(AESCCM_LENPRO(pState) & (MBS_RIJ128 - 1));
 
-      Ipp32u MAC[NB(128)];
-      CopyBlock16(AESCCM_MAC(pState), MAC);
+        Ipp32u MAC[NB(128)];
+        CopyBlock16(AESCCM_MAC(pState), MAC);
 
-      if(flag) {
-         IppsAESSpec* pAES = AESCCM_CIPHER(pState);
-         RijnCipher encoder = RIJ_ENCODER(pAES);
+        if (flag) {
+            IppsAESSpec* pAES  = AESCCM_CIPHER(pState);
+            RijnCipher encoder = RIJ_ENCODER(pAES);
 
-         Ipp8u  BLK[MBS_RIJ128];
-         FillBlock16(0, NULL,BLK, 0);
-         CopyBlock(AESCCM_BLK(pState), BLK, (cpSize)flag);
+            Ipp8u BLK[MBS_RIJ128];
+            FillBlock16(0, NULL, BLK, 0);
+            CopyBlock(AESCCM_BLK(pState), BLK, (cpSize)flag);
 
-         XorBlock16(MAC, BLK, MAC);
-         #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-         encoder((Ipp8u*)MAC, (Ipp8u*)MAC, RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox/*NULL*/);
-         #else
-         encoder((Ipp8u*)MAC, (Ipp8u*)MAC, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
-         #endif
-      }
+            XorBlock16(MAC, BLK, MAC);
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+            encoder((Ipp8u*)MAC, (Ipp8u*)MAC, RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox /*NULL*/);
+#else
+            encoder((Ipp8u*)MAC, (Ipp8u*)MAC, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
+#endif
+        }
 
-      XorBlock(MAC, AESCCM_S0(pState), pTag, (cpSize)tagLen);
-      return ippStsNoErr;
-   }
+        XorBlock(MAC, AESCCM_S0(pState), pTag, (cpSize)tagLen);
+        return ippStsNoErr;
+    }
 }

@@ -60,57 +60,63 @@
 //    generation. In this case, the user should update PRNG parameters
 //    and call the primitive again.
 *F*/
-IPPFUN(IppStatus, ippsPrimeGen, (int nBits, int nTrials, IppsPrimeState* pCtx,
-                                 IppBitSupplier rndFunc, void* pRndParam))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsPrimeGen, (int nBits,
+                                 int nTrials,
+                                 IppsPrimeState* pCtx,
+                                 IppBitSupplier rndFunc,
+                                 void* pRndParam))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pCtx, rndFunc);
+    IPP_BAD_PTR2_RET(pCtx, rndFunc);
 
-   IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(nBits<1, ippStsLengthErr);
-   IPP_BADARG_RET(nBits>PRIME_MAXBITSIZE(pCtx), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
+    IPP_BADARG_RET(nBits > PRIME_MAXBITSIZE(pCtx), ippStsOutOfRangeErr);
 
-   IPP_BADARG_RET(nTrials < 0, ippStsBadArgErr);
+    IPP_BADARG_RET(nTrials < 0, ippStsBadArgErr);
 
-   {
-      cpSize count;
+    {
+        cpSize count;
 
-      BNU_CHUNK_T botPattern = 0x1;
-      BNU_CHUNK_T topPattern = (BNU_CHUNK_T)1 << ((nBits-1)&(BNU_CHUNK_BITS-1));
-      BNU_CHUNK_T topMask = MASK_BNU_CHUNK(nBits);
+        BNU_CHUNK_T botPattern = 0x1;
+        BNU_CHUNK_T topPattern = (BNU_CHUNK_T)1 << ((nBits - 1) & (BNU_CHUNK_BITS - 1));
+        BNU_CHUNK_T topMask    = MASK_BNU_CHUNK(nBits);
 
-      BNU_CHUNK_T* pRand = PRIME_NUMBER(pCtx);
-      cpSize randLen = BITS_BNU_CHUNK(nBits);
+        BNU_CHUNK_T* pRand = PRIME_NUMBER(pCtx);
+        cpSize randLen     = BITS_BNU_CHUNK(nBits);
 
-      ZEXPAND_BNU(pRand, 0, BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx)));
+        ZEXPAND_BNU(pRand, 0, BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx)));
 
-      if(nTrials < 1)
-         nTrials =  MR_rounds_p80(nBits);
+        if (nTrials < 1)
+            nTrials = MR_rounds_p80(nBits);
 
-      #define MAX_COUNT (1000)
-      for(count=0; count<MAX_COUNT; count++) {
-         Ipp32u result;
+#define MAX_COUNT (1000)
+        for (count = 0; count < MAX_COUNT; count++) {
+            Ipp32u result;
 
-         /* get trial number */
-         IppStatus sts = rndFunc((Ipp32u*)pRand, nBits, pRndParam);
-         if(ippStsNoErr!=sts)
-            return sts;
+            /* get trial number */
+            IppStatus sts = rndFunc((Ipp32u*)pRand, nBits, pRndParam);
+            if (ippStsNoErr != sts)
+                return sts;
 
-         /* set up top and bottom bit to 1 */
-         pRand[0] |= botPattern;
-         pRand[randLen-1] &= topMask;
-         pRand[randLen-1] |= topPattern;
+            /* set up top and bottom bit to 1 */
+            pRand[0] |= botPattern;
+            pRand[randLen - 1] &= topMask;
+            pRand[randLen - 1] |= topPattern;
 
-         /* test trial number */
-         sts = ippsPrimeTest(nTrials, &result, pCtx, rndFunc, pRndParam);
-         if(ippStsNoErr!=sts)
-            return sts;
+            /* test trial number */
+            sts = ippsPrimeTest(nTrials, &result, pCtx, rndFunc, pRndParam);
+            if (ippStsNoErr != sts)
+                return sts;
 
-         if (result == IPP_IS_PRIME)
-            return ippStsNoErr;
-      }
-      #undef MAX_COUNT
+            if (result == IPP_IS_PRIME)
+                return ippStsNoErr;
+        }
+#undef MAX_COUNT
 
-      return ippStsInsufficientEntropy;
-   }
+        return ippStsInsufficientEntropy;
+    }
 }

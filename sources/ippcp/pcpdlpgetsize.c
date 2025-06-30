@@ -54,71 +54,71 @@
 //    pSize       pointer to the size of DLP context (bytes)
 //
 *F*/
-IPPFUN(IppStatus, ippsDLPGetSize,(int feBitSize, int ordBitSize, int *pSize))
+IPPFUN(IppStatus, ippsDLPGetSize, (int feBitSize, int ordBitSize, int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   /* test sizes of DL system */
-   IPP_BADARG_RET(MIN_DLP_BITSIZE >feBitSize,  ippStsSizeErr);
-   IPP_BADARG_RET(MIN_DLP_BITSIZER>ordBitSize, ippStsSizeErr);
-   IPP_BADARG_RET(ordBitSize>=feBitSize,       ippStsSizeErr);
+    /* test sizes of DL system */
+    IPP_BADARG_RET(MIN_DLP_BITSIZE > feBitSize, ippStsSizeErr);
+    IPP_BADARG_RET(MIN_DLP_BITSIZER > ordBitSize, ippStsSizeErr);
+    IPP_BADARG_RET(ordBitSize >= feBitSize, ippStsSizeErr);
 
-   {
-      int bnSizeP;
-      int bnSizeR;
-      int montSizeP;
-      int montSizeR;
-      int primeGenSize;
-      int bn_resourceSize;
+    {
+        int bnSizeP;
+        int bnSizeR;
+        int montSizeP;
+        int montSizeR;
+        int primeGenSize;
+        int bn_resourceSize;
 
-      #if defined(_USE_WINDOW_EXP_)
-      int window = cpMontExp_WinSize(ordBitSize);
-      int bnu_resourceSize = window==1? 0 : cpMontExpScratchBufferSize(feBitSize, ordBitSize, 1);
-      #endif
+#if defined(_USE_WINDOW_EXP_)
+        int window = cpMontExp_WinSize(ordBitSize);
+        int bnu_resourceSize =
+            window == 1 ? 0 : cpMontExpScratchBufferSize(feBitSize, ordBitSize, 1);
+#endif
 
-      /* size of GF(P) element */
-      int sizeP = BITS2WORD32_SIZE(feBitSize);
-      /* size of GF(R) element */
-      int sizeR = BITS2WORD32_SIZE(ordBitSize);
-      /* sizeof multi-exp table */
-      int sizeMeTable = cpMontExpScratchBufferSize(feBitSize, ordBitSize, 2);
+        /* size of GF(P) element */
+        int sizeP = BITS2WORD32_SIZE(feBitSize);
+        /* size of GF(R) element */
+        int sizeR = BITS2WORD32_SIZE(ordBitSize);
+        /* sizeof multi-exp table */
+        int sizeMeTable = cpMontExpScratchBufferSize(feBitSize, ordBitSize, 2);
 
-      /* size of BigNum over GF(P) */
-      ippsBigNumGetSize(sizeP, &bnSizeP);
-      /* size of BigNum over GF(R) */
-      ippsBigNumGetSize(sizeR, &bnSizeR);
+        /* size of BigNum over GF(P) */
+        ippsBigNumGetSize(sizeP, &bnSizeP);
+        /* size of BigNum over GF(R) */
+        ippsBigNumGetSize(sizeR, &bnSizeR);
 
-      /* size of montgomery engine over GF(P) */
-      gsModEngineGetSize(feBitSize, DLP_MONT_POOL_LENGTH, &montSizeP);
+        /* size of montgomery engine over GF(P) */
+        gsModEngineGetSize(feBitSize, DLP_MONT_POOL_LENGTH, &montSizeP);
 
-      /* size of montgomery engine over GF(R) */
-      gsModEngineGetSize(ordBitSize, DLP_MONT_POOL_LENGTH, &montSizeR);
+        /* size of montgomery engine over GF(R) */
+        gsModEngineGetSize(ordBitSize, DLP_MONT_POOL_LENGTH, &montSizeR);
 
-      /* size of prime engine */
-      ippsPrimeGetSize(feBitSize, &primeGenSize);
+        /* size of prime engine */
+        ippsPrimeGetSize(feBitSize, &primeGenSize);
 
-      /* size of big num list (big num in the list preserve 32 bit word) */
-      bn_resourceSize = cpBigNumListGetSize(feBitSize+1, BNLISTSIZE);
+        /* size of big num list (big num in the list preserve 32 bit word) */
+        bn_resourceSize = cpBigNumListGetSize(feBitSize + 1, BNLISTSIZE);
 
-      *pSize = (Ipp32s)sizeof(IppsDLPState)
-              +montSizeP         /* montgomery(P) */
-              +montSizeR         /* montgomery(Q) */
+        *pSize = (Ipp32s)sizeof(IppsDLPState) + montSizeP /* montgomery(P) */
+                 + montSizeR                              /* montgomery(Q) */
 
-              +bnSizeP           /* Genc          */
-              +bnSizeR           /* X             */
-              +bnSizeP           /* Y             */
+                 + bnSizeP                                /* Genc          */
+                 + bnSizeR                                /* X             */
+                 + bnSizeP                                /* Y             */
 
-              +primeGenSize      /* prime engine  */
+                 + primeGenSize                           /* prime engine  */
 
-              +sizeMeTable       /* pre-computed multi-exp table */
+                 + sizeMeTable                            /* pre-computed multi-exp table */
 
-              +bn_resourceSize   /* BN resource   */
-              #if defined(_USE_WINDOW_EXP_)
-              +bnu_resourceSize  /* BNU resource  */
-              #endif
-              ;
+                 + bn_resourceSize                        /* BN resource   */
+#if defined(_USE_WINDOW_EXP_)
+                 + bnu_resourceSize                       /* BNU resource  */
+#endif
+            ;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

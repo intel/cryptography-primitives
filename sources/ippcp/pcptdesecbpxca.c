@@ -14,30 +14,36 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Encrypt/Decrypt byte data stream according to TDES (ECB mode)
-// 
+//
 //  Contents:
 //     ECB_TDES()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpdes.h"
 
-IPP_OWN_DEFN (void, ECB_TDES, (const Ipp64u* pSrc, Ipp64u* pDst, int nBlocks, const RoundKeyDES* pRKey[3], const Ipp32u spbox[]))
+/* clang-format off */
+IPP_OWN_DEFN(void, ECB_TDES, (const Ipp64u* pSrc,
+                              Ipp64u* pDst,
+                              int nBlocks,
+                              const RoundKeyDES* pRKey[3],
+                              const Ipp32u spbox[]))
+/* clang-format on */
 {
-   while(nBlocks) {
-      Ipp64u tmp = Cipher_DES(*pSrc, pRKey[0], spbox);
-      tmp        = Cipher_DES( tmp,  pRKey[1], spbox);
-      *pDst      = Cipher_DES( tmp,  pRKey[2], spbox);
-      pSrc++;
-      pDst++;
-      nBlocks--;
-   }
+    while (nBlocks) {
+        Ipp64u tmp = Cipher_DES(*pSrc, pRKey[0], spbox);
+        tmp        = Cipher_DES(tmp, pRKey[1], spbox);
+        *pDst      = Cipher_DES(tmp, pRKey[2], spbox);
+        pSrc++;
+        pDst++;
+        nBlocks--;
+    }
 }

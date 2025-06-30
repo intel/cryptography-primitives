@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_GetPrivateKeyType2()
 //
@@ -58,68 +58,69 @@
 //    pInverseQ   (optional) pointer to CRT coefficient (invQ)
 //    pKey        pointer to the key context
 *F*/
+
+/* clang-format off */
 IPPFUN(IppStatus, ippsRSA_GetPrivateKeyType2,(IppsBigNumState* pFactorP,
                                               IppsBigNumState* pFactorQ,
                                               IppsBigNumState* pCrtExpP,
                                               IppsBigNumState* pCrtExpQ,
                                               IppsBigNumState* pInverseQ,
                                               const IppsRSAPrivateKeyState* pKey))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET(!RSA_PRV_KEY2_VALID_ID(pKey), ippStsContextMatchErr);
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET(!RSA_PRV_KEY2_VALID_ID(pKey), ippStsContextMatchErr);
 
-   if(pFactorP) {
-      IPP_BADARG_RET(!BN_VALID_ID(pFactorP), ippStsContextMatchErr);
-      IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
-      IPP_BADARG_RET(BN_ROOM(pFactorP) < BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_P(pKey)), ippStsSizeErr);
+    if (pFactorP) {
+        IPP_BADARG_RET(!BN_VALID_ID(pFactorP), ippStsContextMatchErr);
+        IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+        IPP_BADARG_RET(BN_ROOM(pFactorP) < BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_P(pKey)),
+                       ippStsSizeErr);
 
-      BN_Set(MOD_MODULUS(RSA_PRV_KEY_PMONT(pKey)),
-             MOD_LEN(RSA_PRV_KEY_PMONT(pKey)),
-             pFactorP);
-   }
+        BN_Set(MOD_MODULUS(RSA_PRV_KEY_PMONT(pKey)), MOD_LEN(RSA_PRV_KEY_PMONT(pKey)), pFactorP);
+    }
 
-   if(pFactorQ) {
-      IPP_BADARG_RET(!BN_VALID_ID(pFactorQ), ippStsContextMatchErr);
-      IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
-      IPP_BADARG_RET(BN_ROOM(pFactorQ) < BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_Q(pKey)), ippStsSizeErr);
+    if (pFactorQ) {
+        IPP_BADARG_RET(!BN_VALID_ID(pFactorQ), ippStsContextMatchErr);
+        IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+        IPP_BADARG_RET(BN_ROOM(pFactorQ) < BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_Q(pKey)),
+                       ippStsSizeErr);
 
-      BN_Set(MOD_MODULUS(RSA_PRV_KEY_QMONT(pKey)),
-             MOD_LEN(RSA_PRV_KEY_QMONT(pKey)),
-             pFactorQ);
-   }
+        BN_Set(MOD_MODULUS(RSA_PRV_KEY_QMONT(pKey)), MOD_LEN(RSA_PRV_KEY_QMONT(pKey)), pFactorQ);
+    }
 
-   if(pCrtExpP) {
-      cpSize expLen = BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_P(pKey));
-      FIX_BNU(RSA_PRV_KEY_DP(pKey), expLen);
+    if (pCrtExpP) {
+        cpSize expLen = BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_P(pKey));
+        FIX_BNU(RSA_PRV_KEY_DP(pKey), expLen);
 
-      IPP_BADARG_RET(!BN_VALID_ID(pCrtExpP), ippStsContextMatchErr);
-      IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
-      IPP_BADARG_RET(BN_ROOM(pCrtExpP) < expLen, ippStsSizeErr);
+        IPP_BADARG_RET(!BN_VALID_ID(pCrtExpP), ippStsContextMatchErr);
+        IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+        IPP_BADARG_RET(BN_ROOM(pCrtExpP) < expLen, ippStsSizeErr);
 
-      BN_Set(RSA_PRV_KEY_DP(pKey), expLen, pCrtExpP);
-   }
+        BN_Set(RSA_PRV_KEY_DP(pKey), expLen, pCrtExpP);
+    }
 
-   if(pCrtExpQ) {
-      cpSize expLen = BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_Q(pKey));
-      FIX_BNU(RSA_PRV_KEY_DQ(pKey), expLen);
+    if (pCrtExpQ) {
+        cpSize expLen = BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_Q(pKey));
+        FIX_BNU(RSA_PRV_KEY_DQ(pKey), expLen);
 
-      IPP_BADARG_RET(!BN_VALID_ID(pCrtExpQ), ippStsContextMatchErr);
-      IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
-      IPP_BADARG_RET(BN_ROOM(pCrtExpQ) < expLen, ippStsSizeErr);
+        IPP_BADARG_RET(!BN_VALID_ID(pCrtExpQ), ippStsContextMatchErr);
+        IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+        IPP_BADARG_RET(BN_ROOM(pCrtExpQ) < expLen, ippStsSizeErr);
 
-      BN_Set(RSA_PRV_KEY_DQ(pKey), expLen, pCrtExpQ);
-   }
+        BN_Set(RSA_PRV_KEY_DQ(pKey), expLen, pCrtExpQ);
+    }
 
-   if(pInverseQ) {
-      cpSize coeffLen = BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_P(pKey));
-      FIX_BNU(RSA_PRV_KEY_INVQ(pKey), coeffLen);
+    if (pInverseQ) {
+        cpSize coeffLen = BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_P(pKey));
+        FIX_BNU(RSA_PRV_KEY_INVQ(pKey), coeffLen);
 
-      IPP_BADARG_RET(!BN_VALID_ID(pInverseQ), ippStsContextMatchErr);
-      IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
-      IPP_BADARG_RET(BN_ROOM(pInverseQ) < coeffLen, ippStsSizeErr);
+        IPP_BADARG_RET(!BN_VALID_ID(pInverseQ), ippStsContextMatchErr);
+        IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+        IPP_BADARG_RET(BN_ROOM(pInverseQ) < coeffLen, ippStsSizeErr);
 
-      BN_Set(RSA_PRV_KEY_INVQ(pKey), MOD_LEN(RSA_PRV_KEY_PMONT(pKey)), pInverseQ);
-   }
+        BN_Set(RSA_PRV_KEY_INVQ(pKey), MOD_LEN(RSA_PRV_KEY_PMONT(pKey)), pInverseQ);
+    }
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

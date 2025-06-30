@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES encryption/decryption (CBC mode)
 //     AES encryption/decryption (CBC-CS mode)
-// 
+//
 //  Contents:
 //        ippsAESDecryptCBC()
 //
@@ -55,28 +55,32 @@
 //    pIV         pointer to the initialization vector
 //
 *F*/
-IPPFUN(IppStatus, ippsAESDecryptCBC,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                                     const IppsAESSpec* pCtx,
-                                     const Ipp8u* pIV))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAESDecryptCBC, (const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
+                                      const IppsAESSpec* pCtx,
+                                      const Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source, target buffers and initialization pointers */
-   IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test stream integrity */
-   IPP_BADARG_RET((len&(MBS_RIJ128-1)), ippStsUnderRunErr);
+    /* test source, target buffers and initialization pointers */
+    IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len & (MBS_RIJ128 - 1)), ippStsUnderRunErr);
 
-   /* do encryption */
-   {
-      int nBlocks = len / MBS_RIJ128;
+    /* do encryption */
+    {
+        int nBlocks = len / MBS_RIJ128;
 
-      cpDecryptAES_cbc(pIV, pSrc, pDst, nBlocks, pCtx);
+        cpDecryptAES_cbc(pIV, pSrc, pDst, nBlocks, pCtx);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

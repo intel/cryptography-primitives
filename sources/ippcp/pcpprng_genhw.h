@@ -32,36 +32,36 @@
 #include "pcpbn.h"
 #include "pcptool.h"
 
-#if !defined (_PCP_PRN_GEN_HW_H)
+#if !defined(_PCP_PRN_GEN_HW_H)
 #define _PCP_PRN_GEN_HW_H
 
-#if ((_IPP>=_IPP_G9) || (_IPP32E>=_IPP32E_E9))
+#if ((_IPP >= _IPP_G9) || (_IPP32E >= _IPP32E_E9))
 __IPPCP_INLINE int cpRand_hw_sample(BNU_CHUNK_T* pSample)
 {
 #define LOCAL_COUNTER (8)
-   int n;
-   int success = 0;
-   for(n=0; n<LOCAL_COUNTER && !success; n++)
-      #if (_IPP_ARCH == _IPP_ARCH_IA32)
-      success = _rdrand32_step(pSample);
-      #elif (_IPP_ARCH == _IPP_ARCH_EM64T)
-      success = _rdrand64_step(pSample);
-      #else
-      #error Unknown CPU arch
-      #endif
-   return success;
+    int n;
+    int success = 0;
+    for (n = 0; n < LOCAL_COUNTER && !success; n++)
+#if (_IPP_ARCH == _IPP_ARCH_IA32)
+        success = _rdrand32_step(pSample);
+#elif (_IPP_ARCH == _IPP_ARCH_EM64T)
+        success = _rdrand64_step(pSample);
+#else
+#error Unknown CPU arch
+#endif
+    return success;
 #undef LOCAL_COUNTER
 }
 
-#if (_IPP32E>=_IPP32E_E9)
+#if (_IPP32E >= _IPP32E_E9)
 __IPPCP_INLINE int cpRand_hw_sample32(Ipp32u* pSample)
 {
 #define LOCAL_COUNTER (8)
-   int n;
-   int success = 0;
-   for(n=0; n<LOCAL_COUNTER && !success; n++)
-      success = _rdrand32_step(pSample);
-   return success;
+    int n;
+    int success = 0;
+    for (n = 0; n < LOCAL_COUNTER && !success; n++)
+        success = _rdrand32_step(pSample);
+    return success;
 #undef LOCAL_COUNTER
 }
 #endif
@@ -83,23 +83,23 @@ __IPPCP_INLINE int cpRand_hw_sample32(Ipp32u* pSample)
 
 __IPPCP_INLINE int cpRandHW_buffer(Ipp32u* pBuffer, int bufLen)
 {
-   int nSamples = bufLen/((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)));
+    int nSamples = bufLen / ((Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)));
 
-   int n;
-   /* collect nSamples randoms */
-   for(n=0; n<nSamples; n++, pBuffer+=(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u))) {
-      if( !cpRand_hw_sample((BNU_CHUNK_T*)pBuffer))
-         return 0;
-   }
+    int n;
+    /* collect nSamples randoms */
+    for (n = 0; n < nSamples; n++, pBuffer += (sizeof(BNU_CHUNK_T) / sizeof(Ipp32u))) {
+        if (!cpRand_hw_sample((BNU_CHUNK_T*)pBuffer))
+            return 0;
+    }
 
-   #if (_IPP32E>=_IPP32E_E9)
-   if( bufLen%((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u))) ) {
-      if( !cpRand_hw_sample32(pBuffer)) {
-         return 0;
-      }
-   }
-   #endif
-   return 1;
+#if (_IPP32E >= _IPP32E_E9)
+    if (bufLen % ((Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)))) {
+        if (!cpRand_hw_sample32(pBuffer)) {
+            return 0;
+        }
+    }
+#endif
+    return 1;
 }
 #endif
 

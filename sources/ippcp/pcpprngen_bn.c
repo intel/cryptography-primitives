@@ -54,36 +54,36 @@
 //    nBits    number of bits be requested
 //    pCtx     pointer to the context
 *F*/
-IPPFUN(IppStatus, ippsPRNGen_BN,(IppsBigNumState* pRand, int nBits, void* pCtx))
+IPPFUN(IppStatus, ippsPRNGen_BN, (IppsBigNumState * pRand, int nBits, void* pCtx))
 {
-   IppsPRNGState* pRndCtx;
+    IppsPRNGState* pRndCtx;
 
-   /* test PRNG context */
-   IPP_BAD_PTR1_RET(pCtx);
-   pRndCtx = (IppsPRNGState*)(pCtx);
-   IPP_BADARG_RET(!RAND_VALID_ID(pRndCtx), ippStsContextMatchErr);
+    /* test PRNG context */
+    IPP_BAD_PTR1_RET(pCtx);
+    pRndCtx = (IppsPRNGState*)(pCtx);
+    IPP_BADARG_RET(!RAND_VALID_ID(pRndCtx), ippStsContextMatchErr);
 
-   /* test random BN */
-   IPP_BAD_PTR1_RET(pRand);
-   IPP_BADARG_RET(!BN_VALID_ID(pRand), ippStsContextMatchErr);
+    /* test random BN */
+    IPP_BAD_PTR1_RET(pRand);
+    IPP_BADARG_RET(!BN_VALID_ID(pRand), ippStsContextMatchErr);
 
-   /* test sizes */
-   IPP_BADARG_RET(nBits< 1, ippStsLengthErr);
-   IPP_BADARG_RET(nBits> BN_ROOM(pRand)*BNU_CHUNK_BITS, ippStsLengthErr);
+    /* test sizes */
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
+    IPP_BADARG_RET(nBits > BN_ROOM(pRand) * BNU_CHUNK_BITS, ippStsLengthErr);
 
 
-   {
-      BNU_CHUNK_T* pRandBN = BN_NUMBER(pRand);
-      cpSize rndSize = BITS_BNU_CHUNK(nBits);
-      BNU_CHUNK_T rndMask = MASK_BNU_CHUNK(nBits);
+    {
+        BNU_CHUNK_T* pRandBN = BN_NUMBER(pRand);
+        cpSize rndSize       = BITS_BNU_CHUNK(nBits);
+        BNU_CHUNK_T rndMask  = MASK_BNU_CHUNK(nBits);
 
-      cpPRNGen((Ipp32u*)pRandBN, nBits, pRndCtx);
-      pRandBN[rndSize-1] &= rndMask;
+        cpPRNGen((Ipp32u*)pRandBN, nBits, pRndCtx);
+        pRandBN[rndSize - 1] &= rndMask;
 
-      FIX_BNU(pRandBN, rndSize);
-      BN_SIZE(pRand) = rndSize;
-      BN_SIGN(pRand) = ippBigNumPOS;
+        FIX_BNU(pRandBN, rndSize);
+        BN_SIZE(pRand) = rndSize;
+        BN_SIGN(pRand) = ippBigNumPOS;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -33,17 +33,17 @@
 
 __IPPCP_INLINE BNU_CHUNK_T* cpPow2_ct(int bit, BNU_CHUNK_T* dst, int len)
 {
-   int slot = bit/BNU_CHUNK_BITS;
-   BNU_CHUNK_T value = (BNU_CHUNK_T)1 << (bit%BNU_CHUNK_BITS);
+    int slot          = bit / BNU_CHUNK_BITS;
+    BNU_CHUNK_T value = (BNU_CHUNK_T)1 << (bit % BNU_CHUNK_BITS);
 
-   int i;
-   len -= (int)( cpIsEqu_ct((BNU_CHUNK_T)slot, (BNU_CHUNK_T)len) );
-   for(i=0; i<len; i++) {
-      BNU_CHUNK_T mask = cpIsEqu_ct((BNU_CHUNK_T)slot, (BNU_CHUNK_T)i);
-      dst[i] = value & mask;
-   }
+    int i;
+    len -= (int)(cpIsEqu_ct((BNU_CHUNK_T)slot, (BNU_CHUNK_T)len));
+    for (i = 0; i < len; i++) {
+        BNU_CHUNK_T mask = cpIsEqu_ct((BNU_CHUNK_T)slot, (BNU_CHUNK_T)i);
+        dst[i]           = value & mask;
+    }
 
-   return dst;
+    return dst;
 }
 
 /*
@@ -51,34 +51,39 @@ __IPPCP_INLINE BNU_CHUNK_T* cpPow2_ct(int bit, BNU_CHUNK_T* dst, int len)
 //    a in desidue domain
 //    r in Montgomery domain
 */
-IPP_OWN_DEFN (BNU_CHUNK_T*, gs_mont_inv, (BNU_CHUNK_T* pr, const BNU_CHUNK_T* pa, gsModEngine* pME, alm_inv alm_inversion))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, gs_mont_inv, (BNU_CHUNK_T* pr,
+                                         const BNU_CHUNK_T* pa,
+                                         gsModEngine* pME,
+                                         alm_inv alm_inversion))
+/* clang-format on */
 {
-   int k = alm_inversion(pr, pa, pME);
+    int k = alm_inversion(pr, pa, pME);
 
-   if(0 == k)
-      return NULL;
+    if (0 == k)
+        return NULL;
 
-   {
-      int mLen = MOD_LEN(pME);
-      int m = mLen*BNU_CHUNK_BITS;
-      mod_mul mon_mul = MOD_METHOD(pME)->mul;
+    {
+        int mLen        = MOD_LEN(pME);
+        int m           = mLen * BNU_CHUNK_BITS;
+        mod_mul mon_mul = MOD_METHOD(pME)->mul;
 
-      BNU_CHUNK_T* t = gsModPoolAlloc(pME, 1);
-      if(NULL == t)
-         return NULL;
+        BNU_CHUNK_T* t = gsModPoolAlloc(pME, 1);
+        if (NULL == t)
+            return NULL;
 
-      if(k <= m) {
-         mon_mul(pr, pr, MOD_MNT_R2(pME), pME);
-         k += m;
-      }
+        if (k <= m) {
+            mon_mul(pr, pr, MOD_MNT_R2(pME), pME);
+            k += m;
+        }
 
-      //ZEXPAND_BNU(t, 0, mLen);
-      //SET_BIT(t, 2*m-k); /* t = 2^(2*m-k) */
-      cpPow2_ct(2*m-k, t, mLen);
-      mon_mul(pr, pr, t, pME);
+        //ZEXPAND_BNU(t, 0, mLen);
+        //SET_BIT(t, 2*m-k); /* t = 2^(2*m-k) */
+        cpPow2_ct(2 * m - k, t, mLen);
+        mon_mul(pr, pr, t, pME);
 
-      gsModPoolFree(pME, 1);
+        gsModPoolFree(pME, 1);
 
-      return pr;
-   }
+        return pr;
+    }
 }

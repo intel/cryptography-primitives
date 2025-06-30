@@ -46,11 +46,11 @@
 *F*/
 IPPFUN(IppStatus, ippsGetSize_BN, (const IppsBigNumState* pBN, int* pSize))
 {
-   IPP_BAD_PTR2_RET(pBN, pSize);
+    IPP_BAD_PTR2_RET(pBN, pSize);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
 
-   *pSize = BN_ROOM(pBN)*(Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u));
+    *pSize = BN_ROOM(pBN) * (Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u));
 
     return ippStsNoErr;
 }

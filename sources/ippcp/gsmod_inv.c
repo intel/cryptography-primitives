@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive. Modular Arithmetic Engine. General Functionality
-// 
+//
 //  Contents:
 //        gs_inv()
 //
@@ -35,34 +35,39 @@
 //    a in desidue domain
 //    r in desidue domain
 */
-IPP_OWN_DEFN (BNU_CHUNK_T*, gs_inv, (BNU_CHUNK_T* pr, const BNU_CHUNK_T* pa, gsModEngine* pME, alm_inv alm_inversion))
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T*, gs_inv, (BNU_CHUNK_T* pr,
+                                    const BNU_CHUNK_T* pa,
+                                    gsModEngine* pME,
+                                    alm_inv alm_inversion))
+/* clang-format on */
 {
-   int k = alm_inversion(pr, pa, pME);
+    int k = alm_inversion(pr, pa, pME);
 
-   if(0==k)
-      return NULL;
+    if (0 == k)
+        return NULL;
 
-   {
-      int mLen = MOD_LEN(pME);
-      int m = mLen*BNU_CHUNK_BITS;
-      mod_mul mon_mul = MOD_METHOD(pME)->mul;
+    {
+        int mLen        = MOD_LEN(pME);
+        int m           = mLen * BNU_CHUNK_BITS;
+        mod_mul mon_mul = MOD_METHOD(pME)->mul;
 
-      BNU_CHUNK_T* t = gsModPoolAlloc(pME, 1);
-      if(NULL == t)
-         return NULL;
+        BNU_CHUNK_T* t = gsModPoolAlloc(pME, 1);
+        if (NULL == t)
+            return NULL;
 
-      if(k>m) {
-         ZEXPAND_BNU(t, 0, mLen);
-         t[0] = 1;
-         mon_mul(pr, pr, t, pME);
-         k -= m;
-      }
-      ZEXPAND_BNU(t, 0, mLen);
-      SET_BIT(t, m-k); /* t = 2^(m-k) */
-      mon_mul(pr, pr, t, pME);
+        if (k > m) {
+            ZEXPAND_BNU(t, 0, mLen);
+            t[0] = 1;
+            mon_mul(pr, pr, t, pME);
+            k -= m;
+        }
+        ZEXPAND_BNU(t, 0, mLen);
+        SET_BIT(t, m - k); /* t = 2^(m-k) */
+        mon_mul(pr, pr, t, pME);
 
-      gsModPoolFree(pME, 1);
+        gsModPoolFree(pME, 1);
 
-      return pr;
-   }
+        return pr;
+    }
 }

@@ -52,24 +52,24 @@
 //    pCtx     pointer to the context
 *F*/
 
-IPPFUN(IppStatus, ippsPRNGen,(Ipp32u* pRand, int nBits, void* pCtx))
+IPPFUN(IppStatus, ippsPRNGen, (Ipp32u * pRand, int nBits, void* pCtx))
 {
-   IppsPRNGState* pCtxCtx = (IppsPRNGState*)pCtx;
+    IppsPRNGState* pCtxCtx = (IppsPRNGState*)pCtx;
 
-   /* test PRNG context */
-   IPP_BAD_PTR2_RET(pRand, pCtx);
-   IPP_BADARG_RET(!RAND_VALID_ID(pCtxCtx), ippStsContextMatchErr);
+    /* test PRNG context */
+    IPP_BAD_PTR2_RET(pRand, pCtx);
+    IPP_BADARG_RET(!RAND_VALID_ID(pCtxCtx), ippStsContextMatchErr);
 
-   /* test sizes */
-   IPP_BADARG_RET(nBits< 1, ippStsLengthErr);
+    /* test sizes */
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
 
-   {
-      cpSize rndSize = BITS2WORD32_SIZE(nBits);
-      Ipp32u rndMask = MAKEMASK32(nBits);
+    {
+        cpSize rndSize = BITS2WORD32_SIZE(nBits);
+        Ipp32u rndMask = MAKEMASK32(nBits);
 
-      cpPRNGen(pRand, nBits, pCtxCtx);
-      pRand[rndSize-1] &= rndMask;
+        cpPRNGen(pRand, nBits, pCtxCtx);
+        pRand[rndSize - 1] &= rndMask;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

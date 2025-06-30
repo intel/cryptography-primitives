@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-GCM
-// 
+//
 //  Contents:
 //        wrpAesGcmEnc_avx()
 //
@@ -31,28 +31,36 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 
-#if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8) 
-#if(_IPP32E<_IPP32E_K0)
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+#if (_IPP32E < _IPP32E_K0)
 
 /* encrypts and authenticates n*BLOCK_SIZE bytes */
-IPP_OWN_DEFN (void, wrpAesGcmEnc_avx, (Ipp8u* pDst, const Ipp8u* pSrc, int lenBlks, IppsAES_GCMState* pState))
+/* clang-format off */
+IPP_OWN_DEFN(void, wrpAesGcmEnc_avx, (Ipp8u* pDst,
+                                      const Ipp8u* pSrc,
+                                      int lenBlks,
+                                      IppsAES_GCMState* pState))
+/* clang-format on */
 {
-   IppsAESSpec* pAES = AESGCM_CIPHER(pState);
-   RijnCipher encoder = RIJ_ENCODER(pAES);
+    IppsAESSpec* pAES  = AESGCM_CIPHER(pState);
+    RijnCipher encoder = RIJ_ENCODER(pAES);
 
-   AesGcmEnc_avx(pDst, pSrc, lenBlks,
-                 encoder, RIJ_NR(pAES), RIJ_EKEYS(pAES),
-                 AESGCM_GHASH(pState),
-                 AESGCM_COUNTER(pState),
-                 AESGCM_ECOUNTER(pState),
-                 AESGCM_HKEY(pState));
+    AesGcmEnc_avx(pDst,
+                  pSrc,
+                  lenBlks,
+                  encoder,
+                  RIJ_NR(pAES),
+                  RIJ_EKEYS(pAES),
+                  AESGCM_GHASH(pState),
+                  AESGCM_COUNTER(pState),
+                  AESGCM_ECOUNTER(pState),
+                  AESGCM_HKEY(pState));
 }
 
 #endif /* (_IPP32E<_IPP32E_K0) */
 #endif /* #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8) */
-

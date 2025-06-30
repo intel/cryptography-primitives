@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES encryption/decryption (OFB mode)
-// 
+//
 //  Contents:
 //        cpProcessAES_ofb8()
 //
@@ -43,6 +43,13 @@
 //    pIV         pointer to the initialization vector
 */
 #define cpProcessAES_ofb8 OWNAPI(cpProcessAES_ofb8)
-    IPP_OWN_DECL (void, cpProcessAES_ofb8, (const Ipp8u *pSrc, Ipp8u *pDst, int dataLen, int ofbBlkSize, const IppsAESSpec* pCtx, Ipp8u* pIV))
+/* clang-format off */
+    IPP_OWN_DECL (void, cpProcessAES_ofb8, (const Ipp8u *pSrc,
+                                            Ipp8u *pDst,
+                                            int dataLen,
+                                            int ofbBlkSize,
+                                            const IppsAESSpec* pCtx,
+                                            Ipp8u* pIV))
+/* clang-format on */
 
 #endif /* #if !defined(_PCP_AES_OFB_H) */

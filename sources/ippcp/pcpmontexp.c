@@ -58,23 +58,32 @@
 //        no less than (m->n->length) number of 32-bit words.
 *F*/
 
-IPPFUN(IppStatus, ippsMontExp, (const IppsBigNumState* pA, const IppsBigNumState* pE, IppsMontState* pCtx, IppsBigNumState* pR))
+/* clang-format off */
+IPPFUN(IppStatus, ippsMontExp, (const IppsBigNumState* pA,
+                                const IppsBigNumState* pE,
+                                IppsMontState* pCtx,
+                                IppsBigNumState* pR))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pA, pE, pCtx, pR);
+    IPP_BAD_PTR4_RET(pA, pE, pCtx, pR);
 
-   IPP_BADARG_RET(!MNT_VALID_ID(pCtx), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pA), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pE), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pR), ippStsContextMatchErr);
+    IPP_BADARG_RET(!MNT_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pE), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pR), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(BN_ROOM(pR) <  MOD_LEN( MNT_ENGINE(pCtx) ), ippStsOutOfRangeErr);
-   /* check a */
-   IPP_BADARG_RET(BN_NEGATIVE(pA), ippStsBadArgErr);
-   IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pA), BN_SIZE(pA), MOD_MODULUS( MNT_ENGINE(pCtx) ), MOD_LEN( MNT_ENGINE(pCtx) )) >= 0, ippStsScaleRangeErr);
-   /* check e */
-   IPP_BADARG_RET(BN_NEGATIVE(pE), ippStsBadArgErr);
+    IPP_BADARG_RET(BN_ROOM(pR) < MOD_LEN(MNT_ENGINE(pCtx)), ippStsOutOfRangeErr);
+    /* check a */
+    IPP_BADARG_RET(BN_NEGATIVE(pA), ippStsBadArgErr);
+    IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pA),
+                             BN_SIZE(pA),
+                             MOD_MODULUS(MNT_ENGINE(pCtx)),
+                             MOD_LEN(MNT_ENGINE(pCtx))) >= 0,
+                   ippStsScaleRangeErr);
+    /* check e */
+    IPP_BADARG_RET(BN_NEGATIVE(pE), ippStsBadArgErr);
 
-   cpMontExpBin_BN(pR, pA, pE, MNT_ENGINE( pCtx) );
+    cpMontExpBin_BN(pR, pA, pE, MNT_ENGINE(pCtx));
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

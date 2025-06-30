@@ -44,33 +44,37 @@
 //    strLen      octet string length
 *F*/
 
-IPP_OWN_DEFN (cpSize, cpToOctStr_BNU32, (Ipp8u* pStr, cpSize strLen, const Ipp32u* pBNU, cpSize bnuSize))
+/* clang-format off */
+IPP_OWN_DEFN(cpSize, cpToOctStr_BNU32, (Ipp8u* pStr,
+                                        cpSize strLen,
+                                        const Ipp32u* pBNU,
+                                        cpSize bnuSize))
+/* clang-format on */
 {
-   FIX_BNU32(pBNU, bnuSize);
-   {
-      int bnuBitSize = BITSIZE_BNU32(pBNU, bnuSize);
-      if(bnuBitSize <= strLen*BYTESIZE) {
-         Ipp32u x = pBNU[bnuSize-1];
+    FIX_BNU32(pBNU, bnuSize);
+    {
+        int bnuBitSize = BITSIZE_BNU32(pBNU, bnuSize);
+        if (bnuBitSize <= strLen * BYTESIZE) {
+            Ipp32u x = pBNU[bnuSize - 1];
 
-         ZEXPAND_BNU(pStr, 0, strLen);
-         pStr += strLen - BITS2WORD8_SIZE(bnuBitSize);
+            ZEXPAND_BNU(pStr, 0, strLen);
+            pStr += strLen - BITS2WORD8_SIZE(bnuBitSize);
 
-         if(x) {
-            int nb;
-            for(nb=cpNLZ_BNU32(x)/BYTESIZE; nb<4; nb++)
-               *pStr++ = EBYTE(x,3-nb);
+            if (x) {
+                int nb;
+                for (nb = cpNLZ_BNU32(x) / BYTESIZE; nb < 4; nb++)
+                    *pStr++ = EBYTE(x, 3 - nb);
 
-            for(--bnuSize; bnuSize>0; bnuSize--) {
-               x = pBNU[bnuSize-1];
-               *pStr++ = EBYTE(x,3);
-               *pStr++ = EBYTE(x,2);
-               *pStr++ = EBYTE(x,1);
-               *pStr++ = EBYTE(x,0);
+                for (--bnuSize; bnuSize > 0; bnuSize--) {
+                    x       = pBNU[bnuSize - 1];
+                    *pStr++ = EBYTE(x, 3);
+                    *pStr++ = EBYTE(x, 2);
+                    *pStr++ = EBYTE(x, 1);
+                    *pStr++ = EBYTE(x, 0);
+                }
             }
-         }
-         return strLen;
-      }
-      else
-         return 0;
-   }
+            return strLen;
+        } else
+            return 0;
+    }
 }

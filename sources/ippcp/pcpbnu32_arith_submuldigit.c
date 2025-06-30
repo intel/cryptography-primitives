@@ -45,19 +45,16 @@
 //
 *F*/
 
-#if !((_IPP32E==_IPP32E_M7) || \
-      (_IPP32E==_IPP32E_U8) || \
-      (_IPP32E==_IPP32E_Y8) || \
-      (_IPP32E>=_IPP32E_E9) || \
-      (_IPP32E==_IPP32E_N8))
-IPP_OWN_DEFN (Ipp32u, cpSubMulDgt_BNU32, (Ipp32u* pR, const Ipp32u* pA, cpSize nsA, Ipp32u val))
+#if !((_IPP32E == _IPP32E_M7) || (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) || \
+      (_IPP32E >= _IPP32E_E9) || (_IPP32E == _IPP32E_N8))
+IPP_OWN_DEFN(Ipp32u, cpSubMulDgt_BNU32, (Ipp32u * pR, const Ipp32u* pA, cpSize nsA, Ipp32u val))
 {
-   Ipp32u carry = 0;
-   for(; nsA>0; nsA--) {
-      Ipp64u r = (Ipp64u)*pR - (Ipp64u)(*pA++) * val - carry;
-      *pR++  = IPP_LODWORD(r);
-      carry  = 0-IPP_HIDWORD(r);
-   }
-   return carry;
+    Ipp32u carry = 0;
+    for (; nsA > 0; nsA--) {
+        Ipp64u r = (Ipp64u)*pR - (Ipp64u)(*pA++) * val - carry;
+        *pR++    = IPP_LODWORD(r);
+        carry    = 0 - IPP_HIDWORD(r);
+    }
+    return carry;
 }
 #endif

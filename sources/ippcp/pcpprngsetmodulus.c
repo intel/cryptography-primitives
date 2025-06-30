@@ -52,15 +52,18 @@
 *F*/
 IPPFUN(IppStatus, ippsPRNGSetModulus, (const IppsBigNumState* pMod, IppsPRNGState* pCtx))
 {
-   /* test PRNG context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!RAND_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test PRNG context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!RAND_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   /* test modulus */
-   IPP_BAD_PTR1_RET(pMod);
-   IPP_BADARG_RET(!BN_VALID_ID(pMod), ippStsContextMatchErr);
-   IPP_BADARG_RET(160 != BITSIZE_BNU(BN_NUMBER(pMod),BN_SIZE(pMod)), ippStsBadArgErr);
+    /* test modulus */
+    IPP_BAD_PTR1_RET(pMod);
+    IPP_BADARG_RET(!BN_VALID_ID(pMod), ippStsContextMatchErr);
+    IPP_BADARG_RET(160 != BITSIZE_BNU(BN_NUMBER(pMod), BN_SIZE(pMod)), ippStsBadArgErr);
 
-   ZEXPAND_COPY_BNU(RAND_Q(pCtx), (int)(sizeof(RAND_Q(pCtx))/sizeof(BNU_CHUNK_T)), BN_NUMBER(pMod),  BN_SIZE(pMod));
-   return ippStsNoErr;
+    ZEXPAND_COPY_BNU(RAND_Q(pCtx),
+                     (int)(sizeof(RAND_Q(pCtx)) / sizeof(BNU_CHUNK_T)),
+                     BN_NUMBER(pMod),
+                     BN_SIZE(pMod));
+    return ippStsNoErr;
 }

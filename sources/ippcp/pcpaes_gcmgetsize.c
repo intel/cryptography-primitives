@@ -30,7 +30,7 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 
-#if(_IPP32E>=_IPP32E_K0)
+#if (_IPP32E >= _IPP32E_K0)
 #include "pcpaesauthgcm_avx512.h"
 #else
 #include "pcpaesauthgcm.h"
@@ -50,12 +50,12 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsAES_GCMGetSize,(int* pSize))
+IPPFUN(IppStatus, ippsAES_GCMGetSize, (int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = cpSizeofCtx_AESGCM();
+    *pSize = cpSizeofCtx_AESGCM();
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

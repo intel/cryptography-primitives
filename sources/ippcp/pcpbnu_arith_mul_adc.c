@@ -44,39 +44,36 @@
 //    pR    resultant BigNum
 //
 *F*/
-#if !((_IPP==_IPP_V8) || \
-      (_IPP==_IPP_P8) || \
-      (_IPP>=_IPP_G9) || \
-      (_IPP==_IPP_S8) || \
-      (_IPP32E==_IPP32E_M7) || \
-      (_IPP32E==_IPP32E_U8) || \
-      (_IPP32E==_IPP32E_Y8) || \
-      (_IPP32E>=_IPP32E_E9) || \
-      (_IPP32E==_IPP32E_N8)) || \
-      defined(_USE_C_cpMulAdc_BNU_school_)
-IPP_OWN_DEFN (BNU_CHUNK_T, cpMulAdc_BNU_school, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB, cpSize nsB))
+#if !((_IPP == _IPP_V8) || (_IPP == _IPP_P8) || (_IPP >= _IPP_G9) || (_IPP == _IPP_S8) || \
+      (_IPP32E == _IPP32E_M7) || (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) ||    \
+      (_IPP32E >= _IPP32E_E9) || (_IPP32E == _IPP32E_N8)) ||                              \
+    defined(_USE_C_cpMulAdc_BNU_school_)
+IPP_OWN_DEFN(
+    BNU_CHUNK_T,
+    cpMulAdc_BNU_school,
+    (BNU_CHUNK_T * pR, const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB, cpSize nsB))
 {
-   const BNU_CHUNK_T* pa = (BNU_CHUNK_T*)pA;
-   const BNU_CHUNK_T* pb = (BNU_CHUNK_T*)pB;
-   BNU_CHUNK_T* pr = (BNU_CHUNK_T*)pR;
+    const BNU_CHUNK_T* pa = (BNU_CHUNK_T*)pA;
+    const BNU_CHUNK_T* pb = (BNU_CHUNK_T*)pB;
+    BNU_CHUNK_T* pr       = (BNU_CHUNK_T*)pR;
 
-   BNU_CHUNK_T extension = 0;
-   cpSize i, j;
+    BNU_CHUNK_T extension = 0;
+    cpSize i, j;
 
-   ZEXPAND_BNU(pr, 0, nsA+nsB);
+    ZEXPAND_BNU(pr, 0, nsA + nsB);
 
-   for(i=0; i<nsB; i++ ) {
-      BNU_CHUNK_T b = pb[i];
+    for (i = 0; i < nsB; i++) {
+        BNU_CHUNK_T b = pb[i];
 
-      for(j=0, extension=0; j<nsA; j++ ) {
-         BNU_CHUNK_T rH, rL;
+        for (j = 0, extension = 0; j < nsA; j++) {
+            BNU_CHUNK_T rH, rL;
 
-         MUL_AB(rH, rL, pa[j], b);
-         ADD_ABC(extension, pr[i+j], pr[i+j], rL, extension);
-         extension += rH;
-      }
-      pr[i+j] = extension;
-   }
-   return extension;
+            MUL_AB(rH, rL, pa[j], b);
+            ADD_ABC(extension, pr[i + j], pr[i + j], rL, extension);
+            extension += rH;
+        }
+        pr[i + j] = extension;
+    }
+    return extension;
 }
 #endif

@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSASSA-PKCS-v1_5
-// 
+//
 //     Signatire Scheme with Appendix Signatute Generation
-// 
+//
 //  Contents:
 //        ippsRSAVerify_PKCS1v15()
 //
@@ -36,39 +36,49 @@
 #include "pcprsa_pkcs1c15_data.h"
 #include "pcprsa_verifysign_pkcs1v15.h"
 
-IPPFUN(IppStatus, ippsRSAVerify_PKCS1v15,(const Ipp8u* pMsg, int msgLen,
-                                          const Ipp8u* pSign, int* pIsValid,
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSAVerify_PKCS1v15,(const Ipp8u* pMsg,
+                                          int msgLen,
+                                          const Ipp8u* pSign,
+                                          int* pIsValid,
                                           const IppsRSAPublicKeyState* pKey,
-                                                IppHashAlgId hashAlg,
-                                                Ipp8u* pScratchBuffer))
+                                          IppHashAlgId hashAlg,
+                                          Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   /* test public key context */
-   IPP_BAD_PTR2_RET(pKey, pScratchBuffer);
-   IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pKey), ippStsContextMatchErr);
-   IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+    /* test public key context */
+    IPP_BAD_PTR2_RET(pKey, pScratchBuffer);
+    IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
 
-   /* test hash algorithm ID */
-   hashAlg = cpValidHashAlg(hashAlg);
-   IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
-   IPP_BADARG_RET(ippHashAlg_SM3==hashAlg, ippStsNotSupportedModeErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
+    /* test hash algorithm ID */
+    hashAlg = cpValidHashAlg(hashAlg);
+    IPP_BADARG_RET(ippHashAlg_Unknown == hashAlg, ippStsNotSupportedModeErr);
+    IPP_BADARG_RET(ippHashAlg_SM3 == hashAlg, ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
-   /* test data pointer */
-   IPP_BAD_PTR3_RET(pMsg, pSign, pIsValid);
-   /* test length */
-   IPP_BADARG_RET(msgLen<0, ippStsLengthErr);
+    /* test data pointer */
+    IPP_BAD_PTR3_RET(pMsg, pSign, pIsValid);
+    /* test length */
+    IPP_BADARG_RET(msgLen < 0, ippStsLengthErr);
 
-   *pIsValid = 0;
-   {
-      Ipp8u md[IPP_SHA512_DIGEST_BITSIZE/BYTESIZE];
-      int mdLen = cpHashSize(hashAlg);
-      ippsHashMessage(pMsg, msgLen, md, hashAlg);
+    *pIsValid = 0;
+    {
+        Ipp8u md[IPP_SHA512_DIGEST_BITSIZE / BYTESIZE];
+        int mdLen = cpHashSize(hashAlg);
+        ippsHashMessage(pMsg, msgLen, md, hashAlg);
 
-      return VerifySign(md, mdLen,
-                        pksc15_salt[hashAlg].pSalt, pksc15_salt[hashAlg].saltLen,
-                        pSign, pIsValid,
-                        pKey,
-                        (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((pScratchBuffer), (int)sizeof(BNU_CHUNK_T))))? ippStsNoErr : ippStsSizeErr;
-   }
+        return VerifySign(
+                   md,
+                   mdLen,
+                   pksc15_salt[hashAlg].pSalt,
+                   pksc15_salt[hashAlg].saltLen,
+                   pSign,
+                   pIsValid,
+                   pKey,
+                   (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((pScratchBuffer), (int)sizeof(BNU_CHUNK_T))))
+                   ? ippStsNoErr
+                   : ippStsSizeErr;
+    }
 }

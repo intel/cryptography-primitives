@@ -43,22 +43,22 @@
 //    pCtx        pointer to the ARCFOUR context
 //
 *F*/
-IPPFUN(IppStatus, ippsARCFourReset, (IppsARCFourState* pCtx))
+IPPFUN(IppStatus, ippsARCFourReset, (IppsARCFourState * pCtx))
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!RC4_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!RC4_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   {
-      /* reset Sbox */
-      int n;
-      for(n=0; n<256; n++)
-         RC4_SBOX(pCtx)[n] = RC4_SBOX0(pCtx)[n];
+    {
+        /* reset Sbox */
+        int n;
+        for (n = 0; n < 256; n++)
+            RC4_SBOX(pCtx)[n] = RC4_SBOX0(pCtx)[n];
 
-      /* reset counters */
-      RC4_CNTX(pCtx) = 0;
-      RC4_CNTY(pCtx) = 0;
+        /* reset counters */
+        RC4_CNTX(pCtx) = 0;
+        RC4_CNTY(pCtx) = 0;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

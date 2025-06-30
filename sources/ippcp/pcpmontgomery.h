@@ -31,230 +31,236 @@
 /*
 // Montgomery spec structure
 */
-struct _cpMontgomery
-{
-   Ipp32u         idCtx;      /* Montgomery spec identifier             */
-   cpSize         maxLen;     /* Maximum length of modulus being stored */
-   gsModEngine*   pEngine;    /* Modular arith engine structure         */
+struct _cpMontgomery {
+    Ipp32u idCtx;         /* Montgomery spec identifier             */
+    cpSize maxLen;        /* Maximum length of modulus being stored */
+    gsModEngine* pEngine; /* Modular arith engine structure         */
 };
 
 /* accessory macros */
-#define MNT_SET_ID(eng)   ((eng)->idCtx = (Ipp32u)idCtxMontgomery ^ (Ipp32u)IPP_UINT_PTR(eng))
-#define MNT_ROOM(eng)     ((eng)->maxLen)
-#define MNT_ENGINE(eng)   ((eng)->pEngine)
+#define MNT_SET_ID(eng) ((eng)->idCtx = (Ipp32u)idCtxMontgomery ^ (Ipp32u)IPP_UINT_PTR(eng))
+#define MNT_ROOM(eng)   ((eng)->maxLen)
+#define MNT_ENGINE(eng) ((eng)->pEngine)
 
-#define MNT_VALID_ID(eng) ((((eng)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((eng))) == (Ipp32u)idCtxMontgomery)
+#define MNT_VALID_ID(eng) \
+    ((((eng)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((eng))) == (Ipp32u)idCtxMontgomery)
 
 /* default method */
-#define EXPONENT_METHOD    (ippBinaryMethod)
+#define EXPONENT_METHOD (ippBinaryMethod)
 
 /* alignment */
-#define MONT_ALIGNMENT  ((int)(sizeof(void*)))
+#define MONT_ALIGNMENT ((int)(sizeof(void*)))
 
 
 /*
 // Pacp/unpack Montgomery context
 */
 #define cpPackMontCtx OWNAPI(cpPackMontCtx)
-   IPP_OWN_DECL (void, cpPackMontCtx, (const IppsMontState* pCtx, Ipp8u* pBuffer))
+IPP_OWN_DECL(void, cpPackMontCtx, (const IppsMontState* pCtx, Ipp8u* pBuffer))
 #define cpUnpackMontCtx OWNAPI(cpUnpackMontCtx)
-   IPP_OWN_DECL (void, cpUnpackMontCtx, (const Ipp8u* pBuffer, IppsMontState* pCtx))
+IPP_OWN_DECL(void, cpUnpackMontCtx, (const Ipp8u* pBuffer, IppsMontState* pCtx))
 
 /*
 // Montgomery reduction, multiplication and squaring
 */
-__IPPCP_INLINE void cpMontRed_BNU(BNU_CHUNK_T* pR,
-                            BNU_CHUNK_T* pProduct,
-                            gsModEngine* pModEngine)
+__IPPCP_INLINE void cpMontRed_BNU(BNU_CHUNK_T* pR, BNU_CHUNK_T* pProduct, gsModEngine* pModEngine)
 {
-   MOD_METHOD( pModEngine )->red(pR, pProduct, pModEngine);
+    MOD_METHOD(pModEngine)->red(pR, pProduct, pModEngine);
 }
 
 __IPPCP_INLINE void cpMontMul_BNU(BNU_CHUNK_T* pR,
-                     const BNU_CHUNK_T* pA,
-                     const BNU_CHUNK_T* pB,
-                           gsModEngine* pModEngine)
+                                  const BNU_CHUNK_T* pA,
+                                  const BNU_CHUNK_T* pB,
+                                  gsModEngine* pModEngine)
 {
-   MOD_METHOD( pModEngine )->mul(pR, pA, pB, pModEngine);
+    MOD_METHOD(pModEngine)->mul(pR, pA, pB, pModEngine);
 }
 
 __IPPCP_INLINE cpSize cpMontMul_BNU_EX(BNU_CHUNK_T* pR,
-                           const BNU_CHUNK_T* pA, cpSize nsA,
-                           const BNU_CHUNK_T* pB, cpSize nsB,
-                                 gsModEngine* pModEngine)
+                                       const BNU_CHUNK_T* pA,
+                                       cpSize nsA,
+                                       const BNU_CHUNK_T* pB,
+                                       cpSize nsB,
+                                       gsModEngine* pModEngine)
 {
-   const int usedPoolLen = 1;
-   cpSize nsM = MOD_LEN( pModEngine );
-   BNU_CHUNK_T* pDataR  = pR;
-   BNU_CHUNK_T* pDataA  = gsModPoolAlloc(pModEngine, usedPoolLen);
-   if(NULL == pDataA)
-      return -1;
+    const int usedPoolLen = 1;
+    cpSize nsM            = MOD_LEN(pModEngine);
+    BNU_CHUNK_T* pDataR   = pR;
+    BNU_CHUNK_T* pDataA   = gsModPoolAlloc(pModEngine, usedPoolLen);
+    if (NULL == pDataA)
+        return -1;
 
-   ZEXPAND_COPY_BNU(pDataA, nsM, pA, nsA);
-   ZEXPAND_COPY_BNU(pDataR, nsM, pB, nsB);
+    ZEXPAND_COPY_BNU(pDataA, nsM, pA, nsA);
+    ZEXPAND_COPY_BNU(pDataR, nsM, pB, nsB);
 
-   MOD_METHOD( pModEngine )->mul(pDataR, pDataA, pDataR, pModEngine);
+    MOD_METHOD(pModEngine)->mul(pDataR, pDataA, pDataR, pModEngine);
 
-   gsModPoolFree(pModEngine, usedPoolLen);
-   return nsM;
+    gsModPoolFree(pModEngine, usedPoolLen);
+    return nsM;
 }
 
-__IPPCP_INLINE void cpMontSqr_BNU(BNU_CHUNK_T* pR,
-                      const BNU_CHUNK_T* pA,
-                            gsModEngine* pModEngine)
+__IPPCP_INLINE void cpMontSqr_BNU(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, gsModEngine* pModEngine)
 {
-   MOD_METHOD( pModEngine )->sqr(pR, pA, pModEngine);
+    MOD_METHOD(pModEngine)->sqr(pR, pA, pModEngine);
 }
 
 __IPPCP_INLINE void cpMontSqr_BNU_EX(BNU_CHUNK_T* pR,
-                         const BNU_CHUNK_T* pA, cpSize nsA,
-                               gsModEngine* pModEngine)
+                                     const BNU_CHUNK_T* pA,
+                                     cpSize nsA,
+                                     gsModEngine* pModEngine)
 {
-   cpSize nsM = MOD_LEN( pModEngine );
-   ZEXPAND_COPY_BNU(pR, nsM, pA, nsA);
+    cpSize nsM = MOD_LEN(pModEngine);
+    ZEXPAND_COPY_BNU(pR, nsM, pA, nsA);
 
-   MOD_METHOD( pModEngine )->sqr(pR, pR, pModEngine);
+    MOD_METHOD(pModEngine)->sqr(pR, pR, pModEngine);
 }
 
 /*
 // Montgomery encoding/decoding
 */
 __IPPCP_INLINE cpSize cpMontEnc_BNU(BNU_CHUNK_T* pR,
-                        const BNU_CHUNK_T* pXreg,
-                              gsModEngine* pModEngine)
+                                    const BNU_CHUNK_T* pXreg,
+                                    gsModEngine* pModEngine)
 {
-   cpSize nsM = MOD_LEN(pModEngine);
+    cpSize nsM = MOD_LEN(pModEngine);
 
-   MOD_METHOD( pModEngine )->encode(pR, pXreg, pModEngine);
+    MOD_METHOD(pModEngine)->encode(pR, pXreg, pModEngine);
 
-   FIX_BNU(pR, nsM);
-   return nsM;
+    FIX_BNU(pR, nsM);
+    return nsM;
 }
 
 __IPPCP_INLINE cpSize cpMontEnc_BNU_EX(BNU_CHUNK_T* pR,
-                           const BNU_CHUNK_T* pXreg, cpSize nsX,
-                                 gsModEngine* pModEngine)
+                                       const BNU_CHUNK_T* pXreg,
+                                       cpSize nsX,
+                                       gsModEngine* pModEngine)
 {
-   cpSize nsM = MOD_LEN(pModEngine);
+    cpSize nsM = MOD_LEN(pModEngine);
 
-   ZEXPAND_COPY_BNU(pR, nsM, pXreg, nsX);
+    ZEXPAND_COPY_BNU(pR, nsM, pXreg, nsX);
 
-   MOD_METHOD( pModEngine )->encode(pR, pR, pModEngine);
+    MOD_METHOD(pModEngine)->encode(pR, pR, pModEngine);
 
-   FIX_BNU(pR, nsM);
+    FIX_BNU(pR, nsM);
 
-   return nsM;
+    return nsM;
 }
 
 __IPPCP_INLINE cpSize cpMontDec_BNU(BNU_CHUNK_T* pR,
-                        const BNU_CHUNK_T* pXmont, cpSize nsX,
-                              gsModEngine* pModEngine)
+                                    const BNU_CHUNK_T* pXmont,
+                                    cpSize nsX,
+                                    gsModEngine* pModEngine)
 {
-   cpSize nsM = MOD_LEN( pModEngine );
+    cpSize nsM = MOD_LEN(pModEngine);
 
-   ZEXPAND_COPY_BNU(pR, nsM, pXmont, nsX);
+    ZEXPAND_COPY_BNU(pR, nsM, pXmont, nsX);
 
-   MOD_METHOD( pModEngine )->decode(pR, pR, pModEngine);
+    MOD_METHOD(pModEngine)->decode(pR, pR, pModEngine);
 
-   FIX_BNU(pR, nsM);
-   return nsM;
+    FIX_BNU(pR, nsM);
+    return nsM;
 }
 
 __IPPCP_INLINE void cpMontMul_BN(IppsBigNumState* pRbn,
-                     const IppsBigNumState* pXbn,
-                     const IppsBigNumState* pYbn,
-                           gsModEngine*     pModEngine)
+                                 const IppsBigNumState* pXbn,
+                                 const IppsBigNumState* pYbn,
+                                 gsModEngine* pModEngine)
 {
-   cpSize nsM = cpMontMul_BNU_EX(BN_NUMBER(pRbn),
-                                 BN_NUMBER(pXbn), BN_SIZE(pXbn),
-                                 BN_NUMBER(pYbn), BN_SIZE(pYbn),
-                                 pModEngine);
+    cpSize nsM = cpMontMul_BNU_EX(BN_NUMBER(pRbn),
+                                  BN_NUMBER(pXbn),
+                                  BN_SIZE(pXbn),
+                                  BN_NUMBER(pYbn),
+                                  BN_SIZE(pYbn),
+                                  pModEngine);
 
-   FIX_BNU(BN_NUMBER(pRbn), nsM);
-   BN_SIZE(pRbn) = nsM;
-   BN_SIGN(pRbn) = ippBigNumPOS;
+    FIX_BNU(BN_NUMBER(pRbn), nsM);
+    BN_SIZE(pRbn) = nsM;
+    BN_SIGN(pRbn) = ippBigNumPOS;
 }
 
 __IPPCP_INLINE void cpMontEnc_BN(IppsBigNumState* pRbn,
-                     const IppsBigNumState* pXbn,
-                           gsModEngine*     pModEngine)
+                                 const IppsBigNumState* pXbn,
+                                 gsModEngine* pModEngine)
 {
-   cpSize nsM = cpMontEnc_BNU_EX(BN_NUMBER(pRbn),
-                                 BN_NUMBER(pXbn), BN_SIZE(pXbn),
-                                 pModEngine);
+    cpSize nsM = cpMontEnc_BNU_EX(BN_NUMBER(pRbn), BN_NUMBER(pXbn), BN_SIZE(pXbn), pModEngine);
 
-   BN_SIZE(pRbn) = nsM;
-   BN_SIGN(pRbn) = ippBigNumPOS;
+    BN_SIZE(pRbn) = nsM;
+    BN_SIGN(pRbn) = ippBigNumPOS;
 }
 
 __IPPCP_INLINE void cpMontDec_BN(IppsBigNumState* pRbn,
-                     const IppsBigNumState* pXbn,
-                           gsModEngine*     pModEngine)
+                                 const IppsBigNumState* pXbn,
+                                 gsModEngine* pModEngine)
 {
-   cpSize nsM = MOD_LEN(pModEngine);
-   cpMontDec_BNU(BN_NUMBER(pRbn), BN_NUMBER(pXbn), BN_SIZE(pXbn), pModEngine);
+    cpSize nsM = MOD_LEN(pModEngine);
+    cpMontDec_BNU(BN_NUMBER(pRbn), BN_NUMBER(pXbn), BN_SIZE(pXbn), pModEngine);
 
-   BN_SIZE(pRbn) = nsM;
-   BN_SIGN(pRbn) = ippBigNumPOS;
+    BN_SIZE(pRbn) = nsM;
+    BN_SIGN(pRbn) = ippBigNumPOS;
 }
 
 /*
 // Montgomery exponentiation (binary) "fast" and "safe" versions
 */
+/* clang-format off */
 #define cpMontExpBin_BNU OWNAPI(cpMontExpBin_BNU)
    IPP_OWN_DECL (cpSize, cpMontExpBin_BNU, (BNU_CHUNK_T* pY, const BNU_CHUNK_T* pX, cpSize nsX, const BNU_CHUNK_T* pE, cpSize nsE, gsModEngine* pModEngine))
 #define cpMontExpBin_BNU_sscm OWNAPI(cpMontExpBin_BNU_sscm)
    IPP_OWN_DECL (cpSize, cpMontExpBin_BNU_sscm, (BNU_CHUNK_T* pY, const BNU_CHUNK_T* pX, cpSize nsX, const BNU_CHUNK_T* pE, cpSize nsE, gsModEngine* pModEngine))
+/* clang-format on */
 
 __IPPCP_INLINE void cpMontExpBin_BN_sscm(IppsBigNumState* pYbn,
-                             const IppsBigNumState* pXbn,
-                             const IppsBigNumState* pEbn,
-                                   gsModEngine*     pMont)
+                                         const IppsBigNumState* pXbn,
+                                         const IppsBigNumState* pEbn,
+                                         gsModEngine* pMont)
 {
-   BNU_CHUNK_T* pX = BN_NUMBER(pXbn);
-   cpSize nsX = BN_SIZE(pXbn);
-   BNU_CHUNK_T* pE = BN_NUMBER(pEbn);
-   cpSize nsE = BN_SIZE(pEbn);
-   BNU_CHUNK_T* pY = BN_NUMBER(pYbn);
-   cpSize nsY = cpMontExpBin_BNU_sscm(pY, pX,nsX, pE,nsE, pMont);
-   FIX_BNU(pY, nsY);
-   BN_SIZE(pYbn) = nsY;
-   BN_SIGN(pYbn) = ippBigNumPOS;
+    BNU_CHUNK_T* pX = BN_NUMBER(pXbn);
+    cpSize nsX      = BN_SIZE(pXbn);
+    BNU_CHUNK_T* pE = BN_NUMBER(pEbn);
+    cpSize nsE      = BN_SIZE(pEbn);
+    BNU_CHUNK_T* pY = BN_NUMBER(pYbn);
+    cpSize nsY      = cpMontExpBin_BNU_sscm(pY, pX, nsX, pE, nsE, pMont);
+    FIX_BNU(pY, nsY);
+    BN_SIZE(pYbn) = nsY;
+    BN_SIGN(pYbn) = ippBigNumPOS;
 }
 
 __IPPCP_INLINE void cpMontExpBin_BN(IppsBigNumState* pYbn,
-                        const IppsBigNumState* pXbn,
-                        const IppsBigNumState* pEbn,
-                              gsModEngine* pModEngine)
+                                    const IppsBigNumState* pXbn,
+                                    const IppsBigNumState* pEbn,
+                                    gsModEngine* pModEngine)
 {
-   BNU_CHUNK_T* pX = BN_NUMBER(pXbn);
-   cpSize nsX = BN_SIZE(pXbn);
-   BNU_CHUNK_T* pE = BN_NUMBER(pEbn);
-   cpSize nsE = BN_SIZE(pEbn);
-   BNU_CHUNK_T* pY = BN_NUMBER(pYbn);
-   cpSize nsY = cpMontExpBin_BNU(pY, pX,nsX, pE,nsE, pModEngine);
-   FIX_BNU(pY, nsY);
-   BN_SIZE(pYbn) = nsY;
-   BN_SIGN(pYbn) = ippBigNumPOS;
+    BNU_CHUNK_T* pX = BN_NUMBER(pXbn);
+    cpSize nsX      = BN_SIZE(pXbn);
+    BNU_CHUNK_T* pE = BN_NUMBER(pEbn);
+    cpSize nsE      = BN_SIZE(pEbn);
+    BNU_CHUNK_T* pY = BN_NUMBER(pYbn);
+    cpSize nsY      = cpMontExpBin_BNU(pY, pX, nsX, pE, nsE, pModEngine);
+    FIX_BNU(pY, nsY);
+    BN_SIZE(pYbn) = nsY;
+    BN_SIGN(pYbn) = ippBigNumPOS;
 }
 
 /*
 // Montgomery exponentiation (fixed window)
 */
 #define cpMontExp_WinSize OWNAPI(cpMontExp_WinSize)
-   IPP_OWN_DECL (cpSize, cpMontExp_WinSize, (int bitsize))
+IPP_OWN_DECL(cpSize, cpMontExp_WinSize, (int bitsize))
 
+/* clang-format off */
 #if defined(_USE_WINDOW_EXP_)
 #define cpMontExpWin_BN_sscm OWNAPI(cpMontExpWin_BN_sscm)
    IPP_OWN_DECL (void, cpMontExpWin_BN_sscm, (IppsBigNumState* pY, const IppsBigNumState* pX, const IppsBigNumState* pE, gsModEngine* pMont, BNU_CHUNK_T* pPrecompResource))
 #define cpMontExpWin_BN OWNAPI(cpMontExpWin_BN)
    IPP_OWN_DECL (void, cpMontExpWin_BN, (IppsBigNumState* pY, const IppsBigNumState* pX, const IppsBigNumState* pE, gsModEngine* pMont, BNU_CHUNK_T* pPrecompResource))
 #endif
+/* clang-format on */
 
 /*
 // Montgomery multi-exponentiation
 */
 /* precompute table for multi-exponentiation */
+/* clang-format off */
 #define cpMontMultiExpInitArray OWNAPI(cpMontMultiExpInitArray)
    IPP_OWN_DECL (void, cpMontMultiExpInitArray, (BNU_CHUNK_T* pPrecomTbl, const BNU_CHUNK_T** ppX, cpSize xItemBitSize, cpSize numItems, gsModEngine* pMont))
 
@@ -268,16 +274,16 @@ __IPPCP_INLINE void cpMontExpBin_BN(IppsBigNumState* pYbn,
    IPP_OWN_DECL (BNU_CHUNK_T*, cpMontInv_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, IppsMontState* pMont))
 #define cpRegInv_BNU OWNAPI(cpRegInv_BNU)
    IPP_OWN_DECL (BNU_CHUNK_T*, cpRegInv_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, IppsMontState* pMont))
-
+/* clang-format on */
 
 /*
 // Montgomery internal GetSize/Init functions
 */
 #define cpMontGetSize OWNAPI(cpMontGetSize)
-   IPP_OWN_DECL (IppStatus, cpMontGetSize, (cpSize maxLen32, int poolLength, cpSize* pCtxSize))
+IPP_OWN_DECL(IppStatus, cpMontGetSize, (cpSize maxLen32, int poolLength, cpSize* pCtxSize))
 #define cpMontInit OWNAPI(cpMontInit)
-   IPP_OWN_DECL (IppStatus, cpMontInit, (int maxLen32, int poolLength, IppsMontState* pMont))
+IPP_OWN_DECL(IppStatus, cpMontInit, (int maxLen32, int poolLength, IppsMontState* pMont))
 #define cpMontSet OWNAPI(cpMontSet)
-   IPP_OWN_DECL (IppStatus, cpMontSet, (const Ipp32u* pModulus, cpSize len32, IppsMontState* pMont))
+IPP_OWN_DECL(IppStatus, cpMontSet, (const Ipp32u* pModulus, cpSize len32, IppsMontState* pMont))
 
 #endif /* _CP_MONTGOMETRY_H */

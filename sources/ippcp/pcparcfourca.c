@@ -44,34 +44,34 @@
 //    pCtx        pointer to the ARCFOUR context
 //
 *F*/
-IPPFUN(IppStatus, ippsARCFourInit, (const Ipp8u *pKey, int keyLen, IppsARCFourState *pCtx))
+IPPFUN(IppStatus, ippsARCFourInit, (const Ipp8u* pKey, int keyLen, IppsARCFourState* pCtx))
 {
-   /* test context pointer */
-   IPP_BAD_PTR1_RET(pCtx);
+    /* test context pointer */
+    IPP_BAD_PTR1_RET(pCtx);
 
-   /* test key */
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET(((1>keyLen)||(IPP_ARCFOUR_KEYMAX_SIZE< keyLen)), ippStsLengthErr);
+    /* test key */
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET(((1 > keyLen) || (IPP_ARCFOUR_KEYMAX_SIZE < keyLen)), ippStsLengthErr);
 
-   {
-      int i;
-      Ipp8u kblk[256], j, tmp;
+    {
+        int i;
+        Ipp8u kblk[256], j, tmp;
 
-      /* init RC4 context */
-      RC4_SET_ID(pCtx);
+        /* init RC4 context */
+        RC4_SET_ID(pCtx);
 
-      for(i=0; i<256; i++) {
-         pCtx->Sbox0[i] = (Ipp8u)i;
-         kblk[i] = pKey[i%keyLen];
-      }
-      j=0;
-      for(i=0; i<256; i++) {
-         j += pCtx->Sbox0[i] + kblk[i];
-         tmp = pCtx->Sbox0[j];
-         pCtx->Sbox0[j] = pCtx->Sbox0[i];
-         pCtx->Sbox0[i] = tmp;
-      }
+        for (i = 0; i < 256; i++) {
+            pCtx->Sbox0[i] = (Ipp8u)i;
+            kblk[i]        = pKey[i % keyLen];
+        }
+        j = 0;
+        for (i = 0; i < 256; i++) {
+            j += pCtx->Sbox0[i] + kblk[i];
+            tmp            = pCtx->Sbox0[j];
+            pCtx->Sbox0[j] = pCtx->Sbox0[i];
+            pCtx->Sbox0[i] = tmp;
+        }
 
-      return ippsARCFourReset(pCtx);
-   }
+        return ippsARCFourReset(pCtx);
+    }
 }

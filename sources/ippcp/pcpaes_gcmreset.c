@@ -30,7 +30,7 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 
-#if(_IPP32E>=_IPP32E_K0)
+#if (_IPP32E >= _IPP32E_K0)
 #include "pcpaesauthgcm_avx512.h"
 #else
 #include "pcpaesauthgcm.h"
@@ -50,33 +50,33 @@
 //    pState       pointer to the context
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_GCMReset,(IppsAES_GCMState* pState))
+IPPFUN(IppStatus, ippsAES_GCMReset, (IppsAES_GCMState * pState))
 {
-   /* test pState pointer */
-   IPP_BAD_PTR1_RET(pState);
+    /* test pState pointer */
+    IPP_BAD_PTR1_RET(pState);
 
-   /* use aligned context */
-   pState = (IppsAES_GCMState*)( IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT) );
-   /* test context validity */
-   IPP_BADARG_RET(!AESGCM_VALID_ID(pState), ippStsContextMatchErr);
+    /* use aligned context */
+    pState = (IppsAES_GCMState*)(IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT));
+    /* test context validity */
+    IPP_BADARG_RET(!AESGCM_VALID_ID(pState), ippStsContextMatchErr);
 
-   /* reset GCM */
-   AESGCM_STATE(pState) = GcmInit;
-   AESGCM_IV_LEN(pState) = CONST_64(0);
-   AESGCM_AAD_LEN(pState) = CONST_64(0);
-   AESGCM_TXT_LEN(pState) = CONST_64(0);
+    /* reset GCM */
+    AESGCM_STATE(pState)   = GcmInit;
+    AESGCM_IV_LEN(pState)  = CONST_64(0);
+    AESGCM_AAD_LEN(pState) = CONST_64(0);
+    AESGCM_TXT_LEN(pState) = CONST_64(0);
 
-   AESGCM_BUFLEN(pState) = 0;
-   PadBlock(0, AESGCM_COUNTER(pState), BLOCK_SIZE);
-   PadBlock(0, AESGCM_ECOUNTER(pState), BLOCK_SIZE);
-   PadBlock(0, AESGCM_ECOUNTER0(pState), BLOCK_SIZE);
-   PadBlock(0, AESGCM_GHASH(pState), BLOCK_SIZE);
+    AESGCM_BUFLEN(pState) = 0;
+    PadBlock(0, AESGCM_COUNTER(pState), BLOCK_SIZE);
+    PadBlock(0, AESGCM_ECOUNTER(pState), BLOCK_SIZE);
+    PadBlock(0, AESGCM_ECOUNTER0(pState), BLOCK_SIZE);
+    PadBlock(0, AESGCM_GHASH(pState), BLOCK_SIZE);
 
-   #if(_IPP32E>=_IPP32E_K0)
+#if (_IPP32E >= _IPP32E_K0)
 
-   PadBlock(0, (void*)&AES_GCM_CONTEXT_DATA(pState), sizeof(struct gcm_context_data));
+    PadBlock(0, (void*)&AES_GCM_CONTEXT_DATA(pState), sizeof(struct gcm_context_data));
 
-   #endif /* #if(_IPP32E>=_IPP32E_K0) */
+#endif /* #if(_IPP32E>=_IPP32E_K0) */
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

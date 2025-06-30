@@ -24,48 +24,50 @@
 
 static gsModMethod* gsModArithMont_C(void)
 {
-   static gsModMethod m = {
-      gs_mont_encode,
-      gs_mont_decode,
-      gs_mont_mul,
-      gs_mont_sqr,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
+    /* clang-format off */
+   static gsModMethod m = { gs_mont_encode,
+                            gs_mont_decode,
+                            gs_mont_mul,
+                            gs_mont_sqr,
+                            NULL,
+                            NULL,
+                            NULL,
+                            NULL,
+                            NULL,
+                            NULL,
+                            NULL,
    };
-   return &m;
+    /* clang-format on */
+    return &m;
 }
-#if (_IPP32E>=_IPP32E_L9)
+#if (_IPP32E >= _IPP32E_L9)
 static gsModMethod* gsModArithMont_X(void)
 {
-   static gsModMethod m = {
-      gs_mont_encodeX,
-      gs_mont_decodeX,
-      gs_mont_mulX,
-      gs_mont_sqrX,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-   };
-   return &m;
+    /* clang-format off */
+    static gsModMethod m = { gs_mont_encodeX,
+                             gs_mont_decodeX,
+                             gs_mont_mulX,
+                             gs_mont_sqrX,
+                             NULL,
+                             NULL,
+                             NULL,
+                             NULL,
+                             NULL,
+                             NULL,
+                             NULL,
+    };
+    /* clang-format on */
+    return &m;
 }
 #endif
 
-IPP_OWN_DEFN (gsModMethod*, gsModArithMont, (void))
+IPP_OWN_DEFN(gsModMethod*, gsModArithMont, (void))
 {
-   #if (_IPP32E>=_IPP32E_L9)
-   if(IsFeatureEnabled(ippCPUID_ADCOX))
-      return gsModArithMont_X();
-   else
-   #endif
-      return gsModArithMont_C();
+#if (_IPP32E >= _IPP32E_L9)
+    if (IsFeatureEnabled(ippCPUID_ADCOX))
+        return gsModArithMont_X();
+    else
+#endif
+        return gsModArithMont_C();
 }
 /* ******************************************** */

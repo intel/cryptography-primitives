@@ -57,30 +57,30 @@
 *F*/
 IPPFUN(IppStatus, ippsAES_GCMReinit, (IppsAES_GCMState * pState))
 {
-   /* test pState pointer */
-   IPP_BAD_PTR1_RET(pState);
+    /* test pState pointer */
+    IPP_BAD_PTR1_RET(pState);
 
-   /* use aligned context */
-   pState = (IppsAES_GCMState *)(IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT));
+    /* use aligned context */
+    pState = (IppsAES_GCMState*)(IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT));
 
-   /* set proper GCM context id */
-   AESGCM_SET_ID(pState);
+    /* set proper GCM context id */
+    AESGCM_SET_ID(pState);
 
-   Ipp64u keyByteLen;
+    Ipp64u keyByteLen;
 /* re-init pointers inside the cipher context */
 #if (_IPP32E >= _IPP32E_K0)
-   keyByteLen = AES_GCM_KEY_LEN(pState);
+    keyByteLen = AES_GCM_KEY_LEN(pState);
 #else
-   IppsAESSpec *pAesCtx = AESGCM_CIPHER(pState);
-   /* set proper cipher context id*/
-   RIJ_SET_ID(pAesCtx);
-   keyByteLen = (Ipp64u)RIJ_NK(pAesCtx) * RIJ_BYTES_IN_WORD;
+    IppsAESSpec* pAesCtx = AESGCM_CIPHER(pState);
+    /* set proper cipher context id*/
+    RIJ_SET_ID(pAesCtx);
+    keyByteLen = (Ipp64u)RIJ_NK(pAesCtx) * RIJ_BYTES_IN_WORD;
 
-   cpAes_setup_ptrs_and_methods(pAesCtx);
+    cpAes_setup_ptrs_and_methods(pAesCtx);
 #endif
 
-   /* re-init pointers inside the AES-GCM context */
-   cpAesGCM_setup_ptrs_and_methods(pState, keyByteLen);
+    /* re-init pointers inside the AES-GCM context */
+    cpAesGCM_setup_ptrs_and_methods(pState, keyByteLen);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

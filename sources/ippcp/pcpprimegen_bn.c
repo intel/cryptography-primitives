@@ -61,63 +61,67 @@
 //    and call the primitive again.
 *F*/
 
-IPPFUN(IppStatus, ippsPrimeGen_BN, (IppsBigNumState* pPrime, int nBits,
-                                   int nTrials,
-                                   IppsPrimeState* pCtx,
-                                   IppBitSupplier rndFunc, void* pRndParam))
+/* clang-format off */
+IPPFUN(IppStatus, ippsPrimeGen_BN, (IppsBigNumState* pPrime,
+                                    int nBits,
+                                    int nTrials,
+                                    IppsPrimeState* pCtx,
+                                    IppBitSupplier rndFunc,
+                                    void* pRndParam))
+/* clang-format on */
 {
-   /* test generator context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test generator context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   /* test BN context */
-   IPP_BAD_PTR1_RET(pPrime);
-   IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
+    /* test BN context */
+    IPP_BAD_PTR1_RET(pPrime);
+    IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(nBits<1, ippStsLengthErr);
-   IPP_BADARG_RET(nBits>PRIME_MAXBITSIZE(pCtx), ippStsOutOfRangeErr);
-   IPP_BADARG_RET(BN_ROOM(pPrime) < BITS_BNU_CHUNK(nBits), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
+    IPP_BADARG_RET(nBits > PRIME_MAXBITSIZE(pCtx), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(BN_ROOM(pPrime) < BITS_BNU_CHUNK(nBits), ippStsOutOfRangeErr);
 
-   IPP_BADARG_RET(nTrials < 0, ippStsBadArgErr);
-   IPP_BAD_PTR1_RET(rndFunc);
+    IPP_BADARG_RET(nTrials < 0, ippStsBadArgErr);
+    IPP_BAD_PTR1_RET(rndFunc);
 
-   {
-      cpSize count;
-      Ipp32u result = IPP_IS_COMPOSITE;
+    {
+        cpSize count;
+        Ipp32u result = IPP_IS_COMPOSITE;
 
-      BNU_CHUNK_T botPattern = 0x1;
-      BNU_CHUNK_T topPattern = (BNU_CHUNK_T)1 << ((nBits-1)&(BNU_CHUNK_BITS-1));
-      BNU_CHUNK_T topMask = MASK_BNU_CHUNK(nBits);
+        BNU_CHUNK_T botPattern = 0x1;
+        BNU_CHUNK_T topPattern = (BNU_CHUNK_T)1 << ((nBits - 1) & (BNU_CHUNK_BITS - 1));
+        BNU_CHUNK_T topMask    = MASK_BNU_CHUNK(nBits);
 
-      BNU_CHUNK_T* pRand = BN_NUMBER(pPrime);
-      cpSize randLen = BITS_BNU_CHUNK(nBits);
+        BNU_CHUNK_T* pRand = BN_NUMBER(pPrime);
+        cpSize randLen     = BITS_BNU_CHUNK(nBits);
 
-      ZEXPAND_BNU(pRand, 0, BN_ROOM(pPrime));
-      BN_SIZE(pPrime) = randLen;
-      BN_SIGN(pPrime) = ippBigNumPOS;
+        ZEXPAND_BNU(pRand, 0, BN_ROOM(pPrime));
+        BN_SIZE(pPrime) = randLen;
+        BN_SIGN(pPrime) = ippBigNumPOS;
 
-      if (nTrials < 1)
-         nTrials = MR_rounds_p80(nBits);
+        if (nTrials < 1)
+            nTrials = MR_rounds_p80(nBits);
 
-      #define MAX_COUNT (1000)
-      for(count=0; count<MAX_COUNT && result!=IPP_IS_PRIME; count++) {
-         /* get trial number */
-         IppStatus sts = rndFunc((Ipp32u*)pRand, nBits, pRndParam);
-         if(ippStsNoErr!=sts)
-            return sts;
+#define MAX_COUNT (1000)
+        for (count = 0; count < MAX_COUNT && result != IPP_IS_PRIME; count++) {
+            /* get trial number */
+            IppStatus sts = rndFunc((Ipp32u*)pRand, nBits, pRndParam);
+            if (ippStsNoErr != sts)
+                return sts;
 
-         /* set up top and bottom bit to 1 */
-         pRand[0] |= botPattern;
-         pRand[randLen-1] &= topMask;
-         pRand[randLen-1] |= topPattern;
+            /* set up top and bottom bit to 1 */
+            pRand[0] |= botPattern;
+            pRand[randLen - 1] &= topMask;
+            pRand[randLen - 1] |= topPattern;
 
-         /* test trial number */
-         sts = ippsPrimeTest_BN(pPrime, nTrials, &result, pCtx, rndFunc, pRndParam);
-         if(ippStsNoErr!=sts)
-            return sts;
-      }
-      #undef MAX_COUNT
+            /* test trial number */
+            sts = ippsPrimeTest_BN(pPrime, nTrials, &result, pCtx, rndFunc, pRndParam);
+            if (ippStsNoErr != sts)
+                return sts;
+        }
+#undef MAX_COUNT
 
-      return result==IPP_IS_PRIME? ippStsNoErr : ippStsInsufficientEntropy;
-   }
+        return result == IPP_IS_PRIME ? ippStsNoErr : ippStsInsufficientEntropy;
+    }
 }

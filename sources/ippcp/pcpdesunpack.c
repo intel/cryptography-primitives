@@ -45,13 +45,13 @@
 //    pBuffer     pointer to the packed context
 //
 *F*/
-IPPFUN(IppStatus, ippsDESUnpack,(const Ipp8u* pBuffer, IppsDESSpec* pCtx))
+IPPFUN(IppStatus, ippsDESUnpack, (const Ipp8u* pBuffer, IppsDESSpec* pCtx))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
 
-   CopyBlock(pBuffer, pCtx, sizeof(IppsDESSpec));
-   DES_SET_ID(pCtx);
+    CopyBlock(pBuffer, pCtx, sizeof(IppsDESSpec));
+    DES_SET_ID(pCtx);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

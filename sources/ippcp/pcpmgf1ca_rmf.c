@@ -59,52 +59,58 @@
 //    MGF1 defined in the ANSI X9.63 standard and frequently called KDF (key Generation Function).
 //    The fifference between MGF1 and MGF2 is negligible - counter i runs from 0 (in MGF1) and from 1 (in MGF2)
 *F*/
-IPPFUN(IppStatus, ippsMGF1_rmf,(const Ipp8u* pSeed, int seedLen, Ipp8u* pMask, int maskLen, const IppsHashMethod* pMethod))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsMGF1_rmf, (const Ipp8u* pSeed,
+                                 int seedLen,
+                                 Ipp8u* pMask,
+                                 int maskLen,
+                                 const IppsHashMethod* pMethod))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pMask, pMethod);
-   IPP_BADARG_RET((seedLen<0)||(maskLen<0), ippStsLengthErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+    IPP_BAD_PTR2_RET(pMask, pMethod);
+    IPP_BADARG_RET((seedLen < 0) || (maskLen < 0), ippStsLengthErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
-   {
-      /* hash specific */
-      int hashSize = pMethod->hashLen;
+    {
+        /* hash specific */
+        int hashSize = pMethod->hashLen;
 
-      /* check if enough memory is allocated for the context */
-      int contextSize = 0;
-      ippsHashGetSizeOptimal_rmf(&contextSize, pMethod);
-      IPP_BADARG_RET((MAX_HASH_RMF_CONTEXT_SIZE < contextSize), ippStsMemAllocErr);
+        /* check if enough memory is allocated for the context */
+        int contextSize = 0;
+        ippsHashGetSizeOptimal_rmf(&contextSize, pMethod);
+        IPP_BADARG_RET((MAX_HASH_RMF_CONTEXT_SIZE < contextSize), ippStsMemAllocErr);
 
-      int i, outLen;
-      __ALIGN64 Ipp8u hashCtxMem[MAX_HASH_RMF_CONTEXT_SIZE];
-      IppsHashState_rmf* hashCtx = (IppsHashState_rmf*)hashCtxMem;
-      ippsHashInit_rmf(hashCtx, pMethod);
+        int i, outLen;
+        __ALIGN64 Ipp8u hashCtxMem[MAX_HASH_RMF_CONTEXT_SIZE];
+        IppsHashState_rmf* hashCtx = (IppsHashState_rmf*)hashCtxMem;
+        ippsHashInit_rmf(hashCtx, pMethod);
 
-      if(!pSeed)
-         seedLen = 0;
+        if (!pSeed)
+            seedLen = 0;
 
-      for(i=0,outLen=0; outLen<maskLen; i++) { /* counter i runs from 0 */
-         Ipp8u cnt[4];
-         cnt[0] = (Ipp8u)((i>>24) & 0xFF);
-         cnt[1] = (Ipp8u)((i>>16) & 0xFF);
-         cnt[2] = (Ipp8u)((i>>8)  & 0xFF);
-         cnt[3] = (Ipp8u)(i & 0xFF);
+        for (i = 0, outLen = 0; outLen < maskLen; i++) { /* counter i runs from 0 */
+            Ipp8u cnt[4];
+            cnt[0] = (Ipp8u)((i >> 24) & 0xFF);
+            cnt[1] = (Ipp8u)((i >> 16) & 0xFF);
+            cnt[2] = (Ipp8u)((i >> 8) & 0xFF);
+            cnt[3] = (Ipp8u)(i & 0xFF);
 
-         ippsHashUpdate_rmf(pSeed, seedLen, hashCtx);
-         ippsHashUpdate_rmf(cnt,   4,       hashCtx);
+            ippsHashUpdate_rmf(pSeed, seedLen, hashCtx);
+            ippsHashUpdate_rmf(cnt, 4, hashCtx);
 
-         if((outLen + hashSize) <= maskLen) {
-            ippsHashFinal_rmf(pMask+outLen, hashCtx);
-            outLen += hashSize;
-         }
-         else {
-            Ipp8u md[MAX_HASH_SIZE];
-            ippsHashFinal_rmf(md, hashCtx);
-            CopyBlock(md, pMask+outLen, maskLen-outLen);
-            outLen = maskLen;
-         }
-      }
+            if ((outLen + hashSize) <= maskLen) {
+                ippsHashFinal_rmf(pMask + outLen, hashCtx);
+                outLen += hashSize;
+            } else {
+                Ipp8u md[MAX_HASH_SIZE];
+                ippsHashFinal_rmf(md, hashCtx);
+                CopyBlock(md, pMask + outLen, maskLen - outLen);
+                outLen = maskLen;
+            }
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Encrypt/Decrypt byte data stream according to TDES (CTR mode)
-// 
+//
 //  Contents:
 //     ippsTDESEncryptCTR()
 //     ippsTDESDecryptCTR()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -33,67 +33,69 @@
 #include "pcpdes.h"
 #include "pcptool.h"
 
-static
-IppStatus TDES_CTR(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                   const IppsDESSpec* pCtx1,
-                   const IppsDESSpec* pCtx2,
-                   const IppsDESSpec* pCtx3,
-                   Ipp8u* pCtrValue, int ctrNumBitSize)
+static IppStatus TDES_CTR(const Ipp8u* pSrc,
+                          Ipp8u* pDst,
+                          int len,
+                          const IppsDESSpec* pCtx1,
+                          const IppsDESSpec* pCtx2,
+                          const IppsDESSpec* pCtx3,
+                          Ipp8u* pCtrValue,
+                          int ctrNumBitSize)
 {
-   Ipp64u counter;
-   Ipp64u  output;
+    Ipp64u counter;
+    Ipp64u output;
 
-   /* test contexts */
-   IPP_BAD_PTR3_RET(pCtx1, pCtx2, pCtx3);
+    /* test contexts */
+    IPP_BAD_PTR3_RET(pCtx1, pCtx2, pCtx3);
 
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx1), ippStsContextMatchErr);
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx2), ippStsContextMatchErr);
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx3), ippStsContextMatchErr);
-   /* test source, target and counter block pointers */
-   IPP_BAD_PTR3_RET(pSrc, pDst, pCtrValue);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test counter block size */
-   IPP_BADARG_RET(((MBS_DES*8)<ctrNumBitSize)||(ctrNumBitSize<1), ippStsCTRSizeErr);
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx1), ippStsContextMatchErr);
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx2), ippStsContextMatchErr);
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx3), ippStsContextMatchErr);
+    /* test source, target and counter block pointers */
+    IPP_BAD_PTR3_RET(pSrc, pDst, pCtrValue);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test counter block size */
+    IPP_BADARG_RET(((MBS_DES * 8) < ctrNumBitSize) || (ctrNumBitSize < 1), ippStsCTRSizeErr);
 
-   /* copy counter */
-   CopyBlock8(pCtrValue, &counter);
+    /* copy counter */
+    CopyBlock8(pCtrValue, &counter);
 
-   /*
+    /*
    // encrypt block-by-block aligned streams
    */
-   while(len >= MBS_DES) {
-      /* encrypt counter block */
-      output = Cipher_DES(counter, DES_EKEYS(pCtx1), DESspbox);
-      output = Cipher_DES(output,  DES_DKEYS(pCtx2), DESspbox);
-      output = Cipher_DES(output,  DES_EKEYS(pCtx3), DESspbox);
-      /* compute ciphertext block */
-      XorBlock8(pSrc, &output, pDst);
-      /* encrement counter block */
-      StdIncrement((Ipp8u*)&counter,MBS_DES*8, ctrNumBitSize);
+    while (len >= MBS_DES) {
+        /* encrypt counter block */
+        output = Cipher_DES(counter, DES_EKEYS(pCtx1), DESspbox);
+        output = Cipher_DES(output, DES_DKEYS(pCtx2), DESspbox);
+        output = Cipher_DES(output, DES_EKEYS(pCtx3), DESspbox);
+        /* compute ciphertext block */
+        XorBlock8(pSrc, &output, pDst);
+        /* encrement counter block */
+        StdIncrement((Ipp8u*)&counter, MBS_DES * 8, ctrNumBitSize);
 
-      pSrc += MBS_DES;
-      pDst += MBS_DES;
-      len  -= MBS_DES;
-   }
-   /*
+        pSrc += MBS_DES;
+        pDst += MBS_DES;
+        len -= MBS_DES;
+    }
+    /*
    // encrypt last data block
    */
-   if(len) {
-      /* encrypt counter block */
-      output = Cipher_DES(counter, DES_EKEYS(pCtx1), DESspbox);
-      output = Cipher_DES(output,  DES_DKEYS(pCtx2), DESspbox);
-      output = Cipher_DES(output,  DES_EKEYS(pCtx3), DESspbox);
-      /* compute ciphertext block */
-      XorBlock(pSrc, &output, pDst,len);
-      /* encrement counter block */
-      StdIncrement((Ipp8u*)&counter,MBS_DES*8, ctrNumBitSize);
-   }
+    if (len) {
+        /* encrypt counter block */
+        output = Cipher_DES(counter, DES_EKEYS(pCtx1), DESspbox);
+        output = Cipher_DES(output, DES_DKEYS(pCtx2), DESspbox);
+        output = Cipher_DES(output, DES_EKEYS(pCtx3), DESspbox);
+        /* compute ciphertext block */
+        XorBlock(pSrc, &output, pDst, len);
+        /* encrement counter block */
+        StdIncrement((Ipp8u*)&counter, MBS_DES * 8, ctrNumBitSize);
+    }
 
-   /* update counter */
-   CopyBlock8(&counter, pCtrValue);
+    /* update counter */
+    CopyBlock8(&counter, pCtrValue);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }
 
 /*F*
@@ -127,14 +129,18 @@ IppStatus TDES_CTR(const Ipp8u* pSrc, Ipp8u* pDst, int len,
 //    counter will updated on return
 //
 *F*/
-
-IPPFUN(IppStatus, ippsTDESEncryptCTR,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
+/* clang-format off */
+IPPFUN(IppStatus, ippsTDESEncryptCTR,(const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
                                       const IppsDESSpec* pCtx1,
                                       const IppsDESSpec* pCtx2,
                                       const IppsDESSpec* pCtx3,
-                                      Ipp8u* pCtrValue, int ctrNumBitSize))
+                                      Ipp8u* pCtrValue,
+                                      int ctrNumBitSize))
+/* clang-format on */
 {
-   return TDES_CTR(pSrc,pDst,len, pCtx1,pCtx2,pCtx3, pCtrValue,ctrNumBitSize);
+    return TDES_CTR(pSrc, pDst, len, pCtx1, pCtx2, pCtx3, pCtrValue, ctrNumBitSize);
 }
 
 /*F*
@@ -168,12 +174,16 @@ IPPFUN(IppStatus, ippsTDESEncryptCTR,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
 //    counter will updated on return
 //
 *F*/
-
-IPPFUN(IppStatus, ippsTDESDecryptCTR,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
+/* clang-format off */
+IPPFUN(IppStatus, ippsTDESDecryptCTR,(const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
                                       const IppsDESSpec* pCtx1,
                                       const IppsDESSpec* pCtx2,
                                       const IppsDESSpec* pCtx3,
-                                      Ipp8u* pCtrValue, int ctrNumBitSize))
+                                      Ipp8u* pCtrValue,
+                                      int ctrNumBitSize))
+/* clang-format on */
 {
-   return TDES_CTR(pSrc,pDst,len, pCtx1,pCtx2,pCtx3, pCtrValue,ctrNumBitSize);
+    return TDES_CTR(pSrc, pDst, len, pCtx1, pCtx2, pCtx3, pCtrValue, ctrNumBitSize);
 }

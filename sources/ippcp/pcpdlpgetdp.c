@@ -57,43 +57,48 @@
 //    pDL      pointer to the DL context
 //
 *F*/
-IPPFUN(IppStatus, ippsDLPGetDP,(IppsBigNumState* pDP, IppDLPKeyTag tag, const IppsDLPState* pDL))
+IPPFUN(IppStatus, ippsDLPGetDP, (IppsBigNumState * pDP, IppDLPKeyTag tag, const IppsDLPState* pDL))
 {
-   /* test DL context */
-   IPP_BAD_PTR1_RET(pDL);
-   IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
+    /* test DL context */
+    IPP_BAD_PTR1_RET(pDL);
+    IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
 
-   /* test DL parameter to be set */
-   IPP_BAD_PTR1_RET(pDP);
-   IPP_BADARG_RET(!BN_VALID_ID(pDP), ippStsContextMatchErr);
+    /* test DL parameter to be set */
+    IPP_BAD_PTR1_RET(pDP);
+    IPP_BADARG_RET(!BN_VALID_ID(pDP), ippStsContextMatchErr);
 
-   {
-      IppStatus sts = ippStsNoErr;
+    {
+        IppStatus sts = ippStsNoErr;
 
-      switch(tag) {
-         case ippDLPkeyP:
-            if(DLP_FLAG(pDL)&ippDLPkeyP)
-               sts = ippsSet_BN(ippBigNumPOS, BITS2WORD32_SIZE(DLP_BITSIZEP(pDL)), (Ipp32u*)DLP_P(pDL), pDP);
+        switch (tag) {
+        case ippDLPkeyP:
+            if (DLP_FLAG(pDL) & ippDLPkeyP)
+                sts = ippsSet_BN(ippBigNumPOS,
+                                 BITS2WORD32_SIZE(DLP_BITSIZEP(pDL)),
+                                 (Ipp32u*)DLP_P(pDL),
+                                 pDP);
             else
-               sts = ippStsIncompleteContextErr;
+                sts = ippStsIncompleteContextErr;
             break;
-         case ippDLPkeyR:
-            if(DLP_FLAG(pDL)&ippDLPkeyR)
-               sts = ippsSet_BN(ippBigNumPOS, BITS2WORD32_SIZE(DLP_BITSIZER(pDL)), (Ipp32u*)DLP_R(pDL), pDP);
+        case ippDLPkeyR:
+            if (DLP_FLAG(pDL) & ippDLPkeyR)
+                sts = ippsSet_BN(ippBigNumPOS,
+                                 BITS2WORD32_SIZE(DLP_BITSIZER(pDL)),
+                                 (Ipp32u*)DLP_R(pDL),
+                                 pDP);
             else
-               sts = ippStsIncompleteContextErr;
+                sts = ippStsIncompleteContextErr;
             break;
-         case ippDLPkeyG:
-            if(DLP_FLAG(pDL)&ippDLPkeyG) {
-               cpMontDec_BN(pDP, DLP_GENC(pDL), DLP_MONTP0(pDL));
-            }
-            else
-               sts = ippStsIncompleteContextErr;
+        case ippDLPkeyG:
+            if (DLP_FLAG(pDL) & ippDLPkeyG) {
+                cpMontDec_BN(pDP, DLP_GENC(pDL), DLP_MONTP0(pDL));
+            } else
+                sts = ippStsIncompleteContextErr;
             break;
-         default:
+        default:
             sts = ippStsBadArgErr;
-      }
+        }
 
-      return sts;
-   }
+        return sts;
+    }
 }

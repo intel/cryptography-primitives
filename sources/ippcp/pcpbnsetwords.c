@@ -47,30 +47,37 @@
 //    pBN      BigNum ctx
 //
 *F*/
-IPPFUN(IppStatus, ippsSet_BN, (IppsBigNumSGN sgn, int length, const Ipp32u* pData,
+/* clang-format off */
+IPPFUN(IppStatus, ippsSet_BN, (IppsBigNumSGN sgn,
+                               int length,
+                               const Ipp32u* pData,
                                IppsBigNumState* pBN))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pData, pBN);
+    IPP_BAD_PTR2_RET(pData, pBN);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(length<1, ippStsLengthErr);
+    IPP_BADARG_RET(length < 1, ippStsLengthErr);
 
-   /* compute real size */
-   FIX_BNU32(pData, length);
+    /* compute real size */
+    FIX_BNU32(pData, length);
 
-   {
-      cpSize len = INTERNAL_BNU_LENGTH(length);
-      IPP_BADARG_RET(len > BN_ROOM(pBN), ippStsOutOfRangeErr);
+    {
+        cpSize len = INTERNAL_BNU_LENGTH(length);
+        IPP_BADARG_RET(len > BN_ROOM(pBN), ippStsOutOfRangeErr);
 
-      ZEXPAND_COPY_BNU((Ipp32u*)BN_NUMBER(pBN), BN_ROOM(pBN)*(int)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)), pData, length);
+        ZEXPAND_COPY_BNU((Ipp32u*)BN_NUMBER(pBN),
+                         BN_ROOM(pBN) * (int)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)),
+                         pData,
+                         length);
 
-      BN_SIZE(pBN) = len;
+        BN_SIZE(pBN) = len;
 
-      if(length==1 && pData[0] == 0)
-         sgn = ippBigNumPOS;  /* consider zero value as positive */
-      BN_SIGN(pBN) = sgn;
+        if (length == 1 && pData[0] == 0)
+            sgn = ippBigNumPOS; /* consider zero value as positive */
+        BN_SIGN(pBN) = sgn;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

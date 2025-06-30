@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     HASH based Mask Generation Functions
-// 
+//
 //  Contents:
 //     ippsMGF_SHA1()
 //     ippsMGF_SHA224()
@@ -27,8 +27,8 @@
 //     ippsMGF_SHA384()
 //     ippsMGF_SHA512()
 //     ippsMGF_MD5()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -62,53 +62,58 @@
 //    hashAlg     identifier of the hash algorithm
 //
 *F*/
-IPPFUN(IppStatus, ippsMGF, (const Ipp8u* pSeed, int seedLen, Ipp8u* pMask, int maskLen, IppHashAlgId hashAlg))
+/* clang-format off */
+IPPFUN(IppStatus, ippsMGF, (const Ipp8u* pSeed,
+                            int seedLen,
+                            Ipp8u* pMask,
+                            int maskLen,
+                            IppHashAlgId hashAlg))
+/* clang-format on */
 {
-   /* get algorithm id */
-   hashAlg = cpValidHashAlg(hashAlg);
-   /* test hash alg */
-   IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
+    /* get algorithm id */
+    hashAlg = cpValidHashAlg(hashAlg);
+    /* test hash alg */
+    IPP_BADARG_RET(ippHashAlg_Unknown == hashAlg, ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
-   IPP_BAD_PTR1_RET(pMask);
-   IPP_BADARG_RET((seedLen<0)||(maskLen<0), ippStsLengthErr);
+    IPP_BAD_PTR1_RET(pMask);
+    IPP_BADARG_RET((seedLen < 0) || (maskLen < 0), ippStsLengthErr);
 
-   {
-      /* hash specific */
-      int hashSize = cpHashSize(hashAlg);
+    {
+        /* hash specific */
+        int hashSize = cpHashSize(hashAlg);
 
-      int i, outLen;
+        int i, outLen;
 
-      IppsHashState hashCtx;
-      ippsHashInit(&hashCtx, hashAlg);
+        IppsHashState hashCtx;
+        ippsHashInit(&hashCtx, hashAlg);
 
-      if(!pSeed)
-         seedLen = 0;
+        if (!pSeed)
+            seedLen = 0;
 
-      for(i=0,outLen=0; outLen<maskLen; i++) {
-         Ipp8u cnt[4];
-         cnt[0] = (Ipp8u)((i>>24) & 0xFF);
-         cnt[1] = (Ipp8u)((i>>16) & 0xFF);
-         cnt[2] = (Ipp8u)((i>>8)  & 0xFF);
-         cnt[3] = (Ipp8u)(i & 0xFF);
+        for (i = 0, outLen = 0; outLen < maskLen; i++) {
+            Ipp8u cnt[4];
+            cnt[0] = (Ipp8u)((i >> 24) & 0xFF);
+            cnt[1] = (Ipp8u)((i >> 16) & 0xFF);
+            cnt[2] = (Ipp8u)((i >> 8) & 0xFF);
+            cnt[3] = (Ipp8u)(i & 0xFF);
 
-         cpReInitHash(&hashCtx, hashAlg);
-         ippsHashUpdate(pSeed, seedLen, &hashCtx);
-         ippsHashUpdate(cnt,   4,       &hashCtx);
+            cpReInitHash(&hashCtx, hashAlg);
+            ippsHashUpdate(pSeed, seedLen, &hashCtx);
+            ippsHashUpdate(cnt, 4, &hashCtx);
 
-         if((outLen + hashSize) <= maskLen) {
-            ippsHashFinal(pMask+outLen, &hashCtx);
-            outLen += hashSize;
-         }
-         else {
-            Ipp8u md[MAX_HASH_SIZE];
-            ippsHashFinal(md, &hashCtx);
-            CopyBlock(md, pMask+outLen, maskLen-outLen);
-            outLen = maskLen;
-         }
-      }
+            if ((outLen + hashSize) <= maskLen) {
+                ippsHashFinal(pMask + outLen, &hashCtx);
+                outLen += hashSize;
+            } else {
+                Ipp8u md[MAX_HASH_SIZE];
+                ippsHashFinal(md, &hashCtx);
+                CopyBlock(md, pMask + outLen, maskLen - outLen);
+                outLen = maskLen;
+            }
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

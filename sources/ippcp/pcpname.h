@@ -27,20 +27,20 @@
    GetLibVersion function. It is used to generate the names in the dispatcher code, in
    the version description and in the resource file.
 */
-#define LIB_PREFIX          ippcp
+#define LIB_PREFIX ippcp
 
 /*
    Names of library. It is used in the resource file and is used to generate the names
    in the dispatcher code.
 */
-#define CRYPTO_LIB_NAME()    "Intel® Cryptography Primitives Library"
+#define CRYPTO_LIB_NAME() "Intel® Cryptography Primitives Library"
 
 
 #define GET_STR2(x)      #x
 #define GET_STR(x)       GET_STR2(x)
 #define IPP_LIB_PREFIX() GET_STR(LIB_PREFIX)
 
-#define IPP_INC_NAME()   "ippcp.h"
+#define IPP_INC_NAME() "ippcp.h"
 
 #endif /* __PCPNAME_H__ */
 /* ///////////////////////// End of file "pcpname.h" ///////////////////////// */

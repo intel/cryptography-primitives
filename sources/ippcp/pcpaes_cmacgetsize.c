@@ -45,12 +45,12 @@
 //    pSize    pointer to the AES-CMAC size of context
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CMACGetSize,(int* pSize))
+IPPFUN(IppStatus, ippsAES_CMACGetSize, (int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = cpSizeofCtx_AESCMAC();
+    *pSize = cpSizeofCtx_AESCMAC();
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

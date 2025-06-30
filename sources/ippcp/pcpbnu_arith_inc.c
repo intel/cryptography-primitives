@@ -43,29 +43,27 @@
 //    ns    size of BigNum
 //    val   carry
 *F*/
-#if !((_IPP==_IPP_W7) || \
-      (_IPP==_IPP_T7) || \
-      (_IPP==_IPP_V8) || \
-      (_IPP==_IPP_P8) || \
-      (_IPP>=_IPP_G9) || \
-      (_IPP==_IPP_S8) || \
-      (_IPP32E==_IPP32E_M7) || \
-      (_IPP32E==_IPP32E_U8) || \
-      (_IPP32E==_IPP32E_Y8) || \
-      (_IPP32E>=_IPP32E_E9) || \
-      (_IPP32E==_IPP32E_N8)) || \
-      defined(_USE_C_cpInc_BNU_)
-IPP_OWN_DEFN (BNU_CHUNK_T, cpInc_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize ns, BNU_CHUNK_T val))
+#if !((_IPP == _IPP_W7) || (_IPP == _IPP_T7) || (_IPP == _IPP_V8) || (_IPP == _IPP_P8) || \
+      (_IPP >= _IPP_G9) || (_IPP == _IPP_S8) || (_IPP32E == _IPP32E_M7) ||                \
+      (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) || (_IPP32E >= _IPP32E_E9) ||    \
+      (_IPP32E == _IPP32E_N8)) ||                                                         \
+    defined(_USE_C_cpInc_BNU_)
+/* clang-format off */
+IPP_OWN_DEFN(BNU_CHUNK_T, cpInc_BNU, (BNU_CHUNK_T* pR,
+                                      const BNU_CHUNK_T* pA,
+                                      cpSize ns,
+                                      BNU_CHUNK_T val))
+/* clang-format on */
 {
-   cpSize i;
-   for(i=0; i<ns && val; i++) {
-      BNU_CHUNK_T carry;
-      ADD_AB(carry, pR[i], pA[i], val);
-      val = carry;
-   }
-   if(pR!=pA)
-      for(; i<ns; i++)
-         pR[i] = pA[i];
-   return val;
+    cpSize i;
+    for (i = 0; i < ns && val; i++) {
+        BNU_CHUNK_T carry;
+        ADD_AB(carry, pR[i], pA[i], val);
+        val = carry;
+    }
+    if (pR != pA)
+        for (; i < ns; i++)
+            pR[i] = pA[i];
+    return val;
 }
 #endif

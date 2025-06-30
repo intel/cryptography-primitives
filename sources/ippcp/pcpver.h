@@ -23,8 +23,8 @@
 
 
 #include "ippver.h"
-#define BUILD() 1043
-#define VERSION() BASE_VERSION(),BUILD()
+#define BUILD()            1043
+#define VERSION()          BASE_VERSION(), BUILD()
 #define STR_FILE_VERSION() STR_BASE_VERSION() "," STR(BUILD())
 
 /* ////////////////////////// End of file "pcpver.h" ///////////////////////// */

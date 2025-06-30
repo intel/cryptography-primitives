@@ -28,21 +28,21 @@
 
 
 typedef struct {
-   void*            pNext;
-   IppsBigNumState* pBN;
+    void* pNext;
+    IppsBigNumState* pBN;
 } BigNumNode;
 
 
 /* size (byte) of BN resource */
 #define cpBigNumListGetSize OWNAPI(cpBigNumListGetSize)
-   IPP_OWN_DECL (int, cpBigNumListGetSize, (int feBitSize, int nodes))
+IPP_OWN_DECL(int, cpBigNumListGetSize, (int feBitSize, int nodes))
 
 /* init BN resource */
 #define cpBigNumListInit OWNAPI(cpBigNumListInit)
-   IPP_OWN_DECL (void, cpBigNumListInit, (int feBitSize, int nodes, BigNumNode* pList))
+IPP_OWN_DECL(void, cpBigNumListInit, (int feBitSize, int nodes, BigNumNode* pList))
 
 /* get BN from resource */
 #define cpBigNumListGet OWNAPI(cpBigNumListGet)
-   IPP_OWN_DECL (IppsBigNumState*, cpBigNumListGet, (BigNumNode** pList))
+IPP_OWN_DECL(IppsBigNumState*, cpBigNumListGet, (BigNumNode * *pList))
 
 #endif /* _PCP_BNRESOURCE_H */

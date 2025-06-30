@@ -52,35 +52,35 @@
 *F*/
 IPPFUN(IppStatus, ippsPRNGInit, (int seedBits, IppsPRNGState* pCtx))
 {
-   /* test PRNG context */
-   IPP_BAD_PTR1_RET(pCtx);
+    /* test PRNG context */
+    IPP_BAD_PTR1_RET(pCtx);
 
-   /* test sizes */
-   IPP_BADARG_RET((1>seedBits) || (seedBits>MAX_XKEY_SIZE) ||(seedBits&7), ippStsLengthErr);
+    /* test sizes */
+    IPP_BADARG_RET((1 > seedBits) || (seedBits > MAX_XKEY_SIZE) || (seedBits & 7), ippStsLengthErr);
 
-   {
-      int hashIvSize = cpHashIvSize(ippHashAlg_SHA1);
-      const Ipp8u* iv = cpHashIV[ippHashAlg_SHA1];
+    {
+        int hashIvSize  = cpHashIvSize(ippHashAlg_SHA1);
+        const Ipp8u* iv = cpHashIV[ippHashAlg_SHA1];
 
-      /* cleanup context */
-      ZEXPAND_BNU((Ipp8u*)pCtx, 0, (cpSize)(sizeof(IppsPRNGState)));
+        /* cleanup context */
+        ZEXPAND_BNU((Ipp8u*)pCtx, 0, (cpSize)(sizeof(IppsPRNGState)));
 
-      RAND_SET_ID(pCtx);
-      RAND_SEEDBITS(pCtx) = seedBits;
+        RAND_SET_ID(pCtx);
+        RAND_SEEDBITS(pCtx) = seedBits;
 
-      /* default Q parameter */
-      ((Ipp32u*)RAND_Q(pCtx))[0] = 0xFFFFFFFF;
-      ((Ipp32u*)RAND_Q(pCtx))[1] = 0xFFFFFFFF;
-      ((Ipp32u*)RAND_Q(pCtx))[2] = 0xFFFFFFFF;
-      ((Ipp32u*)RAND_Q(pCtx))[3] = 0xFFFFFFFF;
-      ((Ipp32u*)RAND_Q(pCtx))[4] = 0xFFFFFFFF;
+        /* default Q parameter */
+        ((Ipp32u*)RAND_Q(pCtx))[0] = 0xFFFFFFFF;
+        ((Ipp32u*)RAND_Q(pCtx))[1] = 0xFFFFFFFF;
+        ((Ipp32u*)RAND_Q(pCtx))[2] = 0xFFFFFFFF;
+        ((Ipp32u*)RAND_Q(pCtx))[3] = 0xFFFFFFFF;
+        ((Ipp32u*)RAND_Q(pCtx))[4] = 0xFFFFFFFF;
 
-      /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
-      hashIvSize = ( IPP_MIN(hashIvSize, BITS2WORD8_SIZE(160)) );
+        /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
+        hashIvSize = (IPP_MIN(hashIvSize, BITS2WORD8_SIZE(160)));
 
-      /* default T parameter */
-      CopyBlock(iv, RAND_T(pCtx), hashIvSize);
+        /* default T parameter */
+        CopyBlock(iv, RAND_T(pCtx), hashIvSize);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

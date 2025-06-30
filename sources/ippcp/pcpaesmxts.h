@@ -30,46 +30,42 @@
 #include "pcpaesm.h"
 
 #define _NEW_XTS_API_3
-#if defined (_NEW_XTS_API_3)
+#if defined(_NEW_XTS_API_3)
 /*
 // AES-XTS State
 */
 #if !defined(AES_BLK_SIZE)
-#define AES_BLK_SIZE (IPP_AES_BLOCK_BITSIZE/BITSIZE(Ipp8u))
+#define AES_BLK_SIZE (IPP_AES_BLOCK_BITSIZE / BITSIZE(Ipp8u))
 #endif
 
 #define AES_BLKS_PER_BUFFER (32)
 
-struct _cpAES_XTS
-{
-   Ipp32u    idCtx;
-   int       duBitsize;         /* size of data unit (in bits) */
-   IppsAESSpec datumAES;        /* datum AES context */
-   IppsAESSpec tweakAES;        /* tweak AES context */
+struct _cpAES_XTS {
+    Ipp32u idCtx;
+    int duBitsize;        /* size of data unit (in bits) */
+    IppsAESSpec datumAES; /* datum AES context */
+    IppsAESSpec tweakAES; /* tweak AES context */
 };
 
-#define AES_XTS_SET_ID(ctx)     ((ctx)->idCtx = (Ipp32u)idCtxAESXTS ^ (Ipp32u)IPP_UINT_PTR(ctx))
+#define AES_XTS_SET_ID(ctx) ((ctx)->idCtx = (Ipp32u)idCtxAESXTS ^ (Ipp32u)IPP_UINT_PTR(ctx))
 /* valid AES_XTS context ID */
-#define VALID_AES_XTS_ID(ctx)   ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxAESXTS)
+#define VALID_AES_XTS_ID(ctx) \
+    ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxAESXTS)
 
 /* size of AES-XTS context */
-__IPPCP_INLINE int cpSizeof_AES_XTS_Ctx(void)
-{
-   return sizeof(IppsAES_XTSSpec);
-}
+__IPPCP_INLINE int cpSizeof_AES_XTS_Ctx(void) { return sizeof(IppsAES_XTSSpec); }
 
 static int IsLegalGeometry(int startCipherBlkNo, int bitLen, int duBitsize)
 {
-   int duBlocks = (duBitsize+IPP_AES_BLOCK_BITSIZE-1)/IPP_AES_BLOCK_BITSIZE;
-   int legalBlk = (0<=startCipherBlkNo && startCipherBlkNo<duBlocks) && ((startCipherBlkNo*IPP_AES_BLOCK_BITSIZE+bitLen)<=duBitsize);
-   int legalLen = 0;
-   if(0 == duBitsize%IPP_AES_BLOCK_BITSIZE) {
-      legalLen = (0 == bitLen%IPP_AES_BLOCK_BITSIZE);
-   }
-   else
-      if(bitLen%IPP_AES_BLOCK_BITSIZE)
-         legalLen = (startCipherBlkNo*IPP_AES_BLOCK_BITSIZE+bitLen == duBitsize);
-   return legalBlk && legalLen;
+    int duBlocks = (duBitsize + IPP_AES_BLOCK_BITSIZE - 1) / IPP_AES_BLOCK_BITSIZE;
+    int legalBlk = (0 <= startCipherBlkNo && startCipherBlkNo < duBlocks) &&
+                   ((startCipherBlkNo * IPP_AES_BLOCK_BITSIZE + bitLen) <= duBitsize);
+    int legalLen = 0;
+    if (0 == duBitsize % IPP_AES_BLOCK_BITSIZE) {
+        legalLen = (0 == bitLen % IPP_AES_BLOCK_BITSIZE);
+    } else if (bitLen % IPP_AES_BLOCK_BITSIZE)
+        legalLen = (startCipherBlkNo * IPP_AES_BLOCK_BITSIZE + bitLen == duBitsize);
+    return legalBlk && legalLen;
 }
 
 

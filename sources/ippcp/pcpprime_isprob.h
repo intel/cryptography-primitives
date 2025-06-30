@@ -31,12 +31,14 @@
 #include "pcpngrsa.h"
 
 
-static int cpMillerRabinTest(BNU_CHUNK_T* pW, cpSize nsW,
-    const BNU_CHUNK_T* pE, cpSize bitsizeE,
-    int k,
-    const BNU_CHUNK_T* pPrime1,
-    gsModEngine* pMont,
-    BNU_CHUNK_T* pBuffer)
+static int cpMillerRabinTest(BNU_CHUNK_T* pW,
+                             cpSize nsW,
+                             const BNU_CHUNK_T* pE,
+                             cpSize bitsizeE,
+                             int k,
+                             const BNU_CHUNK_T* pPrime1,
+                             gsModEngine* pMont,
+                             BNU_CHUNK_T* pBuffer)
 {
     cpSize nsP = MOD_LEN(pMont);
 
@@ -44,25 +46,24 @@ static int cpMillerRabinTest(BNU_CHUNK_T* pW, cpSize nsW,
     ZEXPAND_BNU(pW, nsW, nsP);
     MOD_METHOD(pMont)->encode(pW, pW, pMont);
 
-    /* w = exp(w,e) */
-    #if !defined(_USE_WINDOW_EXP_)
+/* w = exp(w,e) */
+#if !defined(_USE_WINDOW_EXP_)
     gsMontExpBin_BNU_sscm(pW, pW, nsP, pE, bitsizeE, pMont, pBuffer);
-    #else
+#else
     gsMontExpWin_BNU_sscm(pW, pW, nsP, pE, bitsizeE, pMont, pBuffer);
-    #endif
+#endif
 
     /* if (w==1) ||(w==prime-1) => probably prime */
-    if ((0 == cpCmp_BNU(pW, nsP, MOD_MNT_R(pMont), nsP))
-        || (0 == cpCmp_BNU(pW, nsP, pPrime1, nsP)))
-        return 1;      /* witness of the primality */
+    if ((0 == cpCmp_BNU(pW, nsP, MOD_MNT_R(pMont), nsP)) || (0 == cpCmp_BNU(pW, nsP, pPrime1, nsP)))
+        return 1; /* witness of the primality */
 
     while (--k) {
         MOD_METHOD(pMont)->sqr(pW, pW, pMont);
 
         if (0 == cpCmp_BNU(pW, nsP, MOD_MNT_R(pMont), nsP))
-            return 0;   /* witness of the compositeness */
+            return 0; /* witness of the compositeness */
         if (0 == cpCmp_BNU(pW, nsP, pPrime1, nsP))
-            return 1;   /* witness of the primality */
+            return 1; /* witness of the primality */
     }
     return 0;
 }
@@ -74,28 +75,30 @@ IPP_IS_PRIME     (==1) - prime value has been detected
 IPP_IS_COMPOSITE (==0) - composite value has been detected
 -1 - if internal error (ippStsNoErr != rndFunc())
 */
-static int cpIsProbablyPrime(BNU_CHUNK_T* pPrime, int bitSize,
-    int nTrials,
-    IppBitSupplier rndFunc, void* pRndParam,
-    gsModEngine* pME,
-    BNU_CHUNK_T* pBuffer)
+static int cpIsProbablyPrime(BNU_CHUNK_T* pPrime,
+                             int bitSize,
+                             int nTrials,
+                             IppBitSupplier rndFunc,
+                             void* pRndParam,
+                             gsModEngine* pME,
+                             BNU_CHUNK_T* pBuffer)
 {
     /* if test for trivial divisors passed*/
     int ret = cpMimimalPrimeTest((Ipp32u*)pPrime, BITS2WORD32_SIZE(bitSize));
 
     /* apply Miller-Rabin test */
     if (ret) {
-        int ns = BITS_BNU_CHUNK(bitSize);
-        BNU_CHUNK_T* pPrime1 = pBuffer;
-        BNU_CHUNK_T* pOdd = pPrime1 + ns;
-        BNU_CHUNK_T* pWitness = pOdd + ns;
-        BNU_CHUNK_T* pMontPrime1 = pWitness + ns;
+        int ns                      = BITS_BNU_CHUNK(bitSize);
+        BNU_CHUNK_T* pPrime1        = pBuffer;
+        BNU_CHUNK_T* pOdd           = pPrime1 + ns;
+        BNU_CHUNK_T* pWitness       = pOdd + ns;
+        BNU_CHUNK_T* pMontPrime1    = pWitness + ns;
         BNU_CHUNK_T* pScratchBuffer = pMontPrime1 + ns;
         int k, a, lenOdd;
 
         /* prime1 = prime-1 = odd*2^a */
         cpDec_BNU(pPrime1, pPrime, ns, 1);
-        for (k = 0, a = 0; k<ns; k++) {
+        for (k = 0, a = 0; k < ns; k++) {
             cpSize da = cpNTZ_BNU(pPrime1[k]);
             a += da;
             if (BNU_CHUNK_BITS != da)
@@ -107,29 +110,35 @@ static int cpIsProbablyPrime(BNU_CHUNK_T* pPrime, int bitSize,
         /* prime1 to (Montgomery Domain) */
         cpSub_BNU(pMontPrime1, pPrime, MOD_MNT_R(pME), ns);
 
-      //for (k = 0, ret = 0; k<nTrials && !ret; k++) {
-      //    BNU_CHUNK_T one = 1;
-      //    ret = cpPRNGenRange(pWitness, &one, 1, pPrime1, ns, rndFunc, pRndParam);
-      //    if (ret <= 0) break; /* internal error */
-      //                         /* test primality */
-      //    ret = cpMillerRabinTest(pWitness, ns,
-      //        //pOdd, lenOdd, a,
-      //        pOdd, bitSize - a, a,
-      //        pMontPrime1,
-      //        pME, pScratchBuffer);
-      //}
-       for(k=0, ret=1; k<nTrials; k++) {
+        //for (k = 0, ret = 0; k<nTrials && !ret; k++) {
+        //    BNU_CHUNK_T one = 1;
+        //    ret = cpPRNGenRange(pWitness, &one, 1, pPrime1, ns, rndFunc, pRndParam);
+        //    if (ret <= 0) break; /* internal error */
+        //                         /* test primality */
+        //    ret = cpMillerRabinTest(pWitness, ns,
+        //        //pOdd, lenOdd, a,
+        //        pOdd, bitSize - a, a,
+        //        pMontPrime1,
+        //        pME, pScratchBuffer);
+        //}
+        for (k = 0, ret = 1; k < nTrials; k++) {
             BNU_CHUNK_T one = 1;
-            ret = cpPRNGenRange(pWitness, &one, 1, pPrime1, ns, rndFunc, pRndParam);
-            if (ret <= 0) break; /* internal error */
+            ret             = cpPRNGenRange(pWitness, &one, 1, pPrime1, ns, rndFunc, pRndParam);
+            if (ret <= 0)
+                break; /* internal error */
 
             /* Millar-Rabin primality test */
-            ret = cpMillerRabinTest(pWitness, ns,
-                //pOdd, lenOdd, a,
-                pOdd, bitSize - a, a,
-                pMontPrime1,
-                pME, pScratchBuffer);
-            if (ret == 0) break; /* composite */
+            ret = cpMillerRabinTest(pWitness,
+                                    ns,
+                                    //pOdd, lenOdd, a,
+                                    pOdd,
+                                    bitSize - a,
+                                    a,
+                                    pMontPrime1,
+                                    pME,
+                                    pScratchBuffer);
+            if (ret == 0)
+                break; /* composite */
         }
     }
     return ret;

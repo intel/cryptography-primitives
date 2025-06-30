@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive. Modular Arithmetic Engine. General Functionality
-// 
+//
 //  Contents:
 //        gsModEngineInit()
 //
@@ -51,57 +51,66 @@
 //
 *F*/
 
-IPP_OWN_DEFN (IppStatus, gsModEngineInit, (gsModEngine* pME, const Ipp32u* pModulus, int modulusBitSize, int numpe, const gsModMethod* method))
+/* clang-format off */
+IPP_OWN_DEFN(IppStatus, gsModEngineInit, (gsModEngine* pME,
+                                          const Ipp32u* pModulus,
+                                          int modulusBitSize,
+                                          int numpe,
+                                          const gsModMethod* method))
+/* clang-format on */
 {
-   IPP_BADARG_RET(modulusBitSize<1, ippStsLengthErr);
-   IPP_BADARG_RET((pModulus) && (pModulus[0] & 1) == 0, ippStsBadModulusErr);
-   IPP_BADARG_RET(numpe<MOD_ENGINE_MIN_POOL_SIZE, ippStsLengthErr);
+    IPP_BADARG_RET(modulusBitSize < 1, ippStsLengthErr);
+    IPP_BADARG_RET((pModulus) && (pModulus[0] & 1) == 0, ippStsBadModulusErr);
+    IPP_BADARG_RET(numpe < MOD_ENGINE_MIN_POOL_SIZE, ippStsLengthErr);
 
 /* convert bitsize nbits into  the number of BNU_CHUNK_T */
-#define BITS_BNU_IPP32U(nbits) (((nbits)+31)/32)
+#define BITS_BNU_IPP32U(nbits) (((nbits) + 31) / 32)
 
-   {
-      int pelmLen = BITS_BNU_CHUNK(modulusBitSize);
-      int modLen   = BITS_BNU_CHUNK(modulusBitSize);
-      int modLen32 = BITS_BNU_IPP32U(modulusBitSize);
-      Ipp8u* ptr = (Ipp8u*)pME;
+    {
+        int pelmLen  = BITS_BNU_CHUNK(modulusBitSize);
+        int modLen   = BITS_BNU_CHUNK(modulusBitSize);
+        int modLen32 = BITS_BNU_IPP32U(modulusBitSize);
+        Ipp8u* ptr   = (Ipp8u*)pME;
 
-      /* clear whole context */
-      PadBlock(0, pME, sizeof(gsModEngine));
+        /* clear whole context */
+        PadBlock(0, pME, sizeof(gsModEngine));
 
-      MOD_PARENT(pME)   = NULL;
-      MOD_EXTDEG(pME)   = 1;
-      MOD_BITSIZE(pME)  = modulusBitSize;
-      MOD_LEN(pME)      = modLen;
-      MOD_PELEN(pME)    = pelmLen;
-      MOD_METHOD(pME)   = method;
-      MOD_MODULUS(pME)  = (BNU_CHUNK_T*)(ptr += sizeof(gsModEngine));
-      MOD_MNT_R(pME)    = (BNU_CHUNK_T*)(ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T));
-      MOD_MNT_R2(pME)   = (BNU_CHUNK_T*)(ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T));
-      MOD_POOL_BUF(pME) = (BNU_CHUNK_T*)(ptr += modLen*(Ipp32s)sizeof(BNU_CHUNK_T));
-      MOD_MAXPOOL(pME)  = numpe;
-      MOD_USEDPOOL(pME) = 0;
+        MOD_PARENT(pME)   = NULL;
+        MOD_EXTDEG(pME)   = 1;
+        MOD_BITSIZE(pME)  = modulusBitSize;
+        MOD_LEN(pME)      = modLen;
+        MOD_PELEN(pME)    = pelmLen;
+        MOD_METHOD(pME)   = method;
+        MOD_MODULUS(pME)  = (BNU_CHUNK_T*)(ptr += sizeof(gsModEngine));
+        MOD_MNT_R(pME)    = (BNU_CHUNK_T*)(ptr += modLen * (Ipp32s)sizeof(BNU_CHUNK_T));
+        MOD_MNT_R2(pME)   = (BNU_CHUNK_T*)(ptr += modLen * (Ipp32s)sizeof(BNU_CHUNK_T));
+        MOD_POOL_BUF(pME) = (BNU_CHUNK_T*)(ptr += modLen * (Ipp32s)sizeof(BNU_CHUNK_T));
+        MOD_MAXPOOL(pME)  = numpe;
+        MOD_USEDPOOL(pME) = 0;
 
-      if (pModulus) {
-         /* store modulus */
-         ZEXPAND_COPY_BNU((Ipp32u*)MOD_MODULUS(pME), modLen * (cpSize)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)), pModulus, modLen32);
+        if (pModulus) {
+            /* store modulus */
+            ZEXPAND_COPY_BNU((Ipp32u*)MOD_MODULUS(pME),
+                             modLen * (cpSize)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)),
+                             pModulus,
+                             modLen32);
 
-         /* montgomery factor */
-         MOD_MNT_FACTOR(pME) = gsMontFactor(MOD_MODULUS(pME)[0]);
+            /* montgomery factor */
+            MOD_MNT_FACTOR(pME) = gsMontFactor(MOD_MODULUS(pME)[0]);
 
-         /* montgomery identity (R) */
-         ZEXPAND_BNU(MOD_MNT_R(pME), 0, modLen);
-         MOD_MNT_R(pME)[modLen] = 1;
-         cpMod_BNU(MOD_MNT_R(pME), modLen+1, MOD_MODULUS(pME), modLen);
+            /* montgomery identity (R) */
+            ZEXPAND_BNU(MOD_MNT_R(pME), 0, modLen);
+            MOD_MNT_R(pME)[modLen] = 1;
+            cpMod_BNU(MOD_MNT_R(pME), modLen + 1, MOD_MODULUS(pME), modLen);
 
-         /* montgomery domain converter (RR) */
-         ZEXPAND_BNU(MOD_MNT_R2(pME), 0, modLen);
-         COPY_BNU(MOD_MNT_R2(pME)+modLen, MOD_MNT_R(pME), modLen);
-         cpMod_BNU(MOD_MNT_R2(pME), 2*modLen, MOD_MODULUS(pME), modLen);
-      }
-   }
+            /* montgomery domain converter (RR) */
+            ZEXPAND_BNU(MOD_MNT_R2(pME), 0, modLen);
+            COPY_BNU(MOD_MNT_R2(pME) + modLen, MOD_MNT_R(pME), modLen);
+            cpMod_BNU(MOD_MNT_R2(pME), 2 * modLen, MOD_MODULUS(pME), modLen);
+        }
+    }
 
 #undef BITS_BNU_IPP32U
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

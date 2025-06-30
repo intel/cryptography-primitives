@@ -51,16 +51,16 @@
 *F*/
 IPPFUN(IppStatus, ippsPRNGGetSeed, (const IppsPRNGState* pCtx, IppsBigNumState* pSeed))
 {
-   /* test PRNG context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!RAND_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test PRNG context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!RAND_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   /* test seed */
-   IPP_BAD_PTR1_RET(pSeed);
-   IPP_BADARG_RET(!BN_VALID_ID(pSeed), ippStsContextMatchErr);
+    /* test seed */
+    IPP_BAD_PTR1_RET(pSeed);
+    IPP_BADARG_RET(!BN_VALID_ID(pSeed), ippStsContextMatchErr);
 
-   return ippsSet_BN(ippBigNumPOS,
-                     BITS2WORD32_SIZE(RAND_SEEDBITS(pCtx)),
-                     (Ipp32u*)RAND_XKEY(pCtx),
-                     pSeed);
+    return ippsSet_BN(ippBigNumPOS,
+                      BITS2WORD32_SIZE(RAND_SEEDBITS(pCtx)),
+                      (Ipp32u*)RAND_XKEY(pCtx),
+                      pSeed);
 }

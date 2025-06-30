@@ -39,7 +39,7 @@
 /*
 // Pure Decryption S-boxes
 */
-#if defined( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 const __ALIGN64 Ipp8u RijDecSbox[256] = { DEC_SBOX(none_t) };
 

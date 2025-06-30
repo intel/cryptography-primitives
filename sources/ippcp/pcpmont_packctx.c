@@ -38,13 +38,13 @@
 //    pBuffer buffer
 *F*/
 
-IPP_OWN_DEFN (void, cpPackMontCtx, (const IppsMontState* pCtx, Ipp8u* pBuffer))
+IPP_OWN_DEFN(void, cpPackMontCtx, (const IppsMontState* pCtx, Ipp8u* pBuffer))
 {
-   /* size of context (bytes) */
-   int ctxSize = sizeof(IppsMontState);
-   CopyBlock(pCtx, pBuffer, ctxSize);
+    /* size of context (bytes) */
+    int ctxSize = sizeof(IppsMontState);
+    CopyBlock(pCtx, pBuffer, ctxSize);
 
-   pBuffer = (Ipp8u*)pBuffer + sizeof(IppsMontState);
+    pBuffer = (Ipp8u*)pBuffer + sizeof(IppsMontState);
 
-   gsPackModEngineCtx(MNT_ENGINE(pCtx), pBuffer);
+    gsPackModEngineCtx(MNT_ENGINE(pCtx), pBuffer);
 }

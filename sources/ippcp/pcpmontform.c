@@ -50,34 +50,43 @@
 //    pCtx  Montgomery context
 //    pR    pointer to the output (A*R mod modulus)
 *F*/
-IPPFUN(IppStatus, ippsMontForm,(const IppsBigNumState* pA, IppsMontState* pCtx, IppsBigNumState* pR))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsMontForm, (const IppsBigNumState* pA,
+                                 IppsMontState* pCtx,
+                                 IppsBigNumState* pR))
+/* clang-format on */
 {
-   IPP_BAD_PTR3_RET(pCtx, pA, pR);
+    IPP_BAD_PTR3_RET(pCtx, pA, pR);
 
-   IPP_BADARG_RET(!MNT_VALID_ID(pCtx), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pA), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pR), ippStsContextMatchErr);
+    IPP_BADARG_RET(!MNT_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pR), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(BN_SIGN(pA) != ippBigNumPOS, ippStsBadArgErr);
-   IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pA), BN_SIZE(pA), MOD_MODULUS( MNT_ENGINE(pCtx) ), MOD_LEN( MNT_ENGINE(pCtx) )) >= 0, ippStsScaleRangeErr);
-   IPP_BADARG_RET(BN_ROOM(pR) < MOD_LEN( MNT_ENGINE(pCtx) ), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(BN_SIGN(pA) != ippBigNumPOS, ippStsBadArgErr);
+    IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pA),
+                             BN_SIZE(pA),
+                             MOD_MODULUS(MNT_ENGINE(pCtx)),
+                             MOD_LEN(MNT_ENGINE(pCtx))) >= 0,
+                   ippStsScaleRangeErr);
+    IPP_BADARG_RET(BN_ROOM(pR) < MOD_LEN(MNT_ENGINE(pCtx)), ippStsOutOfRangeErr);
 
-   {
-      const int usedPoolLen = 1;
-      cpSize nsM = MOD_LEN( MNT_ENGINE(pCtx) );
-      BNU_CHUNK_T* pDataA  = gsModPoolAlloc(MNT_ENGINE(pCtx), usedPoolLen);
-      IPP_BAD_PTR1_RET(pDataA); // pDataA can be NULL, stop processing
+    {
+        const int usedPoolLen = 1;
+        cpSize nsM            = MOD_LEN(MNT_ENGINE(pCtx));
+        BNU_CHUNK_T* pDataA   = gsModPoolAlloc(MNT_ENGINE(pCtx), usedPoolLen);
+        IPP_BAD_PTR1_RET(pDataA); // pDataA can be NULL, stop processing
 
-      ZEXPAND_COPY_BNU(pDataA, nsM, BN_NUMBER(pA), BN_SIZE(pA));
+        ZEXPAND_COPY_BNU(pDataA, nsM, BN_NUMBER(pA), BN_SIZE(pA));
 
-      MOD_METHOD( MNT_ENGINE(pCtx) )->encode(BN_NUMBER(pR), pDataA, MNT_ENGINE(pCtx));
+        MOD_METHOD(MNT_ENGINE(pCtx))->encode(BN_NUMBER(pR), pDataA, MNT_ENGINE(pCtx));
 
-      FIX_BNU(BN_NUMBER(pR), nsM);
-      BN_SIZE(pR) = nsM;
-      BN_SIGN(pR) = ippBigNumPOS;
+        FIX_BNU(BN_NUMBER(pR), nsM);
+        BN_SIZE(pR) = nsM;
+        BN_SIGN(pR) = ippBigNumPOS;
 
-      gsModPoolFree(MNT_ENGINE(pCtx), usedPoolLen);
-   }
+        gsModPoolFree(MNT_ENGINE(pCtx), usedPoolLen);
+    }
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

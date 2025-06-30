@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     DL over Prime Finite Field (EC Key Generation, Validation and Set Up)
-// 
+//
 //  Contents:
 //        ippsDLPPublicKey()
 //
@@ -57,46 +57,53 @@
 //    pPubKey  pointer to the public  key
 //    pDL      pointer to the DL context
 *F*/
-IPPFUN(IppStatus, ippsDLPPublicKey,(const IppsBigNumState* pPrvKey,
-                                    IppsBigNumState* pPubKey,
-                                    IppsDLPState* pDL))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsDLPPublicKey, (const IppsBigNumState* pPrvKey,
+                                     IppsBigNumState* pPubKey,
+                                     IppsDLPState* pDL))
+/* clang-format on */
 {
-   /* test DL context */
-   IPP_BAD_PTR1_RET(pDL);
-   IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
+    /* test DL context */
+    IPP_BAD_PTR1_RET(pDL);
+    IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
 
-   /* test flag */
-   IPP_BADARG_RET(!DLP_COMPLETE(pDL), ippStsIncompleteContextErr);
+    /* test flag */
+    IPP_BADARG_RET(!DLP_COMPLETE(pDL), ippStsIncompleteContextErr);
 
-   /* test private/public keys */
-   IPP_BAD_PTR2_RET(pPrvKey, pPubKey);
-   IPP_BADARG_RET(!BN_VALID_ID(pPrvKey), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pPubKey), ippStsContextMatchErr);
+    /* test private/public keys */
+    IPP_BAD_PTR2_RET(pPrvKey, pPubKey);
+    IPP_BADARG_RET(!BN_VALID_ID(pPrvKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pPubKey), ippStsContextMatchErr);
 
-   /* test private key */
-   IPP_BADARG_RET((0<=cpBN_cmp(cpBN_OneRef(), pPrvKey))||
-                  (0<=cpCmp_BNU(BN_NUMBER(pPrvKey),BN_SIZE(pPrvKey), DLP_R(pDL),BITS_BNU_CHUNK(DLP_BITSIZER(pDL)))), ippStsInvalidPrivateKey);
+    /* test private key */
+    IPP_BADARG_RET((0 <= cpBN_cmp(cpBN_OneRef(), pPrvKey)) ||
+                       (0 <= cpCmp_BNU(BN_NUMBER(pPrvKey),
+                                       BN_SIZE(pPrvKey),
+                                       DLP_R(pDL),
+                                       BITS_BNU_CHUNK(DLP_BITSIZER(pDL)))),
+                   ippStsInvalidPrivateKey);
 
-   /* test public key's room */
-   IPP_BADARG_RET(BN_ROOM(pPubKey)<BITS_BNU_CHUNK(DLP_BITSIZEP(pDL)), ippStsRangeErr);
+    /* test public key's room */
+    IPP_BADARG_RET(BN_ROOM(pPubKey) < BITS_BNU_CHUNK(DLP_BITSIZEP(pDL)), ippStsRangeErr);
 
-   {
-      gsModEngine* pME= DLP_MONTP0(pDL);
-    //int nsM = MOD_LEN(pME);
+    {
+        gsModEngine* pME = DLP_MONTP0(pDL);
+        //int nsM = MOD_LEN(pME);
 
-      gsModEngine* pMEorder = DLP_MONTR(pDL);
-      int ordLen = MOD_LEN(pMEorder);
+        gsModEngine* pMEorder = DLP_MONTR(pDL);
+        int ordLen            = MOD_LEN(pMEorder);
 
-      /* expand privKeyA */
-      BigNumNode* pList = DLP_BNCTX(pDL);
-      IppsBigNumState* pTmpPrivKey = cpBigNumListGet(&pList);
-      ZEXPAND_COPY_BNU(BN_NUMBER(pTmpPrivKey), ordLen, BN_NUMBER(pPrvKey), BN_SIZE(pPrvKey));
-      BN_SIZE(pTmpPrivKey) = ordLen;
+        /* expand privKeyA */
+        BigNumNode* pList            = DLP_BNCTX(pDL);
+        IppsBigNumState* pTmpPrivKey = cpBigNumListGet(&pList);
+        ZEXPAND_COPY_BNU(BN_NUMBER(pTmpPrivKey), ordLen, BN_NUMBER(pPrvKey), BN_SIZE(pPrvKey));
+        BN_SIZE(pTmpPrivKey) = ordLen;
 
-      /* compute public key:  G^prvKey (mod P) */
-      cpMontExpBin_BN_sscm(pPubKey, DLP_GENC(pDL), pTmpPrivKey, pME);
-      cpMontDec_BN(pPubKey, pPubKey, pME);
+        /* compute public key:  G^prvKey (mod P) */
+        cpMontExpBin_BN_sscm(pPubKey, DLP_GENC(pDL), pTmpPrivKey, pME);
+        cpMontDec_BN(pPubKey, pPubKey, pME);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

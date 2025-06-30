@@ -15,11 +15,11 @@
 *************************************************************************/
 
 /*
-// 
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-CMAC Functions
-// 
+//
 //  Contents:
 //        ippsAES_CMACInit()
 //
@@ -32,20 +32,20 @@
 #include "pcptool.h"
 #include "pcpaes_cmac_stuff.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 
 static void LogicalLeftSift16(const Ipp8u* pSrc, Ipp8u* pDst)
 {
-   Ipp32u carry = 0;
-   int n;
-   for(n=0; n<16; n++) {
-      Ipp32u x = pSrc[16-1-n] + pSrc[16-1-n] + carry;
-      pDst[16-1-n] = (Ipp8u)x;
-      carry = (x>>8) & 0xFF;
-   }
+    Ipp32u carry = 0;
+    int n;
+    for (n = 0; n < 16; n++) {
+        Ipp32u x         = pSrc[16 - 1 - n] + pSrc[16 - 1 - n] + carry;
+        pDst[16 - 1 - n] = (Ipp8u)x;
+        carry            = (x >> 8) & 0xFF;
+    }
 }
 
 
@@ -69,48 +69,59 @@ static void LogicalLeftSift16(const Ipp8u* pSrc, Ipp8u* pDst)
 //    ctxSize  available size (in bytes) of buffer above
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CMACInit,(const Ipp8u* pKey, int keyLen, IppsAES_CMACState* pState, int ctxSize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_CMACInit, (const Ipp8u* pKey,
+                                     int keyLen,
+                                     IppsAES_CMACState* pState,
+                                     int ctxSize))
+/* clang-format on */
 {
-   /* test pState pointer */
-   IPP_BAD_PTR1_RET(pState);
+    /* test pState pointer */
+    IPP_BAD_PTR1_RET(pState);
 
-   /* test available size of context buffer */
-   IPP_BADARG_RET(ctxSize<cpSizeofCtx_AESCMAC(), ippStsMemAllocErr);
+    /* test available size of context buffer */
+    IPP_BADARG_RET(ctxSize < cpSizeofCtx_AESCMAC(), ippStsMemAllocErr);
 
-   {
-      IppStatus sts;
+    {
+        IppStatus sts;
 
-      /* set context ID */
-      CMAC_SET_ID(pState);
-      /* init internal buffer and DAC */
-      init(pState);
+        /* set context ID */
+        CMAC_SET_ID(pState);
+        /* init internal buffer and DAC */
+        init(pState);
 
-      /* init AES cipher */
-      sts = ippsAESInit(pKey, keyLen, &CMAC_CIPHER(pState), cpSizeofCtx_AES());
+        /* init AES cipher */
+        sts = ippsAESInit(pKey, keyLen, &CMAC_CIPHER(pState), cpSizeofCtx_AES());
 
-      if(ippStsNoErr==sts) {
-         const IppsAESSpec* pAES = &CMAC_CIPHER(pState);
+        if (ippStsNoErr == sts) {
+            const IppsAESSpec* pAES = &CMAC_CIPHER(pState);
 
-         /* setup encoder method */
-         RijnCipher encoder = RIJ_ENCODER(pAES);
+            /* setup encoder method */
+            RijnCipher encoder = RIJ_ENCODER(pAES);
 
-         int msb;
-         /* precompute k1 subkey */
-         #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-         encoder(CMAC_MAC(pState), CMAC_K1(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox/*NULL*/);
-         #else
-         encoder(CMAC_MAC(pState), CMAC_K1(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
-         #endif
+            int msb;
+/* precompute k1 subkey */
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+            encoder(CMAC_MAC(pState),
+                    CMAC_K1(pState),
+                    RIJ_NR(pAES),
+                    RIJ_EKEYS(pAES),
+                    RijEncSbox /*NULL*/);
+#else
+            encoder(CMAC_MAC(pState), CMAC_K1(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
+#endif
 
-         msb = (CMAC_K1(pState))[0];
-         LogicalLeftSift16(CMAC_K1(pState),CMAC_K1(pState));
-         (CMAC_K1(pState))[MBS_RIJ128-1] ^= (Ipp8u)((0-(msb>>7)) & 0x87); /* ^ Rb changed for constant time execution */
-         /* precompute k2 subkey */
-         msb = (CMAC_K1(pState))[0];
-         LogicalLeftSift16(CMAC_K1(pState),CMAC_K2(pState));
-         (CMAC_K2(pState))[MBS_RIJ128-1] ^= (Ipp8u)((0-(msb>>7)) & 0x87); /* ^ Rb changed for constant time execution */
-      }
+            msb = (CMAC_K1(pState))[0];
+            LogicalLeftSift16(CMAC_K1(pState), CMAC_K1(pState));
+            (CMAC_K1(pState))[MBS_RIJ128 - 1] ^=
+                (Ipp8u)((0 - (msb >> 7)) & 0x87); /* ^ Rb changed for constant time execution */
+            /* precompute k2 subkey */
+            msb = (CMAC_K1(pState))[0];
+            LogicalLeftSift16(CMAC_K1(pState), CMAC_K2(pState));
+            (CMAC_K2(pState))[MBS_RIJ128 - 1] ^=
+                (Ipp8u)((0 - (msb >> 7)) & 0x87); /* ^ Rb changed for constant time execution */
+        }
 
-      return sts;
-   }
+        return sts;
+    }
 }

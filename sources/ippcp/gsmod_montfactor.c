@@ -34,19 +34,19 @@
 /*
 // montfomery factor k0 = -((modulus^-1 mod B) %B)
 */
-IPP_OWN_DEFN (BNU_CHUNK_T, gsMontFactor, (BNU_CHUNK_T m0))
+IPP_OWN_DEFN(BNU_CHUNK_T, gsMontFactor, (BNU_CHUNK_T m0))
 {
-   BNU_CHUNK_T y = 1;
-   BNU_CHUNK_T x = 2;
-   BNU_CHUNK_T mask = 2*x-1;
+    BNU_CHUNK_T y    = 1;
+    BNU_CHUNK_T x    = 2;
+    BNU_CHUNK_T mask = 2 * x - 1;
 
-   int i;
-   for(i=2; i<=BNU_CHUNK_BITS; i++, x<<=1) {
-      BNU_CHUNK_T rH, rL;
-      MUL_AB(rH, rL, m0, y);
-      if( x < (rL & mask) ) /* x < ((m0*y) mod (2*x)) */
-         y+=x;
-      mask += mask + 1;
-   }
-   return 0-y;
+    int i;
+    for (i = 2; i <= BNU_CHUNK_BITS; i++, x <<= 1) {
+        BNU_CHUNK_T rH, rL;
+        MUL_AB(rH, rL, m0, y);
+        if (x < (rL & mask)) /* x < ((m0*y) mod (2*x)) */
+            y += x;
+        mask += mask + 1;
+    }
+    return 0 - y;
 }

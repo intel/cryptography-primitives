@@ -29,17 +29,19 @@
 
 #include "pcprsa_emsa_pkcs1v15.h"
 
-static int GenerateSign(const Ipp8u* pMsg, int msgLen,  /* message representation */
-    const Ipp8u* pSalt, int saltLen,
-    Ipp8u* pSign,
-    const IppsRSAPrivateKeyState* pPrvKey,
-    const IppsRSAPublicKeyState*  pPubKey,
-    BNU_CHUNK_T* pBuffer)
+static int GenerateSign(const Ipp8u* pMsg,
+                        int msgLen, /* message representation */
+                        const Ipp8u* pSalt,
+                        int saltLen,
+                        Ipp8u* pSign,
+                        const IppsRSAPrivateKeyState* pPrvKey,
+                        const IppsRSAPublicKeyState* pPubKey,
+                        BNU_CHUNK_T* pBuffer)
 {
     /* size of RSA modulus in bytes and chunks */
     cpSize rsaBits = RSA_PRV_KEY_BITSIZE_N(pPrvKey);
-    cpSize k = BITS2WORD8_SIZE(rsaBits);
-    cpSize nsN = BITS_BNU_CHUNK(rsaBits);
+    cpSize k       = BITS2WORD8_SIZE(rsaBits);
+    cpSize nsN     = BITS_BNU_CHUNK(rsaBits);
 
     /* EMSA-PKCS-v1_5 encoding */
     int result = EMSA_PKCSv15(pMsg, msgLen, pSalt, saltLen, pSign, k);

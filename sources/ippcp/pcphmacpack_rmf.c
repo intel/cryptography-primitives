@@ -47,30 +47,30 @@
 //    bufSize     size of destination buffer
 //
 *F*/
-IPPFUN(IppStatus, ippsHMACPack_rmf,(const IppsHMACState_rmf* pCtx, Ipp8u* pBuffer, int bufSize))
+IPPFUN(IppStatus, ippsHMACPack_rmf, (const IppsHMACState_rmf* pCtx, Ipp8u* pBuffer, int bufSize))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
-   /* test the context */
-   IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test the context */
+    IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   {
-      int ctxSize;
-      ippsHMACGetSize_rmf(&ctxSize);
-      /* test buffer length */
-      IPP_BADARG_RET(ctxSize>bufSize, ippStsNoMemErr);
+    {
+        int ctxSize;
+        ippsHMACGetSize_rmf(&ctxSize);
+        /* test buffer length */
+        IPP_BADARG_RET(ctxSize > bufSize, ippStsNoMemErr);
 
-      CopyBlock(pCtx, pBuffer, ctxSize);
-      
-      /* Reset IppsHMACState_rmf context id */
-      IppsHMACState_rmf* pCopy = (IppsHMACState_rmf*)pBuffer;
-      HMAC_RESET_CTX_ID(pCopy);
-      /* Reset context id for IppsHashState_rmf, which is the part of IppsHMACState_rmf */
-      IppsHashState_rmf* pHashCopy = (IppsHashState_rmf*)HASH_CTX(pCopy);
-      HASH_RESET_ID(pHashCopy,idCtxHash);
-      /* setup pointers to buffer and hash in IppsHashState_rmf structure */
-      HASH_SETUP_POINTERS((IppsHashState_rmf*)HASH_CTX(pCtx));
+        CopyBlock(pCtx, pBuffer, ctxSize);
 
-      return ippStsNoErr;
-   }
+        /* Reset IppsHMACState_rmf context id */
+        IppsHMACState_rmf* pCopy = (IppsHMACState_rmf*)pBuffer;
+        HMAC_RESET_CTX_ID(pCopy);
+        /* Reset context id for IppsHashState_rmf, which is the part of IppsHMACState_rmf */
+        IppsHashState_rmf* pHashCopy = (IppsHashState_rmf*)HASH_CTX(pCopy);
+        HASH_RESET_ID(pHashCopy, idCtxHash);
+        /* setup pointers to buffer and hash in IppsHashState_rmf structure */
+        HASH_SETUP_POINTERS((IppsHashState_rmf*)HASH_CTX(pCtx));
+
+        return ippStsNoErr;
+    }
 }

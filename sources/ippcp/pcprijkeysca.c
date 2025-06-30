@@ -28,7 +28,7 @@
 */
 
 // Prevent code expansion from inline functions for clang compiler
-#if defined( __clang__ ) && !defined (__INTEL_COMPILER) && !defined (__INTEL_LLVM_COMPILER)
+#if defined(__clang__) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
 #define __IPPCP_INLINE static __attribute__((noinline))
 #endif
 
@@ -135,16 +135,16 @@
 // Note:
 //    Reference sec 4.2 of FIPS-197 for calculation
 */
-static const Ipp32u RconTbl[] = {
-   BYTE0_TO_WORD(0x01), BYTE0_TO_WORD(0x02), BYTE0_TO_WORD(0x04), BYTE0_TO_WORD(0x08),
-   BYTE0_TO_WORD(0x10), BYTE0_TO_WORD(0x20), BYTE0_TO_WORD(0x40), BYTE0_TO_WORD(0x80),
-   BYTE0_TO_WORD(0x1B), BYTE0_TO_WORD(0x36), BYTE0_TO_WORD(0x6C), BYTE0_TO_WORD(0xD8),
-   BYTE0_TO_WORD(0xAB), BYTE0_TO_WORD(0x4D), BYTE0_TO_WORD(0x9A), BYTE0_TO_WORD(0x2F),
-   BYTE0_TO_WORD(0x5E), BYTE0_TO_WORD(0xBC), BYTE0_TO_WORD(0x63), BYTE0_TO_WORD(0xC6),
-   BYTE0_TO_WORD(0x97), BYTE0_TO_WORD(0x35), BYTE0_TO_WORD(0x6A), BYTE0_TO_WORD(0xD4),
-   BYTE0_TO_WORD(0xB3), BYTE0_TO_WORD(0x7D), BYTE0_TO_WORD(0xFA), BYTE0_TO_WORD(0xEF),
-   BYTE0_TO_WORD(0xC5)
-};
+static const Ipp32u RconTbl[] = { BYTE0_TO_WORD(0x01), BYTE0_TO_WORD(0x02), BYTE0_TO_WORD(0x04),
+                                  BYTE0_TO_WORD(0x08), BYTE0_TO_WORD(0x10), BYTE0_TO_WORD(0x20),
+                                  BYTE0_TO_WORD(0x40), BYTE0_TO_WORD(0x80), BYTE0_TO_WORD(0x1B),
+                                  BYTE0_TO_WORD(0x36), BYTE0_TO_WORD(0x6C), BYTE0_TO_WORD(0xD8),
+                                  BYTE0_TO_WORD(0xAB), BYTE0_TO_WORD(0x4D), BYTE0_TO_WORD(0x9A),
+                                  BYTE0_TO_WORD(0x2F), BYTE0_TO_WORD(0x5E), BYTE0_TO_WORD(0xBC),
+                                  BYTE0_TO_WORD(0x63), BYTE0_TO_WORD(0xC6), BYTE0_TO_WORD(0x97),
+                                  BYTE0_TO_WORD(0x35), BYTE0_TO_WORD(0x6A), BYTE0_TO_WORD(0xD4),
+                                  BYTE0_TO_WORD(0xB3), BYTE0_TO_WORD(0x7D), BYTE0_TO_WORD(0xFA),
+                                  BYTE0_TO_WORD(0xEF), BYTE0_TO_WORD(0xC5) };
 
 /// commented due to mitigation
 //
@@ -164,146 +164,158 @@ static const Ipp32u RconTbl[] = {
 
 __IPPCP_INLINE Ipp32u InvMixColumn(Ipp32u x)
 {
-  Ipp32u x_mul_2 = xtime4(x);
-  Ipp32u x_mul_4 = xtime4(x_mul_2);
-  Ipp32u x_mul_8 = xtime4(x_mul_4);
+    Ipp32u x_mul_2 = xtime4(x);
+    Ipp32u x_mul_4 = xtime4(x_mul_2);
+    Ipp32u x_mul_8 = xtime4(x_mul_4);
 
-  Ipp32u x_mul_9 = x_mul_8 ^ x;
-  Ipp32u x_mul_B = x_mul_8 ^ x_mul_2 ^ x;
-  Ipp32u x_mul_D = x_mul_8 ^ x_mul_4 ^ x;
-  Ipp32u x_mul_E = x_mul_8 ^ x_mul_4 ^ x_mul_2;
+    Ipp32u x_mul_9 = x_mul_8 ^ x;
+    Ipp32u x_mul_B = x_mul_8 ^ x_mul_2 ^ x;
+    Ipp32u x_mul_D = x_mul_8 ^ x_mul_4 ^ x;
+    Ipp32u x_mul_E = x_mul_8 ^ x_mul_4 ^ x_mul_2;
 
-  x = x_mul_E ^ ROR32(x_mul_B, 8) ^ ROR32(x_mul_D, 16) ^ ROR32(x_mul_9, 24);
-  return x;
+    x = x_mul_E ^ ROR32(x_mul_B, 8) ^ ROR32(x_mul_D, 16) ^ ROR32(x_mul_9, 24);
+    return x;
 }
 
 /*
 // Expansion of key for Rijndael's Encryption
 */
-IPP_OWN_DEFN (void, ExpandRijndaelKey, (const Ipp8u* pKey, int NK, int NB, int NR, int nKeys, Ipp8u* pEncKeys, Ipp8u* pDecKeys))
+/* clang-format off */
+IPP_OWN_DEFN(void, ExpandRijndaelKey, (const Ipp8u* pKey,
+                                       int NK,
+                                       int NB,
+                                       int NR,
+                                       int nKeys,
+                                       Ipp8u* pEncKeys,
+                                       Ipp8u* pDecKeys))
+/* clang-format on */
 {
-   Ipp32u* enc_keys = (Ipp32u*)pEncKeys;
-   Ipp32u* dec_keys = (Ipp32u*)pDecKeys;
-   /* convert security key to WORD and save into the enc_key array */
-   int n;
-   for(n=0; n<NK; n++)
-      enc_keys[n] = BYTES_TO_WORD(pKey[4*n+0], pKey[4*n+1], pKey[4*n+2], pKey[4*n+3]);
+    Ipp32u* enc_keys = (Ipp32u*)pEncKeys;
+    Ipp32u* dec_keys = (Ipp32u*)pDecKeys;
+    /* convert security key to WORD and save into the enc_key array */
+    int n;
+    for (n = 0; n < NK; n++)
+        enc_keys[n] =
+            BYTES_TO_WORD(pKey[4 * n + 0], pKey[4 * n + 1], pKey[4 * n + 2], pKey[4 * n + 3]);
 
-   /* 128-bits Key */
-   if(NK128 == NK) {
-      const Ipp32u* rtbl = RconTbl;
-      Ipp32u k0 = enc_keys[0];
-      Ipp32u k1 = enc_keys[1];
-      Ipp32u k2 = enc_keys[2];
-      Ipp32u k3 = enc_keys[3];
+    /* 128-bits Key */
+    if (NK128 == NK) {
+        const Ipp32u* rtbl = RconTbl;
+        Ipp32u k0          = enc_keys[0];
+        Ipp32u k1          = enc_keys[1];
+        Ipp32u k2          = enc_keys[2];
+        Ipp32u k3          = enc_keys[3];
 
-      for(n=NK128; n<nKeys; n+=NK128) {
-         /* key expansion: extract bytes, substitute via Sbox and rotate */
-         k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k3, 1)),
-                             getSboxValue(EBYTE(k3, 2)),
-                             getSboxValue(EBYTE(k3, 3)),
-                             getSboxValue(EBYTE(k3, 0))) ^ *rtbl++;
-         k1 ^= k0;
-         k2 ^= k1;
-         k3 ^= k2;
+        for (n = NK128; n < nKeys; n += NK128) {
+            /* key expansion: extract bytes, substitute via Sbox and rotate */
+            k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k3, 1)),
+                                getSboxValue(EBYTE(k3, 2)),
+                                getSboxValue(EBYTE(k3, 3)),
+                                getSboxValue(EBYTE(k3, 0))) ^
+                  *rtbl++;
+            k1 ^= k0;
+            k2 ^= k1;
+            k3 ^= k2;
 
-         /* add key expansion */
-         enc_keys[n  ] = k0;
-         enc_keys[n+1] = k1;
-         enc_keys[n+2] = k2;
-         enc_keys[n+3] = k3;
-      }
-   }
+            /* add key expansion */
+            enc_keys[n]     = k0;
+            enc_keys[n + 1] = k1;
+            enc_keys[n + 2] = k2;
+            enc_keys[n + 3] = k3;
+        }
+    }
 
-   /* 192-bits Key */
-   else if(NK192 == NK) {
-      const Ipp32u* rtbl = RconTbl;
-      Ipp32u k0 = enc_keys[0];
-      Ipp32u k1 = enc_keys[1];
-      Ipp32u k2 = enc_keys[2];
-      Ipp32u k3 = enc_keys[3];
-      Ipp32u k4 = enc_keys[4];
-      Ipp32u k5 = enc_keys[5];
+    /* 192-bits Key */
+    else if (NK192 == NK) {
+        const Ipp32u* rtbl = RconTbl;
+        Ipp32u k0          = enc_keys[0];
+        Ipp32u k1          = enc_keys[1];
+        Ipp32u k2          = enc_keys[2];
+        Ipp32u k3          = enc_keys[3];
+        Ipp32u k4          = enc_keys[4];
+        Ipp32u k5          = enc_keys[5];
 
-      for(n=NK192; n<nKeys; n+=NK192) {
-         /* key expansion: extract bytes, substitute via Sbox and rotate */
-         k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k5, 1)),
-                             getSboxValue(EBYTE(k5, 2)),
-                             getSboxValue(EBYTE(k5, 3)),
-                             getSboxValue(EBYTE(k5, 0))) ^ *rtbl++;
-         k1 ^= k0;
-         k2 ^= k1;
-         k3 ^= k2;
-         k4 ^= k3;
-         k5 ^= k4;
+        for (n = NK192; n < nKeys; n += NK192) {
+            /* key expansion: extract bytes, substitute via Sbox and rotate */
+            k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k5, 1)),
+                                getSboxValue(EBYTE(k5, 2)),
+                                getSboxValue(EBYTE(k5, 3)),
+                                getSboxValue(EBYTE(k5, 0))) ^
+                  *rtbl++;
+            k1 ^= k0;
+            k2 ^= k1;
+            k3 ^= k2;
+            k4 ^= k3;
+            k5 ^= k4;
 
-         /* add key expansion */
-         enc_keys[n  ] = k0;
-         enc_keys[n+1] = k1;
-         enc_keys[n+2] = k2;
-         enc_keys[n+3] = k3;
-         enc_keys[n+4] = k4;
-         enc_keys[n+5] = k5;
-      }
-   }
+            /* add key expansion */
+            enc_keys[n]     = k0;
+            enc_keys[n + 1] = k1;
+            enc_keys[n + 2] = k2;
+            enc_keys[n + 3] = k3;
+            enc_keys[n + 4] = k4;
+            enc_keys[n + 5] = k5;
+        }
+    }
 
-   /* 256-bits Key */
-   else {
-      const Ipp32u* rtbl = RconTbl;
-      Ipp32u k0 = enc_keys[0];
-      Ipp32u k1 = enc_keys[1];
-      Ipp32u k2 = enc_keys[2];
-      Ipp32u k3 = enc_keys[3];
-      Ipp32u k4 = enc_keys[4];
-      Ipp32u k5 = enc_keys[5];
-      Ipp32u k6 = enc_keys[6];
-      Ipp32u k7 = enc_keys[7];
+    /* 256-bits Key */
+    else {
+        const Ipp32u* rtbl = RconTbl;
+        Ipp32u k0          = enc_keys[0];
+        Ipp32u k1          = enc_keys[1];
+        Ipp32u k2          = enc_keys[2];
+        Ipp32u k3          = enc_keys[3];
+        Ipp32u k4          = enc_keys[4];
+        Ipp32u k5          = enc_keys[5];
+        Ipp32u k6          = enc_keys[6];
+        Ipp32u k7          = enc_keys[7];
 
-      for(n=NK256; n<nKeys; n+=NK256) {
-         /* key expansion: extract bytes, substitute via Sbox and rotate */
-         k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k7, 1)),
-                             getSboxValue(EBYTE(k7, 2)),
-                             getSboxValue(EBYTE(k7, 3)),
-                             getSboxValue(EBYTE(k7, 0))) ^ *rtbl++;
-         k1 ^= k0;
-         k2 ^= k1;
-         k3 ^= k2;
-         k4 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k3, 0)),
-                             getSboxValue(EBYTE(k3, 1)),
-                             getSboxValue(EBYTE(k3, 2)),
-                             getSboxValue(EBYTE(k3, 3)));
-         k5 ^= k4;
-         k6 ^= k5;
-         k7 ^= k6;
+        for (n = NK256; n < nKeys; n += NK256) {
+            /* key expansion: extract bytes, substitute via Sbox and rotate */
+            k0 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k7, 1)),
+                                getSboxValue(EBYTE(k7, 2)),
+                                getSboxValue(EBYTE(k7, 3)),
+                                getSboxValue(EBYTE(k7, 0))) ^
+                  *rtbl++;
+            k1 ^= k0;
+            k2 ^= k1;
+            k3 ^= k2;
+            k4 ^= BYTES_TO_WORD(getSboxValue(EBYTE(k3, 0)),
+                                getSboxValue(EBYTE(k3, 1)),
+                                getSboxValue(EBYTE(k3, 2)),
+                                getSboxValue(EBYTE(k3, 3)));
+            k5 ^= k4;
+            k6 ^= k5;
+            k7 ^= k6;
 
-         /* add key expansion */
-         enc_keys[n  ] = k0;
-         enc_keys[n+1] = k1;
-         enc_keys[n+2] = k2;
-         enc_keys[n+3] = k3;
-         enc_keys[n+4] = k4;
-         enc_keys[n+5] = k5;
-         enc_keys[n+6] = k6;
-         enc_keys[n+7] = k7;
-      }
-   }
+            /* add key expansion */
+            enc_keys[n]     = k0;
+            enc_keys[n + 1] = k1;
+            enc_keys[n + 2] = k2;
+            enc_keys[n + 3] = k3;
+            enc_keys[n + 4] = k4;
+            enc_keys[n + 5] = k5;
+            enc_keys[n + 6] = k6;
+            enc_keys[n + 7] = k7;
+        }
+    }
 
 
-   /*
+    /*
    // Key Expansion for Decryption
    */
-   /* copy keys */
-   CopyBlock(enc_keys, dec_keys, (Ipp32s)sizeof(Ipp32u)*nKeys);
+    /* copy keys */
+    CopyBlock(enc_keys, dec_keys, (Ipp32s)sizeof(Ipp32u) * nKeys);
 
-   /* update decryption keys */
-   for(n=NB; n<NR*NB; n++) {
-      #if ((_IPP>=_IPP_W7) || (_IPP32E==_IPP32E_M7))
-      _mm_lfence(); /* lfence added because of potential exploit of speculative execution (KW); lfence accessible on SSE2 and above */
-      #endif
-      dec_keys[n] = InvMixColumn(dec_keys[n]);
-   }
+    /* update decryption keys */
+    for (n = NB; n < NR * NB; n++) {
+#if ((_IPP >= _IPP_W7) || (_IPP32E == _IPP32E_M7))
+        _mm_lfence(); /* lfence added because of potential exploit of speculative execution (KW); lfence accessible on SSE2 and above */
+#endif
+        dec_keys[n] = InvMixColumn(dec_keys[n]);
+    }
 }
 
-#if defined( __clang__ ) && !defined (__INTEL_COMPILER) && !defined (__INTEL_LLVM_COMPILER)
+#if defined(__clang__) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
 #undef __IPPCP_INLINE
 #endif

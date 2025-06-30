@@ -39,42 +39,50 @@
 //    - array of pointers to the BNU bases x[0], x[1],...,x[numItems-1]
 //    - pointer to the Montgomery engine
 */
-IPP_OWN_DEFN (void, cpMontMultiExpInitArray, (BNU_CHUNK_T* pPrecomTbl, const BNU_CHUNK_T** ppX, cpSize xItemBitSize, cpSize numItems, gsModEngine* pModEngine))
+/* clang-format off */
+IPP_OWN_DEFN (void, cpMontMultiExpInitArray, (BNU_CHUNK_T* pPrecomTbl,
+                                              const BNU_CHUNK_T** ppX,
+                                              cpSize xItemBitSize,
+                                              cpSize numItems,
+                                              gsModEngine* pModEngine))
+/* clang-format on */
 {
-   cpSize sizeM = MOD_LEN(pModEngine);
+    cpSize sizeM = MOD_LEN(pModEngine);
 
-   cpSize i, base;
-   cpSize sizeX = BITS_BNU_CHUNK(xItemBitSize);
+    cpSize i, base;
+    cpSize sizeX = BITS_BNU_CHUNK(xItemBitSize);
 
-   /* buff[0] = mont(1) */
-   COPY_BNU(pPrecomTbl, MOD_MNT_R(pModEngine), sizeM);
-   /* buff[1] = X[0] */
-   ZEXPAND_COPY_BNU(pPrecomTbl+sizeM, sizeM, ppX[0], sizeX);
+    /* buff[0] = mont(1) */
+    COPY_BNU(pPrecomTbl, MOD_MNT_R(pModEngine), sizeM);
+    /* buff[1] = X[0] */
+    ZEXPAND_COPY_BNU(pPrecomTbl + sizeM, sizeM, ppX[0], sizeX);
 
-   for(i=1,base=2*sizeM; i<numItems; i++,base*=2) {
-      /* buf[base] = X[i] */
-      ZEXPAND_COPY_BNU(pPrecomTbl+base, sizeM, ppX[i], sizeX);
+    for (i = 1, base = 2 * sizeM; i < numItems; i++, base *= 2) {
+        /* buf[base] = X[i] */
+        ZEXPAND_COPY_BNU(pPrecomTbl + base, sizeM, ppX[i], sizeX);
 
-      {
-         int nPasses = 1;
-         int step = base/2;
+        {
+            int nPasses = 1;
+            int step    = base / 2;
 
-         int k;
-         for(k=i-1; k>=0; k--) {
-            const BNU_CHUNK_T* pXterm = ppX[k];
+            int k;
+            for (k = i - 1; k >= 0; k--) {
+                const BNU_CHUNK_T* pXterm = ppX[k];
 
-            BNU_CHUNK_T* pBufferBase = pPrecomTbl+base;
-            int n;
-            for(n=1; n<=nPasses; n++, pBufferBase+=2*step) {
-               cpMontMul_BNU_EX(pBufferBase+step,
-                                pBufferBase,      sizeM,
-                                pXterm,           sizeX,
-                                pModEngine);
+                BNU_CHUNK_T* pBufferBase = pPrecomTbl + base;
+                int n;
+                for (n = 1; n <= nPasses; n++, pBufferBase += 2 * step) {
+                    cpMontMul_BNU_EX(pBufferBase + step,
+                                     pBufferBase,
+                                     sizeM,
+                                     pXterm,
+                                     sizeX,
+                                     pModEngine);
+                }
+
+                nPasses *= 2;
+                step /= 2;
             }
-
-            nPasses *= 2;
-            step /= 2;
-         }
-      }
-   }
+        }
+    }
 }

@@ -43,13 +43,11 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsAES_XTSGetSize,(int* pSize))
+IPPFUN(IppStatus, ippsAES_XTSGetSize, (int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = cpSizeof_AES_XTS_Ctx();
-   return ippStsNoErr;
+    *pSize = cpSizeof_AES_XTS_Ctx();
+    return ippStsNoErr;
 }
-
-

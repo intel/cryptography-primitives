@@ -44,34 +44,38 @@
 *F*/
 IPPFUN(IppStatus, ippsPrimeInit, (int nMaxBits, IppsPrimeState* pCtx))
 {
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(nMaxBits<1, ippStsLengthErr);
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(nMaxBits < 1, ippStsLengthErr);
 
-   {
-      Ipp8u* ptr = (Ipp8u*)pCtx;
+    {
+        Ipp8u* ptr = (Ipp8u*)pCtx;
 
-      cpSize len = BITS_BNU_CHUNK(nMaxBits);
+        cpSize len = BITS_BNU_CHUNK(nMaxBits);
 
-      PRIME_SET_ID(pCtx);
-      PRIME_MAXBITSIZE(pCtx) = nMaxBits;
+        PRIME_SET_ID(pCtx);
+        PRIME_MAXBITSIZE(pCtx) = nMaxBits;
 
-      ptr += sizeof(IppsPrimeState);
-      ptr = (Ipp8u*)(IPP_ALIGNED_PTR(ptr, PRIME_ALIGNMENT));
-      PRIME_NUMBER(pCtx) = (BNU_CHUNK_T*)ptr;
+        ptr += sizeof(IppsPrimeState);
+        ptr                = (Ipp8u*)(IPP_ALIGNED_PTR(ptr, PRIME_ALIGNMENT));
+        PRIME_NUMBER(pCtx) = (BNU_CHUNK_T*)ptr;
 
-      ptr += len*(Ipp32s)sizeof(BNU_CHUNK_T);
-      PRIME_TEMP1(pCtx) = (BNU_CHUNK_T*)ptr;
+        ptr += len * (Ipp32s)sizeof(BNU_CHUNK_T);
+        PRIME_TEMP1(pCtx) = (BNU_CHUNK_T*)ptr;
 
-      ptr += len*(Ipp32s)(Ipp32s)sizeof(BNU_CHUNK_T);
-      PRIME_TEMP2(pCtx) = (BNU_CHUNK_T*)ptr;
+        ptr += len * (Ipp32s)(Ipp32s)sizeof(BNU_CHUNK_T);
+        PRIME_TEMP2(pCtx) = (BNU_CHUNK_T*)ptr;
 
-      ptr += len*(Ipp32s)sizeof(BNU_CHUNK_T);
-      PRIME_TEMP3(pCtx) = (BNU_CHUNK_T*)ptr;
+        ptr += len * (Ipp32s)sizeof(BNU_CHUNK_T);
+        PRIME_TEMP3(pCtx) = (BNU_CHUNK_T*)ptr;
 
-      ptr += len*(Ipp32s)sizeof(BNU_CHUNK_T);
-      PRIME_MONT(pCtx) = (gsModEngine*)(ptr);
-      gsModEngineInit(PRIME_MONT(pCtx), NULL, nMaxBits, MONT_DEFAULT_POOL_LENGTH, gsModArithMont());
+        ptr += len * (Ipp32s)sizeof(BNU_CHUNK_T);
+        PRIME_MONT(pCtx) = (gsModEngine*)(ptr);
+        gsModEngineInit(PRIME_MONT(pCtx),
+                        NULL,
+                        nMaxBits,
+                        MONT_DEFAULT_POOL_LENGTH,
+                        gsModArithMont());
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

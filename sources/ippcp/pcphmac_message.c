@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     HMAC General Functionality
-// 
+//
 //  Contents:
 //        ippsHMAC_Message()
 //
@@ -55,42 +55,49 @@
 //    hashAlg     hash alg ID
 //
 *F*/
-IPPFUN(IppStatus, ippsHMAC_Message,(const Ipp8u* pMsg, int msgLen,
-                                   const Ipp8u* pKey, int keyLen,
-                                   Ipp8u* pMD, int mdLen,
-                                   IppHashAlgId hashAlg))
+/* clang-format off */
+IPPFUN(IppStatus, ippsHMAC_Message, (const Ipp8u* pMsg,
+                                     int msgLen,
+                                     const Ipp8u* pKey,
+                                     int keyLen,
+                                     Ipp8u* pMD,
+                                     int mdLen,
+                                     IppHashAlgId hashAlg))
+/* clang-format on */
 {
-   /* get algorithm id */
-   hashAlg = cpValidHashAlg(hashAlg);
-   /* test hash alg */
-   IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
+    /* get algorithm id */
+    hashAlg = cpValidHashAlg(hashAlg);
+    /* test hash alg */
+    IPP_BADARG_RET(ippHashAlg_Unknown == hashAlg, ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
-   /* test secret key pointer and length */
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET((keyLen<0), ippStsLengthErr);
+    /* test secret key pointer and length */
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET((keyLen < 0), ippStsLengthErr);
 
-   /* test input message pointer and length */
-   IPP_BADARG_RET((msgLen<0), ippStsLengthErr);
-   IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
+    /* test input message pointer and length */
+    IPP_BADARG_RET((msgLen < 0), ippStsLengthErr);
+    IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
 
-   /* test MD pointer and length */
-   IPP_BAD_PTR1_RET(pMD);
-   IPP_BADARG_RET(0>=mdLen || mdLen>cpHashSize(hashAlg), ippStsLengthErr);
+    /* test MD pointer and length */
+    IPP_BAD_PTR1_RET(pMD);
+    IPP_BADARG_RET(0 >= mdLen || mdLen > cpHashSize(hashAlg), ippStsLengthErr);
 
-   {
-      __ALIGN8 IppsHMACState ctx;
-      IppStatus sts = ippsHMAC_Init(pKey, keyLen, &ctx, hashAlg);
-      if(ippStsNoErr!=sts) goto exit;
+    {
+        __ALIGN8 IppsHMACState ctx;
+        IppStatus sts = ippsHMAC_Init(pKey, keyLen, &ctx, hashAlg);
+        if (ippStsNoErr != sts)
+            goto exit;
 
-      sts = ippsHashUpdate(pMsg,msgLen, &HASH_CTX(&ctx));
-      if(ippStsNoErr!=sts) goto exit;
+        sts = ippsHashUpdate(pMsg, msgLen, &HASH_CTX(&ctx));
+        if (ippStsNoErr != sts)
+            goto exit;
 
-      sts = ippsHMAC_Final(pMD, mdLen, &ctx);
+        sts = ippsHMAC_Final(pMD, mdLen, &ctx);
 
-      exit:
-      PurgeBlock(&ctx, sizeof(IppsHMACState));
-      return sts;
-   }
+    exit:
+        PurgeBlock(&ctx, sizeof(IppsHMACState));
+        return sts;
+    }
 }

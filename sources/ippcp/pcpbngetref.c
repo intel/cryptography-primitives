@@ -67,22 +67,27 @@
 //    pBN      BigNum ctx
 //
 *F*/
-IPPFUN(IppStatus, ippsRef_BN, (IppsBigNumSGN* pSgn, int* pBitSize, Ipp32u** const ppData,
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsRef_BN, (IppsBigNumSGN* pSgn,
+                               int* pBitSize,
+                               Ipp32u** const ppData,
                                const IppsBigNumState *pBN))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pBN);
+    IPP_BAD_PTR1_RET(pBN);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
 
-   if(pSgn)
-      *pSgn = BN_SIGN(pBN);
-   if(pBitSize) {
-      cpSize bitLen = BITSIZE_BNU(BN_NUMBER(pBN), BN_SIZE(pBN));
-      *pBitSize = bitLen? bitLen : 1;
-   }
+    if (pSgn)
+        *pSgn = BN_SIGN(pBN);
+    if (pBitSize) {
+        cpSize bitLen = BITSIZE_BNU(BN_NUMBER(pBN), BN_SIZE(pBN));
+        *pBitSize     = bitLen ? bitLen : 1;
+    }
 
-   if(ppData)
-      *ppData = (Ipp32u*)BN_NUMBER(pBN);
+    if (ppData)
+        *ppData = (Ipp32u*)BN_NUMBER(pBN);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

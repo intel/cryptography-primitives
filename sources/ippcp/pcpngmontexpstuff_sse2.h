@@ -23,55 +23,81 @@
 */
 #include "owncp.h"
 
-#if (_IPP>=_IPP_W7)
+#if (_IPP >= _IPP_W7)
 
 #include "pcpbnuimpl.h"
 #include "pcpngmontexpstuff.h"
 
-#define RSA_SSE2_MIN_BITSIZE  (256)
-#define RSA_SSE2_MAX_BITSIZE  (13*1024)
+#define RSA_SSE2_MIN_BITSIZE (256)
+#define RSA_SSE2_MAX_BITSIZE (13 * 1024)
 
 #define NORM_DIGSIZE_SSE2 (BITSIZE(Ipp32u))
-#define NORM_BASE_SSE2   ((Ipp64u)1<<NORM_DIGSIZE_SSE2)
-#define NORM_MASK_SSE2 (NORM_BASE_SSE2-1)
+#define NORM_BASE_SSE2    ((Ipp64u)1 << NORM_DIGSIZE_SSE2)
+#define NORM_MASK_SSE2    (NORM_BASE_SSE2 - 1)
 
-#define EXP_DIGIT_SIZE_SSE2   (27)
-#define EXP_DIGIT_BASE_SSE2   (1<<EXP_DIGIT_SIZE_SSE2)
-#define EXP_DIGIT_MASK_SSE2   (EXP_DIGIT_BASE_SSE2-1)
+#define EXP_DIGIT_SIZE_SSE2 (27)
+#define EXP_DIGIT_BASE_SSE2 (1 << EXP_DIGIT_SIZE_SSE2)
+#define EXP_DIGIT_MASK_SSE2 (EXP_DIGIT_BASE_SSE2 - 1)
 
 
 /* number of "diSize" chunks in "bitSize" bit string */
 __IPPCP_INLINE int cpDigitNum_sse2(int bitSize, int digSize)
-{ return (bitSize + digSize-1)/digSize; }
+{
+    return (bitSize + digSize - 1) / digSize;
+}
 
 /* number of "RSA_SSE2_DIGIT_SIZE" chunks in "bitSize" bit string matched for AMM */
 __IPPCP_INLINE cpSize numofVariable_sse2(int modulusBits)
 {
-   cpSize ammBitSize = 2 + cpDigitNum_sse2(modulusBits, BITSIZE(BNU_CHUNK_T)) * BITSIZE(BNU_CHUNK_T);
-   cpSize redNum = cpDigitNum_sse2(ammBitSize, EXP_DIGIT_SIZE_SSE2);
-   return redNum;
+    cpSize ammBitSize =
+        2 + cpDigitNum_sse2(modulusBits, BITSIZE(BNU_CHUNK_T)) * BITSIZE(BNU_CHUNK_T);
+    cpSize redNum = cpDigitNum_sse2(ammBitSize, EXP_DIGIT_SIZE_SSE2);
+    return redNum;
 }
 
 /* buffer corresponding to numofVariable_sse2() */
-__IPPCP_INLINE cpSize numofVariableBuff_sse2(int numV)
-{
-   return numV +4 +(numV&1);
-}
+__IPPCP_INLINE cpSize numofVariableBuff_sse2(int numV) { return numV + 4 + (numV & 1); }
 
+/* clang-format off */
 /* exponentiation buffer size */
 #define gsMontExpBinBuffer_sse2 OWNAPI(gsMontExpBinBuffer_sse2)
-   IPP_OWN_DECL (cpSize, gsMontExpBinBuffer_sse2, (int modulusBits))
+   IPP_OWN_DECL(cpSize, gsMontExpBinBuffer_sse2, (int modulusBits))
 #define gsMontExpWinBuffer_sse2 OWNAPI(gsMontExpWinBuffer_sse2)
-   IPP_OWN_DECL (cpSize, gsMontExpWinBuffer_sse2, (int modulusBits))
+   IPP_OWN_DECL(cpSize, gsMontExpWinBuffer_sse2, (int modulusBits))
 
 /* exponentiations */
 #define gsMontExpBin_BNU_sse2 OWNAPI(gsMontExpBin_BNU_sse2)
-   IPP_OWN_DECL (cpSize, gsMontExpBin_BNU_sse2, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize nsE, gsModEngine* pMont, BNU_CHUNK_T* pBufferT))
+   IPP_OWN_DECL(cpSize, gsMontExpBin_BNU_sse2, (BNU_CHUNK_T* dataY,
+                                                     const BNU_CHUNK_T* dataX,
+                                                     cpSize nsX,
+                                                     const BNU_CHUNK_T* dataE,
+                                                     cpSize nsE,
+                                                     gsModEngine* pMont,
+                                                     BNU_CHUNK_T* pBufferT))
 #define gsMontExpBin_BNU_sscm_sse2 OWNAPI(gsMontExpBin_BNU_sscm_sse2)
-   IPP_OWN_DECL (cpSize, gsMontExpBin_BNU_sscm_sse2, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize nsE, gsModEngine* pMont, BNU_CHUNK_T* pBufferT))
+   IPP_OWN_DECL(cpSize, gsMontExpBin_BNU_sscm_sse2, (BNU_CHUNK_T* dataY,
+                                                     const BNU_CHUNK_T* dataX,
+                                                     cpSize nsX,
+                                                     const BNU_CHUNK_T* dataE,
+                                                     cpSize nsE,
+                                                     gsModEngine* pMont,
+                                                     BNU_CHUNK_T* pBufferT))
 #define gsMontExpWin_BNU_sse2 OWNAPI(gsMontExpWin_BNU_sse2)
-   IPP_OWN_DECL (cpSize, gsMontExpWin_BNU_sse2, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize nsE, gsModEngine* pMont, BNU_CHUNK_T* pBufferT))
+   IPP_OWN_DECL(cpSize, gsMontExpWin_BNU_sse2, (BNU_CHUNK_T* dataY,
+                                                     const BNU_CHUNK_T* dataX,
+                                                     cpSize nsX,
+                                                     const BNU_CHUNK_T* dataE,
+                                                     cpSize nsE,
+                                                     gsModEngine* pMont,
+                                                     BNU_CHUNK_T* pBufferT))
 #define gsMontExpWin_BNU_sscm_sse2 OWNAPI(gsMontExpWin_BNU_sscm_sse2)
-   IPP_OWN_DECL (cpSize, gsMontExpWin_BNU_sscm_sse2, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize nsE, gsModEngine* pMont, BNU_CHUNK_T* pBuffer))
+   IPP_OWN_DECL(cpSize, gsMontExpWin_BNU_sscm_sse2, (BNU_CHUNK_T* dataY,
+                                                     const BNU_CHUNK_T* dataX,
+                                                     cpSize nsX,
+                                                     const BNU_CHUNK_T* dataE,
+                                                     cpSize nsE,
+                                                     gsModEngine* pMont,
+                                                     BNU_CHUNK_T* pBuffer))
+/* clang-format on */
 
 #endif /* _IPP_W7 */

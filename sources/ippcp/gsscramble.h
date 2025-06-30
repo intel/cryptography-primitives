@@ -14,19 +14,19 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Fixed window exponentiation scramble/unscramble
-// 
+//
 //  Contents:
 //    gsGetScrambleBufferSize()
 //    gsScramblePut()
 //    gsScrambleGet()
 //    gsScrambleGet_sscm()
-// 
-// 
+//
+//
 */
 
 #if !defined(_GS_SCRAMBLE_H)
@@ -34,15 +34,27 @@
 
 #include "pcpbnuimpl.h"
 
-#define MAX_W  (6)
+#define MAX_W (6)
 
+/* clang-format off */
 #define gsGetScrambleBufferSize OWNAPI(gsGetScrambleBufferSize)
-    IPP_OWN_DECL (int, gsGetScrambleBufferSize, (int modulusLen, int w))
+    IPP_OWN_DECL(int, gsGetScrambleBufferSize, (int modulusLen, int w))
 #define gsScramblePut OWNAPI(gsScramblePut)
-    IPP_OWN_DECL (void, gsScramblePut, (BNU_CHUNK_T* tbl, int idx, const BNU_CHUNK_T* val, int vLen, int w))
+    IPP_OWN_DECL(void, gsScramblePut, (BNU_CHUNK_T* tbl,
+                                       int idx,
+                                       const BNU_CHUNK_T* val,
+                                       int vLen, int w))
 #define gsScrambleGet OWNAPI(gsScrambleGet)
-    IPP_OWN_DECL (void, gsScrambleGet, (BNU_CHUNK_T* val, int vLen, const BNU_CHUNK_T* tbl, int idx, int w))
+    IPP_OWN_DECL(void, gsScrambleGet, (BNU_CHUNK_T* val,
+                                       int vLen,
+                                       const BNU_CHUNK_T* tbl,
+                                       int idx, int w))
 #define gsScrambleGet_sscm OWNAPI(gsScrambleGet_sscm)
-    IPP_OWN_DECL (void, gsScrambleGet_sscm, (BNU_CHUNK_T* val, int vLen, const BNU_CHUNK_T* tbl, int idx, int w))
+    IPP_OWN_DECL(void, gsScrambleGet_sscm, (BNU_CHUNK_T* val,
+                                            int vLen,
+                                            const BNU_CHUNK_T* tbl,
+                                            int idx,
+                                            int w))
+/* clang-format on */
 
 #endif /* _GS_SCRAMBLE_H */

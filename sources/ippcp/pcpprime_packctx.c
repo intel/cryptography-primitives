@@ -38,18 +38,22 @@
 //    pBuffer buffer
 *F*/
 
-IPP_OWN_DEFN (void, cpPackPrimeCtx, (const IppsPrimeState* pCtx, Ipp8u* pBuffer))
+IPP_OWN_DEFN(void, cpPackPrimeCtx, (const IppsPrimeState* pCtx, Ipp8u* pBuffer))
 {
-   IppsPrimeState* pB = (IppsPrimeState*)(pBuffer);
+    IppsPrimeState* pB = (IppsPrimeState*)(pBuffer);
 
-   /* max length of prime */
-   cpSize nsPrime = BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx));
+    /* max length of prime */
+    cpSize nsPrime = BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx));
 
-   CopyBlock(pCtx, pB, sizeof(IppsPrimeState));
+    CopyBlock(pCtx, pB, sizeof(IppsPrimeState));
 
-   cpSize dataAlignment = (cpSize)(IPP_INT_PTR(PRIME_NUMBER(pCtx)) - IPP_INT_PTR(pCtx) - (IPP_INT64)sizeof(IppsPrimeState));
-   cpSize gsMontOffset = (cpSize)(IPP_INT_PTR(PRIME_MONT(pCtx)) - IPP_INT_PTR(pCtx) - dataAlignment);
+    cpSize dataAlignment = (cpSize)(IPP_INT_PTR(PRIME_NUMBER(pCtx)) - IPP_INT_PTR(pCtx) -
+                                    (IPP_INT64)sizeof(IppsPrimeState));
+    cpSize gsMontOffset =
+        (cpSize)(IPP_INT_PTR(PRIME_MONT(pCtx)) - IPP_INT_PTR(pCtx) - dataAlignment);
 
-   CopyBlock(PRIME_NUMBER(pCtx), (Ipp8u*)pB + sizeof(IppsPrimeState), nsPrime*(Ipp32s)sizeof(BNU_CHUNK_T));
-   gsPackModEngineCtx(PRIME_MONT(pCtx), (Ipp8u*)pB + gsMontOffset);
+    CopyBlock(PRIME_NUMBER(pCtx),
+              (Ipp8u*)pB + sizeof(IppsPrimeState),
+              nsPrime * (Ipp32s)sizeof(BNU_CHUNK_T));
+    gsPackModEngineCtx(PRIME_MONT(pCtx), (Ipp8u*)pB + gsMontOffset);
 }

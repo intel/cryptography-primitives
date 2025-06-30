@@ -24,13 +24,11 @@
 
 static int cpSizeof_RSA_privateKey1(int rsaModulusBitSize, int privateExpBitSize)
 {
-    int prvExpLen = BITS_BNU_CHUNK(privateExpBitSize);
+    int prvExpLen    = BITS_BNU_CHUNK(privateExpBitSize);
     int modulusLen32 = BITS2WORD32_SIZE(rsaModulusBitSize);
     int montNsize;
     rsaMontExpGetSize(modulusLen32, &montNsize);
 
-    return (Ipp32s)sizeof(IppsRSAPrivateKeyState)
-        + prvExpLen * (Ipp32s)sizeof(BNU_CHUNK_T)
-        + (Ipp32s)sizeof(BNU_CHUNK_T) - 1
-        + montNsize;
+    return (Ipp32s)sizeof(IppsRSAPrivateKeyState) + prvExpLen * (Ipp32s)sizeof(BNU_CHUNK_T) +
+           (Ipp32s)sizeof(BNU_CHUNK_T) - 1 + montNsize;
 }

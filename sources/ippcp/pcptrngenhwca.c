@@ -33,59 +33,59 @@
 #include "pcpbn.h"
 #include "pcptool.h"
 
-#if ((_IPP>=_IPP_G9) || (_IPP32E>=_IPP32E_E9))
+#if ((_IPP >= _IPP_G9) || (_IPP32E >= _IPP32E_E9))
 static int cpSeed_hw_sample(BNU_CHUNK_T* pSample)
 {
 #define LOCAL_COUNTER (320) /* this constant has been tuned manually */
-   int n;
-   int success = 0;
-   for(n=0; n<LOCAL_COUNTER && !success; n++)
-      #if (_IPP_ARCH == _IPP_ARCH_IA32)
-      success = _rdseed32_step(pSample);
-      #elif (_IPP_ARCH == _IPP_ARCH_EM64T)
-      #pragma warning(push) // temporary, compiler bug workaround
-      #pragma warning(disable : 167)
-      success = _rdseed64_step(pSample);
-      #pragma warning(pop)
-      #else
-      #error Unknown CPU arch
-      #endif
-   return success;
+    int n;
+    int success = 0;
+    for (n = 0; n < LOCAL_COUNTER && !success; n++)
+#if (_IPP_ARCH == _IPP_ARCH_IA32)
+        success = _rdseed32_step(pSample);
+#elif (_IPP_ARCH == _IPP_ARCH_EM64T)
+#pragma warning(push) // temporary, compiler bug workaround
+#pragma warning(disable : 167)
+        success = _rdseed64_step(pSample);
+#pragma warning(pop)
+#else
+#error Unknown CPU arch
+#endif
+    return success;
 #undef LOCAL_COUNTER
 }
 
-#if (_IPP32E>=_IPP32E_E9)
+#if (_IPP32E >= _IPP32E_E9)
 static int cpSeed_hw_sample32(Ipp32u* pSample)
 {
 #define LOCAL_COUNTER (320) /* this constant has been tuned manually */
-   int n;
-   int success = 0;
-   for(n=0; n<LOCAL_COUNTER && !success; n++)
-      success = _rdseed32_step(pSample);
-   return success;
+    int n;
+    int success = 0;
+    for (n = 0; n < LOCAL_COUNTER && !success; n++)
+        success = _rdseed32_step(pSample);
+    return success;
 #undef LOCAL_COUNTER
 }
 #endif
 
 static int cpSeedHW_buffer(Ipp32u* pRand, int bufLen)
 {
-   int nSamples = bufLen/((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)));
+    int nSamples = bufLen / ((Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)));
 
-   int n;
-   /* collect nSamples randoms */
-   for(n=0; n<nSamples; n++, pRand+=((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)))) {
-      if( !cpSeed_hw_sample((BNU_CHUNK_T*)pRand))
-         return 0;
-   }
+    int n;
+    /* collect nSamples randoms */
+    for (n = 0; n < nSamples; n++, pRand += ((Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)))) {
+        if (!cpSeed_hw_sample((BNU_CHUNK_T*)pRand))
+            return 0;
+    }
 
-   #if (_IPP32E>=_IPP32E_E9)
-   if( bufLen%((Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u))) ) {
-      if( !cpSeed_hw_sample32(pRand)) {
-         return 0;
-      }
-   }
-   #endif
-   return 1;
+#if (_IPP32E >= _IPP32E_E9)
+    if (bufLen % ((Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)))) {
+        if (!cpSeed_hw_sample32(pRand)) {
+            return 0;
+        }
+    }
+#endif
+    return 1;
 }
 #endif
 
@@ -112,32 +112,31 @@ static int cpSeedHW_buffer(Ipp32u* pRand, int bufLen)
 //    nBits    number of bits be requested
 //    pCtx     pointer to the context, unused, can be NULL
 *F*/
-IPPFUN(IppStatus, ippsTRNGenRDSEED,(Ipp32u* pRand, int nBits, void* pCtx))
+IPPFUN(IppStatus, ippsTRNGenRDSEED, (Ipp32u * pRand, int nBits, void* pCtx))
 {
-   /* test PRNG buffer */
-   IPP_BAD_PTR1_RET(pRand);
+    /* test PRNG buffer */
+    IPP_BAD_PTR1_RET(pRand);
 
-   /* test sizes */
-   IPP_BADARG_RET(nBits< 1, ippStsLengthErr);
+    /* test sizes */
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
 
-   IPP_UNREFERENCED_PARAMETER(pCtx);
+    IPP_UNREFERENCED_PARAMETER(pCtx);
 
-   #if ((_IPP>=_IPP_G9) || (_IPP32E>=_IPP32E_E9))
-   if( IsFeatureEnabled(ippCPUID_RDSEED) ) {
-      cpSize rndSize = BITS2WORD32_SIZE(nBits);
-      Ipp32u rndMask = MAKEMASK32(nBits);
+#if ((_IPP >= _IPP_G9) || (_IPP32E >= _IPP32E_E9))
+    if (IsFeatureEnabled(ippCPUID_RDSEED)) {
+        cpSize rndSize = BITS2WORD32_SIZE(nBits);
+        Ipp32u rndMask = MAKEMASK32(nBits);
 
-      if(cpSeedHW_buffer(pRand, rndSize)) {
-         pRand[rndSize-1] &= rndMask;
-         return ippStsNoErr;
-      }
-      else
-         return ippStsErr;
-   }
-   /* unsupported rdseed instruction */
-   else
-   #endif
-      IPP_ERROR_RET(ippStsNotSupportedModeErr);
+        if (cpSeedHW_buffer(pRand, rndSize)) {
+            pRand[rndSize - 1] &= rndMask;
+            return ippStsNoErr;
+        } else
+            return ippStsErr;
+    }
+    /* unsupported rdseed instruction */
+    else
+#endif
+        IPP_ERROR_RET(ippStsNotSupportedModeErr);
 }
 
 
@@ -164,39 +163,39 @@ IPPFUN(IppStatus, ippsTRNGenRDSEED,(Ipp32u* pRand, int nBits, void* pCtx))
 //    nBits    number of bits be requested
 //    pCtx  pointer to the context, unused, can be NULL
 *F*/
-IPPFUN(IppStatus, ippsTRNGenRDSEED_BN,(IppsBigNumState* pRand, int nBits, void* pCtx))
+IPPFUN(IppStatus, ippsTRNGenRDSEED_BN, (IppsBigNumState * pRand, int nBits, void* pCtx))
 {
-   /* test random BN */
-   IPP_BAD_PTR1_RET(pRand);
-   IPP_BADARG_RET(!BN_VALID_ID(pRand), ippStsContextMatchErr);
+    /* test random BN */
+    IPP_BAD_PTR1_RET(pRand);
+    IPP_BADARG_RET(!BN_VALID_ID(pRand), ippStsContextMatchErr);
 
-   /* test sizes */
-   IPP_BADARG_RET(nBits< 1, ippStsLengthErr);
-   IPP_BADARG_RET(nBits> BN_ROOM(pRand)*BNU_CHUNK_BITS, ippStsLengthErr);
+    /* test sizes */
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
+    IPP_BADARG_RET(nBits > BN_ROOM(pRand) * BNU_CHUNK_BITS, ippStsLengthErr);
 
-   IPP_UNREFERENCED_PARAMETER(pCtx);
+    IPP_UNREFERENCED_PARAMETER(pCtx);
 
-   #if ((_IPP>=_IPP_G9) || (_IPP32E>=_IPP32E_E9))
-   if( IsFeatureEnabled(ippCPUID_RDSEED) ) {
-      BNU_CHUNK_T* pRandBN = BN_NUMBER(pRand);
-      cpSize rndSize = BITS_BNU_CHUNK(nBits);
-      BNU_CHUNK_T rndMask = MASK_BNU_CHUNK(nBits);
+#if ((_IPP >= _IPP_G9) || (_IPP32E >= _IPP32E_E9))
+    if (IsFeatureEnabled(ippCPUID_RDSEED)) {
+        BNU_CHUNK_T* pRandBN = BN_NUMBER(pRand);
+        cpSize rndSize       = BITS_BNU_CHUNK(nBits);
+        BNU_CHUNK_T rndMask  = MASK_BNU_CHUNK(nBits);
 
-      if(cpSeedHW_buffer((Ipp32u*)pRandBN, rndSize*(Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)))) {
-         pRandBN[rndSize-1] &= rndMask;
+        if (cpSeedHW_buffer((Ipp32u*)pRandBN,
+                            rndSize * (Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)))) {
+            pRandBN[rndSize - 1] &= rndMask;
 
-         FIX_BNU(pRandBN, rndSize);
-         BN_SIZE(pRand) = rndSize;
-         BN_SIGN(pRand) = ippBigNumPOS;
+            FIX_BNU(pRandBN, rndSize);
+            BN_SIZE(pRand) = rndSize;
+            BN_SIGN(pRand) = ippBigNumPOS;
 
-         return ippStsNoErr;
-      }
-      else
-         return ippStsErr;
-   }
+            return ippStsNoErr;
+        } else
+            return ippStsErr;
+    }
 
-   /* unsupported rdseed instruction */
-   else
-   #endif
-      IPP_ERROR_RET(ippStsNotSupportedModeErr);
+    /* unsupported rdseed instruction */
+    else
+#endif
+        IPP_ERROR_RET(ippStsNotSupportedModeErr);
 }

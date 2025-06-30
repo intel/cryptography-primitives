@@ -28,10 +28,10 @@
 
 
 #if !defined(_USE_WINDOW_EXP_)
-IPP_OWN_DEFN (cpSize, cpMontExp_WinSize, (int bitsize))
+IPP_OWN_DEFN(cpSize, cpMontExp_WinSize, (int bitsize))
 {
-   IPP_UNREFERENCED_PARAMETER(bitsize);
-   return 1;
+    IPP_UNREFERENCED_PARAMETER(bitsize);
+    return 1;
 }
 
 #else
@@ -42,37 +42,35 @@ IPP_OWN_DEFN (cpSize, cpMontExp_WinSize, (int bitsize))
 //    XScale        - 32 bytes
 //    Blend         - no cache
 */
-#if !((_IPP==_IPP_W7) || (_IPP==_IPP_T7) || \
-      (_IPP==_IPP_V8) || (_IPP==_IPP_P8) || \
-      (_IPP==_IPP_S8) || (_IPP>=_IPP_G9) || \
-      (_IPP32E==_IPP32E_M7) || \
-      (_IPP32E==_IPP32E_U8) || (_IPP32E==_IPP32E_Y8) || \
-      (_IPP32E==_IPP32E_N8) || (_IPP32E>=_IPP32E_E9))
-IPP_OWN_DEFN (cpSize, cpMontExp_WinSize, (int bitsize))
+#if !((_IPP == _IPP_W7) || (_IPP == _IPP_T7) || (_IPP == _IPP_V8) || (_IPP == _IPP_P8) || \
+      (_IPP == _IPP_S8) || (_IPP >= _IPP_G9) || (_IPP32E == _IPP32E_M7) ||                \
+      (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) || (_IPP32E == _IPP32E_N8) ||    \
+      (_IPP32E >= _IPP32E_E9))
+IPP_OWN_DEFN(cpSize, cpMontExp_WinSize, (int bitsize))
 {
-   IPP_UNREFERENCED_PARAMETER(bitsize);
-   return 1;
+    IPP_UNREFERENCED_PARAMETER(bitsize);
+    return 1;
 }
 #endif
 
-#if ((_IPP==_IPP_W7) || (_IPP==_IPP_T7) || \
-     (_IPP==_IPP_V8) || (_IPP==_IPP_P8) || \
-     (_IPP==_IPP_S8) || (_IPP>=_IPP_G9) || \
-     (_IPP32E==_IPP32E_M7) || \
-     (_IPP32E==_IPP32E_U8) || (_IPP32E==_IPP32E_Y8) || \
-     (_IPP32E==_IPP32E_N8) || (_IPP32E>=_IPP32E_E9))
-IPP_OWN_DEFN (cpSize, cpMontExp_WinSize, (int bitsize))
+#if ((_IPP == _IPP_W7) || (_IPP == _IPP_T7) || (_IPP == _IPP_V8) || (_IPP == _IPP_P8) || \
+     (_IPP == _IPP_S8) || (_IPP >= _IPP_G9) || (_IPP32E == _IPP32E_M7) ||                \
+     (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) || (_IPP32E == _IPP32E_N8) ||    \
+     (_IPP32E >= _IPP32E_E9))
+IPP_OWN_DEFN(cpSize, cpMontExp_WinSize, (int bitsize))
 {
-   return
-          //bitsize>3715? 8 : /*limited by 6 or 4 (LOG_CACHE_LINE_SIZE); we use it for windowing-exp imtigation */
-          //bitsize>1434? 7 :
-      #if (_IPP !=_IPP_M5)
-          bitsize> 539? 6 :
-          bitsize> 197? 5 :
-      #endif
-          bitsize>  70? 4 :
-          bitsize>  25? 3 :
-          bitsize>   9? 2 : 1;
+    return
+    //bitsize>3715? 8 : /*limited by 6 or 4 (LOG_CACHE_LINE_SIZE); we use it for windowing-exp imtigation */
+    //bitsize>1434? 7 :
+#if (_IPP != _IPP_M5)
+        bitsize > 539   ? 6
+        : bitsize > 197 ? 5
+        :
+#endif
+        bitsize > 70   ? 4
+        : bitsize > 25 ? 3
+        : bitsize > 9  ? 2
+                       : 1;
 }
 #endif
 

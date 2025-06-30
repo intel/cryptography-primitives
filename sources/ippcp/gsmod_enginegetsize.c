@@ -48,20 +48,19 @@
 //
 *F*/
 
-IPP_OWN_DEFN (IppStatus, gsModEngineGetSize, (int modulusBitSize, int numpe, int* pSize))
+IPP_OWN_DEFN(IppStatus, gsModEngineGetSize, (int modulusBitSize, int numpe, int* pSize))
 {
-   int modLen  = BITS_BNU_CHUNK(modulusBitSize);
-   int pelmLen = BITS_BNU_CHUNK(modulusBitSize);
+    int modLen  = BITS_BNU_CHUNK(modulusBitSize);
+    int pelmLen = BITS_BNU_CHUNK(modulusBitSize);
 
-   IPP_BADARG_RET(modulusBitSize<1, ippStsLengthErr);
-   IPP_BADARG_RET(numpe<MOD_ENGINE_MIN_POOL_SIZE, ippStsLengthErr);
+    IPP_BADARG_RET(modulusBitSize < 1, ippStsLengthErr);
+    IPP_BADARG_RET(numpe < MOD_ENGINE_MIN_POOL_SIZE, ippStsLengthErr);
 
-   /* allocates minimal necessary to Montgomery based methods */
-   *pSize = (Ipp32s)sizeof(gsModEngine)
-           + modLen*(Ipp32s)(sizeof(BNU_CHUNK_T))        /* modulus  */
-           + modLen*(Ipp32s)(sizeof(BNU_CHUNK_T))         /* mont_R   */
-           + modLen*(Ipp32s)(sizeof(BNU_CHUNK_T))         /* mont_R^2 */
-           + pelmLen*(Ipp32s)(sizeof(BNU_CHUNK_T))*numpe; /* buffers  */
+    /* allocates minimal necessary to Montgomery based methods */
+    *pSize = (Ipp32s)sizeof(gsModEngine) + modLen * (Ipp32s)(sizeof(BNU_CHUNK_T)) /* modulus  */
+             + modLen * (Ipp32s)(sizeof(BNU_CHUNK_T))                             /* mont_R   */
+             + modLen * (Ipp32s)(sizeof(BNU_CHUNK_T))                             /* mont_R^2 */
+             + pelmLen * (Ipp32s)(sizeof(BNU_CHUNK_T)) * numpe;                   /* buffers  */
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

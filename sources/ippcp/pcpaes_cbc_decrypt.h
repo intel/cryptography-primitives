@@ -33,6 +33,12 @@
 #define _PCP_AES_CBC_DECRYPT_H_
 
 #define cpDecryptAES_cbc OWNAPI(cpDecryptAES_cbc)
-    IPP_OWN_DECL (void, cpDecryptAES_cbc, (const Ipp8u* pIV, const Ipp8u* pSrc, Ipp8u* pDst, int nBlocks, const IppsAESSpec* pCtx))
+/* clang-format off */
+    IPP_OWN_DECL (void, cpDecryptAES_cbc, (const Ipp8u* pIV,
+                                           const Ipp8u* pSrc,
+                                           Ipp8u* pDst,
+                                           int nBlocks,
+                                           const IppsAESSpec* pCtx))
+/* clang-format on */
 
 #endif /* #if !defined(_PCP_AES_CBC_DECRYPT_H_) */

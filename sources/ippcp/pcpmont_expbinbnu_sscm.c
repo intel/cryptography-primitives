@@ -58,62 +58,68 @@
 /       dataY        the Montgomery exponentiation result.
 //
 *F*/
-IPP_OWN_DEFN (cpSize, cpMontExpBin_BNU_sscm, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize nsE, gsModEngine* pMont))
-{
-   cpSize nsM = MOD_LEN(pMont);
 
-   /*
+/* clang-format off */
+IPP_OWN_DEFN (cpSize, cpMontExpBin_BNU_sscm, (BNU_CHUNK_T* dataY,
+                                              const BNU_CHUNK_T* dataX,
+                                              cpSize nsX,
+                                              const BNU_CHUNK_T* dataE,
+                                              cpSize nsE, gsModEngine* pMont))
+/* clang-format on */
+{
+    cpSize nsM = MOD_LEN(pMont);
+
+    /*
    // test for special cases:
    //    x^0 = 1
    //    0^e = 0
    */
-   if( cpIsGFpElemEquChunk_ct(dataE, nsE, 0) ) {
-      COPY_BNU(dataY, MOD_MNT_R(pMont), nsM);
-   }
-   else if( cpIsGFpElemEquChunk_ct(dataX, nsX, 0) ) {
-      ZEXPAND_BNU(dataY, 0, nsM);
-   }
+    if (cpIsGFpElemEquChunk_ct(dataE, nsE, 0)) {
+        COPY_BNU(dataY, MOD_MNT_R(pMont), nsM);
+    } else if (cpIsGFpElemEquChunk_ct(dataX, nsX, 0)) {
+        ZEXPAND_BNU(dataY, 0, nsM);
+    }
 
-   /* general case */
-   else {
-      /* Montgomery engine buffers */
-      const int usedPoolLen = 2;
-      BNU_CHUNK_T* dataT = gsModPoolAlloc(pMont, usedPoolLen);
-      if(NULL == dataT)
-         return -1;
+    /* general case */
+    else {
+        /* Montgomery engine buffers */
+        const int usedPoolLen = 2;
+        BNU_CHUNK_T* dataT    = gsModPoolAlloc(pMont, usedPoolLen);
+        if (NULL == dataT)
+            return -1;
 
-      BNU_CHUNK_T* sscmB = dataT + nsM;
+        BNU_CHUNK_T* sscmB = dataT + nsM;
 
-      /* mont(1) */
-      BNU_CHUNK_T* pR = MOD_MNT_R(pMont);
+        /* mont(1) */
+        BNU_CHUNK_T* pR = MOD_MNT_R(pMont);
 
-      /* copy base */
-      ZEXPAND_COPY_BNU(dataT, nsM, dataX, nsX);
-      /* init result, Y=1 */
-      COPY_BNU(dataY, pR, nsM);
+        /* copy base */
+        ZEXPAND_COPY_BNU(dataT, nsM, dataX, nsX);
+        /* init result, Y=1 */
+        COPY_BNU(dataY, pR, nsM);
 
-      /* execute bits of E */
-      for(; nsE>0; nsE--) {
-         BNU_CHUNK_T eValue = dataE[nsE-1];
+        /* execute bits of E */
+        for (; nsE > 0; nsE--) {
+            BNU_CHUNK_T eValue = dataE[nsE - 1];
 
-         int n;
-         for(n=BNU_CHUNK_BITS; n>0; n--) {
-            /* sscmB = ( msb(eValue) )? X : mont(1) */
-            BNU_CHUNK_T mask = cpIsMsb_ct(eValue);
-            eValue <<= 1;
-            cpMaskedCopyBNU_ct(sscmB, mask, dataT, pR, nsM);
+            int n;
+            for (n = BNU_CHUNK_BITS; n > 0; n--) {
+                /* sscmB = ( msb(eValue) )? X : mont(1) */
+                BNU_CHUNK_T mask = cpIsMsb_ct(eValue);
+                eValue <<= 1;
+                cpMaskedCopyBNU_ct(sscmB, mask, dataT, pR, nsM);
 
-            /* squaring Y = Y^2 */
-            MOD_METHOD(pMont)->sqr(dataY, dataY, pMont);
-            /* and multiplication: Y = Y * sscmB */
-            MOD_METHOD(pMont)->mul(dataY, dataY, sscmB, pMont);
-         }
-      }
+                /* squaring Y = Y^2 */
+                MOD_METHOD(pMont)->sqr(dataY, dataY, pMont);
+                /* and multiplication: Y = Y * sscmB */
+                MOD_METHOD(pMont)->mul(dataY, dataY, sscmB, pMont);
+            }
+        }
 
-      gsModPoolFree(pMont, usedPoolLen);
-   }
+        gsModPoolFree(pMont, usedPoolLen);
+    }
 
-   return nsM;
+    return nsM;
 }
 
 #endif /* _USE_IPP_OWN_CBA_MITIGATION_ */

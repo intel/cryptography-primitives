@@ -31,38 +31,42 @@
 /*
 // data processing function.
 */
-#if !((_IPP>=_IPP_M5) || (_IPP32E>=_IPP32E_M7))
+#if !((_IPP >= _IPP_M5) || (_IPP32E >= _IPP32E_M7))
 
-IPP_OWN_DEFN (void, ARCFourProcessData, (const Ipp8u *pSrc, Ipp8u *pDst, int length, IppsARCFourState *pCtx))
+/* clang-format off */
+IPP_OWN_DEFN(void, ARCFourProcessData, (const Ipp8u *pSrc,
+                                        Ipp8u *pDst,
+                                        int length,
+                                        IppsARCFourState *pCtx))
+/* clang-format on */
 {
-   if(length) {
-      rc4word tx, ty;
+    if (length) {
+        rc4word tx, ty;
 
-      Ipp32u x = RC4_CNTX(pCtx);
-      Ipp32u y = RC4_CNTY(pCtx);
-      rc4word* pSbox = RC4_SBOX(pCtx);
+        Ipp32u x       = RC4_CNTX(pCtx);
+        Ipp32u y       = RC4_CNTY(pCtx);
+        rc4word* pSbox = RC4_SBOX(pCtx);
 
-      x = (x+1) &0xFF;
-      tx = pSbox[x];
+        x  = (x + 1) & 0xFF;
+        tx = pSbox[x];
 
-      while(length) {
-         y = (y+tx) & 0xFF;
-         ty = pSbox[y];
-         pSbox[x] = ty;
-         x = (x+1) & 0xFF;
-         ty = (ty+tx) & 0xFF;
-         pSbox[y] = tx;
-         tx = pSbox[x];
-         ty = pSbox[ty];
-         *pDst = (Ipp8u)( *pSrc ^ ty );
-         pDst++;
-         pSrc++;
-         length--;
-      }
-      RC4_CNTX(pCtx) = (x-1) & 0xFF;
-      RC4_CNTY(pCtx) = y;
-   }
+        while (length) {
+            y        = (y + tx) & 0xFF;
+            ty       = pSbox[y];
+            pSbox[x] = ty;
+            x        = (x + 1) & 0xFF;
+            ty       = (ty + tx) & 0xFF;
+            pSbox[y] = tx;
+            tx       = pSbox[x];
+            ty       = pSbox[ty];
+            *pDst    = (Ipp8u)(*pSrc ^ ty);
+            pDst++;
+            pSrc++;
+            length--;
+        }
+        RC4_CNTX(pCtx) = (x - 1) & 0xFF;
+        RC4_CNTY(pCtx) = y;
+    }
 }
 
 #endif /* #if !((_IPP>=_IPP_M5) || (_IPP32E>=_IPP32E_M7)) */
-

@@ -33,13 +33,13 @@
 // Prime context
 */
 struct _cpPrime {
-   Ipp32u            idCtx;      /* Prime context identifier */
-   cpSize            maxBitSize; /* max bit length             */
-   BNU_CHUNK_T*      pPrime;     /* prime value   */
-   BNU_CHUNK_T*      pT1;        /* temporary BNU */
-   BNU_CHUNK_T*      pT2;        /* temporary BNU */
-   BNU_CHUNK_T*      pT3;        /* temporary BNU */
-   gsModEngine*      pMont;      /* montgomery engine        */
+    Ipp32u idCtx;        /* Prime context identifier */
+    cpSize maxBitSize;   /* max bit length             */
+    BNU_CHUNK_T* pPrime; /* prime value   */
+    BNU_CHUNK_T* pT1;    /* temporary BNU */
+    BNU_CHUNK_T* pT2;    /* temporary BNU */
+    BNU_CHUNK_T* pT3;    /* temporary BNU */
+    gsModEngine* pMont;  /* montgomery engine        */
 };
 
 /* alignment */
@@ -54,36 +54,40 @@ struct _cpPrime {
 #define PRIME_TEMP3(ctx)      ((ctx)->pT3)
 #define PRIME_MONT(ctx)       ((ctx)->pMont)
 
-#define PRIME_VALID_ID(ctx)   ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxPrimeNumber)
+#define PRIME_VALID_ID(ctx) \
+    ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxPrimeNumber)
 
 /*
 // Number of Miller-Rabin rounds for an error rate of less than 1/2^80 for random 'b'-bit input, b >= 100.
 // (see Table 4.4, Handbook of Applied Cryptography [Menezes, van Oorschot, Vanstone; CRC Press 1996]
 */
-#define MR_rounds_p80(b) ((b) >= 1300 ?  2 : \
-                          (b) >=  850 ?  3 : \
-                          (b) >=  650 ?  4 : \
-                          (b) >=  550 ?  5 : \
-                          (b) >=  450 ?  6 : \
-                          (b) >=  400 ?  7 : \
-                          (b) >=  350 ?  8 : \
-                          (b) >=  300 ?  9 : \
-                          (b) >=  250 ? 12 : \
-                          (b) >=  200 ? 15 : \
-                          (b) >=  150 ? 18 : \
-                        /*(b) >=  100*/ 27)
+#define MR_rounds_p80(b) \
+    ((b) >= 1300  ? 2    \
+     : (b) >= 850 ? 3    \
+     : (b) >= 650 ? 4    \
+     : (b) >= 550 ? 5    \
+     : (b) >= 450 ? 6    \
+     : (b) >= 400 ? 7    \
+     : (b) >= 350 ? 8    \
+     : (b) >= 300 ? 9    \
+     : (b) >= 250 ? 12   \
+     : (b) >= 200 ? 15   \
+     : (b) >= 150 ? 18   \
+                  : /*(b) >=  100*/ 27)
 
 /* easy prime test */
 #define cpMimimalPrimeTest OWNAPI(cpMimimalPrimeTest)
-   IPP_OWN_DECL (int, cpMimimalPrimeTest, (const Ipp32u* pPrime, cpSize ns))
+IPP_OWN_DECL(int, cpMimimalPrimeTest, (const Ipp32u* pPrime, cpSize ns))
 
 /* prime test */
+/* clang-format off */
 #define cpPrimeTest OWNAPI(cpPrimeTest)
-   IPP_OWN_DECL (int, cpPrimeTest, (const BNU_CHUNK_T* pPrime, cpSize primeLen, cpSize nTrials, IppsPrimeState* pCtx, IppBitSupplier rndFunc, void* pRndParam))
+IPP_OWN_DECL (int, cpPrimeTest, (const BNU_CHUNK_T* pPrime, cpSize primeLen, cpSize nTrials, IppsPrimeState* pCtx, IppBitSupplier rndFunc, void* pRndParam))
+/* clang-format on */
 
 #define cpPackPrimeCtx OWNAPI(cpPackPrimeCtx)
-   IPP_OWN_DECL (void, cpPackPrimeCtx, (const IppsPrimeState* pCtx, Ipp8u* pBuffer))
+IPP_OWN_DECL(void, cpPackPrimeCtx, (const IppsPrimeState* pCtx, Ipp8u* pBuffer))
 #define cpUnpackPrimeCtx OWNAPI(cpUnpackPrimeCtx)
-   IPP_OWN_DECL (void, cpUnpackPrimeCtx, (const Ipp8u* pBuffer, IppsPrimeState* pCtx))
+IPP_OWN_DECL(void, cpUnpackPrimeCtx, (const Ipp8u* pBuffer, IppsPrimeState* pCtx))
 
 #endif /* _CP_PRIME_H */

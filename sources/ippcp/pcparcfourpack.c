@@ -42,16 +42,16 @@
 //    pSize       pointer to the packed spec size
 //
 *F*/
-IPPFUN(IppStatus, ippsARCFourPack,(const IppsARCFourState* pCtx, Ipp8u* pBuffer))
+IPPFUN(IppStatus, ippsARCFourPack, (const IppsARCFourState* pCtx, Ipp8u* pBuffer))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
-   /* test the context */
-   IPP_BADARG_RET(!RC4_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test the context */
+    IPP_BADARG_RET(!RC4_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   CopyBlock(pCtx, pBuffer, sizeof(IppsARCFourState));
-   IppsARCFourState* pCopy = (IppsARCFourState*)pBuffer;
-   RC4_RESET_ID(pCopy);
-   
-   return ippStsNoErr;
+    CopyBlock(pCtx, pBuffer, sizeof(IppsARCFourState));
+    IppsARCFourState* pCopy = (IppsARCFourState*)pBuffer;
+    RC4_RESET_ID(pCopy);
+
+    return ippStsNoErr;
 }

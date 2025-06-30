@@ -31,8 +31,8 @@
 #include "pcptool.h"
 #include "pcpaes_cbc_decrypt.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*
@@ -45,86 +45,99 @@
 //    nBlocks     number of decrypted data blocks
 //    pCtx        pointer to the AES context
 */
-IPP_OWN_DEFN (void, cpDecryptAES_cbc, (const Ipp8u* pIV, const Ipp8u* pSrc, Ipp8u* pDst, int nBlocks, const IppsAESSpec* pCtx))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpDecryptAES_cbc, (const Ipp8u* pIV,
+                                      const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int nBlocks,
+                                      const IppsAESSpec* pCtx))
+/* clang-format on */
 {
-#if(_IPP32E>=_IPP32E_K1)
-   if (IsFeatureEnabled(ippCPUID_AVX512VAES)) {
-      DecryptCBC_RIJ128pipe_VAES_NI(pSrc, pDst, nBlocks*MBS_RIJ128, pCtx, pIV);
-   }
-   else
+#if (_IPP32E >= _IPP32E_K1)
+    if (IsFeatureEnabled(ippCPUID_AVX512VAES)) {
+        DecryptCBC_RIJ128pipe_VAES_NI(pSrc, pDst, nBlocks * MBS_RIJ128, pCtx, pIV);
+    } else
 #endif
-#if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   /* use pipelined version is possible */
-   if(AES_NI_ENABLED==RIJ_AESNI(pCtx)) {
-      DecryptCBC_RIJ128pipe_AES_NI(pSrc, pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), nBlocks*MBS_RIJ128, pIV);
-   }
-   else
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+        /* use pipelined version is possible */
+        if (AES_NI_ENABLED == RIJ_AESNI(pCtx)) {
+            DecryptCBC_RIJ128pipe_AES_NI(pSrc,
+                                         pDst,
+                                         RIJ_NR(pCtx),
+                                         RIJ_DKEYS(pCtx),
+                                         nBlocks * MBS_RIJ128,
+                                         pIV);
+        } else
 #endif
-   {
-      /* setup decoder method */
-      RijnCipher decoder = RIJ_DECODER(pCtx);
+        {
+            /* setup decoder method */
+            RijnCipher decoder = RIJ_DECODER(pCtx);
 
-      Ipp32u iv[NB(128)];
+            Ipp32u iv[NB(128)];
 
-      /* copy IV */
-      CopyBlock16(pIV, iv);
+            /* copy IV */
+            CopyBlock16(pIV, iv);
 
-      /* not inplace block-by-block decryption */
-      if(pSrc != pDst) {
-         while(nBlocks) {
-            //decoder((const Ipp32u*)pSrc, (Ipp32u*)pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), (const Ipp32u (*)[256])RIJ_DEC_SBOX(pCtx));
-            #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-            decoder(pSrc, pDst, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijDecSbox/*NULL*/);
-            #else
-            decoder(pSrc, pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
-            #endif
+            /* not inplace block-by-block decryption */
+            if (pSrc != pDst) {
+                while (nBlocks) {
+//decoder((const Ipp32u*)pSrc, (Ipp32u*)pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), (const Ipp32u (*)[256])RIJ_DEC_SBOX(pCtx));
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+                    decoder(pSrc, pDst, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijDecSbox /*NULL*/);
+#else
+                decoder(pSrc, pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
+#endif
 
-            ((Ipp32u*)pDst)[0] ^= iv[0];
-            ((Ipp32u*)pDst)[1] ^= iv[1];
-            ((Ipp32u*)pDst)[2] ^= iv[2];
-            ((Ipp32u*)pDst)[3] ^= iv[3];
+                    ((Ipp32u*)pDst)[0] ^= iv[0];
+                    ((Ipp32u*)pDst)[1] ^= iv[1];
+                    ((Ipp32u*)pDst)[2] ^= iv[2];
+                    ((Ipp32u*)pDst)[3] ^= iv[3];
 
-            iv[0] = ((Ipp32u*)pSrc)[0];
-            iv[1] = ((Ipp32u*)pSrc)[1];
-            iv[2] = ((Ipp32u*)pSrc)[2];
-            iv[3] = ((Ipp32u*)pSrc)[3];
+                    iv[0] = ((Ipp32u*)pSrc)[0];
+                    iv[1] = ((Ipp32u*)pSrc)[1];
+                    iv[2] = ((Ipp32u*)pSrc)[2];
+                    iv[3] = ((Ipp32u*)pSrc)[3];
 
-            pSrc += MBS_RIJ128;
-            pDst += MBS_RIJ128;
-            nBlocks--;
-         }
-      }
-      /* inplace block-by-block decryption */
-      else {
-         Ipp32u tmpOut[NB(128)];
+                    pSrc += MBS_RIJ128;
+                    pDst += MBS_RIJ128;
+                    nBlocks--;
+                }
+            }
+            /* inplace block-by-block decryption */
+            else {
+                Ipp32u tmpOut[NB(128)];
 
-         while(nBlocks) {
-            //decoder(pSrc, tmpOut, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), (const Ipp32u (*)[256])RIJ_DEC_SBOX(pCtx));
-            #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-            decoder(pSrc, (Ipp8u*)tmpOut, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijDecSbox/*NULL*/);
-            #else
-            decoder(pSrc, (Ipp8u*)tmpOut, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
-            #endif
+                while (nBlocks) {
+//decoder(pSrc, tmpOut, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), (const Ipp32u (*)[256])RIJ_DEC_SBOX(pCtx));
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+                    decoder(pSrc,
+                            (Ipp8u*)tmpOut,
+                            RIJ_NR(pCtx),
+                            RIJ_EKEYS(pCtx),
+                            RijDecSbox /*NULL*/);
+#else
+                decoder(pSrc, (Ipp8u*)tmpOut, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
+#endif
 
-            tmpOut[0] ^= iv[0];
-            tmpOut[1] ^= iv[1];
-            tmpOut[2] ^= iv[2];
-            tmpOut[3] ^= iv[3];
+                    tmpOut[0] ^= iv[0];
+                    tmpOut[1] ^= iv[1];
+                    tmpOut[2] ^= iv[2];
+                    tmpOut[3] ^= iv[3];
 
-            iv[0] = ((Ipp32u*)pSrc)[0];
-            iv[1] = ((Ipp32u*)pSrc)[1];
-            iv[2] = ((Ipp32u*)pSrc)[2];
-            iv[3] = ((Ipp32u*)pSrc)[3];
+                    iv[0] = ((Ipp32u*)pSrc)[0];
+                    iv[1] = ((Ipp32u*)pSrc)[1];
+                    iv[2] = ((Ipp32u*)pSrc)[2];
+                    iv[3] = ((Ipp32u*)pSrc)[3];
 
-            CopyBlock16(tmpOut, pDst);
+                    CopyBlock16(tmpOut, pDst);
 
-            pSrc += MBS_RIJ128;
-            pDst += MBS_RIJ128;
-            nBlocks--;
-         }
+                    pSrc += MBS_RIJ128;
+                    pDst += MBS_RIJ128;
+                    nBlocks--;
+                }
 
-         /* clear secret data */
-         PurgeBlock(tmpOut, sizeof(tmpOut));
-      }
-   }
+                /* clear secret data */
+                PurgeBlock(tmpOut, sizeof(tmpOut));
+            }
+        }
 }

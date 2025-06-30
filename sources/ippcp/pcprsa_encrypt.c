@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_Encrypt()
 //
@@ -60,28 +60,34 @@
 //    pKey           pointer to the key context
 //    pScratchBuffer pointer to the temporary buffer
 *F*/
-IPPFUN(IppStatus, ippsRSA_Encrypt,(const IppsBigNumState* pPtxt,
-                                         IppsBigNumState* pCtxt,
-                                   const IppsRSAPublicKeyState* pKey,
-                                         Ipp8u* pBuffer))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSA_Encrypt, (const IppsBigNumState* pPtxt,
+                                    IppsBigNumState* pCtxt,
+                                    const IppsRSAPublicKeyState* pKey,
+                                    Ipp8u* pBuffer))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pKey, pBuffer);
-   IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pKey), ippStsContextMatchErr);
-   IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+    IPP_BAD_PTR2_RET(pKey, pBuffer);
+    IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
 
-   IPP_BAD_PTR1_RET(pPtxt);
-   IPP_BADARG_RET(!BN_VALID_ID(pPtxt), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pPtxt), ippStsOutOfRangeErr);
-   IPP_BADARG_RET(0 <= cpCmp_BNU(BN_NUMBER(pPtxt), BN_SIZE(pPtxt),
-                                 MOD_MODULUS(RSA_PUB_KEY_NMONT(pKey)), MOD_LEN(RSA_PUB_KEY_NMONT(pKey))), ippStsOutOfRangeErr);
+    IPP_BAD_PTR1_RET(pPtxt);
+    IPP_BADARG_RET(!BN_VALID_ID(pPtxt), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pPtxt), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(0 <= cpCmp_BNU(BN_NUMBER(pPtxt),
+                                  BN_SIZE(pPtxt),
+                                  MOD_MODULUS(RSA_PUB_KEY_NMONT(pKey)),
+                                  MOD_LEN(RSA_PUB_KEY_NMONT(pKey))),
+                   ippStsOutOfRangeErr);
 
-   IPP_BAD_PTR1_RET(pCtxt);
-   IPP_BADARG_RET(!BN_VALID_ID(pCtxt), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_ROOM(pCtxt) < BITS_BNU_CHUNK(RSA_PUB_KEY_BITSIZE_N(pKey)), ippStsSizeErr);
+    IPP_BAD_PTR1_RET(pCtxt);
+    IPP_BADARG_RET(!BN_VALID_ID(pCtxt), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_ROOM(pCtxt) < BITS_BNU_CHUNK(RSA_PUB_KEY_BITSIZE_N(pKey)), ippStsSizeErr);
 
-   {
-      BNU_CHUNK_T* pScratchBuffer = (BNU_CHUNK_T*)(IPP_ALIGNED_PTR(pBuffer, (int)sizeof(BNU_CHUNK_T)) );
-      gsRSApub_cipher(pCtxt, pPtxt, pKey, pScratchBuffer);
-      return ippStsNoErr;
-   }
+    {
+        BNU_CHUNK_T* pScratchBuffer =
+            (BNU_CHUNK_T*)(IPP_ALIGNED_PTR(pBuffer, (int)sizeof(BNU_CHUNK_T)));
+        gsRSApub_cipher(pCtxt, pPtxt, pKey, pScratchBuffer);
+        return ippStsNoErr;
+    }
 }

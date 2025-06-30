@@ -49,20 +49,20 @@
 //    pState      pointer to the HMAC state
 //
 *F*/
-IPPFUN(IppStatus, ippsHMACUpdate_rmf,(const Ipp8u* pSrc, int len, IppsHMACState_rmf* pCtx))
+IPPFUN(IppStatus, ippsHMACUpdate_rmf, (const Ipp8u* pSrc, int len, IppsHMACState_rmf* pCtx))
 {
-   /* test state pointers */
-   IPP_BAD_PTR1_RET(pCtx);
+    /* test state pointers */
+    IPP_BAD_PTR1_RET(pCtx);
 
-   /* test state ID */
-   IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
-   /* test input length */
-   IPP_BADARG_RET((len<0), ippStsLengthErr);
-   /* test source pointer */
-   IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
+    /* test state ID */
+    IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test input length */
+    IPP_BADARG_RET((len < 0), ippStsLengthErr);
+    /* test source pointer */
+    IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
 
-   if(len)
-      return ippsHashUpdate_rmf(pSrc, len, HASH_CTX(pCtx));
-   else
-      return ippStsNoErr;
+    if (len)
+        return ippsHashUpdate_rmf(pSrc, len, HASH_CTX(pCtx));
+    else
+        return ippStsNoErr;
 }

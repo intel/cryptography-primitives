@@ -27,17 +27,14 @@
 
 
 /* bit operations */
-#define BITSIZE_BNU32(p,ns)  ((ns)*BNU_CHUNK_32BIT-cpNLZ_BNU32((p)[(ns)-1]))
+#define BITSIZE_BNU32(p, ns) ((ns) * BNU_CHUNK_32BIT - cpNLZ_BNU32((p)[(ns)-1]))
 
 /* number of leading/trailing zeros */
 #if (_IPP < _IPP_H9)
 #define cpNLZ_BNU32 OWNAPI(cpNLZ_BNU32)
-   IPP_OWN_DECL (cpSize, cpNLZ_BNU32, (Ipp32u x))
+IPP_OWN_DECL(cpSize, cpNLZ_BNU32, (Ipp32u x))
 #else
-   __IPPCP_INLINE cpSize cpNLZ_BNU32(Ipp32u x)
-   {
-      return (cpSize)_lzcnt_u32(x);
-   }
+__IPPCP_INLINE cpSize cpNLZ_BNU32(Ipp32u x) { return (cpSize)_lzcnt_u32(x); }
 #endif
 
 /*   Name: cpFix_BNU32
@@ -54,16 +51,16 @@
 */
 __IPPCP_INLINE int cpFix_BNU32(const Ipp32u* pA, int nsA)
 {
-   Ipp32u zscan = (Ipp32u)(-1);
-   int outLen = nsA;
-   for(; nsA>0; nsA--) {
-      zscan &= (Ipp32u)cpIsZero_ct((BNU_CHUNK_T)pA[nsA-1]);
-      outLen -= 1 & zscan;
-   }
-   return (int)((1 & zscan) | ((BNU_CHUNK_T)outLen & ~(BNU_CHUNK_T)zscan)); // change to scanz
+    Ipp32u zscan = (Ipp32u)(-1);
+    int outLen   = nsA;
+    for (; nsA > 0; nsA--) {
+        zscan &= (Ipp32u)cpIsZero_ct((BNU_CHUNK_T)pA[nsA - 1]);
+        outLen -= 1 & zscan;
+    }
+    return (int)((1 & zscan) | ((BNU_CHUNK_T)outLen & ~(BNU_CHUNK_T)zscan)); // change to scanz
 }
 
-#define FIX_BNU32(src,srcLen) ((srcLen) = cpFix_BNU32((src), (srcLen)))
+#define FIX_BNU32(src, srcLen) ((srcLen) = cpFix_BNU32((src), (srcLen)))
 
 /* most significant BNU bit */
 #if 0
@@ -89,9 +86,10 @@ __IPPCP_INLINE int cpCmp_BNU32(const Ipp32u* pA, cpSize nsA, const Ipp32u* pB, c
 #endif
 
 /* to/from oct string conversion */
+/* clang-format off */
 #define cpToOctStr_BNU32 OWNAPI(cpToOctStr_BNU32)
    IPP_OWN_DECL (cpSize, cpToOctStr_BNU32, (Ipp8u* pStr, cpSize strLen, const Ipp32u* pBNU, cpSize bnuSize))
 #define cpFromOctStr_BNU32 OWNAPI(cpFromOctStr_BNU32)
    IPP_OWN_DECL (cpSize, cpFromOctStr_BNU32, (Ipp32u* pBNU, const Ipp8u* pOctStr, cpSize strLen))
-
+/* clang-format on */
 #endif /* _CP_BNU32_MISC_H */

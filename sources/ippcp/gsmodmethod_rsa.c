@@ -24,48 +24,50 @@
 
 static gsModMethod* gsModArithRSA_C(void)
 {
-   static gsModMethod m = {
-      gs_mont_encode,
-      gs_mont_decode,
-      gs_mont_mul,
-      gs_mont_sqr,
-      gs_mont_red,
-      NULL,
-      gs_mont_sub,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
+    /* clang-format off */
+   static gsModMethod m = { gs_mont_encode,
+                            gs_mont_decode,
+                            gs_mont_mul,
+                            gs_mont_sqr,
+                            gs_mont_red,
+                            NULL,
+                            gs_mont_sub,
+                            NULL,
+                            NULL,
+                            NULL,
+                            NULL,
    };
-   return &m;
+    /* clang-format on */
+    return &m;
 }
-#if (_IPP32E>=_IPP32E_L9)
+#if (_IPP32E >= _IPP32E_L9)
 static gsModMethod* gsModArithRSA_X(void)
 {
-   static gsModMethod m = {
-      gs_mont_encodeX,
-      gs_mont_decodeX,
-      gs_mont_mulX,
-      gs_mont_sqrX,
-      gs_mont_redX,
-      NULL,
-      gs_mont_sub,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-   };
-   return &m;
+    /* clang-format off */
+    static gsModMethod m = { gs_mont_encodeX,
+                             gs_mont_decodeX,
+                             gs_mont_mulX,
+                             gs_mont_sqrX,
+                             gs_mont_redX,
+                             NULL,
+                             gs_mont_sub,
+                             NULL,
+                             NULL,
+                             NULL,
+                             NULL,
+    };
+    /* clang-format on */
+    return &m;
 }
 #endif
 
-IPP_OWN_DEFN (gsModMethod*, gsModArithRSA, (void))
+IPP_OWN_DEFN(gsModMethod*, gsModArithRSA, (void))
 {
-   #if (_IPP32E>=_IPP32E_L9)
-   if(IsFeatureEnabled(ippCPUID_ADCOX))
-      return gsModArithRSA_X();
-   else
-   #endif
-      return gsModArithRSA_C();
+#if (_IPP32E >= _IPP32E_L9)
+    if (IsFeatureEnabled(ippCPUID_ADCOX))
+        return gsModArithRSA_X();
+    else
+#endif
+        return gsModArithRSA_C();
 }
 /* ******************************************** */

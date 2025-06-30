@@ -30,17 +30,24 @@
 #include "owncp.h"
 #include "pcpdes.h"
 
-IPP_OWN_DEFN (void, EncryptCBC_TDES, (const Ipp64u* pSrc, Ipp64u* pDst, int nBlocks, const RoundKeyDES* pRKey[3], Ipp64u iv, const Ipp32u spbox[]))
+/* clang-format off */
+IPP_OWN_DEFN(void, EncryptCBC_TDES, (const Ipp64u* pSrc,
+                                     Ipp64u* pDst,
+                                     int nBlocks,
+                                     const RoundKeyDES* pRKey[3],
+                                     Ipp64u iv,
+                                     const Ipp32u spbox[]))
+/* clang-format on */
 {
-   while(nBlocks) {
-      Ipp64u tmp = *pSrc ^ iv;
-      tmp = Cipher_DES(tmp, pRKey[0], spbox);
-      tmp = Cipher_DES(tmp, pRKey[1], spbox);
-      tmp = Cipher_DES(tmp, pRKey[2], spbox);
-      *pDst = tmp;
-      iv = tmp;
-      pSrc++;
-      pDst++;
-      nBlocks--;
-   }
+    while (nBlocks) {
+        Ipp64u tmp = *pSrc ^ iv;
+        tmp        = Cipher_DES(tmp, pRKey[0], spbox);
+        tmp        = Cipher_DES(tmp, pRKey[1], spbox);
+        tmp        = Cipher_DES(tmp, pRKey[2], spbox);
+        *pDst      = tmp;
+        iv         = tmp;
+        pSrc++;
+        pDst++;
+        nBlocks--;
+    }
 }

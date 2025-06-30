@@ -41,25 +41,56 @@
 //
 *F*/
 
-IPP_OWN_DEFN (cpSize, cpNTZ_BNU, (BNU_CHUNK_T x))
+IPP_OWN_DEFN(cpSize, cpNTZ_BNU, (BNU_CHUNK_T x))
 {
-   cpSize ntz = BNU_CHUNK_BITS;
-   if(x) {
-      ntz = 0;
-      #if (BNU_CHUNK_BITS==BNU_CHUNK_64BIT)
-      if( 0==(x & 0x00000000FFFFFFFF) ) { ntz+=32; x>>=32; }
-      if( 0==(x & 0x000000000000FFFF) ) { ntz+=16; x>>=16; }
-      if( 0==(x & 0x00000000000000FF) ) { ntz+= 8; x>>= 8; }
-      if( 0==(x & 0x000000000000000F) ) { ntz+= 4; x>>= 4; }
-      if( 0==(x & 0x0000000000000003) ) { ntz+= 2; x>>= 2; }
-      if( 0==(x & 0x0000000000000001) ) { ntz++; }
-      #else
-      if( 0==(x & 0x0000FFFF) )         { ntz+=16; x>>=16; }
-      if( 0==(x & 0x000000FF) )         { ntz+= 8; x>>= 8; }
-      if( 0==(x & 0x0000000F) )         { ntz+= 4; x>>= 4; }
-      if( 0==(x & 0x00000003) )         { ntz+= 2; x>>= 2; }
-      if( 0==(x & 0x00000001) )         { ntz++; }
-      #endif
-   }
-   return ntz;
+    cpSize ntz = BNU_CHUNK_BITS;
+    if (x) {
+        ntz = 0;
+#if (BNU_CHUNK_BITS == BNU_CHUNK_64BIT)
+        if (0 == (x & 0x00000000FFFFFFFF)) {
+            ntz += 32;
+            x >>= 32;
+        }
+        if (0 == (x & 0x000000000000FFFF)) {
+            ntz += 16;
+            x >>= 16;
+        }
+        if (0 == (x & 0x00000000000000FF)) {
+            ntz += 8;
+            x >>= 8;
+        }
+        if (0 == (x & 0x000000000000000F)) {
+            ntz += 4;
+            x >>= 4;
+        }
+        if (0 == (x & 0x0000000000000003)) {
+            ntz += 2;
+            x >>= 2;
+        }
+        if (0 == (x & 0x0000000000000001)) {
+            ntz++;
+        }
+#else
+        if (0 == (x & 0x0000FFFF)) {
+            ntz += 16;
+            x >>= 16;
+        }
+        if (0 == (x & 0x000000FF)) {
+            ntz += 8;
+            x >>= 8;
+        }
+        if (0 == (x & 0x0000000F)) {
+            ntz += 4;
+            x >>= 4;
+        }
+        if (0 == (x & 0x00000003)) {
+            ntz += 2;
+            x >>= 2;
+        }
+        if (0 == (x & 0x00000001)) {
+            ntz++;
+        }
+#endif
+    }
+    return ntz;
 }

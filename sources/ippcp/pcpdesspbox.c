@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     SP-boxes for DES Cipher
-// 
+//
 //  Contents:
 //     DESspbox
-// 
-// 
+//
+//
 */
 
 
@@ -32,9 +32,10 @@
 #include "pcpdes.h"
 
 
-#if defined( _IPP_DATA )
+#if defined(_IPP_DATA)
 
 #if (IMPLEMENTATION == MITIGATED)
+/* clang-format off */
 const __ALIGN64 Ipp32u DESspbox[16*16] = { // mitigated version
    /* spc_0 */
    0x0f0c0207,0x0c0a0b04,0x0906070b,0x0a00040d,0x03050802,0x0509060f,0x0e030108,0x000e0d01,
@@ -86,6 +87,7 @@ const __ALIGN64 Ipp32u DESspbox[16*16] = { // mitigated version
    0x00000000,0x00000020,0x08000000,0x08000020,0x00008000,0x00008020,0x08008000,0x08008020,
    0x00200000,0x00200020,0x08200000,0x08200020,0x00208000,0x00208020,0x08208000,0x08208020
 };
+/* clang-format on */
 #endif
 
 #endif /* _IPP_DATA */

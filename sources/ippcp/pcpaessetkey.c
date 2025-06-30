@@ -53,16 +53,16 @@
 //    if pKey==NULL, then zero value key being setup
 //
 *F*/
-IPPFUN(IppStatus, ippsAESSetKey,(const Ipp8u* pKey, int keyLen, IppsAESSpec* pCtx))
+IPPFUN(IppStatus, ippsAESSetKey, (const Ipp8u* pKey, int keyLen, IppsAESSpec* pCtx))
 {
-   /* test pointers */
-   IPP_BAD_PTR1_RET(pCtx);
+    /* test pointers */
+    IPP_BAD_PTR1_RET(pCtx);
 
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
 
-   /* make sure in legal keyLen */
-   IPP_BADARG_RET(keyLen!=16 && keyLen!=24 && keyLen!=32, ippStsLengthErr);
+    /* make sure in legal keyLen */
+    IPP_BADARG_RET(keyLen != 16 && keyLen != 24 && keyLen != 32, ippStsLengthErr);
 
-   return ippsAESInit(pKey, keyLen, pCtx, sizeof(IppsAESSpec));
+    return ippsAESInit(pKey, keyLen, pCtx, sizeof(IppsAESSpec));
 }

@@ -52,14 +52,14 @@
 //    pOctStr     pointer to the target octet string
 //    strLen      octet string length
 *F*/
-IPPFUN(IppStatus, ippsGetOctString_BN,(Ipp8u* pOctStr, int strLen,
-                                       const IppsBigNumState* pBN))
+IPPFUN(IppStatus, ippsGetOctString_BN, (Ipp8u * pOctStr, int strLen, const IppsBigNumState* pBN))
 {
-   IPP_BAD_PTR2_RET(pOctStr, pBN);
+    IPP_BAD_PTR2_RET(pOctStr, pBN);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pBN), ippStsRangeErr);
-   IPP_BADARG_RET((0>strLen), ippStsLengthErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pBN), ippStsRangeErr);
+    IPP_BADARG_RET((0 > strLen), ippStsLengthErr);
 
-   return cpToOctStr_BNU(pOctStr,strLen, BN_NUMBER(pBN),BN_SIZE(pBN))? ippStsNoErr : ippStsLengthErr;
+    return cpToOctStr_BNU(pOctStr, strLen, BN_NUMBER(pBN), BN_SIZE(pBN)) ? ippStsNoErr
+                                                                         : ippStsLengthErr;
 }

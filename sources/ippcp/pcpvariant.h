@@ -31,19 +31,19 @@
 // set _AES_NI_ENABLING_
 */
 #if defined _IPP_AES_NI_
-   #if (_IPP_AES_NI_ == 0)
-      #define _AES_NI_ENABLING_  _FEATURE_OFF_
-   #elif  (_IPP_AES_NI_ == 1)
-      #define _AES_NI_ENABLING_  _FEATURE_ON_
-   #else
-      #error Define _IPP_AES_NI_=0 or 1 or omit _IPP_AES_NI_ at all
-   #endif
+#if (_IPP_AES_NI_ == 0)
+#define _AES_NI_ENABLING_ _FEATURE_OFF_
+#elif (_IPP_AES_NI_ == 1)
+#define _AES_NI_ENABLING_ _FEATURE_ON_
 #else
-   #if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-      #define _AES_NI_ENABLING_  _FEATURE_TICKTOCK_
-   #else
-      #define _AES_NI_ENABLING_  _FEATURE_OFF_
-   #endif
+#error Define _IPP_AES_NI_=0 or 1 or omit _IPP_AES_NI_ at all
+#endif
+#else
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+#define _AES_NI_ENABLING_ _FEATURE_TICKTOCK_
+#else
+#define _AES_NI_ENABLING_ _FEATURE_OFF_
+#endif
 #endif
 
 /*
@@ -52,15 +52,15 @@
 #define _ALG_AES_SAFE_COMPACT_SBOX_ (1)
 #define _ALG_AES_SAFE_COMPOSITE_GF_ (2)
 
-#if (_AES_NI_ENABLING_==_FEATURE_ON_)
-   #define _ALG_AES_SAFE_   _FEATURE_OFF_
+#if (_AES_NI_ENABLING_ == _FEATURE_ON_)
+#define _ALG_AES_SAFE_ _FEATURE_OFF_
 #else
-   #if (_IPP>=_IPP_V8) || (_IPP32E>=_IPP32E_U8)
-      #define _ALG_AES_SAFE_   _ALG_AES_SAFE_COMPOSITE_GF_
-   #else
-      #define _ALG_AES_SAFE_   _ALG_AES_SAFE_COMPACT_SBOX_
-      //#define _ALG_AES_SAFE_   _ALG_AES_SAFE_COMPOSITE_GF_
-   #endif
+#if (_IPP >= _IPP_V8) || (_IPP32E >= _IPP32E_U8)
+#define _ALG_AES_SAFE_ _ALG_AES_SAFE_COMPOSITE_GF_
+#else
+#define _ALG_AES_SAFE_ _ALG_AES_SAFE_COMPACT_SBOX_
+//#define _ALG_AES_SAFE_   _ALG_AES_SAFE_COMPOSITE_GF_
+#endif
 #endif
 
 /*
@@ -74,13 +74,13 @@
 #endif
 
 #if (IPP_AES_PROB_NOISE == _FEATURE_ON_)
-   #if ((_AES_NI_ENABLING_ != _FEATURE_OFF_) || (_IPP32E >=_IPP32E_K1))
-       #define _AES_PROB_NOISE _FEATURE_ON_
-   #else
-       #define _AES_PROB_NOISE _FEATURE_OFF_
-   #endif
+#if ((_AES_NI_ENABLING_ != _FEATURE_OFF_) || (_IPP32E >= _IPP32E_K1))
+#define _AES_PROB_NOISE _FEATURE_ON_
 #else
-   #define _AES_PROB_NOISE _FEATURE_OFF_
+#define _AES_PROB_NOISE _FEATURE_OFF_
+#endif
+#else
+#define _AES_PROB_NOISE _FEATURE_OFF_
 #endif
 
 /*
@@ -88,10 +88,10 @@
 // set _SHA_NI_ENABLING_ based on CPU specification
 */
 #if !defined(_SHA_NI_ENABLING_)
-#if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   #define _SHA_NI_ENABLING_  _FEATURE_TICKTOCK_
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+#define _SHA_NI_ENABLING_ _FEATURE_TICKTOCK_
 #else
-   #define _SHA_NI_ENABLING_  _FEATURE_OFF_
+#define _SHA_NI_ENABLING_ _FEATURE_OFF_
 #endif
 #endif
 
@@ -100,11 +100,11 @@
 // set _SM3_ENABLING_ based on CPU specification
 */
 #if !defined(_SM3_ENABLING_)
-   #if (_IPP32E >= _IPP32E_L9)
-      #define _SM3_ENABLING_  _FEATURE_TICKTOCK_
-   #else
-      #define _SM3_ENABLING_  _FEATURE_OFF_
-   #endif
+#if (_IPP32E >= _IPP32E_L9)
+#define _SM3_ENABLING_ _FEATURE_TICKTOCK_
+#else
+#define _SM3_ENABLING_ _FEATURE_OFF_
+#endif
 #endif
 
 /*
@@ -112,23 +112,23 @@
 // set _SHA512_ENABLING_ based on CPU specification
 */
 #if !defined(_SHA512_ENABLING_)
-   #if (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
-      #define _SHA512_ENABLING_  _FEATURE_TICKTOCK_
-   #else
-      #define _SHA512_ENABLING_  _FEATURE_OFF_
-   #endif
+#if (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
+#define _SHA512_ENABLING_ _FEATURE_TICKTOCK_
+#else
+#define _SHA512_ENABLING_ _FEATURE_OFF_
+#endif
 #endif
 
 /*
 // set/reset _ADCOX_NI_ENABLING_
 */
-#if (_IPP32E>=_IPP32E_L9)
-   #if !defined(_ADCOX_NI_ENABLING_)
-      #define _ADCOX_NI_ENABLING_  _FEATURE_TICKTOCK_
-   #endif
+#if (_IPP32E >= _IPP32E_L9)
+#if !defined(_ADCOX_NI_ENABLING_)
+#define _ADCOX_NI_ENABLING_ _FEATURE_TICKTOCK_
+#endif
 #else
-   #undef  _ADCOX_NI_ENABLING_
-   #define _ADCOX_NI_ENABLING_  _FEATURE_OFF_
+#undef _ADCOX_NI_ENABLING_
+#define _ADCOX_NI_ENABLING_ _FEATURE_OFF_
 #endif
 
 /*
@@ -148,93 +148,93 @@
 //
 */
 #if !defined(_DISABLE_ALG_SHA1_)
-#define _ENABLE_ALG_SHA1_          /* SHA1        on  */
+#define _ENABLE_ALG_SHA1_ /* SHA1        on  */
 #else
-#  undef  _ENABLE_ALG_SHA1_        /* SHA1        off */
+#undef _ENABLE_ALG_SHA1_  /* SHA1        off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA256_)
-#  define _ENABLE_ALG_SHA256_      /* SHA256      on  */
+#define _ENABLE_ALG_SHA256_ /* SHA256      on  */
 #else
-#  undef  _ENABLE_ALG_SHA256_      /* SHA256      off */
+#undef _ENABLE_ALG_SHA256_  /* SHA256      off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA224_)
-#  define _ENABLE_ALG_SHA224_      /* SHA224      on  */
+#define _ENABLE_ALG_SHA224_ /* SHA224      on  */
 #else
-#  undef  _ENABLE_ALG_SHA224_      /* SHA224      off */
+#undef _ENABLE_ALG_SHA224_  /* SHA224      off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA512_)
-#  define _ENABLE_ALG_SHA512_      /* SHA512      on  */
+#define _ENABLE_ALG_SHA512_ /* SHA512      on  */
 #else
-#  undef  _ENABLE_ALG_SHA512_      /* SHA512      off */
+#undef _ENABLE_ALG_SHA512_  /* SHA512      off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA384_)
-#  define _ENABLE_ALG_SHA384_      /* SHA384      on  */
+#define _ENABLE_ALG_SHA384_ /* SHA384      on  */
 #else
-#  undef  _ENABLE_ALG_SHA384_      /* SHA384      off */
+#undef _ENABLE_ALG_SHA384_  /* SHA384      off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA512_224_)
-#  define _ENABLE_ALG_SHA512_224_  /* SHA512/224  on  */
+#define _ENABLE_ALG_SHA512_224_ /* SHA512/224  on  */
 #else
-#  undef  _ENABLE_ALG_SHA512_224_  /* SHA512/224  off */
+#undef _ENABLE_ALG_SHA512_224_  /* SHA512/224  off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA512_256_)
-#  define _ENABLE_ALG_SHA512_256_  /* SHA512/256  on  */
+#define _ENABLE_ALG_SHA512_256_ /* SHA512/256  on  */
 #else
-#  undef  _ENABLE_ALG_SHA512_256_  /* SHA512/256  off */
+#undef _ENABLE_ALG_SHA512_256_  /* SHA512/256  off */
 #endif
 
 #if !defined(_DISABLE_ALG_MD5_)
-#  define _ENABLE_ALG_MD5_         /* MD5         on  */
+#define _ENABLE_ALG_MD5_ /* MD5         on  */
 #else
-#  undef  _ENABLE_ALG_MD5_         /* MD5         off */
+#undef _ENABLE_ALG_MD5_  /* MD5         off */
 #endif
 
 #if !defined(_DISABLE_ALG_SM3_)
-#  define _ENABLE_ALG_SM3_         /* SM3         on  */
+#define _ENABLE_ALG_SM3_ /* SM3         on  */
 #else
-#  undef  _ENABLE_ALG_SM3_         /* SM3         off */
+#undef _ENABLE_ALG_SM3_  /* SM3         off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA3_224_)
-#  define _ENABLE_ALG_SHA3_224_        /* SHA3_224         on  */
+#define _ENABLE_ALG_SHA3_224_ /* SHA3_224         on  */
 #else
-#  undef  _ENABLE_ALG_SHA3_224_        /* SHA3_224         off */
+#undef _ENABLE_ALG_SHA3_224_  /* SHA3_224         off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA3_256_)
-#  define _ENABLE_ALG_SHA3_256_        /* SHA3_256         on  */
+#define _ENABLE_ALG_SHA3_256_ /* SHA3_256         on  */
 #else
-#  undef  _ENABLE_ALG_SHA3_256_        /* SHA3_256         off */
+#undef _ENABLE_ALG_SHA3_256_  /* SHA3_256         off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA3_384_)
-#  define _ENABLE_ALG_SHA3_384_        /* SHA3_384         on  */
+#define _ENABLE_ALG_SHA3_384_ /* SHA3_384         on  */
 #else
-#  undef  _ENABLE_ALG_SHA3_384_        /* SHA3_384         off */
+#undef _ENABLE_ALG_SHA3_384_  /* SHA3_384         off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHA3_512_)
-#  define _ENABLE_ALG_SHA3_512_        /* SHA3_512         on  */
+#define _ENABLE_ALG_SHA3_512_ /* SHA3_512         on  */
 #else
-#  undef  _ENABLE_ALG_SHA3_512_        /* SHA3_512         off */
+#undef _ENABLE_ALG_SHA3_512_  /* SHA3_512         off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHAKE128_)
-#  define _ENABLE_ALG_SHAKE128_        /* SHAKE128         on  */
+#define _ENABLE_ALG_SHAKE128_ /* SHAKE128         on  */
 #else
-#  undef  _ENABLE_ALG_SHAKE128_        /* SHAKE128         off */
+#undef _ENABLE_ALG_SHAKE128_  /* SHAKE128         off */
 #endif
 
 #if !defined(_DISABLE_ALG_SHAKE256_)
-#  define _ENABLE_ALG_SHAKE256_        /* SHAKE256         on  */
+#define _ENABLE_ALG_SHAKE256_ /* SHAKE256         on  */
 #else
-#  undef  _ENABLE_ALG_SHAKE256_        /* SHAKE256         off */
+#undef _ENABLE_ALG_SHAKE256_  /* SHAKE256         off */
 #endif
 
 /*
@@ -287,9 +287,9 @@
 //    - do/don't use special implementation of sqr instead of usual multication
 //    - do/don't use Karatsuba multiplication alg
 */
-#define _USE_SQR_          /*     use implementation of sqr */
+#define _USE_SQR_        /*     use implementation of sqr */
 #if !defined(_DISABLE_WINDOW_EXP_)
-   #define _USE_WINDOW_EXP_   /*     use fixed window exponentiation */
+#define _USE_WINDOW_EXP_ /*     use fixed window exponentiation */
 #endif
 
 
@@ -299,9 +299,9 @@
 //    - do/don't use own style mitigation of CBA
 //    - do/don't use Folding technique for RSA-1204 implementation
 */
-#define xUSE_VERSION1_CBA_MITIGATION_   /* not use (version 1)  mitigation of CBA */
-#define _USE_IPP_OWN_CBA_MITIGATION_    /*     use (own) mitigation of CBA */
-#define xUSE_FOLD_MONT512_              /*     use folding technique in RSA-1024 case */
+#define xUSE_VERSION1_CBA_MITIGATION_ /* not use (version 1)  mitigation of CBA */
+#define _USE_IPP_OWN_CBA_MITIGATION_  /*     use (own) mitigation of CBA */
+#define xUSE_FOLD_MONT512_            /*     use folding technique in RSA-1024 case */
 
 
 /*
@@ -330,143 +330,143 @@
 // _ECP_IMPL_MFM_          means that implementation uses "Montgomary Friendly Modulus" (primes);
 //                         p256 and sm2 are using such kind of optimization
 */
-#define _ECP_IMPL_NONE_        0
-#define _ECP_IMPL_ARBIRTRARY_  1
-#define _ECP_IMPL_SPECIFIC_    2
-#define _ECP_IMPL_MFM_         3
+#define _ECP_IMPL_NONE_       0
+#define _ECP_IMPL_ARBIRTRARY_ 1
+#define _ECP_IMPL_SPECIFIC_   2
+#define _ECP_IMPL_MFM_        3
 
 #if !defined(_ECP_112R1_)
 #if !defined(_DISABLE_ECP_112R1_)
-#  define _ECP_112R1_    _ECP_IMPL_ARBIRTRARY_
+#define _ECP_112R1_ _ECP_IMPL_ARBIRTRARY_
 #else
-#  define _ECP_112R1_    _ECP_IMPL_NONE_
+#define _ECP_112R1_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_112R2_)
 #if !defined(_DISABLE_ECP_112R2_)
-#  define _ECP_112R2_    _ECP_IMPL_ARBIRTRARY_
+#define _ECP_112R2_ _ECP_IMPL_ARBIRTRARY_
 #else
-#  define _ECP_112R2_    _ECP_IMPL_NONE_
+#define _ECP_112R2_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_160R1_)
 #if !defined(_DISABLE_ECP_160R1_)
-#  define _ECP_160R1_    _ECP_IMPL_ARBIRTRARY_
+#define _ECP_160R1_ _ECP_IMPL_ARBIRTRARY_
 #else
-#  define _ECP_160R1_    _ECP_IMPL_NONE_
+#define _ECP_160R1_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_160R2_)
 #if !defined(_DISABLE_ECP_160R2_)
-#  define _ECP_160R2_    _ECP_IMPL_ARBIRTRARY_
+#define _ECP_160R2_ _ECP_IMPL_ARBIRTRARY_
 #else
-#  define _ECP_160R2_    _ECP_IMPL_NONE_
+#define _ECP_160R2_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_128R1_)
 #if !defined(_DISABLE_ECP_128R1_)
-#  define _ECP_128R1_    _ECP_IMPL_SPECIFIC_
+#define _ECP_128R1_ _ECP_IMPL_SPECIFIC_
 #else
-#  define _ECP_128R1_    _ECP_IMPL_NONE_
+#define _ECP_128R1_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_128R2_)
 #if !defined(_DISABLE_ECP_128R2_)
-#  define _ECP_128R2_    _ECP_IMPL_SPECIFIC_
+#define _ECP_128R2_ _ECP_IMPL_SPECIFIC_
 #else
-#  define _ECP_128R2_    _ECP_IMPL_NONE_
+#define _ECP_128R2_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_192_)
 #if !defined(_DISABLE_ECP_192_)
-#  if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
-#     define _ECP_192_    _ECP_IMPL_MFM_
-#  else
-#     define _ECP_192_    _ECP_IMPL_SPECIFIC_
-#  endif
+#if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
+#define _ECP_192_ _ECP_IMPL_MFM_
 #else
-#  define _ECP_192_    _ECP_IMPL_NONE_
+#define _ECP_192_ _ECP_IMPL_SPECIFIC_
+#endif
+#else
+#define _ECP_192_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_224_)
 #if !defined(_DISABLE_ECP_224_)
-#  if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
-#     define _ECP_224_    _ECP_IMPL_MFM_
-#  else
-#     define _ECP_224_    _ECP_IMPL_SPECIFIC_
-#  endif
+#if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
+#define _ECP_224_ _ECP_IMPL_MFM_
 #else
-#  define _ECP_224_    _ECP_IMPL_NONE_
+#define _ECP_224_ _ECP_IMPL_SPECIFIC_
+#endif
+#else
+#define _ECP_224_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_256_)
 #if !defined(_DISABLE_ECP_256_)
-#  if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
-#     define _ECP_256_    _ECP_IMPL_MFM_
-#  else
-#     define _ECP_256_    _ECP_IMPL_SPECIFIC_
-#  endif
+#if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
+#define _ECP_256_ _ECP_IMPL_MFM_
 #else
-#  define _ECP_256_    _ECP_IMPL_NONE_
+#define _ECP_256_ _ECP_IMPL_SPECIFIC_
+#endif
+#else
+#define _ECP_256_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_384_)
 #if !defined(_DISABLE_ECP_384_)
-#  if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
-#     define _ECP_384_    _ECP_IMPL_MFM_
-#  else
-#     define _ECP_384_    _ECP_IMPL_SPECIFIC_
-#  endif
+#if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
+#define _ECP_384_ _ECP_IMPL_MFM_
 #else
-#  define _ECP_384_    _ECP_IMPL_NONE_
+#define _ECP_384_ _ECP_IMPL_SPECIFIC_
+#endif
+#else
+#define _ECP_384_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_521_)
 #if !defined(_DISABLE_ECP_521_)
-#  if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
-#     define _ECP_521_    _ECP_IMPL_MFM_
-#  else
-#     define _ECP_521_    _ECP_IMPL_SPECIFIC_
-#  endif
+#if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
+#define _ECP_521_ _ECP_IMPL_MFM_
 #else
-#  define _ECP_521_    _ECP_IMPL_NONE_
+#define _ECP_521_ _ECP_IMPL_SPECIFIC_
+#endif
+#else
+#define _ECP_521_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_SM2_)
 #if !defined(_DISABLE_ECP_SM2_)
-#  if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
-#     define _ECP_SM2_    _ECP_IMPL_MFM_
-#  else
-#     define _ECP_SM2_    _ECP_IMPL_SPECIFIC_
-#  endif
+#if (_IPP32E >= _IPP32E_M7) || (_IPP >= _IPP_P8)
+#define _ECP_SM2_ _ECP_IMPL_MFM_
 #else
-#  define _ECP_SM2_    _ECP_IMPL_NONE_
+#define _ECP_SM2_ _ECP_IMPL_SPECIFIC_
+#endif
+#else
+#define _ECP_SM2_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_ECP_BN_)
 #if !defined(_DISABLE_ECP_BN_)
-#  define _ECP_BN_    _ECP_IMPL_ARBIRTRARY_
+#define _ECP_BN_ _ECP_IMPL_ARBIRTRARY_
 #else
-#  define _ECP_BN_    _ECP_IMPL_NONE_
+#define _ECP_BN_ _ECP_IMPL_NONE_
 #endif
 #endif
 
 #if !defined(_DISABLE_ECP_GENERAL_)
-#  define _ECP_GENERAL_ _ECP_IMPL_ARBIRTRARY_
+#define _ECP_GENERAL_ _ECP_IMPL_ARBIRTRARY_
 #else
-#  define _ECP_GENERAL_ _ECP_IMPL_NONE_
+#define _ECP_GENERAL_ _ECP_IMPL_NONE_
 #endif
 
 
@@ -474,6 +474,6 @@
 // EC over GF(p):
 //    - do/don't use mitigation of CBA
 */
-#define _USE_ECCP_SSCM_             /*     use SSCM ECCP */
+#define _USE_ECCP_SSCM_ /*     use SSCM ECCP */
 
-#endif /* _CP_VARIANT_H */
+#endif                  /* _CP_VARIANT_H */

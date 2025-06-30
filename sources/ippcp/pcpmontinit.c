@@ -45,9 +45,9 @@
 //      length    max modulus length (in Ipp32u chunks)
 //      pCtx      pointer to Montgomery context
 *F*/
-IPPFUN(IppStatus, ippsMontInit,(IppsExpMethod method, int length, IppsMontState* pCtx))
+IPPFUN(IppStatus, ippsMontInit, (IppsExpMethod method, int length, IppsMontState* pCtx))
 {
-    IPP_BADARG_RET(length<1 || length>BITS2WORD32_SIZE(BN_MAXBITSIZE), ippStsLengthErr);
+    IPP_BADARG_RET(length < 1 || length > BITS2WORD32_SIZE(BN_MAXBITSIZE), ippStsLengthErr);
 
     IPP_BAD_PTR1_RET(pCtx);
 

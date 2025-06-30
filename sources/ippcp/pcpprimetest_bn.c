@@ -51,30 +51,34 @@
 //    pRndParam   pointer to the external PRNG parameters
 *F*/
 
+/* clang-format off */
 IPPFUN(IppStatus, ippsPrimeTest_BN, (const IppsBigNumState* pPrime,
                                      int nTrials,
-                                     Ipp32u* pResult, IppsPrimeState* pCtx,
-                                     IppBitSupplier rndFunc, void* pRndParam))
+                                     Ipp32u* pResult,
+                                     IppsPrimeState* pCtx,
+                                     IppBitSupplier rndFunc,
+                                     void* pRndParam))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pPrime, pResult, pCtx, rndFunc);
-   IPP_BADARG_RET(nTrials<1, ippStsBadArgErr);
+    IPP_BAD_PTR4_RET(pPrime, pResult, pCtx, rndFunc);
+    IPP_BADARG_RET(nTrials < 1, ippStsBadArgErr);
 
-   IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
 
-   {
-      BNU_CHUNK_T* pPrimeBN = BN_NUMBER(pPrime);
-      cpSize ns = BN_SIZE(pPrime);
+    {
+        BNU_CHUNK_T* pPrimeBN = BN_NUMBER(pPrime);
+        cpSize ns             = BN_SIZE(pPrime);
 
-      {
-         int ret = cpPrimeTest(pPrimeBN, ns, nTrials, pCtx, rndFunc, pRndParam);
-         if(-1 == ret)
-            return ippStsErr;
-         else {
-            *pResult = ret? IPP_IS_PRIME : IPP_IS_COMPOSITE;
-            return ippStsNoErr;
-         }
-      }
-   }
+        {
+            int ret = cpPrimeTest(pPrimeBN, ns, nTrials, pCtx, rndFunc, pRndParam);
+            if (-1 == ret)
+                return ippStsErr;
+            else {
+                *pResult = ret ? IPP_IS_PRIME : IPP_IS_COMPOSITE;
+                return ippStsNoErr;
+            }
+        }
+    }
 }

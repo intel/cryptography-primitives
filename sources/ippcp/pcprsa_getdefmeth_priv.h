@@ -31,13 +31,14 @@ static gsMethod_RSA* getDefaultMethod_RSA_private(int modulusBitSize)
 {
     gsMethod_RSA* m;
 
-#if(_IPP32E>=_IPP32E_K1)
-    m = IsFeatureEnabled(ippCPUID_AVX512IFMA) ? gsMethod_RSA_avx512_private() : gsMethod_RSA_avx2_private();
+#if (_IPP32E >= _IPP32E_K1)
+    m = IsFeatureEnabled(ippCPUID_AVX512IFMA) ? gsMethod_RSA_avx512_private()
+                                              : gsMethod_RSA_avx2_private();
 
-#elif(_IPP32E>=_IPP32E_L9)
+#elif (_IPP32E >= _IPP32E_L9)
     m = IsFeatureEnabled(ippCPUID_ADCOX) ? gsMethod_RSA_gpr_private() : gsMethod_RSA_avx2_private();
 
-#elif(_IPP>=_IPP_W7)
+#elif (_IPP >= _IPP_W7)
     m = gsMethod_RSA_sse2_private();
 
 #else
@@ -55,9 +56,9 @@ static gsMethod_RSA* getDualExpMethod_RSA_private(int bitSizeDP, int bitSizeDQ)
     if ((bitSizeDP != bitSizeDQ) || (bitSizeDP == 0))
         return NULL;
 
-#if(_IPP32E>=_IPP32E_K1)
+#if (_IPP32E >= _IPP32E_K1)
     gsMethod_RSA* m = NULL;
-    m = gsMethod_RSA_avx512_crt_private(bitSizeDP);
+    m               = gsMethod_RSA_avx512_crt_private(bitSizeDP);
     if (m && m->dualExpFun)
         return m;
 #endif

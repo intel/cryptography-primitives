@@ -38,30 +38,32 @@
 //    pBuffer buffer
 *F*/
 
-IPP_OWN_DEFN (void, cpUnpackPrimeCtx, (const Ipp8u* pBuffer, IppsPrimeState* pCtx))
+IPP_OWN_DEFN(void, cpUnpackPrimeCtx, (const Ipp8u* pBuffer, IppsPrimeState* pCtx))
 {
-   IppsPrimeState* pB = (IppsPrimeState*)(pBuffer);
+    IppsPrimeState* pB = (IppsPrimeState*)(pBuffer);
 
-   /* max length of prime */
-   cpSize nsPrime = BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pB));
+    /* max length of prime */
+    cpSize nsPrime = BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pB));
 
-   CopyBlock(pB, pCtx, sizeof(IppsPrimeState));
+    CopyBlock(pB, pCtx, sizeof(IppsPrimeState));
 
-   Ipp8u* ptr = (Ipp8u*)pCtx;
-   ptr += sizeof(IppsPrimeState);
-   ptr = IPP_ALIGNED_PTR(ptr, PRIME_ALIGNMENT);
-   PRIME_NUMBER(pCtx)=   (BNU_CHUNK_T*)(ptr);
-   ptr += nsPrime*(Ipp32s)sizeof(BNU_CHUNK_T);
-   PRIME_TEMP1(pCtx) =   (BNU_CHUNK_T*)(ptr);
-   ptr += nsPrime*(Ipp32s)sizeof(BNU_CHUNK_T);
-   PRIME_TEMP2(pCtx) =   (BNU_CHUNK_T*)(ptr);
-   ptr += nsPrime*(Ipp32s)sizeof(BNU_CHUNK_T);
-   PRIME_TEMP3(pCtx) =   (BNU_CHUNK_T*)(ptr);
-   ptr += nsPrime*(Ipp32s)sizeof(BNU_CHUNK_T);
-   PRIME_MONT(pCtx)  =   (gsModEngine*)(ptr);
+    Ipp8u* ptr = (Ipp8u*)pCtx;
+    ptr += sizeof(IppsPrimeState);
+    ptr                = IPP_ALIGNED_PTR(ptr, PRIME_ALIGNMENT);
+    PRIME_NUMBER(pCtx) = (BNU_CHUNK_T*)(ptr);
+    ptr += nsPrime * (Ipp32s)sizeof(BNU_CHUNK_T);
+    PRIME_TEMP1(pCtx) = (BNU_CHUNK_T*)(ptr);
+    ptr += nsPrime * (Ipp32s)sizeof(BNU_CHUNK_T);
+    PRIME_TEMP2(pCtx) = (BNU_CHUNK_T*)(ptr);
+    ptr += nsPrime * (Ipp32s)sizeof(BNU_CHUNK_T);
+    PRIME_TEMP3(pCtx) = (BNU_CHUNK_T*)(ptr);
+    ptr += nsPrime * (Ipp32s)sizeof(BNU_CHUNK_T);
+    PRIME_MONT(pCtx) = (gsModEngine*)(ptr);
 
-   cpSize gsMontOffset = (cpSize)(IPP_INT_PTR(PRIME_MONT(pCtx)) - IPP_INT_PTR(pCtx));
+    cpSize gsMontOffset = (cpSize)(IPP_INT_PTR(PRIME_MONT(pCtx)) - IPP_INT_PTR(pCtx));
 
-   CopyBlock((Ipp8u*)pB + sizeof(IppsPrimeState), PRIME_NUMBER(pCtx), nsPrime*(Ipp32s)sizeof(BNU_CHUNK_T));
-   gsUnpackModEngineCtx((Ipp8u*)pB + gsMontOffset, PRIME_MONT(pCtx));
+    CopyBlock((Ipp8u*)pB + sizeof(IppsPrimeState),
+              PRIME_NUMBER(pCtx),
+              nsPrime * (Ipp32s)sizeof(BNU_CHUNK_T));
+    gsUnpackModEngineCtx((Ipp8u*)pB + gsMontOffset, PRIME_MONT(pCtx));
 }

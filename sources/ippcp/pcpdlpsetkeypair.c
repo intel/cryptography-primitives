@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     DL over Prime Finite Field (EC Key Generation, Validation and Set Up)
-// 
+//
 //  Contents:
 //        ippsDLPSetKeyPair()
 //
@@ -59,57 +59,62 @@
 //    pPubKey  pointer to the public key
 //    pDL      pointer to the DL context
 *F*/
-IPPFUN(IppStatus, ippsDLPSetKeyPair,(const IppsBigNumState* pPrvKey,
-                                     const IppsBigNumState* pPubKey,
-                                     IppsDLPState* pDL))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsDLPSetKeyPair, (const IppsBigNumState* pPrvKey,
+                                      const IppsBigNumState* pPubKey,
+                                      IppsDLPState* pDL))
+/* clang-format on */
 {
-   /* test DL context */
-   IPP_BAD_PTR1_RET(pDL);
-   IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
+    /* test DL context */
+    IPP_BAD_PTR1_RET(pDL);
+    IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
 
-   /* test flag */
-   IPP_BADARG_RET(!DLP_COMPLETE(pDL), ippStsIncompleteContextErr);
+    /* test flag */
+    IPP_BADARG_RET(!DLP_COMPLETE(pDL), ippStsIncompleteContextErr);
 
-   /* set up private key */
-   if(pPrvKey) {
-      IPP_BADARG_RET(!BN_VALID_ID(pPrvKey), ippStsContextMatchErr);
-      IPP_BADARG_RET(BN_NEGATIVE(pPrvKey), ippStsInvalidPrivateKey);
-      {
-         gsModEngine* pMontR = DLP_MONTR(pDL);
-         BNU_CHUNK_T* pOrder = MOD_MODULUS(pMontR);
-         int ordLen = MOD_LEN(pMontR);
+    /* set up private key */
+    if (pPrvKey) {
+        IPP_BADARG_RET(!BN_VALID_ID(pPrvKey), ippStsContextMatchErr);
+        IPP_BADARG_RET(BN_NEGATIVE(pPrvKey), ippStsInvalidPrivateKey);
+        {
+            gsModEngine* pMontR = DLP_MONTR(pDL);
+            BNU_CHUNK_T* pOrder = MOD_MODULUS(pMontR);
+            int ordLen          = MOD_LEN(pMontR);
 
-         BNU_CHUNK_T* pPriData = BN_NUMBER(pPrvKey);
-         int priLen = BN_SIZE(pPrvKey);
+            BNU_CHUNK_T* pPriData = BN_NUMBER(pPrvKey);
+            int priLen            = BN_SIZE(pPrvKey);
 
-         /* make sure regular 0 < private < order */
-         IPP_BADARG_RET(cpEqu_BNU_CHUNK(pPriData, priLen, 0) ||
-                     0<=cpCmp_BNU(pPriData, priLen, pOrder, ordLen), ippStsInvalidPrivateKey);
+            /* make sure regular 0 < private < order */
+            IPP_BADARG_RET(cpEqu_BNU_CHUNK(pPriData, priLen, 0) ||
+                               0 <= cpCmp_BNU(pPriData, priLen, pOrder, ordLen),
+                           ippStsInvalidPrivateKey);
 
-         cpBN_copy(DLP_X(pDL), pPrvKey);
-         BN_SIZE(DLP_X(pDL)) = ordLen;
-      }
-   }
+            cpBN_copy(DLP_X(pDL), pPrvKey);
+            BN_SIZE(DLP_X(pDL)) = ordLen;
+        }
+    }
 
-   /* set up public key */
-   if(pPubKey) {
-      IPP_BADARG_RET(!BN_VALID_ID(pPubKey), ippStsContextMatchErr);
-      IPP_BADARG_RET(BN_NEGATIVE(pPubKey), ippStsRangeErr);
-      {
-         gsModEngine* pMontP = DLP_MONTP0(pDL);
-         BNU_CHUNK_T* pPrime = MOD_MODULUS(pMontP);
-         int primeLen = MOD_LEN(pMontP);
+    /* set up public key */
+    if (pPubKey) {
+        IPP_BADARG_RET(!BN_VALID_ID(pPubKey), ippStsContextMatchErr);
+        IPP_BADARG_RET(BN_NEGATIVE(pPubKey), ippStsRangeErr);
+        {
+            gsModEngine* pMontP = DLP_MONTP0(pDL);
+            BNU_CHUNK_T* pPrime = MOD_MODULUS(pMontP);
+            int primeLen        = MOD_LEN(pMontP);
 
-         BNU_CHUNK_T* pPubData = BN_NUMBER(pPubKey);
-         int pubLen = BN_SIZE(pPubKey);
+            BNU_CHUNK_T* pPubData = BN_NUMBER(pPubKey);
+            int pubLen            = BN_SIZE(pPubKey);
 
-         /* make sure regular 0 < public < prime */
-         IPP_BADARG_RET(cpEqu_BNU_CHUNK(pPubData, pubLen, 0) ||
-                     0<=cpCmp_BNU(pPubData, pubLen, pPrime, primeLen), ippStsRangeErr);
+            /* make sure regular 0 < public < prime */
+            IPP_BADARG_RET(cpEqu_BNU_CHUNK(pPubData, pubLen, 0) ||
+                               0 <= cpCmp_BNU(pPubData, pubLen, pPrime, primeLen),
+                           ippStsRangeErr);
 
-         cpMontEnc_BN(DLP_YENC(pDL), pPubKey, DLP_MONTP0(pDL));
-      }
-   }
+            cpMontEnc_BN(DLP_YENC(pDL), pPubKey, DLP_MONTP0(pDL));
+        }
+    }
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

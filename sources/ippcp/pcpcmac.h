@@ -33,38 +33,44 @@
 // Rijndael128 based CMAC context
 */
 struct _cpAES_CMAC {
-   Ipp32u   idCtx;              /* CMAC  identifier              */
-   int      index;              /* internal buffer entry (free)  */
-   Ipp8u    k1[MBS_RIJ128];     /* k1 subkey                     */
-   Ipp8u    k2[MBS_RIJ128];     /* k2 subkey                     */
-   Ipp8u    mBuffer[MBS_RIJ128];/* buffer                        */
-   Ipp8u    mMAC[MBS_RIJ128];   /* intermediate digest           */
-   IppsRijndael128Spec mCipherCtx;
+    Ipp32u idCtx;              /* CMAC  identifier              */
+    int index;                 /* internal buffer entry (free)  */
+    Ipp8u k1[MBS_RIJ128];      /* k1 subkey                     */
+    Ipp8u k2[MBS_RIJ128];      /* k2 subkey                     */
+    Ipp8u mBuffer[MBS_RIJ128]; /* buffer                        */
+    Ipp8u mMAC[MBS_RIJ128];    /* intermediate digest           */
+    IppsRijndael128Spec mCipherCtx;
 };
 
 /* alignment */
 //#define CMACRIJ_ALIGNMENT (RIJ_ALIGNMENT)
-#define AESCMAC_ALIGNMENT  (RIJ_ALIGNMENT)
+#define AESCMAC_ALIGNMENT (RIJ_ALIGNMENT)
 
 /*
 // Useful macros
 */
-#define CMAC_SET_ID(stt)  ((stt)->idCtx = (Ipp32u)idCtxCMAC ^ (Ipp32u)IPP_UINT_PTR(stt))
-#define CMAC_INDX(stt)    ((stt)->index)
-#define CMAC_K1(stt)      ((stt)->k1)
-#define CMAC_K2(stt)      ((stt)->k2)
-#define CMAC_BUFF(stt)    ((stt)->mBuffer)
-#define CMAC_MAC(stt)     ((stt)->mMAC)
-#define CMAC_CIPHER(stt)  ((stt)->mCipherCtx)
+#define CMAC_SET_ID(stt) ((stt)->idCtx = (Ipp32u)idCtxCMAC ^ (Ipp32u)IPP_UINT_PTR(stt))
+#define CMAC_INDX(stt)   ((stt)->index)
+#define CMAC_K1(stt)     ((stt)->k1)
+#define CMAC_K2(stt)     ((stt)->k2)
+#define CMAC_BUFF(stt)   ((stt)->mBuffer)
+#define CMAC_MAC(stt)    ((stt)->mMAC)
+#define CMAC_CIPHER(stt) ((stt)->mCipherCtx)
 
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-#define AESCMAC_NOISE_PARAMS(ctx)        (CMAC_CIPHER(ctx).noiseParams)
+#define AESCMAC_NOISE_PARAMS(ctx) (CMAC_CIPHER(ctx).noiseParams)
 #endif
 
 /* valid context ID */
 #define VALID_AESCMAC_ID(ctx) ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxCMAC)
 
 #define cpAESCMAC_Update_AES_NI OWNAPI(cpAESCMAC_Update_AES_NI)
-   IPP_OWN_DECL (void, cpAESCMAC_Update_AES_NI, (Ipp8u* pMac, const Ipp8u* inpBlk, int nBlks, int nr, const Ipp8u* pKeys))
+/* clang-format off */
+    IPP_OWN_DECL(void, cpAESCMAC_Update_AES_NI, (Ipp8u* pMac,
+                                                 const Ipp8u* inpBlk,
+                                                 int nBlks,
+                                                 int nr,
+                                                 const Ipp8u* pKeys))
+/* clang-format on */
 
 #endif /* _PCP_CMAC_H */

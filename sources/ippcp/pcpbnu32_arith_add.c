@@ -45,14 +45,14 @@
 //    pR    result
 //
 *F*/
-IPP_OWN_DEFN (Ipp32u, cpAdd_BNU32, (Ipp32u* pR, const Ipp32u* pA, const Ipp32u* pB, cpSize ns))
+IPP_OWN_DEFN(Ipp32u, cpAdd_BNU32, (Ipp32u * pR, const Ipp32u* pA, const Ipp32u* pB, cpSize ns))
 {
-   Ipp32u carry = 0;
-   cpSize i;
-   for(i=0; i<ns; i++) {
-      Ipp64u t = (Ipp64u)carry +pA[i] + pB[i];
-      pR[i] = IPP_LODWORD(t);
-      carry = IPP_HIDWORD(t);
-   }
-   return carry;
+    Ipp32u carry = 0;
+    cpSize i;
+    for (i = 0; i < ns; i++) {
+        Ipp64u t = (Ipp64u)carry + pA[i] + pB[i];
+        pR[i]    = IPP_LODWORD(t);
+        carry    = IPP_HIDWORD(t);
+    }
+    return carry;
 }

@@ -31,19 +31,18 @@
 #include "gsmodstuff.h"
 #include "pcptool.h"
 
-IPP_OWN_DEFN (void, gsUnpackModEngineCtx, (const Ipp8u* pBuffer, gsModEngine* pCtx))
+IPP_OWN_DEFN(void, gsUnpackModEngineCtx, (const Ipp8u* pBuffer, gsModEngine* pCtx))
 {
-   gsModEngine* pAlignedBuffer = (gsModEngine*)pBuffer;
+    gsModEngine* pAlignedBuffer = (gsModEngine*)pBuffer;
 
-   /* max modulus length */
-   int modSize = MOD_LEN(pAlignedBuffer);
-   /* size of context (bytes) without cube and pool buffers */
-   int ctxSize = (Ipp32s)sizeof(gsModEngine)
-                +(Ipp32s)sizeof(BNU_CHUNK_T)*(modSize*3);
+    /* max modulus length */
+    int modSize = MOD_LEN(pAlignedBuffer);
+    /* size of context (bytes) without cube and pool buffers */
+    int ctxSize = (Ipp32s)sizeof(gsModEngine) + (Ipp32s)sizeof(BNU_CHUNK_T) * (modSize * 3);
 
-   CopyBlock(pAlignedBuffer, pCtx, ctxSize);
-   MOD_MODULUS(pCtx)  = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MODULUS(pAlignedBuffer)));
-   MOD_MNT_R(pCtx)    = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MNT_R(pAlignedBuffer)));
-   MOD_MNT_R2(pCtx)   = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MNT_R2(pAlignedBuffer)));
-   MOD_POOL_BUF(pCtx) = MOD_MNT_R2(pCtx) + modSize;
+    CopyBlock(pAlignedBuffer, pCtx, ctxSize);
+    MOD_MODULUS(pCtx)  = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MODULUS(pAlignedBuffer)));
+    MOD_MNT_R(pCtx)    = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MNT_R(pAlignedBuffer)));
+    MOD_MNT_R2(pCtx)   = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MNT_R2(pAlignedBuffer)));
+    MOD_POOL_BUF(pCtx) = MOD_MNT_R2(pCtx) + modSize;
 }

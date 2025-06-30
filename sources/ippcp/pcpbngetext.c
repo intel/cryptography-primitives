@@ -47,24 +47,28 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsExtGet_BN, (IppsBigNumSGN* pSgn, int* pBitSize, Ipp32u* pData,
-                               const IppsBigNumState* pBN))
+/* clang-format off */
+IPPFUN(IppStatus, ippsExtGet_BN, (IppsBigNumSGN* pSgn,
+                                  int* pBitSize,
+                                  Ipp32u* pData,
+                                  const IppsBigNumState* pBN))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pBN);
+    IPP_BAD_PTR1_RET(pBN);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
 
-   {
-      cpSize bitSize = BITSIZE_BNU(BN_NUMBER(pBN), BN_SIZE(pBN));
-      if(0==bitSize)
-         bitSize = 1;
-      if(pData)
-         COPY_BNU(pData, (Ipp32u*)BN_NUMBER(pBN), BITS2WORD32_SIZE(bitSize));
-      if(pSgn)
-         *pSgn = BN_SIGN(pBN);
-      if(pBitSize)
-         *pBitSize = bitSize;
+    {
+        cpSize bitSize = BITSIZE_BNU(BN_NUMBER(pBN), BN_SIZE(pBN));
+        if (0 == bitSize)
+            bitSize = 1;
+        if (pData)
+            COPY_BNU(pData, (Ipp32u*)BN_NUMBER(pBN), BITS2WORD32_SIZE(bitSize));
+        if (pSgn)
+            *pSgn = BN_SIGN(pBN);
+        if (pBitSize)
+            *pBitSize = bitSize;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

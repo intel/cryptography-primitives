@@ -45,16 +45,16 @@
 //    pSize       pointer to the packed spec size
 //
 *F*/
-IPPFUN(IppStatus, ippsDLPPack,(const IppsDLPState* pDL, Ipp8u* pBuffer))
+IPPFUN(IppStatus, ippsDLPPack, (const IppsDLPState* pDL, Ipp8u* pBuffer))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pDL, pBuffer);
-   /* test the context */
-   IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pDL, pBuffer);
+    /* test the context */
+    IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
 
-   cpPackDLPCtx(pDL, pBuffer);
-   IppsDLPState* pCopy = (IppsDLPState*)pBuffer;
-   DLP_RESET_ID(pCopy);
+    cpPackDLPCtx(pDL, pBuffer);
+    IppsDLPState* pCopy = (IppsDLPState*)pBuffer;
+    DLP_RESET_ID(pCopy);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

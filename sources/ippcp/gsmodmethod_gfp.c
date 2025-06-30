@@ -24,47 +24,49 @@
 
 static gsModMethod* gsArithGFp_C(void)
 {
-   static gsModMethod m = {
-      gs_mont_encode,
-      gs_mont_decode,
-      gs_mont_mul,
-      gs_mont_sqr,
-      NULL,
-      gs_mont_add,
-      gs_mont_sub,
-      gs_mont_neg,
-      gs_mont_div2,
-      gs_mont_mul2,
-      gs_mont_mul3,
+    /* clang-format off */
+   static gsModMethod m = { gs_mont_encode,
+                            gs_mont_decode,
+                            gs_mont_mul,
+                            gs_mont_sqr,
+                            NULL,
+                            gs_mont_add,
+                            gs_mont_sub,
+                            gs_mont_neg,
+                            gs_mont_div2,
+                            gs_mont_mul2,
+                            gs_mont_mul3,
    };
-   return &m;
+    /* clang-format on */
+    return &m;
 }
-#if (_IPP32E>=_IPP32E_L9)
+#if (_IPP32E >= _IPP32E_L9)
 static gsModMethod* gsArithGFp_X(void)
 {
-   static gsModMethod m = {
-      gs_mont_encode,
-      gs_mont_decode,
-      gs_mont_mul,
-      gs_mont_sqr,
-      NULL,
-      gs_mont_add,
-      gs_mont_sub,
-      gs_mont_neg,
-      gs_mont_div2,
-      gs_mont_mul2,
-      gs_mont_mul3,
+    /* clang-format off */
+   static gsModMethod m = { gs_mont_encode,
+                            gs_mont_decode,
+                            gs_mont_mul,
+                            gs_mont_sqr,
+                            NULL,
+                            gs_mont_add,
+                            gs_mont_sub,
+                            gs_mont_neg,
+                            gs_mont_div2,
+                            gs_mont_mul2,
+                            gs_mont_mul3,
    };
-   return &m;
+    /* clang-format on */
+    return &m;
 }
 #endif
 
-IPP_OWN_DEFN (gsModMethod*, gsArithGFp, (void))
+IPP_OWN_DEFN(gsModMethod*, gsArithGFp, (void))
 {
-   #if (_IPP32E>=_IPP32E_L9)
-   if(IsFeatureEnabled(ippCPUID_ADCOX))
-      return gsArithGFp_X();
-   else
-   #endif
-      return gsArithGFp_C();
+#if (_IPP32E >= _IPP32E_L9)
+    if (IsFeatureEnabled(ippCPUID_ADCOX))
+        return gsArithGFp_X();
+    else
+#endif
+        return gsArithGFp_C();
 }

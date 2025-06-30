@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     HMAC General Functionality
-// 
+//
 //  Contents:
 //        ippsHMACMessage_rmf()
 //
@@ -56,39 +56,46 @@
 //    pMethod     hash method
 //
 *F*/
-IPPFUN(IppStatus, ippsHMACMessage_rmf,(const Ipp8u* pMsg, int msgLen,
-                                       const Ipp8u* pKey, int keyLen,
-                                       Ipp8u* pMD, int mdLen,
-                                       const IppsHashMethod* pMethod))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsHMACMessage_rmf, (const Ipp8u* pMsg,
+                                        int msgLen,
+                                        const Ipp8u* pKey,
+                                        int keyLen,
+                                        Ipp8u* pMD,
+                                        int mdLen,
+                                        const IppsHashMethod* pMethod))
+/* clang-format on */
 {
-   /* test method pointer */
-   IPP_BAD_PTR1_RET(pMethod);
-   /* test secret key pointer and length */
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET((keyLen<0), ippStsLengthErr);
-   /* test input message pointer and length */
-   IPP_BADARG_RET((msgLen<0), ippStsLengthErr);
-   IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
-   /* SHAKE128/256 are not supported with HMAC mode*/
-   IPP_BADARG_RET(cpIsSHAKEAlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+    /* test method pointer */
+    IPP_BAD_PTR1_RET(pMethod);
+    /* test secret key pointer and length */
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET((keyLen < 0), ippStsLengthErr);
+    /* test input message pointer and length */
+    IPP_BADARG_RET((msgLen < 0), ippStsLengthErr);
+    IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
+    /* SHAKE128/256 are not supported with HMAC mode*/
+    IPP_BADARG_RET(cpIsSHAKEAlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
-   /* test MD pointer and length */
-   IPP_BAD_PTR1_RET(pMD);
-   IPP_BADARG_RET(0>=mdLen || mdLen>pMethod->hashLen, ippStsLengthErr);
+    /* test MD pointer and length */
+    IPP_BAD_PTR1_RET(pMD);
+    IPP_BADARG_RET(0 >= mdLen || mdLen > pMethod->hashLen, ippStsLengthErr);
 
-   {
-      __ALIGN8 IppsHMACState_rmf ctx;
-      IppStatus sts;
+    {
+        __ALIGN8 IppsHMACState_rmf ctx;
+        IppStatus sts;
 
-      ippsHMACInit_rmf(pKey, keyLen, &ctx, pMethod);
+        ippsHMACInit_rmf(pKey, keyLen, &ctx, pMethod);
 
-      sts = ippsHashUpdate_rmf(pMsg,msgLen, HASH_CTX(&ctx));
-      if(ippStsNoErr!=sts) goto exit;
+        sts = ippsHashUpdate_rmf(pMsg, msgLen, HASH_CTX(&ctx));
+        if (ippStsNoErr != sts)
+            goto exit;
 
-      sts = ippsHMACFinal_rmf(pMD, mdLen, &ctx);
+        sts = ippsHMACFinal_rmf(pMD, mdLen, &ctx);
 
-      exit:
-      PurgeBlock(&ctx, sizeof(IppsHMACState_rmf));
-      return sts;
-   }
+    exit:
+        PurgeBlock(&ctx, sizeof(IppsHMACState_rmf));
+        return sts;
+    }
 }

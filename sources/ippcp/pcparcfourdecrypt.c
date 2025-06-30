@@ -48,21 +48,25 @@
 // Note:
 //    Convenience function only
 *F*/
-IPPFUN(IppStatus, ippsARCFourDecrypt, (const Ipp8u *pSrc, Ipp8u *pDst, int length,
-                  IppsARCFourState *pCtx))
+/* clang-format off */
+IPPFUN(IppStatus, ippsARCFourDecrypt, (const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int length,
+                                       IppsARCFourState* pCtx))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!RC4_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!RC4_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source and destination pointers */
-   IPP_BAD_PTR2_RET(pSrc, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((length<1), ippStsLengthErr);
+    /* test source and destination pointers */
+    IPP_BAD_PTR2_RET(pSrc, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((length < 1), ippStsLengthErr);
 
 
-   /* process data */
-   ARCFourProcessData(pSrc, pDst, length, pCtx);
+    /* process data */
+    ARCFourProcessData(pSrc, pDst, length, pCtx);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

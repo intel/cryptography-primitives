@@ -56,50 +56,57 @@
 //    pDL      pointer to the DL context
 //
 *F*/
-IPPFUN(IppStatus, ippsDLPSetDP,(const IppsBigNumState* pDP, IppDLPKeyTag tag, IppsDLPState* pDL))
+IPPFUN(IppStatus, ippsDLPSetDP, (const IppsBigNumState* pDP, IppDLPKeyTag tag, IppsDLPState* pDL))
 {
-   /* test DL context */
-   IPP_BAD_PTR1_RET(pDL);
-   IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
+    /* test DL context */
+    IPP_BAD_PTR1_RET(pDL);
+    IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
 
-   /* test DL parameter to be set */
-   IPP_BAD_PTR1_RET(pDP);
-   IPP_BADARG_RET(!BN_VALID_ID(pDP), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pDP), ippStsBadArgErr);
+    /* test DL parameter to be set */
+    IPP_BAD_PTR1_RET(pDP);
+    IPP_BADARG_RET(!BN_VALID_ID(pDP), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pDP), ippStsBadArgErr);
 
-   {
-      IppStatus sts = ippStsNoErr;
+    {
+        IppStatus sts = ippStsNoErr;
 
-      cpBN_zero(DLP_X(pDL));
-      cpBN_zero(DLP_YENC(pDL));
+        cpBN_zero(DLP_X(pDL));
+        cpBN_zero(DLP_YENC(pDL));
 
-      switch(tag) {
-         case ippDLPkeyP:
-            DLP_FLAG(pDL) &=(Ipp32u)~ippDLPkeyP;
-            sts = gsModEngineInit(DLP_MONTP0(pDL), (Ipp32u*)BN_NUMBER(pDP), cpBN_bitsize(pDP), DLP_MONT_POOL_LENGTH, gsModArithDLP());
-            if(ippStsNoErr==sts) {
-               DLP_FLAG(pDL) |= ippDLPkeyP;
+        switch (tag) {
+        case ippDLPkeyP:
+            DLP_FLAG(pDL) &= (Ipp32u)~ippDLPkeyP;
+            sts = gsModEngineInit(DLP_MONTP0(pDL),
+                                  (Ipp32u*)BN_NUMBER(pDP),
+                                  cpBN_bitsize(pDP),
+                                  DLP_MONT_POOL_LENGTH,
+                                  gsModArithDLP());
+            if (ippStsNoErr == sts) {
+                DLP_FLAG(pDL) |= ippDLPkeyP;
             }
             break;
-         case ippDLPkeyR:
-            DLP_FLAG(pDL) &=(Ipp32u)~ippDLPkeyR;
-            sts = gsModEngineInit(DLP_MONTR(pDL), (Ipp32u*)BN_NUMBER(pDP), cpBN_bitsize(pDP), DLP_MONT_POOL_LENGTH, gsModArithDLP());
-            if(ippStsNoErr==sts)
-               DLP_FLAG(pDL) |= ippDLPkeyR;
+        case ippDLPkeyR:
+            DLP_FLAG(pDL) &= (Ipp32u)~ippDLPkeyR;
+            sts = gsModEngineInit(DLP_MONTR(pDL),
+                                  (Ipp32u*)BN_NUMBER(pDP),
+                                  cpBN_bitsize(pDP),
+                                  DLP_MONT_POOL_LENGTH,
+                                  gsModArithDLP());
+            if (ippStsNoErr == sts)
+                DLP_FLAG(pDL) |= ippDLPkeyR;
             break;
-         case ippDLPkeyG:
-            DLP_FLAG(pDL) &=(Ipp32u)~ippDLPkeyG;
-            if(DLP_FLAG(pDL)&ippDLPkeyP) {
-               cpMontEnc_BN(DLP_GENC(pDL), pDP, DLP_MONTP0(pDL));
-               DLP_FLAG(pDL) |= ippDLPkeyG;
-            }
-            else
-               sts = ippStsIncompleteContextErr;
+        case ippDLPkeyG:
+            DLP_FLAG(pDL) &= (Ipp32u)~ippDLPkeyG;
+            if (DLP_FLAG(pDL) & ippDLPkeyP) {
+                cpMontEnc_BN(DLP_GENC(pDL), pDP, DLP_MONTP0(pDL));
+                DLP_FLAG(pDL) |= ippDLPkeyG;
+            } else
+                sts = ippStsIncompleteContextErr;
             break;
-         default:
+        default:
             sts = ippStsBadArgErr;
-      }
+        }
 
-      return sts;
-   }
+        return sts;
+    }
 }

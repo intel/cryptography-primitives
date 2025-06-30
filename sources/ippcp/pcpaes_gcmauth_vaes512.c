@@ -25,10 +25,10 @@
 */
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-#pragma warning(disable: 4206) // empty translation unit in MSVC
+#pragma warning(disable : 4206) // empty translation unit in MSVC
 #endif
 
-#if 0 // Not used
+#if 0                           // Not used
 
 #include "owncp.h"
 #include "pcpaesm.h"
@@ -36,9 +36,9 @@
 #include "pcpaes_gcm_vaes512.h"
 #include "pcpaesauthgcm.h"
 
-#if (_IPP32E>=_IPP32E_K1)
+#if (_IPP32E >= _IPP32E_K1)
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-#pragma warning(disable: 4310) // cast truncates constant value in MSVC
+#pragma warning(disable : 4310) // cast truncates constant value in MSVC
 #endif
 
 /* AES-GCM authentication function. It calculates GHASH of the source input */
@@ -225,6 +225,6 @@ IPP_OWN_DEFN (void, AesGcmAuth_vaes, (Ipp8u* pGHash, const Ipp8u* pSrc, int len,
    _mm512_mask_storeu_epi64(pGHash, 0x03, ghash512);
 }
 
-#endif /* #if (_IPP32E>=_IPP32E_K1) */
+#endif                          /* #if (_IPP32E>=_IPP32E_K1) */
 
 #endif

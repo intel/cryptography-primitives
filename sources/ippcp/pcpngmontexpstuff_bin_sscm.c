@@ -14,8 +14,8 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Modular Exponentiation
@@ -26,7 +26,15 @@
 #include "gsscramble.h"
 #include "pcpmask_ct.h"
 
-IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU_sscm, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize bitsizeE, gsModEngine* pMont, BNU_CHUNK_T* pBuffer))
+/* clang-format off */
+IPP_OWN_DEFN(cpSize, gsMontExpBin_BNU_sscm, (BNU_CHUNK_T* dataY,
+                                             const BNU_CHUNK_T* dataX,
+                                             cpSize nsX,
+                                             const BNU_CHUNK_T* dataE,
+                                             cpSize bitsizeE,
+                                             gsModEngine* pMont,
+                                             BNU_CHUNK_T* pBuffer))
+/* clang-format on */
 {
 
     cpSize nsM = MOD_LEN(pMont);
@@ -39,46 +47,45 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU_sscm, (BNU_CHUNK_T* dataY, const BNU_CHUN
     */
     if (cpEqu_BNU_CHUNK(dataE, nsE, 0)) {
         COPY_BNU(dataY, MOD_MNT_R(pMont), nsM);
-    }
-    else if (cpEqu_BNU_CHUNK(dataX, nsX, 0)) {
+    } else if (cpEqu_BNU_CHUNK(dataX, nsX, 0)) {
         ZEXPAND_BNU(dataY, 0, nsM);
     }
 
     /* general case */
     else {
 
-      /* allocate buffers */
-      BNU_CHUNK_T* dataT = pBuffer;
-      BNU_CHUNK_T* sscmB = dataT + nsM;
+        /* allocate buffers */
+        BNU_CHUNK_T* dataT = pBuffer;
+        BNU_CHUNK_T* sscmB = dataT + nsM;
 
-      /* mont(1) */
-      BNU_CHUNK_T* pR = MOD_MNT_R(pMont);
+        /* mont(1) */
+        BNU_CHUNK_T* pR = MOD_MNT_R(pMont);
 
-      /* copy and expand base to the modulus length */
-       ZEXPAND_COPY_BNU(dataT, nsM, dataX, nsX);
-       /* init result */
-       COPY_BNU(dataY, MOD_MNT_R(pMont), nsM);
+        /* copy and expand base to the modulus length */
+        ZEXPAND_COPY_BNU(dataT, nsM, dataX, nsX);
+        /* init result */
+        COPY_BNU(dataY, MOD_MNT_R(pMont), nsM);
 
-      /* execute bits of E */
-      for (; nsE>0; nsE--) {
-         BNU_CHUNK_T eValue = dataE[nsE-1];
+        /* execute bits of E */
+        for (; nsE > 0; nsE--) {
+            BNU_CHUNK_T eValue = dataE[nsE - 1];
 
-         int n;
-         for(n=BNU_CHUNK_BITS; n>0; n--) {
-            /* sscmB = ( msb(eValue) )? X : mont(1) */
-            BNU_CHUNK_T mask = cpIsMsb_ct(eValue);
-            eValue <<= 1;
-            cpMaskedCopyBNU_ct(sscmB, mask, dataT, pR, nsM);
+            int n;
+            for (n = BNU_CHUNK_BITS; n > 0; n--) {
+                /* sscmB = ( msb(eValue) )? X : mont(1) */
+                BNU_CHUNK_T mask = cpIsMsb_ct(eValue);
+                eValue <<= 1;
+                cpMaskedCopyBNU_ct(sscmB, mask, dataT, pR, nsM);
 
-            /* squaring Y = Y^2 */
-            MOD_METHOD(pMont)->sqr(dataY, dataY, pMont);
-            /* and multiplication: Y = Y * sscmB */
-            MOD_METHOD(pMont)->mul(dataY, dataY, sscmB, pMont);
-         }
-      }
-   }
+                /* squaring Y = Y^2 */
+                MOD_METHOD(pMont)->sqr(dataY, dataY, pMont);
+                /* and multiplication: Y = Y * sscmB */
+                MOD_METHOD(pMont)->mul(dataY, dataY, sscmB, pMont);
+            }
+        }
+    }
 
-   return nsM;
+    return nsM;
 }
 
 /*
@@ -91,21 +98,30 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU_sscm, (BNU_CHUNK_T* dataY, const BNU_CHUN
 //    dataT[nsM]
 //     sscm[nsM]
 */
-IPP_OWN_DEFN (cpSize, gsModExpBin_BNU_sscm, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize bitsizeE, gsModEngine* pMont, BNU_CHUNK_T* pBuffer))
+
+/* clang-format off */
+IPP_OWN_DEFN(cpSize, gsModExpBin_BNU_sscm, (BNU_CHUNK_T* dataY,
+                                            const BNU_CHUNK_T* dataX,
+                                            cpSize nsX,
+                                            const BNU_CHUNK_T* dataE,
+                                            cpSize bitsizeE,
+                                            gsModEngine* pMont,
+                                            BNU_CHUNK_T* pBuffer))
+/* clang-format on */
 {
-   cpSize nsM = MOD_LEN(pMont);
+    cpSize nsM = MOD_LEN(pMont);
 
-   /* copy and expand base to the modulus length */
-   ZEXPAND_COPY_BNU(dataY, nsM, dataX, nsX);
+    /* copy and expand base to the modulus length */
+    ZEXPAND_COPY_BNU(dataY, nsM, dataX, nsX);
 
-   /* convert base to Montgomery domain */
-   MOD_METHOD(pMont)->encode(dataY, dataY, pMont);
+    /* convert base to Montgomery domain */
+    MOD_METHOD(pMont)->encode(dataY, dataY, pMont);
 
-   /* exponentiation */
-   gsMontExpBin_BNU_sscm(dataY, dataY, nsM, dataE, bitsizeE, pMont, pBuffer);
+    /* exponentiation */
+    gsMontExpBin_BNU_sscm(dataY, dataY, nsM, dataE, bitsizeE, pMont, pBuffer);
 
-   /* convert result back to regular domain */
-   MOD_METHOD(pMont)->decode(dataY, dataY, pMont);
+    /* convert result back to regular domain */
+    MOD_METHOD(pMont)->decode(dataY, dataY, pMont);
 
-   return nsM;
+    return nsM;
 }

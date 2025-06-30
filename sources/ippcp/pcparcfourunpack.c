@@ -42,13 +42,13 @@
 //    pSize       pointer to the packed spec size
 //
 *F*/
-IPPFUN(IppStatus, ippsARCFourUnpack,(const Ipp8u* pBuffer, IppsARCFourState* pCtx))
+IPPFUN(IppStatus, ippsARCFourUnpack, (const Ipp8u* pBuffer, IppsARCFourState* pCtx))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
 
-   CopyBlock(pBuffer, pCtx, sizeof(IppsARCFourState));
-   RC4_SET_ID(pCtx);
-   
-   return ippStsNoErr;
+    CopyBlock(pBuffer, pCtx, sizeof(IppsARCFourState));
+    RC4_SET_ID(pCtx);
+
+    return ippStsNoErr;
 }

@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_GetBufferSizePublicKey()
 //
@@ -51,26 +51,29 @@
 //    pBufferSize pointer to size of temporary buffer
 //    pKey        pointer to the key context
 *F*/
-IPPFUN(IppStatus, ippsRSA_GetBufferSizePublicKey,(int* pBufferSize, const IppsRSAPublicKeyState* pKey))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSA_GetBufferSizePublicKey, (int* pBufferSize,
+                                                   const IppsRSAPublicKeyState* pKey))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pKey), ippStsContextMatchErr);
-   IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
 
-   IPP_BAD_PTR1_RET(pBufferSize);
+    IPP_BAD_PTR1_RET(pBufferSize);
 
-   {
-      cpSize bitSizeN = RSA_PUB_KEY_BITSIZE_N(pKey);
-      cpSize nsN = BITS_BNU_CHUNK(bitSizeN);
+    {
+        cpSize bitSizeN = RSA_PUB_KEY_BITSIZE_N(pKey);
+        cpSize nsN      = BITS_BNU_CHUNK(bitSizeN);
 
-      gsMethod_RSA* m = getDefaultMethod_RSA_public(bitSizeN);
+        gsMethod_RSA* m = getDefaultMethod_RSA_public(bitSizeN);
 
-      cpSize bufferNum = ((nsN+1)*2)*2          /* (1)2 BN for RSA (enc)/sign schemes */
-                        + 1;                    /* BNU_CHUNK_T alignment */
-      bufferNum += m->bufferNumFunc(bitSizeN);  /* RSA public key operation */
+        cpSize bufferNum = ((nsN + 1) * 2) * 2   /* (1)2 BN for RSA (enc)/sign schemes */
+                           + 1;                  /* BNU_CHUNK_T alignment */
+        bufferNum += m->bufferNumFunc(bitSizeN); /* RSA public key operation */
 
-      *pBufferSize = bufferNum*(Ipp32s)sizeof(BNU_CHUNK_T);
+        *pBufferSize = bufferNum * (Ipp32s)sizeof(BNU_CHUNK_T);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

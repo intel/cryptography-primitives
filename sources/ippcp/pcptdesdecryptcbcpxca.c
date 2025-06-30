@@ -14,33 +14,40 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Decrypt byte data stream according to TDES (CBC mode)
-// 
+//
 //  Contents:
 //     DecyptCBC_TDES()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpdes.h"
 
-IPP_OWN_DEFN (void, DecryptCBC_TDES, (const Ipp64u* pSrc, Ipp64u* pDst, int nBlocks, const RoundKeyDES* pRKey[3], Ipp64u iv, const Ipp32u spbox[]))
+/* clang-format off */
+IPP_OWN_DEFN(void, DecryptCBC_TDES, (const Ipp64u* pSrc,
+                                     Ipp64u* pDst,
+                                     int nBlocks,
+                                     const RoundKeyDES* pRKey[3],
+                                     Ipp64u iv,
+                                     const Ipp32u spbox[]))
+/* clang-format on */
 {
-   while(nBlocks) {
-      Ipp64u tmp = *pSrc;
-      tmp = Cipher_DES(tmp, pRKey[0], spbox);
-      tmp = Cipher_DES(tmp, pRKey[1], spbox);
-      tmp = Cipher_DES(tmp, pRKey[2], spbox);
-      *pDst = tmp^iv;
-      iv = *pSrc;
-      pSrc++;
-      pDst++;
-      nBlocks--;
-   }
+    while (nBlocks) {
+        Ipp64u tmp = *pSrc;
+        tmp        = Cipher_DES(tmp, pRKey[0], spbox);
+        tmp        = Cipher_DES(tmp, pRKey[1], spbox);
+        tmp        = Cipher_DES(tmp, pRKey[2], spbox);
+        *pDst      = tmp ^ iv;
+        iv         = *pSrc;
+        pSrc++;
+        pDst++;
+        nBlocks--;
+    }
 }

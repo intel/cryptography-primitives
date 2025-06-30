@@ -41,39 +41,39 @@
 //#define DEF_DLP_BITSIZER    (160)
 
 struct _cpDLP {
-   Ipp32u            idCtx;      /* DL identifier  */
-   Ipp32u            flag;       /* complete flag  */
+    Ipp32u idCtx;              /* DL identifier  */
+    Ipp32u flag;               /* complete flag  */
 
-   int               bitSizeP;   /* DH bitsize (P) */
-   int               bitSizeR;   /* DH bitsize (R) */
+    int bitSizeP;              /* DH bitsize (P) */
+    int bitSizeR;              /* DH bitsize (R) */
 
-   int               method;     /* exponentiation method: binary/window */
-   gsModEngine*      pMontP0;    /* Montgomery P-engine */
-   gsModEngine*      pMontP1;    /* Montgomery P-engine (for multithread version) */
-   gsModEngine*      pMontR;     /* Montgomery R-engine */
+    int method;                /* exponentiation method: binary/window */
+    gsModEngine* pMontP0;      /* Montgomery P-engine */
+    gsModEngine* pMontP1;      /* Montgomery P-engine (for multithread version) */
+    gsModEngine* pMontR;       /* Montgomery R-engine */
 
-   IppsBigNumState*  pGenc;      /* P-encoded DL generator    */
-   IppsBigNumState*  pX;         /*           private key */
-   IppsBigNumState*  pYenc;      /* P-encoded public  key */
+    IppsBigNumState* pGenc;    /* P-encoded DL generator    */
+    IppsBigNumState* pX;       /*           private key */
+    IppsBigNumState* pYenc;    /* P-encoded public  key */
 
-   IppsPrimeState*   pPrimeGen;  /* prime generator     */
+    IppsPrimeState* pPrimeGen; /* prime generator     */
 
-   BNU_CHUNK_T*      pMeTable;   /* pre-computed multi-exp table */
+    BNU_CHUNK_T* pMeTable;     /* pre-computed multi-exp table */
 
-   BigNumNode*      pBnList;    /* BN  resource */
-   #if defined(_USE_WINDOW_EXP_)
-   BNU_CHUNK_T*      pBnuList0;  /* BNU resource */
-   BNU_CHUNK_T*      pBnuList1;  /* BNU resource (for multithread version) */
-   #endif
+    BigNumNode* pBnList;       /* BN  resource */
+#if defined(_USE_WINDOW_EXP_)
+    BNU_CHUNK_T* pBnuList0;    /* BNU resource */
+    BNU_CHUNK_T* pBnuList1;    /* BNU resource (for multithread version) */
+#endif
 };
 
 /*
 // Exponentiation method
 */
-#define BINARY       (0)
-#define WINDOW       ((BINARY)+1)
+#define BINARY (0)
+#define WINDOW ((BINARY) + 1)
 
-#define BNLISTSIZE   (8)        /* list size */
+#define BNLISTSIZE (8) /* list size */
 
 /*
 // Contetx Access Macros
@@ -85,27 +85,27 @@ struct _cpDLP {
 #define DLP_BITSIZER(ctx)  ((ctx)->bitSizeR)
 #define DLP_EXPMETHOD(ctx) ((ctx)->method)
 
-#define DLP_MONTP0(ctx)    ((ctx)->pMontP0)
-#define DLP_MONTP1(ctx)    ((ctx)->pMontP1)
-#define DLP_MONTR(ctx)     ((ctx)->pMontR)
+#define DLP_MONTP0(ctx) ((ctx)->pMontP0)
+#define DLP_MONTP1(ctx) ((ctx)->pMontP1)
+#define DLP_MONTR(ctx)  ((ctx)->pMontR)
 
-#define DLP_P(ctx)         (MOD_MODULUS(DLP_MONTP0((ctx))))
-#define DLP_R(ctx)         (MOD_MODULUS(DLP_MONTR((ctx))))
-#define DLP_GENC(ctx)      ((ctx)->pGenc)
-#define DLP_X(ctx)         ((ctx)->pX)
-#define DLP_YENC(ctx)      ((ctx)->pYenc)
+#define DLP_P(ctx)    (MOD_MODULUS(DLP_MONTP0((ctx))))
+#define DLP_R(ctx)    (MOD_MODULUS(DLP_MONTR((ctx))))
+#define DLP_GENC(ctx) ((ctx)->pGenc)
+#define DLP_X(ctx)    ((ctx)->pX)
+#define DLP_YENC(ctx) ((ctx)->pYenc)
 
-#define DLP_PRIMEGEN(ctx)  ((ctx)->pPrimeGen)
+#define DLP_PRIMEGEN(ctx) ((ctx)->pPrimeGen)
 
-#define DLP_METBL(ctx)     ((ctx)->pMeTable)
-#define DLP_BNCTX(ctx)     ((ctx)->pBnList)
+#define DLP_METBL(ctx) ((ctx)->pMeTable)
+#define DLP_BNCTX(ctx) ((ctx)->pBnList)
 #if defined(_USE_WINDOW_EXP_)
-#define DLP_BNUCTX0(ctx)   ((ctx)->pBnuList0)
-#define DLP_BNUCTX1(ctx)   ((ctx)->pBnuList1)
+#define DLP_BNUCTX0(ctx) ((ctx)->pBnuList0)
+#define DLP_BNUCTX1(ctx) ((ctx)->pBnuList1)
 #endif
 
-#define DLP_VALID_ID(ctx)  ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxDLP)
-#define DLP_COMPLETE(ctx)  (DLP_FLAG((ctx))==(IppDLPkeyP|IppDLPkeyR|IppDLPkeyG))
+#define DLP_VALID_ID(ctx) ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxDLP)
+#define DLP_COMPLETE(ctx) (DLP_FLAG((ctx)) == (IppDLPkeyP | IppDLPkeyR | IppDLPkeyG))
 
 /* alignment */
 #define DLP_ALIGNMENT ((int)(sizeof(void*)))
@@ -114,8 +114,8 @@ struct _cpDLP {
 #define DLP_MONT_POOL_LENGTH (6)
 
 #define cpPackDLPCtx OWNAPI(cpPackDLPCtx)
-   IPP_OWN_DECL (void, cpPackDLPCtx, (const IppsDLPState* pDLP, Ipp8u* pBuffer))
+IPP_OWN_DECL(void, cpPackDLPCtx, (const IppsDLPState* pDLP, Ipp8u* pBuffer))
 #define cpUnpackDLPCtx OWNAPI(cpUnpackDLPCtx)
-   IPP_OWN_DECL (void, cpUnpackDLPCtx, (const Ipp8u* pBuffer, IppsDLPState* pDLP))
+IPP_OWN_DECL(void, cpUnpackDLPCtx, (const Ipp8u* pBuffer, IppsDLPState* pDLP))
 
 #endif /* _PCP_DLP_H */

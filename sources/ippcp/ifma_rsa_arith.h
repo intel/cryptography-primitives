@@ -23,9 +23,10 @@
 
 #include "owncp.h"
 
-#if(_IPP32E>=_IPP32E_K1)
+#if (_IPP32E >= _IPP32E_K1)
 
 /* Almost Montgomery Multiplication / Squaring */
+/* clang-format off */
 #define ifma256_amm52x20 OWNAPI(ifma256_amm52x20)
   IPP_OWN_DECL(void, ifma256_amm52x20, (Ipp64u out[20], const Ipp64u a[20], const Ipp64u b[20], const Ipp64u m[20], Ipp64u k0))
 #define ifma256_ams52x20 OWNAPI(ifma256_ams52x20)
@@ -38,12 +39,13 @@
   IPP_OWN_DECL(void, ifma256_amm52x40, (Ipp64u out[40], const Ipp64u a[40], const Ipp64u b[40], const Ipp64u m[40], Ipp64u k0))
 #define ifma256_ams52x40 OWNAPI(ifma256_ams52x40)
   IPP_OWN_DECL(void, ifma256_ams52x40, (Ipp64u out[40], const Ipp64u a[40], const Ipp64u m[40], Ipp64u k0))
-
+/* clang-format on */
 
 /*
  * Dual Almost Montgomery Multiplication / Squaring
  * (two independent operations and data arrays)
  */
+/* clang-format off */
 #define ifma256_amm52x20_dual OWNAPI(ifma256_amm52x20_dual)
   IPP_OWN_DECL(void, ifma256_amm52x20_dual, (Ipp64u out[2][20], const Ipp64u a[2][20], const Ipp64u b[2][20], const Ipp64u m[2][20], const Ipp64u k0[2]))
 #define ifma256_ams52x20_dual OWNAPI(ifma256_ams52x20_dual)
@@ -56,41 +58,44 @@
   IPP_OWN_DECL(void, ifma256_amm52x40_dual, (Ipp64u out[2][40], const Ipp64u a[2][40], const Ipp64u b[2][40], const Ipp64u m[2][40], const Ipp64u k0[2]))
 #define ifma256_ams52x40_dual OWNAPI(ifma256_ams52x40_dual)
   IPP_OWN_DECL(void, ifma256_ams52x40_dual, (Ipp64u out[2][40], const Ipp64u a[2][40], const Ipp64u m[2][40], const Ipp64u k0[2]))
-
+/* clang-format on */
 
 /* Exponentiation */
 #define ifma256_exp52x20 OWNAPI(ifma256_exp52x20)
-  IPP_OWN_DECL (void, ifma256_exp52x20, (Ipp64u *out,
-                                   const Ipp64u *base,
-                                   const Ipp64u *exp,
-                                   const Ipp64u *modulus,
-                                   const Ipp64u *toMont,
-                                   const Ipp64u k0))
+/* clang-format off */
+IPP_OWN_DECL (void, ifma256_exp52x20, (Ipp64u* out,
+                                       const Ipp64u* base,
+                                       const Ipp64u* exp,
+                                       const Ipp64u* modulus,
+                                       const Ipp64u* toMont,
+                                       const Ipp64u k0))
 
 /* Dual exponentiation */
 #define ifma256_exp52x20_dual OWNAPI(ifma256_exp52x20_dual)
-  IPP_OWN_DECL (void, ifma256_exp52x20_dual, (Ipp64u out    [2][20],
-                                        const Ipp64u base   [2][20],
-                                        const Ipp64u *exp   [2], // 2x16
-                                        const Ipp64u modulus[2][20],
-                                        const Ipp64u toMont [2][20],
-                                        const Ipp64u k0     [2]))
+IPP_OWN_DECL (void, ifma256_exp52x20_dual, (Ipp64u out [2][20],
+                                            const Ipp64u base [2][20],
+                                            const Ipp64u* exp [2], // 2x16
+                                            const Ipp64u modulus[2][20],
+                                            const Ipp64u toMont [2][20],
+                                            const Ipp64u k0 [2]))
 
 #define ifma256_exp52x30_dual OWNAPI(ifma256_exp52x30_dual)
-  IPP_OWN_DECL (void, ifma256_exp52x30_dual, (Ipp64u out    [2][32],
-                                        const Ipp64u base   [2][32],
-                                        const Ipp64u *exp   [2], // 2x24
-                                        const Ipp64u modulus[2][32],
-                                        const Ipp64u toMont [2][32],
-                                        const Ipp64u k0     [2]))
+IPP_OWN_DECL (void, ifma256_exp52x30_dual, (Ipp64u out [2][32],
+                                            const Ipp64u base [2][32],
+                                            const Ipp64u* exp [2], // 2x24
+                                            const Ipp64u modulus[2][32],
+                                            const Ipp64u toMont [2][32],
+                                            const Ipp64u k0 [2]))
 
 #define ifma256_exp52x40_dual OWNAPI(ifma256_exp52x40_dual)
-  IPP_OWN_DECL (void, ifma256_exp52x40_dual, (Ipp64u out    [2][40],
-                                        const Ipp64u base   [2][40],
-                                        const Ipp64u *exp   [2], // 2x32
-                                        const Ipp64u modulus[2][40],
-                                        const Ipp64u toMont [2][40],
-                                        const Ipp64u k0     [2]))
+IPP_OWN_DECL (void, ifma256_exp52x40_dual, (Ipp64u out [2][40],
+                                            const Ipp64u base [2][40],
+                                            const Ipp64u* exp [2], // 2x32
+                                            const Ipp64u modulus[2][40],
+                                            const Ipp64u toMont [2][40],
+                                            const Ipp64u k0 [2]))
+
+/* clang-format on */
 
 #endif // #if(_IPP32E>=_IPP32E_K1)
 #endif // #ifndef _IFMA_RSA_ARITH_H_

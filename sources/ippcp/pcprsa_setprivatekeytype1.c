@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_SetPrivateKeyType1()
 //
@@ -56,33 +56,46 @@
 //    pPrivateExp    pointer to public exponent (D)
 //    pKey           pointer to the key context
 *F*/
-IPPFUN(IppStatus, ippsRSA_SetPrivateKeyType1,(const IppsBigNumState* pModulus,
-                                              const IppsBigNumState* pPrivateExp,
-                                              IppsRSAPrivateKeyState* pKey))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSA_SetPrivateKeyType1, (const IppsBigNumState* pModulus,
+                                               const IppsBigNumState* pPrivateExp,
+                                               IppsRSAPrivateKeyState* pKey))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET(!RSA_PRV_KEY1_VALID_ID(pKey), ippStsContextMatchErr);
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET(!RSA_PRV_KEY1_VALID_ID(pKey), ippStsContextMatchErr);
 
-   IPP_BAD_PTR1_RET(pModulus);
-   IPP_BADARG_RET(!BN_VALID_ID(pModulus), ippStsContextMatchErr);
-   IPP_BADARG_RET(!(0 < cpBN_tst(pModulus)), ippStsOutOfRangeErr);
-   IPP_BADARG_RET(BITSIZE_BNU(BN_NUMBER(pModulus), BN_SIZE(pModulus)) > RSA_PRV_KEY_MAXSIZE_N(pKey), ippStsSizeErr);
+    IPP_BAD_PTR1_RET(pModulus);
+    IPP_BADARG_RET(!BN_VALID_ID(pModulus), ippStsContextMatchErr);
+    IPP_BADARG_RET(!(0 < cpBN_tst(pModulus)), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(BITSIZE_BNU(BN_NUMBER(pModulus), BN_SIZE(pModulus)) >
+                       RSA_PRV_KEY_MAXSIZE_N(pKey),
+                   ippStsSizeErr);
 
-   IPP_BAD_PTR1_RET(pPrivateExp);
-   IPP_BADARG_RET(!BN_VALID_ID(pPrivateExp), ippStsContextMatchErr);
-   IPP_BADARG_RET(!(0 < cpBN_tst(pPrivateExp)), ippStsOutOfRangeErr);
-   IPP_BADARG_RET(BITSIZE_BNU(BN_NUMBER(pPrivateExp), BN_SIZE(pPrivateExp)) > RSA_PRV_KEY_MAXSIZE_D(pKey), ippStsSizeErr);
+    IPP_BAD_PTR1_RET(pPrivateExp);
+    IPP_BADARG_RET(!BN_VALID_ID(pPrivateExp), ippStsContextMatchErr);
+    IPP_BADARG_RET(!(0 < cpBN_tst(pPrivateExp)), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(BITSIZE_BNU(BN_NUMBER(pPrivateExp), BN_SIZE(pPrivateExp)) >
+                       RSA_PRV_KEY_MAXSIZE_D(pKey),
+                   ippStsSizeErr);
 
-   {
-      /* store D */
-      ZEXPAND_COPY_BNU(RSA_PRV_KEY_D(pKey), BITS_BNU_CHUNK(RSA_PRV_KEY_MAXSIZE_D(pKey)), BN_NUMBER(pPrivateExp), BN_SIZE(pPrivateExp));
+    {
+        /* store D */
+        ZEXPAND_COPY_BNU(RSA_PRV_KEY_D(pKey),
+                         BITS_BNU_CHUNK(RSA_PRV_KEY_MAXSIZE_D(pKey)),
+                         BN_NUMBER(pPrivateExp),
+                         BN_SIZE(pPrivateExp));
 
-      /* setup montgomery engine */
-      gsModEngineInit(RSA_PRV_KEY_NMONT(pKey), (Ipp32u*)BN_NUMBER(pModulus), cpBN_bitsize(pModulus), MOD_ENGINE_RSA_POOL_SIZE, gsModArithRSA());
+        /* setup montgomery engine */
+        gsModEngineInit(RSA_PRV_KEY_NMONT(pKey),
+                        (Ipp32u*)BN_NUMBER(pModulus),
+                        cpBN_bitsize(pModulus),
+                        MOD_ENGINE_RSA_POOL_SIZE,
+                        gsModArithRSA());
 
-      RSA_PRV_KEY_BITSIZE_N(pKey) = cpBN_bitsize(pModulus);
-      RSA_PRV_KEY_BITSIZE_D(pKey) = cpBN_bitsize(pPrivateExp);
+        RSA_PRV_KEY_BITSIZE_N(pKey) = cpBN_bitsize(pModulus);
+        RSA_PRV_KEY_BITSIZE_D(pKey) = cpBN_bitsize(pPrivateExp);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -46,16 +46,16 @@
 *F*/
 IPPFUN(IppStatus, ippsCmpZero_BN, (const IppsBigNumState* pBN, Ipp32u* pResult))
 {
-   IPP_BAD_PTR2_RET(pBN, pResult);
+    IPP_BAD_PTR2_RET(pBN, pResult);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
 
-   if(BN_SIZE(pBN)==1 && BN_NUMBER(pBN)[0]==0)
-      *pResult = IS_ZERO;
-   else if (BN_SIGN(pBN)==ippBigNumPOS)
-      *pResult = GREATER_THAN_ZERO;
-   else if (BN_SIGN(pBN)==ippBigNumNEG)
-      *pResult = LESS_THAN_ZERO;
+    if (BN_SIZE(pBN) == 1 && BN_NUMBER(pBN)[0] == 0)
+        *pResult = IS_ZERO;
+    else if (BN_SIGN(pBN) == ippBigNumPOS)
+        *pResult = GREATER_THAN_ZERO;
+    else if (BN_SIGN(pBN) == ippBigNumNEG)
+        *pResult = LESS_THAN_ZERO;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

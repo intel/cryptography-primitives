@@ -44,30 +44,28 @@
 //
 *F*/
 
-IPP_OWN_DEFN (cpSize, cpFromOctStr_BNU32, (Ipp32u* pBNU, const Ipp8u* pOctStr, cpSize strLen))
+IPP_OWN_DEFN(cpSize, cpFromOctStr_BNU32, (Ipp32u * pBNU, const Ipp8u* pOctStr, cpSize strLen))
 {
-   cpSize bnuSize=0;
-   *pBNU = 0;
+    cpSize bnuSize = 0;
+    *pBNU          = 0;
 
-   /* start from the end of string */
-   for(; strLen>=4; bnuSize++,strLen-=4) {
-      /* pack 4 bytes into single Ipp32u value*/
-      *pBNU++ = (Ipp32u)(( pOctStr[strLen-4]<<(8*3) )
-               +( pOctStr[strLen-3]<<(8*2) )
-               +( pOctStr[strLen-2]<<(8*1) )
-               +  pOctStr[strLen-1]);
-   }
+    /* start from the end of string */
+    for (; strLen >= 4; bnuSize++, strLen -= 4) {
+        /* pack 4 bytes into single Ipp32u value*/
+        *pBNU++ = (Ipp32u)((pOctStr[strLen - 4] << (8 * 3)) + (pOctStr[strLen - 3] << (8 * 2)) +
+                           (pOctStr[strLen - 2] << (8 * 1)) + pOctStr[strLen - 1]);
+    }
 
-   /* convert the beginning of the string */
-   if(strLen) {
-      Ipp32u x;
-      for(x=0; strLen>0; strLen--) {
-         Ipp32u d = *pOctStr++;
-         x = x*256 + d;
-       }
-       *pBNU++ = x;
-       bnuSize++;
-   }
+    /* convert the beginning of the string */
+    if (strLen) {
+        Ipp32u x;
+        for (x = 0; strLen > 0; strLen--) {
+            Ipp32u d = *pOctStr++;
+            x        = x * 256 + d;
+        }
+        *pBNU++ = x;
+        bnuSize++;
+    }
 
-   return bnuSize? bnuSize : 1;
+    return bnuSize ? bnuSize : 1;
 }

@@ -53,30 +53,35 @@
 //    pInv  result BigNum
 //
 *F*/
-IPPFUN(IppStatus, ippsModInv_BN, (IppsBigNumState* pA, IppsBigNumState* pM, IppsBigNumState* pInv) )
+IPPFUN(IppStatus, ippsModInv_BN, (IppsBigNumState * pA, IppsBigNumState* pM, IppsBigNumState* pInv))
 {
-   IPP_BAD_PTR3_RET(pA, pM, pInv);
+    IPP_BAD_PTR3_RET(pA, pM, pInv);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pA), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pM), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pInv), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pM), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pInv), ippStsContextMatchErr);
 
     IPP_BADARG_RET(BN_ROOM(pInv) < BN_SIZE(pM), ippStsOutOfRangeErr);
-    IPP_BADARG_RET(BN_NEGATIVE(pA) || (BN_SIZE(pA)==1 && BN_NUMBER(pA)[0]==0), ippStsBadArgErr);
-    IPP_BADARG_RET(BN_NEGATIVE(pM) || (BN_SIZE(pM)==1 && BN_NUMBER(pM)[0]==0), ippStsBadModulusErr);
-    IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pA), BN_SIZE(pA), BN_NUMBER(pM), BN_SIZE(pM)) >= 0, ippStsScaleRangeErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pA) || (BN_SIZE(pA) == 1 && BN_NUMBER(pA)[0] == 0), ippStsBadArgErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pM) || (BN_SIZE(pM) == 1 && BN_NUMBER(pM)[0] == 0),
+                   ippStsBadModulusErr);
+    IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pA), BN_SIZE(pA), BN_NUMBER(pM), BN_SIZE(pM)) >= 0,
+                   ippStsScaleRangeErr);
 
-   {
-      cpSize nsR = cpModInv_BNU(BN_NUMBER(pInv),
-                                BN_NUMBER(pA), BN_SIZE(pA),
-                                BN_NUMBER(pM), BN_SIZE(pM),
-                                BN_BUFFER(pInv), BN_BUFFER(pA), BN_BUFFER(pM));
-      if(nsR) {
-         BN_SIGN(pInv) = ippBigNumPOS;
-         BN_SIZE(pInv) = nsR;
-         return ippStsNoErr;
-      }
-      else
-         return ippStsBadModulusErr;
+    {
+        cpSize nsR = cpModInv_BNU(BN_NUMBER(pInv),
+                                  BN_NUMBER(pA),
+                                  BN_SIZE(pA),
+                                  BN_NUMBER(pM),
+                                  BN_SIZE(pM),
+                                  BN_BUFFER(pInv),
+                                  BN_BUFFER(pA),
+                                  BN_BUFFER(pM));
+        if (nsR) {
+            BN_SIGN(pInv) = ippBigNumPOS;
+            BN_SIZE(pInv) = nsR;
+            return ippStsNoErr;
+        } else
+            return ippStsBadModulusErr;
     }
 }

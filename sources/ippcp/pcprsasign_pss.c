@@ -14,15 +14,15 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSASSA-PSS
-// 
+//
 //     Signatire Scheme with Appendix Signatute Generation
 //     (Ppobabilistic Signature Scheme)
-// 
+//
 //  Contents:
 //        ippsRSASign_PSS()
 //
@@ -72,101 +72,107 @@
 //    hashAlg     hash ID
 //    pBuffer     pointer to scratch buffer
 *F*/
-IPPFUN(IppStatus, ippsRSASign_PSS,(const Ipp8u* pMsg,  int msgLen,
-                                   const Ipp8u* pSalt, int saltLen,
-                                         Ipp8u* pSign,
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSASign_PSS,(const Ipp8u* pMsg,
+                                   int msgLen,
+                                   const Ipp8u* pSalt,
+                                   int saltLen,
+                                   Ipp8u* pSign,
                                    const IppsRSAPrivateKeyState* pPrvKey,
-                                   const IppsRSAPublicKeyState*  pPubKey,
-                                         IppHashAlgId hashAlg,
-                                         Ipp8u* pScratchBuffer))
+                                   const IppsRSAPublicKeyState* pPubKey,
+                                   IppHashAlgId hashAlg,
+                                   Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   /* test hash algorithm ID */
-   hashAlg = cpValidHashAlg(hashAlg);
-   IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
+    /* test hash algorithm ID */
+    hashAlg = cpValidHashAlg(hashAlg);
+    IPP_BADARG_RET(ippHashAlg_Unknown == hashAlg, ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
-   /* test message length */
-   IPP_BADARG_RET((msgLen<0), ippStsLengthErr);
-   /* test message pointer */
-   IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
+    /* test message length */
+    IPP_BADARG_RET((msgLen < 0), ippStsLengthErr);
+    /* test message pointer */
+    IPP_BADARG_RET((msgLen && !pMsg), ippStsNullPtrErr);
 
-   /* test data pointer */
-   IPP_BAD_PTR1_RET(pSign);
+    /* test data pointer */
+    IPP_BAD_PTR1_RET(pSign);
 
-   /* test salt length and salt pointer */
-   IPP_BADARG_RET(saltLen<0, ippStsLengthErr);
-   IPP_BADARG_RET((saltLen && !pSalt), ippStsNullPtrErr);
+    /* test salt length and salt pointer */
+    IPP_BADARG_RET(saltLen < 0, ippStsLengthErr);
+    IPP_BADARG_RET((saltLen && !pSalt), ippStsNullPtrErr);
 
-   /* test private key context */
-   IPP_BAD_PTR2_RET(pPrvKey, pScratchBuffer);
-   IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(pPrvKey), ippStsContextMatchErr);
-   IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pPrvKey), ippStsIncompleteContextErr);
+    /* test private key context */
+    IPP_BAD_PTR2_RET(pPrvKey, pScratchBuffer);
+    IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(pPrvKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pPrvKey), ippStsIncompleteContextErr);
 
-   /* use public key context if defined */
-   if(pPubKey) {
-      IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pPubKey), ippStsContextMatchErr);
-      IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pPubKey), ippStsIncompleteContextErr);
-   }
+    /* use public key context if defined */
+    if (pPubKey) {
+        IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pPubKey), ippStsContextMatchErr);
+        IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pPubKey), ippStsIncompleteContextErr);
+    }
 
-   {
-      Ipp8u hashMsg[MAX_HASH_SIZE];
+    {
+        Ipp8u hashMsg[MAX_HASH_SIZE];
 
-      /* hash length */
-      int hashLen = cpHashSize(hashAlg);
+        /* hash length */
+        int hashLen = cpHashSize(hashAlg);
 
-      /* size of RSA modulus in bytes and chunks */
-      cpSize rsaBits = RSA_PRV_KEY_BITSIZE_N(pPrvKey);
-      cpSize k = BITS2WORD8_SIZE(rsaBits);
-      cpSize nsN = BITS_BNU_CHUNK(rsaBits);
+        /* size of RSA modulus in bytes and chunks */
+        cpSize rsaBits = RSA_PRV_KEY_BITSIZE_N(pPrvKey);
+        cpSize k       = BITS2WORD8_SIZE(rsaBits);
+        cpSize nsN     = BITS_BNU_CHUNK(rsaBits);
 
-      /* align buffer */
-      BNU_CHUNK_T* pBuffer = (BNU_CHUNK_T*)(IPP_ALIGNED_PTR(pScratchBuffer, (int)sizeof(BNU_CHUNK_T)) );
+        /* align buffer */
+        BNU_CHUNK_T* pBuffer =
+            (BNU_CHUNK_T*)(IPP_ALIGNED_PTR(pScratchBuffer, (int)sizeof(BNU_CHUNK_T)));
 
-      /* temporary BNs */
-      __ALIGN8 IppsBigNumState bnC;
-      __ALIGN8 IppsBigNumState bnP;
+        /* temporary BNs */
+        __ALIGN8 IppsBigNumState bnC;
+        __ALIGN8 IppsBigNumState bnP;
 
-      /* message presentative size */
-      int emBits = rsaBits-1;
-      int emLen  = BITS2WORD8_SIZE(emBits);
+        /* message presentative size */
+        int emBits = rsaBits - 1;
+        int emLen  = BITS2WORD8_SIZE(emBits);
 
-      /* size of padding string (PS) */
-      int psLen = emLen -hashLen -saltLen -2;
+        /* size of padding string (PS) */
+        int psLen = emLen - hashLen - saltLen - 2;
 
-      /* test size consistence */
-      if(0 > psLen)
-         IPP_ERROR_RET(ippStsLengthErr);
+        /* test size consistence */
+        if (0 > psLen)
+            IPP_ERROR_RET(ippStsLengthErr);
 
-      /* compute hash of the message */
-      ippsHashMessage(pMsg, msgLen, hashMsg, hashAlg);
+        /* compute hash of the message */
+        ippsHashMessage(pMsg, msgLen, hashMsg, hashAlg);
 
-      /* make BNs */
-      BN_Make(pBuffer, pBuffer+nsN+1, nsN, &bnC);
-      pBuffer += (nsN+1)*2;
-      BN_Make(pBuffer, pBuffer+nsN+1, nsN, &bnP);
-      pBuffer += (nsN+1)*2;
+        /* make BNs */
+        BN_Make(pBuffer, pBuffer + nsN + 1, nsN, &bnC);
+        pBuffer += (nsN + 1) * 2;
+        BN_Make(pBuffer, pBuffer + nsN + 1, nsN, &bnP);
+        pBuffer += (nsN + 1) * 2;
 
-      /*
+        /*
       // EMSA-PSS encoding
       */
-      {
-         Ipp8u* pM  = (Ipp8u*)BN_NUMBER(&bnP);
-         Ipp8u* pEM = pSign;
-         Ipp8u* pDB = pSign;
-         int dbLen = emLen-hashLen-1;
-         Ipp8u* pH  = pSign+dbLen;
+        {
+            Ipp8u* pM  = (Ipp8u*)BN_NUMBER(&bnP);
+            Ipp8u* pEM = pSign;
+            Ipp8u* pDB = pSign;
+            int dbLen  = emLen - hashLen - 1;
+            Ipp8u* pH  = pSign + dbLen;
 
-         /* construct message M'
+            /* construct message M'
          // M' = (00 00 00 00 00 00 00 00) || mHash || salt
          // where:
          //    mHash = HASH(pMsg)
          */
-         PadBlock(0, pM, 8);
-         CopyBlock(hashMsg, pM+8, hashLen);
-         CopyBlock(pSalt, pM+8+hashLen, saltLen);
+            PadBlock(0, pM, 8);
+            CopyBlock(hashMsg, pM + 8, hashLen);
+            CopyBlock(pSalt, pM + 8 + hashLen, saltLen);
 
-         /* construct EM
+            /* construct EM
          // EM = maskedDB || H || 0xBC
          // where:
          //    H = HASH(M')
@@ -177,43 +183,43 @@ IPPFUN(IppStatus, ippsRSASign_PSS,(const Ipp8u* pMsg,  int msgLen,
          // by other words
          // EM = (dbMask ^ (PS || 0x01 || salt)) || HASH(M) || 0xBC
          */
-         pEM[emLen-1] = 0xBC;                               /* tail octet */
-         ippsHashMessage(pM, 8+hashLen+saltLen, pH, hashAlg); /* H = HASH(M) */
-         ippsMGF(pH, hashLen, pDB, dbLen, hashAlg);           /* dbMask = MGF(H) */
+            pEM[emLen - 1] = 0xBC;                                   /* tail octet */
+            ippsHashMessage(pM, 8 + hashLen + saltLen, pH, hashAlg); /* H = HASH(M) */
+            ippsMGF(pH, hashLen, pDB, dbLen, hashAlg);               /* dbMask = MGF(H) */
 
-         XorBlock(pDB+psLen+1, pSalt, pDB+psLen+1, saltLen);
-         pDB[psLen] ^= 0x01;
+            XorBlock(pDB + psLen + 1, pSalt, pDB + psLen + 1, saltLen);
+            pDB[psLen] ^= 0x01;
 
-         /* make sure that top 8*emLen-emBits bits are clear */
-         pDB[0] &= MAKEMASK32(8-8*emLen+emBits);
-      }
+            /* make sure that top 8*emLen-emBits bits are clear */
+            pDB[0] &= MAKEMASK32(8 - 8 * emLen + emBits);
+        }
 
-      /*
+        /*
       // private-key operation
       */
-      ippsSetOctString_BN(pSign, emLen, &bnC);
+        ippsSetOctString_BN(pSign, emLen, &bnC);
 
-      if(RSA_PRV_KEY1_VALID_ID(pPrvKey))
-         gsRSAprv_cipher(&bnP, &bnC, pPrvKey, pBuffer);
-      else
-         gsRSAprv_cipher_crt(&bnP, &bnC, pPrvKey, pBuffer);
+        if (RSA_PRV_KEY1_VALID_ID(pPrvKey))
+            gsRSAprv_cipher(&bnP, &bnC, pPrvKey, pBuffer);
+        else
+            gsRSAprv_cipher_crt(&bnP, &bnC, pPrvKey, pBuffer);
 
-      ippsGetOctString_BN(pSign, k, &bnP);
+        ippsGetOctString_BN(pSign, k, &bnP);
 
-      /* no check requested */
-      if(!pPubKey)
-         return ippStsNoErr;
-
-      /* check the result before send it out (fault attack mitigation) */
-      else {
-         gsRSApub_cipher(&bnP, &bnP, pPubKey, pBuffer);
-         if(0==cpBN_cmp(&bnP, &bnC))
+        /* no check requested */
+        if (!pPubKey)
             return ippStsNoErr;
-         /* discard signature if check failed */
-         else {
-            PadBlock(0, pSign, k);
-            return ippStsErr;
-         }
-      }
-   }
+
+        /* check the result before send it out (fault attack mitigation) */
+        else {
+            gsRSApub_cipher(&bnP, &bnP, pPubKey, pBuffer);
+            if (0 == cpBN_cmp(&bnP, &bnC))
+                return ippStsNoErr;
+            /* discard signature if check failed */
+            else {
+                PadBlock(0, pSign, k);
+                return ippStsErr;
+            }
+        }
+    }
 }

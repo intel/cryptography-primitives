@@ -20,10 +20,17 @@
 #include "owndefs.h"
 #include "owncp.h"
 
-#if (_IPP32E>=_IPP32E_Y8)
+#if (_IPP32E >= _IPP32E_Y8)
 
 #define aes_cfb16_enc_aesni_mb4 OWNAPI(aes_cfb16_enc_aesni_mb4)
-    IPP_OWN_DECL (void, aes_cfb16_enc_aesni_mb4, (const Ipp8u* const source_pa[4], Ipp8u* const dst_pa[4], const int len[4], const int num_of_rounds, const Ipp32u* enc_keys[4], const Ipp8u* pIV[4]))
+/* clang-format off */
+IPP_OWN_DECL(void, aes_cfb16_enc_aesni_mb4, (const Ipp8u* const source_pa[4],
+                                             Ipp8u* const dst_pa[4],
+                                             const int len[4],
+                                             const int num_of_rounds,
+                                             const Ipp32u* enc_keys[4],
+                                             const Ipp8u* pIV[4]))
+/* clang-format on */
 
 #endif
 

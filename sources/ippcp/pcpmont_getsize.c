@@ -44,16 +44,15 @@
 //
 *F*/
 
-IPP_OWN_DEFN (IppStatus, cpMontGetSize, (cpSize maxLen32, int poolLength, cpSize* pCtxSize))
+IPP_OWN_DEFN(IppStatus, cpMontGetSize, (cpSize maxLen32, int poolLength, cpSize* pCtxSize))
 {
-   {
-      int size = 0;
-      int maxBitSize = maxLen32 << 5;
-      gsModEngineGetSize(maxBitSize, poolLength, &size);
+    {
+        int size       = 0;
+        int maxBitSize = maxLen32 << 5;
+        gsModEngineGetSize(maxBitSize, poolLength, &size);
 
-      *pCtxSize = (Ipp32s)sizeof(IppsMontState)
-               + (cpSize)size;
+        *pCtxSize = (Ipp32s)sizeof(IppsMontState) + (cpSize)size;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

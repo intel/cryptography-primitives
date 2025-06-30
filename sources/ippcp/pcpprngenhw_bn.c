@@ -54,39 +54,39 @@
 //    nBits    number of bits be requested
 //    pCtx     pointer to the context
 *F*/
-IPPFUN(IppStatus, ippsPRNGenRDRAND_BN,(IppsBigNumState* pRand, int nBits, void* pCtx))
+IPPFUN(IppStatus, ippsPRNGenRDRAND_BN, (IppsBigNumState * pRand, int nBits, void* pCtx))
 {
-   /* test random BN */
-   IPP_BAD_PTR1_RET(pRand);
-   IPP_BADARG_RET(!BN_VALID_ID(pRand), ippStsContextMatchErr);
+    /* test random BN */
+    IPP_BAD_PTR1_RET(pRand);
+    IPP_BADARG_RET(!BN_VALID_ID(pRand), ippStsContextMatchErr);
 
-   /* test sizes */
-   IPP_BADARG_RET(nBits< 1, ippStsLengthErr);
-   IPP_BADARG_RET(nBits> BN_ROOM(pRand)*BNU_CHUNK_BITS, ippStsLengthErr);
+    /* test sizes */
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
+    IPP_BADARG_RET(nBits > BN_ROOM(pRand) * BNU_CHUNK_BITS, ippStsLengthErr);
 
-   IPP_UNREFERENCED_PARAMETER(pCtx);
+    IPP_UNREFERENCED_PARAMETER(pCtx);
 
-   #if ((_IPP>=_IPP_G9) || (_IPP32E>=_IPP32E_E9))
-   if( IsFeatureEnabled(ippCPUID_RDRAND) ) {
-      BNU_CHUNK_T* pRandBN = BN_NUMBER(pRand);
-      cpSize rndSize = BITS_BNU_CHUNK(nBits);
-      BNU_CHUNK_T rndMask = MASK_BNU_CHUNK(nBits);
+#if ((_IPP >= _IPP_G9) || (_IPP32E >= _IPP32E_E9))
+    if (IsFeatureEnabled(ippCPUID_RDRAND)) {
+        BNU_CHUNK_T* pRandBN = BN_NUMBER(pRand);
+        cpSize rndSize       = BITS_BNU_CHUNK(nBits);
+        BNU_CHUNK_T rndMask  = MASK_BNU_CHUNK(nBits);
 
-      if(cpRandHW_buffer((Ipp32u*)pRandBN, rndSize*(Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)))) {
-         pRandBN[rndSize-1] &= rndMask;
+        if (cpRandHW_buffer((Ipp32u*)pRandBN,
+                            rndSize * (Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)))) {
+            pRandBN[rndSize - 1] &= rndMask;
 
-         FIX_BNU(pRandBN, rndSize);
-         BN_SIZE(pRand) = rndSize;
-         BN_SIGN(pRand) = ippBigNumPOS;
+            FIX_BNU(pRandBN, rndSize);
+            BN_SIZE(pRand) = rndSize;
+            BN_SIGN(pRand) = ippBigNumPOS;
 
-         return ippStsNoErr;
-      }
-      else
-         return ippStsErr;
-   }
+            return ippStsNoErr;
+        } else
+            return ippStsErr;
+    }
 
-   /* unsupported rdrand instruction */
-   else
-   #endif
-      IPP_ERROR_RET(ippStsNotSupportedModeErr);
+    /* unsupported rdrand instruction */
+    else
+#endif
+        IPP_ERROR_RET(ippStsNotSupportedModeErr);
 }

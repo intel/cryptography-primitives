@@ -43,33 +43,32 @@
 //    nBits       size of shift in bits
 *F*/
 
-IPP_OWN_DEFN (cpSize, cpLSR_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA, cpSize nBits))
+IPP_OWN_DEFN(cpSize, cpLSR_BNU, (BNU_CHUNK_T * pR, const BNU_CHUNK_T* pA, cpSize nsA, cpSize nBits))
 {
-   cpSize nw = nBits/BNU_CHUNK_BITS;
-   cpSize n;
+    cpSize nw = nBits / BNU_CHUNK_BITS;
+    cpSize n;
 
-   pA += nw;
-   nsA -= nw;
+    pA += nw;
+    nsA -= nw;
 
-   nBits %= BNU_CHUNK_BITS;
-   if(nBits) {
-      BNU_CHUNK_T hi;
-      BNU_CHUNK_T lo = pA[0];
+    nBits %= BNU_CHUNK_BITS;
+    if (nBits) {
+        BNU_CHUNK_T hi;
+        BNU_CHUNK_T lo = pA[0];
 
-      for(n=0; n<(nsA-1); n++) {
-         hi = pA[n+1];
-         pR[n] = (lo>>nBits) | (hi<<(BNU_CHUNK_BITS-nBits));
-         lo = hi;
-      }
-      pR[nsA-1] = (lo>>nBits);
-   }
-   else {
-      for(n=0; n<nsA; n++)
-         pR[n] = pA[n];
-   }
+        for (n = 0; n < (nsA - 1); n++) {
+            hi    = pA[n + 1];
+            pR[n] = (lo >> nBits) | (hi << (BNU_CHUNK_BITS - nBits));
+            lo    = hi;
+        }
+        pR[nsA - 1] = (lo >> nBits);
+    } else {
+        for (n = 0; n < nsA; n++)
+            pR[n] = pA[n];
+    }
 
-   for(n=0; n<nw; n++)
-      pR[nsA+n] = 0;
+    for (n = 0; n < nw; n++)
+        pR[nsA + n] = 0;
 
-   return nsA+nw;
+    return nsA + nw;
 }

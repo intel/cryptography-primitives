@@ -74,281 +74,307 @@
 *F*/
 #define MAXLOOP (4096)
 
-IPPFUN(IppStatus, ippsDLPGenerateDH,(const IppsBigNumState* pSeedIn,
-                                     int nTrials, IppsDLPState* pDL,
-                                     IppsBigNumState* pSeedOut, int* pCounter,
-                                     IppBitSupplier rndFunc, void* pRndParam))
+/* clang-format off */
+IPPFUN(IppStatus, ippsDLPGenerateDH, (const IppsBigNumState* pSeedIn,
+                                      int nTrials,
+                                      IppsDLPState* pDL,
+                                      IppsBigNumState* pSeedOut,
+                                      int* pCounter,
+                                      IppBitSupplier rndFunc,
+                                      void* pRndParam))
+/* clang-format on */
 {
-   /* test DL context */
-   IPP_BAD_PTR1_RET(pDL);
-   IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
+    /* test DL context */
+    IPP_BAD_PTR1_RET(pDL);
+    IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
 
-   /* test DL sizes */
-   IPP_BADARG_RET(MIN_DLPDH_BITSIZER>DLP_BITSIZER(pDL), ippStsSizeErr);
-   IPP_BADARG_RET(MIN_DLPDH_BITSIZE >DLP_BITSIZEP(pDL), ippStsSizeErr);
-   IPP_BADARG_RET(DLP_BITSIZEP(pDL)%256, ippStsSizeErr);
+    /* test DL sizes */
+    IPP_BADARG_RET(MIN_DLPDH_BITSIZER > DLP_BITSIZER(pDL), ippStsSizeErr);
+    IPP_BADARG_RET(MIN_DLPDH_BITSIZE > DLP_BITSIZEP(pDL), ippStsSizeErr);
+    IPP_BADARG_RET(DLP_BITSIZEP(pDL) % 256, ippStsSizeErr);
 
-   /* test number of trials for primality check */
-   IPP_BADARG_RET(nTrials<=0, ippStsBadArgErr);
+    /* test number of trials for primality check */
+    IPP_BADARG_RET(nTrials <= 0, ippStsBadArgErr);
 
-   IPP_BAD_PTR1_RET(rndFunc);
+    IPP_BAD_PTR1_RET(rndFunc);
 
-   {
-      /* allocate BN resources */
-      BigNumNode* pList = DLP_BNCTX(pDL);
-      IppsBigNumState* pP = cpBigNumListGet(&pList);
-      IppsBigNumState* pR = cpBigNumListGet(&pList);
-      IppsBigNumState* pG = cpBigNumListGet(&pList);
+    {
+        /* allocate BN resources */
+        BigNumNode* pList   = DLP_BNCTX(pDL);
+        IppsBigNumState* pP = cpBigNumListGet(&pList);
+        IppsBigNumState* pR = cpBigNumListGet(&pList);
+        IppsBigNumState* pG = cpBigNumListGet(&pList);
 
-      IppsBigNumState* pSeed1 = cpBigNumListGet(&pList);
-      IppsBigNumState* pSeed2 = cpBigNumListGet(&pList);
+        IppsBigNumState* pSeed1 = cpBigNumListGet(&pList);
+        IppsBigNumState* pSeed2 = cpBigNumListGet(&pList);
 
-      /* internally generates SeedIn value by default */
-      IppBool seed_is_random = ippTrue;
-      int seedBitSize = DLP_BITSIZER(pDL);
+        /* internally generates SeedIn value by default */
+        IppBool seed_is_random = ippTrue;
+        int seedBitSize        = DLP_BITSIZER(pDL);
 
-      DLP_FLAG(pDL) = 0;
-      /*
+        DLP_FLAG(pDL) = 0;
+        /*
       // DH generator uses input SEED
       // either defined by user or generated internally
       */
-      if(pSeedIn) {
-         /* test SeedIn */
-         IPP_BADARG_RET(!BN_VALID_ID(pSeedIn), ippStsContextMatchErr);
-         seedBitSize = BITSIZE_BNU(BN_NUMBER(pSeedIn), BN_SIZE(pSeedIn));
-         IPP_BADARG_RET(DLP_BITSIZER(pDL)>seedBitSize, ippStsRangeErr);
-         IPP_BADARG_RET(BN_ROOM(pSeed1)<BN_SIZE(pSeedIn), ippStsRangeErr);
+        if (pSeedIn) {
+            /* test SeedIn */
+            IPP_BADARG_RET(!BN_VALID_ID(pSeedIn), ippStsContextMatchErr);
+            seedBitSize = BITSIZE_BNU(BN_NUMBER(pSeedIn), BN_SIZE(pSeedIn));
+            IPP_BADARG_RET(DLP_BITSIZER(pDL) > seedBitSize, ippStsRangeErr);
+            IPP_BADARG_RET(BN_ROOM(pSeed1) < BN_SIZE(pSeedIn), ippStsRangeErr);
 
-         cpBN_copy(pSeed1, pSeedIn);
-         seed_is_random = ippFalse;
-      }
+            cpBN_copy(pSeed1, pSeedIn);
+            seed_is_random = ippFalse;
+        }
 
-      /* test SeedOut if requested */
-      if(pSeedOut) {
-         IPP_BADARG_RET(!BN_VALID_ID(pSeedOut), ippStsContextMatchErr);
-         IPP_BADARG_RET(DLP_BITSIZER(pDL)>BITSIZE(BNU_CHUNK_T)*BN_ROOM(pSeedOut), ippStsRangeErr);
-      }
+        /* test SeedOut if requested */
+        if (pSeedOut) {
+            IPP_BADARG_RET(!BN_VALID_ID(pSeedOut), ippStsContextMatchErr);
+            IPP_BADARG_RET(DLP_BITSIZER(pDL) > BITSIZE(BNU_CHUNK_T) * BN_ROOM(pSeedOut),
+                           ippStsRangeErr);
+        }
 
-      /*
+        /*
       // generation DSA domain parameters
       */
-      {
-         int feBitsize  = DLP_BITSIZEP(pDL);
-         int ordBitsize = DLP_BITSIZER(pDL);
-         int m = (ordBitsize + IPP_SHA1_DIGEST_BITSIZE -1)/IPP_SHA1_DIGEST_BITSIZE;
-         int l = (feBitsize  + IPP_SHA1_DIGEST_BITSIZE -1)/IPP_SHA1_DIGEST_BITSIZE;
-         int n = (feBitsize  + 1023)/1024;
+        {
+            int feBitsize  = DLP_BITSIZEP(pDL);
+            int ordBitsize = DLP_BITSIZER(pDL);
+            int m          = (ordBitsize + IPP_SHA1_DIGEST_BITSIZE - 1) / IPP_SHA1_DIGEST_BITSIZE;
+            int l          = (feBitsize + IPP_SHA1_DIGEST_BITSIZE - 1) / IPP_SHA1_DIGEST_BITSIZE;
+            int n          = (feBitsize + 1023) / 1024;
 
-         IppsPrimeState* pPrimeGen = DLP_PRIMEGEN(pDL);
+            IppsPrimeState* pPrimeGen = DLP_PRIMEGEN(pDL);
 
-         /* pointers to the BNU32-value of SEED */
-         Ipp32u* pSeed1BNU32 = (Ipp32u*)BN_NUMBER(pSeed1);
-         Ipp32u* pSeed2BNU32 = (Ipp32u*)BN_NUMBER(pSeed2);
-         int seedSize32 = BITS2WORD32_SIZE(seedBitSize);
-         /* pointers to the octet-string-value of SEED */
-         Ipp8u* pSeed1Oct = (Ipp8u*)BN_BUFFER(pSeed1);
-         Ipp8u* pSeed2Oct = (Ipp8u*)BN_BUFFER(pSeed2);
+            /* pointers to the BNU32-value of SEED */
+            Ipp32u* pSeed1BNU32 = (Ipp32u*)BN_NUMBER(pSeed1);
+            Ipp32u* pSeed2BNU32 = (Ipp32u*)BN_NUMBER(pSeed2);
+            int seedSize32      = BITS2WORD32_SIZE(seedBitSize);
+            /* pointers to the octet-string-value of SEED */
+            Ipp8u* pSeed1Oct = (Ipp8u*)BN_BUFFER(pSeed1);
+            Ipp8u* pSeed2Oct = (Ipp8u*)BN_BUFFER(pSeed2);
 
-         int octSize;
-         Ipp8u shaDgst1[BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE)];
-         Ipp8u shaDgst2[BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE)];
-         Ipp8u hashMethodArr[sizeof(IppsHashMethod)];
-         IppsHashMethod* hash_method = (IppsHashMethod*)hashMethodArr;
-         #if (_SHA_NI_ENABLING_==_FEATURE_ON_)
+            int octSize;
+            Ipp8u shaDgst1[BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE)];
+            Ipp8u shaDgst2[BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE)];
+            Ipp8u hashMethodArr[sizeof(IppsHashMethod)];
+            IppsHashMethod* hash_method = (IppsHashMethod*)hashMethodArr;
+#if (_SHA_NI_ENABLING_ == _FEATURE_ON_)
             ippsHashMethodSet_SHA1_NI(hash_method);
-         #elif (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_)
+#elif (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_)
             ippsHashMethodSet_SHA1_TT(hash_method);
-         #else
+#else
             ippsHashMethodSet_SHA1(hash_method);
-         #endif
+#endif
 
-         int primeGenerated = 0;
-         int genCounter;
+            int primeGenerated = 0;
+            int genCounter;
 
-         ippsSet_BN(ippBigNumPOS, 1, (Ipp32u*)&m, pP); /* P = m */
+            ippsSet_BN(ippBigNumPOS, 1, (Ipp32u*)&m, pP); /* P = m */
 
-         /*
+            /*
          // generate prime Q
          */
-         for(genCounter=0; genCounter<MAXLOOP && !primeGenerated; genCounter++) {
-            int i;
+            for (genCounter = 0; genCounter < MAXLOOP && !primeGenerated; genCounter++) {
+                int i;
 
-            if(seed_is_random) {
-               rndFunc(pSeed1BNU32, seedBitSize, pRndParam);
-               ippsSet_BN(ippBigNumPOS, seedSize32, pSeed1BNU32, pSeed1);
+                if (seed_is_random) {
+                    rndFunc(pSeed1BNU32, seedBitSize, pRndParam);
+                    ippsSet_BN(ippBigNumPOS, seedSize32, pSeed1BNU32, pSeed1);
+                }
+
+                /* save value of SEED if requested */
+                if (pSeedOut)
+                    cpBN_copy(pSeedOut, pSeed1);
+
+                /* pSeed2 = pSeed1+m */
+                ippsAdd_BN(pSeed1, pP, pSeed2);
+
+                /* R += (SHA1[SEED+i] ^ SHA1[(SEED+m+i)) * (2^i*IPP_SHA1_DIGEST_BITSIZE) */
+                cpBN_zero(pR);
+                for (i = 0; i < m; i++) {
+                    int j;
+                    cpSize seed1Size32, seed2Size32;
+
+                    /* SHA1[SEED+i] */
+                    seed1Size32 = BN_SIZE32(pSeed1);
+                    octSize     = BITS2WORD8_SIZE(BITSIZE_BNU32(pSeed1BNU32, seed1Size32));
+                    cpToOctStr_BNU32(pSeed1Oct, octSize, pSeed1BNU32, seed1Size32);
+                    ippsHashMessage_rmf(pSeed1Oct, octSize, shaDgst1, hash_method);
+
+                    /* SHA1[SEED+m+i] */
+                    seed2Size32 = BN_SIZE32(pSeed2);
+                    octSize     = BITS2WORD8_SIZE(BITSIZE_BNU32(pSeed2BNU32, seed2Size32));
+                    cpToOctStr_BNU32(pSeed2Oct, octSize, pSeed2BNU32, seedSize32);
+                    ippsHashMessage_rmf(pSeed2Oct, octSize, shaDgst2, hash_method);
+
+                    /* SHA1[] ^ SHA1[] */
+                    for (j = 0; j < BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE); j++)
+                        shaDgst1[j] ^= shaDgst2[j];
+
+                    if (i != m - 1) { /* convert back whole digest */
+                        cpFromOctStr_BNU32((Ipp32u*)BN_NUMBER(pR) +
+                                               i * BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),
+                                           shaDgst1,
+                                           BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE));
+
+                    } else { /* convert back part of one only */
+                        octSize = BITS2WORD8_SIZE(ordBitsize - IPP_SHA1_DIGEST_BITSIZE * i);
+                        cpFromOctStr_BNU32(
+                            (Ipp32u*)BN_NUMBER(pR) + i * BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),
+                            shaDgst1 + BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE) - octSize,
+                            octSize);
+                    }
+
+                    /* increment both SEED instances */
+                    ippsAdd_BN(pSeed1, cpBN_OneRef(), pSeed1);
+                    ippsAdd_BN(pSeed2, cpBN_OneRef(), pSeed2);
+                }
+
+                /* decorate R */
+                {
+                    BNU_CHUNK_T maskR = MASK_BNU_CHUNK(ordBitsize);
+                    BN_SIZE(pR)       = BITS_BNU_CHUNK(ordBitsize);
+                    BN_NUMBER(pR)[BN_SIZE(pR) - 1] &= maskR;
+                    SET_BIT(BN_NUMBER(pR), ordBitsize - 1);
+                    BN_NUMBER(pR)[0] |= 1;
+                }
+
+                /* perform primality test on Q */
+                //ippsPrimeSet_BN(pR, pPrimeGen);
+                //ippsPrimeTest(nTrials, &result, pPrimeGen, rndFunc, pRndParam);
+                primeGenerated =
+                    cpPrimeTest(BN_NUMBER(pR), BN_SIZE(pR), nTrials, pPrimeGen, rndFunc, pRndParam);
+                if (!primeGenerated)
+                    seed_is_random = ippTrue;
             }
-
-            /* save value of SEED if requested */
-            if(pSeedOut)
-               cpBN_copy(pSeedOut, pSeed1);
-
-            /* pSeed2 = pSeed1+m */
-            ippsAdd_BN(pSeed1, pP, pSeed2);
-
-            /* R += (SHA1[SEED+i] ^ SHA1[(SEED+m+i)) * (2^i*IPP_SHA1_DIGEST_BITSIZE) */
-            cpBN_zero(pR);
-            for(i=0; i<m; i++) {
-               int j;
-               cpSize seed1Size32, seed2Size32;
-
-               /* SHA1[SEED+i] */
-               seed1Size32 = BN_SIZE32(pSeed1);
-               octSize = BITS2WORD8_SIZE( BITSIZE_BNU32(pSeed1BNU32,seed1Size32) );
-               cpToOctStr_BNU32(pSeed1Oct,octSize, pSeed1BNU32, seed1Size32);
-               ippsHashMessage_rmf(pSeed1Oct, octSize, shaDgst1, hash_method);
-
-               /* SHA1[SEED+m+i] */
-               seed2Size32 = BN_SIZE32(pSeed2);
-               octSize = BITS2WORD8_SIZE( BITSIZE_BNU32(pSeed2BNU32,seed2Size32) );
-               cpToOctStr_BNU32(pSeed2Oct,octSize, pSeed2BNU32,seedSize32);
-               ippsHashMessage_rmf(pSeed2Oct, octSize, shaDgst2, hash_method);
-
-               /* SHA1[] ^ SHA1[] */
-               for(j=0; j<BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE); j++)
-                  shaDgst1[j] ^= shaDgst2[j];
-
-               if(i!=m-1) { /* convert back whole digest */
-                  cpFromOctStr_BNU32((Ipp32u*)BN_NUMBER(pR)+i*BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),
-                         shaDgst1, BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE));
-
-               }
-               else {     /* convert back part of one only */
-                  octSize = BITS2WORD8_SIZE( ordBitsize-IPP_SHA1_DIGEST_BITSIZE*i );
-                  cpFromOctStr_BNU32((Ipp32u*)BN_NUMBER(pR)+i*BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),
-                         shaDgst1+BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE)-octSize, octSize);
-               }
-
-               /* increment both SEED instances */
-               ippsAdd_BN(pSeed1, cpBN_OneRef(), pSeed1);
-               ippsAdd_BN(pSeed2, cpBN_OneRef(), pSeed2);
-            }
-
-            /* decorate R */
-            {
-               BNU_CHUNK_T maskR = MASK_BNU_CHUNK(ordBitsize);
-               BN_SIZE(pR) = BITS_BNU_CHUNK(ordBitsize);
-               BN_NUMBER(pR)[BN_SIZE(pR)-1] &= maskR;
-               SET_BIT(BN_NUMBER(pR), ordBitsize-1);
-               BN_NUMBER(pR)[0] |= 1;
-            }
-
-            /* perform primality test on Q */
-            //ippsPrimeSet_BN(pR, pPrimeGen);
-            //ippsPrimeTest(nTrials, &result, pPrimeGen, rndFunc, pRndParam);
-            primeGenerated = cpPrimeTest(BN_NUMBER(pR), BN_SIZE(pR), nTrials, pPrimeGen, rndFunc, pRndParam);
-            if(!primeGenerated)
-               seed_is_random = ippTrue;
-         }
-         if(MAXLOOP==genCounter)
-            return ippStsInsufficientEntropy;
+            if (MAXLOOP == genCounter)
+                return ippStsInsufficientEntropy;
 
 
-         ippsAdd_BN(pSeed1, pP, pSeed1); /* SEED+2*m */
-         cpBN_power2(pG, feBitsize-1);     /*  2^(L-1) */
+            ippsAdd_BN(pSeed1, pP, pSeed1); /* SEED+2*m */
+            cpBN_power2(pG, feBitsize - 1); /*  2^(L-1) */
 
-         /*
+            /*
          // generate prime P
          */
-         for(genCounter=0,primeGenerated=0; genCounter<MAXLOOP*n && !primeGenerated; genCounter++) {
-            int i;
+            for (genCounter = 0, primeGenerated = 0; genCounter < MAXLOOP * n && !primeGenerated;
+                 genCounter++) {
+                int i;
 
-            /* P += (SHA1[SEED+2*m+i]) * (2^i*IPP_SHA1_DIGEST_BITSIZE) */
-            cpBN_zero(pP);
-            for(i=0; i<l; i++) {
-               /* SHA1[SEED+2*m+i] */
-               cpSize seed1Size32 = BN_SIZE32(pSeed1);
-               octSize = BITS2WORD8_SIZE( BITSIZE_BNU32(pSeed1BNU32,seed1Size32) );
-               cpToOctStr_BNU32(pSeed1Oct,octSize, pSeed1BNU32,seed1Size32);
-               ippsHashMessage_rmf(pSeed1Oct, octSize, shaDgst1, hash_method);
+                /* P += (SHA1[SEED+2*m+i]) * (2^i*IPP_SHA1_DIGEST_BITSIZE) */
+                cpBN_zero(pP);
+                for (i = 0; i < l; i++) {
+                    /* SHA1[SEED+2*m+i] */
+                    cpSize seed1Size32 = BN_SIZE32(pSeed1);
+                    octSize            = BITS2WORD8_SIZE(BITSIZE_BNU32(pSeed1BNU32, seed1Size32));
+                    cpToOctStr_BNU32(pSeed1Oct, octSize, pSeed1BNU32, seed1Size32);
+                    ippsHashMessage_rmf(pSeed1Oct, octSize, shaDgst1, hash_method);
 
-               if(i!=l-1) { /* convert back whole digest */
-                  cpFromOctStr_BNU32((Ipp32u*)BN_NUMBER(pP)+i*BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),
-                         shaDgst1, BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE));
+                    if (i != l - 1) { /* convert back whole digest */
+                        cpFromOctStr_BNU32((Ipp32u*)BN_NUMBER(pP) +
+                                               i * BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),
+                                           shaDgst1,
+                                           BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE));
 
-               }
-               else {     /* convert back part of one only */
-                  octSize = BITS2WORD8_SIZE( feBitsize-IPP_SHA1_DIGEST_BITSIZE*i );
-                  cpFromOctStr_BNU32((Ipp32u*)BN_NUMBER(pP)+i*BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),
-                         shaDgst1+BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE)-octSize, octSize);
-               }
-               /* advance SEED */
-               ippsAdd_BN(pSeed1, cpBN_OneRef(), pSeed1);
+                    } else { /* convert back part of one only */
+                        octSize = BITS2WORD8_SIZE(feBitsize - IPP_SHA1_DIGEST_BITSIZE * i);
+                        cpFromOctStr_BNU32(
+                            (Ipp32u*)BN_NUMBER(pP) + i * BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE),
+                            shaDgst1 + BITS2WORD8_SIZE(IPP_SHA1_DIGEST_BITSIZE) - octSize,
+                            octSize);
+                    }
+                    /* advance SEED */
+                    ippsAdd_BN(pSeed1, cpBN_OneRef(), pSeed1);
+                }
+
+                /* decorate P */
+                {
+                    BNU_CHUNK_T maskP = MASK_BNU_CHUNK(feBitsize);
+                    BN_SIZE(pP)       = BITS_BNU_CHUNK(feBitsize);
+                    BN_NUMBER(pP)[BN_SIZE(pP) - 1] &= maskP;
+                    SET_BIT(BN_NUMBER(pP), feBitsize - 1);
+                }
+
+                /* P = P - (P (mod 2*R)) +1 */
+                ippsAdd_BN(pR, pR, pSeed2);
+                ippsMod_BN(pP, pSeed2, pSeed2);
+                ippsSub_BN(pP, pSeed2, pP);
+                ippsAdd_BN(pP, cpBN_OneRef(), pP);
+
+                if (0 < cpBN_cmp(pP, pG)) { /* P ~ 2^(L-1) */
+                    /* perform primality test on P */
+                    //ippsPrimeSet_BN(pP, pPrimeGen);
+                    //ippsPrimeTest(nTrials, &result, pPrimeGen, rndFunc, pRndParam);
+                    //if(IS_PRIME==result)
+                    //   break;
+                    primeGenerated = cpPrimeTest(BN_NUMBER(pP),
+                                                 BN_SIZE(pP),
+                                                 nTrials,
+                                                 pPrimeGen,
+                                                 rndFunc,
+                                                 pRndParam);
+                    if (primeGenerated)
+                        break;
+                }
             }
+            if (n * MAXLOOP <= genCounter)
+                return ippStsInsufficientEntropy;
 
-            /* decorate P */
-            {
-               BNU_CHUNK_T maskP = MASK_BNU_CHUNK(feBitsize);
-               BN_SIZE(pP) = BITS_BNU_CHUNK(feBitsize);
-               BN_NUMBER(pP)[BN_SIZE(pP)-1] &= maskP;
-               SET_BIT(BN_NUMBER(pP), feBitsize-1);
-            }
-
-            /* P = P - (P (mod 2*R)) +1 */
-            ippsAdd_BN(pR, pR, pSeed2);
-            ippsMod_BN(pP, pSeed2, pSeed2);
-            ippsSub_BN(pP, pSeed2, pP);
-            ippsAdd_BN(pP, cpBN_OneRef(), pP);
-
-            if( 0<cpBN_cmp(pP, pG)) { /* P ~ 2^(L-1) */
-               /* perform primality test on P */
-               //ippsPrimeSet_BN(pP, pPrimeGen);
-               //ippsPrimeTest(nTrials, &result, pPrimeGen, rndFunc, pRndParam);
-               //if(IS_PRIME==result)
-               //   break;
-               primeGenerated = cpPrimeTest(BN_NUMBER(pP), BN_SIZE(pP), nTrials, pPrimeGen, rndFunc, pRndParam);
-               if(primeGenerated)
-                  break;
-            }
-         }
-         if(n*MAXLOOP<=genCounter)
-            return ippStsInsufficientEntropy;
-
-         /* save value of counter if requested */
-         if(pCounter)
-            *pCounter = genCounter;
+            /* save value of counter if requested */
+            if (pCounter)
+                *pCounter = genCounter;
 
 
-         /* set up Q */
-         ZEXPAND_COPY_BNU(DLP_R(pDL),BITS_BNU_CHUNK(DLP_BITSIZER(pDL)), BN_NUMBER(pR), BN_SIZE(pR));
+            /* set up Q */
+            ZEXPAND_COPY_BNU(DLP_R(pDL),
+                             BITS_BNU_CHUNK(DLP_BITSIZER(pDL)),
+                             BN_NUMBER(pR),
+                             BN_SIZE(pR));
 
-         /* set up motgomery(P) engine */
-         gsModEngineInit(DLP_MONTP0(pDL), (Ipp32u*)BN_NUMBER(pP), feBitsize, DLP_MONT_POOL_LENGTH, gsModArithDLP());
+            /* set up motgomery(P) engine */
+            gsModEngineInit(DLP_MONTP0(pDL),
+                            (Ipp32u*)BN_NUMBER(pP),
+                            feBitsize,
+                            DLP_MONT_POOL_LENGTH,
+                            gsModArithDLP());
 
-         /* precompute cofactor j = (P-1)/R */
-         ippsSub_BN(pP, cpBN_OneRef(), pSeed2);
-         ippsDiv_BN(pSeed2, pR, pSeed1, pG);
+            /* precompute cofactor j = (P-1)/R */
+            ippsSub_BN(pP, cpBN_OneRef(), pSeed2);
+            ippsDiv_BN(pSeed2, pR, pSeed1, pG);
 
-         /* precompute ENC(1) */
-         cpMontEnc_BN(pR, cpBN_OneRef(), DLP_MONTP0(pDL));
+            /* precompute ENC(1) */
+            cpMontEnc_BN(pR, cpBN_OneRef(), DLP_MONTP0(pDL));
 
-         /*
+            /*
          // compute G
          */
-         BN_SIGN(pG) = ippBigNumPOS;
-         for(genCounter=0; genCounter<MAXLOOP; genCounter++) {
-            /* random < 2^L */
-            cpSize sizeG = BITS_BNU_CHUNK(feBitsize);
-            rndFunc((Ipp32u*)BN_NUMBER(pG), feBitsize, pRndParam);
-            FIX_BNU(BN_NUMBER(pG), sizeG);
-            BN_SIZE(pG) = sizeG;
-            /* G < (P-1) */
-            ippsMod_BN(pG, pP, pG);
+            BN_SIGN(pG) = ippBigNumPOS;
+            for (genCounter = 0; genCounter < MAXLOOP; genCounter++) {
+                /* random < 2^L */
+                cpSize sizeG = BITS_BNU_CHUNK(feBitsize);
+                rndFunc((Ipp32u*)BN_NUMBER(pG), feBitsize, pRndParam);
+                FIX_BNU(BN_NUMBER(pG), sizeG);
+                BN_SIZE(pG) = sizeG;
+                /* G < (P-1) */
+                ippsMod_BN(pG, pP, pG);
 
-            if( !cpEqu_BNU_CHUNK(BN_NUMBER(pG), BN_SIZE(pG), 0) ) {
-               cpMontEnc_BN(pG, pG, DLP_MONTP0(pDL));
-               cpMontExpBin_BN(pG, pG, pSeed1, DLP_MONTP0(pDL));
-               if( cpBN_cmp(pG, pR) )
-                  break;
+                if (!cpEqu_BNU_CHUNK(BN_NUMBER(pG), BN_SIZE(pG), 0)) {
+                    cpMontEnc_BN(pG, pG, DLP_MONTP0(pDL));
+                    cpMontExpBin_BN(pG, pG, pSeed1, DLP_MONTP0(pDL));
+                    if (cpBN_cmp(pG, pR))
+                        break;
+                }
             }
-         }
-         if(MAXLOOP==genCounter)
-            return ippStsInsufficientEntropy;
+            if (MAXLOOP == genCounter)
+                return ippStsInsufficientEntropy;
 
-         /* set up encoded G */
-         cpBN_copy(DLP_GENC(pDL), pG);
-      }
+            /* set up encoded G */
+            cpBN_copy(DLP_GENC(pDL), pG);
+        }
 
-      DLP_FLAG(pDL) = ippDLPkeyP|ippDLPkeyR|ippDLPkeyG;
-      return ippStsNoErr;
-   }
+        DLP_FLAG(pDL) = ippDLPkeyP | ippDLPkeyR | ippDLPkeyG;
+        return ippStsNoErr;
+    }
 }

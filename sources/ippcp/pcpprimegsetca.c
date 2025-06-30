@@ -48,26 +48,26 @@
 *F*/
 IPPFUN(IppStatus, ippsPrimeSet, (const Ipp32u* pPrime, int nBits, IppsPrimeState* pCtx))
 {
-   IPP_BAD_PTR2_RET(pCtx, pPrime);
-   IPP_BADARG_RET(nBits<1, ippStsLengthErr);
+    IPP_BAD_PTR2_RET(pCtx, pPrime);
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
 
-   IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(nBits > PRIME_MAXBITSIZE(pCtx), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(nBits > PRIME_MAXBITSIZE(pCtx), ippStsOutOfRangeErr);
 
-   /* clear prime container */
-   ZEXPAND_BNU(PRIME_NUMBER(pCtx), 0, BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx)));
+    /* clear prime container */
+    ZEXPAND_BNU(PRIME_NUMBER(pCtx), 0, BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx)));
 
-   {
-      Ipp32u* pValue = (Ipp32u*)PRIME_NUMBER(pCtx);
+    {
+        Ipp32u* pValue = (Ipp32u*)PRIME_NUMBER(pCtx);
 
-      cpSize len32 = BITS2WORD32_SIZE(nBits);
-      Ipp32u mask = MAKEMASK32(nBits);
-      FIX_BNU32(pPrime, len32);
+        cpSize len32 = BITS2WORD32_SIZE(nBits);
+        Ipp32u mask  = MAKEMASK32(nBits);
+        FIX_BNU32(pPrime, len32);
 
-      ZEXPAND_COPY_BNU(pValue, BITS2WORD32_SIZE(PRIME_MAXBITSIZE(pCtx)), pPrime, len32);
-      pValue[len32-1] &= mask;
+        ZEXPAND_COPY_BNU(pValue, BITS2WORD32_SIZE(PRIME_MAXBITSIZE(pCtx)), pPrime, len32);
+        pValue[len32 - 1] &= mask;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

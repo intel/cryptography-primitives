@@ -48,24 +48,25 @@
 *F*/
 IPPFUN(IppStatus, ippsPrimeSet_BN, (const IppsBigNumState* pPrime, IppsPrimeState* pCtx))
 {
-   IPP_BAD_PTR2_RET(pCtx, pPrime);
+    IPP_BAD_PTR2_RET(pCtx, pPrime);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
-   IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
+    IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(BITSIZE_BNU(BN_NUMBER(pPrime), BN_SIZE(pPrime)) > PRIME_MAXBITSIZE(pCtx), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(BITSIZE_BNU(BN_NUMBER(pPrime), BN_SIZE(pPrime)) > PRIME_MAXBITSIZE(pCtx),
+                   ippStsOutOfRangeErr);
 
-   {
-      BNU_CHUNK_T* pPrimeU = BN_NUMBER(pPrime);
-      cpSize ns = BN_SIZE(pPrime);
-      cpSize nBits = BITSIZE_BNU(pPrimeU, ns);
+    {
+        BNU_CHUNK_T* pPrimeU = BN_NUMBER(pPrime);
+        cpSize ns            = BN_SIZE(pPrime);
+        cpSize nBits         = BITSIZE_BNU(pPrimeU, ns);
 
-      BNU_CHUNK_T* pPrimeCtx = PRIME_NUMBER(pCtx);
-      BNU_CHUNK_T topMask = MASK_BNU_CHUNK(nBits);
+        BNU_CHUNK_T* pPrimeCtx = PRIME_NUMBER(pCtx);
+        BNU_CHUNK_T topMask    = MASK_BNU_CHUNK(nBits);
 
-      ZEXPAND_COPY_BNU(pPrimeCtx, BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx)), pPrimeU, ns);
-      pPrimeCtx[ns-1] &= topMask;
+        ZEXPAND_COPY_BNU(pPrimeCtx, BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx)), pPrimeU, ns);
+        pPrimeCtx[ns - 1] &= topMask;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

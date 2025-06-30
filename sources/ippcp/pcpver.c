@@ -25,6 +25,7 @@
 #include "pcpver.h"
 #include "pcpname.h"
 
+/* clang-format off */
 #if ( _IPP_ARCH == _IPP_ARCH_IA32 ) || ( _IPP_ARCH == _IPP_ARCH_LP32 )
     #if ( _IPP == _IPP_M5 )             /* Intel® Quark(TM) processor - ia32 */
         #define CRYPTO_LIB_CPU_TYPE() "m5"
@@ -81,24 +82,24 @@
         #define CRYPTO_LIB_CPU_DESCR() "PX"
     #endif
 #endif
+/* clang-format on */
 
-#define GET_LIBRARY_NAME()  CRYPTO_LIB_NAME() " (" CRYPTO_LIB_CPU_TYPE() ")" \
-                           " (ver: " STR_VERSION() \
-                           " build: " __DATE__ ")"
+#define GET_LIBRARY_NAME()         \
+    CRYPTO_LIB_NAME()              \
+    " (" CRYPTO_LIB_CPU_TYPE() ")" \
+                               " (ver: " STR_VERSION() " build: " __DATE__ ")"
 
 static const CryptoLibraryVersion cryptoLibVer = {
     /* major, minor, patch (ex-majorBuild) */
     BASE_VERSION(),
-       /* targetCpu[4] */
+    /* targetCpu[4] */
     CRYPTO_LIB_CPU_TYPE(),
     CRYPTO_LIB_NAME() " (" CRYPTO_LIB_CPU_TYPE() ")",
-    __DATE__, //BuildDate
+    __DATE__,          //BuildDate
     GET_LIBRARY_NAME() /* release Version */
 };
 
-IPPFUN( const CryptoLibraryVersion*, cryptoGetLibVersion, ( void )){
-    return &cryptoLibVer;
-};
+IPPFUN(const CryptoLibraryVersion*, cryptoGetLibVersion, (void)) { return &cryptoLibVer; };
 
 /* Deprecated functionality*/
 static const IppLibraryVersion ippcpLibVer = {
@@ -108,15 +109,13 @@ static const IppLibraryVersion ippcpLibVer = {
     IPP_REVISION,
 #else
     0,
-#endif /* IPP_REVISION */
+#endif             /* IPP_REVISION */
     CRYPTO_LIB_CPU_TYPE(),
     "ippCP " CRYPTO_LIB_CPU_DESCR() " (" CRYPTO_LIB_CPU_TYPE() ")",
     STR_VERSION(), /* release Version */
-    __DATE__ //BuildDate
+    __DATE__       //BuildDate
 };
 
-IPPFUN( const IppLibraryVersion*, ippcpGetLibVersion, ( void )){
-    return &ippcpLibVer;
-};
+IPPFUN(const IppLibraryVersion*, ippcpGetLibVersion, (void)) { return &ippcpLibVer; };
 
 /*////////////////////////// End of file "pcpver.c" ////////////////////////// */

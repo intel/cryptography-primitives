@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES encryption/decryption (CBC mode)
 //     AES encryption/decryption (CBC-CS mode)
-// 
+//
 //  Contents:
 //        ippsAESEncryptCBC_CS3()
 //
@@ -32,8 +32,8 @@
 #include "pcptool.h"
 #include "pcpaes_cbc_encrypt.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*F*
@@ -63,54 +63,59 @@
 // - Therefore, CBC-CS3 is not strictly an extensioin of usual CBC mode
 //
 *F*/
-IPPFUN(IppStatus, ippsAESEncryptCBC_CS3,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                                         const IppsAESSpec* pCtx,
-                                         const Ipp8u* pIV))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsAESEncryptCBC_CS3, (const Ipp8u* pSrc,
+                                          Ipp8u* pDst,
+                                          int len,
+                                          const IppsAESSpec* pCtx,
+                                          const Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source, target buffers and initialization pointers */
-   IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<=MBS_RIJ128), ippStsLengthErr);
+    /* test source, target buffers and initialization pointers */
+    IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len <= MBS_RIJ128), ippStsLengthErr);
 
-   {
-      int tail = len & (MBS_RIJ128-1); /* length of the last partial block */
-      if(0==tail)
-         tail = MBS_RIJ128;
-      len -= tail;
+    {
+        int tail = len & (MBS_RIJ128 - 1); /* length of the last partial block */
+        if (0 == tail)
+            tail = MBS_RIJ128;
+        len -= tail;
 
-      /* encryption of complete blocks */
-      cpEncryptAES_cbc(pIV, pSrc, pDst, len/MBS_RIJ128, pCtx);
-      pSrc += len;
-      pDst += len;
+        /* encryption of complete blocks */
+        cpEncryptAES_cbc(pIV, pSrc, pDst, len / MBS_RIJ128, pCtx);
+        pSrc += len;
+        pDst += len;
 
-      {
-         RijnCipher encoder = RIJ_ENCODER(pCtx);
+        {
+            RijnCipher encoder = RIJ_ENCODER(pCtx);
 
-         Ipp8u lastIV[MBS_RIJ128];
-         Ipp8u lastEncBlk[MBS_RIJ128];
+            Ipp8u lastIV[MBS_RIJ128];
+            Ipp8u lastEncBlk[MBS_RIJ128];
 
-         int n;
+            int n;
 
-         CopyBlock16(pDst-MBS_RIJ128, lastIV);
-         CopyBlock16(pDst-MBS_RIJ128, lastEncBlk);
-         for(n=0; n<tail; n++)
-            lastIV[n] ^= pSrc[n];
+            CopyBlock16(pDst - MBS_RIJ128, lastIV);
+            CopyBlock16(pDst - MBS_RIJ128, lastEncBlk);
+            for (n = 0; n < tail; n++)
+                lastIV[n] ^= pSrc[n];
 
-         /* encrypt last padded block */
-         #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-         encoder(lastIV, pDst-MBS_RIJ128, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijEncSbox/*NULL*/);
-         #else
-         encoder(lastIV, pDst-MBS_RIJ128, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), NULL);
-         #endif
+/* encrypt last padded block */
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+            encoder(lastIV, pDst - MBS_RIJ128, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijEncSbox /*NULL*/);
+#else
+            encoder(lastIV, pDst - MBS_RIJ128, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), NULL);
+#endif
 
-         CopyBlock(lastEncBlk, pDst, tail);
-      }
+            CopyBlock(lastEncBlk, pDst, tail);
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

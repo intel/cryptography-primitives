@@ -30,7 +30,7 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 
-#if(_IPP32E>=_IPP32E_K0)
+#if (_IPP32E >= _IPP32E_K0)
 #include "pcpaesauthgcm_avx512.h"
 #else
 #include "pcpaesauthgcm.h"
@@ -55,56 +55,56 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsAES_GCMGetTag,(Ipp8u* pDstTag, int tagLen, const IppsAES_GCMState* pState))
+IPPFUN(IppStatus, ippsAES_GCMGetTag, (Ipp8u * pDstTag, int tagLen, const IppsAES_GCMState* pState))
 {
-   /* test State pointer */
-   IPP_BAD_PTR1_RET(pState);
-   /* use aligned context */
-   pState = (IppsAES_GCMState*)( IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT) );
-   /* test state ID */
-   IPP_BADARG_RET(!AESGCM_VALID_ID(pState), ippStsContextMatchErr);
+    /* test State pointer */
+    IPP_BAD_PTR1_RET(pState);
+    /* use aligned context */
+    pState = (IppsAES_GCMState*)(IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT));
+    /* test state ID */
+    IPP_BADARG_RET(!AESGCM_VALID_ID(pState), ippStsContextMatchErr);
 
-   /* test tag pointer and length */
-   IPP_BAD_PTR1_RET(pDstTag);
-   IPP_BADARG_RET(tagLen<=0 || tagLen>BLOCK_SIZE, ippStsLengthErr);
+    /* test tag pointer and length */
+    IPP_BAD_PTR1_RET(pDstTag);
+    IPP_BADARG_RET(tagLen <= 0 || tagLen > BLOCK_SIZE, ippStsLengthErr);
 
-#if(_IPP32E>=_IPP32E_K0)
-   GetTag_ getTag = AES_GCM_GET_TAG(pState);
-   getTag(&AES_GCM_KEY_DATA(pState), &AES_GCM_CONTEXT_DATA(pState), pDstTag, (Ipp64u)tagLen);
+#if (_IPP32E >= _IPP32E_K0)
+    GetTag_ getTag = AES_GCM_GET_TAG(pState);
+    getTag(&AES_GCM_KEY_DATA(pState), &AES_GCM_CONTEXT_DATA(pState), pDstTag, (Ipp64u)tagLen);
 #else
-   /* get method */
-   MulGcm_ hashFunc = AESGCM_HASH(pState);
+    /* get method */
+    MulGcm_ hashFunc = AESGCM_HASH(pState);
 
-   __ALIGN16 Ipp8u tmpHash[BLOCK_SIZE];
-   Ipp8u tmpCntr[BLOCK_SIZE];
+    __ALIGN16 Ipp8u tmpHash[BLOCK_SIZE];
+    Ipp8u tmpCntr[BLOCK_SIZE];
 
-   /* local copy of AAD and text counters (in bits) */
-   Ipp64u aadBitLen = AESGCM_AAD_LEN(pState)*BYTESIZE;
-   Ipp64u txtBitLen = AESGCM_TXT_LEN(pState)*BYTESIZE;
+    /* local copy of AAD and text counters (in bits) */
+    Ipp64u aadBitLen = AESGCM_AAD_LEN(pState) * BYTESIZE;
+    Ipp64u txtBitLen = AESGCM_TXT_LEN(pState) * BYTESIZE;
 
-   /* do local copy of ghash */
-   CopyBlock16(AESGCM_GHASH(pState), tmpHash);
+    /* do local copy of ghash */
+    CopyBlock16(AESGCM_GHASH(pState), tmpHash);
 
-   /* complete text processing */
-   if(AESGCM_BUFLEN(pState)) {
-      hashFunc(tmpHash, AESGCM_HKEY(pState), AesGcmConst_table);
-   }
+    /* complete text processing */
+    if (AESGCM_BUFLEN(pState)) {
+        hashFunc(tmpHash, AESGCM_HKEY(pState), AesGcmConst_table);
+    }
 
-   /* process lengths of AAD and text */
-   U32_TO_HSTRING(tmpCntr,   IPP_HIDWORD(aadBitLen));
-   U32_TO_HSTRING(tmpCntr+4, IPP_LODWORD(aadBitLen));
-   U32_TO_HSTRING(tmpCntr+8, IPP_HIDWORD(txtBitLen));
-   U32_TO_HSTRING(tmpCntr+12,IPP_LODWORD(txtBitLen));
+    /* process lengths of AAD and text */
+    U32_TO_HSTRING(tmpCntr, IPP_HIDWORD(aadBitLen));
+    U32_TO_HSTRING(tmpCntr + 4, IPP_LODWORD(aadBitLen));
+    U32_TO_HSTRING(tmpCntr + 8, IPP_HIDWORD(txtBitLen));
+    U32_TO_HSTRING(tmpCntr + 12, IPP_LODWORD(txtBitLen));
 
-   XorBlock16(tmpHash, tmpCntr, tmpHash);
-   hashFunc(tmpHash, AESGCM_HKEY(pState), AesGcmConst_table);
+    XorBlock16(tmpHash, tmpCntr, tmpHash);
+    hashFunc(tmpHash, AESGCM_HKEY(pState), AesGcmConst_table);
 
-   /* add encrypted initial counter */
-   XorBlock16(tmpHash, AESGCM_ECOUNTER0(pState), tmpHash);
+    /* add encrypted initial counter */
+    XorBlock16(tmpHash, AESGCM_ECOUNTER0(pState), tmpHash);
 
-   /* return tag of required length */
-   CopyBlock(tmpHash, pDstTag, tagLen);
+    /* return tag of required length */
+    CopyBlock(tmpHash, pDstTag, tagLen);
 #endif /* #if(_IPP32E>=_IPP32E_K0) */
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

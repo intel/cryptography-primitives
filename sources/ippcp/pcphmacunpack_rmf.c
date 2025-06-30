@@ -46,19 +46,19 @@
 //    pSize       pointer to the packed spec size
 //
 *F*/
-IPPFUN(IppStatus, ippsHMACUnpack_rmf,(const Ipp8u* pBuffer, IppsHMACState_rmf* pCtx))
+IPPFUN(IppStatus, ippsHMACUnpack_rmf, (const Ipp8u* pBuffer, IppsHMACState_rmf* pCtx))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
 
-   CopyBlock(pBuffer, pCtx, sizeof(IppsHMACState_rmf));
+    CopyBlock(pBuffer, pCtx, sizeof(IppsHMACState_rmf));
 
-   /* Set IppsHMACState_rmf context id */
-   HMAC_SET_CTX_ID(pCtx);
-   /* Set context id for IppsHashState_rmf, which is the part of IppsHMACState_rmf */
-   HASH_SET_ID(HASH_CTX(pCtx),idCtxHash);
-   /* setup pointers to buffer and hash in IppsHashState_rmf structure */
-   HASH_SETUP_POINTERS(HASH_CTX(pCtx));
+    /* Set IppsHMACState_rmf context id */
+    HMAC_SET_CTX_ID(pCtx);
+    /* Set context id for IppsHashState_rmf, which is the part of IppsHMACState_rmf */
+    HASH_SET_ID(HASH_CTX(pCtx), idCtxHash);
+    /* setup pointers to buffer and hash in IppsHashState_rmf structure */
+    HASH_SETUP_POINTERS(HASH_CTX(pCtx));
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

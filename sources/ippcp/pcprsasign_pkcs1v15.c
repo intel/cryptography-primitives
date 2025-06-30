@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSASSA-PKCS-v1_5
-// 
+//
 //     Signatire Scheme with Appendix Signatute Generation
-// 
+//
 //  Contents:
 //        ippsRSASign_PKCS1v15()
 //
@@ -36,52 +36,59 @@
 #include "pcprsa_pkcs1c15_data.h"
 #include "pcprsa_generatesign_pkcs1v15.h"
 
-IPPFUN(IppStatus, ippsRSASign_PKCS1v15,(const Ipp8u* pMsg, int msgLen,
-                                              Ipp8u* pSign,
-                                        const IppsRSAPrivateKeyState* pPrvKey,
-                                        const IppsRSAPublicKeyState*  pPubKey,
-                                              IppHashAlgId hashAlg,
-                                              Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSASign_PKCS1v15, (const Ipp8u* pMsg,
+                                         int msgLen,
+                                         Ipp8u* pSign,
+                                         const IppsRSAPrivateKeyState* pPrvKey,
+                                         const IppsRSAPublicKeyState*  pPubKey,
+                                         IppHashAlgId hashAlg,
+                                         Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   /* test private key context */
-   IPP_BAD_PTR2_RET(pPrvKey, pScratchBuffer);
-   IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(pPrvKey), ippStsContextMatchErr);
-   IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pPrvKey), ippStsIncompleteContextErr);
+    /* test private key context */
+    IPP_BAD_PTR2_RET(pPrvKey, pScratchBuffer);
+    IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(pPrvKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pPrvKey), ippStsIncompleteContextErr);
 
-   /* test hash algorithm ID */
-   hashAlg = cpValidHashAlg(hashAlg);
-   IPP_BADARG_RET(ippHashAlg_Unknown==hashAlg, ippStsNotSupportedModeErr);
-   IPP_BADARG_RET(ippHashAlg_SM3==hashAlg, ippStsNotSupportedModeErr);
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
-   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
+    /* test hash algorithm ID */
+    hashAlg = cpValidHashAlg(hashAlg);
+    IPP_BADARG_RET(ippHashAlg_Unknown == hashAlg, ippStsNotSupportedModeErr);
+    IPP_BADARG_RET(ippHashAlg_SM3 == hashAlg, ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported in non-rmf methods)*/
+    IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
-   /* use aligned public key context if defined */
-   if(pPubKey) {
-      IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pPubKey), ippStsContextMatchErr);
-      IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pPubKey), ippStsIncompleteContextErr);
-   }
+    /* use aligned public key context if defined */
+    if (pPubKey) {
+        IPP_BADARG_RET(!RSA_PUB_KEY_VALID_ID(pPubKey), ippStsContextMatchErr);
+        IPP_BADARG_RET(!RSA_PUB_KEY_IS_SET(pPubKey), ippStsIncompleteContextErr);
+    }
 
-   /* test data pointer */
-   IPP_BAD_PTR2_RET(pMsg, pSign);
-   /* test length */
-   IPP_BADARG_RET(msgLen<0, ippStsLengthErr);
+    /* test data pointer */
+    IPP_BAD_PTR2_RET(pMsg, pSign);
+    /* test length */
+    IPP_BADARG_RET(msgLen < 0, ippStsLengthErr);
 
-   {
-      Ipp8u md[IPP_SHA512_DIGEST_BITSIZE/BYTESIZE];
-      int mdLen = cpHashSize(hashAlg);
-      ippsHashMessage(pMsg, msgLen, md, hashAlg);
+    {
+        Ipp8u md[IPP_SHA512_DIGEST_BITSIZE / BYTESIZE];
+        int mdLen = cpHashSize(hashAlg);
+        ippsHashMessage(pMsg, msgLen, md, hashAlg);
 
-      {
-         const Ipp8u* pSalt = pksc15_salt[hashAlg].pSalt;
-         int saltLen = pksc15_salt[hashAlg].saltLen;
+        {
+            const Ipp8u* pSalt = pksc15_salt[hashAlg].pSalt;
+            int saltLen        = pksc15_salt[hashAlg].saltLen;
 
-         int sts = GenerateSign(md, mdLen,
-                         pSalt, saltLen,
-                         pSign,
-                         pPrvKey, pPubKey,
-                         (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((pScratchBuffer), (int)sizeof(BNU_CHUNK_T))));
+            int sts = GenerateSign(
+                md,
+                mdLen,
+                pSalt,
+                saltLen,
+                pSign,
+                pPrvKey,
+                pPubKey,
+                (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((pScratchBuffer), (int)sizeof(BNU_CHUNK_T))));
 
-         return (1==sts)? ippStsNoErr : ippStsSizeErr;
-      }
-   }
+            return (1 == sts) ? ippStsNoErr : ippStsSizeErr;
+        }
+    }
 }

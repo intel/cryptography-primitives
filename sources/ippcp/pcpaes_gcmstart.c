@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-GCM
-// 
+//
 //  Contents:
 //        ippsAES_GCMStart()
 //
@@ -30,7 +30,7 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 
-#if(_IPP32E>=_IPP32E_K0)
+#if (_IPP32E >= _IPP32E_K0)
 #include "pcpaesauthgcm_avx512.h"
 #else
 #include "pcpaesauthgcm.h"
@@ -58,14 +58,18 @@
 //    pState      pointer to the AES-GCM state
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_GCMStart,(const Ipp8u* pIV,  int ivLen,
-                                    const Ipp8u* pAAD, int aadLen,
-                                    IppsAES_GCMState* pState))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_GCMStart, (const Ipp8u* pIV,
+                                     int ivLen,
+                                     const Ipp8u* pAAD,
+                                     int aadLen,
+                                     IppsAES_GCMState* pState))
+/* clang-format on */
 {
-   IppStatus sts = ippsAES_GCMReset(pState);
-   if(ippStsNoErr==sts)
-      sts = ippsAES_GCMProcessIV(pIV, ivLen, pState);
-   if(ippStsNoErr==sts)
-      sts = ippsAES_GCMProcessAAD(pAAD, aadLen, pState);
-   return sts;
+    IppStatus sts = ippsAES_GCMReset(pState);
+    if (ippStsNoErr == sts)
+        sts = ippsAES_GCMProcessIV(pIV, ivLen, pState);
+    if (ippStsNoErr == sts)
+        sts = ippsAES_GCMProcessAAD(pAAD, aadLen, pState);
+    return sts;
 }

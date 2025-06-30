@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     DL over Prime Finite Field (setup/retrieve domain parameters)
-// 
+//
 //  Contents:
 //        ippsDLPSet()
 //
@@ -62,47 +62,58 @@
 //    pDSA     pointer to the DL context
 //
 *F*/
-IPPFUN(IppStatus, ippsDLPSet,(const IppsBigNumState* pP,
-                              const IppsBigNumState* pR,
-                              const IppsBigNumState* pG,
-                              IppsDLPState* pDL))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsDLPSet, (const IppsBigNumState* pP,
+                               const IppsBigNumState* pR,
+                               const IppsBigNumState* pG,
+                               IppsDLPState* pDL))
+/* clang-format on */
 {
-   /* test DL context */
-   IPP_BAD_PTR1_RET(pDL);
-   IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
+    /* test DL context */
+    IPP_BAD_PTR1_RET(pDL);
+    IPP_BADARG_RET(!DLP_VALID_ID(pDL), ippStsContextMatchErr);
 
-   /* test DL domain parameters */
-   IPP_BAD_PTR3_RET(pP, pR, pG);
-   IPP_BADARG_RET(!BN_VALID_ID(pP), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pR), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pG), ippStsContextMatchErr);
+    /* test DL domain parameters */
+    IPP_BAD_PTR3_RET(pP, pR, pG);
+    IPP_BADARG_RET(!BN_VALID_ID(pP), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pR), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pG), ippStsContextMatchErr);
 
-   /* test size of DL domain parameters */
-   IPP_BADARG_RET(BN_SIZE(pP)>BITS_BNU_CHUNK(DLP_BITSIZEP(pDL)), ippStsRangeErr);
-   IPP_BADARG_RET(BN_SIZE(pR)>BITS_BNU_CHUNK(DLP_BITSIZER(pDL)), ippStsRangeErr);
-   IPP_BADARG_RET(BN_SIZE(pG)>BITS_BNU_CHUNK(DLP_BITSIZEP(pDL)), ippStsRangeErr);
+    /* test size of DL domain parameters */
+    IPP_BADARG_RET(BN_SIZE(pP) > BITS_BNU_CHUNK(DLP_BITSIZEP(pDL)), ippStsRangeErr);
+    IPP_BADARG_RET(BN_SIZE(pR) > BITS_BNU_CHUNK(DLP_BITSIZER(pDL)), ippStsRangeErr);
+    IPP_BADARG_RET(BN_SIZE(pG) > BITS_BNU_CHUNK(DLP_BITSIZEP(pDL)), ippStsRangeErr);
 
-   /*
+    /*
    // set up DL domain parameters
    */
-   {
-      IppStatus sts;
+    {
+        IppStatus sts;
 
-      DLP_FLAG(pDL) = 0;
+        DLP_FLAG(pDL) = 0;
 
-      cpBN_zero(DLP_X(pDL));
-      cpBN_zero(DLP_YENC(pDL));
+        cpBN_zero(DLP_X(pDL));
+        cpBN_zero(DLP_YENC(pDL));
 
-      sts = gsModEngineInit(DLP_MONTP0(pDL), (Ipp32u*)BN_NUMBER(pP), cpBN_bitsize(pP), DLP_MONT_POOL_LENGTH, gsModArithDLP());
+        sts = gsModEngineInit(DLP_MONTP0(pDL),
+                              (Ipp32u*)BN_NUMBER(pP),
+                              cpBN_bitsize(pP),
+                              DLP_MONT_POOL_LENGTH,
+                              gsModArithDLP());
 
-      if(ippStsNoErr==sts) {
-         sts = gsModEngineInit(DLP_MONTR(pDL), (Ipp32u*)BN_NUMBER(pR), cpBN_bitsize(pR), DLP_MONT_POOL_LENGTH, gsModArithDLP());
-         if(ippStsNoErr==sts) {
-            cpMontEnc_BN(DLP_GENC(pDL), pG, DLP_MONTP0(pDL));
-            DLP_FLAG(pDL) = ippDLPkeyP|ippDLPkeyR|ippDLPkeyG;
-            return ippStsNoErr;
-         }
-      }
-      return sts;
-   }
+        if (ippStsNoErr == sts) {
+            sts = gsModEngineInit(DLP_MONTR(pDL),
+                                  (Ipp32u*)BN_NUMBER(pR),
+                                  cpBN_bitsize(pR),
+                                  DLP_MONT_POOL_LENGTH,
+                                  gsModArithDLP());
+            if (ippStsNoErr == sts) {
+                cpMontEnc_BN(DLP_GENC(pDL), pG, DLP_MONTP0(pDL));
+                DLP_FLAG(pDL) = ippDLPkeyP | ippDLPkeyR | ippDLPkeyG;
+                return ippStsNoErr;
+            }
+        }
+        return sts;
+    }
 }

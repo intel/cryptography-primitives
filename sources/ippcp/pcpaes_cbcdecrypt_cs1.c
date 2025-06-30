@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES encryption/decryption (CBC mode)
 //     AES encryption/decryption (CBC-CS mode)
-// 
+//
 //  Contents:
 //        ippsAESDecryptCBC_CS1()
 //
@@ -32,8 +32,8 @@
 #include "pcptool.h"
 #include "pcpaes_cbc_decrypt.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*F*
@@ -58,74 +58,83 @@
 //    pIV         pointer to the initialization vector
 //
 *F*/
-IPPFUN(IppStatus, ippsAESDecryptCBC_CS1,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                                         const IppsAESSpec* pCtx,
-                                         const Ipp8u* pIV))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsAESDecryptCBC_CS1, (const Ipp8u* pSrc,
+                                          Ipp8u* pDst,
+                                          int len,
+                                          const IppsAESSpec* pCtx,
+                                          const Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source, target buffers and initialization pointers */
-   IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<MBS_RIJ128), ippStsLengthErr);
+    /* test source, target buffers and initialization pointers */
+    IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < MBS_RIJ128), ippStsLengthErr);
 
-   {
-      int tail = len & (MBS_RIJ128-1); /* length of the last partial block */
+    {
+        int tail = len & (MBS_RIJ128 - 1); /* length of the last partial block */
 
-      if(tail) {
-         RijnCipher decoder = RIJ_DECODER(pCtx);
+        if (tail) {
+            RijnCipher decoder = RIJ_DECODER(pCtx);
 
-         Ipp8u lastIV[MBS_RIJ128];
-         Ipp8u lastDecBlk[2*MBS_RIJ128];
+            Ipp8u lastIV[MBS_RIJ128];
+            Ipp8u lastDecBlk[2 * MBS_RIJ128];
 
-         int n;
+            int n;
 
-         len -= MBS_RIJ128+tail;
+            len -= MBS_RIJ128 + tail;
 
-         if(len) {
-            CopyBlock16(pSrc+len-MBS_RIJ128, lastIV);
-            cpDecryptAES_cbc(pIV, pSrc, pDst, len/MBS_RIJ128, pCtx);
-            pSrc += len;
-            pDst += len;
-         }
-         else
-            CopyBlock16(pIV, lastIV);
+            if (len) {
+                CopyBlock16(pSrc + len - MBS_RIJ128, lastIV);
+                cpDecryptAES_cbc(pIV, pSrc, pDst, len / MBS_RIJ128, pCtx);
+                pSrc += len;
+                pDst += len;
+            } else
+                CopyBlock16(pIV, lastIV);
 
-         /* decrypt last  block */
-         #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-         decoder(pSrc+tail, lastDecBlk+MBS_RIJ128, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijDecSbox/*NULL*/);
-         #else
-         decoder(pSrc+tail, lastDecBlk+MBS_RIJ128, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
-         #endif
+/* decrypt last  block */
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+            decoder(pSrc + tail,
+                    lastDecBlk + MBS_RIJ128,
+                    RIJ_NR(pCtx),
+                    RIJ_EKEYS(pCtx),
+                    RijDecSbox /*NULL*/);
+#else
+            decoder(pSrc + tail, lastDecBlk + MBS_RIJ128, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
+#endif
 
-         CopyBlock16(lastDecBlk+MBS_RIJ128, lastDecBlk);
-         for(n=0; n<tail; n++) lastDecBlk[n] = pSrc[n];
-         /* decrypt penultimate  block */
-         #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-         decoder(lastDecBlk, lastDecBlk, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijDecSbox/*NULL*/);
-         #else
-         decoder(lastDecBlk, lastDecBlk, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
-         #endif
+            CopyBlock16(lastDecBlk + MBS_RIJ128, lastDecBlk);
+            for (n = 0; n < tail; n++)
+                lastDecBlk[n] = pSrc[n];
+/* decrypt penultimate  block */
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+            decoder(lastDecBlk, lastDecBlk, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijDecSbox /*NULL*/);
+#else
+            decoder(lastDecBlk, lastDecBlk, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
+#endif
 
-         for(n=0; n<MBS_RIJ128; n++) {
-            Ipp8u c = pSrc[n];
-            pDst[n] = lastDecBlk[n] ^ lastIV[n];
-            lastIV[n] = pSrc[n+tail];
-            lastDecBlk[n] = c;
-         }
-         for(tail+=MBS_RIJ128; n<tail; n++)
-            pDst[n] = lastDecBlk[n] ^ lastDecBlk[n-MBS_RIJ128];
+            for (n = 0; n < MBS_RIJ128; n++) {
+                Ipp8u c       = pSrc[n];
+                pDst[n]       = lastDecBlk[n] ^ lastIV[n];
+                lastIV[n]     = pSrc[n + tail];
+                lastDecBlk[n] = c;
+            }
+            for (tail += MBS_RIJ128; n < tail; n++)
+                pDst[n] = lastDecBlk[n] ^ lastDecBlk[n - MBS_RIJ128];
 
-         /* clear secret data */
-         PurgeBlock(lastDecBlk, sizeof(lastDecBlk));
-      }
+            /* clear secret data */
+            PurgeBlock(lastDecBlk, sizeof(lastDecBlk));
+        }
 
-      else
-         cpDecryptAES_cbc(pIV, pSrc, pDst, len/MBS_RIJ128, pCtx);
+        else
+            cpDecryptAES_cbc(pIV, pSrc, pDst, len / MBS_RIJ128, pCtx);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

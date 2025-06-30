@@ -34,17 +34,14 @@
 #if !defined(_PCP_AES_CMAC_STUFF_H_)
 #define _PCP_AES_CMAC_STUFF_H_
 
-__IPPCP_INLINE int cpSizeofCtx_AESCMAC(void)
-{
-   return sizeof(IppsAES_CMACState);
-}
+__IPPCP_INLINE int cpSizeofCtx_AESCMAC(void) { return sizeof(IppsAES_CMACState); }
 
 static void init(IppsAES_CMACState* pCtx)
 {
-   /* buffer is empty */
-   CMAC_INDX(pCtx) = 0;
-   /* zeros MAC */
-   PadBlock(0, CMAC_MAC(pCtx), MBS_RIJ128);
+    /* buffer is empty */
+    CMAC_INDX(pCtx) = 0;
+    /* zeros MAC */
+    PadBlock(0, CMAC_MAC(pCtx), MBS_RIJ128);
 }
 
 #endif /* #if !defined(_PCP_AES_CMAC_STUFF_H_) */

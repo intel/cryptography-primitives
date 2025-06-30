@@ -46,16 +46,16 @@
 //    pBuffer     pointer to the packed context
 //
 *F*/
-IPPFUN(IppStatus, ippsDESPack,(const IppsDESSpec* pCtx, Ipp8u* pBuffer))
+IPPFUN(IppStatus, ippsDESPack, (const IppsDESSpec* pCtx, Ipp8u* pBuffer))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
-   /* test the context */
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx), ippStsContextMatchErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test the context */
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx), ippStsContextMatchErr);
 
-   CopyBlock(pCtx, pBuffer, sizeof(IppsDESSpec));
-   IppsDESSpec* pCopy = (IppsDESSpec*)pBuffer;
-   DES_RESET_ID(pCopy);
-   
-   return ippStsNoErr;
+    CopyBlock(pCtx, pBuffer, sizeof(IppsDESSpec));
+    IppsDESSpec* pCopy = (IppsDESSpec*)pBuffer;
+    DES_RESET_ID(pCopy);
+
+    return ippStsNoErr;
 }

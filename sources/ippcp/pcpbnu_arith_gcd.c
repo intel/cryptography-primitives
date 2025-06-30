@@ -42,22 +42,22 @@
 //
 *F*/
 
-IPP_OWN_DEFN (BNU_CHUNK_T, cpGcd_BNU, (BNU_CHUNK_T a, BNU_CHUNK_T b))
+IPP_OWN_DEFN(BNU_CHUNK_T, cpGcd_BNU, (BNU_CHUNK_T a, BNU_CHUNK_T b))
 {
     BNU_CHUNK_T gcd, t, r;
 
-    if(a > b){
+    if (a > b) {
         gcd = a;
-        t = b;
+        t   = b;
     } else {
-        t = a;
+        t   = a;
         gcd = b;
     }
 
-    while (t != 0)    {
-        r = gcd % t;
+    while (t != 0) {
+        r   = gcd % t;
         gcd = t;
-        t = r;
+        t   = r;
     }
     return gcd;
 }

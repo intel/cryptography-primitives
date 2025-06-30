@@ -33,24 +33,26 @@
 #include "pcpngrsa.h"
 
 
-#if (_IPP>=_IPP_W7)
+#if (_IPP >= _IPP_W7)
 #include "pcpngmontexpstuff_sse2.h"
 
-IPP_OWN_DEFN (gsMethod_RSA*, gsMethod_RSA_sse2_private, (void))
+IPP_OWN_DEFN(gsMethod_RSA*, gsMethod_RSA_sse2_private, (void))
 {
-   static gsMethod_RSA m = {
-      RSA_SSE2_MIN_BITSIZE, RSA_SSE2_MAX_BITSIZE,  /* RSA range */
+    static gsMethod_RSA m = {
+        RSA_SSE2_MIN_BITSIZE,
+        RSA_SSE2_MAX_BITSIZE, /* RSA range */
 
-      /* private key exponentiation: private, window, sse2 */
-      #if !defined(_USE_WINDOW_EXP_)
-      gsMontExpBinBuffer_sse2,
-      gsMontExpBin_BNU_sscm_sse2
-      #else
-      gsMontExpWinBuffer_sse2,
-      gsMontExpWin_BNU_sscm_sse2
-      #endif
-      , NULL
-   };
-   return &m;
+/* private key exponentiation: private, window, sse2 */
+#if !defined(_USE_WINDOW_EXP_)
+        gsMontExpBinBuffer_sse2,
+        gsMontExpBin_BNU_sscm_sse2
+#else
+        gsMontExpWinBuffer_sse2,
+        gsMontExpWin_BNU_sscm_sse2
+#endif
+        ,
+        NULL
+    };
+    return &m;
 }
 #endif /* _IPP_W7 */

@@ -33,8 +33,10 @@
 __IPPCP_INLINE int cpGetBitSize(Ipp32u offset, Ipp32u val)
 {
     int bitSize = 31;
-    if (val == 0) return 0;
-    while ((val & (1 << bitSize)) == 0) bitSize--;
+    if (val == 0)
+        return 0;
+    while ((val & (1 << bitSize)) == 0)
+        bitSize--;
     return (int)offset + bitSize;
 }
 
@@ -55,20 +57,20 @@ __IPPCP_INLINE int cpGetBitSize(Ipp32u offset, Ipp32u val)
 //    pMont       pointer to the context
 *F*/
 
-IPP_OWN_DEFN (IppStatus, cpMontSet, (const Ipp32u* pModulus, cpSize len32, IppsMontState* pMont))
+IPP_OWN_DEFN(IppStatus, cpMontSet, (const Ipp32u* pModulus, cpSize len32, IppsMontState* pMont))
 {
-   IPP_BADARG_RET(len32<1, ippStsLengthErr);
+    IPP_BADARG_RET(len32 < 1, ippStsLengthErr);
 
-   /* modulus is not an odd number */
-   IPP_BADARG_RET((pModulus[0] & 1) == 0, ippStsBadModulusErr);
-   IPP_BADARG_RET(MNT_ROOM(pMont)<(int)(INTERNAL_BNU_LENGTH(len32)), ippStsOutOfRangeErr);
+    /* modulus is not an odd number */
+    IPP_BADARG_RET((pModulus[0] & 1) == 0, ippStsBadModulusErr);
+    IPP_BADARG_RET(MNT_ROOM(pMont) < (int)(INTERNAL_BNU_LENGTH(len32)), ippStsOutOfRangeErr);
 
-   {
-      const int poolLen  = MOD_MAXPOOL(MNT_ENGINE(pMont));
-      int modulusBitSize = cpGetBitSize((Ipp32u)((len32 - 1) << 5), pModulus[len32-1]);
+    {
+        const int poolLen  = MOD_MAXPOOL(MNT_ENGINE(pMont));
+        int modulusBitSize = cpGetBitSize((Ipp32u)((len32 - 1) << 5), pModulus[len32 - 1]);
 
-      gsModEngineInit(MNT_ENGINE(pMont), pModulus, modulusBitSize, poolLen, gsModArithMont());
+        gsModEngineInit(MNT_ENGINE(pMont), pModulus, modulusBitSize, poolLen, gsModArithMont());
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

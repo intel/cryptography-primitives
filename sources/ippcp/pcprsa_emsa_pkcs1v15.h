@@ -27,9 +27,12 @@
 #include "pcpngrsa.h"
 #include "pcptool.h"
 
-static int EMSA_PKCSv15(const Ipp8u* msgDg, int lenMsgDg,
-    const Ipp8u* fixPS, int lenFixPS,
-    Ipp8u*   pEM, int lenEM)
+static int EMSA_PKCSv15(const Ipp8u* msgDg,
+                        int lenMsgDg,
+                        const Ipp8u* fixPS,
+                        int lenFixPS,
+                        Ipp8u* pEM,
+                        int lenEM)
 {
     /*
     // encoded message format:
@@ -37,21 +40,20 @@ static int EMSA_PKCSv15(const Ipp8u* msgDg, int lenMsgDg,
     //    T = fixPS || msgDg
     //    len(PS) >= 8
     */
-    int  tLen = lenFixPS + lenMsgDg;
+    int tLen = lenFixPS + lenMsgDg;
 
     if (lenEM >= tLen + 11) {
         int psLen = lenEM - 3 - tLen;
 
         PadBlock(0xFF, pEM, lenEM);
-        pEM[0] = 0x00;
-        pEM[1] = 0x01;
+        pEM[0]         = 0x00;
+        pEM[1]         = 0x01;
         pEM[2 + psLen] = 0x00;
         CopyBlock(fixPS, pEM + 3 + psLen, lenFixPS);
         if (msgDg) {
-           CopyBlock(msgDg, pEM + 3 + psLen + lenFixPS, lenMsgDg);
+            CopyBlock(msgDg, pEM + 3 + psLen + lenFixPS, lenMsgDg);
         }
         return 1;
-    }
-    else
+    } else
         return 0; /* encoded message length too long */
 }

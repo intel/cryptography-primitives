@@ -34,30 +34,30 @@
 #if defined _PCP_RIJ_SAFE_OLD
 /* old version */
 #define TransformByte OWNAPI(TransformByte)
-    IPP_OWN_DECL (Ipp8u, TransformByte, (Ipp8u x, const Ipp8u Transformation[]))
+IPP_OWN_DECL(Ipp8u, TransformByte, (Ipp8u x, const Ipp8u Transformation[]))
 #define TransformNative2Composite OWNAPI(TransformNative2Composite)
-    IPP_OWN_DECL (void, TransformNative2Composite, (Ipp8u out[16], const Ipp8u inp[16]))
+IPP_OWN_DECL(void, TransformNative2Composite, (Ipp8u out[16], const Ipp8u inp[16]))
 #define TransformComposite2Native OWNAPI(TransformComposite2Native)
-    IPP_OWN_DECL (void, TransformComposite2Native, (Ipp8u out[16], const Ipp8u inp[16]))
+IPP_OWN_DECL(void, TransformComposite2Native, (Ipp8u out[16], const Ipp8u inp[16]))
 #define InverseComposite OWNAPI(InverseComposite)
-    IPP_OWN_DECL (Ipp8u, InverseComposite, (Ipp8u x))
+IPP_OWN_DECL(Ipp8u, InverseComposite, (Ipp8u x))
 #define AddRoundKey OWNAPI(AddRoundKey)
-    IPP_OWN_DECL (void, AddRoundKey, (Ipp8u out[], const Ipp8u inp[], const Ipp8u pKey[]))
+IPP_OWN_DECL(void, AddRoundKey, (Ipp8u out[], const Ipp8u inp[], const Ipp8u pKey[]))
 #endif
 
 
 #if !defined _PCP_RIJ_SAFE_OLD
 /* new version */
 #define TransformNative2Composite OWNAPI(TransformNative2Composite)
-    IPP_OWN_DECL (void, TransformNative2Composite, (Ipp8u out[16], const Ipp8u inp[16]))
+IPP_OWN_DECL(void, TransformNative2Composite, (Ipp8u out[16], const Ipp8u inp[16]))
 #define TransformComposite2Native OWNAPI(TransformComposite2Native)
-    IPP_OWN_DECL (void, TransformComposite2Native, (Ipp8u out[16], const Ipp8u inp[16]))
+IPP_OWN_DECL(void, TransformComposite2Native, (Ipp8u out[16], const Ipp8u inp[16]))
 
 /* add round key operation */
 __IPPCP_INLINE void AddRoundKey(Ipp8u out[16], const Ipp8u inp[16], const Ipp8u rkey[16])
 {
-   ((Ipp64u*)out)[0] = ((Ipp64u*)inp)[0] ^ ((Ipp64u*)rkey)[0];
-   ((Ipp64u*)out)[1] = ((Ipp64u*)inp)[1] ^ ((Ipp64u*)rkey)[1];
+    ((Ipp64u*)out)[0] = ((Ipp64u*)inp)[0] ^ ((Ipp64u*)rkey)[0];
+    ((Ipp64u*)out)[1] = ((Ipp64u*)inp)[1] ^ ((Ipp64u*)rkey)[1];
 }
 
 /* add logs of GF(2^4) elements
@@ -65,35 +65,35 @@ __IPPCP_INLINE void AddRoundKey(Ipp8u out[16], const Ipp8u inp[16], const Ipp8u 
 */
 __IPPCP_INLINE Ipp8u AddLogGF16(Ipp8u loga, Ipp8u logb)
 {
-   //Ipp8u s = loga+logb;
-   //return (s>2*14)? 15 : (s>14)? s-15 : s;
-   Ipp8u s = loga+logb;
-   Ipp8u delta = ((0xF-1)-s)>>7;
-   s -= delta;
-   s |= 0-(s>>7);
-   return s & (0xF);
+    //Ipp8u s = loga+logb;
+    //return (s>2*14)? 15 : (s>14)? s-15 : s;
+    Ipp8u s     = loga + logb;
+    Ipp8u delta = ((0xF - 1) - s) >> 7;
+    s -= delta;
+    s |= 0 - (s >> 7);
+    return s & (0xF);
 }
 #endif
 
-#define SELECTION_BITS  ((sizeof(BNU_CHUNK_T)/sizeof(Ipp8u)) -1)
+#define SELECTION_BITS ((sizeof(BNU_CHUNK_T) / sizeof(Ipp8u)) - 1)
 
 __IPPCP_INLINE Ipp8u getSboxValue(Ipp8u x)
 {
-  BNU_CHUNK_T selection = 0;
-  const Ipp8u* SboxEntry = RijEncSbox;
+    BNU_CHUNK_T selection  = 0;
+    const Ipp8u* SboxEntry = RijEncSbox;
 
-  Ipp32u i;
-  for (i = 0; i<sizeof(RijEncSbox); i++) {
-// disable the compiler predictions in case of M7/N8 paths to keep the execution time constant 
-#if !((_IPP>_IPP_S8) || (_IPP32E>_IPP32E_N8))
-    // volatile is needed to prevent the compiler from optimizing
-    volatile BNU_CHUNK_T mask = cpIsEqu_ct(x, i);
+    Ipp32u i;
+    for (i = 0; i < sizeof(RijEncSbox); i++) {
+// disable the compiler predictions in case of M7/N8 paths to keep the execution time constant
+#if !((_IPP > _IPP_S8) || (_IPP32E > _IPP32E_N8))
+        // volatile is needed to prevent the compiler from optimizing
+        volatile BNU_CHUNK_T mask = cpIsEqu_ct(x, i);
 #else
-    BNU_CHUNK_T mask = cpIsEqu_ct(x, i);
+        BNU_CHUNK_T mask = cpIsEqu_ct(x, i);
 #endif
-    selection |= SboxEntry[i] & mask;
-  }
-  return (Ipp8u)(selection & 0xFF);
+        selection |= SboxEntry[i] & mask;
+    }
+    return (Ipp8u)(selection & 0xFF);
 }
 
 

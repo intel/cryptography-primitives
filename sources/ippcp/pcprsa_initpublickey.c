@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_InitPublicKey()
 //
@@ -54,43 +54,55 @@
 //    pKey                 pointer to the key context
 //    keyCtxSize           size of memory associated with key context
 *F*/
-IPPFUN(IppStatus, ippsRSA_InitPublicKey,(int rsaModulusBitSize, int publicExpBitSize,
-                                         IppsRSAPublicKeyState* pKey, int keyCtxSize))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSA_InitPublicKey, (int rsaModulusBitSize,
+                                          int publicExpBitSize,
+                                          IppsRSAPublicKeyState* pKey,
+                                          int keyCtxSize))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pKey);
+    IPP_BAD_PTR1_RET(pKey);
 
-   IPP_BADARG_RET((MIN_RSA_SIZE>rsaModulusBitSize) || (rsaModulusBitSize>MAX_RSA_SIZE), ippStsNotSupportedModeErr);
-   IPP_BADARG_RET(!((0<publicExpBitSize) && (publicExpBitSize<=rsaModulusBitSize)), ippStsBadArgErr);
+    IPP_BADARG_RET((MIN_RSA_SIZE > rsaModulusBitSize) || (rsaModulusBitSize > MAX_RSA_SIZE),
+                   ippStsNotSupportedModeErr);
+    IPP_BADARG_RET(!((0 < publicExpBitSize) && (publicExpBitSize <= rsaModulusBitSize)),
+                   ippStsBadArgErr);
 
-   /* test available size of context buffer */
-   IPP_BADARG_RET(keyCtxSize<cpSizeof_RSA_publicKey(rsaModulusBitSize, publicExpBitSize), ippStsMemAllocErr);
+    /* test available size of context buffer */
+    IPP_BADARG_RET(keyCtxSize < cpSizeof_RSA_publicKey(rsaModulusBitSize, publicExpBitSize),
+                   ippStsMemAllocErr);
 
-   RSA_PUB_KEY_SET_ID(pKey);
-   RSA_PUB_KEY_MAXSIZE_N(pKey) = rsaModulusBitSize;
-   RSA_PUB_KEY_MAXSIZE_E(pKey) = publicExpBitSize;
-   RSA_PUB_KEY_BITSIZE_N(pKey) = 0;
-   RSA_PUB_KEY_BITSIZE_E(pKey) = 0;
+    RSA_PUB_KEY_SET_ID(pKey);
+    RSA_PUB_KEY_MAXSIZE_N(pKey) = rsaModulusBitSize;
+    RSA_PUB_KEY_MAXSIZE_E(pKey) = publicExpBitSize;
+    RSA_PUB_KEY_BITSIZE_N(pKey) = 0;
+    RSA_PUB_KEY_BITSIZE_E(pKey) = 0;
 
-   {
-      Ipp8u* ptr = (Ipp8u*)pKey;
+    {
+        Ipp8u* ptr = (Ipp8u*)pKey;
 
-      int pubExpLen = BITS_BNU_CHUNK(publicExpBitSize);
-      int modulusLen32 = BITS2WORD32_SIZE(rsaModulusBitSize);
-      int montNsize;
-      rsaMontExpGetSize(modulusLen32, &montNsize);
+        int pubExpLen    = BITS_BNU_CHUNK(publicExpBitSize);
+        int modulusLen32 = BITS2WORD32_SIZE(rsaModulusBitSize);
+        int montNsize;
+        rsaMontExpGetSize(modulusLen32, &montNsize);
 
-      /* allocate internal contexts */
-      ptr += sizeof(IppsRSAPublicKeyState);
+        /* allocate internal contexts */
+        ptr += sizeof(IppsRSAPublicKeyState);
 
-      RSA_PUB_KEY_E(pKey) = (BNU_CHUNK_T*)( IPP_ALIGNED_PTR((ptr), (int)sizeof(BNU_CHUNK_T)) );
-      ptr += pubExpLen*(Ipp32s)sizeof(BNU_CHUNK_T);
+        RSA_PUB_KEY_E(pKey) = (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((ptr), (int)sizeof(BNU_CHUNK_T)));
+        ptr += pubExpLen * (Ipp32s)sizeof(BNU_CHUNK_T);
 
-      RSA_PUB_KEY_NMONT(pKey) = (gsModEngine*)(ptr);
-      ptr += montNsize;
+        RSA_PUB_KEY_NMONT(pKey) = (gsModEngine*)(ptr);
+        ptr += montNsize;
 
-      ZEXPAND_BNU(RSA_PUB_KEY_E(pKey), 0, pubExpLen);
-      gsModEngineInit(RSA_PUB_KEY_NMONT(pKey), 0, rsaModulusBitSize, MOD_ENGINE_RSA_POOL_SIZE, gsModArithRSA());
+        ZEXPAND_BNU(RSA_PUB_KEY_E(pKey), 0, pubExpLen);
+        gsModEngineInit(RSA_PUB_KEY_NMONT(pKey),
+                        0,
+                        rsaModulusBitSize,
+                        MOD_ENGINE_RSA_POOL_SIZE,
+                        gsModArithRSA());
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -49,12 +49,12 @@
 *F*/
 IPPFUN(IppStatus, ippsMontGetSize, (IppsExpMethod method, int length, int* pSize))
 {
-   IPP_BAD_PTR1_RET(pSize);
-   IPP_BADARG_RET(length<1 || length>BITS2WORD32_SIZE(BN_MAXBITSIZE), ippStsLengthErr);
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET(length < 1 || length > BITS2WORD32_SIZE(BN_MAXBITSIZE), ippStsLengthErr);
 
-   IPP_UNREFERENCED_PARAMETER(method);
+    IPP_UNREFERENCED_PARAMETER(method);
 
-   {
-      return cpMontGetSize(length, MONT_DEFAULT_POOL_LENGTH, pSize);
-   }
+    {
+        return cpMontGetSize(length, MONT_DEFAULT_POOL_LENGTH, pSize);
+    }
 }

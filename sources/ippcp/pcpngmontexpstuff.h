@@ -37,65 +37,70 @@
 */
 __IPPCP_INLINE cpSize gsMontExp_WinSize(cpSize bitsize)
 {
-   #if defined(_USE_WINDOW_EXP_)
-   // new computations
-   return
-      #if (_IPP !=_IPP_M5)     /*limited by 6 or 4 (LOG_CACHE_LINE_SIZE); we use it for windowing-exp imtigation */
-         bitsize> 4096? 6 :    /* 4096- .. .  */
-         bitsize> 2666? 5 :    /* 2666 - 4095 */
-      #endif
-         bitsize>  717? 4 :    /*  717 - 2665 */
-         bitsize>  178? 3 :    /*  178 - 716  */
-         bitsize>   41? 2 : 1; /*   41 - 177  */
-   #else
-   IPP_UNREFERENCED_PARAMETER(bitsize);
-   return 1;
-   #endif
+#if defined(_USE_WINDOW_EXP_)
+    // new computations
+    return
+#if (_IPP != \
+     _IPP_M5) /*limited by 6 or 4 (LOG_CACHE_LINE_SIZE); we use it for windowing-exp imtigation */
+        bitsize > 4096 ? 6 :  /* 4096- .. .  */
+            bitsize > 2666 ? 5
+                           :  /* 2666 - 4095 */
+#endif
+            bitsize > 717 ? 4
+                          :   /*  717 - 2665 */
+            bitsize > 178 ? 3
+                          :   /*  178 - 716  */
+            bitsize > 41 ? 2
+                         : 1; /*   41 - 177  */
+#else
+    IPP_UNREFERENCED_PARAMETER(bitsize);
+    return 1;
+#endif
 }
 
 /*
 // Montgomery encoding/decoding
 */
 __IPPCP_INLINE cpSize gsMontEnc_BNU(BNU_CHUNK_T* pR,
-                        const BNU_CHUNK_T* pXreg, cpSize nsX,
-                        const gsModEngine* pMont)
+                                    const BNU_CHUNK_T* pXreg,
+                                    cpSize nsX,
+                                    const gsModEngine* pMont)
 {
-   cpSize nsM = MOD_LEN( pMont );
-   ZEXPAND_COPY_BNU(pR, nsM, pXreg, nsX);
-   MOD_METHOD( pMont )->encode(pR, pR, (gsModEngine*)pMont);
-   return nsM;
+    cpSize nsM = MOD_LEN(pMont);
+    ZEXPAND_COPY_BNU(pR, nsM, pXreg, nsX);
+    MOD_METHOD(pMont)->encode(pR, pR, (gsModEngine*)pMont);
+    return nsM;
 }
 
-__IPPCP_INLINE cpSize gsMontDec_BNU(BNU_CHUNK_T* pR,
-                        const BNU_CHUNK_T* pXmont,
-                              gsModEngine* pMont)
+__IPPCP_INLINE cpSize gsMontDec_BNU(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pXmont, gsModEngine* pMont)
 {
-   cpSize nsM = MOD_LEN(pMont);
-   MOD_METHOD( pMont )->decode(pR, pXmont, (gsModEngine*)pMont);
-   return nsM;
+    cpSize nsM = MOD_LEN(pMont);
+    MOD_METHOD(pMont)->decode(pR, pXmont, (gsModEngine*)pMont);
+    return nsM;
 }
 
 __IPPCP_INLINE void gsMontEnc_BN(IppsBigNumState* pRbn,
-                     const IppsBigNumState* pXbn,
-                           gsModEngine* pMont)
+                                 const IppsBigNumState* pXbn,
+                                 gsModEngine* pMont)
 {
-   BNU_CHUNK_T* pR = BN_NUMBER(pRbn);
-   cpSize nsM = MOD_LEN(pMont);
+    BNU_CHUNK_T* pR = BN_NUMBER(pRbn);
+    cpSize nsM      = MOD_LEN(pMont);
 
-   gsMontEnc_BNU(pR, BN_NUMBER(pXbn), BN_SIZE(pXbn), pMont);
+    gsMontEnc_BNU(pR, BN_NUMBER(pXbn), BN_SIZE(pXbn), pMont);
 
-   FIX_BNU(pR, nsM);
-   BN_SIZE(pRbn) = nsM;
-   BN_SIGN(pRbn) = ippBigNumPOS;
+    FIX_BNU(pR, nsM);
+    BN_SIZE(pRbn) = nsM;
+    BN_SIGN(pRbn) = ippBigNumPOS;
 }
 
 /* exponentiation buffer size */
 #define gsMontExpBinBuffer OWNAPI(gsMontExpBinBuffer)
-   IPP_OWN_DECL (cpSize, gsMontExpBinBuffer, (int modulusBits))
+IPP_OWN_DECL(cpSize, gsMontExpBinBuffer, (int modulusBits))
 #define gsMontExpWinBuffer OWNAPI(gsMontExpWinBuffer)
-   IPP_OWN_DECL (cpSize, gsMontExpWinBuffer, (int modulusBits))
+IPP_OWN_DECL(cpSize, gsMontExpWinBuffer, (int modulusBits))
 
 /* exponentiation prototype */
+/* clang-format off */
 IPP_OWN_FUNPTR (cpSize, ngMontExp, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize nbitsE, gsModEngine* pMont, BNU_CHUNK_T* pBuffer))
 IPP_OWN_FUNPTR (cpSize, ngMontDualExp, (BNU_CHUNK_T* dataY[2], const BNU_CHUNK_T* dataX[2], cpSize nsX[2], const BNU_CHUNK_T* dataE[2], gsModEngine* pMont[2], BNU_CHUNK_T* pBuffer))
 
@@ -124,5 +129,6 @@ IPP_OWN_FUNPTR (cpSize, ngMontDualExp, (BNU_CHUNK_T* dataY[2], const BNU_CHUNK_T
    IPP_OWN_DECL (cpSize, gsMontExpWin_BNU_sscm, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize nbitsE, gsModEngine* pMont, BNU_CHUNK_T* pBuffer))
 #define gsModExpWin_BNU_sscm OWNAPI(gsModExpWin_BNU_sscm)
    IPP_OWN_DECL (cpSize, gsModExpWin_BNU_sscm, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize nbitsE, gsModEngine* pMont, BNU_CHUNK_T* pBuffer))
+/* clang-format on */
 
 #endif /* _CP_NG_MONT_EXP_STUFF_H */

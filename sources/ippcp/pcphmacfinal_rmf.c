@@ -48,47 +48,47 @@
 //    pState      pointer to the HMAC state
 //
 *F*/
-IPPFUN(IppStatus, ippsHMACFinal_rmf,(Ipp8u* pMD, int mdLen, IppsHMACState_rmf* pCtx))
+IPPFUN(IppStatus, ippsHMACFinal_rmf, (Ipp8u * pMD, int mdLen, IppsHMACState_rmf* pCtx))
 {
-   /* test state pointer and ID */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test state pointer and ID */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   /* test MD pointer and length */
-   IPP_BAD_PTR1_RET(pMD);
-   IPP_BADARG_RET(mdLen<=0, ippStsLengthErr);
+    /* test MD pointer and length */
+    IPP_BAD_PTR1_RET(pMD);
+    IPP_BADARG_RET(mdLen <= 0, ippStsLengthErr);
 
-   {
-      /* hash specific */
-      IppsHashState_rmf* pHashCtx = HASH_CTX(pCtx);
-      const IppsHashMethod* method = HASH_METHOD(pHashCtx);
-      int mbs = method->msgBlkSize;
-      int hashSize = method->hashLen;
-      if(mdLen>hashSize)
-         IPP_ERROR_RET(ippStsLengthErr);
+    {
+        /* hash specific */
+        IppsHashState_rmf* pHashCtx  = HASH_CTX(pCtx);
+        const IppsHashMethod* method = HASH_METHOD(pHashCtx);
+        int mbs                      = method->msgBlkSize;
+        int hashSize                 = method->hashLen;
+        if (mdLen > hashSize)
+            IPP_ERROR_RET(ippStsLengthErr);
 
-      /*
+        /*
       // finalize hmac
       */
-      {
-         /* finalize 1-st step */
-         Ipp8u md[IPP_SHA512_DIGEST_BITSIZE/8];
-         IppStatus sts = ippsHashFinal_rmf(md, pHashCtx);
+        {
+            /* finalize 1-st step */
+            Ipp8u md[IPP_SHA512_DIGEST_BITSIZE / 8];
+            IppStatus sts = ippsHashFinal_rmf(md, pHashCtx);
 
-         if(ippStsNoErr==sts) {
-            /* perform outer hash */
-            ippsHashUpdate_rmf(pCtx->opadKey, mbs, pHashCtx);
-            ippsHashUpdate_rmf(md, hashSize, pHashCtx);
+            if (ippStsNoErr == sts) {
+                /* perform outer hash */
+                ippsHashUpdate_rmf(pCtx->opadKey, mbs, pHashCtx);
+                ippsHashUpdate_rmf(md, hashSize, pHashCtx);
 
-            /* complete HMAC */
-            ippsHashFinal_rmf(md, pHashCtx);
-            CopyBlock(md, pMD, IPP_MIN(hashSize, mdLen));
+                /* complete HMAC */
+                ippsHashFinal_rmf(md, pHashCtx);
+                CopyBlock(md, pMD, IPP_MIN(hashSize, mdLen));
 
-            /* ready to the next HMAC computation */
-            ippsHashUpdate_rmf(pCtx->ipadKey, mbs, pHashCtx);
-         }
+                /* ready to the next HMAC computation */
+                ippsHashUpdate_rmf(pCtx->ipadKey, mbs, pHashCtx);
+            }
 
-         return sts;
-      }
-   }
+            return sts;
+        }
+    }
 }

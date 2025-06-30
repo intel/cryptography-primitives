@@ -31,11 +31,11 @@
 #include "pcptool.h"
 #include "pcpaes_gcm_internal_func.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
-#if(_IPP32E>=_IPP32E_K0)
+#if (_IPP32E >= _IPP32E_K0)
 #include "pcpaesauthgcm_avx512.h"
 #else
 #include "pcpaesauthgcm.h"
@@ -62,134 +62,163 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsAES_GCMDecrypt,(const Ipp8u* pSrc, Ipp8u* pDst, int len, IppsAES_GCMState* pState))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_GCMDecrypt, (const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int len,
+                                       IppsAES_GCMState* pState))
+/* clang-format on */
 {
-   /* test pState pointer */
-   IPP_BAD_PTR1_RET(pState);
-   /* use aligned context */
-   pState = (IppsAES_GCMState*)( IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT) );
-   /* test state ID */
-   IPP_BADARG_RET(!AESGCM_VALID_ID(pState), ippStsContextMatchErr);
-   /* test context validity */
-   IPP_BADARG_RET(!(GcmAADprocessing==AESGCM_STATE(pState) || GcmTXTprocessing==AESGCM_STATE(pState)), ippStsBadArgErr);
+    /* test pState pointer */
+    IPP_BAD_PTR1_RET(pState);
+    /* use aligned context */
+    pState = (IppsAES_GCMState*)(IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT));
+    /* test state ID */
+    IPP_BADARG_RET(!AESGCM_VALID_ID(pState), ippStsContextMatchErr);
+    /* test context validity */
+    IPP_BADARG_RET(
+        !(GcmAADprocessing == AESGCM_STATE(pState) || GcmTXTprocessing == AESGCM_STATE(pState)),
+        ippStsBadArgErr);
 
-   /* test text pointers and length */
-   IPP_BAD_PTR2_RET(pSrc, pDst);
-   IPP_BADARG_RET(len<0, ippStsLengthErr);
+    /* test text pointers and length */
+    IPP_BAD_PTR2_RET(pSrc, pDst);
+    IPP_BADARG_RET(len < 0, ippStsLengthErr);
 
-   /* According to the NIST Special Publication 800-38D (Recommendation for GCM
+    /* According to the NIST Special Publication 800-38D (Recommendation for GCM
     * mode, p.5.2.1.1 Input Data) the input text shall be between 0 and 2^39-256
     * bits. */
-   const Ipp64u MAX_TXT_LEN = ((Ipp64u)1 << 36) - 32; /* length in bytes */
-   IPP_BADARG_RET(((AESGCM_TXT_LEN(pState) > MAX_TXT_LEN - (Ipp64u)len) ||
-                  ((AESGCM_TXT_LEN(pState) + (Ipp64u)len) < (Ipp64u)len)),
-                  ippStsScaleRangeErr);
+    const Ipp64u MAX_TXT_LEN = ((Ipp64u)1 << 36) - 32; /* length in bytes */
+    IPP_BADARG_RET(((AESGCM_TXT_LEN(pState) > MAX_TXT_LEN - (Ipp64u)len) ||
+                    ((AESGCM_TXT_LEN(pState) + (Ipp64u)len) < (Ipp64u)len)),
+                   ippStsScaleRangeErr);
 
 #if (_IPP32E < _IPP32E_K0)
-   /* get method */
-   IppsAESSpec *pAES = AESGCM_CIPHER(pState);
-   RijnCipher encoder = RIJ_ENCODER(pAES);
-   MulGcm_ hashFunc = AESGCM_HASH(pState);
+    /* get method */
+    IppsAESSpec* pAES  = AESGCM_CIPHER(pState);
+    RijnCipher encoder = RIJ_ENCODER(pAES);
+    MulGcm_ hashFunc   = AESGCM_HASH(pState);
 #endif
 
-   if( GcmAADprocessing==AESGCM_STATE(pState) ) {
-#if(_IPP32E>=_IPP32E_K0)
-      if(AESGCM_BUFLEN(pState)) {
-         MulGcm_ ghashFunc = AES_GCM_GMUL(pState);
-         ghashFunc(&AES_GCM_KEY_DATA(pState), AESGCM_GHASH(pState));
-      }
+    if (GcmAADprocessing == AESGCM_STATE(pState)) {
+#if (_IPP32E >= _IPP32E_K0)
+        if (AESGCM_BUFLEN(pState)) {
+            MulGcm_ ghashFunc = AES_GCM_GMUL(pState);
+            ghashFunc(&AES_GCM_KEY_DATA(pState), AESGCM_GHASH(pState));
+        }
 #else
-      /* complete AAD processing */
-      if(AESGCM_BUFLEN(pState))
-         hashFunc(AESGCM_GHASH(pState), AESGCM_HKEY(pState), AesGcmConst_table);
+        /* complete AAD processing */
+        if (AESGCM_BUFLEN(pState))
+            hashFunc(AESGCM_GHASH(pState), AESGCM_HKEY(pState), AesGcmConst_table);
 
-      /* increment counter block */
-      IncrementCounter32(AESGCM_COUNTER(pState));
-      /* and encrypt counter */
-      #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-      encoder(AESGCM_COUNTER(pState), AESGCM_ECOUNTER(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox/*NULL*/);
-      #else
-      encoder(AESGCM_COUNTER(pState), AESGCM_ECOUNTER(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
-      #endif
+        /* increment counter block */
+        IncrementCounter32(AESGCM_COUNTER(pState));
+/* and encrypt counter */
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+        encoder(AESGCM_COUNTER(pState),
+                AESGCM_ECOUNTER(pState),
+                RIJ_NR(pAES),
+                RIJ_EKEYS(pAES),
+                RijEncSbox /*NULL*/);
+#else
+        encoder(AESGCM_COUNTER(pState),
+                AESGCM_ECOUNTER(pState),
+                RIJ_NR(pAES),
+                RIJ_EKEYS(pAES),
+                NULL);
+#endif
 #endif /* #if(_IPP32E>=_IPP32E_K0) */
 
-      /* switch mode and init counters */
-      AESGCM_BUFLEN(pState) = 0; 
-      AESGCM_TXT_LEN(pState) = CONST_64(0);
-      AESGCM_STATE(pState) = GcmTXTprocessing;
-   }
+        /* switch mode and init counters */
+        AESGCM_BUFLEN(pState)  = 0;
+        AESGCM_TXT_LEN(pState) = CONST_64(0);
+        AESGCM_STATE(pState)   = GcmTXTprocessing;
+    }
 
-   /*
+    /*
    // process text (authenticate and decrypt)
    */
 
-#if(_IPP32E>=_IPP32E_K0)
-   condNoisedGCMDecryption(pSrc, pDst, len, pState);
+#if (_IPP32E >= _IPP32E_K0)
+    condNoisedGCMDecryption(pSrc, pDst, len, pState);
 #else
-   /* process partial block */
-   if(AESGCM_BUFLEN(pState)) {
-      int locLen = IPP_MIN(len, BLOCK_SIZE-AESGCM_BUFLEN(pState));
-      /* authentication */
-      XorBlock(pSrc, AESGCM_GHASH(pState)+AESGCM_BUFLEN(pState), AESGCM_GHASH(pState)+AESGCM_BUFLEN(pState), locLen);
-      /* ctr decryption */
-      XorBlock(pSrc, AESGCM_ECOUNTER(pState)+AESGCM_BUFLEN(pState), pDst, locLen);
+    /* process partial block */
+    if (AESGCM_BUFLEN(pState)) {
+        int locLen = IPP_MIN(len, BLOCK_SIZE - AESGCM_BUFLEN(pState));
+        /* authentication */
+        XorBlock(pSrc,
+                 AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
+                 AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
+                 locLen);
+        /* ctr decryption */
+        XorBlock(pSrc, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), pDst, locLen);
 
-      AESGCM_BUFLEN(pState) += locLen;
-      AESGCM_TXT_LEN(pState) += (Ipp64u)locLen;
-      pSrc += locLen;
-      pDst += locLen;
-      len -= locLen;
+        AESGCM_BUFLEN(pState) += locLen;
+        AESGCM_TXT_LEN(pState) += (Ipp64u)locLen;
+        pSrc += locLen;
+        pDst += locLen;
+        len -= locLen;
 
-      /* if buffer full */
-      if(BLOCK_SIZE==AESGCM_BUFLEN(pState)) {
-         /* hash buffer */
-         hashFunc(AESGCM_GHASH(pState), AESGCM_HKEY(pState), AesGcmConst_table);
-         AESGCM_BUFLEN(pState) = 0;
+        /* if buffer full */
+        if (BLOCK_SIZE == AESGCM_BUFLEN(pState)) {
+            /* hash buffer */
+            hashFunc(AESGCM_GHASH(pState), AESGCM_HKEY(pState), AesGcmConst_table);
+            AESGCM_BUFLEN(pState) = 0;
 
-         /* Inject the noise for the case of partial blocks processing */
-      #if (_AES_PROB_NOISE == _FEATURE_ON_)
-         cpAESNoiseParams *params = (cpAESNoiseParams*)&AESGCM_NOISE_PARAMS(pState);
-         if (AES_NOISE_LEVEL(params) > 0)
-            cpAESRandomNoise(NULL,
-                     MISTLETOE3_BASE_NOISE_LEVEL + AES_NOISE_LEVEL(params),
-                     MISTLETOE3_NOISE_RATE,
-                     &AES_NOISE_RAND(params));
-      #endif
+            /* Inject the noise for the case of partial blocks processing */
+#if (_AES_PROB_NOISE == _FEATURE_ON_)
+            cpAESNoiseParams* params = (cpAESNoiseParams*)&AESGCM_NOISE_PARAMS(pState);
+            if (AES_NOISE_LEVEL(params) > 0)
+                cpAESRandomNoise(NULL,
+                                 MISTLETOE3_BASE_NOISE_LEVEL + AES_NOISE_LEVEL(params),
+                                 MISTLETOE3_NOISE_RATE,
+                                 &AES_NOISE_RAND(params));
+#endif
 
-         /* increment counter block */
-         IncrementCounter32(AESGCM_COUNTER(pState));
-         /* and encrypt counter */
-         #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-         encoder(AESGCM_COUNTER(pState), AESGCM_ECOUNTER(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox/*NULL*/);
-         #else
-         encoder(AESGCM_COUNTER(pState), AESGCM_ECOUNTER(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
-         #endif
-      }
-   }
+            /* increment counter block */
+            IncrementCounter32(AESGCM_COUNTER(pState));
+/* and encrypt counter */
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+            encoder(AESGCM_COUNTER(pState),
+                    AESGCM_ECOUNTER(pState),
+                    RIJ_NR(pAES),
+                    RIJ_EKEYS(pAES),
+                    RijEncSbox /*NULL*/);
+#else
+            encoder(AESGCM_COUNTER(pState),
+                    AESGCM_ECOUNTER(pState),
+                    RIJ_NR(pAES),
+                    RIJ_EKEYS(pAES),
+                    NULL);
+#endif
+        }
+    }
 
-   /* process the main part of text */
-   {
-      int lenBlks = len & (-BLOCK_SIZE);
-      if(lenBlks) {
-         condNoisedGCMDecryption(pSrc, pDst, lenBlks, pState);
+    /* process the main part of text */
+    {
+        int lenBlks = len & (-BLOCK_SIZE);
+        if (lenBlks) {
+            condNoisedGCMDecryption(pSrc, pDst, lenBlks, pState);
 
-         AESGCM_TXT_LEN(pState) += (Ipp64u)lenBlks;
-         pSrc += lenBlks;
-         pDst += lenBlks;
-         len -= lenBlks;
-      }
-   }
+            AESGCM_TXT_LEN(pState) += (Ipp64u)lenBlks;
+            pSrc += lenBlks;
+            pDst += lenBlks;
+            len -= lenBlks;
+        }
+    }
 
-   /* process the rest of text */
-   if(len) {
-      /* ctr encryption */
-      XorBlock(pSrc, AESGCM_GHASH(pState)+AESGCM_BUFLEN(pState), AESGCM_GHASH(pState)+AESGCM_BUFLEN(pState), len);
-      XorBlock(pSrc, AESGCM_ECOUNTER(pState)+AESGCM_BUFLEN(pState), pDst, len);
+    /* process the rest of text */
+    if (len) {
+        /* ctr encryption */
+        XorBlock(pSrc,
+                 AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
+                 AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
+                 len);
+        XorBlock(pSrc, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), pDst, len);
 
-      AESGCM_BUFLEN(pState) += len;
-      AESGCM_TXT_LEN(pState) += (Ipp64u)len;
-   }
+        AESGCM_BUFLEN(pState) += len;
+        AESGCM_TXT_LEN(pState) += (Ipp64u)len;
+    }
 #endif /* #if(_IPP32E>=_IPP32E_K0) */
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

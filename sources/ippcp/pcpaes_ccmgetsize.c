@@ -27,8 +27,8 @@
 #include "pcpaesauthccm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*F*
@@ -44,12 +44,12 @@
 //    pSize       pointer to the size of CCM (in bytes)
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CCMGetSize,(int* pSize))
+IPPFUN(IppStatus, ippsAES_CCMGetSize, (int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = cpSizeofCtx_AESCCM();
+    *pSize = cpSizeofCtx_AESCCM();
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

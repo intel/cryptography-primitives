@@ -42,36 +42,34 @@
 //
 *F*/
 
-IPP_OWN_DEFN (cpSize, cpFromOctStr_BNU, (BNU_CHUNK_T* pA, const Ipp8u* pStr, cpSize strLen))
+IPP_OWN_DEFN(cpSize, cpFromOctStr_BNU, (BNU_CHUNK_T * pA, const Ipp8u* pStr, cpSize strLen))
 {
-   int nsA =0;
+    int nsA = 0;
 
-   /* start from the end of string */
-   for(; strLen>=(int)sizeof(BNU_CHUNK_T); nsA++,strLen-=(int)(sizeof(BNU_CHUNK_T))) {
-      /* pack sizeof(BNU_CHUNK_T) bytes into single BNU_CHUNK_T value*/
-      *pA++ =
-         #if (BNU_CHUNK_BITS==BNU_CHUNK_64BIT)
-         +( (BNU_CHUNK_T)pStr[strLen-8]<<(8*7) )
-         +( (BNU_CHUNK_T)pStr[strLen-7]<<(8*6) )
-         +( (BNU_CHUNK_T)pStr[strLen-6]<<(8*5) )
-         +( (BNU_CHUNK_T)pStr[strLen-5]<<(8*4) )
-         #endif
-         +( (BNU_CHUNK_T)pStr[strLen-4]<<(8*3) )
-         +( (BNU_CHUNK_T)pStr[strLen-3]<<(8*2) )
-         +( (BNU_CHUNK_T)pStr[strLen-2]<<(8*1) )
-         +  (BNU_CHUNK_T)pStr[strLen-1];
-   }
+    /* start from the end of string */
+    for (; strLen >= (int)sizeof(BNU_CHUNK_T); nsA++, strLen -= (int)(sizeof(BNU_CHUNK_T))) {
+        /* pack sizeof(BNU_CHUNK_T) bytes into single BNU_CHUNK_T value*/
+        *pA++ =
+#if (BNU_CHUNK_BITS == BNU_CHUNK_64BIT)
+            +((BNU_CHUNK_T)pStr[strLen - 8] << (8 * 7)) +
+            ((BNU_CHUNK_T)pStr[strLen - 7] << (8 * 6)) +
+            ((BNU_CHUNK_T)pStr[strLen - 6] << (8 * 5)) + ((BNU_CHUNK_T)pStr[strLen - 5] << (8 * 4))
+#endif
+            + ((BNU_CHUNK_T)pStr[strLen - 4] << (8 * 3)) +
+            ((BNU_CHUNK_T)pStr[strLen - 3] << (8 * 2)) +
+            ((BNU_CHUNK_T)pStr[strLen - 2] << (8 * 1)) + (BNU_CHUNK_T)pStr[strLen - 1];
+    }
 
-   /* convert the beginning of the string */
-   if(strLen) {
-      BNU_CHUNK_T x = 0;
-      for(x=0; strLen>0; strLen--) {
-         BNU_CHUNK_T d = *pStr++;
-         x = (x<<8) + d;
-       }
-       *pA++ = x;
-       nsA++;
-   }
+    /* convert the beginning of the string */
+    if (strLen) {
+        BNU_CHUNK_T x = 0;
+        for (x = 0; strLen > 0; strLen--) {
+            BNU_CHUNK_T d = *pStr++;
+            x             = (x << 8) + d;
+        }
+        *pA++ = x;
+        nsA++;
+    }
 
-   return nsA;
+    return nsA;
 }

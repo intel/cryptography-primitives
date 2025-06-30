@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_GetSizePrivateKeyType1()
 //
@@ -53,14 +53,19 @@
 //    pSize                pointer to the size of RSA key context (bytes)
 *F*/
 
-
-IPPFUN(IppStatus, ippsRSA_GetSizePrivateKeyType1,(int rsaModulusBitSize, int privateExpBitSize, int* pKeySize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSA_GetSizePrivateKeyType1, (int rsaModulusBitSize,
+                                                   int privateExpBitSize,
+                                                   int* pKeySize))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pKeySize);
-   IPP_BADARG_RET((MIN_RSA_SIZE>rsaModulusBitSize) || (rsaModulusBitSize>MAX_RSA_SIZE), ippStsNotSupportedModeErr);
-   IPP_BADARG_RET(!((0<privateExpBitSize) && (privateExpBitSize<=rsaModulusBitSize)), ippStsBadArgErr);
+    IPP_BAD_PTR1_RET(pKeySize);
+    IPP_BADARG_RET((MIN_RSA_SIZE > rsaModulusBitSize) || (rsaModulusBitSize > MAX_RSA_SIZE),
+                   ippStsNotSupportedModeErr);
+    IPP_BADARG_RET(!((0 < privateExpBitSize) && (privateExpBitSize <= rsaModulusBitSize)),
+                   ippStsBadArgErr);
 
-   //*pKeySize = cpSizeof_RSA_privateKey1(rsaModulusBitSize, privateExpBitSize);
-   *pKeySize = cpSizeof_RSA_privateKey1(rsaModulusBitSize, rsaModulusBitSize);
-   return ippStsNoErr;
+    //*pKeySize = cpSizeof_RSA_privateKey1(rsaModulusBitSize, privateExpBitSize);
+    *pKeySize = cpSizeof_RSA_privateKey1(rsaModulusBitSize, rsaModulusBitSize);
+    return ippStsNoErr;
 }

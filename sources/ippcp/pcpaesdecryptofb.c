@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES decryption (OFB mode)
-// 
+//
 //  Contents:
 //        ippsAESDecryptOFB()
 //
@@ -55,36 +55,46 @@
 //    pCtx        pointer to the AES context
 //    pIV         pointer to the initialization vector
 *F*/
-IPPFUN(IppStatus, ippsAESDecryptOFB,(const Ipp8u* pSrc, Ipp8u* pDst, int len, int ofbBlkSize,
-                                     const IppsAESSpec* pCtx,
-                                     Ipp8u* pIV))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAESDecryptOFB, (const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
+                                      int ofbBlkSize,
+                                      const IppsAESSpec* pCtx,
+                                      Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source, target buffers and initialization pointers */
-   IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test OFB value */
-   IPP_BADARG_RET(((1>ofbBlkSize) || (MBS_RIJ128<ofbBlkSize)), ippStsOFBSizeErr);
-   /* test stream integrity */
-   IPP_BADARG_RET((len%ofbBlkSize), ippStsUnderRunErr);
+    /* test source, target buffers and initialization pointers */
+    IPP_BAD_PTR3_RET(pSrc, pIV, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test OFB value */
+    IPP_BADARG_RET(((1 > ofbBlkSize) || (MBS_RIJ128 < ofbBlkSize)), ippStsOFBSizeErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len % ofbBlkSize), ippStsUnderRunErr);
 
-#if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   if(AES_NI_ENABLED==RIJ_AESNI(pCtx)) {
-      if(ofbBlkSize==MBS_RIJ128)
-         EncryptOFB128_RIJ128_AES_NI(pSrc, pDst, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), len, pIV);
-      else
-         EncryptOFB_RIJ128_AES_NI(pSrc, pDst, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), len, ofbBlkSize, pIV);
-      return ippStsNoErr;
-   }
-   else
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+    if (AES_NI_ENABLED == RIJ_AESNI(pCtx)) {
+        if (ofbBlkSize == MBS_RIJ128)
+            EncryptOFB128_RIJ128_AES_NI(pSrc, pDst, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), len, pIV);
+        else
+            EncryptOFB_RIJ128_AES_NI(pSrc,
+                                     pDst,
+                                     RIJ_NR(pCtx),
+                                     RIJ_EKEYS(pCtx),
+                                     len,
+                                     ofbBlkSize,
+                                     pIV);
+        return ippStsNoErr;
+    } else
 #endif
-   {
-      cpProcessAES_ofb8(pSrc, pDst, len, ofbBlkSize, pCtx, pIV);
-      return ippStsNoErr;
-   }
+    {
+        cpProcessAES_ofb8(pSrc, pDst, len, ofbBlkSize, pCtx, pIV);
+        return ippStsNoErr;
+    }
 }

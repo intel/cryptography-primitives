@@ -44,14 +44,14 @@
 //
 *F*/
 
-IPP_OWN_DEFN (int, cpBigNumListGetSize, (int feBitSize, int nodes))
+IPP_OWN_DEFN(int, cpBigNumListGetSize, (int feBitSize, int nodes))
 {
-   /* size of buffer per single big number */
-   int bnSize;
-   ippsBigNumGetSize(BITS2WORD32_SIZE(feBitSize), &bnSize);
+    /* size of buffer per single big number */
+    int bnSize;
+    ippsBigNumGetSize(BITS2WORD32_SIZE(feBitSize), &bnSize);
 
-   /* size of buffer for whole list */
-   return ((Ipp32s)sizeof(BigNumNode) + bnSize) * nodes;
+    /* size of buffer for whole list */
+    return ((Ipp32s)sizeof(BigNumNode) + bnSize) * nodes;
 }
 
 /*F*
@@ -68,30 +68,30 @@ IPP_OWN_DEFN (int, cpBigNumListGetSize, (int feBitSize, int nodes))
 // Note: buffer for BN list must have appropriate alignment
 //
 *F*/
-IPP_OWN_DEFN (void, cpBigNumListInit, (int feBitSize, int nodes, BigNumNode* pList))
+IPP_OWN_DEFN(void, cpBigNumListInit, (int feBitSize, int nodes, BigNumNode* pList))
 {
-   int itemSize;
-   /* length of Big Num */
-   int bnLen = BITS2WORD32_SIZE(feBitSize);
-   /* size of buffer per single big number */
-   ippsBigNumGetSize(bnLen, &itemSize);
-   /* size of list item */
-   itemSize += sizeof(BigNumNode);
+    int itemSize;
+    /* length of Big Num */
+    int bnLen = BITS2WORD32_SIZE(feBitSize);
+    /* size of buffer per single big number */
+    ippsBigNumGetSize(bnLen, &itemSize);
+    /* size of list item */
+    itemSize += sizeof(BigNumNode);
 
-   {
-      int n;
-      /* init all nodes */
-      BigNumNode* pNode = (BigNumNode*)( (Ipp8u*)pList + (nodes-1)*itemSize );
-      BigNumNode* pNext = NULL;
-      for(n=0; n<nodes; n++) {
-         Ipp8u* tbnPtr = (Ipp8u*)pNode + sizeof(BigNumNode);
-         pNode->pNext = pNext;
-         pNode->pBN = (IppsBigNumState*)(tbnPtr);
-         ippsBigNumInit(bnLen, pNode->pBN);
-         pNext = pNode;
-         pNode = (BigNumNode*)( (Ipp8u*)pNode - itemSize);
-      }
-   }
+    {
+        int n;
+        /* init all nodes */
+        BigNumNode* pNode = (BigNumNode*)((Ipp8u*)pList + (nodes - 1) * itemSize);
+        BigNumNode* pNext = NULL;
+        for (n = 0; n < nodes; n++) {
+            Ipp8u* tbnPtr = (Ipp8u*)pNode + sizeof(BigNumNode);
+            pNode->pNext  = pNext;
+            pNode->pBN    = (IppsBigNumState*)(tbnPtr);
+            ippsBigNumInit(bnLen, pNode->pBN);
+            pNext = pNode;
+            pNode = (BigNumNode*)((Ipp8u*)pNode - itemSize);
+        }
+    }
 }
 
 
@@ -108,13 +108,12 @@ IPP_OWN_DEFN (void, cpBigNumListInit, (int feBitSize, int nodes, BigNumNode* pLi
 //
 *F*/
 
-IPP_OWN_DEFN (IppsBigNumState*, cpBigNumListGet, (BigNumNode** ppList))
+IPP_OWN_DEFN(IppsBigNumState*, cpBigNumListGet, (BigNumNode * *ppList))
 {
-   if(*ppList) {
-      IppsBigNumState* ret = (*ppList)->pBN;
-      *ppList = (*ppList)->pNext;
-      return ret;
-   }
-   else
-      return NULL;
+    if (*ppList) {
+        IppsBigNumState* ret = (*ppList)->pBN;
+        *ppList              = (*ppList)->pNext;
+        return ret;
+    } else
+        return NULL;
 }

@@ -43,17 +43,31 @@
 *F*/
 
 #if (_IPP < _IPP_H9)
-   IPP_OWN_DEFN (cpSize, cpNLZ_BNU32, (Ipp32u x))
-   {
-      cpSize nlz = BITSIZE(Ipp32u);
-      if(x) {
-         nlz = 0;
-         if( 0==(x & 0xFFFF0000) ) { nlz +=16; x<<=16; }
-         if( 0==(x & 0xFF000000) ) { nlz += 8; x<<= 8; }
-         if( 0==(x & 0xF0000000) ) { nlz += 4; x<<= 4; }
-         if( 0==(x & 0xC0000000) ) { nlz += 2; x<<= 2; }
-         if( 0==(x & 0x80000000) ) { nlz++; }
-      }
-      return nlz;
-   }
+IPP_OWN_DEFN(cpSize, cpNLZ_BNU32, (Ipp32u x))
+{
+    cpSize nlz = BITSIZE(Ipp32u);
+    if (x) {
+        nlz = 0;
+        if (0 == (x & 0xFFFF0000)) {
+            nlz += 16;
+            x <<= 16;
+        }
+        if (0 == (x & 0xFF000000)) {
+            nlz += 8;
+            x <<= 8;
+        }
+        if (0 == (x & 0xF0000000)) {
+            nlz += 4;
+            x <<= 4;
+        }
+        if (0 == (x & 0xC0000000)) {
+            nlz += 2;
+            x <<= 2;
+        }
+        if (0 == (x & 0x80000000)) {
+            nlz++;
+        }
+    }
+    return nlz;
+}
 #endif

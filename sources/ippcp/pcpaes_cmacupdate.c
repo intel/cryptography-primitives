@@ -31,8 +31,8 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 
@@ -54,144 +54,152 @@
 //    pState   pointer to the CMAC context
 //
 *F*/
-static void AES_CMAC_processing(Ipp8u* pDigest, const Ipp8u* pSrc, int processedLen, const IppsAESSpec* pAES)
+static void AES_CMAC_processing(Ipp8u* pDigest,
+                                const Ipp8u* pSrc,
+                                int processedLen,
+                                const IppsAESSpec* pAES)
 {
-#if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   if(AES_NI_ENABLED==RIJ_AESNI(pAES)) {
-      cpAESCMAC_Update_AES_NI(pDigest, pSrc, processedLen, RIJ_NR(pAES), RIJ_EKEYS(pAES));
-   }
-   else
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+    if (AES_NI_ENABLED == RIJ_AESNI(pAES)) {
+        cpAESCMAC_Update_AES_NI(pDigest, pSrc, processedLen, RIJ_NR(pAES), RIJ_EKEYS(pAES));
+    } else
 #endif
-   {
-      /* setup encoder method */
-      RijnCipher encoder = RIJ_ENCODER(pAES);
+    {
+        /* setup encoder method */
+        RijnCipher encoder = RIJ_ENCODER(pAES);
 
-      while(processedLen) {
-         ((Ipp32u*)pDigest)[0] ^= ((Ipp32u*)pSrc)[0];
-         ((Ipp32u*)pDigest)[1] ^= ((Ipp32u*)pSrc)[1];
-         ((Ipp32u*)pDigest)[2] ^= ((Ipp32u*)pSrc)[2];
-         ((Ipp32u*)pDigest)[3] ^= ((Ipp32u*)pSrc)[3];
+        while (processedLen) {
+            ((Ipp32u*)pDigest)[0] ^= ((Ipp32u*)pSrc)[0];
+            ((Ipp32u*)pDigest)[1] ^= ((Ipp32u*)pSrc)[1];
+            ((Ipp32u*)pDigest)[2] ^= ((Ipp32u*)pSrc)[2];
+            ((Ipp32u*)pDigest)[3] ^= ((Ipp32u*)pSrc)[3];
 
-         #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-         encoder(pDigest, pDigest, RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox/*NULL*/);
-         #else
-         encoder(pDigest, pDigest, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
-         #endif
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+            encoder(pDigest, pDigest, RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox /*NULL*/);
+#else
+            encoder(pDigest, pDigest, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
+#endif
 
-         pSrc += MBS_RIJ128;
-         processedLen -= MBS_RIJ128;
-      }
-   }
+            pSrc += MBS_RIJ128;
+            processedLen -= MBS_RIJ128;
+        }
+    }
 }
 
-IPPFUN(IppStatus, ippsAES_CMACUpdate,(const Ipp8u* pSrc, int len, IppsAES_CMACState* pState))
+IPPFUN(IppStatus, ippsAES_CMACUpdate, (const Ipp8u* pSrc, int len, IppsAES_CMACState* pState))
 {
-   int processedLen;
+    int processedLen;
 
-   /* test context pointer */
-   IPP_BAD_PTR1_RET(pState);
-   /* test ID */
-   IPP_BADARG_RET(!VALID_AESCMAC_ID(pState), ippStsContextMatchErr);
-   /* test input message and its length */
-   IPP_BADARG_RET((len<0 && pSrc), ippStsLengthErr);
-   /* test source pointer */
-   IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
+    /* test context pointer */
+    IPP_BAD_PTR1_RET(pState);
+    /* test ID */
+    IPP_BADARG_RET(!VALID_AESCMAC_ID(pState), ippStsContextMatchErr);
+    /* test input message and its length */
+    IPP_BADARG_RET((len < 0 && pSrc), ippStsLengthErr);
+    /* test source pointer */
+    IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
 
-   if(!len)
-      return ippStsNoErr;
+    if (!len)
+        return ippStsNoErr;
 
-   {
-      /*
+    {
+        /*
       // test internal buffer filling
       */
-      if(CMAC_INDX(pState)) {
-         /* copy from input stream to the internal buffer as match as possible */
-         processedLen = IPP_MIN(len, (MBS_RIJ128 - CMAC_INDX(pState)));
-         CopyBlock(pSrc, CMAC_BUFF(pState)+CMAC_INDX(pState), processedLen);
+        if (CMAC_INDX(pState)) {
+            /* copy from input stream to the internal buffer as match as possible */
+            processedLen = IPP_MIN(len, (MBS_RIJ128 - CMAC_INDX(pState)));
+            CopyBlock(pSrc, CMAC_BUFF(pState) + CMAC_INDX(pState), processedLen);
 
-         /* internal buffer filling */
-         CMAC_INDX(pState) += processedLen;
+            /* internal buffer filling */
+            CMAC_INDX(pState) += processedLen;
 
-         /* update message pointer and length */
-         pSrc += processedLen;
-         len  -= processedLen;
+            /* update message pointer and length */
+            pSrc += processedLen;
+            len -= processedLen;
 
-         if(!len)
-            return ippStsNoErr;
+            if (!len)
+                return ippStsNoErr;
 
-         /* update CMAC if buffer full but not the last */
-         if(MBS_RIJ128==CMAC_INDX(pState) ) {
-            const IppsAESSpec* pAES = &CMAC_CIPHER(pState);
-            /* setup encoder method */
-            RijnCipher encoder = RIJ_ENCODER(pAES);
-            XorBlock16(CMAC_BUFF(pState), CMAC_MAC(pState), CMAC_MAC(pState));
+            /* update CMAC if buffer full but not the last */
+            if (MBS_RIJ128 == CMAC_INDX(pState)) {
+                const IppsAESSpec* pAES = &CMAC_CIPHER(pState);
+                /* setup encoder method */
+                RijnCipher encoder = RIJ_ENCODER(pAES);
+                XorBlock16(CMAC_BUFF(pState), CMAC_MAC(pState), CMAC_MAC(pState));
 
-            #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-            encoder(CMAC_MAC(pState), CMAC_MAC(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox/*NULL*/);
-            #else
-            encoder(CMAC_MAC(pState), CMAC_MAC(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
-            #endif
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+                encoder(CMAC_MAC(pState),
+                        CMAC_MAC(pState),
+                        RIJ_NR(pAES),
+                        RIJ_EKEYS(pAES),
+                        RijEncSbox /*NULL*/);
+#else
+                encoder(CMAC_MAC(pState), CMAC_MAC(pState), RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
+#endif
 
-            CMAC_INDX(pState) = 0;
-         }
-      }
+                CMAC_INDX(pState) = 0;
+            }
+        }
 
-      /*
+        /*
       // main part
       */
 
-      processedLen = len & ~(MBS_RIJ128-1);
-      if(!(len & (MBS_RIJ128-1)))
-         processedLen -= MBS_RIJ128;
-      if (processedLen) {
-         const IppsAESSpec *pAES = &CMAC_CIPHER(pState);
+        processedLen = len & ~(MBS_RIJ128 - 1);
+        if (!(len & (MBS_RIJ128 - 1)))
+            processedLen -= MBS_RIJ128;
+        if (processedLen) {
+            const IppsAESSpec* pAES = &CMAC_CIPHER(pState);
 
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-         /* Mistletoe3 mitigation */
-         cpAESNoiseParams *params = (cpAESNoiseParams *)&AESCMAC_NOISE_PARAMS(pState);
-         if (AES_NOISE_LEVEL(params) > 0) {
-            /* Number of bytes allowed for operation without adding noise */
-            int chunk_size;
-            /* Number of bytes remaining for operation */
-            int remaining_size = processedLen;
+            /* Mistletoe3 mitigation */
+            cpAESNoiseParams* params = (cpAESNoiseParams*)&AESCMAC_NOISE_PARAMS(pState);
+            if (AES_NOISE_LEVEL(params) > 0) {
+                /* Number of bytes allowed for operation without adding noise */
+                int chunk_size;
+                /* Number of bytes remaining for operation */
+                int remaining_size = processedLen;
 
-            while (remaining_size > 0) {
-               /* How many bytes to encrypt in this operation */
-               chunk_size = (remaining_size >= MISTLETOE3_MAX_CHUNK_SIZE) ? MISTLETOE3_MAX_CHUNK_SIZE : remaining_size;
+                while (remaining_size > 0) {
+                    /* How many bytes to encrypt in this operation */
+                    chunk_size = (remaining_size >= MISTLETOE3_MAX_CHUNK_SIZE)
+                                     ? MISTLETOE3_MAX_CHUNK_SIZE
+                                     : remaining_size;
 
-               AES_CMAC_processing(CMAC_MAC(pState), pSrc, chunk_size, pAES);
+                    AES_CMAC_processing(CMAC_MAC(pState), pSrc, chunk_size, pAES);
 
-               cpAESRandomNoise(NULL,
-                        MISTLETOE3_BASE_NOISE_LEVEL + AES_NOISE_LEVEL(params),
-                        MISTLETOE3_NOISE_RATE,
-                        &AES_NOISE_RAND(params));
+                    cpAESRandomNoise(NULL,
+                                     MISTLETOE3_BASE_NOISE_LEVEL + AES_NOISE_LEVEL(params),
+                                     MISTLETOE3_NOISE_RATE,
+                                     &AES_NOISE_RAND(params));
 
-               pSrc += chunk_size;
-               remaining_size -= chunk_size;
-            }
-         } else
+                    pSrc += chunk_size;
+                    remaining_size -= chunk_size;
+                }
+            } else
 #endif
-         {
-            AES_CMAC_processing(CMAC_MAC(pState), pSrc, processedLen, pAES);
-            /* update message pointer and length */
-            pSrc += processedLen;
-         }
+            {
+                AES_CMAC_processing(CMAC_MAC(pState), pSrc, processedLen, pAES);
+                /* update message pointer and length */
+                pSrc += processedLen;
+            }
 
-         len -= processedLen;
-      }
+            len -= processedLen;
+        }
 
-      /*
+        /*
       // remainder
       */
-      if(len) {
-         /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
-         len = ( IPP_MIN(len, MBS_RIJ128) );
+        if (len) {
+            /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
+            len = (IPP_MIN(len, MBS_RIJ128));
 
-         CopyBlock(pSrc, (Ipp8u*)(&CMAC_BUFF(pState)), len);
-         /* update internal buffer filling */
-         CMAC_INDX(pState) += len;
-      }
+            CopyBlock(pSrc, (Ipp8u*)(&CMAC_BUFF(pState)), len);
+            /* update internal buffer filling */
+            CMAC_INDX(pState) += len;
+        }
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

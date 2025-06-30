@@ -27,8 +27,8 @@
 #include "pcpaesauthccm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*F*
@@ -51,24 +51,28 @@
 //    ctxSize     available size (in bytes) of buffer above
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CCMInit,(const Ipp8u* pKey, int keyLen,
-                                   IppsAES_CCMState* pState, int ctxSize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_CCMInit, (const Ipp8u* pKey,
+                                    int keyLen,
+                                    IppsAES_CCMState* pState,
+                                    int ctxSize))
+/* clang-format on */
 {
-   /* test pState pointer */
-   IPP_BAD_PTR1_RET(pState);
+    /* test pState pointer */
+    IPP_BAD_PTR1_RET(pState);
 
-   /* test available size of context buffer */
-   IPP_BADARG_RET(ctxSize<cpSizeofCtx_AESCCM(), ippStsMemAllocErr);
+    /* test available size of context buffer */
+    IPP_BADARG_RET(ctxSize < cpSizeofCtx_AESCCM(), ippStsMemAllocErr);
 
-   /* set state ID */
-   AESCCM_SET_ID(pState);
+    /* set state ID */
+    AESCCM_SET_ID(pState);
 
-   /* set default message len*/
-   AESCCM_MSGLEN(pState) = 0;
+    /* set default message len*/
+    AESCCM_MSGLEN(pState) = 0;
 
-   /* set default tag len*/
-   AESCCM_TAGLEN(pState) = 4;
+    /* set default tag len*/
+    AESCCM_TAGLEN(pState) = 4;
 
-   /* init AES by the secret key */
-   return ippsAESInit(pKey, keyLen, AESCCM_CIPHER(pState), cpSizeofCtx_AES());
+    /* init AES by the secret key */
+    return ippsAESInit(pKey, keyLen, AESCCM_CIPHER(pState), cpSizeofCtx_AES());
 }

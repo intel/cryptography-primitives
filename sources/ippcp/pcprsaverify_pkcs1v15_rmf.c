@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSASSA-PKCS-v1_5
-// 
+//
 //     Signatire Scheme with Appendix Signatute Generation
-// 
+//
 //  Contents:
 //        ippsRSAVerify_PKCS1v15_rmf()
 //
@@ -37,27 +37,43 @@
 #include "pcprsa_verifysign_pkcs1v15.h"
 #include "pcprsa_pkcs1v15_preproc.h"
 
-IPPFUN(IppStatus, ippsRSAVerify_PKCS1v15_rmf,(const Ipp8u* pMsg, int msgLen,
-                                              const Ipp8u* pSign, int* pIsValid,
-                                              const IppsRSAPublicKeyState* pKey,
-                                              const IppsHashMethod* pMethod,
-                                                    Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSAVerify_PKCS1v15_rmf, (const Ipp8u* pMsg,
+                                               int msgLen,
+                                               const Ipp8u* pSign,
+                                               int* pIsValid,
+                                               const IppsRSAPublicKeyState* pKey,
+                                               const IppsHashMethod* pMethod,
+                                               Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   const IppStatus preprocResult = SingleVerifyPkcs1v15RmfPreproc(pMsg, msgLen, pSign,
-      pIsValid, &pKey, pMethod, pScratchBuffer); // badargs, pointer alignments, set valid = 0
+    const IppStatus preprocResult = SingleVerifyPkcs1v15RmfPreproc(
+        pMsg,
+        msgLen,
+        pSign,
+        pIsValid,
+        &pKey,
+        pMethod,
+        pScratchBuffer); // badargs, pointer alignments, set valid = 0
 
-   if (ippStsNoErr != preprocResult) {
-      return preprocResult;
-   }
+    if (ippStsNoErr != preprocResult) {
+        return preprocResult;
+    }
 
-   {
-      Ipp8u md[IPP_SHA512_DIGEST_BITSIZE/BYTESIZE];
-      ippsHashMessage_rmf(pMsg, msgLen, md, pMethod);
+    {
+        Ipp8u md[IPP_SHA512_DIGEST_BITSIZE / BYTESIZE];
+        ippsHashMessage_rmf(pMsg, msgLen, md, pMethod);
 
-      return VerifySign(md, pMethod->hashLen,
-                        pksc15_salt[pMethod->hashAlgId].pSalt, pksc15_salt[pMethod->hashAlgId].saltLen,
-                        pSign, pIsValid,
-                        pKey,
-                        (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((pScratchBuffer), (int)sizeof(BNU_CHUNK_T))))? ippStsNoErr : ippStsSizeErr;
-   }
+        return VerifySign(
+                   md,
+                   pMethod->hashLen,
+                   pksc15_salt[pMethod->hashAlgId].pSalt,
+                   pksc15_salt[pMethod->hashAlgId].saltLen,
+                   pSign,
+                   pIsValid,
+                   pKey,
+                   (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((pScratchBuffer), (int)sizeof(BNU_CHUNK_T))))
+                   ? ippStsNoErr
+                   : ippStsSizeErr;
+    }
 }

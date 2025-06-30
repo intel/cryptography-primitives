@@ -48,57 +48,56 @@
 //    ctxSize     available size (in bytes) of AES context above
 //
 *F*/
-IPPFUN(IppStatus, ippsAESUnpack,(const Ipp8u* pBuffer, IppsAESSpec* pCtx, int ctxSize))
+IPPFUN(IppStatus, ippsAESUnpack, (const Ipp8u* pBuffer, IppsAESSpec* pCtx, int ctxSize))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
 
-   /* test available size of destination buffer */
-   IPP_BADARG_RET(ctxSize<cpSizeofCtx_AES(), ippStsLengthErr);
+    /* test available size of destination buffer */
+    IPP_BADARG_RET(ctxSize < cpSizeofCtx_AES(), ippStsLengthErr);
 
-   IppsAESSpec* pB = (IppsAESSpec*)pBuffer;
+    IppsAESSpec* pB = (IppsAESSpec*)pBuffer;
 
-   cpSize keysOffset  = (cpSize)(IPP_INT_PTR(RIJ_KEYS_BUFFER(pCtx)) - IPP_INT_PTR(pCtx));
-   cpSize keysBufSize = sizeof(RIJ_KEYS_BUFFER(pCtx));
-   int nExpKeys = rij128nKeys[rij_index(RIJ_NK(pB))];
+    cpSize keysOffset  = (cpSize)(IPP_INT_PTR(RIJ_KEYS_BUFFER(pCtx)) - IPP_INT_PTR(pCtx));
+    cpSize keysBufSize = sizeof(RIJ_KEYS_BUFFER(pCtx));
+    int nExpKeys       = rij128nKeys[rij_index(RIJ_NK(pB))];
 
-   /* restore all except expanded keys */
-   CopyBlock(pBuffer, pCtx, keysOffset);
+    /* restore all except expanded keys */
+    CopyBlock(pBuffer, pCtx, keysOffset);
 
-   /* align addresses of keys buffer */
-   RIJ_EKEYS(pCtx) = (Ipp8u*)(IPP_ALIGNED_PTR(RIJ_KEYS_BUFFER(pCtx), AES_ALIGNMENT));
-   RIJ_DKEYS(pCtx) = (Ipp8u*)((Ipp32u*)RIJ_EKEYS(pCtx) + nExpKeys);
+    /* align addresses of keys buffer */
+    RIJ_EKEYS(pCtx) = (Ipp8u*)(IPP_ALIGNED_PTR(RIJ_KEYS_BUFFER(pCtx), AES_ALIGNMENT));
+    RIJ_DKEYS(pCtx) = (Ipp8u*)((Ipp32u*)RIJ_EKEYS(pCtx) + nExpKeys);
 
-   /* restore expanded keys (encryption and decryption) placed with correct alignment */
-   CopyBlock(pBuffer+keysOffset, RIJ_EKEYS(pCtx), (keysBufSize - RIJ_ALIGNMENT));
+    /* restore expanded keys (encryption and decryption) placed with correct alignment */
+    CopyBlock(pBuffer + keysOffset, RIJ_EKEYS(pCtx), (keysBufSize - RIJ_ALIGNMENT));
 
-   RIJ_SET_ID(pCtx);
+    RIJ_SET_ID(pCtx);
 
-   RIJ_ENC_SBOX(pCtx) = NULL;
-   RIJ_DEC_SBOX(pCtx) = NULL;
+    RIJ_ENC_SBOX(pCtx) = NULL;
+    RIJ_DEC_SBOX(pCtx) = NULL;
 
-   #if (_AES_NI_ENABLING_==_FEATURE_ON_)
-      RIJ_AESNI(pCtx) = AES_NI_ENABLED;
-      RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
-      RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
+#if (_AES_NI_ENABLING_ == _FEATURE_ON_)
+    RIJ_AESNI(pCtx)   = AES_NI_ENABLED;
+    RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
+    RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
 
-   #else
-      #if (_AES_NI_ENABLING_==_FEATURE_TICKTOCK_)
-      if(AES_NI_ENABLED == RIJ_AESNI(pCtx)) {
-         RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
-         RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
-      }
-      else {
-         RIJ_ENCODER(pCtx) = SafeEncrypt_RIJ128; /* safe encoder */
-         RIJ_DECODER(pCtx) = SafeDecrypt_RIJ128; /* safe decoder */
-      }
-      #endif
-   #endif
+#else
+#if (_AES_NI_ENABLING_ == _FEATURE_TICKTOCK_)
+    if (AES_NI_ENABLED == RIJ_AESNI(pCtx)) {
+        RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
+        RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
+    } else {
+        RIJ_ENCODER(pCtx) = SafeEncrypt_RIJ128;    /* safe encoder */
+        RIJ_DECODER(pCtx) = SafeDecrypt_RIJ128;    /* safe decoder */
+    }
+#endif
+#endif
 
-   #if (_AES_PROB_NOISE == _FEATURE_ON_)
-      cpAESNoiseParams* pAESNoiseParams = &RIJ_NOISE_PARAMS(pCtx);
-      CopyBlock(pBuffer+keysOffset+keysBufSize, pAESNoiseParams, cpSizeofNoise_Params());
-   #endif
+#if (_AES_PROB_NOISE == _FEATURE_ON_)
+    cpAESNoiseParams* pAESNoiseParams = &RIJ_NOISE_PARAMS(pCtx);
+    CopyBlock(pBuffer + keysOffset + keysBufSize, pAESNoiseParams, cpSizeofNoise_Params());
+#endif
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

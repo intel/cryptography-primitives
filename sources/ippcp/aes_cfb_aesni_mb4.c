@@ -20,9 +20,11 @@
 #include "pcptool.h"
 #include "aes_cfb_aesni_mb.h"
 
-#if (_IPP32E>=_IPP32E_Y8)
+#if (_IPP32E >= _IPP32E_Y8)
 
-static inline void aes_encrypt4_aesni_mb4(__m128i blocks[4], __m128i enc_keys[4][15], int cipherRounds)
+static inline void aes_encrypt4_aesni_mb4(__m128i blocks[4],
+                                          __m128i enc_keys[4][15],
+                                          int cipherRounds)
 {
 
     blocks[0] = _mm_xor_si128(blocks[0], enc_keys[0][0]);
@@ -38,7 +40,6 @@ static inline void aes_encrypt4_aesni_mb4(__m128i blocks[4], __m128i enc_keys[4]
         blocks[1] = _mm_aesenc_si128(blocks[1], enc_keys[1][nr]);
         blocks[2] = _mm_aesenc_si128(blocks[2], enc_keys[2][nr]);
         blocks[3] = _mm_aesenc_si128(blocks[3], enc_keys[3][nr]);
-
     }
 
     blocks[0] = _mm_aesenclast_si128(blocks[0], enc_keys[0][nr]);
@@ -48,7 +49,14 @@ static inline void aes_encrypt4_aesni_mb4(__m128i blocks[4], __m128i enc_keys[4]
 }
 
 
-IPP_OWN_DEFN (void, aes_cfb16_enc_aesni_mb4, (const Ipp8u* const source_pa[4], Ipp8u* const dst_pa[4], const int len[4], const int cipherRounds, const Ipp32u* enc_keys[4], const Ipp8u* pIV[4]))
+/* clang-format off */
+IPP_OWN_DEFN(void, aes_cfb16_enc_aesni_mb4, (const Ipp8u* const source_pa[4],
+                                             Ipp8u* const dst_pa[4],
+                                             const int len[4],
+                                             const int cipherRounds,
+                                             const Ipp32u* enc_keys[4],
+                                             const Ipp8u* pIV[4]))
+/* clang-format on */
 {
     __m128i* pSrc[4];
     __m128i* pDst[4];
@@ -68,7 +76,7 @@ IPP_OWN_DEFN (void, aes_cfb16_enc_aesni_mb4, (const Ipp8u* const source_pa[4], I
 
         nBlocks[i] = len[i] / CFB16_BLOCK_SIZE;
 
-        if(nBlocks[i] > 0) {
+        if (nBlocks[i] > 0) {
             blocks[i] = _mm_loadu_si128((__m128i const*)(pIV[i]));
 
             for (int j = 0; j <= cipherRounds; j++) {
@@ -87,11 +95,11 @@ IPP_OWN_DEFN (void, aes_cfb16_enc_aesni_mb4, (const Ipp8u* const source_pa[4], I
         for (int i = 0; i < 4; i++) {
             if (nBlocks[i] > 0) {
                 plainBlocks[i] = _mm_loadu_si128(pSrc[i]);
-                blocks[i] = _mm_xor_si128(blocks[i], plainBlocks[i]);
+                blocks[i]      = _mm_xor_si128(blocks[i], plainBlocks[i]);
                 _mm_storeu_si128(pDst[i], blocks[i]);
 
-                pSrc[i]+= 1;
-                pDst[i]+= 1;
+                pSrc[i] += 1;
+                pDst[i] += 1;
                 nBlocks[i] -= 1;
             }
         }

@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_Decrypt()
 //
@@ -60,33 +60,39 @@
 //    pKey           pointer to the key context
 //    pScratchBuffer pointer to the temporary buffer
 *F*/
-IPPFUN(IppStatus, ippsRSA_Decrypt,(const IppsBigNumState* pCtxt,
-                                         IppsBigNumState* pPtxt,
-                                   const IppsRSAPrivateKeyState* pKey,
-                                         Ipp8u* pBuffer))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSA_Decrypt, (const IppsBigNumState* pCtxt,
+                                    IppsBigNumState* pPtxt,
+                                    const IppsRSAPrivateKeyState* pKey,
+                                    Ipp8u* pBuffer))
+/* clang-format on */
 {
-   IPP_BAD_PTR2_RET(pKey, pBuffer);
-   IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(pKey), ippStsContextMatchErr);
-   IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+    IPP_BAD_PTR2_RET(pKey, pBuffer);
+    IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(pKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
 
-   IPP_BAD_PTR1_RET(pCtxt);
-   IPP_BADARG_RET(!BN_VALID_ID(pCtxt), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_NEGATIVE(pCtxt), ippStsOutOfRangeErr);
-   IPP_BADARG_RET(0 <= cpCmp_BNU(BN_NUMBER(pCtxt), BN_SIZE(pCtxt),
-                                 MOD_MODULUS(RSA_PRV_KEY_NMONT(pKey)), MOD_LEN(RSA_PRV_KEY_NMONT(pKey))), ippStsOutOfRangeErr);
+    IPP_BAD_PTR1_RET(pCtxt);
+    IPP_BADARG_RET(!BN_VALID_ID(pCtxt), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pCtxt), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(0 <= cpCmp_BNU(BN_NUMBER(pCtxt),
+                                  BN_SIZE(pCtxt),
+                                  MOD_MODULUS(RSA_PRV_KEY_NMONT(pKey)),
+                                  MOD_LEN(RSA_PRV_KEY_NMONT(pKey))),
+                   ippStsOutOfRangeErr);
 
-   IPP_BAD_PTR1_RET(pPtxt);
-   IPP_BADARG_RET(!BN_VALID_ID(pPtxt), ippStsContextMatchErr);
-   IPP_BADARG_RET(BN_ROOM(pPtxt) < BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_N(pKey)), ippStsSizeErr);
+    IPP_BAD_PTR1_RET(pPtxt);
+    IPP_BADARG_RET(!BN_VALID_ID(pPtxt), ippStsContextMatchErr);
+    IPP_BADARG_RET(BN_ROOM(pPtxt) < BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_N(pKey)), ippStsSizeErr);
 
-   {
-      BNU_CHUNK_T* pScratchBuffer = (BNU_CHUNK_T*)( IPP_ALIGNED_PTR(pBuffer, (int)sizeof(BNU_CHUNK_T)) );
+    {
+        BNU_CHUNK_T* pScratchBuffer =
+            (BNU_CHUNK_T*)(IPP_ALIGNED_PTR(pBuffer, (int)sizeof(BNU_CHUNK_T)));
 
-      if(RSA_PRV_KEY1_VALID_ID(pKey))
-         gsRSAprv_cipher(pPtxt, pCtxt, pKey, pScratchBuffer);
-      else
-         gsRSAprv_cipher_crt(pPtxt, pCtxt, pKey, pScratchBuffer);
+        if (RSA_PRV_KEY1_VALID_ID(pKey))
+            gsRSAprv_cipher(pPtxt, pCtxt, pKey, pScratchBuffer);
+        else
+            gsRSAprv_cipher_crt(pPtxt, pCtxt, pKey, pScratchBuffer);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

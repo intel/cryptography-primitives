@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSASSA-PKCS-v1_5
-// 
+//
 //     Signatire Scheme with Appendix Signatute Generation
-// 
+//
 //  Contents:
 //        ippsRSASign_PKCS1v15_rmf()
 //
@@ -37,36 +37,49 @@
 #include "pcprsa_generatesign_pkcs1v15.h"
 #include "pcprsa_pkcs1v15_preproc.h"
 
-IPPFUN(IppStatus, ippsRSASign_PKCS1v15_rmf,(const Ipp8u* pMsg, int msgLen,
-                                                  Ipp8u* pSign,
-                                            const IppsRSAPrivateKeyState* pPrvKey,
-                                            const IppsRSAPublicKeyState*  pPubKey,
-                                            const IppsHashMethod* pMethod,
-                                                  Ipp8u* pScratchBuffer))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSASign_PKCS1v15_rmf, (const Ipp8u* pMsg,
+                                             int msgLen,
+                                             Ipp8u* pSign,
+                                             const IppsRSAPrivateKeyState* pPrvKey,
+                                             const IppsRSAPublicKeyState* pPubKey,
+                                             const IppsHashMethod* pMethod,
+                                             Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   const IppStatus preprocResult = SingleSignPkcs1v15RmfPreproc(pMsg, msgLen, pSign,
-      &pPrvKey, &pPubKey, pMethod, pScratchBuffer); // badargs and pointer alignments
+    // badargs and pointer alignments
+    const IppStatus preprocResult = SingleSignPkcs1v15RmfPreproc(pMsg,
+                                                                 msgLen,
+                                                                 pSign,
+                                                                 &pPrvKey,
+                                                                 &pPubKey,
+                                                                 pMethod,
+                                                                 pScratchBuffer);
 
-   if (ippStsNoErr != preprocResult) {
-      return preprocResult;
-   }
+    if (ippStsNoErr != preprocResult) {
+        return preprocResult;
+    }
 
-   {
-      Ipp8u md[IPP_SHA512_DIGEST_BITSIZE/BYTESIZE];
-      int mdLen = pMethod->hashLen;
-      ippsHashMessage_rmf(pMsg, msgLen, md, pMethod);
+    {
+        Ipp8u md[IPP_SHA512_DIGEST_BITSIZE / BYTESIZE];
+        int mdLen = pMethod->hashLen;
+        ippsHashMessage_rmf(pMsg, msgLen, md, pMethod);
 
-      {
-         const Ipp8u* pSalt = pksc15_salt[pMethod->hashAlgId].pSalt;
-         int saltLen = pksc15_salt[pMethod->hashAlgId].saltLen;
+        {
+            const Ipp8u* pSalt = pksc15_salt[pMethod->hashAlgId].pSalt;
+            int saltLen        = pksc15_salt[pMethod->hashAlgId].saltLen;
 
-         int sts = GenerateSign(md, mdLen,
-                         pSalt, saltLen,
-                         pSign,
-                         pPrvKey, pPubKey,
-                         (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((pScratchBuffer), (int)sizeof(BNU_CHUNK_T))));
+            int sts = GenerateSign(
+                md,
+                mdLen,
+                pSalt,
+                saltLen,
+                pSign,
+                pPrvKey,
+                pPubKey,
+                (BNU_CHUNK_T*)(IPP_ALIGNED_PTR((pScratchBuffer), (int)sizeof(BNU_CHUNK_T))));
 
-         return (1==sts)? ippStsNoErr : ippStsSizeErr;
-      }
-   }
+            return (1 == sts) ? ippStsNoErr : ippStsSizeErr;
+        }
+    }
 }

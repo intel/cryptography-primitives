@@ -45,15 +45,15 @@
 //    pSize       pointer to the packed spec size
 //
 *F*/
-IPPFUN(IppStatus, ippsHMAC_Unpack,(const Ipp8u* pBuffer, IppsHMACState* pCtx))
+IPPFUN(IppStatus, ippsHMAC_Unpack, (const Ipp8u* pBuffer, IppsHMACState* pCtx))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
 
-   CopyBlock(pBuffer, pCtx, sizeof(IppsHMACState));
-   /* Set IppsHMACState context id */
-   HMAC_SET_CTX_ID(pCtx);
-   /* Set context id for IppsHashState, which is the part of IppsHMACState */
-   HASH_SET_ID(&HASH_CTX(pCtx),idCtxHash);
-   return ippStsNoErr;
+    CopyBlock(pBuffer, pCtx, sizeof(IppsHMACState));
+    /* Set IppsHMACState context id */
+    HMAC_SET_CTX_ID(pCtx);
+    /* Set context id for IppsHashState, which is the part of IppsHMACState */
+    HASH_SET_ID(&HASH_CTX(pCtx), idCtxHash);
+    return ippStsNoErr;
 }

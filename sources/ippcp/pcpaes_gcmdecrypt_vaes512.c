@@ -25,10 +25,10 @@
 */
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-#pragma warning(disable: 4206) // empty translation unit in MSVC
+#pragma warning(disable : 4206) // empty translation unit in MSVC
 #endif
 
-#if 0 // Not used
+#if 0                           // Not used
 
 #include "owncp.h"
 #include "pcpaesm.h"
@@ -36,7 +36,7 @@
 #include "pcpaes_gcm_vaes512.h"
 #include "pcpaesauthgcm.h"
 
-#if (_IPP32E>=_IPP32E_K1)
+#if (_IPP32E >= _IPP32E_K1)
 
 static __ALIGN64 Ipp32u inc_lo32x4[]  = { 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0 };
 static __ALIGN64 Ipp32u inc1_lo32x4[] = { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 };

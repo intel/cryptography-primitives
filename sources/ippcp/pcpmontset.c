@@ -48,18 +48,19 @@
 //    pCtx        pointer to the context
 *F*/
 
-IPPFUN(IppStatus, ippsMontSet,(const Ipp32u* pModulus, int size, IppsMontState* pCtx))
+IPPFUN(IppStatus, ippsMontSet, (const Ipp32u* pModulus, int size, IppsMontState* pCtx))
 {
-   IPP_BAD_PTR2_RET(pModulus, pCtx);
-   IPP_BADARG_RET(!MNT_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BAD_PTR2_RET(pModulus, pCtx);
+    IPP_BADARG_RET(!MNT_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(size<1, ippStsLengthErr);
+    IPP_BADARG_RET(size < 1, ippStsLengthErr);
 
-   /* modulus is not an odd number */
-   IPP_BADARG_RET((pModulus[0] & 1) == 0, ippStsBadModulusErr);
-   IPP_BADARG_RET(((Ipp32u)MNT_ROOM(pCtx) < (Ipp32u)INTERNAL_BNU_LENGTH(size)), ippStsOutOfRangeErr);
+    /* modulus is not an odd number */
+    IPP_BADARG_RET((pModulus[0] & 1) == 0, ippStsBadModulusErr);
+    IPP_BADARG_RET(((Ipp32u)MNT_ROOM(pCtx) < (Ipp32u)INTERNAL_BNU_LENGTH(size)),
+                   ippStsOutOfRangeErr);
 
-   {
-      return cpMontSet(pModulus, size, pCtx);
-   }
+    {
+        return cpMontSet(pModulus, size, pCtx);
+    }
 }

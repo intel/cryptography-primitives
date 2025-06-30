@@ -32,19 +32,18 @@
 #include "pcpngrsamethod.h"
 #include "pcpngrsa.h"
 
-#if (_IPP32E>=_IPP32E_K1)
+#if (_IPP32E >= _IPP32E_K1)
 #include "pcpngmontexpstuff_avx512.h"
 
-IPP_OWN_DEFN (gsMethod_RSA*, gsMethod_RSA_avx512_public, (void))
+IPP_OWN_DEFN(gsMethod_RSA*, gsMethod_RSA_avx512_public, (void))
 {
-    static gsMethod_RSA m = {
-        RSA_AVX512_MIN_BITSIZE, RSA_AVX512_MAX_BITSIZE, /* RSA range */
+    static gsMethod_RSA m = { RSA_AVX512_MIN_BITSIZE,
+                              RSA_AVX512_MAX_BITSIZE, /* RSA range */
 
-        /* public key exponentiation: public, binary, avx512 */
-        gsMontExpBinBuffer_avx512,
-        gsMontExpBin_BNU_avx512,
-        NULL
-    };
+                              /* public key exponentiation: public, binary, avx512 */
+                              gsMontExpBinBuffer_avx512,
+                              gsMontExpBin_BNU_avx512,
+                              NULL };
     return &m;
 }
 #endif /* _IPP32E_L9 */

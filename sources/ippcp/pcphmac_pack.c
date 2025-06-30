@@ -46,28 +46,28 @@
 //    bufSize     size of destination buffer
 //
 *F*/
-IPPFUN(IppStatus, ippsHMAC_Pack,(const IppsHMACState* pCtx, Ipp8u* pBuffer, int bufSize))
+IPPFUN(IppStatus, ippsHMAC_Pack, (const IppsHMACState* pCtx, Ipp8u* pBuffer, int bufSize))
 {
-   /* test pointers */
-   IPP_BAD_PTR2_RET(pCtx, pBuffer);
-   /* test the context */
-   IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test pointers */
+    IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    /* test the context */
+    IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   {
-      int ctxSize;
-      ippsHMAC_GetSize(&ctxSize);
-      /* test buffer length */
-      IPP_BADARG_RET(ctxSize>bufSize, ippStsNoMemErr);
+    {
+        int ctxSize;
+        ippsHMAC_GetSize(&ctxSize);
+        /* test buffer length */
+        IPP_BADARG_RET(ctxSize > bufSize, ippStsNoMemErr);
 
-      CopyBlock(pCtx, pBuffer, ctxSize);
-      
-      /* Reset IppsHMACState context id */
-      IppsHMACState* pCopy = (IppsHMACState*)pBuffer;
-      HMAC_RESET_CTX_ID(pCopy);
-      /* Reset context id for IppsHashState, which is the part of IppsHMACState */
-      IppsHashState* pHashCopy = (IppsHashState*)&HASH_CTX(pCopy);
-      HASH_RESET_ID(pHashCopy,idCtxHash);
+        CopyBlock(pCtx, pBuffer, ctxSize);
 
-      return ippStsNoErr;
-   }
+        /* Reset IppsHMACState context id */
+        IppsHMACState* pCopy = (IppsHMACState*)pBuffer;
+        HMAC_RESET_CTX_ID(pCopy);
+        /* Reset context id for IppsHashState, which is the part of IppsHMACState */
+        IppsHashState* pHashCopy = (IppsHashState*)&HASH_CTX(pCopy);
+        HASH_RESET_ID(pHashCopy, idCtxHash);
+
+        return ippStsNoErr;
+    }
 }

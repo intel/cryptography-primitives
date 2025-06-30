@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     PRNG Functions
-// 
+//
 //  Contents:
 //        cpPRNGenPattern()
 //
@@ -36,16 +36,25 @@
       1 random bit string generated
      -1 detected internal error (ippStsNoErr != rndFunc())
 */
-IPP_OWN_DEFN (int, cpPRNGenPattern, (BNU_CHUNK_T* pRand, int bitSize, BNU_CHUNK_T botPattern, BNU_CHUNK_T topPattern, IppBitSupplier rndFunc, void* pRndParam))
+
+/* clang-format off */
+IPP_OWN_DEFN(int, cpPRNGenPattern, (BNU_CHUNK_T* pRand,
+                                    int bitSize,
+                                    BNU_CHUNK_T botPattern,
+                                    BNU_CHUNK_T topPattern,
+                                    IppBitSupplier rndFunc,
+                                    void* pRndParam))
+/* clang-format on */
 {
-   BNU_CHUNK_T topMask = MASK_BNU_CHUNK(bitSize);
-   cpSize randLen = BITS_BNU_CHUNK(bitSize);
+    BNU_CHUNK_T topMask = MASK_BNU_CHUNK(bitSize);
+    cpSize randLen      = BITS_BNU_CHUNK(bitSize);
 
-   IppStatus sts = rndFunc((Ipp32u*)pRand, bitSize, pRndParam);
-   if(ippStsNoErr!=sts) return -1;
+    IppStatus sts = rndFunc((Ipp32u*)pRand, bitSize, pRndParam);
+    if (ippStsNoErr != sts)
+        return -1;
 
-   pRand[randLen-1] &= topMask;
-   pRand[0] |= botPattern;
-   pRand[randLen-1] |= topPattern;
-   return 1;
+    pRand[randLen - 1] &= topMask;
+    pRand[0] |= botPattern;
+    pRand[randLen - 1] |= topPattern;
+    return 1;
 }

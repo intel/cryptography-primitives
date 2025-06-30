@@ -45,14 +45,14 @@
 //    pR    result
 //
 *F*/
-IPP_OWN_DEFN (Ipp32u, cpSub_BNU32, (Ipp32u* pR, const Ipp32u* pA, const Ipp32u* pB, cpSize ns))
+IPP_OWN_DEFN(Ipp32u, cpSub_BNU32, (Ipp32u * pR, const Ipp32u* pA, const Ipp32u* pB, cpSize ns))
 {
-   Ipp32u borrow = 0;
-   cpSize i;
-   for(i=0; i<ns; i++) {
-      Ipp64u t = (Ipp64u)(pA[i]) - pB[i] - borrow;
-      pR[i] = IPP_LODWORD(t);
-      borrow = 0-IPP_HIDWORD(t);
-   }
-   return borrow;
+    Ipp32u borrow = 0;
+    cpSize i;
+    for (i = 0; i < ns; i++) {
+        Ipp64u t = (Ipp64u)(pA[i]) - pB[i] - borrow;
+        pR[i]    = IPP_LODWORD(t);
+        borrow   = 0 - IPP_HIDWORD(t);
+    }
+    return borrow;
 }

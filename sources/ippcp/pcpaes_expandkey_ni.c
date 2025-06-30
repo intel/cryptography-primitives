@@ -29,22 +29,27 @@
 #include "pcpaesm.h"
 #include "pcpaes_keys_ni.h"
 
-#if (_AES_NI_ENABLING_==_FEATURE_ON_) || (_AES_NI_ENABLING_==_FEATURE_TICKTOCK_)
+#if (_AES_NI_ENABLING_ == _FEATURE_ON_) || (_AES_NI_ENABLING_ == _FEATURE_TICKTOCK_)
 
-IPP_OWN_DEFN (void, cpExpandAesKey_NI, (const Ipp8u* pSecret, IppsAESSpec* pCtx))
+IPP_OWN_DEFN(void, cpExpandAesKey_NI, (const Ipp8u* pSecret, IppsAESSpec* pCtx))
 {
-   int nRounds = RIJ_NR(pCtx);
-   Ipp8u* pEncKeys = RIJ_EKEYS(pCtx);
-   Ipp8u* pDecKeys = RIJ_DKEYS(pCtx);
+    int nRounds     = RIJ_NR(pCtx);
+    Ipp8u* pEncKeys = RIJ_EKEYS(pCtx);
+    Ipp8u* pDecKeys = RIJ_DKEYS(pCtx);
 
-   switch (nRounds) {
-   case 12: aes192_KeyExpansion_NI(pEncKeys, pSecret);  break;
-   case 14: aes256_KeyExpansion_NI(pEncKeys, pSecret);  break;
-   default: aes128_KeyExpansion_NI(pEncKeys, pSecret);  break;
-   }
+    switch (nRounds) {
+    case 12:
+        aes192_KeyExpansion_NI(pEncKeys, pSecret);
+        break;
+    case 14:
+        aes256_KeyExpansion_NI(pEncKeys, pSecret);
+        break;
+    default:
+        aes128_KeyExpansion_NI(pEncKeys, pSecret);
+        break;
+    }
 
-   aes_DecKeyExpansion_NI(pDecKeys, pEncKeys, nRounds);
+    aes_DecKeyExpansion_NI(pDecKeys, pEncKeys, nRounds);
 }
 
 #endif /* #if (_AES_NI_ENABLING_==_FEATURE_ON_) || (_AES_NI_ENABLING_==_FEATURE_TICKTOCK_) */
-

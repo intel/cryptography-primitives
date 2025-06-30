@@ -45,16 +45,16 @@
 //    pCtx        pointer DES spec
 //
 *F*/
-IPPFUN(IppStatus, ippsDESInit,(const Ipp8u* pKey, IppsDESSpec* pCtx))
+IPPFUN(IppStatus, ippsDESInit, (const Ipp8u* pKey, IppsDESSpec* pCtx))
 {
-   /* test key's and spec's pointers */
-   IPP_BAD_PTR2_RET(pKey, pCtx);
+    /* test key's and spec's pointers */
+    IPP_BAD_PTR2_RET(pKey, pCtx);
 
-   /* init DES spec */
-   DES_SET_ID(pCtx);
+    /* init DES spec */
+    DES_SET_ID(pCtx);
 
-   /* set round keys */
-   SetKey_DES(pKey, pCtx);
+    /* set round keys */
+    SetKey_DES(pKey, pCtx);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

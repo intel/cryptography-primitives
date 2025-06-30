@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     PRNG Functions
-// 
+//
 //  Contents:
 //        cpPRNGenRange()
 //
@@ -38,24 +38,34 @@
       1 random bit string generated
      -1 detected internal error (ippStsNoErr != rndFunc())
 */
-IPP_OWN_DEFN (int, cpPRNGenRange, (BNU_CHUNK_T* pRand, const BNU_CHUNK_T* pLo, cpSize loLen, const BNU_CHUNK_T* pHi, cpSize hiLen, IppBitSupplier rndFunc, void* pRndParam))
+/* clang-format off */
+IPP_OWN_DEFN(int, cpPRNGenRange, (BNU_CHUNK_T* pRand,
+                                  const BNU_CHUNK_T* pLo,
+                                  cpSize loLen,
+                                  const BNU_CHUNK_T* pHi,
+                                  cpSize hiLen,
+                                  IppBitSupplier rndFunc,
+                                  void* pRndParam))
+/* clang-format on */
 {
-   int bitSize = BITSIZE_BNU(pHi,hiLen);
-   BNU_CHUNK_T topMask = MASK_BNU_CHUNK(bitSize);
+    int bitSize         = BITSIZE_BNU(pHi, hiLen);
+    BNU_CHUNK_T topMask = MASK_BNU_CHUNK(bitSize);
 
-   #define MAX_COUNT (1000)
-   int n;
-   for(n=0; n<MAX_COUNT; n++) {
-      cpSize randLen;
-      IppStatus sts = rndFunc((Ipp32u*)pRand, bitSize, pRndParam);
-      if(ippStsNoErr!=sts) return -1;
+#define MAX_COUNT (1000)
+    int n;
+    for (n = 0; n < MAX_COUNT; n++) {
+        cpSize randLen;
+        IppStatus sts = rndFunc((Ipp32u*)pRand, bitSize, pRndParam);
+        if (ippStsNoErr != sts)
+            return -1;
 
-      pRand[hiLen-1] &= topMask;
-      randLen = cpFix_BNU(pRand, hiLen);
-      if((0 < cpCmp_BNU(pRand, randLen, pLo, loLen)) && (0 < cpCmp_BNU(pHi, hiLen, pRand, randLen)))
-         return 1;
-   }
-   #undef MAX_COUNT
+        pRand[hiLen - 1] &= topMask;
+        randLen = cpFix_BNU(pRand, hiLen);
+        if ((0 < cpCmp_BNU(pRand, randLen, pLo, loLen)) &&
+            (0 < cpCmp_BNU(pHi, hiLen, pRand, randLen)))
+            return 1;
+    }
+#undef MAX_COUNT
 
-   return 0; /* no random matched to (Lo,Hi) */
+    return 0; /* no random matched to (Lo,Hi) */
 }

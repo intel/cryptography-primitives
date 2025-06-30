@@ -32,20 +32,19 @@
 #include "pcpngrsamethod.h"
 #include "pcpngrsa.h"
 
-#if (_IPP>=_IPP_W7)
+#if (_IPP >= _IPP_W7)
 
 #include "pcpngmontexpstuff_sse2.h"
 
-IPP_OWN_DEFN (gsMethod_RSA*, gsMethod_RSA_sse2_public, (void))
+IPP_OWN_DEFN(gsMethod_RSA*, gsMethod_RSA_sse2_public, (void))
 {
-   static gsMethod_RSA m = {
-      RSA_SSE2_MIN_BITSIZE, RSA_SSE2_MAX_BITSIZE,  /* RSA range */
+    static gsMethod_RSA m = { RSA_SSE2_MIN_BITSIZE,
+                              RSA_SSE2_MAX_BITSIZE, /* RSA range */
 
-      /* public key exponentiation: public, binary, sse2 */
-      gsMontExpBinBuffer_sse2,
-      gsMontExpBin_BNU_sse2,
-      NULL
-   };
-   return &m;
+                              /* public key exponentiation: public, binary, sse2 */
+                              gsMontExpBinBuffer_sse2,
+                              gsMontExpBin_BNU_sse2,
+                              NULL };
+    return &m;
 }
 #endif /* _IPP_W7 */

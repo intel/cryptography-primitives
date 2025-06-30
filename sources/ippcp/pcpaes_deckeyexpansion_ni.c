@@ -29,23 +29,22 @@
 #include "pcpaesm.h"
 #include "pcpaes_keys_ni.h"
 
-#if (_AES_NI_ENABLING_==_FEATURE_ON_) || (_AES_NI_ENABLING_==_FEATURE_TICKTOCK_)
+#if (_AES_NI_ENABLING_ == _FEATURE_ON_) || (_AES_NI_ENABLING_ == _FEATURE_TICKTOCK_)
 
 //////////////////////////////////////////////////////////////////////
 /*
 // AES decryption key schelule
 */
-IPP_OWN_DEFN (void, aes_DecKeyExpansion_NI, (Ipp8u* decKeys, const Ipp8u* encKeys, int nr))
+IPP_OWN_DEFN(void, aes_DecKeyExpansion_NI, (Ipp8u * decKeys, const Ipp8u* encKeys, int nr))
 {
-   __m128i* encKeys16 = (__m128i*)encKeys;
-   __m128i* decKeys16 = (__m128i*)decKeys;
+    __m128i* encKeys16 = (__m128i*)encKeys;
+    __m128i* decKeys16 = (__m128i*)decKeys;
 
-   decKeys16[nr] = encKeys16[nr];
-   for(nr-=1; nr > 0; nr--) {
-      decKeys16[nr] = _mm_aesimc_si128(encKeys16[nr]);
-   }
-   decKeys16[0] = encKeys16[0];
+    decKeys16[nr] = encKeys16[nr];
+    for (nr -= 1; nr > 0; nr--) {
+        decKeys16[nr] = _mm_aesimc_si128(encKeys16[nr]);
+    }
+    decKeys16[0] = encKeys16[0];
 }
 
 #endif /* #if (_AES_NI_ENABLING_==_FEATURE_ON_) || (_AES_NI_ENABLING_==_FEATURE_TICKTOCK_) */
-

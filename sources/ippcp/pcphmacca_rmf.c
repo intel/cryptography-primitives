@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     HMAC General Functionality
-// 
+//
 //  Contents:
 //        ippsHMACInit_rmf()
 //
@@ -50,60 +50,63 @@
 //    pMethod     hash method
 //
 *F*/
-IPPFUN(IppStatus, ippsHMACInit_rmf,(const Ipp8u* pKey, int keyLen,
-                                    IppsHMACState_rmf* pCtx,
-                                    const IppsHashMethod* pMethod))
+/* clang-format off */
+IPPFUN(IppStatus, ippsHMACInit_rmf, (const Ipp8u* pKey,
+                                     int keyLen,
+                                     IppsHMACState_rmf* pCtx,
+                                     const IppsHashMethod* pMethod))
+/* clang-format on */
 {
-   /* test pointer */
-   IPP_BAD_PTR2_RET(pCtx, pMethod);
-   /* SHAKE128/256 are not supported with HMAC mode*/
-   IPP_BADARG_RET(cpIsSHAKEAlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+    /* test pointer */
+    IPP_BAD_PTR2_RET(pCtx, pMethod);
+    /* SHAKE128/256 are not supported with HMAC mode*/
+    IPP_BADARG_RET(cpIsSHAKEAlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
-   /* test key pointer and key length */
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET(0>keyLen, ippStsLengthErr);
+    /* test key pointer and key length */
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET(0 > keyLen, ippStsLengthErr);
 
-   /* set state ID */
-   HMAC_SET_CTX_ID(pCtx);
+    /* set state ID */
+    HMAC_SET_CTX_ID(pCtx);
 
-   /* init hash context */
-   ippsHashInit_rmf(HASH_CTX(pCtx), pMethod);
+    /* init hash context */
+    ippsHashInit_rmf(HASH_CTX(pCtx), pMethod);
 
-   {
-      int n;
+    {
+        int n;
 
-      /* hash specific */
-      IppsHashState_rmf* pHashCtx = HASH_CTX(pCtx);
-      int mbs = pMethod->msgBlkSize;
-      int hashSize = pMethod->hashLen;
+        /* hash specific */
+        IppsHashState_rmf* pHashCtx = HASH_CTX(pCtx);
+        int mbs                     = pMethod->msgBlkSize;
+        int hashSize                = pMethod->hashLen;
 
-      /* copyMask = keyLen>mbs? 0xFF : 0x00 */
-      int copyMask = (mbs-keyLen) >>(BITSIZE(int)-1);
+        /* copyMask = keyLen>mbs? 0xFF : 0x00 */
+        int copyMask = (mbs - keyLen) >> (BITSIZE(int) - 1);
 
-      /* actualKeyLen = keyLen>mbs? hashSize:keyLen */
-      int actualKeyLen = (hashSize & copyMask) | (keyLen & ~copyMask);
+        /* actualKeyLen = keyLen>mbs? hashSize:keyLen */
+        int actualKeyLen = (hashSize & copyMask) | (keyLen & ~copyMask);
 
-      /* compute hash(key, keyLen) just in case */
-      ippsHashUpdate_rmf(pKey, keyLen, pHashCtx);
-      ippsHashFinal_rmf(HASH_BUFF(pHashCtx), pHashCtx);
+        /* compute hash(key, keyLen) just in case */
+        ippsHashUpdate_rmf(pKey, keyLen, pHashCtx);
+        ippsHashFinal_rmf(HASH_BUFF(pHashCtx), pHashCtx);
 
-      /* copy either key or hash(key) into ipad- and opad- buffers */
-      MASKED_COPY_BNU(pCtx->ipadKey, (Ipp8u)copyMask, HASH_BUFF(pHashCtx), pKey, actualKeyLen);
-      MASKED_COPY_BNU(pCtx->opadKey, (Ipp8u)copyMask, HASH_BUFF(pHashCtx), pKey, actualKeyLen);
+        /* copy either key or hash(key) into ipad- and opad- buffers */
+        MASKED_COPY_BNU(pCtx->ipadKey, (Ipp8u)copyMask, HASH_BUFF(pHashCtx), pKey, actualKeyLen);
+        MASKED_COPY_BNU(pCtx->opadKey, (Ipp8u)copyMask, HASH_BUFF(pHashCtx), pKey, actualKeyLen);
 
-      /* XOR-ing key */
-      for(n=0; n<actualKeyLen; n++) {
-         pCtx->ipadKey[n] ^= (Ipp8u)IPAD;
-         pCtx->opadKey[n] ^= (Ipp8u)OPAD;
-      }
-      for(; n<mbs; n++) {
-         pCtx->ipadKey[n] = (Ipp8u)IPAD;
-         pCtx->opadKey[n] = (Ipp8u)OPAD;
-      }
+        /* XOR-ing key */
+        for (n = 0; n < actualKeyLen; n++) {
+            pCtx->ipadKey[n] ^= (Ipp8u)IPAD;
+            pCtx->opadKey[n] ^= (Ipp8u)OPAD;
+        }
+        for (; n < mbs; n++) {
+            pCtx->ipadKey[n] = (Ipp8u)IPAD;
+            pCtx->opadKey[n] = (Ipp8u)OPAD;
+        }
 
-      /* ipad key processing */
-      ippsHashUpdate_rmf(pCtx->ipadKey, mbs, pHashCtx);
+        /* ipad key processing */
+        ippsHashUpdate_rmf(pCtx->ipadKey, mbs, pHashCtx);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

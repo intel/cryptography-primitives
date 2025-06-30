@@ -30,17 +30,19 @@
 
 #include "pcprsa_emsa_pkcs1v15.h"
 
-static int VerifySign(const Ipp8u* pMsg, int msgLen,  /* message representation */
-    const Ipp8u* pSalt, int saltLen,
-    const Ipp8u* pSign,
-    int* pIsValid,
-    const IppsRSAPublicKeyState* pKey,
-    BNU_CHUNK_T* pBuffer)
+static int VerifySign(const Ipp8u* pMsg,
+                      int msgLen, /* message representation */
+                      const Ipp8u* pSalt,
+                      int saltLen,
+                      const Ipp8u* pSign,
+                      int* pIsValid,
+                      const IppsRSAPublicKeyState* pKey,
+                      BNU_CHUNK_T* pBuffer)
 {
     /* size of RSA modulus in bytes and chunks */
     cpSize rsaBits = RSA_PUB_KEY_BITSIZE_N(pKey);
-    cpSize k = BITS2WORD8_SIZE(rsaBits);
-    cpSize nsN = BITS_BNU_CHUNK(rsaBits);
+    cpSize k       = BITS2WORD8_SIZE(rsaBits);
+    cpSize nsN     = BITS_BNU_CHUNK(rsaBits);
 
     /* temporary BNs */
     __ALIGN8 IppsBigNumState bnC;
@@ -65,7 +67,6 @@ static int VerifySign(const Ipp8u* pMsg, int msgLen,  /* message representation 
     if (EMSA_PKCSv15(pMsg, msgLen, pSalt, saltLen, (Ipp8u*)(BN_NUMBER(&bnC)), k)) {
         *pIsValid = 1 == EquBlock((Ipp8u*)(BN_BUFFER(&bnC)), (Ipp8u*)(BN_NUMBER(&bnC)), k);
         return 1;
-    }
-    else
+    } else
         return 0;
 }

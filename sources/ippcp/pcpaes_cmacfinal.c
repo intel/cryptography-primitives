@@ -32,8 +32,8 @@
 #include "pcptool.h"
 #include "pcpaes_cmac_stuff.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 
@@ -55,25 +55,25 @@
 //    pState   pointer to the CMAC context
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CMACFinal,(Ipp8u* pMD, int mdLen, IppsAES_CMACState* pState))
+IPPFUN(IppStatus, ippsAES_CMACFinal, (Ipp8u * pMD, int mdLen, IppsAES_CMACState* pState))
 {
-   /* test context pointer and ID */
-   IPP_BAD_PTR1_RET(pState);
-   /* test DAC pointer */
-   IPP_BAD_PTR1_RET(pMD);
-   IPP_BADARG_RET((mdLen<1)||(MBS_RIJ128<mdLen), ippStsLengthErr);
+    /* test context pointer and ID */
+    IPP_BAD_PTR1_RET(pState);
+    /* test DAC pointer */
+    IPP_BAD_PTR1_RET(pMD);
+    IPP_BADARG_RET((mdLen < 1) || (MBS_RIJ128 < mdLen), ippStsLengthErr);
 
-   {
-      Ipp8u localMD[MBS_RIJ128];
-      IppStatus sts = ippsAES_CMACGetTag(localMD, MBS_RIJ128, pState);
+    {
+        Ipp8u localMD[MBS_RIJ128];
+        IppStatus sts = ippsAES_CMACGetTag(localMD, MBS_RIJ128, pState);
 
-      if(ippStsNoErr==sts) {
-         /* return truncated DAC */
-         CopyBlock(localMD, pMD, mdLen);
-         /* re-init context */
-         init(pState);
-      }
+        if (ippStsNoErr == sts) {
+            /* return truncated DAC */
+            CopyBlock(localMD, pMD, mdLen);
+            /* re-init context */
+            init(pState);
+        }
 
-      return sts;
-   }
+        return sts;
+    }
 }

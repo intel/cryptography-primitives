@@ -55,40 +55,53 @@
 // Notes: The size of IppsBigNumState *r should not be less than the data
 //      length of the modulus m.
 *F*/
-IPPFUN(IppStatus, ippsMontMul, (const IppsBigNumState* pA, const IppsBigNumState* pB, IppsMontState* pCtx, IppsBigNumState* pR))
+/* clang-format off */
+IPPFUN(IppStatus, ippsMontMul, (const IppsBigNumState* pA,
+                                const IppsBigNumState* pB,
+                                IppsMontState* pCtx,
+                                IppsBigNumState* pR))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pA, pB, pCtx, pR);
+    IPP_BAD_PTR4_RET(pA, pB, pCtx, pR);
 
-   IPP_BADARG_RET(!MNT_VALID_ID(pCtx), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pA), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pB), ippStsContextMatchErr);
-   IPP_BADARG_RET(!BN_VALID_ID(pR), ippStsContextMatchErr);
+    IPP_BADARG_RET(!MNT_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pA), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pB), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pR), ippStsContextMatchErr);
 
-   IPP_BADARG_RET(BN_NEGATIVE(pA) || BN_NEGATIVE(pB), ippStsBadArgErr);
-   IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pA), BN_SIZE(pA), MOD_MODULUS( MNT_ENGINE(pCtx) ), MOD_LEN( MNT_ENGINE(pCtx) )) >= 0, ippStsScaleRangeErr);
-   IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pB), BN_SIZE(pB), MOD_MODULUS( MNT_ENGINE(pCtx) ), MOD_LEN( MNT_ENGINE(pCtx) )) >= 0, ippStsScaleRangeErr);
-   IPP_BADARG_RET(BN_ROOM(pR) < MOD_LEN( MNT_ENGINE(pCtx) ), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(BN_NEGATIVE(pA) || BN_NEGATIVE(pB), ippStsBadArgErr);
+    IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pA),
+                             BN_SIZE(pA),
+                             MOD_MODULUS(MNT_ENGINE(pCtx)),
+                             MOD_LEN(MNT_ENGINE(pCtx))) >= 0,
+                   ippStsScaleRangeErr);
+    IPP_BADARG_RET(cpCmp_BNU(BN_NUMBER(pB),
+                             BN_SIZE(pB),
+                             MOD_MODULUS(MNT_ENGINE(pCtx)),
+                             MOD_LEN(MNT_ENGINE(pCtx))) >= 0,
+                   ippStsScaleRangeErr);
+    IPP_BADARG_RET(BN_ROOM(pR) < MOD_LEN(MNT_ENGINE(pCtx)), ippStsOutOfRangeErr);
 
-   {
-      const int usedPoolLen = 2;
-      cpSize nsM = MOD_LEN( MNT_ENGINE(pCtx) );
-      BNU_CHUNK_T* pDataR  = BN_NUMBER(pR);
-      BNU_CHUNK_T* pDataA  = gsModPoolAlloc(MNT_ENGINE(pCtx), usedPoolLen);
-      IPP_BAD_PTR1_RET(pDataA); // pDataA can be NULL, stop processing
+    {
+        const int usedPoolLen = 2;
+        cpSize nsM            = MOD_LEN(MNT_ENGINE(pCtx));
+        BNU_CHUNK_T* pDataR   = BN_NUMBER(pR);
+        BNU_CHUNK_T* pDataA   = gsModPoolAlloc(MNT_ENGINE(pCtx), usedPoolLen);
+        IPP_BAD_PTR1_RET(pDataA); // pDataA can be NULL, stop processing
 
-      BNU_CHUNK_T* pDataB  = pDataA + nsM;
+        BNU_CHUNK_T* pDataB = pDataA + nsM;
 
-      ZEXPAND_COPY_BNU(pDataA, nsM, BN_NUMBER(pA), BN_SIZE(pA));
-      ZEXPAND_COPY_BNU(pDataB, nsM, BN_NUMBER(pB), BN_SIZE(pB));
+        ZEXPAND_COPY_BNU(pDataA, nsM, BN_NUMBER(pA), BN_SIZE(pA));
+        ZEXPAND_COPY_BNU(pDataB, nsM, BN_NUMBER(pB), BN_SIZE(pB));
 
-      MOD_METHOD( MNT_ENGINE(pCtx) )->mul(pDataR, pDataA, pDataB, MNT_ENGINE(pCtx));
+        MOD_METHOD(MNT_ENGINE(pCtx))->mul(pDataR, pDataA, pDataB, MNT_ENGINE(pCtx));
 
-      gsModPoolFree(MNT_ENGINE(pCtx), usedPoolLen);
+        gsModPoolFree(MNT_ENGINE(pCtx), usedPoolLen);
 
-      FIX_BNU(pDataR, nsM);
-      BN_SIZE(pR) = nsM;
-      BN_SIGN(pR) = ippBigNumPOS;
+        FIX_BNU(pDataR, nsM);
+        BN_SIZE(pR) = nsM;
+        BN_SIGN(pR) = ippBigNumPOS;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

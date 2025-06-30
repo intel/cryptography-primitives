@@ -55,25 +55,25 @@
 IPPFUN(IppStatus, ippsAESSetupNoise, (Ipp32u noiseLevel, IppsAESSpec* pCtx))
 {
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
 
-   /* test noise level range */
-   IPP_BADARG_RET(noiseLevel > 4, ippStsLengthErr);
+    /* test noise level range */
+    IPP_BADARG_RET(noiseLevel > 4, ippStsLengthErr);
 
-   cpAESNoiseParams *params = (cpAESNoiseParams *)&RIJ_NOISE_PARAMS(pCtx);
+    cpAESNoiseParams* params = (cpAESNoiseParams*)&RIJ_NOISE_PARAMS(pCtx);
 
-   /* set up the parameters with initial values */
-   AES_NOISE_RAND(params)       = 0;
-   AES_NOISE_LEVEL(params)      = noiseLevel;
+    /* set up the parameters with initial values */
+    AES_NOISE_RAND(params)  = 0;
+    AES_NOISE_LEVEL(params) = noiseLevel;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 #else
-   /* To remove MSVC warning C4100: 'XXX': unreferenced formal parameter*/
-   IPP_UNREFERENCED_PARAMETER(noiseLevel);
-   IPP_UNREFERENCED_PARAMETER(pCtx);
-   return ippStsNotSupportedModeErr;
+    /* To remove MSVC warning C4100: 'XXX': unreferenced formal parameter*/
+    IPP_UNREFERENCED_PARAMETER(noiseLevel);
+    IPP_UNREFERENCED_PARAMETER(pCtx);
+    return ippStsNotSupportedModeErr;
 #endif
 }

@@ -28,21 +28,22 @@
 #include "pcpbnuimpl.h"
 #include "pcpbnu32arith.h"
 
+/* clang-format off */
 #define cpAdd_BNU OWNAPI(cpAdd_BNU)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpAdd_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, cpSize ns))
+   IPP_OWN_DECL(BNU_CHUNK_T, cpAdd_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, cpSize ns))
 #define cpSub_BNU OWNAPI(cpSub_BNU)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpSub_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, cpSize ns))
+   IPP_OWN_DECL(BNU_CHUNK_T, cpSub_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, const BNU_CHUNK_T* pB, cpSize ns))
 #define cpInc_BNU OWNAPI(cpInc_BNU)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpInc_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize ns, BNU_CHUNK_T val))
+   IPP_OWN_DECL(BNU_CHUNK_T, cpInc_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize ns, BNU_CHUNK_T val))
 #define cpDec_BNU OWNAPI(cpDec_BNU)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpDec_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize ns, BNU_CHUNK_T val))
+   IPP_OWN_DECL(BNU_CHUNK_T, cpDec_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize ns, BNU_CHUNK_T val))
 #define cpAddMulDgt_BNU OWNAPI(cpAddMulDgt_BNU)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpAddMulDgt_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize ns, BNU_CHUNK_T val))
+   IPP_OWN_DECL(BNU_CHUNK_T, cpAddMulDgt_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize ns, BNU_CHUNK_T val))
 #define cpMulAdc_BNU_school OWNAPI(cpMulAdc_BNU_school)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpMulAdc_BNU_school, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB, cpSize nsB))
+   IPP_OWN_DECL(BNU_CHUNK_T, cpMulAdc_BNU_school, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB, cpSize nsB))
 #define cpMulAdx_BNU_school OWNAPI(cpMulAdx_BNU_school)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpMulAdx_BNU_school, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB, cpSize nsB))
-
+   IPP_OWN_DECL(BNU_CHUNK_T, cpMulAdx_BNU_school, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pB, cpSize nsB))
+/* clang-format on */
 /*F*
 //    Name: cpMul_BNU_school
 //
@@ -61,25 +62,27 @@
 *F*/
 
 __IPPCP_INLINE BNU_CHUNK_T cpMul_BNU_school(BNU_CHUNK_T* pR,
-                                const BNU_CHUNK_T* pA, cpSize nsA,
-                                const BNU_CHUNK_T* pB, cpSize nsB)
+                                            const BNU_CHUNK_T* pA,
+                                            cpSize nsA,
+                                            const BNU_CHUNK_T* pB,
+                                            cpSize nsB)
 {
-#if(_ADCOX_NI_ENABLING_==_FEATURE_ON_)
-   return cpMulAdx_BNU_school(pR, pA,nsA, pB,nsB);
-#elif(_ADCOX_NI_ENABLING_==_FEATURE_TICKTOCK_)
-   return IsFeatureEnabled(ippCPUID_ADCOX)? cpMulAdx_BNU_school(pR, pA,nsA, pB,nsB)
-                                          : cpMulAdc_BNU_school(pR, pA,nsA, pB,nsB);
+#if (_ADCOX_NI_ENABLING_ == _FEATURE_ON_)
+    return cpMulAdx_BNU_school(pR, pA, nsA, pB, nsB);
+#elif (_ADCOX_NI_ENABLING_ == _FEATURE_TICKTOCK_)
+    return IsFeatureEnabled(ippCPUID_ADCOX) ? cpMulAdx_BNU_school(pR, pA, nsA, pB, nsB)
+                                            : cpMulAdc_BNU_school(pR, pA, nsA, pB, nsB);
 #else
-   return cpMulAdc_BNU_school(pR, pA,nsA, pB,nsB);
+    return cpMulAdc_BNU_school(pR, pA, nsA, pB, nsB);
 #endif
 }
 
-
+/* clang-format off */
 #define cpSqrAdc_BNU_school OWNAPI(cpSqrAdc_BNU_school)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpSqrAdc_BNU_school, (BNU_CHUNK_T * pR, const BNU_CHUNK_T * pA, cpSize nsA))
+   IPP_OWN_DECL(BNU_CHUNK_T, cpSqrAdc_BNU_school, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA))
 #define cpSqrAdx_BNU_school OWNAPI(cpSqrAdx_BNU_school)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpSqrAdx_BNU_school, (BNU_CHUNK_T * pR, const BNU_CHUNK_T * pA, cpSize nsA))
-
+   IPP_OWN_DECL(BNU_CHUNK_T, cpSqrAdx_BNU_school, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA))
+/* clang-format on */
 /*F*
 //    Name: cpSqr_BNU_school
 //
@@ -94,40 +97,45 @@ __IPPCP_INLINE BNU_CHUNK_T cpMul_BNU_school(BNU_CHUNK_T* pR,
 //
 *F*/
 
-__IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU_school(BNU_CHUNK_T * pR, const BNU_CHUNK_T * pA, cpSize nsA)
+__IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU_school(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA)
 {
-#if(_ADCOX_NI_ENABLING_==_FEATURE_ON_)
-   return cpSqrAdx_BNU_school(pR, pA,nsA);
-#elif(_ADCOX_NI_ENABLING_==_FEATURE_TICKTOCK_)
-   return IsFeatureEnabled(ippCPUID_ADCOX)? cpSqrAdx_BNU_school(pR, pA,nsA)
-                                          : cpSqrAdc_BNU_school(pR, pA,nsA);
+#if (_ADCOX_NI_ENABLING_ == _FEATURE_ON_)
+    return cpSqrAdx_BNU_school(pR, pA, nsA);
+#elif (_ADCOX_NI_ENABLING_ == _FEATURE_TICKTOCK_)
+    return IsFeatureEnabled(ippCPUID_ADCOX) ? cpSqrAdx_BNU_school(pR, pA, nsA)
+                                            : cpSqrAdc_BNU_school(pR, pA, nsA);
 #else
-   return cpSqrAdc_BNU_school(pR, pA,nsA);
+    return cpSqrAdc_BNU_school(pR, pA, nsA);
 #endif
 }
 
+/* clang-format off */
 #define cpGcd_BNU OWNAPI(cpGcd_BNU)
-   IPP_OWN_DECL (BNU_CHUNK_T, cpGcd_BNU, (BNU_CHUNK_T a, BNU_CHUNK_T b))
+   IPP_OWN_DECL(BNU_CHUNK_T, cpGcd_BNU, (BNU_CHUNK_T a, BNU_CHUNK_T b))
 #define cpModInv_BNU OWNAPI(cpModInv_BNU)
-   IPP_OWN_DECL (int, cpModInv_BNU, (BNU_CHUNK_T* pInv, const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pM, cpSize nsM, BNU_CHUNK_T* bufInv, BNU_CHUNK_T* bufA, BNU_CHUNK_T* bufM))
+   IPP_OWN_DECL(int, cpModInv_BNU, (BNU_CHUNK_T* pInv, const BNU_CHUNK_T* pA, cpSize nsA, const BNU_CHUNK_T* pM, cpSize nsM, BNU_CHUNK_T* bufInv, BNU_CHUNK_T* bufA, BNU_CHUNK_T* bufM))
+/* clang-format on */
 
 /*
 // multiplication/squaring wrappers
 */
 __IPPCP_INLINE BNU_CHUNK_T cpMul_BNU(BNU_CHUNK_T* pR,
-                         const BNU_CHUNK_T* pA, cpSize nsA,
-                         const BNU_CHUNK_T* pB, cpSize nsB,
-                               BNU_CHUNK_T* pBuffer)
+                                     const BNU_CHUNK_T* pA,
+                                     cpSize nsA,
+                                     const BNU_CHUNK_T* pB,
+                                     cpSize nsB,
+                                     BNU_CHUNK_T* pBuffer)
 {
-   IPP_UNREFERENCED_PARAMETER(pBuffer);
-   return cpMul_BNU_school(pR, pA,nsA, pB,nsB);
+    IPP_UNREFERENCED_PARAMETER(pBuffer);
+    return cpMul_BNU_school(pR, pA, nsA, pB, nsB);
 }
-__IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T * pR,
-                         const BNU_CHUNK_T * pA, cpSize nsA,
-                               BNU_CHUNK_T* pBuffer)
+__IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T* pR,
+                                     const BNU_CHUNK_T* pA,
+                                     cpSize nsA,
+                                     BNU_CHUNK_T* pBuffer)
 {
-   IPP_UNREFERENCED_PARAMETER(pBuffer);
-   return cpSqr_BNU_school(pR, pA,nsA);
+    IPP_UNREFERENCED_PARAMETER(pBuffer);
+    return cpSqr_BNU_school(pR, pA, nsA);
 }
 
 /*F*
@@ -148,20 +156,26 @@ __IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T * pR,
 //
 *F*/
 
-__IPPCP_INLINE cpSize cpDiv_BNU(BNU_CHUNK_T* pQ, cpSize* pnsQ, BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_T* pB, cpSize nsB)
+__IPPCP_INLINE cpSize
+cpDiv_BNU(BNU_CHUNK_T* pQ, cpSize* pnsQ, BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_T* pB, cpSize nsB)
 {
-   int nsR = cpDiv_BNU32((Ipp32u*)pQ, pnsQ,
-                         (Ipp32u*)pA, nsA*(Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)),
-                         (Ipp32u*)pB, nsB*(Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u)));
-   #if (BNU_CHUNK_BITS == BNU_CHUNK_64BIT)
-   if(nsR&1) ((Ipp32u*)pA)[nsR] = 0;
-   nsR = INTERNAL_BNU_LENGTH(nsR);
-   if(pQ) {
-      if(*pnsQ&1) ((Ipp32u*)pQ)[*pnsQ] = 0;
-      *pnsQ = INTERNAL_BNU_LENGTH(*pnsQ);
-   }
-   #endif
-   return nsR;
+    int nsR = cpDiv_BNU32((Ipp32u*)pQ,
+                          pnsQ,
+                          (Ipp32u*)pA,
+                          nsA * (Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)),
+                          (Ipp32u*)pB,
+                          nsB * (Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u)));
+#if (BNU_CHUNK_BITS == BNU_CHUNK_64BIT)
+    if (nsR & 1)
+        ((Ipp32u*)pA)[nsR] = 0;
+    nsR = INTERNAL_BNU_LENGTH(nsR);
+    if (pQ) {
+        if (*pnsQ & 1)
+            ((Ipp32u*)pQ)[*pnsQ] = 0;
+        *pnsQ = INTERNAL_BNU_LENGTH(*pnsQ);
+    }
+#endif
+    return nsR;
 }
 
 /*F*
@@ -182,7 +196,7 @@ __IPPCP_INLINE cpSize cpDiv_BNU(BNU_CHUNK_T* pQ, cpSize* pnsQ, BNU_CHUNK_T* pA, 
 
 __IPPCP_INLINE cpSize cpMod_BNU(BNU_CHUNK_T* pX, cpSize nsX, BNU_CHUNK_T* pModulus, cpSize nsM)
 {
-   return cpDiv_BNU(NULL,NULL, pX,nsX, pModulus, nsM);
+    return cpDiv_BNU(NULL, NULL, pX, nsX, pModulus, nsM);
 }
 
 #endif /* _CP_BNU_ARITH_H */

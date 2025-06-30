@@ -27,8 +27,8 @@
 #include "pcpaesauthccm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*F*
@@ -46,14 +46,14 @@
 //    pState   pointer to the AES-CCM state
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CCMMessageLen,(Ipp64u msgLen, IppsAES_CCMState* pState))
+IPPFUN(IppStatus, ippsAES_CCMMessageLen, (Ipp64u msgLen, IppsAES_CCMState* pState))
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pState);
-   IPP_BADARG_RET(!VALID_AESCCM_ID(pState), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pState);
+    IPP_BADARG_RET(!VALID_AESCCM_ID(pState), ippStsContextMatchErr);
 
-   /* init for new message */
-   AESCCM_MSGLEN(pState) = msgLen;
+    /* init for new message */
+    AESCCM_MSGLEN(pState) = msgLen;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

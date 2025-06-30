@@ -43,23 +43,25 @@
 //    val   carry
 *F*/
 
-#if !((_IPP32E==_IPP32E_M7) || \
-      (_IPP32E==_IPP32E_U8) || \
-      (_IPP32E==_IPP32E_Y8) || \
-      (_IPP32E>=_IPP32E_E9) || \
-      (_IPP32E==_IPP32E_N8))
+#if !((_IPP32E == _IPP32E_M7) || (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) || \
+      (_IPP32E >= _IPP32E_E9) || (_IPP32E == _IPP32E_N8))
 
-IPP_OWN_DEFN (BNU_CHUNK_T, cpDec_BNU, (BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize ns, BNU_CHUNK_T val))
+/* clang-format off */
+IPP_OWN_DEFN (BNU_CHUNK_T, cpDec_BNU, (BNU_CHUNK_T* pR,
+                                       const BNU_CHUNK_T* pA,
+                                       cpSize ns,
+                                       BNU_CHUNK_T val))
+/* clang-format on */
 {
-   cpSize i;
-   for(i=0; i<ns && val; i++) {
-      BNU_CHUNK_T borrow;
-      SUB_AB(borrow, pR[i], pA[i], val);
-      val = borrow;
-   }
-   if(pR!=pA)
-      for(; i<ns; i++)
-         pR[i] = pA[i];
-   return val;
+    cpSize i;
+    for (i = 0; i < ns && val; i++) {
+        BNU_CHUNK_T borrow;
+        SUB_AB(borrow, pR[i], pA[i], val);
+        val = borrow;
+    }
+    if (pR != pA)
+        for (; i < ns; i++)
+            pR[i] = pA[i];
+    return val;
 }
 #endif

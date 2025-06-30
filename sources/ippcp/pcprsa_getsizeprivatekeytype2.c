@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSA Functions
-// 
+//
 //  Contents:
 //        ippsRSA_GetSizePrivateKeyType2()
 //
@@ -54,14 +54,19 @@
 //    pSize             pointer to the size of RSA key context (bytes)
 *F*/
 
-
-IPPFUN(IppStatus, ippsRSA_GetSizePrivateKeyType2,(int factorPbitSize, int factorQbitSize, int* pKeySize))
+/* clang-format off */
+IPPFUN(IppStatus, ippsRSA_GetSizePrivateKeyType2, (int factorPbitSize,
+                                                   int factorQbitSize,
+                                                   int* pKeySize))
+/* clang-format on */
 {
-   IPP_BAD_PTR1_RET(pKeySize);
-   IPP_BADARG_RET((factorPbitSize<=0) || (factorQbitSize<=0), ippStsBadArgErr);
-   //25.09.2019 gres: IPP_BADARG_RET((factorPbitSize < factorQbitSize), ippStsBadArgErr);
-   IPP_BADARG_RET((MIN_RSA_SIZE>(factorPbitSize+factorQbitSize) || (factorPbitSize+factorQbitSize)>MAX_RSA_SIZE), ippStsNotSupportedModeErr);
+    IPP_BAD_PTR1_RET(pKeySize);
+    IPP_BADARG_RET((factorPbitSize <= 0) || (factorQbitSize <= 0), ippStsBadArgErr);
+    //25.09.2019 gres: IPP_BADARG_RET((factorPbitSize < factorQbitSize), ippStsBadArgErr);
+    IPP_BADARG_RET((MIN_RSA_SIZE > (factorPbitSize + factorQbitSize) ||
+                    (factorPbitSize + factorQbitSize) > MAX_RSA_SIZE),
+                   ippStsNotSupportedModeErr);
 
-   *pKeySize = cpSizeof_RSA_privateKey2(factorPbitSize, factorQbitSize);
-   return ippStsNoErr;
+    *pKeySize = cpSizeof_RSA_privateKey2(factorPbitSize, factorQbitSize);
+    return ippStsNoErr;
 }

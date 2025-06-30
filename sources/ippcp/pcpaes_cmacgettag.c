@@ -31,8 +31,8 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*F*
@@ -53,48 +53,48 @@
 //    pState   pointer to the CMAC context
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CMACGetTag,(Ipp8u* pMD, int mdLen, const IppsAES_CMACState* pState))
+IPPFUN(IppStatus, ippsAES_CMACGetTag, (Ipp8u * pMD, int mdLen, const IppsAES_CMACState* pState))
 {
-   /* test context pointer and ID */
-   IPP_BAD_PTR1_RET(pState);
+    /* test context pointer and ID */
+    IPP_BAD_PTR1_RET(pState);
 
-   IPP_BADARG_RET(!VALID_AESCMAC_ID(pState), ippStsContextMatchErr);
-   /* test DAC pointer */
-   IPP_BAD_PTR1_RET(pMD);
-   IPP_BADARG_RET((mdLen<1)||(MBS_RIJ128<mdLen), ippStsLengthErr);
+    IPP_BADARG_RET(!VALID_AESCMAC_ID(pState), ippStsContextMatchErr);
+    /* test DAC pointer */
+    IPP_BAD_PTR1_RET(pMD);
+    IPP_BADARG_RET((mdLen < 1) || (MBS_RIJ128 < mdLen), ippStsLengthErr);
 
-   {
-      const IppsAESSpec* pAES = &CMAC_CIPHER(pState);
-      /* setup encoder method */
-      RijnCipher encoder = RIJ_ENCODER(pAES);
+    {
+        const IppsAESSpec* pAES = &CMAC_CIPHER(pState);
+        /* setup encoder method */
+        RijnCipher encoder = RIJ_ENCODER(pAES);
 
-      Ipp8u locBuffer[MBS_RIJ128];
-      Ipp8u locMac[MBS_RIJ128];
-      CopyBlock16(CMAC_BUFF(pState), locBuffer);
-      CopyBlock16(CMAC_MAC(pState), locMac);
+        Ipp8u locBuffer[MBS_RIJ128];
+        Ipp8u locMac[MBS_RIJ128];
+        CopyBlock16(CMAC_BUFF(pState), locBuffer);
+        CopyBlock16(CMAC_MAC(pState), locMac);
 
-      /* message length is divided by MBS_RIJ128 */
-      if(MBS_RIJ128==CMAC_INDX(pState)) {
-         XorBlock16(locBuffer, CMAC_K1(pState), locBuffer);
-      }
-      /* message length isn't divided by MBS_RIJ128 */
-      else {
-         PadBlock(0, locBuffer+CMAC_INDX(pState), MBS_RIJ128-CMAC_INDX(pState));
-         locBuffer[CMAC_INDX(pState)] = 0x80;
-         XorBlock16(locBuffer, CMAC_K2(pState), locBuffer);
-      }
+        /* message length is divided by MBS_RIJ128 */
+        if (MBS_RIJ128 == CMAC_INDX(pState)) {
+            XorBlock16(locBuffer, CMAC_K1(pState), locBuffer);
+        }
+        /* message length isn't divided by MBS_RIJ128 */
+        else {
+            PadBlock(0, locBuffer + CMAC_INDX(pState), MBS_RIJ128 - CMAC_INDX(pState));
+            locBuffer[CMAC_INDX(pState)] = 0x80;
+            XorBlock16(locBuffer, CMAC_K2(pState), locBuffer);
+        }
 
-      XorBlock16(locBuffer, locMac, locMac);
+        XorBlock16(locBuffer, locMac, locMac);
 
-      #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-      encoder(locMac, locMac, RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox/*NULL*/);
-      #else
-      encoder(locMac, locMac, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
-      #endif
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+        encoder(locMac, locMac, RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox /*NULL*/);
+#else
+        encoder(locMac, locMac, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
+#endif
 
-      /* return truncated DAC */
-      CopyBlock(locMac, pMD, mdLen);
+        /* return truncated DAC */
+        CopyBlock(locMac, pMD, mdLen);
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

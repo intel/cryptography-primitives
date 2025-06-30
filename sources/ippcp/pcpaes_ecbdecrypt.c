@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES encryption/decryption (ECB mode)
-// 
+//
 //  Contents:
 //        ippsAESDecryptECB()
 //
@@ -30,8 +30,8 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*
@@ -43,46 +43,51 @@
 //    nBlocks     number of decrypted data blocks
 //    pCtx        pointer to the AES context
 */
-static
-void cpDecryptAES_ecb(const Ipp8u* pSrc, Ipp8u* pDst, int nBlocks, const IppsAESSpec* pCtx)
+static void cpDecryptAES_ecb(const Ipp8u* pSrc, Ipp8u* pDst, int nBlocks, const IppsAESSpec* pCtx)
 {
-#if (_IPP>=_IPP_P8) || (_IPP32E>=_IPP32E_Y8)
-   /* use pipelined version is possible */
-   if(AES_NI_ENABLED==RIJ_AESNI(pCtx)) {
-      DecryptECB_RIJ128pipe_AES_NI(pSrc, pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), nBlocks*MBS_RIJ128);
-   }
-   else
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+    /* use pipelined version is possible */
+    if (AES_NI_ENABLED == RIJ_AESNI(pCtx)) {
+        DecryptECB_RIJ128pipe_AES_NI(pSrc,
+                                     pDst,
+                                     RIJ_NR(pCtx),
+                                     RIJ_DKEYS(pCtx),
+                                     nBlocks * MBS_RIJ128);
+    } else
 #endif
-   {
-      /* block-by-block decryption */
-      RijnCipher decoder = RIJ_DECODER(pCtx);
+    {
+        /* block-by-block decryption */
+        RijnCipher decoder = RIJ_DECODER(pCtx);
 
-      while(nBlocks) {
-         //decoder((const Ipp32u*)pSrc, (Ipp32u*)pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), (const Ipp32u (*)[256])RIJ_DEC_SBOX(pCtx));
-         #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-         decoder(pSrc, pDst, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijDecSbox/*NULL*/);
-         #else
-         decoder(pSrc, pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
-         #endif
+        while (nBlocks) {
+//decoder((const Ipp32u*)pSrc, (Ipp32u*)pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), (const Ipp32u (*)[256])RIJ_DEC_SBOX(pCtx));
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+            decoder(pSrc, pDst, RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijDecSbox /*NULL*/);
+#else
+            decoder(pSrc, pDst, RIJ_NR(pCtx), RIJ_DKEYS(pCtx), NULL);
+#endif
 
-         pSrc += MBS_RIJ128;
-         pDst += MBS_RIJ128;
-         nBlocks--;
-      }
-   }
+            pSrc += MBS_RIJ128;
+            pDst += MBS_RIJ128;
+            nBlocks--;
+        }
+    }
 }
 
-static void cpDecryptAES_ecb_dispatch(const Ipp8u *pSrc, Ipp8u *pDst, int len, const IppsAESSpec *pCtx)
+static void cpDecryptAES_ecb_dispatch(const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
+                                      const IppsAESSpec* pCtx)
 {
 #if (_IPP32E >= _IPP32E_K1)
-   if (IsFeatureEnabled(ippCPUID_AVX512VAES))
-      DecryptECB_RIJ128pipe_VAES_NI(pSrc, pDst, len, pCtx);
-   else
+    if (IsFeatureEnabled(ippCPUID_AVX512VAES))
+        DecryptECB_RIJ128pipe_VAES_NI(pSrc, pDst, len, pCtx);
+    else
 #endif
-   {
-      int nBlocks = len / MBS_RIJ128;
-      cpDecryptAES_ecb(pSrc, pDst, nBlocks, pCtx);
-   }
+    {
+        int nBlocks = len / MBS_RIJ128;
+        cpDecryptAES_ecb(pSrc, pDst, nBlocks, pCtx);
+    }
 }
 
 /*F*
@@ -106,51 +111,56 @@ static void cpDecryptAES_ecb_dispatch(const Ipp8u *pSrc, Ipp8u *pDst, int len, c
 //    pCtx        pointer to the AES context
 //
 *F*/
-IPPFUN(IppStatus, ippsAESDecryptECB,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                                     const IppsAESSpec* pCtx))
+/* clang-format off */
+IPPFUN(IppStatus, ippsAESDecryptECB, (const Ipp8u* pSrc,
+                                      Ipp8u* pDst,
+                                      int len,
+                                      const IppsAESSpec* pCtx))
+/* clang-format on */
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test the context ID */
-   IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test the context ID */
+    IPP_BADARG_RET(!VALID_AES_ID(pCtx), ippStsContextMatchErr);
 
-   /* test source and target buffer pointers */
-   IPP_BAD_PTR2_RET(pSrc, pDst);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test stream integrity */
-   IPP_BADARG_RET((len&(MBS_RIJ128-1)), ippStsUnderRunErr);
+    /* test source and target buffer pointers */
+    IPP_BAD_PTR2_RET(pSrc, pDst);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len & (MBS_RIJ128 - 1)), ippStsUnderRunErr);
 
-   /* do encryption */
+    /* do encryption */
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-   cpAESNoiseParams *params = (cpAESNoiseParams*)&RIJ_NOISE_PARAMS(pCtx);
-   /* Mistletoe3 mitigation */
-   if (AES_NOISE_LEVEL(params) > 0) {
-      /* Number of bytes allowed for operation without adding noise */
-      int chunk_size;
-      /* Number of bytes remaining for operation */
-      int remaining_size = len;
+    cpAESNoiseParams* params = (cpAESNoiseParams*)&RIJ_NOISE_PARAMS(pCtx);
+    /* Mistletoe3 mitigation */
+    if (AES_NOISE_LEVEL(params) > 0) {
+        /* Number of bytes allowed for operation without adding noise */
+        int chunk_size;
+        /* Number of bytes remaining for operation */
+        int remaining_size = len;
 
-      while (remaining_size > 0) {
-         /* How many bytes to encrypt in this operation */
-         chunk_size = (remaining_size >= MISTLETOE3_MAX_CHUNK_SIZE) ? MISTLETOE3_MAX_CHUNK_SIZE : remaining_size;
+        while (remaining_size > 0) {
+            /* How many bytes to encrypt in this operation */
+            chunk_size = (remaining_size >= MISTLETOE3_MAX_CHUNK_SIZE) ? MISTLETOE3_MAX_CHUNK_SIZE
+                                                                       : remaining_size;
 
-         cpDecryptAES_ecb_dispatch(pSrc, pDst, chunk_size, pCtx);
+            cpDecryptAES_ecb_dispatch(pSrc, pDst, chunk_size, pCtx);
 
-         cpAESRandomNoise(NULL,
-               MISTLETOE3_BASE_NOISE_LEVEL + AES_NOISE_LEVEL(params),
-               MISTLETOE3_NOISE_RATE,
-               &AES_NOISE_RAND(params));
+            cpAESRandomNoise(NULL,
+                             MISTLETOE3_BASE_NOISE_LEVEL + AES_NOISE_LEVEL(params),
+                             MISTLETOE3_NOISE_RATE,
+                             &AES_NOISE_RAND(params));
 
-         pSrc += chunk_size;
-         pDst += chunk_size;
-         remaining_size -= chunk_size;
-      }
-   } else
+            pSrc += chunk_size;
+            pDst += chunk_size;
+            remaining_size -= chunk_size;
+        }
+    } else
 #endif
-   {
-      cpDecryptAES_ecb_dispatch(pSrc, pDst, len, pCtx);
-   }
+    {
+        cpDecryptAES_ecb_dispatch(pSrc, pDst, len, pCtx);
+    }
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

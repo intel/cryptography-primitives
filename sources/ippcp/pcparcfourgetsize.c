@@ -42,9 +42,9 @@
 *F*/
 IPPFUN(IppStatus, ippsARCFourGetSize, (int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = sizeof(IppsARCFourState);
+    *pSize = sizeof(IppsARCFourState);
     return ippStsNoErr;
 }

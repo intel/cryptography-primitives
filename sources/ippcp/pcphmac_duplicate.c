@@ -50,18 +50,18 @@
 //    pDstState may not to be initialized by ippsHMACInit()
 //
 *F*/
-IPPFUN(IppStatus, ippsHMAC_Duplicate,(const IppsHMACState* pSrcCtx, IppsHMACState* pDstCtx))
+IPPFUN(IppStatus, ippsHMAC_Duplicate, (const IppsHMACState* pSrcCtx, IppsHMACState* pDstCtx))
 {
-   /* test state pointers */
-   IPP_BAD_PTR2_RET(pSrcCtx, pDstCtx);
-   /* test states ID */
-   IPP_BADARG_RET(!HMAC_VALID_ID(pSrcCtx), ippStsContextMatchErr);
+    /* test state pointers */
+    IPP_BAD_PTR2_RET(pSrcCtx, pDstCtx);
+    /* test states ID */
+    IPP_BADARG_RET(!HMAC_VALID_ID(pSrcCtx), ippStsContextMatchErr);
 
-   /* copy HMAC state without Hash context */
-   CopyBlock(pSrcCtx, pDstCtx, (int)(IPP_UINT_PTR(&HASH_CTX(pSrcCtx)) - IPP_UINT_PTR(pSrcCtx)));
-   HMAC_SET_CTX_ID(pDstCtx);
-   /* copy Hash context separately */
-   ippsHashDuplicate(&HASH_CTX(pSrcCtx), &HASH_CTX(pDstCtx));
+    /* copy HMAC state without Hash context */
+    CopyBlock(pSrcCtx, pDstCtx, (int)(IPP_UINT_PTR(&HASH_CTX(pSrcCtx)) - IPP_UINT_PTR(pSrcCtx)));
+    HMAC_SET_CTX_ID(pDstCtx);
+    /* copy Hash context separately */
+    ippsHashDuplicate(&HASH_CTX(pSrcCtx), &HASH_CTX(pDstCtx));
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

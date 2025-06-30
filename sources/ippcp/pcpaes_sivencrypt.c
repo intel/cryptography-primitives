@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-SIV Functions (RFC 5297)
-// 
+//
 //  Contents:
 //        ippsAES_SIVEncrypt()
 //
@@ -64,69 +64,79 @@
 //    numAD    number of pAD[] and pADlen[] terms
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_SIVEncrypt,(const Ipp8u* pSrc, Ipp8u* pDst, int len,
-                                            Ipp8u* pSIV,
-                                      const Ipp8u* pAuthKey, const Ipp8u* pConfKey, int keyLen,
-                                      const Ipp8u* pAD[], const int pADlen[], int numAD))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_SIVEncrypt, (const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int len,
+                                       Ipp8u* pSIV,
+                                       const Ipp8u* pAuthKey,
+                                       const Ipp8u* pConfKey,
+                                       int keyLen,
+                                       const Ipp8u* pAD[],
+                                       const int pADlen[],
+                                       int numAD))
+/* clang-format on */
 {
-   /* test ciphertext, plaintex and length */
-   IPP_BAD_PTR2_RET(pSrc, pDst);
-   IPP_BADARG_RET(0>=len, ippStsLengthErr);
+    /* test ciphertext, plaintex and length */
+    IPP_BAD_PTR2_RET(pSrc, pDst);
+    IPP_BADARG_RET(0 >= len, ippStsLengthErr);
 
-   /* test keys & keyLen */
-   IPP_BAD_PTR2_RET(pAuthKey, pConfKey);
-   IPP_BADARG_RET(keyLen!=16 && keyLen!=24 && keyLen!=32, ippStsLengthErr);
+    /* test keys & keyLen */
+    IPP_BAD_PTR2_RET(pAuthKey, pConfKey);
+    IPP_BADARG_RET(keyLen != 16 && keyLen != 24 && keyLen != 32, ippStsLengthErr);
 
-   /* test output vector */
-   IPP_BAD_PTR1_RET(pSIV);
+    /* test output vector */
+    IPP_BAD_PTR1_RET(pSIV);
 
-   /* test arrays of input AD[] */
-   IPP_BAD_PTR2_RET(pAD, pADlen);
-   IPP_BADARG_RET(0>numAD, ippStsLengthErr);
+    /* test arrays of input AD[] */
+    IPP_BAD_PTR2_RET(pAD, pADlen);
+    IPP_BADARG_RET(0 > numAD, ippStsLengthErr);
 
-   {
-      int n;
-      for (n = 0; n < numAD; n++) {
-         /* test input message and its length */
-         IPP_BADARG_RET((pADlen[n] < 0), ippStsLengthErr);
-         /* test source pointer */
-         IPP_BADARG_RET((pADlen[n] && !pAD[n]), ippStsNullPtrErr);
-      }
-   }
+    {
+        int n;
+        for (n = 0; n < numAD; n++) {
+            /* test input message and its length */
+            IPP_BADARG_RET((pADlen[n] < 0), ippStsLengthErr);
+            /* test source pointer */
+            IPP_BADARG_RET((pADlen[n] && !pAD[n]), ippStsNullPtrErr);
+        }
+    }
 
-   {
-      int n;
+    {
+        int n;
 
-      /* iv and mask */
-      Ipp8u iv[MBS_RIJ128];
-      Ipp8u vmask[MBS_RIJ128] = {0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
-                                 0x7f,0xff,0xff,0xff,0x7f,0xff,0xff,0xff};
-      /* AES context */
-      Ipp8u aesBlob[sizeof(IppsAESSpec)];
-      IppsAESSpec* paesCtx = (IppsAESSpec*)aesBlob;
+        /* iv and mask */
+        Ipp8u iv[MBS_RIJ128];
+        Ipp8u vmask[MBS_RIJ128] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff, 0xff, 0xff };
+        /* AES context */
+        Ipp8u aesBlob[sizeof(IppsAESSpec)];
+        IppsAESSpec* paesCtx = (IppsAESSpec*)aesBlob;
 
-      {
-         Ipp8u ctxBlob[sizeof(IppsAES_CMACState)];
-         IppsAES_CMACState* pCtx = (IppsAES_CMACState*)ctxBlob;
-         cpAES_S2V_init(pSIV, pAuthKey, keyLen, pCtx, sizeof(ctxBlob));
+        {
+            Ipp8u ctxBlob[sizeof(IppsAES_CMACState)];
+            IppsAES_CMACState* pCtx = (IppsAES_CMACState*)ctxBlob;
+            cpAES_S2V_init(pSIV, pAuthKey, keyLen, pCtx, sizeof(ctxBlob));
 
-         for(n=0; n<numAD; n++) {
-            cpAES_S2V_update(pSIV, pAD[n], pADlen[n], pCtx);
-         }
-         cpAES_S2V_final(pSIV, pSrc, len, pCtx);
+            for (n = 0; n < numAD; n++) {
+                cpAES_S2V_update(pSIV, pAD[n], pADlen[n], pCtx);
+            }
+            cpAES_S2V_final(pSIV, pSrc, len, pCtx);
 
-         PurgeBlock(&ctxBlob, sizeof(ctxBlob));
-      }
+            PurgeBlock(&ctxBlob, sizeof(ctxBlob));
+        }
 
-      ippsAESInit(pConfKey, keyLen, paesCtx, sizeof(aesBlob));
+        ippsAESInit(pConfKey, keyLen, paesCtx, sizeof(aesBlob));
 
-      /*construct iv */
-      for(n=0; n<MBS_RIJ128; n++) iv[n] = pSIV[n] & vmask[n];
+        /*construct iv */
+        for (n = 0; n < MBS_RIJ128; n++)
+            iv[n] = pSIV[n] & vmask[n];
 
-      /* perform AES-CTR encryption */
-      ippsAESEncryptCTR(pSrc, pDst, len, paesCtx, iv, BITSIZE(iv));
+        /* perform AES-CTR encryption */
+        ippsAESEncryptCTR(pSrc, pDst, len, paesCtx, iv, BITSIZE(iv));
 
-      PurgeBlock(&aesBlob, sizeof(aesBlob));
-      return ippStsNoErr;
-   }
+        PurgeBlock(&aesBlob, sizeof(aesBlob));
+        return ippStsNoErr;
+    }
 }

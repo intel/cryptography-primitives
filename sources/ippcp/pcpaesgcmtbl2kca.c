@@ -14,17 +14,17 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Encrypt/Decrypt byte data stream according to Rijndael128 (GCM mode)
-// 
+//
 //     "fast" stuff
-// 
+//
 //  Contents:
 //      AesGcmAuth_table2K()
-// 
+//
 */
 
 
@@ -58,24 +58,29 @@ IPP_OWN_DEFN (void, AesGcmAuth_table2K, (Ipp8u* pHash, const Ipp8u* pSrc, int le
 }
 #endif
 
-#if(_IPP32E<_IPP32E_K0)
+#if (_IPP32E < _IPP32E_K0)
 
-IPP_OWN_DEFN (void, AesGcmAuth_table2K_ct, (Ipp8u* pHash, const Ipp8u* pSrc, int len, const Ipp8u* pHKey, const void* pParam))
+/* clang-format off */
+IPP_OWN_DEFN(void, AesGcmAuth_table2K_ct, (Ipp8u* pHash,
+                                           const Ipp8u* pSrc,
+                                           int len,
+                                           const Ipp8u* pHKey,
+                                           const void* pParam))
+/* clang-format on */
 {
-   IPP_UNREFERENCED_PARAMETER(pParam);
+    IPP_UNREFERENCED_PARAMETER(pParam);
 
-   while (len >= BLOCK_SIZE) {
-      /* add src */
-      XorBlock16(pSrc, pHash, pHash);
-      /* hash it */
-      AesGcmMulGcm_table2K_ct(pHash, pHKey, AesGcmConst_table);
+    while (len >= BLOCK_SIZE) {
+        /* add src */
+        XorBlock16(pSrc, pHash, pHash);
+        /* hash it */
+        AesGcmMulGcm_table2K_ct(pHash, pHKey, AesGcmConst_table);
 
-      pSrc += BLOCK_SIZE;
-      len -= BLOCK_SIZE;
-   }
+        pSrc += BLOCK_SIZE;
+        len -= BLOCK_SIZE;
+    }
 }
 
 #endif
 
 //#endif
-

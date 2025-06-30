@@ -37,17 +37,13 @@
 //      BigNum = 3
 *F*/
 
-IPP_OWN_DEFN (IppsBigNumState*, cpBN_ThreeRef, (void))
+IPP_OWN_DEFN(IppsBigNumState*, cpBN_ThreeRef, (void))
 {
-   static IppsBigNumStateChunk cpChunk_BN3 = {
-      {
-         idCtxUnknown,
-         ippBigNumPOS,
-         1,1,
-         &cpChunk_BN3.value,&cpChunk_BN3.temporary
-      },
-      3,0
-   };
-   BN_SET_ID(&cpChunk_BN3.bn);
-   return &cpChunk_BN3.bn;
+    static IppsBigNumStateChunk cpChunk_BN3 = {
+        {idCtxUnknown, ippBigNumPOS, 1, 1, &cpChunk_BN3.value, &cpChunk_BN3.temporary},
+        3,
+        0
+    };
+    BN_SET_ID(&cpChunk_BN3.bn);
+    return &cpChunk_BN3.bn;
 }

@@ -47,23 +47,28 @@
 //    pBN             BigNum ctx
 //
 *F*/
-IPPFUN(IppStatus, ippsGet_BN, (IppsBigNumSGN* pSgn, int* pLengthInBits, Ipp32u* pData,
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsGet_BN, (IppsBigNumSGN* pSgn,
+                               int* pLengthInBits,
+                               Ipp32u* pData,
                                const IppsBigNumState* pBN))
+/* clang-format on */
 {
-   IPP_BAD_PTR4_RET(pSgn, pLengthInBits, pData, pBN);
+    IPP_BAD_PTR4_RET(pSgn, pLengthInBits, pData, pBN);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
 
-   {
-      cpSize len32 = BN_SIZE(pBN)*(Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u));
-      Ipp32u* bnData = (Ipp32u*)BN_NUMBER(pBN);
+    {
+        cpSize len32   = BN_SIZE(pBN) * (Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u));
+        Ipp32u* bnData = (Ipp32u*)BN_NUMBER(pBN);
 
-      FIX_BNU32(bnData, len32);
-      COPY_BNU(pData, bnData, len32);
+        FIX_BNU32(bnData, len32);
+        COPY_BNU(pData, bnData, len32);
 
-      *pSgn = BN_SIGN(pBN);
-      *pLengthInBits = len32;
+        *pSgn          = BN_SIGN(pBN);
+        *pLengthInBits = len32;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -29,29 +29,36 @@
 #include "owncp.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (int, gsGetScrambleBufferSize, (int modulusLen, int w))
+IPP_OWN_DEFN(int, gsGetScrambleBufferSize, (int modulusLen, int w))
 {
-   /* size of resource to store 2^w values of modulusLen*sizeof(BNU_CHUNK_T) each */
-   int size = (1<<w) * modulusLen * (Ipp32s)sizeof(BNU_CHUNK_T);
-   /* pad it up to CACHE_LINE_SIZE */
-   size += (CACHE_LINE_SIZE - (size % CACHE_LINE_SIZE)) %CACHE_LINE_SIZE;
-   return size/(Ipp32s)sizeof(BNU_CHUNK_T);
+    /* size of resource to store 2^w values of modulusLen*sizeof(BNU_CHUNK_T) each */
+    int size = (1 << w) * modulusLen * (Ipp32s)sizeof(BNU_CHUNK_T);
+    /* pad it up to CACHE_LINE_SIZE */
+    size += (CACHE_LINE_SIZE - (size % CACHE_LINE_SIZE)) % CACHE_LINE_SIZE;
+    return size / (Ipp32s)sizeof(BNU_CHUNK_T);
 }
 
-IPP_OWN_DEFN (void, gsScramblePut, (BNU_CHUNK_T* tbl, int idx, const BNU_CHUNK_T* val, int vLen, int w))
+IPP_OWN_DEFN(void,
+             gsScramblePut,
+             (BNU_CHUNK_T * tbl, int idx, const BNU_CHUNK_T* val, int vLen, int w))
 {
-   int width = 1 << w;
-   int i, j;
-   for(i=0, j=idx; i<vLen; i++, j+= width) {
-      tbl[j] = val[i];
-   }
+    int width = 1 << w;
+    int i, j;
+    for (i = 0, j = idx; i < vLen; i++, j += width) {
+        tbl[j] = val[i];
+    }
 }
 
-IPP_OWN_DEFN (void, gsScrambleGet, (BNU_CHUNK_T* val, int vLen, const BNU_CHUNK_T* tbl, int idx, int w))
+/* clang-format off */
+IPP_OWN_DEFN(void, gsScrambleGet, (BNU_CHUNK_T* val,
+                                   int vLen,
+                                   const BNU_CHUNK_T* tbl,
+                                   int idx, int w))
+/* clang-format on */
 {
-   int width = 1 << w;
-   int i, j;
-   for(i=0, j=idx; i<vLen; i++, j+= width) {
-      val[i] = tbl[j];
-   }
+    int width = 1 << w;
+    int i, j;
+    for (i = 0, j = idx; i < vLen; i++, j += width) {
+        val[i] = tbl[j];
+    }
 }

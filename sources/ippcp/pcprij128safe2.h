@@ -28,46 +28,46 @@
 
 // transpose 4x4 Ipp8u matrix
 #define TRANSPOSE(out, inp) \
-   (out)[ 0] = (inp)[ 0]; \
-   (out)[ 4] = (inp)[ 1]; \
-   (out)[ 8] = (inp)[ 2]; \
-   (out)[12] = (inp)[ 3]; \
-   \
-   (out)[ 1] = (inp)[ 4]; \
-   (out)[ 5] = (inp)[ 5]; \
-   (out)[ 9] = (inp)[ 6]; \
-   (out)[13] = (inp)[ 7]; \
-   \
-   (out)[ 2] = (inp)[ 8]; \
-   (out)[ 6] = (inp)[ 9]; \
-   (out)[10] = (inp)[10]; \
-   (out)[14] = (inp)[11]; \
-   \
-   (out)[ 3] = (inp)[12]; \
-   (out)[ 7] = (inp)[13]; \
-   (out)[11] = (inp)[14]; \
-   (out)[15] = (inp)[15]
+    (out)[0]  = (inp)[0];   \
+    (out)[4]  = (inp)[1];   \
+    (out)[8]  = (inp)[2];   \
+    (out)[12] = (inp)[3];   \
+                            \
+    (out)[1]  = (inp)[4];   \
+    (out)[5]  = (inp)[5];   \
+    (out)[9]  = (inp)[6];   \
+    (out)[13] = (inp)[7];   \
+                            \
+    (out)[2]  = (inp)[8];   \
+    (out)[6]  = (inp)[9];   \
+    (out)[10] = (inp)[10];  \
+    (out)[14] = (inp)[11];  \
+                            \
+    (out)[3]  = (inp)[12];  \
+    (out)[7]  = (inp)[13];  \
+    (out)[11] = (inp)[14];  \
+    (out)[15] = (inp)[15]
 
 __IPPCP_INLINE void XorRoundKey(Ipp32u* state, const Ipp32u* RoundKey)
 {
-   state[0] ^= RoundKey[0];
-   state[1] ^= RoundKey[1];
-   state[2] ^= RoundKey[2];
-   state[3] ^= RoundKey[3];
+    state[0] ^= RoundKey[0];
+    state[1] ^= RoundKey[1];
+    state[2] ^= RoundKey[2];
+    state[3] ^= RoundKey[3];
 }
 
 // xtime is a macro that finds the product of {02} and the argument to xtime modulo {1b}
 __IPPCP_INLINE Ipp32u mask4(Ipp32u x)
 {
-   x &= 0x80808080;
-   return (Ipp32u)((x<<1) - (x>>7));
+    x &= 0x80808080;
+    return (Ipp32u)((x << 1) - (x >> 7));
 }
 
 __IPPCP_INLINE Ipp32u xtime4(Ipp32u x)
 {
-   Ipp32u t = (x+x) &0xFEFEFEFE;
-   t ^= mask4(x) & 0x1B1B1B1B;
-   return t;
+    Ipp32u t = (x + x) & 0xFEFEFEFE;
+    t ^= mask4(x) & 0x1B1B1B1B;
+    return t;
 }
 
 #endif /* _PCP_RIJ_SAFE2_H */

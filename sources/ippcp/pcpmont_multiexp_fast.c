@@ -30,18 +30,18 @@
 
 static cpSize GetIndex(const Ipp8u** ppE, cpSize numItems, cpSize nBit)
 {
-   cpSize shift = nBit%BYTESIZE;
-   cpSize offset= nBit/BYTESIZE;
-   cpSize index = 0;
+    cpSize shift  = nBit % BYTESIZE;
+    cpSize offset = nBit / BYTESIZE;
+    cpSize index  = 0;
 
-   cpSize n;
-   for(n=numItems; n>0; n--) {
-      const Ipp8u* pE = ppE[n-1] + offset;
-      Ipp8u e = pE[0];
-      index <<= 1;
-      index += (e>>shift) &1;
-   }
-   return index;
+    cpSize n;
+    for (n = numItems; n > 0; n--) {
+        const Ipp8u* pE = ppE[n - 1] + offset;
+        Ipp8u e         = pE[0];
+        index <<= 1;
+        index += (e >> shift) & 1;
+    }
+    return index;
 }
 
 /*
@@ -55,30 +55,31 @@ static cpSize GetIndex(const Ipp8u** ppE, cpSize numItems, cpSize nBit)
 //    - array of pointers to the BNU exponents e[0], e[1],...,e[numItems-1]
 //    - pointer to the Montgomery engine
 */
-IPP_OWN_DEFN (void, cpFastMontMultiExp, (BNU_CHUNK_T* pY, const BNU_CHUNK_T* pPrecomTbl, const Ipp8u** ppE, cpSize eItemBitSize, cpSize numItems, gsModEngine* pModEngine))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpFastMontMultiExp, (BNU_CHUNK_T* pY,
+                                        const BNU_CHUNK_T* pPrecomTbl,
+                                        const Ipp8u** ppE,
+                                        cpSize eItemBitSize,
+                                        cpSize numItems,
+                                        gsModEngine* pModEngine))
+/* clang-format on */
 {
-   cpSize sizeM = MOD_LEN(pModEngine);
+    cpSize sizeM = MOD_LEN(pModEngine);
 
-   /* find 1-st non zero index */
-   cpSize eBitNumber;
-   cpSize tblIdx;
-   for(eBitNumber=eItemBitSize-1, tblIdx=0; !tblIdx && eBitNumber>=0; eBitNumber--)
-      tblIdx =GetIndex(ppE, numItems, eBitNumber);
+    /* find 1-st non zero index */
+    cpSize eBitNumber;
+    cpSize tblIdx;
+    for (eBitNumber = eItemBitSize - 1, tblIdx = 0; !tblIdx && eBitNumber >= 0; eBitNumber--)
+        tblIdx = GetIndex(ppE, numItems, eBitNumber);
 
-   COPY_BNU(pY, pPrecomTbl+tblIdx*sizeM, sizeM);
+    COPY_BNU(pY, pPrecomTbl + tblIdx * sizeM, sizeM);
 
-   for(; eBitNumber>=0; eBitNumber--) {
-      cpMontMul_BNU(pY,
-                    pY,
-                    pY,
-                    pModEngine);
+    for (; eBitNumber >= 0; eBitNumber--) {
+        cpMontMul_BNU(pY, pY, pY, pModEngine);
 
-      tblIdx = GetIndex(ppE, numItems, eBitNumber);
+        tblIdx = GetIndex(ppE, numItems, eBitNumber);
 
-      if(tblIdx)
-         cpMontMul_BNU(pY,
-                       pY,
-                       pPrecomTbl+tblIdx*sizeM,
-                       pModEngine);
-   }
+        if (tblIdx)
+            cpMontMul_BNU(pY, pY, pPrecomTbl + tblIdx * sizeM, pModEngine);
+    }
 }

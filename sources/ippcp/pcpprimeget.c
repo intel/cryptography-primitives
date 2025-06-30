@@ -45,20 +45,20 @@
 //    pCtx     pointer to the context
 //
 *F*/
-IPPFUN(IppStatus, ippsPrimeGet, (Ipp32u* pPrime, int* pSize, const IppsPrimeState* pCtx))
+IPPFUN(IppStatus, ippsPrimeGet, (Ipp32u * pPrime, int* pSize, const IppsPrimeState* pCtx))
 {
-   IPP_BAD_PTR3_RET(pCtx, pPrime, pSize);
+    IPP_BAD_PTR3_RET(pCtx, pPrime, pSize);
 
-   IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   {
-      Ipp32u* pValue = (Ipp32u*)PRIME_NUMBER(pCtx);
-      cpSize len32 = BITS2WORD32_SIZE(PRIME_MAXBITSIZE(pCtx));
-      FIX_BNU32(pValue, len32);
+    {
+        Ipp32u* pValue = (Ipp32u*)PRIME_NUMBER(pCtx);
+        cpSize len32   = BITS2WORD32_SIZE(PRIME_MAXBITSIZE(pCtx));
+        FIX_BNU32(pValue, len32);
 
-      COPY_BNU(pPrime, pValue, len32);
-      *pSize = len32;
+        COPY_BNU(pPrime, pValue, len32);
+        *pSize = len32;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

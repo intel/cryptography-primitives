@@ -50,22 +50,25 @@
 *F*/
 IPPFUN(IppStatus, ippsPRNGSetSeed, (const IppsBigNumState* pSeed, IppsPRNGState* pCtx))
 {
-   /* test PRNG context */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!RAND_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test PRNG context */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!RAND_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   /* test seed */
-   IPP_BAD_PTR1_RET(pSeed);
-   IPP_BADARG_RET(!BN_VALID_ID(pSeed), ippStsContextMatchErr);
+    /* test seed */
+    IPP_BAD_PTR1_RET(pSeed);
+    IPP_BADARG_RET(!BN_VALID_ID(pSeed), ippStsContextMatchErr);
 
-   {
-      cpSize argSize = BITS_BNU_CHUNK( RAND_SEEDBITS(pCtx) );
-      BNU_CHUNK_T mask = MASK_BNU_CHUNK(RAND_SEEDBITS(pCtx));
-      cpSize size = IPP_MIN(BN_SIZE(pSeed), argSize);
+    {
+        cpSize argSize   = BITS_BNU_CHUNK(RAND_SEEDBITS(pCtx));
+        BNU_CHUNK_T mask = MASK_BNU_CHUNK(RAND_SEEDBITS(pCtx));
+        cpSize size      = IPP_MIN(BN_SIZE(pSeed), argSize);
 
-      ZEXPAND_COPY_BNU(RAND_XKEY(pCtx), (cpSize)(sizeof(RAND_XKEY(pCtx))/sizeof(BNU_CHUNK_T)), BN_NUMBER(pSeed), size);
-      RAND_XKEY(pCtx)[argSize-1] &= mask;
+        ZEXPAND_COPY_BNU(RAND_XKEY(pCtx),
+                         (cpSize)(sizeof(RAND_XKEY(pCtx)) / sizeof(BNU_CHUNK_T)),
+                         BN_NUMBER(pSeed),
+                         size);
+        RAND_XKEY(pCtx)[argSize - 1] &= mask;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -48,22 +48,22 @@
 //    pState      pointer to the HMAC state
 //
 *F*/
-IPPFUN(IppStatus, ippsHMAC_GetTag,(Ipp8u* pMD, int mdLen, const IppsHMACState* pCtx))
+IPPFUN(IppStatus, ippsHMAC_GetTag, (Ipp8u * pMD, int mdLen, const IppsHMACState* pCtx))
 {
-   /* test state pointer and ID */
-   IPP_BAD_PTR1_RET(pCtx);
-   IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
+    /* test state pointer and ID */
+    IPP_BAD_PTR1_RET(pCtx);
+    IPP_BADARG_RET(!HMAC_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   /* test MD pointer */
-   IPP_BAD_PTR1_RET(pMD);
+    /* test MD pointer */
+    IPP_BAD_PTR1_RET(pMD);
 
-   { /* TBD: consider implementation without copy of context */
-      IppStatus sts;
-      IppsHMACState tmpCtx;
-      ippsHMAC_Duplicate(pCtx, &tmpCtx);
-      sts = ippsHMAC_Final(pMD, mdLen, &tmpCtx);
+    { /* TBD: consider implementation without copy of context */
+        IppStatus sts;
+        IppsHMACState tmpCtx;
+        ippsHMAC_Duplicate(pCtx, &tmpCtx);
+        sts = ippsHMAC_Final(pMD, mdLen, &tmpCtx);
 
-      PurgeBlock(&tmpCtx, sizeof(IppsHMACState));
-      return sts;
-   }
+        PurgeBlock(&tmpCtx, sizeof(IppsHMACState));
+        return sts;
+    }
 }

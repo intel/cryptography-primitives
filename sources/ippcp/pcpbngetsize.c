@@ -45,24 +45,22 @@
 //    pSize   pointer BigNum ctx size
 //
 *F*/
-IPPFUN(IppStatus, ippsBigNumGetSize, (int length, cpSize *pCtxSize))
+IPPFUN(IppStatus, ippsBigNumGetSize, (int length, cpSize* pCtxSize))
 {
-   IPP_BAD_PTR1_RET(pCtxSize);
-   IPP_BADARG_RET(length<1 || length>BITS2WORD32_SIZE(BN_MAXBITSIZE), ippStsLengthErr);
+    IPP_BAD_PTR1_RET(pCtxSize);
+    IPP_BADARG_RET(length < 1 || length > BITS2WORD32_SIZE(BN_MAXBITSIZE), ippStsLengthErr);
 
-   {
-      /* convert length to the number of BNU_CHUNK_T */
-      cpSize len = INTERNAL_BNU_LENGTH(length);
+    {
+        /* convert length to the number of BNU_CHUNK_T */
+        cpSize len = INTERNAL_BNU_LENGTH(length);
 
-      /* reserve one BNU_CHUNK_T more for cpDiv_BNU,
+        /* reserve one BNU_CHUNK_T more for cpDiv_BNU,
          mul, mont exp operations */
-      len++;
+        len++;
 
-      *pCtxSize = (Ipp32s)sizeof(IppsBigNumState)
-                + len*(Ipp32s)sizeof(BNU_CHUNK_T)
-                + len*(Ipp32s)sizeof(BNU_CHUNK_T)
-                + BN_ALIGNMENT-1;
+        *pCtxSize = (Ipp32s)sizeof(IppsBigNumState) + len * (Ipp32s)sizeof(BNU_CHUNK_T) +
+                    len * (Ipp32s)sizeof(BNU_CHUNK_T) + BN_ALIGNMENT - 1;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

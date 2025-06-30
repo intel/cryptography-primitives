@@ -33,11 +33,12 @@ static gsMethod_RSA* getDefaultMethod_RSA_public(int modulusBitSize)
 {
     gsMethod_RSA* m;
 
-#if(_IPP32E>=_IPP32E_K1)
-    m = IsFeatureEnabled(ippCPUID_AVX512IFMA) ? gsMethod_RSA_avx512_public() : gsMethod_RSA_avx2_public();
-#elif(_IPP32E>=_IPP32E_L9)
+#if (_IPP32E >= _IPP32E_K1)
+    m = IsFeatureEnabled(ippCPUID_AVX512IFMA) ? gsMethod_RSA_avx512_public()
+                                              : gsMethod_RSA_avx2_public();
+#elif (_IPP32E >= _IPP32E_L9)
     m = gsMethod_RSA_avx2_public();
-#elif(_IPP>=_IPP_W7)
+#elif (_IPP >= _IPP_W7)
     m = gsMethod_RSA_sse2_public();
 #else
     m = gsMethod_RSA_gpr_public();

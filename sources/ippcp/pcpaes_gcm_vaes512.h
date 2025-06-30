@@ -29,14 +29,14 @@
 #if !defined(_CP_AES_GCM_VAES512_H)
 #define _CP_AES_GCM_VAES512_H
 
-#if (_IPP32E>=_IPP32E_K1)
+#if (_IPP32E >= _IPP32E_K1)
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
-#pragma warning(disable: 4310) // cast truncates constant value in MSVC
+#pragma warning(disable : 4310) // cast truncates constant value in MSVC
 #endif
 
-#define M128(mem)    (*((__m128i*)((Ipp8u*)(mem))))
-#define M256(mem)    (*((__m256i*)((Ipp8u*)(mem))))
-#define M512(mem)    (*((__m512i*)((Ipp8u*)(mem))))
+#define M128(mem) (*((__m128i*)((Ipp8u*)(mem))))
+#define M256(mem) (*((__m256i*)((Ipp8u*)(mem))))
+#define M512(mem) (*((__m512i*)((Ipp8u*)(mem))))
 
 static const __ALIGN64 Ipp64u POLY2[] = { 0x1, 0xC200000000000000, 0x1, 0xC200000000000000,
                                           0x1, 0xC200000000000000, 0x1, 0xC200000000000000 };

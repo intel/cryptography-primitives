@@ -48,19 +48,19 @@
 //    See ANDREW ROOS "A CLASS OF WEAK KEYS IN THE RC4 STREAM CIPHER"
 //    (http://marcel.wanda.ch/Archive/WeakKeys)
 *F*/
-IPPFUN(IppStatus, ippsARCFourCheckKey, (const Ipp8u *pKey, int keyLen, IppBool* pIsWeak))
+IPPFUN(IppStatus, ippsARCFourCheckKey, (const Ipp8u* pKey, int keyLen, IppBool* pIsWeak))
 {
-   /* test key */
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET(((1>keyLen)||(IPP_ARCFOUR_KEYMAX_SIZE< keyLen)), ippStsLengthErr);
+    /* test key */
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET(((1 > keyLen) || (IPP_ARCFOUR_KEYMAX_SIZE < keyLen)), ippStsLengthErr);
 
-   /* test result*/
-   IPP_BAD_PTR1_RET(pIsWeak);
+    /* test result*/
+    IPP_BAD_PTR1_RET(pIsWeak);
 
-   if(1==keyLen)
-      *pIsWeak = (pKey[0]==128)? ippTrue : ippFalse;
-   else
-      *pIsWeak = (pKey[0] + pKey[1])%256 == 0 ? ippTrue : ippFalse;
+    if (1 == keyLen)
+        *pIsWeak = (pKey[0] == 128) ? ippTrue : ippFalse;
+    else
+        *pIsWeak = (pKey[0] + pKey[1]) % 256 == 0 ? ippTrue : ippFalse;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

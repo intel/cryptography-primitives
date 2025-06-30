@@ -24,10 +24,10 @@
 
 static int cpSizeof_RSA_privateKey2(int factorPbitSize, int factorQbitSize)
 {
-    int factorPlen = BITS_BNU_CHUNK(factorPbitSize);
-    int factorQlen = BITS_BNU_CHUNK(factorQbitSize);
-    int factorPlen32 = BITS2WORD32_SIZE(factorPbitSize);
-    int factorQlen32 = BITS2WORD32_SIZE(factorQbitSize);
+    int factorPlen      = BITS_BNU_CHUNK(factorPbitSize);
+    int factorQlen      = BITS_BNU_CHUNK(factorQbitSize);
+    int factorPlen32    = BITS2WORD32_SIZE(factorPbitSize);
+    int factorQlen32    = BITS2WORD32_SIZE(factorQbitSize);
     int rsaModulusLen32 = BITS2WORD32_SIZE(factorPbitSize + factorQbitSize);
     int montPsize;
     int montQsize;
@@ -36,12 +36,10 @@ static int cpSizeof_RSA_privateKey2(int factorPbitSize, int factorQbitSize)
     rsaMontExpGetSize(factorQlen32, &montQsize);
     rsaMontExpGetSize(rsaModulusLen32, &montNsize);
 
-    return (Ipp32s)sizeof(IppsRSAPrivateKeyState)
-        + factorPlen * (Ipp32s)sizeof(BNU_CHUNK_T)  /* dp slot */
-        + factorQlen * (Ipp32s)sizeof(BNU_CHUNK_T)  /* dq slot */
-        + factorPlen * (Ipp32s)sizeof(BNU_CHUNK_T)  /* qinv slot */
-        + (Ipp32s)sizeof(BNU_CHUNK_T) - 1           /* alignment */ 
-        + montPsize
-        + montQsize
-        + montNsize;
+    return (Ipp32s)sizeof(IppsRSAPrivateKeyState) +
+           factorPlen * (Ipp32s)sizeof(BNU_CHUNK_T)   /* dp slot */
+           + factorQlen * (Ipp32s)sizeof(BNU_CHUNK_T) /* dq slot */
+           + factorPlen * (Ipp32s)sizeof(BNU_CHUNK_T) /* qinv slot */
+           + (Ipp32s)sizeof(BNU_CHUNK_T) - 1          /* alignment */
+           + montPsize + montQsize + montNsize;
 }

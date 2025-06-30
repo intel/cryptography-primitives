@@ -14,8 +14,8 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Modular Exponentiation
@@ -25,14 +25,22 @@
 #include "pcpngmontexpstuff.h"
 #include "gsscramble.h"
 
-IPP_OWN_DEFN (cpSize, gsMontExpBinBuffer, (int modulusBits))
+IPP_OWN_DEFN(cpSize, gsMontExpBinBuffer, (int modulusBits))
 {
-   cpSize nsM = BITS_BNU_CHUNK(modulusBits);
-   cpSize bufferNum = nsM;
-   return bufferNum;
+    cpSize nsM       = BITS_BNU_CHUNK(modulusBits);
+    cpSize bufferNum = nsM;
+    return bufferNum;
 }
 
-IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize bitsizeE, gsModEngine* pMont, BNU_CHUNK_T* pBuffer) )
+/* clang-format off */
+IPP_OWN_DEFN(cpSize, gsMontExpBin_BNU, (BNU_CHUNK_T* dataY,
+                                        const BNU_CHUNK_T* dataX,
+                                        cpSize nsX,
+                                        const BNU_CHUNK_T* dataE,
+                                        cpSize bitsizeE,
+                                        gsModEngine* pMont,
+                                        BNU_CHUNK_T* pBuffer))
+/* clang-format on */
 {
     cpSize nsM = MOD_LEN(pMont);
     cpSize nsE = BITS_BNU_CHUNK(bitsizeE);
@@ -44,8 +52,7 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* 
     */
     if (cpEqu_BNU_CHUNK(dataE, nsE, 0)) {
         COPY_BNU(dataY, MOD_MNT_R(pMont), nsM);
-    }
-    else if (cpEqu_BNU_CHUNK(dataX, nsX, 0)) {
+    } else if (cpEqu_BNU_CHUNK(dataX, nsX, 0)) {
         ZEXPAND_BNU(dataY, 0, nsM);
     }
 
@@ -64,10 +71,10 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* 
         /* execute most significant part pE */
         {
             BNU_CHUNK_T eValue = dataE[nsE - 1];
-            int n = cpNLZ_BNU(eValue) + 1;
+            int n              = cpNLZ_BNU(eValue) + 1;
 
             eValue <<= n;
-            for (; n<BNU_CHUNK_BITS; n++, eValue <<= 1) {
+            for (; n < BNU_CHUNK_BITS; n++, eValue <<= 1) {
                 /* squaring R = R*R mod Modulus */
                 MOD_METHOD(pMont)->sqr(dataY, dataY, pMont);
                 /* and multiply R = R*X mod Modulus */
@@ -76,10 +83,10 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* 
             }
 
             /* execute rest bits of E */
-            for (--nsE; nsE>0; nsE--) {
+            for (--nsE; nsE > 0; nsE--) {
                 eValue = dataE[nsE - 1];
 
-                for (n = 0; n<BNU_CHUNK_BITS; n++, eValue <<= 1) {
+                for (n = 0; n < BNU_CHUNK_BITS; n++, eValue <<= 1) {
                     /* squaring: R = R*R mod Modulus */
                     MOD_METHOD(pMont)->sqr(dataY, dataY, pMont);
 
@@ -102,20 +109,29 @@ IPP_OWN_DEFN (cpSize, gsMontExpBin_BNU, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* 
 // scratch buffer structure:
 //    dataT[nsM]     copy of base (in case of inplace operation)
 */
-IPP_OWN_DEFN (cpSize, gsModExpBin_BNU, (BNU_CHUNK_T* dataY, const BNU_CHUNK_T* dataX, cpSize nsX, const BNU_CHUNK_T* dataE, cpSize bitsizeE, gsModEngine* pMont, BNU_CHUNK_T* pBuffer))
+
+/* clang-format off */
+IPP_OWN_DEFN(cpSize, gsModExpBin_BNU, (BNU_CHUNK_T* dataY,
+                                       const BNU_CHUNK_T* dataX,
+                                       cpSize nsX,
+                                       const BNU_CHUNK_T* dataE,
+                                       cpSize bitsizeE,
+                                       gsModEngine* pMont,
+                                       BNU_CHUNK_T* pBuffer))
+/* clang-format on */
 {
-   cpSize nsM = MOD_LEN(pMont);
-   
-   /* copy and expand base to the modulus length */
-   ZEXPAND_COPY_BNU(dataY, nsM, dataX, nsX);
-   /* convert base to Montgomery domain */
-   MOD_METHOD(pMont)->encode(dataY, dataY, pMont);
+    cpSize nsM = MOD_LEN(pMont);
 
-   /* exponentiation */
-   gsMontExpBin_BNU(dataY, dataY, nsM, dataE, bitsizeE, pMont, pBuffer);
+    /* copy and expand base to the modulus length */
+    ZEXPAND_COPY_BNU(dataY, nsM, dataX, nsX);
+    /* convert base to Montgomery domain */
+    MOD_METHOD(pMont)->encode(dataY, dataY, pMont);
 
-   /* convert result back to regular domain */
-   MOD_METHOD(pMont)->decode(dataY, dataY, pMont);
+    /* exponentiation */
+    gsMontExpBin_BNU(dataY, dataY, nsM, dataE, bitsizeE, pMont, pBuffer);
 
-   return nsM;
+    /* convert result back to regular domain */
+    MOD_METHOD(pMont)->decode(dataY, dataY, pMont);
+
+    return nsM;
 }

@@ -43,12 +43,12 @@
 //    pSize       pointer to the HMAC state size
 //
 *F*/
-IPPFUN(IppStatus, ippsHMAC_GetSize,(int* pSize))
+IPPFUN(IppStatus, ippsHMAC_GetSize, (int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = sizeof(IppsHMACState);
+    *pSize = sizeof(IppsHMACState);
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

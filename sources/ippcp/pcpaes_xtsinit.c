@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-XTS Functions (IEEE P1619)
-// 
+//
 //  Contents:
 //     ippsAES_XTSInit()
 //
@@ -39,7 +39,7 @@
 //    ippStsMemAllocErr       size of buffer is not match for operation
 //    ippStsLengthErr         keyLen != 16*8*2 &&
 //                                   != 32*8*2
-//    ippStsBadArgErr         [Only in FIPS-compliance mode]: Indicates an error 
+//    ippStsBadArgErr         [Only in FIPS-compliance mode]: Indicates an error
 //                            condition if tweak key is equal to the data key
 //    ippStsNoErr             no errors
 //
@@ -52,44 +52,50 @@
 //
 *F*/
 
-IPPFUN(IppStatus, ippsAES_XTSInit,(const Ipp8u* pKey, int keyLen,
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_XTSInit, (const Ipp8u* pKey,
+                                    int keyLen,
                                     int duBitsize,
-                                    IppsAES_XTSSpec* pCtx, int ctxSize))
+                                    IppsAES_XTSSpec* pCtx,
+                                    int ctxSize))
+/* clang-format on */
 {
-   /* test key and keyLenBits */
-   IPP_BAD_PTR1_RET(pKey);
-   IPP_BADARG_RET(keyLen!=16*BYTESIZE*2 && keyLen!=32*BYTESIZE*2, ippStsLengthErr);
+    /* test key and keyLenBits */
+    IPP_BAD_PTR1_RET(pKey);
+    IPP_BADARG_RET(keyLen != 16 * BYTESIZE * 2 && keyLen != 32 * BYTESIZE * 2, ippStsLengthErr);
 
-   /* test DU parameters */
-   IPP_BADARG_RET(duBitsize<IPP_AES_BLOCK_BITSIZE, ippStsLengthErr);
+    /* test DU parameters */
+    IPP_BADARG_RET(duBitsize < IPP_AES_BLOCK_BITSIZE, ippStsLengthErr);
 
-   /* test context pointer */
-   IPP_BAD_PTR1_RET(pCtx);
-   /* test context pointer */
-   IPP_BADARG_RET((int)sizeof(IppsAES_XTSSpec) > ctxSize, ippStsMemAllocErr);
+    /* test context pointer */
+    IPP_BAD_PTR1_RET(pCtx);
+    /* test context pointer */
+    IPP_BADARG_RET((int)sizeof(IppsAES_XTSSpec) > ctxSize, ippStsMemAllocErr);
 
-   int keySize = keyLen/2/BYTESIZE;
-   const Ipp8u* pdatKey = pKey;
-   const Ipp8u* ptwkKey = pKey+keySize;
+    int keySize          = keyLen / 2 / BYTESIZE;
+    const Ipp8u* pdatKey = pKey;
+    const Ipp8u* ptwkKey = pKey + keySize;
 #ifdef IPPCP_FIPS_MODE
-   /* test FIPS-compliance requirement pdatKey != ptwkKey */
-   int isEqu = cpIsEquBlock_ct(pdatKey, ptwkKey, keySize) & 1;
-   IPP_BADARG_RET(isEqu, ippStsBadArgErr);
+    /* test FIPS-compliance requirement pdatKey != ptwkKey */
+    int isEqu = cpIsEquBlock_ct(pdatKey, ptwkKey, keySize) & 1;
+    IPP_BADARG_RET(isEqu, ippStsBadArgErr);
 #endif
 
-   {
-      IppsAESSpec* pdatAES = &pCtx->datumAES;
-      IppsAESSpec* ptwkAES = &pCtx->tweakAES;
+    {
+        IppsAESSpec* pdatAES = &pCtx->datumAES;
+        IppsAESSpec* ptwkAES = &pCtx->tweakAES;
 
-      IppStatus sts = ippStsNoErr;
-      sts = ippsAESInit(pdatKey, keySize, pdatAES, sizeof(IppsAESSpec));
-      if(ippStsNoErr!=sts) return sts;
+        IppStatus sts = ippStsNoErr;
+        sts           = ippsAESInit(pdatKey, keySize, pdatAES, sizeof(IppsAESSpec));
+        if (ippStsNoErr != sts)
+            return sts;
 
-      sts = ippsAESInit(ptwkKey, keySize, ptwkAES, sizeof(IppsAESSpec));
-      if(ippStsNoErr!=sts) return sts;
+        sts = ippsAESInit(ptwkKey, keySize, ptwkAES, sizeof(IppsAESSpec));
+        if (ippStsNoErr != sts)
+            return sts;
 
-      AES_XTS_SET_ID(pCtx);
-      pCtx->duBitsize = duBitsize;
-      return sts;
-   }
+        AES_XTS_SET_ID(pCtx);
+        pCtx->duBitsize = duBitsize;
+        return sts;
+    }
 }

@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Internal Definitions and
 //     Internal ng RSA Function Prototypes
-// 
-// 
+//
+//
 */
 
 #if !defined(_CP_NG_RSA_H)
@@ -32,17 +32,17 @@
 #include "pcpngmontexpstuff.h"
 
 struct _cpRSA_public_key {
-   Ipp32u         id;            /* key ID */
-   int         maxbitSizeN;
-   int         maxbitSizeE;
-   int            bitSizeN;      /* RSA modulus bitsize */
-   int            bitSizeE;      /* RSA public exp bitsize */
+    Ipp32u id;           /* key ID */
+    int maxbitSizeN;
+    int maxbitSizeE;
+    int bitSizeN;        /* RSA modulus bitsize */
+    int bitSizeE;        /* RSA public exp bitsize */
 
-   BNU_CHUNK_T*   pDataE;        /* public exp */
-   gsModEngine*   pMontN;        /* montgomery engine (N) */
+    BNU_CHUNK_T* pDataE; /* public exp */
+    gsModEngine* pMontN; /* montgomery engine (N) */
 };
 
-#define RSA_PUB_KEY_SET_ID(x)    ((x)->id = (Ipp32u)idCtxRSA_PubKey ^ (Ipp32u)IPP_UINT_PTR(x))
+#define RSA_PUB_KEY_SET_ID(x) ((x)->id = (Ipp32u)idCtxRSA_PubKey ^ (Ipp32u)IPP_UINT_PTR(x))
 /* access */
 #define RSA_PUB_KEY_MAXSIZE_N(x) ((x)->maxbitSizeN)
 #define RSA_PUB_KEY_MAXSIZE_E(x) ((x)->maxbitSizeE)
@@ -51,33 +51,33 @@ struct _cpRSA_public_key {
 #define RSA_PUB_KEY_E(x)         ((x)->pDataE)
 #define RSA_PUB_KEY_NMONT(x)     ((x)->pMontN)
 
-#define RSA_PUB_KEY_VALID_ID(x)  ((((x)->id) ^ (Ipp32u)IPP_UINT_PTR((x))) == (Ipp32u)idCtxRSA_PubKey)
-#define RSA_PUB_KEY_IS_SET(x)    (RSA_PUB_KEY_BITSIZE_N((x))>0)
+#define RSA_PUB_KEY_VALID_ID(x) ((((x)->id) ^ (Ipp32u)IPP_UINT_PTR((x))) == (Ipp32u)idCtxRSA_PubKey)
+#define RSA_PUB_KEY_IS_SET(x)   (RSA_PUB_KEY_BITSIZE_N((x)) > 0)
 
 /* alignment */
 #define RSA_PUBLIC_KEY_ALIGNMENT ((int)(sizeof(void*)))
 
 struct _cpRSA_private_key {
-   Ipp32u         id;            /* key ID */
-   int         maxbitSizeN;
-   int         maxbitSizeD;
-   int            bitSizeN;      /* RSA modulus bitsize */
-   int            bitSizeD;      /* RSA private exp bitsize */
-   int            bitSizeP;      /* RSA p-factor bitsize */
-   int            bitSizeQ;      /* RSA q-factor bitsize */
+    Ipp32u id;              /* key ID */
+    int maxbitSizeN;
+    int maxbitSizeD;
+    int bitSizeN;           /* RSA modulus bitsize */
+    int bitSizeD;           /* RSA private exp bitsize */
+    int bitSizeP;           /* RSA p-factor bitsize */
+    int bitSizeQ;           /* RSA q-factor bitsize */
 
-   BNU_CHUNK_T*   pDataD;        /* private exp */
-   BNU_CHUNK_T*   pDataDp;       /* dp private exp */
-   BNU_CHUNK_T*   pDataDq;       /* dq private exp */
-   BNU_CHUNK_T*   pDataQinv;     /* qinv coeff in residue domain */
+    BNU_CHUNK_T* pDataD;    /* private exp */
+    BNU_CHUNK_T* pDataDp;   /* dp private exp */
+    BNU_CHUNK_T* pDataDq;   /* dq private exp */
+    BNU_CHUNK_T* pDataQinv; /* qinv coeff in residue domain */
 
-   gsModEngine* pMontP;          /* montgomery engine (P) */
-   gsModEngine* pMontQ;          /* montgomery engine (Q) */
-   gsModEngine* pMontN;          /* montgomery engine (N) */
+    gsModEngine* pMontP;    /* montgomery engine (P) */
+    gsModEngine* pMontQ;    /* montgomery engine (Q) */
+    gsModEngine* pMontN;    /* montgomery engine (N) */
 };
 
-#define RSA_PRV_KEY1_SET_ID(x)    ((x)->id = (Ipp32u)idCtxRSA_PrvKey1 ^ (Ipp32u)IPP_UINT_PTR(x))
-#define RSA_PRV_KEY2_SET_ID(x)    ((x)->id = (Ipp32u)idCtxRSA_PrvKey2 ^ (Ipp32u)IPP_UINT_PTR(x))
+#define RSA_PRV_KEY1_SET_ID(x) ((x)->id = (Ipp32u)idCtxRSA_PrvKey1 ^ (Ipp32u)IPP_UINT_PTR(x))
+#define RSA_PRV_KEY2_SET_ID(x) ((x)->id = (Ipp32u)idCtxRSA_PrvKey2 ^ (Ipp32u)IPP_UINT_PTR(x))
 /* access */
 #define RSA_PRV_KEY_MAXSIZE_N(x) ((x)->maxbitSizeN)
 #define RSA_PRV_KEY_MAXSIZE_D(x) ((x)->maxbitSizeD)
@@ -93,30 +93,43 @@ struct _cpRSA_private_key {
 #define RSA_PRV_KEY_QMONT(x)     ((x)->pMontQ)
 #define RSA_PRV_KEY_NMONT(x)     ((x)->pMontN)
 
-#define RSA_PRV_KEY1_VALID_ID(x) ((((x)->id) ^ (Ipp32u)IPP_UINT_PTR((x))) == (Ipp32u)idCtxRSA_PrvKey1)
-#define RSA_PRV_KEY2_VALID_ID(x) ((((x)->id) ^ (Ipp32u)IPP_UINT_PTR((x))) == (Ipp32u)idCtxRSA_PrvKey2)
-#define RSA_PRV_KEY_VALID_ID(x)  (RSA_PRV_KEY1_VALID_ID((x)) || RSA_PRV_KEY2_VALID_ID((x)))
-#define RSA_PRV_KEY_IS_SET(x)    (RSA_PRV_KEY_BITSIZE_N((x))>0)
+#define RSA_PRV_KEY1_VALID_ID(x) \
+    ((((x)->id) ^ (Ipp32u)IPP_UINT_PTR((x))) == (Ipp32u)idCtxRSA_PrvKey1)
+#define RSA_PRV_KEY2_VALID_ID(x) \
+    ((((x)->id) ^ (Ipp32u)IPP_UINT_PTR((x))) == (Ipp32u)idCtxRSA_PrvKey2)
+#define RSA_PRV_KEY_VALID_ID(x) (RSA_PRV_KEY1_VALID_ID((x)) || RSA_PRV_KEY2_VALID_ID((x)))
+#define RSA_PRV_KEY_IS_SET(x)   (RSA_PRV_KEY_BITSIZE_N((x)) > 0)
 
 /* alignment */
 #define RSA_PRIVATE_KEY_ALIGNMENT ((int)(sizeof(void*)))
 
-#define MOD_ENGINE_RSA_POOL_SIZE    (2)
+#define MOD_ENGINE_RSA_POOL_SIZE (2)
 
 /*
 // Montgomery engine preparation (GetSize/init/Set)
 */
+/* clang-format off */
 #define rsaMontExpGetSize OWNAPI(rsaMontExpGetSize)
-   IPP_OWN_DECL (void, rsaMontExpGetSize, (int length, int* pSize))
+   IPP_OWN_DECL(void, rsaMontExpGetSize, (int length, int* pSize))
 
 /*
 // pubic and private key operations
 */
 #define gsRSApub_cipher OWNAPI(gsRSApub_cipher)
-   IPP_OWN_DECL (void, gsRSApub_cipher, (IppsBigNumState* pY, const IppsBigNumState* pX, const IppsRSAPublicKeyState* pKey, BNU_CHUNK_T* pScratchBuffer))
+   IPP_OWN_DECL(void, gsRSApub_cipher, (IppsBigNumState* pY,
+                                        const IppsBigNumState* pX,
+                                        const IppsRSAPublicKeyState* pKey,
+                                        BNU_CHUNK_T* pScratchBuffer))
 #define gsRSAprv_cipher OWNAPI(gsRSAprv_cipher)
-   IPP_OWN_DECL (void, gsRSAprv_cipher, (IppsBigNumState* pY, const IppsBigNumState* pX, const IppsRSAPrivateKeyState* pKey, BNU_CHUNK_T* pScratchBuffer))
+   IPP_OWN_DECL(void, gsRSAprv_cipher, (IppsBigNumState* pY,
+                                        const IppsBigNumState* pX,
+                                        const IppsRSAPrivateKeyState* pKey,
+                                        BNU_CHUNK_T* pScratchBuffer))
 #define gsRSAprv_cipher_crt OWNAPI(gsRSAprv_cipher_crt)
-   IPP_OWN_DECL (void, gsRSAprv_cipher_crt, (IppsBigNumState* pY, const IppsBigNumState* pX, const IppsRSAPrivateKeyState* pKey, BNU_CHUNK_T* pScratchBuffer))
+   IPP_OWN_DECL(void, gsRSAprv_cipher_crt, (IppsBigNumState* pY,
+                                            const IppsBigNumState* pX,
+                                            const IppsRSAPrivateKeyState* pKey,
+                                            BNU_CHUNK_T* pScratchBuffer))
+/* clang-format on */
 
 #endif /* _CP_NG_RSA_H */

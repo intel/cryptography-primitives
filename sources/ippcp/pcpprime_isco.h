@@ -31,20 +31,18 @@
 #include "pcpngrsa.h"
 
 /* test if E and A are coprime */
-static int cpIsCoPrime(BNU_CHUNK_T* pA, int nsA,
-    BNU_CHUNK_T* pB, int nsB,
-    BNU_CHUNK_T* pBuffer)
+static int cpIsCoPrime(BNU_CHUNK_T* pA, int nsA, BNU_CHUNK_T* pB, int nsB, BNU_CHUNK_T* pBuffer)
 {
-    if (nsA>nsB) {
+    if (nsA > nsB) {
         SWAP_PTR(BNU_CHUNK_T, pA, pB);
         SWAP(nsA, nsB);
     }
     {
         __ALIGN8 IppsBigNumState bnA, bnB, bnGcd;
-        BNU_CHUNK_T* pDataA = pBuffer;
-        BNU_CHUNK_T* pBuffA = pDataA + nsA + 1;
-        BNU_CHUNK_T* pDataB = pBuffA + nsA + 1;
-        BNU_CHUNK_T* pBuffB = pDataB + nsB + 1;
+        BNU_CHUNK_T* pDataA   = pBuffer;
+        BNU_CHUNK_T* pBuffA   = pDataA + nsA + 1;
+        BNU_CHUNK_T* pDataB   = pBuffA + nsA + 1;
+        BNU_CHUNK_T* pBuffB   = pDataB + nsB + 1;
         BNU_CHUNK_T* pDataGcd = pBuffB + nsB + 1;
         BNU_CHUNK_T* pBuffGcd = pDataGcd + nsB + 1;
 
@@ -53,9 +51,9 @@ static int cpIsCoPrime(BNU_CHUNK_T* pA, int nsA,
         BN_Make(pDataGcd, pBuffGcd, nsB, &bnGcd);
 
         COPY_BNU(pDataA, pA, nsA)
-            BN_Set(pDataA, nsA, &bnA);
+        BN_Set(pDataA, nsA, &bnA);
         COPY_BNU(pDataB, pB, nsB)
-            BN_Set(pDataB, nsB, &bnB);
+        BN_Set(pDataB, nsB, &bnB);
         ippsGcd_BN(&bnA, &bnB, &bnGcd);
         return 0 == cpBN_cmp(&bnGcd, cpBN_OneRef());
     }

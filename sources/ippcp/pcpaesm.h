@@ -30,16 +30,16 @@
 #include "pcprij.h"
 
 /* Intel(R) AES New Instructions (Intel(R) AES-NI) flag */
-#define AES_NI_ENABLED        (ippCPUID_AES)
+#define AES_NI_ENABLED (ippCPUID_AES)
 
 /* alignment of AES context */
-#define AES_ALIGNMENT   (RIJ_ALIGNMENT)
+#define AES_ALIGNMENT (RIJ_ALIGNMENT)
 
 /* valid AES context ID */
-#define VALID_AES_ID(ctx)   ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxRijndael)
+#define VALID_AES_ID(ctx) ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxRijndael)
 
 /* number of rounds (use [NK] for access) */
-static int rij128nRounds[3] = {NR128_128, NR128_192, NR128_256};
+static int rij128nRounds[3] = { NR128_128, NR128_192, NR128_256 };
 
 /*
 // number of keys (estimation only!)  (use [NK] for access)
@@ -59,21 +59,15 @@ static int rij128nRounds[3] = {NR128_128, NR128_192, NR128_256};
 //             nKeys - accurate number of keys
 // is more convenient when calculates key extension
 */
-static int rij128nKeys[3] = {44,  52,  60 };
+static int rij128nKeys[3] = { 44, 52, 60 };
 
 /*
 // helper for nRounds[] and estnKeys[] access
 // note: x is length in 32-bits words
 */
-__IPPCP_INLINE int rij_index(int x)
-{
-   return (x-NB(128))>>1;
-}
+__IPPCP_INLINE int rij_index(int x) { return (x - NB(128)) >> 1; }
 
 /* size of AES context */
-__IPPCP_INLINE int cpSizeofCtx_AES(void)
-{
-   return sizeof(IppsAESSpec);
-}
+__IPPCP_INLINE int cpSizeofCtx_AES(void) { return sizeof(IppsAESSpec); }
 
 #endif /* _PCP_AES_H */

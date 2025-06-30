@@ -27,8 +27,8 @@
 #include "pcpaesauthccm.h"
 #include "pcptool.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 /*F*
@@ -48,17 +48,17 @@
 //    pState      pointer to the AES-CCM state
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CCMTagLen,(int tagLen, IppsAES_CCMState* pState))
+IPPFUN(IppStatus, ippsAES_CCMTagLen, (int tagLen, IppsAES_CCMState* pState))
 {
-   /* test context */
-   IPP_BAD_PTR1_RET(pState);
-   IPP_BADARG_RET(!VALID_AESCCM_ID(pState), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pState);
+    IPP_BADARG_RET(!VALID_AESCCM_ID(pState), ippStsContextMatchErr);
 
-   /* test tag length */
-   IPP_BADARG_RET(tagLen>MBS_RIJ128 || tagLen<4 || tagLen&1, ippStsLengthErr);
+    /* test tag length */
+    IPP_BADARG_RET(tagLen > MBS_RIJ128 || tagLen < 4 || tagLen & 1, ippStsLengthErr);
 
-   /* init for new message */
-   AESCCM_TAGLEN(pState) = (Ipp32u)tagLen;
+    /* init for new message */
+    AESCCM_TAGLEN(pState) = (Ipp32u)tagLen;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

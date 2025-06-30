@@ -45,20 +45,20 @@
 //    pSize       pointer to the modulus length (in Ipp32u chunks).
 //    pMont       pointer to the context
 *F*/
-IPPFUN(IppStatus, ippsMontGet,(Ipp32u* pModulus, int* pSize, const IppsMontState* pMont))
+IPPFUN(IppStatus, ippsMontGet, (Ipp32u * pModulus, int* pSize, const IppsMontState* pMont))
 {
-   IPP_BAD_PTR3_RET(pMont, pModulus, pSize);
+    IPP_BAD_PTR3_RET(pMont, pModulus, pSize);
 
-   IPP_BADARG_RET(!MNT_VALID_ID(pMont), ippStsContextMatchErr);
+    IPP_BADARG_RET(!MNT_VALID_ID(pMont), ippStsContextMatchErr);
 
-   {
-      cpSize len32 = MOD_LEN(MNT_ENGINE(pMont))*(Ipp32s)(sizeof(BNU_CHUNK_T)/sizeof(Ipp32u));
-      Ipp32u* bnData = (Ipp32u*) MOD_MODULUS( MNT_ENGINE(pMont) );
+    {
+        cpSize len32 = MOD_LEN(MNT_ENGINE(pMont)) * (Ipp32s)(sizeof(BNU_CHUNK_T) / sizeof(Ipp32u));
+        Ipp32u* bnData = (Ipp32u*)MOD_MODULUS(MNT_ENGINE(pMont));
 
-      FIX_BNU32(bnData, len32);
-      COPY_BNU(pModulus, bnData, len32);
-      *pSize = len32;
+        FIX_BNU32(bnData, len32);
+        COPY_BNU(pModulus, bnData, len32);
+        *pSize = len32;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -30,26 +30,40 @@
 #include "owncp.h"
 
 
-IPPFUN( const char*, ippsDLGetResultString, (IppDLResult code))
+IPPFUN(const char*, ippsDLGetResultString, (IppDLResult code))
 {
-   switch(code) {
-      case ippDLValid:             return "Validation pass successfully";
+    switch (code) {
+    case ippDLValid:
+        return "Validation pass successfully";
 
-      case ippDLBaseIsEven:        return "Base is even";
-      case ippDLOrderIsEven:       return "Order is even";
-      case ippDLInvalidBaseRange:  return "Invalid Base (P) range";
-      case ippDLInvalidOrderRange: return "Invalid Order (R) range";
-      case ippDLCompositeBase:     return "Composite Base (P)";
-      case ippDLCompositeOrder:    return "Composite Order(R)";
-      case ippDLInvalidCofactor:   return "R doesn't divide (P-1)";
-      case ippDLInvalidGenerator:  return "1 != G^R (mod P)";
+    case ippDLBaseIsEven:
+        return "Base is even";
+    case ippDLOrderIsEven:
+        return "Order is even";
+    case ippDLInvalidBaseRange:
+        return "Invalid Base (P) range";
+    case ippDLInvalidOrderRange:
+        return "Invalid Order (R) range";
+    case ippDLCompositeBase:
+        return "Composite Base (P)";
+    case ippDLCompositeOrder:
+        return "Composite Order(R)";
+    case ippDLInvalidCofactor:
+        return "R doesn't divide (P-1)";
+    case ippDLInvalidGenerator:
+        return "1 != G^R (mod P)";
 
-      case ippDLInvalidPrivateKey: return "Invalid Private Key";
-      case ippDLInvalidPublicKey:  return "Invalid Public Key";
-      case ippDLInvalidKeyPair:    return "Invalid Key Pair";
+    case ippDLInvalidPrivateKey:
+        return "Invalid Private Key";
+    case ippDLInvalidPublicKey:
+        return "Invalid Public Key";
+    case ippDLInvalidKeyPair:
+        return "Invalid Key Pair";
 
-      case ippDLInvalidSignature:  return "Invalid Signature";
+    case ippDLInvalidSignature:
+        return "Invalid Signature";
 
-      default:                      return "Unknown DL result";
-   }
+    default:
+        return "Unknown DL result";
+    }
 }

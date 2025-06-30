@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES encryption/decryption (OFB mode)
-// 
+//
 //  Contents:
 //        cpProcessAES_ofb8()
 //
@@ -31,8 +31,8 @@
 #include "pcptool.h"
 #include "pcpaes_ofb.h"
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-#  include "pcprijtables.h"
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+#include "pcprijtables.h"
 #endif
 
 
@@ -47,48 +47,62 @@
 //    pCtx        pointer to the AES context
 //    pIV         pointer to the initialization vector
 */
-IPP_OWN_DEFN (void, cpProcessAES_ofb8, (const Ipp8u *pSrc, Ipp8u *pDst, int dataLen, int ofbBlkSize, const IppsAESSpec* pCtx, Ipp8u* pIV))
+/* clang-format off */
+IPP_OWN_DEFN (void, cpProcessAES_ofb8, (const Ipp8u *pSrc,
+                                        Ipp8u* pDst,
+                                        int dataLen,
+                                        int ofbBlkSize,
+                                        const IppsAESSpec* pCtx,
+                                        Ipp8u* pIV))
+/* clang-format on */
 {
-   /* setup encoder method */
-   RijnCipher encoder = RIJ_ENCODER(pCtx);
+    /* setup encoder method */
+    RijnCipher encoder = RIJ_ENCODER(pCtx);
 
-   Ipp32u tmpInpOut[2*NB(128)];
+    Ipp32u tmpInpOut[2 * NB(128)];
 
-   CopyBlock16(pIV, tmpInpOut);
+    CopyBlock16(pIV, tmpInpOut);
 
-   while(dataLen>=ofbBlkSize) {
-      /* block-by-block processing */
-      //encoder(tmpInpOut, tmpInpOut+NB(128), RIJ_NR(pCtx), RIJ_EKEYS(pCtx), (const Ipp32u (*)[256])RIJ_ENC_SBOX(pCtx));
-      #if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
-      encoder((Ipp8u*)tmpInpOut, (Ipp8u*)(tmpInpOut+NB(128)), RIJ_NR(pCtx), RIJ_EKEYS(pCtx), RijEncSbox/*NULL*/);
-      #else
-      encoder((Ipp8u*)tmpInpOut, (Ipp8u*)(tmpInpOut+NB(128)), RIJ_NR(pCtx), RIJ_EKEYS(pCtx), NULL);
-      #endif
+    while (dataLen >= ofbBlkSize) {
+/* block-by-block processing */
+//encoder(tmpInpOut, tmpInpOut+NB(128), RIJ_NR(pCtx), RIJ_EKEYS(pCtx), (const Ipp32u (*)[256])RIJ_ENC_SBOX(pCtx));
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
+        encoder((Ipp8u*)tmpInpOut,
+                (Ipp8u*)(tmpInpOut + NB(128)),
+                RIJ_NR(pCtx),
+                RIJ_EKEYS(pCtx),
+                RijEncSbox /*NULL*/);
+#else
+        encoder((Ipp8u*)tmpInpOut,
+                (Ipp8u*)(tmpInpOut + NB(128)),
+                RIJ_NR(pCtx),
+                RIJ_EKEYS(pCtx),
+                NULL);
+#endif
 
-      /* store output and shift inpBuffer for the next OFB operation */
-      if(ofbBlkSize==MBS_RIJ128) {
-         ((Ipp32u*)pDst)[0] = tmpInpOut[0+NB(128)]^((Ipp32u*)pSrc)[0];
-         ((Ipp32u*)pDst)[1] = tmpInpOut[1+NB(128)]^((Ipp32u*)pSrc)[1];
-         ((Ipp32u*)pDst)[2] = tmpInpOut[2+NB(128)]^((Ipp32u*)pSrc)[2];
-         ((Ipp32u*)pDst)[3] = tmpInpOut[3+NB(128)]^((Ipp32u*)pSrc)[3];
-         tmpInpOut[0] = tmpInpOut[0+NB(128)];
-         tmpInpOut[1] = tmpInpOut[1+NB(128)];
-         tmpInpOut[2] = tmpInpOut[2+NB(128)];
-         tmpInpOut[3] = tmpInpOut[3+NB(128)];
-      }
-      else {
-         XorBlock(pSrc, tmpInpOut+NB(128), pDst, ofbBlkSize);
-         CopyBlock16((Ipp8u*)tmpInpOut+ofbBlkSize, tmpInpOut);
-      }
+        /* store output and shift inpBuffer for the next OFB operation */
+        if (ofbBlkSize == MBS_RIJ128) {
+            ((Ipp32u*)pDst)[0] = tmpInpOut[0 + NB(128)] ^ ((Ipp32u*)pSrc)[0];
+            ((Ipp32u*)pDst)[1] = tmpInpOut[1 + NB(128)] ^ ((Ipp32u*)pSrc)[1];
+            ((Ipp32u*)pDst)[2] = tmpInpOut[2 + NB(128)] ^ ((Ipp32u*)pSrc)[2];
+            ((Ipp32u*)pDst)[3] = tmpInpOut[3 + NB(128)] ^ ((Ipp32u*)pSrc)[3];
+            tmpInpOut[0]       = tmpInpOut[0 + NB(128)];
+            tmpInpOut[1]       = tmpInpOut[1 + NB(128)];
+            tmpInpOut[2]       = tmpInpOut[2 + NB(128)];
+            tmpInpOut[3]       = tmpInpOut[3 + NB(128)];
+        } else {
+            XorBlock(pSrc, tmpInpOut + NB(128), pDst, ofbBlkSize);
+            CopyBlock16((Ipp8u*)tmpInpOut + ofbBlkSize, tmpInpOut);
+        }
 
-      pSrc += ofbBlkSize;
-      pDst += ofbBlkSize;
-      dataLen -= ofbBlkSize;
-   }
+        pSrc += ofbBlkSize;
+        pDst += ofbBlkSize;
+        dataLen -= ofbBlkSize;
+    }
 
-   /* update pIV */
-   CopyBlock16((Ipp8u*)tmpInpOut, pIV);
+    /* update pIV */
+    CopyBlock16((Ipp8u*)tmpInpOut, pIV);
 
-   /* clear secret data */
-   PurgeBlock(tmpInpOut, sizeof(tmpInpOut));
+    /* clear secret data */
+    PurgeBlock(tmpInpOut, sizeof(tmpInpOut));
 }

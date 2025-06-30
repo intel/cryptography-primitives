@@ -21,6 +21,7 @@
  * The parameters below are empirical and chosen in advance to guarantee
  * the high level of security protection against Mistletoe3 attack.
  */
+/* clang-format off */
 #define MISTLETOE3_MAX_CHUNK_SIZE   (16000)     /* maximum chunks size allowed to be processed without noise injection (in bytes) \
                                                    16000 bytes = 16*1000 bytes = 1000 AES blocks */
 #define MISTLETOE3_TARGET_SIZE      (800000000) /* expected sampling interval of the attacker. During the attack \
@@ -32,30 +33,30 @@
                                                    as processor, code implementation, power limit setting by the attacker, etc. \
                                                    For base noise level was selected a relatively safe value of 28, for user this parameter was \
                                                    introduced as abstract with tunable range [0,4] */
-
-#define MISTLETOE3_NOISE_RATE     ((double)MISTLETOE3_MAX_CHUNK_SIZE / \
-                                   (double)MISTLETOE3_TARGET_SIZE)
+/* clang-format on */
+#define MISTLETOE3_NOISE_RATE ((double)MISTLETOE3_MAX_CHUNK_SIZE / (double)MISTLETOE3_TARGET_SIZE)
 
 /* Structure containing noise parameters required for Mistletoe3 mitigation */
 typedef struct _cpAESNoiseParams {
-  Ipp32u rnd;         /* Random number value from previous noise injection */
-  Ipp32u noiseLevel;  /* Number of bits that should be taken from generated \
+    Ipp32u rnd;        /* Random number value from previous noise injection */
+    Ipp32u noiseLevel; /* Number of bits that should be taken from generated \
                          32-bit random value. noiseLevel == 0 -> mitigation is off */
 } cpAESNoiseParams;
 
-#define AES_NOISE_RAND(ctx)           ((ctx)->rnd)
-#define AES_NOISE_LEVEL(ctx)          ((ctx)->noiseLevel)
+#define AES_NOISE_RAND(ctx)  ((ctx)->rnd)
+#define AES_NOISE_LEVEL(ctx) ((ctx)->noiseLevel)
 
 /* size of _cpAESNoiseParams structure */
-__IPPCP_INLINE int cpSizeofNoise_Params(void)
-{
-   return sizeof(cpAESNoiseParams);
-}
+__IPPCP_INLINE int cpSizeofNoise_Params(void) { return sizeof(cpAESNoiseParams); }
 
-#define _ippcpDelay  OWNAPI(_ippcpDelay)
-   IPP_OWN_DECL(void, _ippcpDelay, (Ipp32u value))
+#define _ippcpDelay OWNAPI(_ippcpDelay)
+IPP_OWN_DECL(void, _ippcpDelay, (Ipp32u value))
 
-#define cpAESRandomNoise  OWNAPI(cpAESRandomNoise)
-   IPP_OWN_DECL(IppStatus, cpAESRandomNoise, (IppBitSupplier rndFunc, Ipp32u nBits, Ipp64f noiseRate, Ipp32u *pRndValue))
-
+/* clang-format off */
+#define cpAESRandomNoise OWNAPI(cpAESRandomNoise)
+IPP_OWN_DECL(IppStatus, cpAESRandomNoise, (IppBitSupplier rndFunc,
+                                           Ipp32u nBits,
+                                           Ipp64f noiseRate,
+                                           Ipp32u* pRndValue))
+/* clang-format on */
 #endif /* _PCP_AES_NOISE_H */

@@ -33,10 +33,10 @@
 // HMAC context
 */
 struct _cpHMAC {
-   Ipp32u   idCtx;               /* HMAC identifier   */
-   Ipp8u ipadKey[MBS_HASH_MAX];  /* inner padding key */
-   Ipp8u opadKey[MBS_HASH_MAX];  /* outer padding key */
-   IppsHashState hashCtx;        /* hash context      */
+    Ipp32u idCtx;                /* HMAC identifier   */
+    Ipp8u ipadKey[MBS_HASH_MAX]; /* inner padding key */
+    Ipp8u opadKey[MBS_HASH_MAX]; /* outer padding key */
+    IppsHashState hashCtx;       /* hash context      */
 };
 
 /* accessors */
@@ -45,7 +45,7 @@ struct _cpHMAC {
 #define HASH_CTX(stt)          ((stt)->hashCtx)
 #define HMAC_VALID_ID(stt)     ((((stt)->idCtx) ^ (Ipp32u)IPP_INT_PTR((stt))) == (Ipp32u)idCtxHMAC)
 
-#define IPAD            (0x36)   /* inner padding value */
-#define OPAD            (0x5C)   /* outer padding value */
+#define IPAD (0x36) /* inner padding value */
+#define OPAD (0x5C) /* outer padding value */
 
-#endif /* _PCP_HMAC_H */
+#endif              /* _PCP_HMAC_H */

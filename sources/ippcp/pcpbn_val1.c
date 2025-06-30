@@ -38,17 +38,13 @@
 *F*/
 
 /* BN(1) and reference */
-IPP_OWN_DEFN (IppsBigNumState*, cpBN_OneRef, (void))
+IPP_OWN_DEFN(IppsBigNumState*, cpBN_OneRef, (void))
 {
-   static IppsBigNumStateChunk cpChunk_BN1 = {
-      {
-         idCtxUnknown,
-         ippBigNumPOS,
-         1,1,
-         &cpChunk_BN1.value,&cpChunk_BN1.temporary
-      },
-      1,0
-   };
-   BN_SET_ID(&cpChunk_BN1.bn);
-   return &cpChunk_BN1.bn;
+    static IppsBigNumStateChunk cpChunk_BN1 = {
+        {idCtxUnknown, ippBigNumPOS, 1, 1, &cpChunk_BN1.value, &cpChunk_BN1.temporary},
+        1,
+        0
+    };
+    BN_SET_ID(&cpChunk_BN1.bn);
+    return &cpChunk_BN1.bn;
 }

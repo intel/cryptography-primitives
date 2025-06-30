@@ -52,28 +52,28 @@
 //    pState         pointer to the AES context
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_CMACSetupNoise,(Ipp32u noiseLevel, IppsAES_CMACState* pState))
+IPPFUN(IppStatus, ippsAES_CMACSetupNoise, (Ipp32u noiseLevel, IppsAES_CMACState* pState))
 {
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-   /* test context */
-   IPP_BAD_PTR1_RET(pState);
-   /* test ID */
-   IPP_BADARG_RET(!VALID_AESCMAC_ID(pState), ippStsContextMatchErr);
+    /* test context */
+    IPP_BAD_PTR1_RET(pState);
+    /* test ID */
+    IPP_BADARG_RET(!VALID_AESCMAC_ID(pState), ippStsContextMatchErr);
 
-   /* test noise level range */
-   IPP_BADARG_RET(noiseLevel > 4, ippStsLengthErr);
+    /* test noise level range */
+    IPP_BADARG_RET(noiseLevel > 4, ippStsLengthErr);
 
-   cpAESNoiseParams *params = (cpAESNoiseParams *)&AESCMAC_NOISE_PARAMS(pState);
+    cpAESNoiseParams* params = (cpAESNoiseParams*)&AESCMAC_NOISE_PARAMS(pState);
 
-   /* set up the parameters with initial values */
-   AES_NOISE_RAND(params)       = 0;
-   AES_NOISE_LEVEL(params)      = noiseLevel;
+    /* set up the parameters with initial values */
+    AES_NOISE_RAND(params)  = 0;
+    AES_NOISE_LEVEL(params) = noiseLevel;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 #else
-   /* To remove MSVC warning C4100: 'XXX': unreferenced formal parameter*/
-   IPP_UNREFERENCED_PARAMETER(noiseLevel);
-   IPP_UNREFERENCED_PARAMETER(pState);
-   return ippStsNotSupportedModeErr;
+    /* To remove MSVC warning C4100: 'XXX': unreferenced formal parameter*/
+    IPP_UNREFERENCED_PARAMETER(noiseLevel);
+    IPP_UNREFERENCED_PARAMETER(pState);
+    return ippStsNotSupportedModeErr;
 #endif
 }

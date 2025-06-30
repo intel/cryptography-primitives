@@ -54,30 +54,29 @@
 //    nBits    number of bits be requested
 //    pCtx     pointer to the context, unused, can be NULL
 *F*/
-IPPFUN(IppStatus, ippsPRNGenRDRAND,(Ipp32u* pRand, int nBits, void* pCtx))
+IPPFUN(IppStatus, ippsPRNGenRDRAND, (Ipp32u * pRand, int nBits, void* pCtx))
 {
-   /* test PRNG buffer */
-   IPP_BAD_PTR1_RET(pRand);
+    /* test PRNG buffer */
+    IPP_BAD_PTR1_RET(pRand);
 
-   /* test sizes */
-   IPP_BADARG_RET(nBits< 1, ippStsLengthErr);
+    /* test sizes */
+    IPP_BADARG_RET(nBits < 1, ippStsLengthErr);
 
-   IPP_UNREFERENCED_PARAMETER(pCtx);
+    IPP_UNREFERENCED_PARAMETER(pCtx);
 
-   #if ((_IPP>=_IPP_G9) || (_IPP32E>=_IPP32E_E9))
-   if( IsFeatureEnabled(ippCPUID_RDRAND) ) {
-      cpSize rndSize = BITS2WORD32_SIZE(nBits);
-      Ipp32u rndMask = MAKEMASK32(nBits);
+#if ((_IPP >= _IPP_G9) || (_IPP32E >= _IPP32E_E9))
+    if (IsFeatureEnabled(ippCPUID_RDRAND)) {
+        cpSize rndSize = BITS2WORD32_SIZE(nBits);
+        Ipp32u rndMask = MAKEMASK32(nBits);
 
-      if(cpRandHW_buffer(pRand, rndSize)) {
-         pRand[rndSize-1] &= rndMask;
-         return ippStsNoErr;
-      }
-      else
-         return ippStsErr;
-   }
-   /* unsupported rdrand instruction */
-   else
-   #endif
-      IPP_ERROR_RET(ippStsNotSupportedModeErr);
+        if (cpRandHW_buffer(pRand, rndSize)) {
+            pRand[rndSize - 1] &= rndMask;
+            return ippStsNoErr;
+        } else
+            return ippStsErr;
+    }
+    /* unsupported rdrand instruction */
+    else
+#endif
+        IPP_ERROR_RET(ippStsNotSupportedModeErr);
 }

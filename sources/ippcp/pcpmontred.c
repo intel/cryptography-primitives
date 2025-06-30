@@ -23,46 +23,45 @@
 #include "pcpbnuarith.h"
 
 
-#if !((_IPP==_IPP_W7) || \
-      (_IPP==_IPP_T7) || \
-      (_IPP==_IPP_V8) || \
-      (_IPP==_IPP_P8) || \
-      (_IPP>=_IPP_G9) || \
-      (_IPP==_IPP_S8) || \
-      (_IPP32E==_IPP32E_M7) || \
-      (_IPP32E==_IPP32E_U8) || \
-      (_IPP32E==_IPP32E_Y8) || \
-      (_IPP32E>=_IPP32E_E9) || \
-      (_IPP32E==_IPP32E_N8)) || \
-      defined(_USE_C_cpMontRedAdc_BNU_)
+#if !((_IPP == _IPP_W7) || (_IPP == _IPP_T7) || (_IPP == _IPP_V8) || (_IPP == _IPP_P8) || \
+      (_IPP >= _IPP_G9) || (_IPP == _IPP_S8) || (_IPP32E == _IPP32E_M7) ||                \
+      (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) || (_IPP32E >= _IPP32E_E9) ||    \
+      (_IPP32E == _IPP32E_N8)) ||                                                         \
+    defined(_USE_C_cpMontRedAdc_BNU_)
 
 #define cpMontRedAdc_BNU OWNAPI(cpMontRedAdc_BNU)
 
-IPP_OWN_DEFN (void, cpMontRedAdc_BNU, (BNU_CHUNK_T* pR, BNU_CHUNK_T* pProduct, const BNU_CHUNK_T* pModulus, cpSize nsM, BNU_CHUNK_T m0))
+/* clang-format off */
+IPP_OWN_DEFN(void, cpMontRedAdc_BNU, (BNU_CHUNK_T* pR,
+                                      BNU_CHUNK_T* pProduct,
+                                      const BNU_CHUNK_T* pModulus,
+                                      cpSize nsM,
+                                      BNU_CHUNK_T m0))
+/* clang-format on */
 {
-   BNU_CHUNK_T carry;
-   BNU_CHUNK_T extension;
+    BNU_CHUNK_T carry;
+    BNU_CHUNK_T extension;
 
-   cpSize n;
-   for(n=0, carry = 0; n<(nsM-1); n++) {
-      BNU_CHUNK_T u = pProduct[n]*m0;
-      BNU_CHUNK_T t = pProduct[nsM +n +1] + carry;
+    cpSize n;
+    for (n = 0, carry = 0; n < (nsM - 1); n++) {
+        BNU_CHUNK_T u = pProduct[n] * m0;
+        BNU_CHUNK_T t = pProduct[nsM + n + 1] + carry;
 
-      extension = cpAddMulDgt_BNU(pProduct+n, pModulus, nsM, u);
-      ADD_AB(carry, pProduct[nsM+n], pProduct[nsM+n], extension);
-      t += carry;
+        extension = cpAddMulDgt_BNU(pProduct + n, pModulus, nsM, u);
+        ADD_AB(carry, pProduct[nsM + n], pProduct[nsM + n], extension);
+        t += carry;
 
-      carry = t<pProduct[nsM+n+1];
-      pProduct[nsM+n+1] = t;
-   }
+        carry                 = t < pProduct[nsM + n + 1];
+        pProduct[nsM + n + 1] = t;
+    }
 
-   m0 *= pProduct[nsM-1];
-   extension = cpAddMulDgt_BNU(pProduct+nsM-1, pModulus, nsM, m0);
-   ADD_AB(extension, pProduct[2*nsM-1], pProduct[2*nsM-1], extension);
+    m0 *= pProduct[nsM - 1];
+    extension = cpAddMulDgt_BNU(pProduct + nsM - 1, pModulus, nsM, m0);
+    ADD_AB(extension, pProduct[2 * nsM - 1], pProduct[2 * nsM - 1], extension);
 
-   carry |= extension;
-   carry -= cpSub_BNU(pR, pProduct+nsM, pModulus, nsM);
-   /* condition copy: R = carry? Product+mSize : R */
-   MASKED_COPY_BNU(pR, carry, pProduct+nsM, pR, nsM);
+    carry |= extension;
+    carry -= cpSub_BNU(pR, pProduct + nsM, pModulus, nsM);
+    /* condition copy: R = carry? Product+mSize : R */
+    MASKED_COPY_BNU(pR, carry, pProduct + nsM, pR, nsM);
 }
 #endif

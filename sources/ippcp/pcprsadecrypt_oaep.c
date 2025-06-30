@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     RSAES-OAEP Encryption/Decryption Functions
-// 
+//
 //  Contents:
 //        ippsRSADecrypt_OAEP()
 //
@@ -32,8 +32,8 @@
 #include "hash/pcphash.h"
 
 // ICX compiler optimizations lead to incorrect execution on windows
-#if(_IPP32E>=_IPP32E_K0) && defined (__INTEL_LLVM_COMPILER) && defined( _WIN64 )
-#pragma optimize( "", off )
+#if (_IPP32E >= _IPP32E_K0) && defined(__INTEL_LLVM_COMPILER) && defined(_WIN64)
+#pragma optimize("", off)
 #endif
 
 /*F*
@@ -77,150 +77,162 @@
 //    hashAlg     hash alg ID
 //    pBuffer     pointer to scratch buffer
 *F*/
+
+/* clang-format off */
 IPPFUN(IppStatus, ippsRSADecrypt_OAEP, (const Ipp8u* pSrc,
-                                        const Ipp8u* pLab, int labLen,
-                                              Ipp8u* pDst, int* pDstLen,
+                                        const Ipp8u* pLab,
+                                        int labLen,
+                                        Ipp8u* pDst,
+                                        int* pDstLen,
                                         const IppsRSAPrivateKeyState* pKey,
-                                              IppHashAlgId hashAlg,
-                                              Ipp8u* pScratchBuffer))
+                                        IppHashAlgId hashAlg,
+                                        Ipp8u* pScratchBuffer))
+/* clang-format on */
 {
-   int hashLen;
+    int hashLen;
 
-   /* test hash algorithm ID */
-   hashAlg = cpValidHashAlg(hashAlg);
-   IPP_BADARG_RET(ippHashAlg_Unknown == hashAlg, ippStsNotSupportedModeErr);
+    /* test hash algorithm ID */
+    hashAlg = cpValidHashAlg(hashAlg);
+    IPP_BADARG_RET(ippHashAlg_Unknown == hashAlg, ippStsNotSupportedModeErr);
 
-   /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
-   IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
+    /* check if the algorithm is from the sha3 family (SHA3 is not supported) */
+    IPP_BADARG_RET(cpIsSHA3AlgID(hashAlg), ippStsNotSupportedModeErr);
 
-   /* test data pointer */
-   IPP_BAD_PTR3_RET(pSrc, pDst, pDstLen);
+    /* test data pointer */
+    IPP_BAD_PTR3_RET(pSrc, pDst, pDstLen);
 
-   IPP_BADARG_RET(!pLab && labLen, ippStsNullPtrErr);
+    IPP_BADARG_RET(!pLab && labLen, ippStsNullPtrErr);
 
-   IPP_BAD_PTR2_RET(pKey, pScratchBuffer);
-   IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(pKey), ippStsContextMatchErr);
-   IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
+    IPP_BAD_PTR2_RET(pKey, pScratchBuffer);
+    IPP_BADARG_RET(!RSA_PRV_KEY_VALID_ID(pKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!RSA_PRV_KEY_IS_SET(pKey), ippStsIncompleteContextErr);
 
-   /* test hash length */
-   IPP_BADARG_RET(labLen < 0, ippStsLengthErr);
+    /* test hash length */
+    IPP_BADARG_RET(labLen < 0, ippStsLengthErr);
 
-   hashLen = cpHashSize(hashAlg);
-   /* test compatibility of RSA and hash length */
-   IPP_BADARG_RET(BITS2WORD8_SIZE(RSA_PRV_KEY_BITSIZE_N(pKey)) < (2 * hashLen + 2), ippStsLengthErr);
+    hashLen = cpHashSize(hashAlg);
+    /* test compatibility of RSA and hash length */
+    IPP_BADARG_RET(BITS2WORD8_SIZE(RSA_PRV_KEY_BITSIZE_N(pKey)) < (2 * hashLen + 2),
+                   ippStsLengthErr);
 
-   {
-      /* size of RSA modulus in bytes and chunks */
-      int k = BITS2WORD8_SIZE(RSA_PRV_KEY_BITSIZE_N(pKey));
-      cpSize nsN = BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_N(pKey));
+    {
+        /* size of RSA modulus in bytes and chunks */
+        int k      = BITS2WORD8_SIZE(RSA_PRV_KEY_BITSIZE_N(pKey));
+        cpSize nsN = BITS_BNU_CHUNK(RSA_PRV_KEY_BITSIZE_N(pKey));
 
-      /* align resource */
-      BNU_CHUNK_T* pResource = (BNU_CHUNK_T*)(IPP_ALIGNED_PTR(pScratchBuffer, (int)sizeof(BNU_CHUNK_T)));
+        /* align resource */
+        BNU_CHUNK_T* pResource =
+            (BNU_CHUNK_T*)(IPP_ALIGNED_PTR(pScratchBuffer, (int)sizeof(BNU_CHUNK_T)));
 
-      /* temporary BN */
-      __ALIGN8 IppsBigNumState tmpBN;
-      BN_Make(pResource, pResource+ nsN + 1, nsN, &tmpBN);
-      pResource += (nsN + 1) * 2;              /* update buffer pointer */
-      ippsSetOctString_BN(pSrc, k, &tmpBN);  /* convert ciphertext to BigNum */
-      /* make sure ciphertext < RSA modulus N */
-      IPP_BADARG_RET(0 <= cpCmp_BNU(BN_NUMBER(&tmpBN), BN_SIZE(&tmpBN),
-         MOD_MODULUS(RSA_PRV_KEY_NMONT(pKey)), MOD_LEN(RSA_PRV_KEY_NMONT(pKey))), ippStsOutOfRangeErr);
+        /* temporary BN */
+        __ALIGN8 IppsBigNumState tmpBN;
+        BN_Make(pResource, pResource + nsN + 1, nsN, &tmpBN);
+        pResource += (nsN + 1) * 2;           /* update buffer pointer */
+        ippsSetOctString_BN(pSrc, k, &tmpBN); /* convert ciphertext to BigNum */
+        /* make sure ciphertext < RSA modulus N */
+        IPP_BADARG_RET(0 <= cpCmp_BNU(BN_NUMBER(&tmpBN),
+                                      BN_SIZE(&tmpBN),
+                                      MOD_MODULUS(RSA_PRV_KEY_NMONT(pKey)),
+                                      MOD_LEN(RSA_PRV_KEY_NMONT(pKey))),
+                       ippStsOutOfRangeErr);
 
-      /* RSA decryption */
+        /* RSA decryption */
 
-      if (RSA_PRV_KEY1_VALID_ID(pKey))
-         gsRSAprv_cipher(&tmpBN, &tmpBN, pKey, pResource);
-      else
-         gsRSAprv_cipher_crt(&tmpBN, &tmpBN, pKey, pResource);
+        if (RSA_PRV_KEY1_VALID_ID(pKey))
+            gsRSAprv_cipher(&tmpBN, &tmpBN, pKey, pResource);
+        else
+            gsRSAprv_cipher_crt(&tmpBN, &tmpBN, pKey, pResource);
 
-      /*
+        /*
       // EME-OAEP decoding
       */
-      {
-         Ipp8u* pEM = (Ipp8u*)(BN_BUFFER(&tmpBN));
-         Ipp8u* pBuffer = (Ipp8u*)BN_NUMBER(&tmpBN);
+        {
+            Ipp8u* pEM     = (Ipp8u*)(BN_BUFFER(&tmpBN));
+            Ipp8u* pBuffer = (Ipp8u*)BN_NUMBER(&tmpBN);
 
-         int i;
-         /* convert RSA encoded into EM */
-         for (i = 0; i < k; i++) {
-            pEM[i] = pBuffer[k - 1 - i];
-         }
+            int i;
+            /* convert RSA encoded into EM */
+            for (i = 0; i < k; i++) {
+                pEM[i] = pBuffer[k - 1 - i];
+            }
 
-         /*
+            /*
          // OAEP EM decoding, EM = Y || maskedSeed || maskedDB
          */
-         {
-            /* check that Y == 0 */
-            BNU_CHUNK_T res = cpIsZero_ct(pEM[0]);
-
-            Ipp8u* pSeed = pEM + 1;
-            Ipp8u* pDB = pEM + 1 + hashLen; /* DB = lHash || PS || Msg */
-            int dbLen = k - 1 - hashLen;
-            int maxMsgLen = dbLen - hashLen - 1;
-
-            /* seed = maskedSeed ^ seedMask, seedMask = MGF(maskedDB, hashLen) */
-            ippsMGF(pDB, dbLen, pBuffer, hashLen, hashAlg);
-            XorBlock(pSeed, pBuffer, pSeed, hashLen);
-
-            /* DB = maskedDB ^ dbMask, dbMask = MGF (seed, dbLen) */
-            ippsMGF(pSeed, hashLen, pBuffer, dbLen, hashAlg);
-            XorBlock(pDB, pBuffer, pDB, dbLen);
-
-            /* re-compute Hash(Label) and compare with lHash */
-            ippsHashMessage(pLab, labLen, pBuffer, hashAlg);
-            res &= cpIsEquBlock_ct(pDB, pBuffer, hashLen);
-
-            /* detect the padding consists of a number of 0x00-bytes, followed by a 0x01 */
-            BNU_CHUNK_T byte_01_found = 0;
-            BNU_CHUNK_T byte_01_idx = 0;
-            for (i = hashLen; i < dbLen; i++) {
-               BNU_CHUNK_T byte_00 = cpIsZero_ct(pDB[i]);        /* mask if byte is 0x00 */
-               BNU_CHUNK_T byte_01 = cpIsZero_ct(pDB[i] ^ 0x01);   /* mask if byte is 0x01 */
-               /* set index of byte 01_idx if byte 01 found */
-               byte_01_idx = cpSelect_ct(~byte_01_found & byte_01, (BNU_CHUNK_T)i, byte_01_idx);
-               /* set flag byte_01_found */
-               byte_01_found |= byte_01;
-               /* update EM encoding result */
-               res &= (byte_01_found | byte_00);
-            }
-            /* update EM encoding result if byte_01_found */
-            res &= byte_01_found;
-
-            /* copy decoded message to pDst */
             {
-               /* move decoded message by (maxMsgLen-msgLen) left
+                /* check that Y == 0 */
+                BNU_CHUNK_T res = cpIsZero_ct(pEM[0]);
+
+                Ipp8u* pSeed  = pEM + 1;
+                Ipp8u* pDB    = pEM + 1 + hashLen; /* DB = lHash || PS || Msg */
+                int dbLen     = k - 1 - hashLen;
+                int maxMsgLen = dbLen - hashLen - 1;
+
+                /* seed = maskedSeed ^ seedMask, seedMask = MGF(maskedDB, hashLen) */
+                ippsMGF(pDB, dbLen, pBuffer, hashLen, hashAlg);
+                XorBlock(pSeed, pBuffer, pSeed, hashLen);
+
+                /* DB = maskedDB ^ dbMask, dbMask = MGF (seed, dbLen) */
+                ippsMGF(pSeed, hashLen, pBuffer, dbLen, hashAlg);
+                XorBlock(pDB, pBuffer, pDB, dbLen);
+
+                /* re-compute Hash(Label) and compare with lHash */
+                ippsHashMessage(pLab, labLen, pBuffer, hashAlg);
+                res &= cpIsEquBlock_ct(pDB, pBuffer, hashLen);
+
+                /* detect the padding consists of a number of 0x00-bytes, followed by a 0x01 */
+                BNU_CHUNK_T byte_01_found = 0;
+                BNU_CHUNK_T byte_01_idx   = 0;
+                for (i = hashLen; i < dbLen; i++) {
+                    BNU_CHUNK_T byte_00 = cpIsZero_ct(pDB[i]);        /* mask if byte is 0x00 */
+                    BNU_CHUNK_T byte_01 = cpIsZero_ct(pDB[i] ^ 0x01); /* mask if byte is 0x01 */
+                    /* set index of byte 01_idx if byte 01 found */
+                    byte_01_idx =
+                        cpSelect_ct(~byte_01_found & byte_01, (BNU_CHUNK_T)i, byte_01_idx);
+                    /* set flag byte_01_found */
+                    byte_01_found |= byte_01;
+                    /* update EM encoding result */
+                    res &= (byte_01_found | byte_00);
+                }
+                /* update EM encoding result if byte_01_found */
+                res &= byte_01_found;
+
+                /* copy decoded message to pDst */
+                {
+                    /* move decoded message by (maxMsgLen-msgLen) left
                */
-               int msgIdx = (int)byte_01_idx + 1; /* decoded message index inside DB */
-               int msgLen = dbLen - msgIdx;  /* length of decoded message */
+                    int msgIdx = (int)byte_01_idx + 1; /* decoded message index inside DB */
+                    int msgLen = dbLen - msgIdx;       /* length of decoded message */
 
-               BNU_CHUNK_T mask;
-               for(msgIdx = 1; msgIdx < maxMsgLen; msgIdx <<= 1) {
-                  mask = cpIsEqu_ct((BNU_CHUNK_T)(msgIdx & (maxMsgLen - msgLen)), (BNU_CHUNK_T)msgIdx);
-                  for(i = hashLen+1; i < (dbLen-msgIdx); i++)
-                     pDB[i] = cpSelect_ct_8u(mask, pDB[i + msgIdx], pDB[i]);
-               }
+                    BNU_CHUNK_T mask;
+                    for (msgIdx = 1; msgIdx < maxMsgLen; msgIdx <<= 1) {
+                        mask = cpIsEqu_ct((BNU_CHUNK_T)(msgIdx & (maxMsgLen - msgLen)),
+                                          (BNU_CHUNK_T)msgIdx);
+                        for (i = hashLen + 1; i < (dbLen - msgIdx); i++)
+                            pDB[i] = cpSelect_ct_8u(mask, pDB[i + msgIdx], pDB[i]);
+                    }
 
-               /* copy decoded message */
-               for(i = 0; i < maxMsgLen; i++) {
-                  mask = res & cpIsLt_ct((BNU_CHUNK_T)i, (BNU_CHUNK_T)msgLen);
-                  pDst[i] = cpSelect_ct_8u(mask, pDB[i + hashLen + 1], pDst[i]);
-               }
+                    /* copy decoded message */
+                    for (i = 0; i < maxMsgLen; i++) {
+                        mask    = res & cpIsLt_ct((BNU_CHUNK_T)i, (BNU_CHUNK_T)msgLen);
+                        pDst[i] = cpSelect_ct_8u(mask, pDB[i + hashLen + 1], pDst[i]);
+                    }
 
-               /* decoded message length */
-               *pDstLen = cpSelect_ct_int(res, msgLen, -1);
+                    /* decoded message length */
+                    *pDstLen = cpSelect_ct_int(res, msgLen, -1);
+                }
+
+                /* clean */
+                PurgeBlock(pEM, k);
+                PurgeBlock(pBuffer, k);
+
+                /* return error status if is */
+                return (IppStatus)cpSelect_ct_int(res, ippStsNoErr, ippStsUnderRunErr);
             }
-
-            /* clean */
-            PurgeBlock(pEM, k);
-            PurgeBlock(pBuffer, k);
-
-            /* return error status if is */
-            return (IppStatus)cpSelect_ct_int(res, ippStsNoErr, ippStsUnderRunErr);
-         }
-      }
-   }
+        }
+    }
 }
 
-#if(_IPP32E>=_IPP32E_K0) && defined (__INTEL_LLVM_COMPILER) && defined( _WIN64 )
-#pragma optimize( "", on )
+#if (_IPP32E >= _IPP32E_K0) && defined(__INTEL_LLVM_COMPILER) && defined(_WIN64)
+#pragma optimize("", on)
 #endif

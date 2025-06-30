@@ -14,16 +14,16 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Encrypt byte data stream according to TDES (OFB mode)
-// 
+//
 //  Contents:
 //     ippsTDESEncryptOCB(), ippsTDESDecryptOCB()
-// 
-// 
+//
+//
 */
 
 #include "owndefs.h"
@@ -31,46 +31,46 @@
 #include "owncp.h"
 #include "pcpdes.h"
 #include "pcptool.h"
-static
-void cpTDES_OFB8(const Ipp8u *pSrc, Ipp8u *pDst, int len, int ofbBlkSize,
-                  const IppsDESSpec* pCtx1,
-                  const IppsDESSpec* pCtx2,
-                  const IppsDESSpec* pCtx3,
+static void cpTDES_OFB8(const Ipp8u* pSrc,
+                        Ipp8u* pDst,
+                        int len,
+                        int ofbBlkSize,
+                        const IppsDESSpec* pCtx1,
+                        const IppsDESSpec* pCtx2,
+                        const IppsDESSpec* pCtx3,
                         Ipp8u* pIV)
 {
-   Ipp64u inpBuffer;
-   Ipp64u outBuffer;
+    Ipp64u inpBuffer;
+    Ipp64u outBuffer;
 
-   CopyBlock8(pIV, &inpBuffer);
+    CopyBlock8(pIV, &inpBuffer);
 
-   while(len>=ofbBlkSize) {
-      /* block-by-block processing */
-      outBuffer = Cipher_DES(inpBuffer, DES_EKEYS(pCtx1), DESspbox);
-      outBuffer = Cipher_DES(outBuffer, DES_DKEYS(pCtx2), DESspbox);
-      outBuffer = Cipher_DES(outBuffer, DES_EKEYS(pCtx3), DESspbox);
+    while (len >= ofbBlkSize) {
+        /* block-by-block processing */
+        outBuffer = Cipher_DES(inpBuffer, DES_EKEYS(pCtx1), DESspbox);
+        outBuffer = Cipher_DES(outBuffer, DES_DKEYS(pCtx2), DESspbox);
+        outBuffer = Cipher_DES(outBuffer, DES_EKEYS(pCtx3), DESspbox);
 
-      /* store output */
-      XorBlock(pSrc, &outBuffer, pDst, ofbBlkSize);
+        /* store output */
+        XorBlock(pSrc, &outBuffer, pDst, ofbBlkSize);
 
-      /* shift inpBuffer for the next OFB operation */
-      if(MBS_DES==ofbBlkSize)
-         inpBuffer = outBuffer;
-      else
-         #if (IPP_ENDIAN == IPP_BIG_ENDIAN)
-         inpBuffer = LSL64(inpBuffer, ofbBlkSize*8)
-                    |LSR64(outBuffer, 64-ofbBlkSize*8);
-         #else
-         inpBuffer = LSR64(inpBuffer, ofbBlkSize*8)
-                    |LSL64(outBuffer, 64-ofbBlkSize*8);
-         #endif
+        /* shift inpBuffer for the next OFB operation */
+        if (MBS_DES == ofbBlkSize)
+            inpBuffer = outBuffer;
+        else
+#if (IPP_ENDIAN == IPP_BIG_ENDIAN)
+            inpBuffer = LSL64(inpBuffer, ofbBlkSize * 8) | LSR64(outBuffer, 64 - ofbBlkSize * 8);
+#else
+            inpBuffer = LSR64(inpBuffer, ofbBlkSize * 8) | LSL64(outBuffer, 64 - ofbBlkSize * 8);
+#endif
 
-      pSrc += ofbBlkSize;
-      pDst += ofbBlkSize;
-      len  -= ofbBlkSize;
-   }
+        pSrc += ofbBlkSize;
+        pDst += ofbBlkSize;
+        len -= ofbBlkSize;
+    }
 
-   /* update pIV */
-   CopyBlock8(&inpBuffer, pIV);
+    /* update pIV */
+    CopyBlock8(&inpBuffer, pIV);
 }
 
 
@@ -101,31 +101,36 @@ void cpTDES_OFB8(const Ipp8u *pSrc, Ipp8u *pDst, int len, int ofbBlkSize,
 //    pIV         pointer to the initialization vector
 //
 *F*/
-IPPFUN(IppStatus, ippsTDESEncryptOFB,(const Ipp8u* pSrc, Ipp8u* pDst, int len, int ofbBlkSize,
-                                      const IppsDESSpec* pCtx1,
-                                      const IppsDESSpec* pCtx2,
-                                      const IppsDESSpec* pCtx3,
-                                            Ipp8u* pIV))
+/* clang-format off */
+IPPFUN(IppStatus, ippsTDESEncryptOFB, (const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int len,
+                                       int ofbBlkSize,
+                                       const IppsDESSpec* pCtx1,
+                                       const IppsDESSpec* pCtx2,
+                                       const IppsDESSpec* pCtx3,
+                                       Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test contexts */
-   IPP_BAD_PTR3_RET(pCtx1, pCtx2, pCtx3);
+    /* test contexts */
+    IPP_BAD_PTR3_RET(pCtx1, pCtx2, pCtx3);
 
-   /* test context validity */
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx1), ippStsContextMatchErr);
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx2), ippStsContextMatchErr);
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx3), ippStsContextMatchErr);
+    /* test context validity */
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx1), ippStsContextMatchErr);
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx2), ippStsContextMatchErr);
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx3), ippStsContextMatchErr);
 
-   /* test source and destination pointers */
-   IPP_BAD_PTR3_RET(pSrc, pDst, pIV);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test OFB value */
-   IPP_BADARG_RET(((1>ofbBlkSize) || (MBS_DES<ofbBlkSize)), ippStsOFBSizeErr);
-   /* test stream integrity */
-   IPP_BADARG_RET((len % ofbBlkSize), ippStsUnderRunErr);
+    /* test source and destination pointers */
+    IPP_BAD_PTR3_RET(pSrc, pDst, pIV);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test OFB value */
+    IPP_BADARG_RET(((1 > ofbBlkSize) || (MBS_DES < ofbBlkSize)), ippStsOFBSizeErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len % ofbBlkSize), ippStsUnderRunErr);
 
-   cpTDES_OFB8(pSrc, pDst, len, ofbBlkSize, pCtx1,pCtx2,pCtx3, pIV);
-   return ippStsNoErr;
+    cpTDES_OFB8(pSrc, pDst, len, ofbBlkSize, pCtx1, pCtx2, pCtx3, pIV);
+    return ippStsNoErr;
 }
 
 /*F*
@@ -156,29 +161,34 @@ IPPFUN(IppStatus, ippsTDESEncryptOFB,(const Ipp8u* pSrc, Ipp8u* pDst, int len, i
 //
 *F*/
 
-IPPFUN(IppStatus, ippsTDESDecryptOFB,(const Ipp8u* pSrc, Ipp8u* pDst, int len, int ofbBlkSize,
-                                      const IppsDESSpec* pCtx1,
-                                      const IppsDESSpec* pCtx2,
-                                      const IppsDESSpec* pCtx3,
-                                            Ipp8u* pIV))
+/* clang-format off */
+IPPFUN(IppStatus, ippsTDESDecryptOFB, (const Ipp8u* pSrc,
+                                       Ipp8u* pDst,
+                                       int len,
+                                       int ofbBlkSize,
+                                       const IppsDESSpec* pCtx1,
+                                       const IppsDESSpec* pCtx2,
+                                       const IppsDESSpec* pCtx3,
+                                       Ipp8u* pIV))
+/* clang-format on */
 {
-   /* test contexts */
-   IPP_BAD_PTR3_RET(pCtx1, pCtx2, pCtx3);
+    /* test contexts */
+    IPP_BAD_PTR3_RET(pCtx1, pCtx2, pCtx3);
 
-   /* test context validity */
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx1), ippStsContextMatchErr);
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx2), ippStsContextMatchErr);
-   IPP_BADARG_RET(!VALID_DES_ID(pCtx3), ippStsContextMatchErr);
+    /* test context validity */
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx1), ippStsContextMatchErr);
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx2), ippStsContextMatchErr);
+    IPP_BADARG_RET(!VALID_DES_ID(pCtx3), ippStsContextMatchErr);
 
-   /* test source and destination pointers */
-   IPP_BAD_PTR3_RET(pSrc, pDst, pIV);
-   /* test stream length */
-   IPP_BADARG_RET((len<1), ippStsLengthErr);
-   /* test OFB value */
-   IPP_BADARG_RET(((1>ofbBlkSize) || (MBS_DES<ofbBlkSize)), ippStsOFBSizeErr);
-   /* test stream integrity */
-   IPP_BADARG_RET((len % ofbBlkSize), ippStsUnderRunErr);
+    /* test source and destination pointers */
+    IPP_BAD_PTR3_RET(pSrc, pDst, pIV);
+    /* test stream length */
+    IPP_BADARG_RET((len < 1), ippStsLengthErr);
+    /* test OFB value */
+    IPP_BADARG_RET(((1 > ofbBlkSize) || (MBS_DES < ofbBlkSize)), ippStsOFBSizeErr);
+    /* test stream integrity */
+    IPP_BADARG_RET((len % ofbBlkSize), ippStsUnderRunErr);
 
-   cpTDES_OFB8(pSrc, pDst, len, ofbBlkSize, pCtx1,pCtx2,pCtx3, pIV);
-   return ippStsNoErr;
+    cpTDES_OFB8(pSrc, pDst, len, ofbBlkSize, pCtx1, pCtx2, pCtx3, pIV);
+    return ippStsNoErr;
 }

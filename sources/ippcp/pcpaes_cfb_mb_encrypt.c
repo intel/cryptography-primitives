@@ -44,7 +44,7 @@
  *    \param[in]   len                  Pointer to the array of input buffer lengths (in bytes)
  *    \param[in]   pCtx                 Pointer to the array of AES contexts
  *    \param[in]   pIV                  Pointer to the array of initialization vectors (IV)
- *    \param[out]  status               Pointer to the IppStatus array that contains status 
+ *    \param[out]  status               Pointer to the IppStatus array that contains status
  *                                      for each processed buffer in encryption operation
  *    \param[in]   numBuffers           Number of buffers to be processed
  *
@@ -64,14 +64,21 @@
  */
 
 /* Work Load Size from Buffers */
-#define WORKLOAD_LINES_16 (AES_MB_MAX_KERNEL_SIZE)    /* size 16 */
-#define WORKLOAD_LINES_8 (AES_MB_MAX_KERNEL_SIZE / 2) /* size  8 */
-#define WORKLOAD_LINES_4 (AES_MB_MAX_KERNEL_SIZE / 4) /* size  4 */
+#define WORKLOAD_LINES_16 (AES_MB_MAX_KERNEL_SIZE)     /* size 16 */
+#define WORKLOAD_LINES_8  (AES_MB_MAX_KERNEL_SIZE / 2) /* size  8 */
+#define WORKLOAD_LINES_4  (AES_MB_MAX_KERNEL_SIZE / 4) /* size  4 */
 
 
-IPPFUN(IppStatus, ippsAES_EncryptCFB16_MB, (const Ipp8u* pSrc[], Ipp8u* pDst[], int len[], const IppsAESSpec* pCtx[], 
-                                            const Ipp8u* pIV[], IppStatus status[], int numBuffers))
-{  
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_EncryptCFB16_MB, (const Ipp8u* pSrc[],
+                                            Ipp8u* pDst[],
+                                            int len[],
+                                            const IppsAESSpec* pCtx[],
+                                            const Ipp8u* pIV[],
+                                            IppStatus status[],
+                                            int numBuffers))
+/* clang-format on */
+{
     int i;
 
     // Check input pointers
@@ -86,28 +93,28 @@ IPPFUN(IppStatus, ippsAES_EncryptCFB16_MB, (const Ipp8u* pSrc[], Ipp8u* pDst[], 
     for (i = 0; i < numBuffers; i++) {
         // Test source, target buffers and initialization pointers
         if (pSrc[i] == NULL || pDst[i] == NULL || pIV[i] == NULL || pCtx[i] == NULL) {
-            status[i] = ippStsNullPtrErr;
+            status[i]         = ippStsNullPtrErr;
             isAllBuffersValid = 0;
             continue;
         }
 
         // Test the context ID
-        if(!VALID_AES_ID(pCtx[i])) {
-            status[i] = ippStsContextMatchErr;
+        if (!VALID_AES_ID(pCtx[i])) {
+            status[i]         = ippStsContextMatchErr;
             isAllBuffersValid = 0;
             continue;
         }
 
         // Test stream length
         if (len[i] < 1) {
-            status[i] = ippStsLengthErr;
+            status[i]         = ippStsLengthErr;
             isAllBuffersValid = 0;
             continue;
         }
 
         // Test stream integrity
         if ((len[i] % CFB16_BLOCK_SIZE)) {
-            status[i] = ippStsUnderRunErr;
+            status[i]         = ippStsUnderRunErr;
             isAllBuffersValid = 0;
             continue;
         }
@@ -124,24 +131,25 @@ IPPFUN(IppStatus, ippsAES_EncryptCFB16_MB, (const Ipp8u* pSrc[], Ipp8u* pDst[], 
         IPP_BADARG_RET((RIJ_NK(pCtx[i]) != referenceKeySize), ippStsContextMatchErr);
     }
 
-    #if (_IPP32E>=_IPP32E_Y8)
+#if (_IPP32E >= _IPP32E_Y8)
     Ipp32u const* loc_enc_keys[AES_MB_MAX_KERNEL_SIZE];
     Ipp8u const* loc_src[AES_MB_MAX_KERNEL_SIZE];
     Ipp8u* loc_dst[AES_MB_MAX_KERNEL_SIZE];
     Ipp8u const* loc_iv[AES_MB_MAX_KERNEL_SIZE];
     int loc_len[AES_MB_MAX_KERNEL_SIZE];
     int buffersProcessed = 0;
-    int numRounds = 0;
-    #endif
+    int numRounds        = 0;
+#endif
 
-    #if(_IPP32E>=_IPP32E_K1)
+#if (_IPP32E >= _IPP32E_K1)
     if (IsFeatureEnabled(ippCPUID_AVX512VAES)) {
         int workLoadSize = 0;
-        while(numBuffers > 0) {
+        while (numBuffers > 0) {
             /* init work load size */
-            if (numBuffers > WORKLOAD_LINES_8) { /* size 16 */
+            if (numBuffers > WORKLOAD_LINES_8) {                           /* size 16 */
                 workLoadSize = WORKLOAD_LINES_16;
-            } else if (numBuffers > WORKLOAD_LINES_4 && numBuffers <= WORKLOAD_LINES_8) { /* size  8 */
+            } else if (numBuffers > WORKLOAD_LINES_4 &&
+                       numBuffers <= WORKLOAD_LINES_8) {                   /* size  8 */
                 workLoadSize = WORKLOAD_LINES_8;
             } else if (numBuffers > 0 && numBuffers <= WORKLOAD_LINES_4) { /* size  4 */
                 workLoadSize = WORKLOAD_LINES_4;
@@ -188,11 +196,11 @@ IPPFUN(IppStatus, ippsAES_EncryptCFB16_MB, (const Ipp8u* pSrc[], Ipp8u* pDst[], 
             buffersProcessed += workLoadSize;
         }
     }
-    #endif // if(_IPP32E>=_IPP32E_K1)
+#endif // if(_IPP32E>=_IPP32E_K1)
 
-    #if (_IPP32E>=_IPP32E_Y8)
-    if( IsFeatureEnabled(ippCPUID_AES) ) {
-        while(numBuffers > 0) {
+#if (_IPP32E >= _IPP32E_Y8)
+    if (IsFeatureEnabled(ippCPUID_AES)) {
+        while (numBuffers > 0) {
             for (i = 0; i < WORKLOAD_LINES_4; i++) {
                 if (i >= numBuffers) {
                     loc_len[i] = 0;
@@ -213,7 +221,7 @@ IPPFUN(IppStatus, ippsAES_EncryptCFB16_MB, (const Ipp8u* pSrc[], Ipp8u* pDst[], 
             buffersProcessed += WORKLOAD_LINES_4;
         }
     }
-    #endif // (_IPP32E>=_IPP32E_Y8)
+#endif // (_IPP32E>=_IPP32E_Y8)
 
     for (i = 0; i < numBuffers; i++) {
         status[i] = ippsAESEncryptCFB(pSrc[i], pDst[i], len[i], CFB16_BLOCK_SIZE, pCtx[i], pIV[i]);

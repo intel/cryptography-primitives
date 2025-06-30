@@ -25,13 +25,12 @@
 /* compute size of RSA public key context */
 static int cpSizeof_RSA_publicKey(int rsaModulusBitSize, int publicExpBitSize)
 {
-   int pubExpLen = BITS_BNU_CHUNK(publicExpBitSize);
-   int modulusLen32 = BITS2WORD32_SIZE(rsaModulusBitSize);
-   int montNsize;
-   rsaMontExpGetSize(modulusLen32, &montNsize);
+    int pubExpLen    = BITS_BNU_CHUNK(publicExpBitSize);
+    int modulusLen32 = BITS2WORD32_SIZE(rsaModulusBitSize);
+    int montNsize;
+    rsaMontExpGetSize(modulusLen32, &montNsize);
 
-   return (Ipp32s)sizeof(IppsRSAPublicKeyState)
-        + pubExpLen*(Ipp32s)sizeof(BNU_CHUNK_T)
-        + (Ipp32s)sizeof(BNU_CHUNK_T)-1 /* alignment */
-        + montNsize;
+    return (Ipp32s)sizeof(IppsRSAPublicKeyState) + pubExpLen * (Ipp32s)sizeof(BNU_CHUNK_T) +
+           (Ipp32s)sizeof(BNU_CHUNK_T) - 1 /* alignment */
+           + montNsize;
 }

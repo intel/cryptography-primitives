@@ -45,24 +45,24 @@
 //    pCtx     pointer to the context
 //
 *F*/
-IPPFUN(IppStatus, ippsPrimeGet_BN, (IppsBigNumState* pPrime, const IppsPrimeState* pCtx))
+IPPFUN(IppStatus, ippsPrimeGet_BN, (IppsBigNumState * pPrime, const IppsPrimeState* pCtx))
 {
-   IPP_BAD_PTR2_RET(pCtx, pPrime);
+    IPP_BAD_PTR2_RET(pCtx, pPrime);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
-   IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
+    IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
 
-   {
-      BNU_CHUNK_T* pValue = PRIME_NUMBER(pCtx);
-      cpSize ns = BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx));
-      FIX_BNU(pValue, ns);
+    {
+        BNU_CHUNK_T* pValue = PRIME_NUMBER(pCtx);
+        cpSize ns           = BITS_BNU_CHUNK(PRIME_MAXBITSIZE(pCtx));
+        FIX_BNU(pValue, ns);
 
-      IPP_BADARG_RET(BN_ROOM(pPrime) < ns, ippStsOutOfRangeErr);
+        IPP_BADARG_RET(BN_ROOM(pPrime) < ns, ippStsOutOfRangeErr);
 
-      COPY_BNU(BN_NUMBER(pPrime), pValue, ns);
-      BN_SIZE(pPrime) = ns;
-      BN_SIGN(pPrime) = ippBigNumPOS;
+        COPY_BNU(BN_NUMBER(pPrime), pValue, ns);
+        BN_SIZE(pPrime) = ns;
+        BN_SIGN(pPrime) = ippBigNumPOS;
 
-      return ippStsNoErr;
-   }
+        return ippStsNoErr;
+    }
 }

@@ -47,33 +47,33 @@
 */
 static void SHA1_G(Ipp32u* xBNU, const Ipp32u* T, Ipp8u* pHexStr, int hexStrLen)
 {
-   /* select processing function */
-   cpHashProc updateFunc;
-   #if (_SHA_NI_ENABLING_==_FEATURE_ON_)
-   updateFunc = UpdateSHA1ni;
-   #elif (_SHA_NI_ENABLING_==_FEATURE_TICKTOCK_)
-   updateFunc = IsFeatureEnabled(ippCPUID_SHA)? UpdateSHA1ni : UpdateSHA1;
-   #else
-   updateFunc = UpdateSHA1;
-   #endif
+    /* select processing function */
+    cpHashProc updateFunc;
+#if (_SHA_NI_ENABLING_ == _FEATURE_ON_)
+    updateFunc = UpdateSHA1ni;
+#elif (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_)
+    updateFunc = IsFeatureEnabled(ippCPUID_SHA) ? UpdateSHA1ni : UpdateSHA1;
+#else
+    updateFunc = UpdateSHA1;
+#endif
 
-   /* pad HexString zeros */
-   PadBlock(0, pHexStr+hexStrLen, BITS2WORD8_SIZE(MAX_XKEY_SIZE)-hexStrLen);
+    /* pad HexString zeros */
+    PadBlock(0, pHexStr + hexStrLen, BITS2WORD8_SIZE(MAX_XKEY_SIZE) - hexStrLen);
 
-   /* reset initial HASH value */
-   xBNU[0] = T[0];
-   xBNU[1] = T[1];
-   xBNU[2] = T[2];
-   xBNU[3] = T[3];
-   xBNU[4] = T[4];
+    /* reset initial HASH value */
+    xBNU[0] = T[0];
+    xBNU[1] = T[1];
+    xBNU[2] = T[2];
+    xBNU[3] = T[3];
+    xBNU[4] = T[4];
 
-   /* SHA1 */
-   //UpdateSHA1(xBNU, pHexStr, BITS2WORD8_SIZE(MAX_XKEY_SIZE), SHA1_cnt);
-   updateFunc(xBNU, pHexStr, BITS2WORD8_SIZE(MAX_XKEY_SIZE), SHA1_cnt);
+    /* SHA1 */
+    //UpdateSHA1(xBNU, pHexStr, BITS2WORD8_SIZE(MAX_XKEY_SIZE), SHA1_cnt);
+    updateFunc(xBNU, pHexStr, BITS2WORD8_SIZE(MAX_XKEY_SIZE), SHA1_cnt);
 
-   /* swap back */
-   SWAP(xBNU[0],xBNU[4]);
-   SWAP(xBNU[1],xBNU[3]);
+    /* swap back */
+    SWAP(xBNU[0], xBNU[4]);
+    SWAP(xBNU[1], xBNU[3]);
 }
 
 /*F*
@@ -90,59 +90,67 @@ static void SHA1_G(Ipp32u* xBNU, const Ipp32u* T, Ipp8u* pHexStr, int hexStrLen)
 //    pRnd     pointer to the context
 *F*/
 
-IPP_OWN_DEFN (int, cpPRNGen, (Ipp32u* pRand, cpSize nBits, IppsPRNGState* pRnd))
+IPP_OWN_DEFN(int, cpPRNGen, (Ipp32u * pRand, cpSize nBits, IppsPRNGState* pRnd))
 {
-   BNU_CHUNK_T Xj  [BITS_BNU_CHUNK(MAX_XKEY_SIZE)];
-   BNU_CHUNK_T XVAL[BITS_BNU_CHUNK(MAX_XKEY_SIZE)];
+    BNU_CHUNK_T Xj[BITS_BNU_CHUNK(MAX_XKEY_SIZE)];
+    BNU_CHUNK_T XVAL[BITS_BNU_CHUNK(MAX_XKEY_SIZE)];
 
-   Ipp8u  TXVAL[BITS2WORD8_SIZE(MAX_XKEY_SIZE)];
+    Ipp8u TXVAL[BITS2WORD8_SIZE(MAX_XKEY_SIZE)];
 
-   /* XKEY length in BNU_CHUNK_T */
-   cpSize xKeyLen = BITS_BNU_CHUNK(RAND_SEEDBITS(pRnd));
-   /* XKEY length in bytes */
-   cpSize xKeySize= BITS2WORD8_SIZE(RAND_SEEDBITS(pRnd));
-   /* XKEY word's mask */
-   BNU_CHUNK_T xKeyMsk = MASK_BNU_CHUNK(RAND_SEEDBITS(pRnd));
+    /* XKEY length in BNU_CHUNK_T */
+    cpSize xKeyLen = BITS_BNU_CHUNK(RAND_SEEDBITS(pRnd));
+    /* XKEY length in bytes */
+    cpSize xKeySize = BITS2WORD8_SIZE(RAND_SEEDBITS(pRnd));
+    /* XKEY word's mask */
+    BNU_CHUNK_T xKeyMsk = MASK_BNU_CHUNK(RAND_SEEDBITS(pRnd));
 
-   /* number of Ipp32u chunks to be generated */
-   cpSize genlen = BITS2WORD32_SIZE(nBits);
+    /* number of Ipp32u chunks to be generated */
+    cpSize genlen = BITS2WORD32_SIZE(nBits);
 
-   ZEXPAND_BNU(Xj, 0, BITS_BNU_CHUNK(MAX_XKEY_SIZE));
-   ZEXPAND_BNU(XVAL, 0, BITS_BNU_CHUNK(MAX_XKEY_SIZE));
+    ZEXPAND_BNU(Xj, 0, BITS_BNU_CHUNK(MAX_XKEY_SIZE));
+    ZEXPAND_BNU(XVAL, 0, BITS_BNU_CHUNK(MAX_XKEY_SIZE));
 
-   while(genlen) {
-      cpSize len;
+    while (genlen) {
+        cpSize len;
 
-      /* Step 1: XVAL=(Xkey+Xseed) mod 2^b */
-      BNU_CHUNK_T carry = cpAdd_BNU(XVAL, RAND_XKEY(pRnd), RAND_XAUGMENT(pRnd), xKeyLen);
-      XVAL[xKeyLen-1] &= xKeyMsk;
+        /* Step 1: XVAL=(Xkey+Xseed) mod 2^b */
+        BNU_CHUNK_T carry = cpAdd_BNU(XVAL, RAND_XKEY(pRnd), RAND_XAUGMENT(pRnd), xKeyLen);
+        XVAL[xKeyLen - 1] &= xKeyMsk;
 
-      /* Step 2: xj=G(t, XVAL) mod Q */
-      cpToOctStr_BNU(TXVAL, xKeySize, XVAL, xKeyLen);
-      SHA1_G((Ipp32u*)Xj, (Ipp32u*)RAND_T(pRnd), TXVAL, xKeySize);
+        /* Step 2: xj=G(t, XVAL) mod Q */
+        cpToOctStr_BNU(TXVAL, xKeySize, XVAL, xKeyLen);
+        SHA1_G((Ipp32u*)Xj, (Ipp32u*)RAND_T(pRnd), TXVAL, xKeySize);
 
-      {
-         cpSize sizeXj = BITS_BNU_CHUNK(160);
-         if(0 <= cpCmp_BNU(Xj, BITS_BNU_CHUNK(IPP_SHA1_DIGEST_BITSIZE), RAND_Q(pRnd),BITS_BNU_CHUNK(IPP_SHA1_DIGEST_BITSIZE)) )
-            sizeXj = cpMod_BNU(Xj, BITS_BNU_CHUNK(IPP_SHA1_DIGEST_BITSIZE), RAND_Q(pRnd), BITS_BNU_CHUNK(IPP_SHA1_DIGEST_BITSIZE));
-         FIX_BNU(Xj, sizeXj);
-         ZEXPAND_BNU(Xj, sizeXj, BITS_BNU_CHUNK(MAX_XKEY_SIZE));
-      }
+        {
+            cpSize sizeXj = BITS_BNU_CHUNK(160);
+            if (0 <= cpCmp_BNU(Xj,
+                               BITS_BNU_CHUNK(IPP_SHA1_DIGEST_BITSIZE),
+                               RAND_Q(pRnd),
+                               BITS_BNU_CHUNK(IPP_SHA1_DIGEST_BITSIZE)))
+                sizeXj = cpMod_BNU(Xj,
+                                   BITS_BNU_CHUNK(IPP_SHA1_DIGEST_BITSIZE),
+                                   RAND_Q(pRnd),
+                                   BITS_BNU_CHUNK(IPP_SHA1_DIGEST_BITSIZE));
+            FIX_BNU(Xj, sizeXj);
+            ZEXPAND_BNU(Xj, sizeXj, BITS_BNU_CHUNK(MAX_XKEY_SIZE));
+        }
 
-      /* Step 3: Xkey=(1+Xkey+Xj) mod 2^b */
-      cpInc_BNU(RAND_XKEY(pRnd), RAND_XKEY(pRnd), xKeyLen, 1);
-      carry = cpAdd_BNU(RAND_XKEY(pRnd), RAND_XKEY(pRnd), Xj, xKeyLen);
-      RAND_XKEY(pRnd)[xKeyLen-1] &= xKeyMsk;
+        /* Step 3: Xkey=(1+Xkey+Xj) mod 2^b */
+        cpInc_BNU(RAND_XKEY(pRnd), RAND_XKEY(pRnd), xKeyLen, 1);
+        carry = cpAdd_BNU(RAND_XKEY(pRnd), RAND_XKEY(pRnd), Xj, xKeyLen);
+        RAND_XKEY(pRnd)[xKeyLen - 1] &= xKeyMsk;
 
-      /* fill out result */
-      len = genlen<BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE)? genlen : BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE);
-      COPY_BNU(pRand, (Ipp32u*)Xj, len);
+        /* fill out result */
+        len = genlen < BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE)
+                  ? genlen
+                  : BITS2WORD32_SIZE(IPP_SHA1_DIGEST_BITSIZE);
+        COPY_BNU(pRand, (Ipp32u*)Xj, len);
 
-      pRand  += len;
-      genlen -= len;
-      
-      IPP_UNREFERENCED_PARAMETER(carry);
-   }
+        pRand += len;
+        genlen -= len;
 
-   return nBits;
+        IPP_UNREFERENCED_PARAMETER(carry);
+    }
+
+    return nBits;
 }

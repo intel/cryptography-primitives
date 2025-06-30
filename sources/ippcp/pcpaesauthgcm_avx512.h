@@ -30,7 +30,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 
-#if(_IPP32E>=_IPP32E_K0)
+#if (_IPP32E >= _IPP32E_K0)
 
 #include "pcprij.h"
 
@@ -40,31 +40,48 @@
 
 // Prototypes for internal functions from IPsec
 
+/* clang-format off */
 // IV processing
-IPP_OWN_FUNPTR (void, IvUpdate_, (const struct gcm_key_data *key_data, struct gcm_context_data *context_data, const Ipp8u *iv, const Ipp64u iv_len))
-IPP_OWN_FUNPTR (void, IvFinalize_, (const struct gcm_key_data *key_data, struct gcm_context_data *context_data, const Ipp8u *iv, const Ipp64u iv_len, const Ipp64u iv_general_len))
+IPP_OWN_FUNPTR(void, IvUpdate_, (const struct gcm_key_data* key_data,
+                                 struct gcm_context_data* context_data,
+                                 const Ipp8u* iv,
+                                 const Ipp64u iv_len))
+IPP_OWN_FUNPTR(void, IvFinalize_, (const struct gcm_key_data* key_data,
+                                   struct gcm_context_data* context_data,
+                                   const Ipp8u* iv,
+                                   const Ipp64u iv_len,
+                                   const Ipp64u iv_general_len))
 
 //  AAD processing
-IPP_OWN_FUNPTR (void, AadUpdate_, (const struct gcm_key_data *key_data, struct gcm_context_data *context_data, const Ipp8u *aad, const Ipp64u aad_len))
+IPP_OWN_FUNPTR(void, AadUpdate_, (const struct gcm_key_data* key_data,
+                                  struct gcm_context_data* context_data,
+                                  const Ipp8u* aad,
+                                  const Ipp64u aad_len))
 
 // GCM multiplication
-IPP_OWN_FUNPTR (void, MulGcm_, (const struct gcm_key_data *key_data, Ipp8u *ghash))
+IPP_OWN_FUNPTR(void, MulGcm_, (const struct gcm_key_data* key_data, Ipp8u* ghash))
 
 //  Encryption-authentication
-IPP_OWN_FUNPTR (void, EncryptUpdate_, (const struct gcm_key_data *key_data, struct gcm_context_data *context_data, Ipp8u *out, const Ipp8u *in, Ipp64u len))
+IPP_OWN_FUNPTR(void, EncryptUpdate_, (const struct gcm_key_data* key_data,
+                                      struct gcm_context_data* context_data,
+                                      Ipp8u* out,
+                                      const Ipp8u* in,
+                                      Ipp64u len))
 
 // Decryption-verification
-IPP_OWN_FUNPTR (void, DecryptUpdate_, (const struct gcm_key_data *key_data, struct gcm_context_data *context_data, Ipp8u *out, const Ipp8u *in, Ipp64u len))
+IPP_OWN_FUNPTR(void, DecryptUpdate_, (const struct gcm_key_data* key_data,
+                                      struct gcm_context_data* context_data,
+                                      Ipp8u* out,
+                                      const Ipp8u* in,Ipp64u len))
 
 // Get tag
-IPP_OWN_FUNPTR (void, GetTag_, (const struct gcm_key_data *key_data, const struct gcm_context_data *context_data, Ipp8u *auth_tag, Ipp64u auth_tag_len))
+IPP_OWN_FUNPTR(void, GetTag_, (const struct gcm_key_data* key_data,
+                               const struct gcm_context_data* context_data,
+                               Ipp8u* auth_tag,
+                               Ipp64u auth_tag_len))
+/* clang-format on */
 
-typedef enum {
-   GcmInit,
-   GcmIVprocessing,
-   GcmAADprocessing,
-   GcmTXTprocessing
-} GcmState;
+typedef enum { GcmInit, GcmIVprocessing, GcmAADprocessing, GcmTXTprocessing } GcmState;
 
 #define BLOCK_SIZE (MBS_RIJ128)
 
@@ -72,79 +89,81 @@ typedef enum {
 
 struct _cpAES_GCM {
 
-   Ipp32u   idCtx;                  /* AES-GCM id                    */
-   GcmState state;                  /* GCM state: Init, IV|AAD|TXT processing */
-   Ipp64u   ivLen;                  /* IV length (bytes)             */
-   Ipp64u   aadLen;                 /* header length (bytes)         */
-   Ipp64u   txtLen;                 /* text length (bytes)           */
+    Ipp32u idCtx;                  /* AES-GCM id                    */
+    GcmState state;                /* GCM state: Init, IV|AAD|TXT processing */
+    Ipp64u ivLen;                  /* IV length (bytes)             */
+    Ipp64u aadLen;                 /* header length (bytes)         */
+    Ipp64u txtLen;                 /* text length (bytes)           */
 
-   int      bufLen;                 /* stuff buffer length           */
-   __ALIGN16                        /* aligned buffers               */
-   Ipp8u    counter[BLOCK_SIZE];    /* counter                       */
-   Ipp8u    ecounter0[BLOCK_SIZE];  /* encrypted initial counter     */
-   Ipp8u    ecounter[BLOCK_SIZE];   /* encrypted counter             */
-   Ipp8u    ghash[BLOCK_SIZE];      /* ghash accumulator             */
+    int bufLen;                    /* stuff buffer length           */
+    __ALIGN16                      /* aligned buffers               */
+        Ipp8u counter[BLOCK_SIZE]; /* counter                       */
+    Ipp8u ecounter0[BLOCK_SIZE];   /* encrypted initial counter     */
+    Ipp8u ecounter[BLOCK_SIZE];    /* encrypted counter             */
+    Ipp8u ghash[BLOCK_SIZE];       /* ghash accumulator             */
 
-   __ALIGN16
-   struct gcm_key_data key_data;
-   __ALIGN16
-   struct gcm_context_data context_data;
-   Ipp64u   keyLen;  /* key length (bytes)             */
+    __ALIGN16
+    struct gcm_key_data key_data;
+    __ALIGN16
+    struct gcm_context_data context_data;
+    Ipp64u keyLen;                    /* key length (bytes)             */
 
-   IvUpdate_        ivUpdateFunc;         // IV processing
-   IvFinalize_      ivFinalizeFunc;
-   AadUpdate_       aadUpdateFunc;        // AAD processing
-   MulGcm_          gcmMulFunc;           // GCM multiplication
-   EncryptUpdate_   encryptUpdateFunc;    // Encryption-authentication
-   DecryptUpdate_   decryptUpdateFunc;    // Decryption-verification
-   GetTag_          getTagFunc;           // Get tag
+    IvUpdate_ ivUpdateFunc;           // IV processing
+    IvFinalize_ ivFinalizeFunc;
+    AadUpdate_ aadUpdateFunc;         // AAD processing
+    MulGcm_ gcmMulFunc;               // GCM multiplication
+    EncryptUpdate_ encryptUpdateFunc; // Encryption-authentication
+    DecryptUpdate_ decryptUpdateFunc; // Decryption-verification
+    GetTag_ getTagFunc;               // Get tag
 
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-   __ALIGN16
-   cpAESNoiseParams noiseParams;
+    __ALIGN16
+    cpAESNoiseParams noiseParams;
 #endif
 };
 
 // Alignment
-#define AESGCM_ALIGNMENT   (16)
+#define AESGCM_ALIGNMENT (16)
 
 // Useful macros
-#define AESGCM_SET_ID(context)       ((context)->idCtx = (Ipp32u)idCtxAESGCM ^ (Ipp32u)IPP_UINT_PTR(context))
-#define AESGCM_STATE(context)        ((context)->state)
+#define AESGCM_SET_ID(context) \
+    ((context)->idCtx = (Ipp32u)idCtxAESGCM ^ (Ipp32u)IPP_UINT_PTR(context))
+#define AESGCM_STATE(context) ((context)->state)
 
-#define AESGCM_IV_LEN(context)       ((context)->ivLen)
+#define AESGCM_IV_LEN(context) ((context)->ivLen)
 
-#define AESGCM_COUNTER(context)      ((context)->counter)
-#define AESGCM_ECOUNTER0(context)    ((context)->ecounter0)
-#define AESGCM_ECOUNTER(context)     ((context)->ecounter)
+#define AESGCM_COUNTER(context)   ((context)->counter)
+#define AESGCM_ECOUNTER0(context) ((context)->ecounter0)
+#define AESGCM_ECOUNTER(context)  ((context)->ecounter)
 
-#define AES_GCM_KEY_DATA(context)          ((context)->key_data)
-#define AES_GCM_CONTEXT_DATA(context)      ((context)->context_data)
-#define AES_GCM_KEY_LEN(context)           ((context)->keyLen)
+#define AES_GCM_KEY_DATA(context)     ((context)->key_data)
+#define AES_GCM_CONTEXT_DATA(context) ((context)->context_data)
+#define AES_GCM_KEY_LEN(context)      ((context)->keyLen)
 
-#define AES_GCM_IV_UPDATE(context)         ((context)->ivUpdateFunc)
-#define AES_GCM_IV_FINALIZE(context)       ((context)->ivFinalizeFunc)
-#define AES_GCM_AAD_UPDATE(context)        ((context)->aadUpdateFunc)
-#define AES_GCM_GMUL(context)              ((context)->gcmMulFunc)
-#define AES_GCM_ENCRYPT_UPDATE(context)    ((context)->encryptUpdateFunc)
-#define AES_GCM_DECRYPT_UPDATE(context)    ((context)->decryptUpdateFunc)
-#define AES_GCM_GET_TAG(context)           ((context)->getTagFunc)
+#define AES_GCM_IV_UPDATE(context)      ((context)->ivUpdateFunc)
+#define AES_GCM_IV_FINALIZE(context)    ((context)->ivFinalizeFunc)
+#define AES_GCM_AAD_UPDATE(context)     ((context)->aadUpdateFunc)
+#define AES_GCM_GMUL(context)           ((context)->gcmMulFunc)
+#define AES_GCM_ENCRYPT_UPDATE(context) ((context)->encryptUpdateFunc)
+#define AES_GCM_DECRYPT_UPDATE(context) ((context)->decryptUpdateFunc)
+#define AES_GCM_GET_TAG(context)        ((context)->getTagFunc)
 
 // Fields retargeted to IPsec context
-#define AESGCM_GHASH(context)              (&(AES_GCM_CONTEXT_DATA(context).aad_hash[0]))
-#define AESGCM_TXT_LEN(context)            (AES_GCM_CONTEXT_DATA(context).in_length)
-#define AESGCM_AAD_LEN(context)            (AES_GCM_CONTEXT_DATA(context).aad_length)
-#define AESGCM_BUFLEN(context)             (AES_GCM_CONTEXT_DATA(context).partial_block_length)
+#define AESGCM_GHASH(context)   (&(AES_GCM_CONTEXT_DATA(context).aad_hash[0]))
+#define AESGCM_TXT_LEN(context) (AES_GCM_CONTEXT_DATA(context).in_length)
+#define AESGCM_AAD_LEN(context) (AES_GCM_CONTEXT_DATA(context).aad_length)
+#define AESGCM_BUFLEN(context)  (AES_GCM_CONTEXT_DATA(context).partial_block_length)
 
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
-#define AESGCM_NOISE_PARAMS(ctx)           ((ctx)->noiseParams)
+#define AESGCM_NOISE_PARAMS(ctx) ((ctx)->noiseParams)
 #endif
 
-#define AESGCM_VALID_ID(context)     ((((context)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((context))) == (Ipp32u)idCtxAESGCM)
+#define AESGCM_VALID_ID(context) \
+    ((((context)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((context))) == (Ipp32u)idCtxAESGCM)
 
 static int cpSizeofCtx_AESGCM(void)
 {
-   return (Ipp32s)sizeof(IppsAES_GCMState) + AESGCM_ALIGNMENT-1;
+    return (Ipp32s)sizeof(IppsAES_GCMState) + AESGCM_ALIGNMENT - 1;
 }
 
 #endif // (_IPP32E>=_IPP32E_K0)

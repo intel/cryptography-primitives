@@ -33,20 +33,20 @@
 // declaration of internal structures used for AVX512 AES GCM optimization
 
 /* GCM data structures */
-#define GCM_BLOCK_LEN   16
+#define GCM_BLOCK_LEN 16
 
 /**
  * \brief holds GCM operation context
  */
 struct gcm_context_data {
-        /* init, update and finalize context data */
-        Ipp8u  aad_hash[GCM_BLOCK_LEN];
-        Ipp64u aad_length;
-        Ipp64u in_length;
-        Ipp8u  partial_block_enc_key[GCM_BLOCK_LEN];
-        Ipp8u  orig_IV[GCM_BLOCK_LEN];
-        Ipp8u  current_counter[GCM_BLOCK_LEN];
-        Ipp64u partial_block_length;
+    /* init, update and finalize context data */
+    Ipp8u aad_hash[GCM_BLOCK_LEN];
+    Ipp64u aad_length;
+    Ipp64u in_length;
+    Ipp8u partial_block_enc_key[GCM_BLOCK_LEN];
+    Ipp8u orig_IV[GCM_BLOCK_LEN];
+    Ipp8u current_counter[GCM_BLOCK_LEN];
+    Ipp64u partial_block_length;
 };
 
 /* #define GCM_BLOCK_LEN   16 */
@@ -59,12 +59,12 @@ struct gcm_context_data {
  * gcm_key_data hold internal key information used by gcm128, gcm192 and gcm256.
  */
 struct gcm_key_data {
-        Ipp8u expanded_keys[GCM_ENC_KEY_LEN * GCM_KEY_SETS];
-        /*
+    Ipp8u expanded_keys[GCM_ENC_KEY_LEN * GCM_KEY_SETS];
+    /*
         * (HashKey<<1 mod poly), (HashKey^2<<1 mod poly), ...,
         * (Hashkey^48<<1 mod poly)
         */
-        Ipp8u shifted_hkey[GCM_ENC_KEY_LEN * 48];
+    Ipp8u shifted_hkey[GCM_ENC_KEY_LEN * 48];
 }
 #ifdef LINUX
 __attribute__((aligned(64)));

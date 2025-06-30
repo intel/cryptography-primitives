@@ -44,12 +44,12 @@
 //    pSize       pointer to AES size of context(in bytes)
 //
 *F*/
-IPPFUN(IppStatus, ippsAESGetSize,(int* pSize))
+IPPFUN(IppStatus, ippsAESGetSize, (int* pSize))
 {
-   /* test size's pointer */
-   IPP_BAD_PTR1_RET(pSize);
+    /* test size's pointer */
+    IPP_BAD_PTR1_RET(pSize);
 
-   *pSize = cpSizeofCtx_AES();
+    *pSize = cpSizeofCtx_AES();
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

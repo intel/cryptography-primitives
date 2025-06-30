@@ -14,14 +14,14 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Internal Definitions and
 //     Internal DES based Encrypt/Decrypt Function Prototypes
-// 
-// 
+//
+//
 */
 
 
@@ -39,36 +39,36 @@ typedef Ipp32u HalfRoundKeyDES;
 // DES context
 */
 struct _cpDES {
-   Ipp32u       idCtx;        /* DES spec identifier           */
-   RoundKeyDES  enc_keys[16]; /* array of keys for encryprion  */
-   RoundKeyDES  dec_keys[16]; /* array of keys for decryprion  */
+    Ipp32u idCtx;             /* DES spec identifier           */
+    RoundKeyDES enc_keys[16]; /* array of keys for encryprion  */
+    RoundKeyDES dec_keys[16]; /* array of keys for decryprion  */
 };
 
 /* alignment */
 #define DES_ALIGNMENT ((int)(sizeof(Ipp64u)))
 
-#define MBS_DES   (8)      /* data block (bytes) */
+#define MBS_DES (8) /* data block (bytes) */
 
 /*
 // Useful macros
 */
-#define DES_SET_ID(ctx)       ((ctx)->idCtx = (Ipp32u)idCtxDES ^ (Ipp32u)IPP_UINT_PTR(ctx))
-#define DES_RESET_ID(ctx)     ((ctx)->idCtx = (Ipp32u)idCtxDES)
-#define DES_EKEYS(ctx)        ((ctx)->enc_keys)
-#define DES_DKEYS(ctx)        ((ctx)->dec_keys)
+#define DES_SET_ID(ctx)   ((ctx)->idCtx = (Ipp32u)idCtxDES ^ (Ipp32u)IPP_UINT_PTR(ctx))
+#define DES_RESET_ID(ctx) ((ctx)->idCtx = (Ipp32u)idCtxDES)
+#define DES_EKEYS(ctx)    ((ctx)->enc_keys)
+#define DES_DKEYS(ctx)    ((ctx)->dec_keys)
 
-#define VALID_DES_ID(ctx)  ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxDES)
+#define VALID_DES_ID(ctx) ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxDES)
 
 /*
 // Internal Tables
 */
-#define MITIGATED    (4)
+#define MITIGATED (4)
 
 #define IMPLEMENTATION MITIGATED
 
 
 #if (IMPLEMENTATION == MITIGATED)
-   extern const __ALIGN64 Ipp32u DESspbox[16*16];
+extern const __ALIGN64 Ipp32u DESspbox[16 * 16];
 #endif
 
 
@@ -76,20 +76,22 @@ struct _cpDES {
 // internal functions
 */
 #define SetKey_DES OWNAPI(SetKey_DES)
-   IPP_OWN_DECL (void, SetKey_DES, (const Ipp8u* pKey, IppsDESSpec* pCtx))
+IPP_OWN_DECL(void, SetKey_DES, (const Ipp8u* pKey, IppsDESSpec* pCtx))
 
 #define Cipher_DES OWNAPI(Cipher_DES)
-   IPP_OWN_DECL (Ipp64u, Cipher_DES, (Ipp64u inpBlk, const RoundKeyDES* pRKey, const Ipp32u spbox[]))
+IPP_OWN_DECL(Ipp64u, Cipher_DES, (Ipp64u inpBlk, const RoundKeyDES* pRKey, const Ipp32u spbox[]))
 
-#define ENCRYPT_DES(blk, pCtx)   Cipher_DES((blk), DES_EKEYS((pCtx)), DESspbox)
-#define DECRYPT_DES(blk, pCtx)   Cipher_DES((blk), DES_DKEYS((pCtx)), DESspbox)
+#define ENCRYPT_DES(blk, pCtx) Cipher_DES((blk), DES_EKEYS((pCtx)), DESspbox)
+#define DECRYPT_DES(blk, pCtx) Cipher_DES((blk), DES_DKEYS((pCtx)), DESspbox)
 
 /* TDES prototypes */
+/* clang-format off */
 #define ECB_TDES OWNAPI(ECB_TDES)
    IPP_OWN_DECL (void, ECB_TDES, (const Ipp64u* pSrc, Ipp64u* pDst, int nBlocks, const RoundKeyDES* pRKey[3], const Ipp32u spbox[]))
 #define EncryptCBC_TDES OWNAPI(EncryptCBC_TDES)
    IPP_OWN_DECL (void, EncryptCBC_TDES, (const Ipp64u* pSrc, Ipp64u* pDst, int nBlocks, const RoundKeyDES* pRKey[3], Ipp64u iv, const Ipp32u spbox[]))
 #define DecryptCBC_TDES OWNAPI(DecryptCBC_TDES)
    IPP_OWN_DECL (void, DecryptCBC_TDES, (const Ipp64u* pSrc, Ipp64u* pDst, int nBlocks, const RoundKeyDES* pRKey[3], Ipp64u iv, const Ipp32u spbox[]))
+/* clang-format on */
 
 #endif /* _PCP_DES_H */

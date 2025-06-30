@@ -35,12 +35,11 @@
 /*
 // Montgomery engine preparation (GetSize/init/Set)
 */
-IPP_OWN_DEFN (void, rsaMontExpGetSize, (int maxLen32, int* pSize))
+IPP_OWN_DEFN(void, rsaMontExpGetSize, (int maxLen32, int* pSize))
 {
-    int size = 0;
+    int size       = 0;
     int maxBitSize = maxLen32 << 5;
     gsModEngineGetSize(maxBitSize, MOD_ENGINE_RSA_POOL_SIZE, &size);
 
     *pSize = size;
 }
-

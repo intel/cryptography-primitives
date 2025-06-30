@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     AES-SIV Functions (RFC 5297)
-// 
+//
 //  Contents:
 //        ippsAES_S2V_CMAC()
 //
@@ -59,48 +59,54 @@
 //    pV       pointer to output vector
 //
 *F*/
-IPPFUN(IppStatus, ippsAES_S2V_CMAC,(const Ipp8u* pKey, int keyLen,
-                                    const Ipp8u* pAD[], const int pADlen[], int numAD,
-                                          Ipp8u  V[MBS_RIJ128]))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsAES_S2V_CMAC, (const Ipp8u* pKey,
+                                     int keyLen,
+                                     const Ipp8u* pAD[],
+                                     const int pADlen[],
+                                     int numAD,
+                                     Ipp8u  V[MBS_RIJ128]))
+/* clang-format on */
 {
-   /* test output vector */
-   IPP_BAD_PTR1_RET(V);
+    /* test output vector */
+    IPP_BAD_PTR1_RET(V);
 
-   /* make sure that number of input string is legal */
-   IPP_BADARG_RET(0>numAD, ippStsLengthErr);
+    /* make sure that number of input string is legal */
+    IPP_BADARG_RET(0 > numAD, ippStsLengthErr);
 
-   /* test arrays of input */
-   IPP_BAD_PTR2_RET(pAD, pADlen);
+    /* test arrays of input */
+    IPP_BAD_PTR2_RET(pAD, pADlen);
 
-   int n;
-   for(n=0; n<numAD; n++) {
-      /* test input message and its length */
-      IPP_BADARG_RET((pADlen[n]<0), ippStsLengthErr);
-      /* test source pointer */
-      IPP_BADARG_RET((pADlen[n] && !pAD[n]), ippStsNullPtrErr);
-   }
+    int n;
+    for (n = 0; n < numAD; n++) {
+        /* test input message and its length */
+        IPP_BADARG_RET((pADlen[n] < 0), ippStsLengthErr);
+        /* test source pointer */
+        IPP_BADARG_RET((pADlen[n] && !pAD[n]), ippStsNullPtrErr);
+    }
 
-   {
-      Ipp8u ctxBlob[sizeof(IppsAES_CMACState)];
-      IppsAES_CMACState* pCtx = (IppsAES_CMACState*)ctxBlob;
-      IppStatus sts = cpAES_S2V_init(V, pKey, keyLen, pCtx, sizeof(ctxBlob));
+    {
+        Ipp8u ctxBlob[sizeof(IppsAES_CMACState)];
+        IppsAES_CMACState* pCtx = (IppsAES_CMACState*)ctxBlob;
+        IppStatus sts           = cpAES_S2V_init(V, pKey, keyLen, pCtx, sizeof(ctxBlob));
 
-      if(ippStsNoErr==sts) {
-         if(0==numAD) {
-            PadBlock(0, V, MBS_RIJ128);
-            V[MBS_RIJ128-1] = 0x1;
-            cpAES_CMAC(V, V, MBS_RIJ128, pCtx);
-         }
+        if (ippStsNoErr == sts) {
+            if (0 == numAD) {
+                PadBlock(0, V, MBS_RIJ128);
+                V[MBS_RIJ128 - 1] = 0x1;
+                cpAES_CMAC(V, V, MBS_RIJ128, pCtx);
+            }
 
-         else {
-            int i;
-            for(i=0, numAD--; i<numAD; i++)
-               cpAES_S2V_update(V, pAD[i], pADlen[i], pCtx);
-             cpAES_S2V_final(V, pAD[numAD], pADlen[numAD], pCtx);
-         }
-      }
+            else {
+                int i;
+                for (i = 0, numAD--; i < numAD; i++)
+                    cpAES_S2V_update(V, pAD[i], pADlen[i], pCtx);
+                cpAES_S2V_final(V, pAD[numAD], pADlen[numAD], pCtx);
+            }
+        }
 
-      PurgeBlock(&ctxBlob, sizeof(ctxBlob));
-      return sts;
-   }
+        PurgeBlock(&ctxBlob, sizeof(ctxBlob));
+        return sts;
+    }
 }

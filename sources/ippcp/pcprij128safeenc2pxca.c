@@ -29,9 +29,9 @@
 
 #include "owncp.h"
 
-#if ((_IPP <_IPP_V8) && (_IPP32E <_IPP32E_U8)) /* no pshufb instruction */
+#if ((_IPP < _IPP_V8) && (_IPP32E < _IPP32E_U8)) /* no pshufb instruction */
 
-#if (_ALG_AES_SAFE_==_ALG_AES_SAFE_COMPACT_SBOX_)
+#if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
 
 #include "pcprij128safe.h"
 #include "pcprij128safe2.h"
@@ -39,73 +39,79 @@
 
 __IPPCP_INLINE void SubBytes(Ipp8u state[])
 {
-   int i;
-   for(i=0;i<16;i++) {
-      state[i] = getSboxValue(state[i]);
-   }
+    int i;
+    for (i = 0; i < 16; i++) {
+        state[i] = getSboxValue(state[i]);
+    }
 }
 
 
 __IPPCP_INLINE void ShiftRows(Ipp32u* state)
 {
-   state[1] =  ROR32(state[1], 8);
-   state[2] =  ROR32(state[2], 16);
-   state[3] =  ROR32(state[3], 24);
+    state[1] = ROR32(state[1], 8);
+    state[2] = ROR32(state[2], 16);
+    state[3] = ROR32(state[3], 24);
 }
 
 // MixColumns4 function mixes the columns of the state matrix
 __IPPCP_INLINE void MixColumns(Ipp32u* state)
 {
-   Ipp32u y0 = state[1] ^ state[2] ^ state[3];
-   Ipp32u y1 = state[0] ^ state[2] ^ state[3];
-   Ipp32u y2 = state[0] ^ state[1] ^ state[3];
-   Ipp32u y3 = state[0] ^ state[1] ^ state[2];
+    Ipp32u y0 = state[1] ^ state[2] ^ state[3];
+    Ipp32u y1 = state[0] ^ state[2] ^ state[3];
+    Ipp32u y2 = state[0] ^ state[1] ^ state[3];
+    Ipp32u y3 = state[0] ^ state[1] ^ state[2];
 
-   state[0] = xtime4(state[0]);
-   state[1] = xtime4(state[1]);
-   state[2] = xtime4(state[2]);
-   state[3] = xtime4(state[3]);
+    state[0] = xtime4(state[0]);
+    state[1] = xtime4(state[1]);
+    state[2] = xtime4(state[2]);
+    state[3] = xtime4(state[3]);
 
-   y0 ^= state[0] ^ state[1];
-   y1 ^= state[1] ^ state[2];
-   y2 ^= state[2] ^ state[3];
-   y3 ^= state[3] ^ state[0];
+    y0 ^= state[0] ^ state[1];
+    y1 ^= state[1] ^ state[2];
+    y2 ^= state[2] ^ state[3];
+    y3 ^= state[3] ^ state[0];
 
-   state[0] = y0;
-   state[1] = y1;
-   state[2] = y2;
-   state[3] = y3;
+    state[0] = y0;
+    state[1] = y1;
+    state[2] = y2;
+    state[3] = y3;
 }
 
-IPP_OWN_DEFN (void, Safe2Encrypt_RIJ128, (const Ipp8u* in, Ipp8u* out, int Nr, const Ipp8u* RoundKey, const void* sbox))
+/* clang-format off */
+IPP_OWN_DEFN(void, Safe2Encrypt_RIJ128, (const Ipp8u* in,
+                                         Ipp8u* out,
+                                         int Nr,
+                                         const Ipp8u* RoundKey,
+                                         const void* sbox))
+/* clang-format on */
 {
-   Ipp32u state[4];
+    Ipp32u state[4];
 
-   int round=0;
+    int round = 0;
 
-   IPP_UNREFERENCED_PARAMETER(sbox);
+    IPP_UNREFERENCED_PARAMETER(sbox);
 
-   // copy input to the state array
-   TRANSPOSE((Ipp8u*)state, in);
+    // copy input to the state array
+    TRANSPOSE((Ipp8u*)state, in);
 
-   // add round key to the state before starting the rounds.
-   XorRoundKey(state, (Ipp32u*)(RoundKey+0*16));
+    // add round key to the state before starting the rounds.
+    XorRoundKey(state, (Ipp32u*)(RoundKey + 0 * 16));
 
-   // there will be Nr rounds
-   for(round=1;round<Nr;round++) {
-      SubBytes((Ipp8u*)state);
-      ShiftRows(state);
-      MixColumns(state);
-      XorRoundKey(state, (Ipp32u*)(RoundKey+round*16));
-   }
+    // there will be Nr rounds
+    for (round = 1; round < Nr; round++) {
+        SubBytes((Ipp8u*)state);
+        ShiftRows(state);
+        MixColumns(state);
+        XorRoundKey(state, (Ipp32u*)(RoundKey + round * 16));
+    }
 
-   // last round
-   SubBytes((Ipp8u*)state);
-   ShiftRows(state);
-   XorRoundKey(state, (Ipp32u*)(RoundKey+Nr*16));
+    // last round
+    SubBytes((Ipp8u*)state);
+    ShiftRows(state);
+    XorRoundKey(state, (Ipp32u*)(RoundKey + Nr * 16));
 
-   // copy from the state to output
-   TRANSPOSE(out, (Ipp8u*)state);
+    // copy from the state to output
+    TRANSPOSE(out, (Ipp8u*)state);
 }
 #endif /* _ALG_AES_SAFE_COMPACT_SBOX_ */
 

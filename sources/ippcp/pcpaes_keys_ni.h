@@ -28,22 +28,22 @@
 #include "owncp.h"
 #include "pcpaesm.h"
 
-#if !defined (_PCP_AES_KEYS_NI_H)
+#if !defined(_PCP_AES_KEYS_NI_H)
 #define _PCP_AES_KEYS_NI_H
 
-#if (_AES_NI_ENABLING_==_FEATURE_ON_) || (_AES_NI_ENABLING_==_FEATURE_TICKTOCK_)
+#if (_AES_NI_ENABLING_ == _FEATURE_ON_) || (_AES_NI_ENABLING_ == _FEATURE_TICKTOCK_)
 
 //////////////////////////////////////////////////////////////////////
 #define cpExpandAesKey_NI OWNAPI(cpExpandAesKey_NI)
-    IPP_OWN_DECL (void, cpExpandAesKey_NI, (const Ipp8u* pSecret, IppsAESSpec* pCtx))
+IPP_OWN_DECL(void, cpExpandAesKey_NI, (const Ipp8u* pSecret, IppsAESSpec* pCtx))
 #define aes_DecKeyExpansion_NI OWNAPI(aes_DecKeyExpansion_NI)
-    IPP_OWN_DECL (void, aes_DecKeyExpansion_NI, (Ipp8u* decKeys, const Ipp8u* encKeys, int nr))
+IPP_OWN_DECL(void, aes_DecKeyExpansion_NI, (Ipp8u * decKeys, const Ipp8u* encKeys, int nr))
 #define aes128_KeyExpansion_NI OWNAPI(aes128_KeyExpansion_NI)
-    IPP_OWN_DECL (void, aes128_KeyExpansion_NI, (Ipp8u* keyExp, const Ipp8u* userkey))
+IPP_OWN_DECL(void, aes128_KeyExpansion_NI, (Ipp8u * keyExp, const Ipp8u* userkey))
 #define aes192_KeyExpansion_NI OWNAPI(aes192_KeyExpansion_NI)
-    IPP_OWN_DECL (void, aes192_KeyExpansion_NI, (Ipp8u* keyExp, const Ipp8u* userkey))
+IPP_OWN_DECL(void, aes192_KeyExpansion_NI, (Ipp8u * keyExp, const Ipp8u* userkey))
 #define aes256_KeyExpansion_NI OWNAPI(aes256_KeyExpansion_NI)
-    IPP_OWN_DECL (void, aes256_KeyExpansion_NI, (Ipp8u* keyExp, const Ipp8u* userkey))
+IPP_OWN_DECL(void, aes256_KeyExpansion_NI, (Ipp8u * keyExp, const Ipp8u* userkey))
 
 #endif /* #if (_AES_NI_ENABLING_==_FEATURE_ON_) || (_AES_NI_ENABLING_==_FEATURE_TICKTOCK_) */
 

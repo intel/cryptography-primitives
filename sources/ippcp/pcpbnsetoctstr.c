@@ -53,30 +53,29 @@
 //    pBN         pointer to the target BN
 //
 *F*/
-IPPFUN(IppStatus, ippsSetOctString_BN,(const Ipp8u* pOctStr, int strLen,
-                                       IppsBigNumState* pBN))
+IPPFUN(IppStatus, ippsSetOctString_BN, (const Ipp8u* pOctStr, int strLen, IppsBigNumState* pBN))
 {
-   IPP_BAD_PTR2_RET(pOctStr, pBN);
+    IPP_BAD_PTR2_RET(pOctStr, pBN);
 
-   IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
+    IPP_BADARG_RET(!BN_VALID_ID(pBN), ippStsContextMatchErr);
 
-   IPP_BADARG_RET((0>strLen), ippStsLengthErr);
+    IPP_BADARG_RET((0 > strLen), ippStsLengthErr);
 
-   /* remove leading zeros */
-   while(strLen && (0==pOctStr[0])) {
-      strLen--;
-      pOctStr++;
-   }
+    /* remove leading zeros */
+    while (strLen && (0 == pOctStr[0])) {
+        strLen--;
+        pOctStr++;
+    }
 
-   /* test BN size */
-   IPP_BADARG_RET((int)((Ipp32s)sizeof(BNU_CHUNK_T)*BN_ROOM(pBN))<strLen, ippStsSizeErr);
-   if(strLen)
-      BN_SIZE(pBN) = cpFromOctStr_BNU(BN_NUMBER(pBN), pOctStr, strLen);
-   else {
-      BN_NUMBER(pBN)[0] = (BNU_CHUNK_T)0;
-      BN_SIZE(pBN) = 1;
-   }
-   BN_SIGN(pBN) = ippBigNumPOS;
+    /* test BN size */
+    IPP_BADARG_RET((int)((Ipp32s)sizeof(BNU_CHUNK_T) * BN_ROOM(pBN)) < strLen, ippStsSizeErr);
+    if (strLen)
+        BN_SIZE(pBN) = cpFromOctStr_BNU(BN_NUMBER(pBN), pOctStr, strLen);
+    else {
+        BN_NUMBER(pBN)[0] = (BNU_CHUNK_T)0;
+        BN_SIZE(pBN)      = 1;
+    }
+    BN_SIGN(pBN) = ippBigNumPOS;
 
-   return ippStsNoErr;
+    return ippStsNoErr;
 }

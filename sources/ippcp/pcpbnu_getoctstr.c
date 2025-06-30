@@ -48,44 +48,48 @@
 //    pStr        pointer to the target octet string
 //    strLen      octet string length
 *F*/
-
-IPP_OWN_DEFN (cpSize, cpToOctStr_BNU, (Ipp8u* pStr, cpSize strLen, const BNU_CHUNK_T* pA, cpSize nsA))
+/* clang-format off */
+IPP_OWN_DEFN (cpSize, cpToOctStr_BNU, (Ipp8u* pStr,
+                                       cpSize strLen,
+                                       const BNU_CHUNK_T* pA,
+                                       cpSize nsA))
+/* clang-format on */
 {
-   FIX_BNU(pA, nsA);
-   {
-      cpSize bnuBitSize = BITSIZE_BNU(pA, nsA);
-      if(bnuBitSize <= strLen*BYTESIZE) {
-         int cnvLen = 0;
-         BNU_CHUNK_T x = pA[nsA-1];
+    FIX_BNU(pA, nsA);
+    {
+        cpSize bnuBitSize = BITSIZE_BNU(pA, nsA);
+        if (bnuBitSize <= strLen * BYTESIZE) {
+            int cnvLen    = 0;
+            BNU_CHUNK_T x = pA[nsA - 1];
 
-         ZEXPAND_BNU(pStr, 0, strLen);
-         pStr += strLen - BITS2WORD8_SIZE(bnuBitSize);
+            ZEXPAND_BNU(pStr, 0, strLen);
+            pStr += strLen - BITS2WORD8_SIZE(bnuBitSize);
 
-         if(x) {
-            //int nb;
-            cpSize nb;
-            for(nb=cpNLZ_BNU(x)/BYTESIZE; nb<(cpSize)(sizeof(BNU_CHUNK_T)); cnvLen++, nb++)
-               *pStr++ = EBYTE(x, (Ipp32s)sizeof(BNU_CHUNK_T)-1-nb);
+            if (x) {
+                //int nb;
+                cpSize nb;
+                for (nb = cpNLZ_BNU(x) / BYTESIZE; nb < (cpSize)(sizeof(BNU_CHUNK_T));
+                     cnvLen++, nb++)
+                    *pStr++ = EBYTE(x, (Ipp32s)sizeof(BNU_CHUNK_T) - 1 - nb);
 
-            for(--nsA; nsA>0; cnvLen+=(Ipp32s)sizeof(BNU_CHUNK_T), nsA--) {
-               x = pA[nsA-1];
-               #if (BNU_CHUNK_BITS==BNU_CHUNK_64BIT)
-               *pStr++ = EBYTE(x,7);
-               *pStr++ = EBYTE(x,6);
-               *pStr++ = EBYTE(x,5);
-               *pStr++ = EBYTE(x,4);
-               #endif
-               *pStr++ = EBYTE(x,3);
-               *pStr++ = EBYTE(x,2);
-               *pStr++ = EBYTE(x,1);
-               *pStr++ = EBYTE(x,0);
+                for (--nsA; nsA > 0; cnvLen += (Ipp32s)sizeof(BNU_CHUNK_T), nsA--) {
+                    x = pA[nsA - 1];
+#if (BNU_CHUNK_BITS == BNU_CHUNK_64BIT)
+                    *pStr++ = EBYTE(x, 7);
+                    *pStr++ = EBYTE(x, 6);
+                    *pStr++ = EBYTE(x, 5);
+                    *pStr++ = EBYTE(x, 4);
+#endif
+                    *pStr++ = EBYTE(x, 3);
+                    *pStr++ = EBYTE(x, 2);
+                    *pStr++ = EBYTE(x, 1);
+                    *pStr++ = EBYTE(x, 0);
+                }
             }
-         }
-         IPP_UNREFERENCED_PARAMETER(cnvLen);
+            IPP_UNREFERENCED_PARAMETER(cnvLen);
 
-         return strLen;
-      }
-      else
-         return 0;
-   }
+            return strLen;
+        } else
+            return 0;
+    }
 }

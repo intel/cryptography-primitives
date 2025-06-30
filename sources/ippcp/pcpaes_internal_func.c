@@ -33,35 +33,35 @@
  */
 IPP_OWN_DEFN(void, cpAes_setup_ptrs_and_methods, (IppsAESSpec * pCtx))
 {
-   int nExpKeys = rij128nKeys[rij_index(RIJ_NK(pCtx))];
+    int nExpKeys = rij128nKeys[rij_index(RIJ_NK(pCtx))];
 
-   RIJ_EKEYS(pCtx) = (Ipp8u *)(IPP_ALIGNED_PTR(RIJ_KEYS_BUFFER(pCtx), AES_ALIGNMENT));
-   RIJ_DKEYS(pCtx) = (Ipp8u *)((Ipp32u *)RIJ_EKEYS(pCtx) + nExpKeys);
+    RIJ_EKEYS(pCtx) = (Ipp8u*)(IPP_ALIGNED_PTR(RIJ_KEYS_BUFFER(pCtx), AES_ALIGNMENT));
+    RIJ_DKEYS(pCtx) = (Ipp8u*)((Ipp32u*)RIJ_EKEYS(pCtx) + nExpKeys);
 
 #if (_AES_NI_ENABLING_ == _FEATURE_ON_)
-   RIJ_AESNI(pCtx)   = AES_NI_ENABLED;
-   RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
-   RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
+    RIJ_AESNI(pCtx)   = AES_NI_ENABLED;
+    RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
+    RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
 #else
 #if (_AES_NI_ENABLING_ == _FEATURE_TICKTOCK_)
-   if (IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES)) {
-      RIJ_AESNI(pCtx)   = AES_NI_ENABLED;
-      RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
-      RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
-   } else
+    if (IsFeatureEnabled(ippCPUID_AES) || IsFeatureEnabled(ippCPUID_AVX2VAES)) {
+        RIJ_AESNI(pCtx)   = AES_NI_ENABLED;
+        RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
+        RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
+    } else
 #endif
-   {
+    {
 #if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPOSITE_GF_)
-      {
-         RIJ_ENCODER(pCtx) = SafeEncrypt_RIJ128; /* safe encoder (composite GF) */
-         RIJ_DECODER(pCtx) = SafeDecrypt_RIJ128; /* safe decoder (composite GF)*/
-      }
+        {
+            RIJ_ENCODER(pCtx) = SafeEncrypt_RIJ128; /* safe encoder (composite GF) */
+            RIJ_DECODER(pCtx) = SafeDecrypt_RIJ128; /* safe decoder (composite GF)*/
+        }
 #else
-      {
-         RIJ_ENCODER(pCtx) = Safe2Encrypt_RIJ128; /* safe encoder (compact Sbox)) */
-         RIJ_DECODER(pCtx) = Safe2Decrypt_RIJ128; /* safe decoder (compact Sbox)) */
-      }
+        {
+            RIJ_ENCODER(pCtx) = Safe2Encrypt_RIJ128; /* safe encoder (compact Sbox)) */
+            RIJ_DECODER(pCtx) = Safe2Decrypt_RIJ128; /* safe decoder (compact Sbox)) */
+        }
 #endif
-   }
+    }
 #endif
 }
