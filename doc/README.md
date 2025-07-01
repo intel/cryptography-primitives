@@ -6,9 +6,9 @@ This document explains how to build Intel® Cryptography Primitives Library docu
 To build the offline version of the documentation, the following tools must be installed:
 - [Python](https://www.python.org/) 3.7.0 or higher
 - [Sphinx](https://pypi.org/project/Sphinx/) 8.2.1 or higher
-- [sphinx-rtd-theme](https://pypi.org/project/sphinx-rtd-theme/) 3.0.2 or higher
+- [sphinx-book-theme](https://pypi.org/project/sphinx-book-theme/) 1.1.4 or higher
 
-> **NOTE:** To avoid incompatibility between `sphinx_rtd_theme` and `Sphinx` versions, use [`requirements.txt`](requirements.txt) file to install guaranteed compatible combination of components.
+> **NOTE:** To avoid incompatibility between `sphinx_book_theme` and `Sphinx` versions, use [`requirements.txt`](requirements.txt) file to install guaranteed compatible combination of components.
 
 ``` bash
 pip3 install -r <crypto_library>/doc/requirements.txt

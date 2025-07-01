@@ -106,7 +106,7 @@ highlight_language = 'cpp'
 # documentation.
 #
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_book_theme'
 
 #otc_tcs_sphinx_theme
 version = current_version = "latest"
@@ -119,12 +119,8 @@ version = current_version = "latest"
 # TODO: Write user-setup section to customize dictionary output below.
 
 html_theme_options = {
-  'canonical_url': '',
-  'style_nav_header_background': '#007ab2',
   'navigation_depth': 4,
-  'collapse_navigation': False,
-  'prev_next_buttons_location': 'None',
-  'sticky_navigation': True
+  'collapse_navigation': False
 }
 
 html_copy_source = False
