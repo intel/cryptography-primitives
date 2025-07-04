@@ -178,7 +178,7 @@ int main(void)
     if (!checkStatus("ippsLMSBufferGetSize", ippStsNoErr, status))
         return status;
     /* 2. Allocate memory for the scratch buffer */
-    std::unique_ptr<Ipp8u> pScratchBuffer(new Ipp8u[buffSize]);
+    std::unique_ptr<Ipp8u[]> pScratchBuffer(new Ipp8u[buffSize]);
 
     /* 3. Get the LMS public key state size */
     int ippcpPubKeySize;
