@@ -95,7 +95,10 @@ def custom_dispatcher_generator(function, dispatcher_type: utils.DispatcherType 
 
     ippe = utils.DOMAINS[utils.IPP]["ippe"]
     if ippe in package.functions[utils.IPP].keys() and function in package.functions[utils.IPP][ippe]:
-        include_lines += "\n" + INCLUDE_STR.format(header_name="ippe.h")
+        ippe_header_name = "ippe.h"
+        if package.dir_layout == utils.DirLayout.NEW:
+            ippe_header_name = "ipp/" + ippe_header_name
+        include_lines += "\n" + INCLUDE_STR.format(header_name=ippe_header_name)
 
     if dispatcher_type == utils.DispatcherType.STATIC:
         uninitialized_features_define = UNINITIALIZED_FEATURES_DEFINE.format(

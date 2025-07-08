@@ -98,14 +98,10 @@ int WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 """,
     LINUX: r"""#include "{package_type}.h"
 
-int _init(void)
+__attribute__((constructor))
+void init_custom_library(void)
 {{
-    {package_type}Init();
-    return 1;
-}}
-
-void _fini(void)
-{{
+    (void){package_type}Init();
 }}
 """,
 }

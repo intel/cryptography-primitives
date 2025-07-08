@@ -86,15 +86,6 @@ Set of CPUs can be any combination of the following:
     if args.console:
         print("Custom Library Tool console version is on...")
 
-        functions_list = []
-        if args.functions_file:
-            with open(args.functions_file, "r") as functions_file:
-                functions_list += functions_file.read().splitlines()
-        if args.functions:
-            functions_list += args.functions
-        if not functions_list:
-            sys.exit("Please, specify functions that has to be in dynamic library by using -f or -ff options")
-
         if args.root:
             root = args.root
             if not os.path.exists(root):
@@ -135,6 +126,24 @@ Set of CPUs can be any combination of the following:
         output_path = os.path.abspath(args.output_path)
         if not os.path.exists(output_path):
             os.makedirs(output_path, 0o744)
+
+        functions_list = []
+        if args.functions_file:
+            with open(args.functions_file, "r") as functions_file:
+                functions_list += functions_file.read().splitlines()
+        if args.functions:
+            functions_list += args.functions
+        if not functions_list:
+            # If neither `-f` nor `-ff` is specified, all functions from the current package are included by default:
+            # * Intel(R) Integrated Performance Primitives (excluding Threading Layer functions) or
+            # * Intel(R) Cryptography Primitives Library
+            if package.type in package.functions:
+                print("Neither -f nor -ff options are specified, so all functions are included in custom library.")
+                package_functions = package.functions[package.type]
+                for domain_functions_list in package_functions.values():
+                    functions_list += domain_functions_list
+            else:
+                sys.exit("Please, specify functions that has to be in dynamic library by using -f or -ff options")
 
         utils.set_configs_dict(
             package=package,
