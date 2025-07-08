@@ -88,7 +88,7 @@ IPP_OWN_DEFN(m512, ifma_neg52_p384, (const m512 a))
     const mask8 mask_zero = is_zero_i64(a);
 
     /* r = 4*p - a */
-    m512 r = mask_sub_i64(a, ~mask_zero, M4, a);
+    m512 r = mask_sub_i64(a, (mask8)~mask_zero, M4, a);
     r      = ifma_norm52(r);
     return r;
 }

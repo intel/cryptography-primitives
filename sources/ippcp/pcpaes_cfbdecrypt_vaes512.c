@@ -96,7 +96,7 @@ IPP_OWN_DEFN(void, DecryptCFB_RIJ128pipe_VAES_NI, (const Ipp8u* pSrc,       // p
     // load masks; allows to load 4 source blocks of cfbBlkSize each (in bytes) to LSB parts of 128-bit lanes in 512-bit register
     __mmask64 kLsbMask64 = (__mmask64)broadcast_16to64((Ipp16u)(0xFFFF << (16 - cfbBlkSize)));
     // same mask to load in MSB parts
-    __mmask64 kMsbMask64 = (__mmask64)broadcast_16to64(~blocksCompressMask);
+    __mmask64 kMsbMask64 = (__mmask64)broadcast_16to64((Ipp16u)~blocksCompressMask);
 
     // load IV
     __m128i IV128 = _mm_maskz_loadu_epi64(0x03 /* load 128-bit */, pIV);

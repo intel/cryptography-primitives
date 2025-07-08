@@ -145,7 +145,7 @@ IPP_OWN_DEFN(void, cpSMS4_CFB_dec_gfni512, (Ipp8u* pDst,
     /* load masks; allows to load 4 source blocks of cfbBlkSize each (in bytes) to LSB parts of 128-bit lanes in 512-bit register */
     __mmask64 kLsbMask64 = broadcast_16to64((Ipp16u)(0xFFFF << (16 - cfbBlkSize)));
     /* same mask to load in MSB parts */
-    __mmask64 kMsbMask64 = broadcast_16to64(~blocksCompressMask);
+    __mmask64 kMsbMask64 = broadcast_16to64((Ipp16u)~blocksCompressMask);
 
     /* load IV */
     __m128i currentState = _mm_maskz_loadu_epi64(0x03 /* load 128-bit */, pIV);
@@ -479,7 +479,7 @@ static void cpSMS4_CFB_dec_gfni512x48(Ipp8u* pDst,
     /* load masks; allows to load 4 source blocks of cfbBlkSize each (in bytes) to LSB parts of 128-bit lanes in 512-bit register */
     __mmask64 kLsbMask64 = broadcast_16to64((Ipp16u)(0xFFFF << (16 - cfbBlkSize)));
     /* same mask to load in MSB parts */
-    __mmask64 kMsbMask64 = broadcast_16to64(~blocksCompressMask);
+    __mmask64 kMsbMask64 = broadcast_16to64((Ipp16u)~blocksCompressMask);
 
     /* load IV */
     __m128i currentState = _mm_maskz_loadu_epi64(0x03 /* load 128-bit */, pIV);
@@ -750,7 +750,7 @@ static void cpSMS4_CFB_dec_gfni512x32(Ipp8u* pDst,
     /* load masks; allows to load 4 source blocks of cfbBlkSize each (in bytes) to LSB parts of 128-bit lanes in 512-bit register */
     __mmask64 kLsbMask64 = broadcast_16to64((Ipp16u)(0xFFFF << (16 - cfbBlkSize)));
     /* same mask to load in MSB parts */
-    __mmask64 kMsbMask64 = broadcast_16to64(~blocksCompressMask);
+    __mmask64 kMsbMask64 = broadcast_16to64((Ipp16u)~blocksCompressMask);
 
     /* load IV */
     __m128i currentState = _mm_maskz_loadu_epi64(0x03 /* load 128-bit */, pIV);
@@ -955,7 +955,7 @@ static void cpSMS4_CFB_dec_gfni512x16(Ipp8u* pDst,
     /* load masks; allows to load 4 source blocks of cfbBlkSize each (in bytes) to LSB parts of 128-bit lanes in 512-bit register */
     __mmask64 kLsbMask64 = broadcast_16to64((Ipp16u)(0xFFFF << (16 - cfbBlkSize)));
     /* same mask to load in MSB parts */
-    __mmask64 kMsbMask64 = broadcast_16to64(~blocksCompressMask);
+    __mmask64 kMsbMask64 = broadcast_16to64((Ipp16u)~blocksCompressMask);
 
     /* load IV */
     __m128i currentState = _mm_maskz_loadu_epi64(0x03 /* load 128-bit */, pIV);
@@ -1083,15 +1083,15 @@ static void cpSMS4_CFB_dec_gfni128x12(Ipp8u* pDst,
    // TMP[12..14] - key
    */
 
-    const Ipp16u blocksCompressMask = (Ipp16u)(0xFFFF << cfbBlkSize);
+    const __mmask16 blocksCompressMask = (__mmask16)(0xFFFF << cfbBlkSize);
 
     int processedLen = len - (len % (12 * cfbBlkSize));
     int blocks;
 
     /* load masks; allows to load 4 source blocks of cfbBlkSize each (in bytes) to LSB parts of 128-bit lanes in 512-bit register */
-    __mmask16 kLsbMask16 = (Ipp16u)(0xFFFF << (16 - cfbBlkSize));
+    __mmask16 kLsbMask16 = (__mmask16)(0xFFFF << (16 - cfbBlkSize));
     /* same mask to load in MSB parts */
-    __mmask16 kMsbMask16 = ~blocksCompressMask;
+    __mmask16 kMsbMask16 = (__mmask16)~blocksCompressMask;
 
     /* load IV */
     __m128i IV128 = _mm_maskz_loadu_epi64(0x03 /* load 128-bit */, pIV);
@@ -1365,15 +1365,15 @@ static void cpSMS4_CFB_dec_gfni128x8(Ipp8u* pDst,
    // TMP[8..9] - key
    */
 
-    const Ipp16u blocksCompressMask = (Ipp16u)(0xFFFF << cfbBlkSize);
+    const __mmask16 blocksCompressMask = (__mmask16)(0xFFFF << cfbBlkSize);
 
     int processedLen = len - (len % (8 * cfbBlkSize));
     int blocks;
 
     /* load masks; allows to load 4 source blocks of cfbBlkSize each (in bytes) to LSB parts of 128-bit lanes in 512-bit register */
-    __mmask16 kLsbMask16 = (Ipp16u)(0xFFFF << (16 - cfbBlkSize));
+    __mmask16 kLsbMask16 = (__mmask16)(0xFFFF << (16 - cfbBlkSize));
     /* same mask to load in MSB parts */
-    __mmask16 kMsbMask16 = ~blocksCompressMask;
+    __mmask16 kMsbMask16 = (__mmask16)~blocksCompressMask;
 
     /* load IV */
     __m128i currentState = _mm_maskz_loadu_epi64(0x03 /* load 128-bit */, pIV);
@@ -1574,15 +1574,15 @@ static void cpSMS4_CFB_dec_gfni128x4(Ipp8u* pDst,
    // TMP[4]    - key
    */
 
-    const Ipp16u blocksCompressMask = (Ipp16u)(0xFFFF << cfbBlkSize);
+    const __mmask16 blocksCompressMask = (__mmask16)(0xFFFF << cfbBlkSize);
 
     int processedLen = len - (len % (4 * cfbBlkSize));
     int blocks;
 
     /* load masks; allows to load 4 source blocks of cfbBlkSize each (in bytes) to LSB parts of 128-bit lanes in 512-bit register */
-    __mmask16 kLsbMask16 = (Ipp16u)(0xFFFF << (16 - cfbBlkSize));
+    __mmask16 kLsbMask16 = (__mmask16)(0xFFFF << (16 - cfbBlkSize));
     /* same mask to load in MSB parts */
-    __mmask16 kMsbMask16 = ~blocksCompressMask;
+    __mmask16 kMsbMask16 = (__mmask16)~blocksCompressMask;
 
     /* load IV */
     __m128i currentState = _mm_maskz_loadu_epi64(0x03 /* load 128-bit */, pIV);
