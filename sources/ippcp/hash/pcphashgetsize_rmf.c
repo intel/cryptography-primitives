@@ -73,7 +73,7 @@ IPPFUN(IppStatus, ippsHashGetSizeOptimal_rmf, (int* pSize, const IppsHashMethod*
     /* test pointers */
     IPP_BAD_PTR2_RET(pSize, pMethod);
 
-    *pSize = (int)((Ipp8u)(sizeof(IppsHashState_rmf)) + pMethod->msgBlkSize + pMethod->stateLen);
+    *pSize = (int)(sizeof(IppsHashState_rmf)) + pMethod->msgBlkSize + pMethod->stateLen;
 
     return ippStsNoErr;
 }
