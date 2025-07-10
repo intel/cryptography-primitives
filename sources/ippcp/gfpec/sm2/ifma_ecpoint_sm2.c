@@ -131,20 +131,20 @@ IPP_OWN_DEFN(void, gesm2_dbl, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p))
     T = U = V = setzero_i64();
     A = B = H = setzero_i64();
 
-    const fesm2 M2 = FESM2_LOADU(psm2_x2); /* 2*p */
-    const fesm2 M4 = FESM2_LOADU(psm2_x4); /* 4*p */
-    const fesm2 M8 = FESM2_LOADU(psm2_x8); /* 8*p */
+    const fesm2 M2 = FESM2_LOADU(psm2_x2);    /* 2*p */
+    const fesm2 M4 = FESM2_LOADU(psm2_x4);    /* 4*p */
+    const fesm2 M8 = FESM2_LOADU(psm2_x8);    /* 8*p */
 
-    add(T, *y1, *y1);                      /* T = 2*y1 */
+    add(T, FESM2_LOADU(y1), FESM2_LOADU(y1)); /* T = 2*y1 */
     lnorm(T, T);
 
     /* V = 4*y1^2 */
     /* U = z1^2 */
-    sqr_dual(V, T, U, *z1);
+    sqr_dual(V, T, U, FESM2_LOADU(z1));
 
-    sub(B, *x1, U); /* B = 2*p + x1 - z1^2 */
+    sub(B, FESM2_LOADU(x1), U); /* B = 2*p + x1 - z1^2 */
     add(B, B, M2);
-    add(U, *x1, U); /* U = x1 + z1^2 */
+    add(U, FESM2_LOADU(x1), U); /* U = x1 + z1^2 */
 
     /* normalization */
     lnorm_dual(V, V, U, U);
@@ -152,7 +152,7 @@ IPP_OWN_DEFN(void, gesm2_dbl, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p))
 
     /* A = 4*x1*y1^2 */
     /* B = (x1 - z1^2)*(x1 + z1^2) */
-    mul_dual(A, V, *x1, B, B, U);
+    mul_dual(A, V, FESM2_LOADU(x1), B, B, U);
 
     add(x2, A, A); /* x2 = 8*x1*y1^2 (4p) */
     add(H, B, B);
@@ -178,7 +178,7 @@ IPP_OWN_DEFN(void, gesm2_dbl, (PSM2_POINT_IFMA * r, const PSM2_POINT_IFMA* p))
 
     /* z2 = 2*y1*z1 */
     /* U = B(l1)*(A(l2) - x2) */
-    mul_dual(z2, T, *z1, U, U, B);
+    mul_dual(z2, T, FESM2_LOADU(z1), U, U, B);
 
     sub(y2, U, y2); /* y2 = 2*p + B(l1)*(A(l2) - x2) - y2(l3) */
     add(y2, y2, M2);
@@ -229,14 +229,14 @@ IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA* r,
 
     /* s1 = y1*z2 */
     /* u1 = z2^2  */
-    mul_dual(S1, *y1, *z2, U1, *z2, *z2);
+    mul_dual(S1, FESM2_LOADU(y1), FESM2_LOADU(z2), U1, FESM2_LOADU(z2), FESM2_LOADU(z2));
 
     /* normalization */
     lnorm_dual(S1, S1, U1, U1);
 
     /* s2 = y2*z1 */
     /* u2 = z1^2 */
-    mul_dual(S2, *y2, *z1, U2, *z1, *z1);
+    mul_dual(S2, FESM2_LOADU(y2), FESM2_LOADU(z1), U2, FESM2_LOADU(z1), FESM2_LOADU(z1));
 
     lnorm_dual(S2, S2, U2, U2);
 
@@ -249,7 +249,7 @@ IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA* r,
 
     /* u1 = x1*z2^2 (A) */
     /* u2 = x2*z1^2 (B) */
-    mul_dual(U1, *x1, U1, U2, *x2, U2);
+    mul_dual(U1, FESM2_LOADU(x1), U1, U2, FESM2_LOADU(x2), U2);
 
     /* normalization */
     lnorm_dual(U1, U1, U2, U2);
@@ -275,7 +275,7 @@ IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA* r,
 
     /* z3 = z1*z2 */
     /* u2 = E^2 */
-    mul_dual(z3, *z1, *z2, U2, H, H);
+    mul_dual(z3, FESM2_LOADU(z1), FESM2_LOADU(z2), U2, H, H);
 
     /* normalization */
     lnorm_dual(z3, z3, U2, U2);
@@ -312,14 +312,14 @@ IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA* r,
     lnorm(z3, z3);
 
     /* T = p_is_inf ? q : T */
-    FESM2_MASK_MOV(x3, x3, p_is_inf, *x2);
-    FESM2_MASK_MOV(y3, y3, p_is_inf, *y2);
-    FESM2_MASK_MOV(z3, z3, p_is_inf, *z2);
+    FESM2_MASK_MOV(x3, x3, p_is_inf, FESM2_LOADU(x2));
+    FESM2_MASK_MOV(y3, y3, p_is_inf, FESM2_LOADU(y2));
+    FESM2_MASK_MOV(z3, z3, p_is_inf, FESM2_LOADU(z2));
 
     /* T = q_is_inf ? p : T */
-    FESM2_MASK_MOV(x3, x3, q_is_inf, *x1);
-    FESM2_MASK_MOV(y3, y3, q_is_inf, *y1);
-    FESM2_MASK_MOV(z3, z3, q_is_inf, *z1);
+    FESM2_MASK_MOV(x3, x3, q_is_inf, FESM2_LOADU(x1));
+    FESM2_MASK_MOV(y3, y3, q_is_inf, FESM2_LOADU(y1));
+    FESM2_MASK_MOV(z3, z3, q_is_inf, FESM2_LOADU(z1));
 
     /* r = point_is_equal ? r2 : T */
     FESM2_MASK_MOV(x3, x3, point_is_equal, r2.x);
