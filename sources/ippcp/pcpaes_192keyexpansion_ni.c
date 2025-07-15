@@ -28,6 +28,7 @@
 #include "owncp.h"
 #include "pcpaesm.h"
 #include "pcpaes_keys_ni.h"
+#include "pcptool.h"
 
 #if (_AES_NI_ENABLING_ == _FEATURE_ON_) || (_AES_NI_ENABLING_ == _FEATURE_TICKTOCK_)
 
@@ -107,9 +108,7 @@ IPP_OWN_DEFN(void, aes192_KeyExpansion_NI, (Ipp8u * keyExp, const Ipp8u* userkey
     pKeySchedule[12] = temp[0];
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(temp) / sizeof(temp[0]); i++) {
-        temp[i] = _mm_xor_si128(temp[i], temp[i]);
-    }
+    PurgeBlock(temp, sizeof(temp));
 }
 
 #endif /* #if (_AES_NI_ENABLING_==_FEATURE_ON_) || (_AES_NI_ENABLING_==_FEATURE_TICKTOCK_) */

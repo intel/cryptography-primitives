@@ -115,9 +115,7 @@ IPP_OWN_DEFN(void, cpSMS4_SetRoundKeys_aesni, (Ipp32u * pRoundKey, const Ipp8u* 
     }
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 }
 
 #endif /* _IPP_P8, _IPP32E_Y8 */

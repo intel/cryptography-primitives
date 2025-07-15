@@ -28,6 +28,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "sms4/pcpsms4.h"
+#include "pcptool.h"
 
 #if (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
 
@@ -237,9 +238,7 @@ IPP_OWN_DEFN(int, cpSMS4_CBC_dec_aesni, (Ipp8u* pOut,
     _mm_storeu_si128((__m128i*)(pIV), _mm256_castsi256_si128(TMP[16]));
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm256_xor_si256(TMP[i], TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     return processedLen + cpSMS4_CBC_dec_aesni_x12(pOut, pInp, len - processedLen, pRKey, pIV);
 }

@@ -415,9 +415,7 @@ IPP_OWN_DEFN(int, cpSMS4_CTR_gfni512, (Ipp8u* pOut,
         _mm_storeu_si128((__m128i*)pCtr, _mm512_castsi512_si128(TMP[20]));
 
         /* clear secret data */
-        for (unsigned int i = 0; i < sizeof(TMP) / sizeof(TMP[0]); ++i) {
-            TMP[i] = _mm512_xor_si512(TMP[i], TMP[i]);
-        }
+        PurgeBlock(TMP, sizeof(TMP));
     }
 
     len -= processedLen;
@@ -665,9 +663,7 @@ static int cpSMS4_CTR_gfni512x48(Ipp8u* pOut,
         _mm_storeu_si128((__m128i*)pCtr, _mm512_castsi512_si128(TMP[16]));
 
         /* clear secret data */
-        for (unsigned int i = 0; i < sizeof(TMP) / sizeof(TMP[0]); ++i) {
-            TMP[i] = _mm512_xor_si512(TMP[i], TMP[i]);
-        }
+        PurgeBlock(TMP, sizeof(TMP));
     }
 
     len -= processedLen;
@@ -860,9 +856,7 @@ static int cpSMS4_CTR_gfni512x32(Ipp8u* pOut,
         _mm_storeu_si128((__m128i*)pCtr, _mm512_castsi512_si128(TMP[12]));
 
         /* clear secret data */
-        for (unsigned int i = 0; i < sizeof(TMP) / sizeof(TMP[0]); ++i) {
-            TMP[i] = _mm512_xor_si512(TMP[i], TMP[i]);
-        }
+        PurgeBlock(TMP, sizeof(TMP));
     }
 
     len -= processedLen;
@@ -1001,9 +995,7 @@ static int cpSMS4_CTR_gfni512x16(Ipp8u* pOut,
         _mm_storeu_si128((__m128i*)pCtr, _mm512_castsi512_si128(TMP[8]));
 
         /* clear secret data */
-        for (unsigned int i = 0; i < sizeof(TMP) / sizeof(TMP[0]); ++i) {
-            TMP[i] = _mm512_xor_si512(TMP[i], TMP[i]);
-        }
+        PurgeBlock(TMP, sizeof(TMP));
     }
 
     len -= processedLen;
@@ -1257,9 +1249,7 @@ static int cpSMS4_CTR_gfni128x12(Ipp8u* pOut,
         _mm_storeu_si128((__m128i*)pCtr, TMP[15]);
 
         /* clear secret data */
-        for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-            TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-        }
+        PurgeBlock(TMP, sizeof(TMP));
     }
 
     len -= processedLen;
@@ -1451,9 +1441,7 @@ static int cpSMS4_CTR_gfni128x8(Ipp8u* pOut,
         _mm_storeu_si128((__m128i*)pCtr, TMP[11]);
 
         /* clear secret data */
-        for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-            TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-        }
+        PurgeBlock(TMP, sizeof(TMP));
     }
 
     len -= processedLen;
@@ -1580,9 +1568,7 @@ static int cpSMS4_ECB_gfni128x4(Ipp8u* pOut,
     _mm_storeu_si128((__m128i*)pCtr, TMP[7]);
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     return processedLen;
 }

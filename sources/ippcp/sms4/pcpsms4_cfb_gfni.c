@@ -439,9 +439,7 @@ IPP_OWN_DEFN(void, cpSMS4_CFB_dec_gfni512, (Ipp8u* pDst,
     }
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm512_setzero_si512(); //_mm512_xor_si512(TMP[i],TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     len -= processedLen;
 
@@ -710,9 +708,7 @@ static void cpSMS4_CFB_dec_gfni512x48(Ipp8u* pDst,
     }
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm512_setzero_si512(); //_mm512_xor_si512(TMP[i],TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     len -= processedLen;
 
@@ -915,9 +911,7 @@ static void cpSMS4_CFB_dec_gfni512x32(Ipp8u* pDst,
     }
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm512_setzero_si512(); //_mm512_xor_si512(TMP[i],TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     len -= processedLen;
 
@@ -1053,9 +1047,7 @@ static void cpSMS4_CFB_dec_gfni512x16(Ipp8u* pDst,
     }
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm512_setzero_si512(); //_mm512_xor_si512(TMP[i],TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     len -= processedLen;
 
@@ -1334,9 +1326,7 @@ static void cpSMS4_CFB_dec_gfni128x12(Ipp8u* pDst,
     }
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm_setzero_si128(); //_mm_xor_si128(TMP[i],TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     len -= processedLen;
 
@@ -1544,9 +1534,7 @@ static void cpSMS4_CFB_dec_gfni128x8(Ipp8u* pDst,
     }
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm_setzero_si128(); //_mm_xor_si128(TMP[i],TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     len -= processedLen;
 
@@ -1684,9 +1672,7 @@ static void cpSMS4_CFB_dec_gfni128x4(Ipp8u* pDst,
     }
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm_setzero_si128(); //_mm_xor_si128(TMP[i],TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     len -= processedLen;
 

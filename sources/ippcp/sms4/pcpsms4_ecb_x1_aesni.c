@@ -105,9 +105,7 @@ IPP_OWN_DEFN(void, cpSMS4_ECB_aesni_x1, (Ipp8u * pOut, const Ipp8u* pInp, const 
     ((Ipp32u*)(pOut))[3] = (Ipp32u)_mm_cvtsi128_si32(_mm_shuffle_epi8(TMP[1], M128(swapBytes)));
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 }
 
 #endif /* _IPP_P8, _IPP32E_Y8 */

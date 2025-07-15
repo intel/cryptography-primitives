@@ -260,9 +260,7 @@ IPP_OWN_DEFN(int, cpSMS4_CTR_aesni, (Ipp8u* pOut,
         _mm_storeu_si128((__m128i*)pCtr, _mm256_castsi256_si128(TMP[12]));
 
         /* clear secret data */
-        for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-            TMP[i] = _mm256_xor_si256(TMP[i], TMP[i]);
-        }
+        PurgeBlock(TMP, sizeof(TMP));
     }
 
     return processedLen +

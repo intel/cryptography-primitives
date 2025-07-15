@@ -152,9 +152,7 @@ static int cpSMS4_CBC_dec_aesni_x4(Ipp8u* pOut,
     _mm_storeu_si128((__m128i*)(pIV), TMP[1]);
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     return processedLen;
 }
@@ -331,9 +329,7 @@ static int cpSMS4_CBC_dec_aesni_x8(Ipp8u* pOut,
     _mm_storeu_si128((__m128i*)(pIV), TMP[2]);
 
     /* clear secret data */
-    for (int i = 0; i < (int)(sizeof(TMP) / sizeof(TMP[0])); i++) {
-        TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     return processedLen + cpSMS4_CBC_dec_aesni_x4(pOut, pInp, len - processedLen, pRKey, pIV);
 }
@@ -580,9 +576,7 @@ IPP_OWN_DEFN(int, cpSMS4_CBC_dec_aesni, (Ipp8u* pOut,
     _mm_storeu_si128((__m128i*)(pIV), TMP[3]);
 
     /* clear secret data */
-    for (int i = 0; i < (int)(sizeof(TMP) / sizeof(TMP[0])); i++) {
-        TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     return processedLen + cpSMS4_CBC_dec_aesni_x8(pOut, pInp, len - processedLen, pRKey, pIV);
 }

@@ -109,9 +109,7 @@ IPP_OWN_DEFN(void, cpSMS4_ECB_gfni_x1, (Ipp8u * pOut, const Ipp8u* pInp, const I
     _mm_storeu_si128((__m128i*)pOut, TMP[1]);
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm_xor_si128(TMP[i], TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 }
 
 #endif /* #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920) */

@@ -213,9 +213,7 @@ IPP_OWN_DEFN(int, cpSMS4_ECB_aesni, (Ipp8u * pOut, const Ipp8u* pInp, int len, c
         processedLen += cpSMS4_ECB_aesni_x12(pOut, pInp, len, pRKey);
 
     /* clear secret data */
-    for (Ipp32u i = 0; i < sizeof(TMP) / sizeof(TMP[0]); i++) {
-        TMP[i] = _mm256_setzero_si256(); //_mm256_xor_si256(TMP[i],TMP[i]);
-    }
+    PurgeBlock(TMP, sizeof(TMP));
 
     return processedLen;
 }
