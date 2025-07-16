@@ -74,6 +74,9 @@ IPPFUN(IppStatus, ippsHashFinal_rmf, (Ipp8u * pMD, IppsHashState_rmf* pState))
         PadBlock(0, HASH_VALUE(pState), method->stateLen);
         method->hashInit(HASH_VALUE(pState));
 
+        /* zeroize */
+        PurgeBlock(HASH_BUFF(pState), method->msgBlkSize);
+
         return ippStsNoErr;
     }
 }

@@ -65,6 +65,11 @@ IPPFUN(IppStatus, ippsHashFinal, (Ipp8u * pMD, IppsHashState* pState))
         int hashSize       = cpHashAlgAttr[algID].hashSize;
 
         cpComputeDigest(pMD, hashSize, pState);
+
+        /* zeroize */
+        const int mbs = cpHashAlgAttr[HASH_ALG_ID(pState)].msgBlkSize;
+        PurgeBlock(HASH_BUFF(pState), mbs);
+
         cpReInitHash(pState, algID);
 
         return ippStsNoErr;
