@@ -569,7 +569,7 @@ if(MERGED_BLD)
   set_source_files_properties(${DISPATCHER_ASM_SOURCES} PROPERTIES INCLUDE_DIRECTORIES "${ASM_INCLUDE_DIRECTORIES}")
 
   # Intel® C++ Compiler specific - the dispatcher also contains C source code
-  # that doesn't use build settings from CMAKE_C/CXX_FLAGS_DEBUG/RELEASE 
+  # that doesn't use build settings from CMAKE_C/CXX_FLAGS_DEBUG/RELEASE
   set_source_files_properties(${DISPATCHER_C_SOURCES} pcpver.rc PROPERTIES INCLUDE_DIRECTORIES "${C_INCLUDE_DIRECTORIES}")
   # protection (_FORTIFY_SOURCE) and optimization flags for dispatcher
   if(UNIX)
