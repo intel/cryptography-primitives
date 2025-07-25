@@ -96,7 +96,7 @@ Return Values
        * ``mdLen`` is less than one or greater than the length of the hash value
        * ``macLen`` is less than one or greater than the length of the hash value
        
-   * -     ippsStsNotSupportedModeErr   
+   * -     ippStsNotSupportedModeErr   
      -     Indicates an error condition if the hashAlg parameter does not match any value of IppHashAlg listed in table :ref:`Supported Hash Algorithms <one-way-hash-primitives>`.   
 
 

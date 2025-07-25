@@ -106,7 +106,7 @@ Return Values
      -     Indicates an error condition if the public or private key is not set up.
    * -     ippStsLengthErr
      -     Indicates an error condition if the value of saltLen is negative or any input/output length parameters are inconsistent with one another together (see [PKCS 1.2.1] for details).
-   * -     ippsStsNotSupportedModeErr
+   * -     ippStsNotSupportedModeErr
      -      Indicates an error condition if the hashAlg parameter does not match any value of IppHashAlgId listed in table :ref:`Supported Hash Algorithms <one-way-hash-primitives>`.
 
 

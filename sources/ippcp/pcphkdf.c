@@ -36,7 +36,7 @@
 //    ippStsLengthErr            okm_len <= 0
 //                               okm_len > 255 * Hash length
 //                               info_len > MAX_HKDF_INFO_SIZE
-//    ippsStsNotSupportedModeErr hash method is not supported
+//    ippStsNotSupportedModeErr hash method is not supported
 //    ippStsNoErr                no errors
 //
 // Parameters:
@@ -67,8 +67,8 @@ IPPFUN(IppStatus,
     IPP_BAD_PTR2_RET(ikm, okm);
     IPP_BAD_PTR1_RET(pMethod);
 
-    /* check if the algorithm is from the sha3 family (SHA3 is not supported)*/
-    IPP_BADARG_RET(cpIsSHA3AlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
+    /* SHAKE128/256 are not supported with HKDF mode*/
+    IPP_BADARG_RET(cpIsSHAKEAlgID(pMethod->hashAlgId), ippStsNotSupportedModeErr);
 
     // test outkey len
     int hash_len = pMethod->hashLen;

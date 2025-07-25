@@ -76,5 +76,5 @@ Return Values
      - Indicates an error condition if any of the specified pointers is NULL.
    * - ippStsLengthErr
      - Indicates an error condition if any of the specified length parameters are invalid.
-   * - ippsStsNotSupportedModeErr
+   * - ippStsNotSupportedModeErr
      - Indicates hash method is not supported

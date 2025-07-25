@@ -93,7 +93,7 @@ Return Values
      -     Indicates an error condition if the context parameter does not match the operation.
    * -     ippStsIncompleteContextErr
      -     Indicates an error condition if the public key is not set up.
-   * -     ippsStsNotSupportedModeErr
+   * -     ippStsNotSupportedModeErr
      -      Indicates an error condition if the hashAlg parameter does not match any value of IppHashAlgId listed in table :ref:`Supported Hash Algorithms <one-way-hash-primitives>`.
 
 

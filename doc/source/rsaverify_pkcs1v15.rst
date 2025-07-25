@@ -95,7 +95,7 @@ Return Values
      -     Indicates an error condition if the public key is not set up.
    * -     ippStsLengthErr
      -  Indicates an error condition if any input/output length parameters are inconsistent with one another.
-   * -     ippsStsNotSupportedModeErr
+   * -     ippStsNotSupportedModeErr
      -     Indicates an error condition if the hashAlg parameter does not match any value of IppHashAlgId listed in table :ref:`Supported Hash Algorithms <one-way-hash-primitives>`.
 
 
