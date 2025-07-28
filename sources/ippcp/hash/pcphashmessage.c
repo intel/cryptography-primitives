@@ -116,10 +116,7 @@ IPPFUN(IppStatus, ippsHashMessage, (const Ipp8u* pMsg, int len, Ipp8u* pMD, IppH
             hashFunc(hash, pMsg, msgLenBlks, pParam);
         hashFunc(hash, buffer, bufferLen, pParam);
 
-        /* zeroize */
-        PurgeBlock(buffer, bufferLen);
-
-        /* store digest into the user buffer (remember digest is big endian) */
+        /* store digest into the user buffer (remember digest in big endian) */
         if (msgLenRepSize > (int)(sizeof(Ipp64u))) {
             /* ippHashAlg_SHA384, ippHashAlg_SHA512, ippHashAlg_SHA512_224 and ippHashAlg_SHA512_256 */
             hash[0] = ENDIANNESS64(hash[0]);
