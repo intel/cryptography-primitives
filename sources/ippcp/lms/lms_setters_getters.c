@@ -75,15 +75,19 @@ IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize,
     /* Calculate the maximum Set LMOTS and LMS parameters */
                       //    pubKey->I   ||  q  ||  D_MESG  ||          C        ||            pMsg
     Ipp32u lenBufQ    = CP_PK_I_BYTESIZE +  4   +     2     +    lmotsParams.n   + (Ipp32u)maxMessageLength;
-                      //    pubKey->I   ||  q  ||  i  || j ||     Y[i]
+                     //    pubKey->I   ||  q  ||  i  || j ||     Y[i]
     Ipp32u lenBufTmp  = CP_PK_I_BYTESIZE +  4  +   2  +  1  + lmotsParams.n;
                       //    pubKey->I   || node_num || D_LEAF ||      Kc
     Ipp32u lenBufTc   = CP_PK_I_BYTESIZE +     4     +    2    + lmotsParams.n;
                       //    pubKey->I   || node_num/2 || D_INTR ||    path[i]   ||     tmp
     Ipp32u lenBufIntr = CP_PK_I_BYTESIZE +      4      +    2    + lmotsParams.n + lmotsParams.n;
+    Ipp32u lenBufZ    = (lmotsParams.p + 1) * lmotsParams.n;
+    // lenBufQZ = lenBufQ + (lenBufZ  - /* shift to reuse Q */ (Ipp32u)maxMessageLength + 1);
+    Ipp32u lenBufQZ = CP_PK_I_BYTESIZE + 4 + 2 + lmotsParams.n + lenBufZ + 1;
     /* clang-format on */
 
-    *pSize = (Ipp32s)IPP_MAX(IPP_MAX(IPP_MAX(lenBufQ, lenBufTmp), lenBufTc), lenBufIntr);
+    *pSize = (Ipp32s)IPP_MAX(IPP_MAX(IPP_MAX(IPP_MAX(lenBufQZ, lenBufQ), lenBufTmp), lenBufTc),
+                             lenBufIntr);
 
     return ippcpSts;
 }

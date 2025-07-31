@@ -79,8 +79,8 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
     Ipp32u nParam = lmotsParams.n;
     Ipp32u wParam = lmotsParams.w;
     Ipp32u pParam = lmotsParams.p;
-    Ipp32u hParam = lmsParams.h;
     Ipp32u mParam = lmsParams.m;
+    Ipp32u hParam = lmsParams.h;
 
     /*                    Parse signature                   */
     /* ---------------------------------------------------- */
@@ -121,14 +121,13 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
     Ipp32u cksmQ = cpCksm(Q_CksmQ, lmotsParams);
     cp_to_byte(Q_CksmQ + nParam, /*cksmQ byteLen*/ 2, cksmQ);
 
-    Ipp8u z[CP_SIG_MAX_Y_WORDSIZE + 1][CP_LMS_MAX_HASH_BYTESIZE];
-    Ipp8u* pZ = z[0];
+    Ipp8u* pZ = pBuffer + (total_size - (Ipp32u)msgLen + 1); // size = (pParam + 1) * nParam //z[0];
 
+    Ipp8u tmp[CP_LMS_MAX_HASH_BYTESIZE];
     for (Ipp32u i = 0; i < pParam; i++) {
         // a = coef(Q || Cksm(Q), i, w)
         Ipp32u a = cpCoef(Q_CksmQ, i, wParam);
         //tmp = y[i]
-        Ipp8u tmp[CP_LMS_MAX_HASH_BYTESIZE];
         CopyBlock(lmotsSig.pY + i * nParam, tmp, (cpSize)nParam);
 
         // I || u32str(q)
@@ -162,8 +161,8 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
     // Conduct operation u16str(D_PBLC)
     cp_to_byte(pZ + nParam - /*D_PBLC byteLen*/ 2, /*D_PBLC byteLen*/ 2, D_PBLC);
     // tmp = Kc = H(I || u32str(q) || u16str(D_PBLC) || z[0] || z[1] || ... || z[p-1])
-    Ipp8u Kc[CP_LMS_MAX_HASH_BYTESIZE];
-    ippcpSts = ippsHashMessage_rmf(
+    Ipp8u* Kc = tmp;
+    ippcpSts  = ippsHashMessage_rmf(
         pZ + zStartOffset,
         (int)(pParam * nParam + CP_PK_I_BYTESIZE + /*q byteLen*/ 4 + /*D_PBLC byteLen*/ 2),
         Kc,
@@ -182,7 +181,7 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
     CopyBlock(Kc,
               tmpBuffKc + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_LEAF byteLen*/ 2,
               (cpSize)mParam);
-    Ipp8u tmp[CP_LMS_MAX_HASH_BYTESIZE];
+
     ippcpSts = ippsHashMessage_rmf(
         tmpBuffKc,
         (int)(CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_LEAF byteLen*/ 2 + mParam),
