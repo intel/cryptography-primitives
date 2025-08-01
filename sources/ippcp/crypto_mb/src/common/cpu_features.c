@@ -314,20 +314,39 @@ static const algo_width_map arr_algo_width_k1[] = {
     { MBX_ALGO_EC_NIST_P521,  MBX_WIDTH_MB8 },
     {       MBX_ALGO_EC_SM2,  MBX_WIDTH_MB8 },
     {          MBX_ALGO_SM3, MBX_WIDTH_MB16 },
-    {          MBX_ALGO_SM4, MBX_WIDTH_MB16 }
+    {          MBX_ALGO_SM4, MBX_WIDTH_MB16 },
+    {      MBX_ALGO_CCM_SM4, MBX_WIDTH_MB16 },
+    {      MBX_ALGO_GCM_SM4, MBX_WIDTH_MB16 },
+    {      MBX_ALGO_XTS_SM4, MBX_WIDTH_MB16 },
+    {      MBX_ALGO_ED25519,  MBX_WIDTH_MB8 },
+    {          MBX_ALGO_EXP,  MBX_WIDTH_MB8 }
 };
 static const algo_width_map arr_algo_width_l9[] = {
+// The `l9` implementations are available for a reduced set of compilers.
+#ifdef _MBX_AVX_IFMA_SUPPORTED
     {       MBX_ALGO_RSA_1K, MBX_WIDTH_MB8 },
     {       MBX_ALGO_RSA_2K, MBX_WIDTH_MB8 },
     {       MBX_ALGO_RSA_3K, MBX_WIDTH_MB8 },
     {       MBX_ALGO_RSA_4K, MBX_WIDTH_MB8 },
-    {       MBX_ALGO_X25519,             0 },
+    { MBX_ALGO_EC_NIST_P256, MBX_WIDTH_MB8 },
+#else
+    {       MBX_ALGO_RSA_1K,             0 },
+    {       MBX_ALGO_RSA_2K,             0 },
+    {       MBX_ALGO_RSA_3K,             0 },
+    {       MBX_ALGO_RSA_4K,             0 },
     { MBX_ALGO_EC_NIST_P256,             0 },
+#endif
+    {       MBX_ALGO_X25519,             0 },
     { MBX_ALGO_EC_NIST_P384,             0 },
     { MBX_ALGO_EC_NIST_P521,             0 },
     {       MBX_ALGO_EC_SM2,             0 },
     {          MBX_ALGO_SM3,             0 },
-    {          MBX_ALGO_SM4,             0 }
+    {          MBX_ALGO_SM4,             0 },
+    {      MBX_ALGO_CCM_SM4,             0 },
+    {      MBX_ALGO_GCM_SM4,             0 },
+    {      MBX_ALGO_XTS_SM4,             0 },
+    {      MBX_ALGO_ED25519,             0 },
+    {          MBX_ALGO_EXP,             0 }
 };
 /* clang-format on */
 
