@@ -67,7 +67,7 @@ static __ALIGN16 Ipp8u one128[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
 __IPPCP_INLINE __m512i inc512(__m512i x, Ipp8u* increment)
 {
-    __m512i t          = _mm512_add_epi64(x, _mm512_loadu_epi64(increment));
+    __m512i t          = _mm512_add_epi64(x, _mm512_loadu_si512(increment));
     __mmask8 carryMask = _mm512_cmplt_epu64_mask(t, x);
     carryMask          = (__mmask8)(carryMask << 1);
     t = _mm512_add_epi64(t, _mm512_mask_set1_epi64(_mm512_setzero_si512(), carryMask, 1));
