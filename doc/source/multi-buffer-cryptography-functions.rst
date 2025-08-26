@@ -89,7 +89,7 @@ numb parameter. Return value is one of the following:
 .. toctree::
    :maxdepth: 1
 
-   
+   mbx-support-functions
    rsa-algorithm-functions-mbx
    nist-recommended-elliptic-curve-functions
    montgomery-curve25519-elliptic-curve-functions
