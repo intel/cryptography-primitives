@@ -36,8 +36,9 @@ IPPFUN(IppStatus, ippsHashMethodSet_SHA3_384, (IppsHashMethod * pMethod))
     /* test pointers */
     IPP_BAD_PTR1_RET(pMethod);
 
-    pMethod->hashAlgId = ippHashAlg_SHA3_384;
-    pMethod->hashLen = IPP_SHA3_384_DIGEST_BITSIZE / 8, pMethod->msgBlkSize = MBS_SHA3_384;
+    pMethod->hashAlgId     = ippHashAlg_SHA3_384;
+    pMethod->hashLen       = IPP_SHA3_384_DIGEST_BITSIZE / 8;
+    pMethod->msgBlkSize    = MBS_SHA3_384;
     pMethod->msgLenRepSize = 0;
     pMethod->stateLen      = IPP_SHA3_STATE_BYTESIZE;
     pMethod->hashInit      = cp_sha3_hashInit;

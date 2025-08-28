@@ -507,3 +507,12 @@ ippsXMSSInitKeyPair
 ippsXMSSInitSignature
 ippsXMSSKeyGen
 ippsXMSSSign
+ippsMLKEM_GetSize
+ippsMLKEM_KeyGenBufferGetSize
+ippsMLKEM_EncapsBufferGetSize
+ippsMLKEM_DecapsBufferGetSize
+ippsMLKEM_GetInfo
+ippsMLKEM_Init
+ippsMLKEM_KeyGen
+ippsMLKEM_Encaps
+ippsMLKEM_Decaps

@@ -1254,6 +1254,12 @@ IPPAPI(IppStatus, ippsGFpECDecryptSM2_Ext, (Ipp8u *pOut, int maxOutLen,
                                             const IppsBigNumState *pPrvKey,
                                             IppsGFpECState *pEC, Ipp8u *pScratchBuffer))
 
+/*
+// =========================================================
+//  Post-Quantum Cryptography
+// =========================================================
+*/
+
 #ifdef IPPCP_PREVIEW_XMSS
 
 /* XMSS */
@@ -1308,6 +1314,7 @@ IPPAPI(IppStatus, ippsXMSSVerify, (const Ipp8u* pMsg,
 
 #ifdef IPPCP_PREVIEW_LMS
 
+/* Leighton-Micali Signature (LMS) */
 IPPAPI(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
 IPPAPI(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
 IPPAPI(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
@@ -1322,6 +1329,28 @@ IPPAPI(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
                                   const IppsLMSPublicKeyState* pKey,
                                   Ipp8u* pBuffer))
 #endif // IPPCP_PREVIEW_LMS
+
+#ifdef IPPCP_PREVIEW_ML_KEM
+
+/* Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM) */
+IPPAPI(IppStatus, ippsMLKEM_GetSize, (int* pSize, IppsMLKEMParamSet schemeType))
+IPPAPI(IppStatus, ippsMLKEM_GetInfo, (IppsMLKEMInfo* pInfo, IppsMLKEMParamSet schemeType))
+
+IPPAPI(IppStatus, ippsMLKEM_Init, (IppsMLKEMState* pMLKEMCtx, IppsMLKEMParamSet schemeType))
+
+IPPAPI(IppStatus, ippsMLKEM_KeyGenBufferGetSize, (int* pSize, const IppsMLKEMState* pMLKEMCtx))
+IPPAPI(IppStatus, ippsMLKEM_EncapsBufferGetSize, (int* pSize, const IppsMLKEMState* pMLKEMCtx))
+IPPAPI(IppStatus, ippsMLKEM_DecapsBufferGetSize, (int* pSize, const IppsMLKEMState* pMLKEMCtx))
+
+IPPAPI(IppStatus, ippsMLKEM_KeyGen, (Ipp8u* pEncKey, Ipp8u* pDecKey, IppsMLKEMState* pMLKEMCtx,
+                                     Ipp8u* pScratchBuffer, IppBitSupplier rndFunc, void* pRndParam))
+IPPAPI(IppStatus, ippsMLKEM_Encaps, (const Ipp8u* pEncKey, Ipp8u* pCipherText, Ipp8u* pSharedSecret,
+                                     IppsMLKEMState* pMLKEMCtx, Ipp8u* pScratchBuffer,
+                                     IppBitSupplier rndFunc, void* pRndParam))
+IPPAPI(IppStatus, ippsMLKEM_Decaps, (const Ipp8u* pDecKey, const Ipp8u* pCipherText,
+                                     Ipp8u* pSharedSecret, IppsMLKEMState* pMLKEMCtx, Ipp8u* pScratchBuffer))
+
+#endif // IPPCP_PREVIEW_ML_KEM
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
 #pragma warning(pop)

@@ -498,3 +498,12 @@ _ippsXMSSInitKeyPair
 _ippsXMSSInitSignature
 _ippsXMSSKeyGen
 _ippsXMSSSign
+_ippsMLKEM_GetSize
+_ippsMLKEM_KeyGenBufferGetSize
+_ippsMLKEM_EncapsBufferGetSize
+_ippsMLKEM_DecapsBufferGetSize
+_ippsMLKEM_GetInfo
+_ippsMLKEM_Init
+_ippsMLKEM_KeyGen
+_ippsMLKEM_Encaps
+_ippsMLKEM_Decaps

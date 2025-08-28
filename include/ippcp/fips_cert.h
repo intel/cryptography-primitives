@@ -242,7 +242,10 @@ enum FIPS_IPPCP_FUNC {
     HKDF,
     XMSSVerify,
     XMSSKeyGen,
-    XMSSSign
+    XMSSSign,
+    MLKEM_KeyGen,
+    MLKEM_Encaps,
+    MLKEM_Decaps
 };
 
 /**

@@ -505,6 +505,15 @@ EXTERN (ippsXMSSInitKeyPair)
 EXTERN (ippsXMSSInitSignature)
 EXTERN (ippsXMSSKeyGen)
 EXTERN (ippsXMSSSign)
+EXTERN (ippsMLKEM_GetSize)
+EXTERN (ippsMLKEM_KeyGenBufferGetSize)
+EXTERN (ippsMLKEM_EncapsBufferGetSize)
+EXTERN (ippsMLKEM_DecapsBufferGetSize)
+EXTERN (ippsMLKEM_GetInfo)
+EXTERN (ippsMLKEM_Init)
+EXTERN (ippsMLKEM_KeyGen)
+EXTERN (ippsMLKEM_Encaps)
+EXTERN (ippsMLKEM_Decaps)
 
 EXTERN (ippcp_is_fips_approved_func)
 EXTERN (fips_selftest_ippsAESEncryptDecrypt_get_size)
@@ -1075,6 +1084,15 @@ VERSION {
    ippsXMSSInitSignature;
    ippsXMSSKeyGen;
    ippsXMSSSign;
+   ippsMLKEM_GetSize;
+   ippsMLKEM_KeyGenBufferGetSize;
+   ippsMLKEM_EncapsBufferGetSize;
+   ippsMLKEM_DecapsBufferGetSize;
+   ippsMLKEM_GetInfo;
+   ippsMLKEM_Init;
+   ippsMLKEM_KeyGen;
+   ippsMLKEM_Encaps;
+   ippsMLKEM_Decaps;
 
    ippcp_is_fips_approved_func;
    fips_selftest_ippsAESEncryptDecrypt_get_size;

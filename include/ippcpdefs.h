@@ -890,10 +890,13 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
 /* Defines related to experimental features enabling */
 #ifdef IPPCP_PREVIEW_ALL
     #ifndef IPPCP_PREVIEW_XMSS
-    #define IPPCP_PREVIEW_XMSS (1)
+    #define IPPCP_PREVIEW_XMSS    (1)
     #endif
     #ifndef IPPCP_PREVIEW_LMS
-    #define IPPCP_PREVIEW_LMS  (1)
+    #define IPPCP_PREVIEW_LMS     (1)
+    #endif
+    #ifndef IPPCP_PREVIEW_ML_KEM
+    #define IPPCP_PREVIEW_ML_KEM  (1)
     #endif
 #endif
 
@@ -966,6 +969,28 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
     typedef struct _cpLMSPublicKeyState IppsLMSPublicKeyState;
 #endif // IPPCP_PREVIEW_LMS
 
+/*
+// =========================================================
+// ML-KEM
+// =========================================================
+*/
+#ifdef IPPCP_PREVIEW_ML_KEM
+
+typedef enum {
+    IPPCP_ML_KEM_512  = 1,
+    IPPCP_ML_KEM_768  = 2,
+    IPPCP_ML_KEM_1024 = 3
+} IppsMLKEMParamSet;
+
+typedef struct {
+   int encapsKeySize;
+   int decapsKeySize;
+   int cipherTextSize;
+   int sharedSecretSize;
+} IppsMLKEMInfo;
+
+typedef struct _cpMLKEMState IppsMLKEMState;
+#endif // IPPCP_PREVIEW_ML_KEM
 
 #ifdef __cplusplus
 }
