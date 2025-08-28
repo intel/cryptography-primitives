@@ -124,14 +124,18 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
                                      const int operation)
 {
     __m512i TMP[20];
-    const __m512i z_poly               = _mm512_loadu_si512(xts_poly);
-    const __m512i z_partial_block_mask = _mm512_loadu_si512(xts_partial_block_mask);
-    const __m512i z_full_block_mask    = _mm512_loadu_si512(xts_full_block_mask);
-    const __m512i z_shuf_mask          = _mm512_loadu_si512(xts_shuf_mask);
+    const __m512i z_poly      = _mm512_loadu_si512(xts_poly);
+    const __m512i z_shuf_mask = _mm512_loadu_si512(xts_shuf_mask);
+    const __m512i z_swap      = _mm512_loadu_si512(swapBytes);
+
     /* Length in bytes of partial blocks for all buffers */
-    const __m512i partial_len32 = _mm512_and_si512(loc_len32, z_partial_block_mask);
+    const __m512i partial_len32 =
+        _mm512_and_si512(loc_len32, _mm512_loadu_si512(xts_partial_block_mask));
+    int partial_block[16];
+    _mm512_storeu_si512((void*)partial_block, partial_len32);
+
     /* Length in bytes of full blocks for all buffers */
-    loc_len32 = _mm512_and_si512(loc_len32, z_full_block_mask);
+    loc_len32 = _mm512_and_si512(loc_len32, _mm512_loadu_si512(xts_full_block_mask));
 
     __mmask16 ge_64_mask = _mm512_mask_cmp_epi32_mask(mb_mask,
                                                       loc_len32,
@@ -153,7 +157,7 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
     __m512i processed_len64_0_7;
     __m512i processed_len64_8_15;
     __m512i TWEAK[SM4_LINES];
-    __m512i num_remain_full_blocks = _mm512_srli_epi32(loc_len32, 4);
+    __m512i z_num_remain_full_blocks = _mm512_srli_epi32(loc_len32, 4);
     /* Calculate bitmask of buffers with at least one full block */
     __mmask16 tmp_mask =
         _mm512_mask_cmp_epi32_mask(mb_mask, loc_len32, _mm512_set1_epi32(0), _MM_CMPINT_NLE);
@@ -166,11 +170,14 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
     while (tmp_mask) {
         /* Mask for data loading */
         __mmask64 stream_mask[16];
+        int loc_len32_tmp[16];
+        int num_remain_full_blocks[16];
+        int* p_loc_len32 = loc_len32_tmp;
+
         int i;
 
-        int* p_loc_len32              = (int*)&loc_len32;
-        int* p_num_remain_full_blocks = (int*)&num_remain_full_blocks;
-        int* p_partial_block          = (int*)&partial_len32;
+        _mm512_storeu_si512((void*)loc_len32_tmp, loc_len32);
+        _mm512_storeu_si512((void*)num_remain_full_blocks, z_num_remain_full_blocks);
 
         /* Generate tweaks for next rounds */
         for (i = 0; i < SM4_LINES; i++) {
@@ -180,18 +187,18 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
              * at least one more tweak will be needed (for more full blocks or
              * for a last partial block)
              */
-            if (p_num_remain_full_blocks[i] >= 4)
+            if (num_remain_full_blocks[i] >= 4)
                 generate_next_4_tweaks(&TWEAK[i], &NEXT_TWEAK[i], z_shuf_mask, z_poly, NEXT_TWEAKS);
 
             /* If there is a partial block, tweaks need to be rearranged depending on cipher direction */
-            if ((p_partial_block[i] > 0) & (p_num_remain_full_blocks[i] <= 4))
+            if ((partial_block[i] > 0) & (num_remain_full_blocks[i] <= 4))
                 prepare_last_tweaks(&TWEAK[i],
                                     &NEXT_TWEAK[i],
                                     operation,
-                                    p_num_remain_full_blocks[i]);
+                                    num_remain_full_blocks[i]);
         }
 
-        num_remain_full_blocks = _mm512_sub_epi32(num_remain_full_blocks, _mm512_set1_epi32(4));
+        z_num_remain_full_blocks = _mm512_sub_epi32(z_num_remain_full_blocks, _mm512_set1_epi32(4));
 
         /*
          * XOR plaintext from each lane with the 4 tweaks and transpose to prepare for encryption.
@@ -206,10 +213,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
         TMP[2] = _mm512_xor_si512(TWEAK[2], _mm512_maskz_loadu_epi8(stream_mask[2], loc_inp[2]));
         UPDATE_STREAM_MASK_64(stream_mask[3], p_loc_len32)
         TMP[3] = _mm512_xor_si512(TWEAK[3], _mm512_maskz_loadu_epi8(stream_mask[3], loc_inp[3]));
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
 
         TRANSPOSE_INP_512(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
 
@@ -221,10 +228,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
         TMP[2] = _mm512_xor_si512(TWEAK[6], _mm512_maskz_loadu_epi8(stream_mask[6], loc_inp[6]));
         UPDATE_STREAM_MASK_64(stream_mask[7], p_loc_len32)
         TMP[3] = _mm512_xor_si512(TWEAK[7], _mm512_maskz_loadu_epi8(stream_mask[7], loc_inp[7]));
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
 
         TRANSPOSE_INP_512(TMP[8], TMP[9], TMP[10], TMP[11], TMP[0], TMP[1], TMP[2], TMP[3]);
 
@@ -236,10 +243,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
         TMP[2] = _mm512_xor_si512(TWEAK[10], _mm512_maskz_loadu_epi8(stream_mask[10], loc_inp[10]));
         UPDATE_STREAM_MASK_64(stream_mask[11], p_loc_len32)
         TMP[3] = _mm512_xor_si512(TWEAK[11], _mm512_maskz_loadu_epi8(stream_mask[11], loc_inp[11]));
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
 
         TRANSPOSE_INP_512(TMP[12], TMP[13], TMP[14], TMP[15], TMP[0], TMP[1], TMP[2], TMP[3]);
 
@@ -251,10 +258,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
         TMP[2] = _mm512_xor_si512(TWEAK[14], _mm512_maskz_loadu_epi8(stream_mask[14], loc_inp[14]));
         UPDATE_STREAM_MASK_64(stream_mask[15], p_loc_len32)
         TMP[3] = _mm512_xor_si512(TWEAK[15], _mm512_maskz_loadu_epi8(stream_mask[15], loc_inp[15]));
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
 
         TRANSPOSE_INP_512(TMP[16], TMP[17], TMP[18], TMP[19], TMP[0], TMP[1], TMP[2], TMP[3]);
 
@@ -263,10 +270,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
 
         /* Transpose, XOR with the tweaks again and write data out */
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
         _mm512_mask_storeu_epi8((__m512i*)loc_out[0],
                                 stream_mask[0],
                                 _mm512_xor_si512(TMP[0], TWEAK[0]));
@@ -281,10 +288,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
                                 _mm512_xor_si512(TMP[3], TWEAK[3]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[8], TMP[9], TMP[10], TMP[11]);
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
         _mm512_mask_storeu_epi8((__m512i*)loc_out[4],
                                 stream_mask[4],
                                 _mm512_xor_si512(TMP[0], TWEAK[4]));
@@ -299,10 +306,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
                                 _mm512_xor_si512(TMP[3], TWEAK[7]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[12], TMP[13], TMP[14], TMP[15]);
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
         _mm512_mask_storeu_epi8((__m512i*)loc_out[8],
                                 stream_mask[8],
                                 _mm512_xor_si512(TMP[0], TWEAK[8]));
@@ -317,10 +324,10 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
                                 _mm512_xor_si512(TMP[3], TWEAK[11]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[16], TMP[17], TMP[18], TMP[19]);
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
         _mm512_mask_storeu_epi8((__m512i*)loc_out[12],
                                 stream_mask[12],
                                 _mm512_xor_si512(TMP[0], TWEAK[12]));
@@ -341,11 +348,18 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
         processed_len64_8_15 = _mm512_mask_blend_epi64(ge_64_mask_8_15,
                                                        remain_len64_8_15,
                                                        _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp)        = _mm512_add_epi64(_mm512_loadu_si512(loc_inp), processed_len64_0_7);
-        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), processed_len64_8_15);
 
-        M512(loc_out)     = _mm512_add_epi64(_mm512_loadu_si512(loc_out), processed_len64_0_7);
-        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), processed_len64_8_15);
+        _mm512_storeu_si512((void*)loc_inp,
+                            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), processed_len64_0_7));
+        _mm512_storeu_si512(
+            (void*)(loc_inp + 8),
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), processed_len64_8_15));
+
+        _mm512_storeu_si512((void*)loc_out,
+                            _mm512_add_epi64(_mm512_loadu_si512(loc_out), processed_len64_0_7));
+        _mm512_storeu_si512(
+            (void*)(loc_out + 8),
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), processed_len64_8_15));
 
         /* Update number of blocks left and processing mask */
         remain_len64_0_7  = _mm512_sub_epi64(remain_len64_0_7, processed_len64_0_7);
@@ -370,7 +384,8 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
     if (tmp_mask) {
         /* Encrypt last plaintext using bytes from previous ciphertext block */
         __mmask64 stream_mask[16];
-        int* p_loc_len32 = (int*)&partial_len32;
+        int* p_loc_len32 = partial_block;
+
         __m128i XTMP[16];
         int i;
 
@@ -461,10 +476,12 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
     __m512i TWEAK[SM4_LINES];
     __m512i NEXT_TWEAK[SM4_LINES];
     __m128i initial_tweak[SM4_LINES];
+
     int i;
 
     const __m512i z_poly      = _mm512_loadu_si512(xts_poly);
     const __m512i z_shuf_mask = _mm512_loadu_si512(xts_shuf_mask);
+    const __m512i z_swap      = _mm512_loadu_si512(swapBytes);
 
     /* Encrypt initial tweak */
     TRANSPOSE_16x4_I32_EPI32(&TMP[0], &TMP[1], &TMP[2], &TMP[3], pa_tweak, mb_mask);
@@ -506,10 +523,10 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[1] = _mm512_xor_si512(TWEAK[1], _mm512_loadu_si512(loc_inp[1]));
         TMP[2] = _mm512_xor_si512(TWEAK[2], _mm512_loadu_si512(loc_inp[2]));
         TMP[3] = _mm512_xor_si512(TWEAK[3], _mm512_loadu_si512(loc_inp[3]));
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
 
         TRANSPOSE_INP_512(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
 
@@ -517,10 +534,10 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[1] = _mm512_xor_si512(TWEAK[5], _mm512_loadu_si512(loc_inp[5]));
         TMP[2] = _mm512_xor_si512(TWEAK[6], _mm512_loadu_si512(loc_inp[6]));
         TMP[3] = _mm512_xor_si512(TWEAK[7], _mm512_loadu_si512(loc_inp[7]));
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
 
         TRANSPOSE_INP_512(TMP[8], TMP[9], TMP[10], TMP[11], TMP[0], TMP[1], TMP[2], TMP[3]);
 
@@ -528,10 +545,10 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[1] = _mm512_xor_si512(TWEAK[9], _mm512_loadu_si512(loc_inp[9]));
         TMP[2] = _mm512_xor_si512(TWEAK[10], _mm512_loadu_si512(loc_inp[10]));
         TMP[3] = _mm512_xor_si512(TWEAK[11], _mm512_loadu_si512(loc_inp[11]));
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
 
         TRANSPOSE_INP_512(TMP[12], TMP[13], TMP[14], TMP[15], TMP[0], TMP[1], TMP[2], TMP[3]);
 
@@ -539,10 +556,10 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
         TMP[1] = _mm512_xor_si512(TWEAK[13], _mm512_loadu_si512(loc_inp[13]));
         TMP[2] = _mm512_xor_si512(TWEAK[14], _mm512_loadu_si512(loc_inp[14]));
         TMP[3] = _mm512_xor_si512(TWEAK[15], _mm512_loadu_si512(loc_inp[15]));
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
 
         TRANSPOSE_INP_512(TMP[16], TMP[17], TMP[18], TMP[19], TMP[0], TMP[1], TMP[2], TMP[3]);
 
@@ -551,55 +568,59 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
 
         /* Transpose, XOR with the tweaks again and write data out */
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
         _mm512_storeu_si512((__m512i*)loc_out[0], _mm512_xor_si512(TMP[0], TWEAK[0]));
         _mm512_storeu_si512((__m512i*)loc_out[1], _mm512_xor_si512(TMP[1], TWEAK[1]));
         _mm512_storeu_si512((__m512i*)loc_out[2], _mm512_xor_si512(TMP[2], TWEAK[2]));
         _mm512_storeu_si512((__m512i*)loc_out[3], _mm512_xor_si512(TMP[3], TWEAK[3]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[8], TMP[9], TMP[10], TMP[11]);
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
         _mm512_storeu_si512((__m512i*)loc_out[4], _mm512_xor_si512(TMP[0], TWEAK[4]));
         _mm512_storeu_si512((__m512i*)loc_out[5], _mm512_xor_si512(TMP[1], TWEAK[5]));
         _mm512_storeu_si512((__m512i*)loc_out[6], _mm512_xor_si512(TMP[2], TWEAK[6]));
         _mm512_storeu_si512((__m512i*)loc_out[7], _mm512_xor_si512(TMP[3], TWEAK[7]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[12], TMP[13], TMP[14], TMP[15]);
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
         _mm512_storeu_si512((__m512i*)loc_out[8], _mm512_xor_si512(TMP[0], TWEAK[8]));
         _mm512_storeu_si512((__m512i*)loc_out[9], _mm512_xor_si512(TMP[1], TWEAK[9]));
         _mm512_storeu_si512((__m512i*)loc_out[10], _mm512_xor_si512(TMP[2], TWEAK[10]));
         _mm512_storeu_si512((__m512i*)loc_out[11], _mm512_xor_si512(TMP[3], TWEAK[11]));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[16], TMP[17], TMP[18], TMP[19]);
-        TMP[0] = _mm512_shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = _mm512_shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = _mm512_shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = _mm512_shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = _mm512_shuffle_epi8(TMP[0], z_swap);
+        TMP[1] = _mm512_shuffle_epi8(TMP[1], z_swap);
+        TMP[2] = _mm512_shuffle_epi8(TMP[2], z_swap);
+        TMP[3] = _mm512_shuffle_epi8(TMP[3], z_swap);
         _mm512_storeu_si512((__m512i*)loc_out[12], _mm512_xor_si512(TMP[0], TWEAK[12]));
         _mm512_storeu_si512((__m512i*)loc_out[13], _mm512_xor_si512(TMP[1], TWEAK[13]));
         _mm512_storeu_si512((__m512i*)loc_out[14], _mm512_xor_si512(TMP[2], TWEAK[14]));
         _mm512_storeu_si512((__m512i*)loc_out[15], _mm512_xor_si512(TMP[3], TWEAK[15]));
 
         /* Update input/output pointers to data */
-        M512(loc_inp) =
-            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8),
-                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        _mm512_storeu_si512(
+            (void*)loc_inp,
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE)));
+        _mm512_storeu_si512((void*)(loc_inp + 8),
+                            _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE)));
 
-        M512(loc_out) =
-            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_out + 8) = _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8),
-                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE));
+        _mm512_storeu_si512(
+            (void*)loc_out,
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(4 * SM4_BLOCK_SIZE)));
+        _mm512_storeu_si512((void*)(loc_out + 8),
+                            _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8),
+                                             _mm512_set1_epi64(4 * SM4_BLOCK_SIZE)));
 
         /* Update number of blocks left and processing mask */
         loc_len  = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(4 * SM4_BLOCK_SIZE));
