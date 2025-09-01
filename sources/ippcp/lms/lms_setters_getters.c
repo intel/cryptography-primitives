@@ -93,6 +93,37 @@ IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize,
 }
 
 /*F*
+//    Name: ippsLMSVerifyBufferGetSize
+//
+// Purpose: Get the size of temporary buffer required for LMS verification (bytes).
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//    ippStsBadArgErr         lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8
+//                            lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1
+//                            lmsType.lmsOIDAlgo   > LMS_SHA256_M24_H25
+//                            lmsType.lmsOIDAlgo   < LMS_SHA256_M32_H5
+//    ippStsLengthErr         maxMessageLength < 1
+//                            maxMessageLength > (Ipp32s)(IPP_MAX_32S) -
+//                            - (byteSizeI + 4(q byteSize) + 2(D_MESG byteSize) + n(C byteSize))
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize             pointer to the work buffer's byte size
+//    maxMessageLength  maximum length of the processing message
+//    lmsType           structure with LMS parameters lmotsOIDAlgo and lmsOIDAlgo
+//
+*F*/
+/* clang-format off */
+IPPFUN(IppStatus, ippsLMSVerifyBufferGetSize, (Ipp32s* pSize,
+                                               Ipp32s maxMessageLength,
+                                               const IppsLMSAlgoType lmsType))
+/* clang-format on */
+{
+    return ippsLMSBufferGetSize(pSize, maxMessageLength, lmsType);
+}
+
+/*F*
 //    Name: ippsLMSSignatureStateGetSize
 //
 // Purpose: Get the LMS signature state size (bytes).

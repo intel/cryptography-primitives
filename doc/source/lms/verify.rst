@@ -44,7 +44,7 @@ Parameters
        the :ref:`ippsLMSPublicKeyStateGetSize <lms-pub-key-get-size>` function.
    * - pBuffer
      - Pointer to the temporary buffer. Size is greater or equal to
-       the value returned by the :ref:`ippsLMSBufferGetSize <lms-buffer-get-size>` function.
+       the value returned by the :ref:`ippsLMSVerifyBufferGetSize <lms-buffer-get-size>` function.
 
 Description
 -----------

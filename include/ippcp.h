@@ -1315,7 +1315,13 @@ IPPAPI(IppStatus, ippsXMSSVerify, (const Ipp8u* pMsg,
 #ifdef IPPCP_PREVIEW_LMS
 
 /* Leighton-Micali Signature (LMS) */
+#define LMS_DEPRECATED "This function is considered to be renamed due to an ambiguous \
+name. Use ippsLMSVerifyBufferGetSize instead."
+
+IPP_DEPRECATED(LMS_DEPRECATED) \
 IPPAPI(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
+
+IPPAPI(IppStatus, ippsLMSVerifyBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
 IPPAPI(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
 IPPAPI(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
 IPPAPI(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType, const Ipp8u* pI, const Ipp8u* pK,

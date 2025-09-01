@@ -4,6 +4,14 @@ This document describes deprecated API in different Intel® Cryptography Primiti
 
 The deprecated API means it is obsolete and will be removed in one of future Intel® Cryptography Primitives Library releases. If you have any concerns, please use the following link for opening a ticket and providing feedback:  <https://supporttickets.intel.com.>
 
+## Intel® Cryptography Primitives Library v1.3.0
+
+Deprecation related to preview features:
+
+| Deprecated            | Recommended replacement       | Context                                          |
+| :-------------------- | :---------------------------: | :----------------------------------------------: |
+| ippsLMSBufferGetSize  | ippsLMSVerifyBufferGetSize    | Function has been renamed to less ambiguous name |
+
 ## Intel® Cryptography Primitives Library v1.2.0
 
 Deprecation related to preview features:

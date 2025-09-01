@@ -166,7 +166,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify_get_size, (int* pBufferSize
     lmsAlgTypePk.lmsOIDAlgo   = lmsAlgo;
 
     /* temporary buf size */
-    sts = ippsLMSBufferGetSize(&tmp_size, msgByteLen, lmsAlgTypePk);
+    sts = ippsLMSVerifyBufferGetSize(&tmp_size, msgByteLen, lmsAlgTypePk);
     if (sts != ippStsNoErr) {
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
@@ -247,7 +247,7 @@ IPPFUN(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u * pBuffer))
 
     /* buffer for the temporary memory */
     int buffSize;
-    sts = ippsLMSBufferGetSize(&buffSize, msgByteLen, lmsAlgTypePk);
+    sts = ippsLMSVerifyBufferGetSize(&buffSize, msgByteLen, lmsAlgTypePk);
     if (sts != ippStsNoErr) {
         MEMORY_FREE(pBuffer, internalMemMgm)
         return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;

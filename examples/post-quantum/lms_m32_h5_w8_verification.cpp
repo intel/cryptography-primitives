@@ -174,8 +174,8 @@ int main(void)
 
     /* 1. Get the scratch buffer size */
     int buffSize;
-    status = ippsLMSBufferGetSize(&buffSize, msgLen, lmsAlgTypePk);
-    if (!checkStatus("ippsLMSBufferGetSize", ippStsNoErr, status))
+    status = ippsLMSVerifyBufferGetSize(&buffSize, msgLen, lmsAlgTypePk);
+    if (!checkStatus("ippsLMSVerifyBufferGetSize", ippStsNoErr, status))
         return status;
     /* 2. Allocate memory for the scratch buffer */
     std::unique_ptr<Ipp8u[]> pScratchBuffer(new Ipp8u[buffSize]);

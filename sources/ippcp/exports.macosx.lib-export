@@ -486,6 +486,7 @@ _ippsXMSSPublicKeyStateGetSize
 _ippsXMSSBufferGetSize
 _ippsXMSSVerifyBufferGetSize
 _ippsLMSBufferGetSize
+_ippsLMSVerifyBufferGetSize
 _ippsLMSSignatureStateGetSize
 _ippsLMSPublicKeyStateGetSize
 _ippsLMSSetPublicKeyState

@@ -11,9 +11,9 @@ Syntax
 
 .. code:: cpp
 
-    IppStatus ippsLMSBufferGetSize (Ipp32s* pSize,
-                                    Ipp32s maxMessageLength,
-                                    const IppsLMSAlgoType OIDAlgo);
+    IppStatus ippsLMSVerifyBufferGetSize (Ipp32s* pSize,
+                                          Ipp32s maxMessageLength,
+                                          const IppsLMSAlgoType OIDAlgo);
 
 Include Files
 -------------

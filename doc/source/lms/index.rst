@@ -20,7 +20,7 @@ Example
     alg_id.prmLmotsAlg = IppsLMOTSAlgo::LMOTS_SHA256_N32_W8;
     alg_id.prmLmsAlg = IppsLMSAlgo::LMS_SHA256_M24_H10;
 
-    status = ippsLMSBufferGetSize(&buffSize, sizeof(msg), alg_id);
+    status = ippsLMSVerifyBufferGetSize(&buffSize, sizeof(msg), alg_id);
 
     status = ippsLMSPublicKeyStateGetSize(&ippcpPubKeySize, alg_id);
 
