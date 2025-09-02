@@ -31,6 +31,13 @@
 #include "hash/pcphash_rmf.h"
 #include "pcptool.h"
 
+// This will make GCC compiler to automatically align this data in a 64-bit aligned memory
+typedef union _HASH_ARRAY
+{
+    Ipp8u buffer[MBS_HASH_MAX * 2];
+    Ipp64u buffer64[(MBS_HASH_MAX * 2) / 8];
+} HASH_ARRAY;
+
 /* clang-format off */
 IPP_OWN_DEFN(void, cpFinalize_rmf, (DigestSHA512 pHash,
                                     const Ipp8u* inpBuffer,
@@ -45,40 +52,40 @@ IPP_OWN_DEFN(void, cpFinalize_rmf, (DigestSHA512 pHash,
     IppHashAlgId algid = method->hashAlgId;
 
     /* local buffer and it length */
-    Ipp8u buffer[MBS_HASH_MAX * 2];
     int bufferLen = inpLen < (mbs - mrl) ? mbs : mbs * 2;
+    HASH_ARRAY ha;  // To make GCC compiler align this to 64-bit
 
     // Path for sha3 algorithms
     if (algid == ippHashAlg_SHA3_224 || algid == ippHashAlg_SHA3_256 ||
         algid == ippHashAlg_SHA3_384 || algid == ippHashAlg_SHA3_512) {
         /* copy rest of message into internal buffer */
-        PadBlock(0, buffer, bufferLen);
-        CopyBlock(inpBuffer, buffer, inpLen);
+        PadBlock(0, ha.buffer, bufferLen);
+        CopyBlock(inpBuffer, ha.buffer, inpLen);
 
-        buffer[inpLen] ^= 0x06;
-        buffer[mbs - 1] ^= 0x80;
+        ha.buffer[inpLen] ^= 0x06;
+        ha.buffer[mbs - 1] ^= 0x80;
     } else if (cpIsSHAKEAlgID(algid)) {
-        PadBlock(0, buffer, bufferLen);
-        CopyBlock(inpBuffer, buffer, inpLen);
-        buffer[inpLen] ^= 0x1F;
-        buffer[mbs - 1] ^= 0x80;
+        PadBlock(0, ha.buffer, bufferLen);
+        CopyBlock(inpBuffer, ha.buffer, inpLen);
+        ha.buffer[inpLen] ^= 0x1F;
+        ha.buffer[mbs - 1] ^= 0x80;
     }
 
     // Path for not sha3 algorithms
     else {
         /* copy rest of message into internal buffer */
-        CopyBlock(inpBuffer, buffer, inpLen);
+        CopyBlock(inpBuffer, ha.buffer, inpLen);
         /* pad message */
-        buffer[inpLen++] = 0x80;
-        PadBlock(0, buffer + inpLen, bufferLen - inpLen - mrl);
+        ha.buffer[inpLen++] = 0x80;
+        PadBlock(0, ha.buffer + inpLen, bufferLen - inpLen - mrl);
 
         /* message length representation */
-        method->msgLenRep(buffer + bufferLen - mrl, lenLo, lenHi);
+        method->msgLenRep(ha.buffer + bufferLen - mrl, lenLo, lenHi);
     }
 
     /* complete hash computation */
-    method->hashUpdate(pHash, buffer, bufferLen);
+    method->hashUpdate(pHash, ha.buffer, bufferLen);
 
     // zeroization
-    PurgeBlock(buffer, bufferLen);
+    PurgeBlock(ha.buffer, bufferLen);
 }
