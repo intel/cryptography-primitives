@@ -45,7 +45,7 @@ IPP_OWN_DEFN(void, cpFinalize_rmf, (DigestSHA512 pHash,
     IppHashAlgId algid = method->hashAlgId;
 
     /* local buffer and it length */
-    Ipp8u buffer[MBS_HASH_MAX * 2];
+    __ALIGN64 Ipp8u buffer[MBS_HASH_MAX * 2];
     int bufferLen = inpLen < (mbs - mrl) ? mbs : mbs * 2;
 
     // Path for sha3 algorithms
