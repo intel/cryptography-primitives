@@ -59,7 +59,7 @@ int main(void)
 
     /*! 2. Get the size needed for the SM3 hash context structure */
     status = ippsHashGetSize_rmf(&context_size);
-    if (!checkStatus("ippsHashGetSize", ippStsNoErr, status)) {
+    if (!checkStatus("ippsHashGetSize_rmf", ippStsNoErr, status)) {
         return status;
     }
 
@@ -73,20 +73,20 @@ int main(void)
 
     /*! 5. Initialize the initial SM3 hash context */
     status = ippsHashInit_rmf(hash_state, hash_method);
-    if (!checkStatus("ippsHashInit", ippStsNoErr, status)) {
+    if (!checkStatus("ippsHashInit_rmf", ippStsNoErr, status)) {
         return status;
     }
 
     /*! 6. Call HashUpdate function to digest the message of the given length */
     /*! This function can be called multiple times for a stream of messages */
     status = ippsHashUpdate_rmf(msg, msg_byte_len, hash_state);
-    if (!checkStatus("ippsHashUpdate", ippStsNoErr, status)) {
+    if (!checkStatus("ippsHashUpdate_rmf", ippStsNoErr, status)) {
         return status;
     }
 
     /*! 7. Complete the computation of the digest value */
     status = ippsHashFinal_rmf(output_hash_buffer, hash_state);
-    if (!checkStatus("ippsHashFinal", ippStsNoErr, status)) {
+    if (!checkStatus("ippsHashFinal_rmf", ippStsNoErr, status)) {
         return status;
     }
 

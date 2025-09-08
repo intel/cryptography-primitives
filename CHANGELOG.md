@@ -4,6 +4,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 
 ## Intel(R) Cryptography Primitives Library 1.3.0
 - Added support for ML-KEM scheme with Key Generation, Encapsulation and Decapsulation functionality implemented according to the FIPS 203.
+- Added API for hash squeezing for Extendable-output functions (XOF) from the Keccak family.
 
 ## Intel(R) Cryptography Primitives Library 1.2.0
 - Crypto Multi buffer library was extended with Intel® AVX-IFMA implementation of ECDSA (Sign and Verify), public key generation, ECDHE over NIST p256r1 curve.

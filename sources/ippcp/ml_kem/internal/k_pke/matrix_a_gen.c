@@ -59,7 +59,7 @@ IPP_OWN_DEFN(IppStatus, cp_SampleNTT,
 
     for (Ipp16u j = 0; j < 256;) {
         Ipp8u arrC[3];
-        cp_hash_squeeze(arrC, HASH_VALUE(hash_state), hash_method, 3, &digestLenProcessed);
+        cpHashSqueeze(arrC, HASH_VALUE(hash_state), hash_method, 3, &digestLenProcessed);
 
         Ipp16u d1 = arrC[0] + 256 * (arrC[1] % 16);
         Ipp16u d2 = arrC[1] / 16 + 16 * arrC[2];

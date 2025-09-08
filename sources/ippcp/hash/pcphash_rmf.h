@@ -51,14 +51,28 @@
 /* integer number N that is used to determine the size of IppsHashState_rmf[N] array */
 #define CONTEXT_HASH_RMF_ARRAY_SIZE (MAX_HASH_RMF_CONTEXT_SIZE / HASH_STATE_RMF_SIZE + 1)
 
+/*
+ * HashProcessState enumeration helps to track the hashing functions' sequence of calls.
+ *
+ *  Rules and restrictions for calls:
+ *    1. ippsHashInit_rmf() can be called at any time.
+ *    2. ippsHashUpdate_rmf() can be called at any time, but not after ippsHashSqueeze_rmf().
+ *    3. ippsHashSqueeze_rmf() can be called at any time.
+ *    4. ippsHashFinal_rmf() can be called at any time, but not after ippsHashSqueeze_rmf().
+ *    5. ippsHashGetTag_rmf() can be called at any time, but not after ippsHashSqueeze_rmf().
+ */
+typedef enum { HashInit, HashProcess, HashFinal, HashSqueeze } HashProcessState;
+
 struct _cpHashCtx_rmf {
-    Ipp32u idCtx;                    /* hash identifier   */
-    const cpHashMethod_rmf* pMethod; /* hash methods      */
-    int msgBuffIdx;                  /* buffer index      */
-    Ipp64u msgLenLo;                 /* processed message */
-    Ipp64u msgLenHi;                 /* length (bytes)    */
-    Ipp8u* msgBuffer;                /* buffer            */
-    Ipp64u* msgHash;                 /* hash value        */
+    Ipp32u idCtx;                    /*                  hash identifier                  */
+    HashProcessState processState;   /*                hash state machine                 */
+    const cpHashMethod_rmf* pMethod; /*                   hash methods                    */
+    int msgBuffIdx;                  /*                   buffer index                    */
+    int digestLenProcessed;          /* length of the hash that has already been squeezed */
+    Ipp64u msgLenLo;                 /*                 processed message                 */
+    Ipp64u msgLenHi;                 /*                  length (bytes)                   */
+    Ipp8u* msgBuffer;                /*                      buffer                       */
+    Ipp64u* msgHash;                 /*                    hash value                     */
 
     /*
     *    memory that stores buffer, pointed by msgBuffer
@@ -69,7 +83,9 @@ struct _cpHashCtx_rmf {
 };
 
 /* accessors (see others in pcphash.h) */
-#define HASH_METHOD(stt) ((stt)->pMethod)
+#define HASH_METHOD(stt)   ((stt)->pMethod)
+#define HASH_STATE(stt)    ((stt)->processState)
+#define HASH_SQUEEZED(stt) ((stt)->digestLenProcessed)
 
 /* setup pointers to buffer and hash */
 #define HASH_SETUP_POINTERS(stt)                                  \
@@ -93,33 +109,33 @@ IPP_OWN_DECL(void, cpFinalize_rmf, (DigestSHA512 pHash,
 *  digestLenProcessed - (input/output) size of hash that was already squeezed (in bytes)
 *  digestLenProcessed < pMethod->msgBlkSize
 */
-void static cp_hash_squeeze(Ipp8u* pMD,
-                            Ipp64u* hash,
-                            const IppsHashMethod* pMethod,
-                            int digestLen,
-                            int* digestLenProcessed)
+void static cpHashSqueeze(Ipp8u* pMD,
+                          Ipp64u* hash,
+                          const IppsHashMethod* pMethod,
+                          const int digestLen,
+                          int* const digestLenProcessed)
 {
-
+    int _digestLen   = digestLen;
     Ipp8u* pMD_tmp   = pMD;
     Ipp64u* hash_tmp = (Ipp64u*)((Ipp8u*)(hash) + *digestLenProcessed);
     int msgBlkSize   = pMethod->msgBlkSize - *digestLenProcessed;
 
-    *digestLenProcessed += digestLen;
+    *digestLenProcessed += _digestLen;
     if (*digestLenProcessed > pMethod->msgBlkSize) {
         *digestLenProcessed -= pMethod->msgBlkSize;
     }
 
-    pMethod->hashOctStr(pMD_tmp, hash_tmp, IPP_MIN(digestLen, msgBlkSize));
-    pMD_tmp += IPP_MIN(digestLen, msgBlkSize);
-    digestLen -= msgBlkSize;
+    pMethod->hashOctStr(pMD_tmp, hash_tmp, IPP_MIN(_digestLen, msgBlkSize));
+    pMD_tmp += IPP_MIN(_digestLen, msgBlkSize);
+    _digestLen -= msgBlkSize;
 
     if (cpIsSHAKEAlgID(pMethod->hashAlgId)) {
-        while (digestLen > 0) {
+        while (_digestLen > 0) {
             cp_keccak_kernel(hash);
             msgBlkSize = pMethod->msgBlkSize;
-            pMethod->hashOctStr(pMD_tmp, hash, IPP_MIN(digestLen, msgBlkSize));
-            pMD_tmp += IPP_MIN(digestLen, msgBlkSize);
-            digestLen -= msgBlkSize;
+            pMethod->hashOctStr(pMD_tmp, hash, IPP_MIN(_digestLen, msgBlkSize));
+            pMD_tmp += IPP_MIN(_digestLen, msgBlkSize);
+            _digestLen -= msgBlkSize;
         }
     }
 }

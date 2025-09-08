@@ -42,6 +42,7 @@
 //    ippStsNullPtrErr           pTag == NULL
 //                               pState == NULL
 //    ippStsContextMatchErr      pState->idCtx != idCtxHash
+//                               pState->processState == HashSqueeze
 //    ippStsLengthErr            hashSize < tagLen <1
 //    ippStsNoErr                no errors
 //
@@ -61,6 +62,8 @@ IPPFUN(IppStatus, ippsHashGetTag_rmf, (Ipp8u * pTag, int tagLen, const IppsHashS
     IPP_BAD_PTR1_RET(pTag);
     IPP_BADARG_RET((tagLen < 1) || HASH_METHOD(pState)->hashLen < tagLen, ippStsLengthErr);
 
+    IPP_BADARG_RET(HashSqueeze == HASH_STATE(pState), ippStsContextMatchErr);
+
     { /* TBD: consider implementation without copy of internal buffer content */
         cpHash hash;
         const IppsHashMethod* method = HASH_METHOD(pState);
@@ -74,7 +77,7 @@ IPPFUN(IppStatus, ippsHashGetTag_rmf, (Ipp8u * pTag, int tagLen, const IppsHashS
 
         /* calculate the rest of hash if any and put it to user's buffer */
         int digestLenProcessed = 0;
-        cp_hash_squeeze(pTag, hash, method, method->hashLen, &digestLenProcessed);
+        cpHashSqueeze(pTag, hash, method, method->hashLen, &digestLenProcessed);
 
         return ippStsNoErr;
     }

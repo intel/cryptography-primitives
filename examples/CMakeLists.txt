@@ -41,6 +41,7 @@ set(IPPCP_EXAMPLES
   sms4/sms4-128-cbc-decryption.cpp
   # Hash examples
   hash/sm3_hash_rmf.cpp
+  hash/xof_shake128_hash_rmf.cpp
   # Post-quantum algorithms examples
   post-quantum/lms_m32_h5_w8_verification.cpp
   post-quantum/ml_kem_512_keygen_encaps_decaps.cpp

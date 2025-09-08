@@ -40,6 +40,7 @@
 //    ippStsNullPtrErr           pState == NULL
 //    ippStsNullPtrErr           pSrc==0 but len!=0
 //    ippStsContextMatchErr      pState->idCtx != idCtxHash
+//                               pState->processState == HashSqueeze
 //    ippStsLengthErr            len <0
 //    ippStsNoErr                no errors
 //
@@ -59,6 +60,10 @@ IPPFUN(IppStatus, ippsHashUpdate_rmf, (const Ipp8u* pSrc, int len, IppsHashState
     IPP_BADARG_RET((len < 0), ippStsLengthErr);
     /* test source pointer */
     IPP_BADARG_RET((len && !pSrc), ippStsNullPtrErr);
+
+    IPP_BADARG_RET((HashSqueeze == HASH_STATE(pState)), ippStsContextMatchErr);
+
+    HASH_STATE(pState) = HashProcess;
 
     if (len) {
         const IppsHashMethod* method = HASH_METHOD(pState);

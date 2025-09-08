@@ -1,5 +1,5 @@
 /*************************************************************************
-* Copyright (C) 2016 Intel Corporation
+* Copyright (C) 2025 Intel Corporation
 *
 * Licensed under the Apache License,  Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 //     Generalized Functionality
 //
 //  Contents:
-//        ippsHashFinal_rmf()
+//        ippsHashSqueeze_rmf()
 //
 */
 
@@ -32,53 +32,54 @@
 #include "pcptool.h"
 
 /*F*
-//    Name: ippsHashFinal_rmf
+// Name: ippsHashSqueeze_rmf
 //
-// Purpose: Complete message digesting and return digest.
+// Purpose: Calculates the rest of hash if any and puts it to user's buffer
 //
 // Returns:                   Reason:
-//    ippStsNullPtrErr           pMD == NULL
-//                               pState == NULL
+//    ippStsNullPtrErr           pState == NULL
+//                               pMD == NULL
 //    ippStsContextMatchErr      pState->idCtx != idCtxHash
-//                               pState->processState == HashSqueeze
+//                               HashSqueeze != HASH_STATE(pState) && HASH_SQUEEZED(pState) != 0
+//    ippStsNotSupportedModeErr  not supported method
+//    ippStsOutOfRangeErr        digestLen <= 0
 //    ippStsNoErr                no errors
 //
 // Parameters:
-//    pMD     address of the output digest
-//    pState  pointer to the SHS state
+//    pMD                address of the output digest
+//    pState             pointer to the hash context
+//    digestLen          length of the hash to be squeezed
 //
 *F*/
-IPPFUN(IppStatus, ippsHashFinal_rmf, (Ipp8u * pMD, IppsHashState_rmf* pState))
+
+/* clang-format off */
+IPPFUN(IppStatus, ippsHashSqueeze_rmf, (Ipp8u * pMD,
+                                        const int digestLen,
+                                        IppsHashState_rmf* pState))
+/* clang-format on */
 {
     /* test state pointer and ID */
     IPP_BAD_PTR2_RET(pMD, pState);
     IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
 
-    IPP_BADARG_RET((HashSqueeze == HASH_STATE(pState)), ippStsContextMatchErr);
+    /* SHAKE128/256 are only supported */
+    IPP_BADARG_RET(!cpIsSHAKEAlgID(HASH_METHOD(pState)->hashAlgId), ippStsNotSupportedModeErr);
 
-    {
-        const IppsHashMethod* method = HASH_METHOD(pState);
+    IPP_BADARG_RET(digestLen <= 0, ippStsOutOfRangeErr);
 
+    if ((HashSqueeze != HASH_STATE(pState)) && (HASH_SQUEEZED(pState) == 0)) {
         cpFinalize_rmf(HASH_VALUE(pState),
                        HASH_BUFF(pState),
                        HASH_BUFFIDX(pState),
                        HASH_LENLO(pState),
                        HASH_LENHI(pState),
-                       method);
+                       HASH_METHOD(pState));
+    } else if ((HashSqueeze != HASH_STATE(pState)) && (HASH_SQUEEZED(pState) != 0))
+        return ippStsContextMatchErr;
 
-        /* calculate the rest of hash if any and put it to user's buffer */
-        int digestLenProcessed = 0;
-        cpHashSqueeze(pMD, HASH_VALUE(pState), method, method->hashLen, &digestLenProcessed);
+    cpHashSqueeze(pMD, HASH_VALUE(pState), HASH_METHOD(pState), digestLen, &HASH_SQUEEZED(pState));
 
-        /* re-init hash value */
-        HASH_BUFFIDX(pState)  = 0;
-        HASH_LENLO(pState)    = 0;
-        HASH_LENHI(pState)    = 0;
-        HASH_SQUEEZED(pState) = 0;
-        PadBlock(0, HASH_VALUE(pState), method->stateLen);
-        method->hashInit(HASH_VALUE(pState));
-        HASH_STATE(pState) = HashFinal;
+    HASH_STATE(pState) = HashSqueeze;
 
-        return ippStsNoErr;
-    }
+    return ippStsNoErr;
 }

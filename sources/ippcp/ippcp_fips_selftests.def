@@ -236,6 +236,7 @@ ippsHashGetTag_rmf
 ippsHashFinal_rmf
 ippsHashMessage_rmf
 ippsHashGetInfo_rmf
+ippsHashSqueeze_rmf
 ippsMGF
 ippsMGF1_rmf
 ippsMGF2_rmf

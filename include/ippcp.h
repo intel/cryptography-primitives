@@ -574,6 +574,8 @@ IPPAPI(IppStatus, ippsHashMessage_rmf,(const Ipp8u* pMsg, int len, Ipp8u* pMD, c
 IPPAPI(IppStatus, ippsHashMethodGetInfo,(IppsHashInfo* pInfo, const IppsHashMethod* pMethod))
 IPPAPI(IppStatus, ippsHashGetInfo_rmf,(IppsHashInfo* pInfo, const IppsHashState_rmf* pState))
 
+IPPAPI(IppStatus, ippsHashSqueeze_rmf, (Ipp8u* pMD, const int digestLen, IppsHashState_rmf* pState))
+
 /* general MGF Primitives*/
 IPP_DEPRECATED(OBSOLETE_API) \
 IPPAPI(IppStatus, ippsMGF,(const Ipp8u* pSeed, int seedLen, Ipp8u* pMask, int maskLen, IppHashAlgId hashAlg))

@@ -234,6 +234,7 @@ EXTERN (ippsHashGetTag_rmf)
 EXTERN (ippsHashFinal_rmf)
 EXTERN (ippsHashMessage_rmf)
 EXTERN (ippsHashGetInfo_rmf)
+EXTERN (ippsHashSqueeze_rmf)
 EXTERN (ippsMGF)
 EXTERN (ippsMGF1_rmf)
 EXTERN (ippsMGF2_rmf)
@@ -755,6 +756,7 @@ VERSION {
    ippsHashFinal_rmf;
    ippsHashMessage_rmf;
    ippsHashGetInfo_rmf;
+   ippsHashSqueeze_rmf;
    ippsMGF;
    ippsMGF1_rmf;
    ippsMGF2_rmf;

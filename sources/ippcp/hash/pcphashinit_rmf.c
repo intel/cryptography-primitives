@@ -60,6 +60,7 @@ IPPFUN(IppStatus, ippsHashInit_rmf, (IppsHashState_rmf * pState, const IppsHashM
     PadBlock(0, pState, stateSize);
     HASH_METHOD(pState) = pMethod;
     HASH_SET_ID(pState, idCtxHash);
+    HASH_SQUEEZED(pState) = 0;
 
     /* setup pointers to buffer and hash */
     HASH_SETUP_POINTERS(pState);
