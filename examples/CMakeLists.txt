@@ -43,6 +43,7 @@ set(IPPCP_EXAMPLES
   hash/sm3_hash_rmf.cpp
   # Post-quantum algorithms examples
   post-quantum/lms_m32_h5_w8_verification.cpp
+  post-quantum/ml_kem_512_keygen_encaps_decaps.cpp
   # Elliptic curve algorithms examples
   ecdsa/ecdsa-256r1-sign.cpp
   )

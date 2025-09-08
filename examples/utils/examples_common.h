@@ -41,6 +41,25 @@
     printf("+--------------------------------------------------------------|\n");
 
 /*!
+ * Helper function to print status message for skipped tests.
+ *
+ * \param[in] Function name to display
+ * \param[in] Example's description
+ * \param[in] The reason for the skip
+ */
+inline void printSkippedExampleDetails(const char* function_name,
+                                       const char* description,
+                                       const char* skip_reason)
+{
+    printf("+--------------------------------------------------------------|\n");
+    printf(" Function: %s\n", function_name);
+    printf(" Description: %s\n", description);
+    printf(" Status: SKIPPED!\n");
+    printf(" %s\n", skip_reason);
+    printf("+--------------------------------------------------------------|\n");
+}
+
+/*!
  * Helper function to compare expected and actual function return statuses and display
  * an error message if those are different.
  *
@@ -79,5 +98,26 @@ inline int bitSizeInBytes(int nBits) { return (nBits + 7) >> 3; }
  */
 
 inline int bitSizeInWords(int nBits) { return (nBits + 31) >> 5; }
+
+
+/*!
+ * Helper function to check if the current CPU supports hardware
+ * RNG (RDRAND instruction).
+ *
+ * \return zero if hardware RNG is not supported, otherwise - non-zero value
+ */
+inline int isAvailablePRNG_HW(void)
+{
+    ippcpInit();
+    if (ippCPUID_RDRAND == (ippCPUID_RDRAND & ippcpGetEnabledCpuFeatures())) {
+        Ipp32u outBuffer[1];
+        return (ippStsNotSupportedModeErr ==
+                ippsPRNGenRDRAND(outBuffer, sizeof(outBuffer) * 8, NULL))
+                   ? 0
+                   : 1;
+    }
+
+    return 0;
+}
 
 #endif /* #ifndef EXAMPLES_COMMON_H_ */

@@ -6,6 +6,9 @@ Intel® Cryptography Primitives Library is a secure, fast and lightweight librar
 
 ## Key Features
 The library provides a comprehensive set of routines commonly used for cryptographic operations, including:
+ - Post-Quantum Cryptography Functions:
+    - Hash-based signature algorithms (XMSS, LMS)
+    - Key encapsulation mechanism (ML-KEM)
  - Symmetric Cryptography Primitive Functions:
     - AES (ECB, CBC, CTR, OFB, CFB, XTS, GCM, CCM, SIV)
     - SM4 (ECB, CBC, CTR, OFB, CFB, CCM)
@@ -13,6 +16,7 @@ The library provides a comprehensive set of routines commonly used for cryptogra
     - RC4
 - One-Way Hash Primitives:
     - SHA-1, SHA-224, SHA-256, SHA-384, SHA-512
+    - SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE128 and SHAKE256
     - MD5
     - SM3
 - Data Authentication Primitive Functions:
@@ -26,7 +30,6 @@ The library provides a comprehensive set of routines commonly used for cryptogra
 - Finite Field Arithmetic Functions
 - Big Number Integer Arithmetic Functions
 - PRNG/TRNG and Prime Numbers Generation
-- Hash-based signature algorithms
 
 ## Reasons to Use Intel® Cryptography Primitives Library
 - Security (constant-time execution for secret processing functions)
