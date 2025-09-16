@@ -44,7 +44,7 @@
     <link rel="icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="HashGetSize" href="hashgetsize.html" />
+    <link rel="next" title="HashDuplicate" href="hashduplicate.html" />
     <link rel="prev" title="One-Way Hash Primitives" href="one-way-hash-primitives.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -310,17 +310,18 @@
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="one-way-hash-primitives.html">One-Way Hash Primitives</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">Hash Functions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="hashgetsize.html">HashGetSize</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hashinit.html">HashInit</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hashpack-hashunpack.html">HashPack, HashUnpack</a></li>
 <li class="toctree-l4"><a class="reference internal" href="hashduplicate.html">HashDuplicate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hashupdate.html">HashUpdate</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hashfinal.html">HashFinal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hashgetsize.html">HashGetSize</a></li>
 <li class="toctree-l4"><a class="reference internal" href="hashgettag.html">HashGetTag</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hashfinal.html">HashFinal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hashinit.html">HashInit</a></li>
 <li class="toctree-l4"><a class="reference internal" href="hashmethod.html">HashMethod</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hashmethodset.html">HashMethodSet</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hashstatemethodset.html">HashStateMethodSet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="hashmethodgetsize.html">HashMethodGetSize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hashmethodset.html">HashMethodSet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hashpack-hashunpack.html">HashPack, HashUnpack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hashstatemethodset.html">HashStateMethodSet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hashsqueeze.html">HashSqueeze</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hashupdate.html">HashUpdate</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="hash-functions-for-non-streaming-messages.html">Hash Functions for Non-Streaming Messages</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -735,7 +736,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -751,6 +754,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -822,23 +833,264 @@ anymore.</p>
 <p>Recommendation: use a more secure hash algorithm (for example, any
 algorithm from the SHA-2 family) instead of SHA-1 or MD5.</p>
 </div>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Usage of the hash API to digest a message with extendable output length (XOF) SHAKE128.</p></li>
+</ol>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cm">/*************************************************************************</span>
+<span class="cm">* Copyright (C) 2025 Intel Corporation</span>
+<span class="cm">*</span>
+<span class="cm">* Licensed under the Apache License,  Version 2.0 (the &quot;License&quot;);</span>
+<span class="cm">* you may not use this file except in compliance with the License.</span>
+<span class="cm">* You may obtain a copy of the License at</span>
+<span class="cm">*</span>
+<span class="cm">* 	http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="cm">*</span>
+<span class="cm">* Unless required by applicable law  or agreed  to  in  writing,  software</span>
+<span class="cm">* distributed under  the License  is  distributed  on  an  &quot;AS IS&quot;  BASIS,</span>
+<span class="cm">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="cm">* See the License for the  specific  language  governing  permissions  and</span>
+<span class="cm">* limitations under the License.</span>
+<span class="cm">*************************************************************************/</span>
+
+<span class="cm">/*!</span>
+<span class="cm">  *</span>
+<span class="cm">  *  \file</span>
+<span class="cm">  *</span>
+<span class="cm">  *  \brief XOF Hash example</span>
+<span class="cm">  *</span>
+<span class="cm">  *  This example demonstrates usage of Hash algorithms to digest a message with extendable output length.</span>
+<span class="cm">  *  Reduced Memory Footprint (_rmf) API is used in this example.</span>
+<span class="cm">  *</span>
+<span class="cm">  */</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ippcp.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;examples_common.h&quot;</span>
+
+<span class="cm">/* Message text */</span>
+<span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">msg</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p">;</span>
+
+<span class="cm">/* Known digest to check the results (189 bytes)*/</span>
+<span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">shake128</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\x58\x81\x09\x2d\xd8\x18\xbf\x5c\xf8\xa3\xdd\xb7\x93\xfb\xcb\xa7\x40\x97</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\xd5\xc5\x26\xa6\xd3\x5f\x97</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\xb8\x33\x51\x94\x0f\x2c\xc8\x44\xc5\x0a\xf3\x2a\xcd\x3f\x2c\xdd\x06\x65</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x68\x70\x6f\x50\x9b\xc1\xbd</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\xde\x58\x29\x5d\xae\x3f\x89\x1a\x9a\x0f\xca\x57\x83\x78\x9a\x41\xf8\x61</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x12\x14\xce\x61\x23\x94\xdf</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x28\x6a\x62\xd1\xa2\x25\x2a\xa9\x4d\xb9\xc5\x38\x95\x6c\x71\x7d\xc2\xbe</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\xd4\xf2\x32\xa0\x29\x4c\x85</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x7c\x73\x0a\xa1\x60\x67\xac\x10\x62\xf1\x20\x1f\xb0\xd3\x77\xcf\xb9\xcd</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\xe4\xc6\x35\x99\xb2\x7f\x34</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x62\xbb\xa4\xa0\xed\x29\x6c\x80\x1f\x9f\xf7\xf5\x73\x02\xbb\x30\x76\xee</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x14\x5f\x97\xa3\x2a\xe6\x8e</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x76\xab\x66\xc4\x8d\x51\x67\x5b\xd4\x9a\xcc\x29\x08\x2f\x56\x47\x58\x4e</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x6a\xa0\x1b\x3f\x5a\xf0\x57</span><span class="s">&quot;</span>
+<span class="w">                         </span><span class="s">&quot;</span><span class="se">\x80\x5f\x97\x3f\xf8\xec\xb8\xb2\x26\xac\x32\xad\xa6\xf0</span><span class="s">&quot;</span><span class="p">;</span>
+
+<span class="cm">/* Message size in bytes */</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">msg_byte_len</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">digest_byte_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">shake128</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Internal function status */</span>
+<span class="w">    </span><span class="n">IppStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* 1. Get the hash methods which is used</span>
+<span class="cm">       Initially it is possible to pass a digest size smaller</span>
+<span class="cm">       than it will be obtained with ippsHashSqueeze_rmf() */</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">digest_size</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IppsHashMethod</span><span class="o">*</span><span class="w"> </span><span class="n">hash_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashMethod_SHAKE128</span><span class="p">(</span><span class="n">digest_size</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* The size of the SHAKE128 hash context structure. It will be set up in ippsHashGetSize_rmf(). */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">context_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* 2. Get the size needed for the SHAKE128 hash context structure */</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashGetSizeOptimal_rmf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">context_size</span><span class="p">,</span><span class="w"> </span><span class="n">hash_method</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsHashGetSizeOptimal_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* 3. Allocate memory for the SHAKE128 hash context structure */</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Ipp8u</span><span class="o">&gt;</span><span class="w"> </span><span class="n">context_buffer</span><span class="p">(</span><span class="n">context_size</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* 4. Buffers for the digest and the tag */</span>
+<span class="w">    </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">output_hash_buffer</span><span class="p">[</span><span class="n">digest_byte_len</span><span class="p">];</span>
+<span class="w">    </span><span class="n">IppsHashState_rmf</span><span class="o">*</span><span class="w"> </span><span class="n">hash_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">IppsHashState_rmf</span><span class="o">*</span><span class="p">)(</span><span class="n">context_buffer</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+
+<span class="w">    </span><span class="cm">/* 5. Initialize SHAKE128 hash context */</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashInit_rmf</span><span class="p">(</span><span class="n">hash_state</span><span class="p">,</span><span class="w"> </span><span class="n">hash_method</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsHashInit_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* 6. Call HashUpdate function to digest the message of the given length</span>
+<span class="cm">       This function can be called multiple times for a stream of messages */</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashUpdate_rmf</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">msg_byte_len</span><span class="p">,</span><span class="w"> </span><span class="n">hash_state</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsHashUpdate_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">digestLen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">digest_byte_len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">digestLen</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* 7. Squeeze the digestLen bytes of the digest value */</span>
+<span class="w">        </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashSqueeze_rmf</span><span class="p">(</span><span class="n">output_hash_buffer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">digestLen</span><span class="p">,</span><span class="w"> </span><span class="n">hash_state</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsHashSqueeze_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="cm">/* 8. Verify the resulted digest part with the known one */</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">check</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">memcmp</span><span class="p">(</span><span class="n">output_hash_buffer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">shake128</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">digestLen</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">check</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: Hash and the reference do not match</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* 9. Verify the entire resulted digest with the known one */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">check</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">memcmp</span><span class="p">(</span><span class="n">output_hash_buffer</span><span class="p">,</span><span class="w"> </span><span class="n">shake128</span><span class="p">,</span><span class="w"> </span><span class="n">digest_byte_len</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">check</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: Hash and the reference do not match</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PRINT_EXAMPLE_STATUS</span><span class="p">(</span><span class="s">&quot;ippsHashUpdate_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;XOF SHAKE128 Hash&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">!</span><span class="n">status</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Usage of the hash API to digest a message using SM3 standard.</p></li>
+</ol>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cm">/*************************************************************************</span>
+<span class="cm">* Copyright (C) 2024 Intel Corporation</span>
+<span class="cm">*</span>
+<span class="cm">* Licensed under the Apache License,  Version 2.0 (the &quot;License&quot;);</span>
+<span class="cm">* you may not use this file except in compliance with the License.</span>
+<span class="cm">* You may obtain a copy of the License at</span>
+<span class="cm">*</span>
+<span class="cm">* 	http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="cm">*</span>
+<span class="cm">* Unless required by applicable law  or agreed  to  in  writing,  software</span>
+<span class="cm">* distributed under  the License  is  distributed  on  an  &quot;AS IS&quot;  BASIS,</span>
+<span class="cm">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="cm">* See the License for the  specific  language  governing  permissions  and</span>
+<span class="cm">* limitations under the License.</span>
+<span class="cm">*************************************************************************/</span>
+
+<span class="cm">/*!</span>
+<span class="cm">  *</span>
+<span class="cm">  *  \file</span>
+<span class="cm">  *</span>
+<span class="cm">  *  \brief SM3 Hash example</span>
+<span class="cm">  *</span>
+<span class="cm">  *  This example demonstrates usage of Hash algorithms to digest a message by</span>
+<span class="cm">  *  using SM3 standard.</span>
+<span class="cm">  *  Reduce Memory Footprint (_rmf) APIs are used in this example.</span>
+<span class="cm">  *</span>
+<span class="cm">  */</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ippcp.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;examples_common.h&quot;</span>
+
+<span class="cm">/*! Message text */</span>
+<span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">msg</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p">;</span>
+
+<span class="cm">/*! Known digest to check the results */</span>
+<span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">sm3</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\x66\xc7\xf0\xf4\x62\xee\xed\xd9\xd1\xf2\xd4\x6b\xdc\x10\xe4\xe2</span><span class="s">&quot;</span>
+<span class="w">                    </span><span class="s">&quot;</span><span class="se">\x41\x67\xc4\x87\x5c\xf2\xf7\xa2\x29\x7d\xa0\x2b\x8f\x4b\xa8\xe0</span><span class="s">&quot;</span><span class="p">;</span>
+
+<span class="cm">/*! Message size in bytes */</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">msg_byte_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/*! Internal function status */</span>
+<span class="w">    </span><span class="n">IppStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/*! 1. Get the hash methods which is used */</span>
+<span class="w">    </span><span class="cm">/* _TT (tick-tock) version of ippsHashMethod_SM3() function automatically switch on SM3 instructions, if possible*/</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IppsHashMethod</span><span class="o">*</span><span class="w"> </span><span class="n">hash_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashMethod_SM3_TT</span><span class="p">();</span>
+
+<span class="w">    </span><span class="cm">/*! The digest size of the SM3 standard */</span>
+<span class="w">    </span><span class="n">Ipp32u</span><span class="w"> </span><span class="n">hash_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IPP_SM3_DIGEST_BYTESIZE</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/*! The size of the SM3 hash context structure. It will be set up in ippsHashGetSize_rmf(). */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">context_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/*! 2. Get the size needed for the SM3 hash context structure */</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashGetSize_rmf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">context_size</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsHashGetSize_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/*! 3. Allocate memory for the SM3 hash context structure */</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Ipp8u</span><span class="o">&gt;</span><span class="w"> </span><span class="n">context_buffer</span><span class="p">(</span><span class="n">context_size</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/*! 4. Buffers for the digest and the tag */</span>
+<span class="w">    </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">output_hash_buffer</span><span class="p">[</span><span class="n">IPP_SM3_DIGEST_BYTESIZE</span><span class="p">];</span>
+
+<span class="w">    </span><span class="n">IppsHashState_rmf</span><span class="o">*</span><span class="w"> </span><span class="n">hash_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">IppsHashState_rmf</span><span class="o">*</span><span class="p">)(</span><span class="n">context_buffer</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+
+<span class="w">    </span><span class="cm">/*! 5. Initialize the initial SM3 hash context */</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashInit_rmf</span><span class="p">(</span><span class="n">hash_state</span><span class="p">,</span><span class="w"> </span><span class="n">hash_method</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsHashInit_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/*! 6. Call HashUpdate function to digest the message of the given length */</span>
+<span class="w">    </span><span class="cm">/*! This function can be called multiple times for a stream of messages */</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashUpdate_rmf</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">msg_byte_len</span><span class="p">,</span><span class="w"> </span><span class="n">hash_state</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsHashUpdate_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/*! 7. Complete the computation of the digest value */</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsHashFinal_rmf</span><span class="p">(</span><span class="n">output_hash_buffer</span><span class="p">,</span><span class="w"> </span><span class="n">hash_state</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsHashFinal_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/*! 8. Verify the resulted digest with the known one */</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">check</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">memcmp</span><span class="p">(</span><span class="n">output_hash_buffer</span><span class="p">,</span><span class="w"> </span><span class="n">sm3</span><span class="p">,</span><span class="w"> </span><span class="n">hash_size</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">check</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: Hash and the reference do not match</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PRINT_EXAMPLE_STATUS</span><span class="p">(</span><span class="s">&quot;ippsHashUpdate_rmf&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SM3 Hash&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">!</span><span class="n">status</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <p class="rubric">Related Information</p>
 <p><a class="reference internal" href="data-security-considerations.html#data-security-considerations"><span class="std std-ref">Data Security Considerations</span></a></p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="hashgetsize.html">HashGetSize</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashinit.html">HashInit</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashpack-hashunpack.html">HashPack, HashUnpack</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashduplicate.html">HashDuplicate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashupdate.html">HashUpdate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashfinal.html">HashFinal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashgetsize.html">HashGetSize</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashgettag.html">HashGetTag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashfinal.html">HashFinal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashinit.html">HashInit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashmethod.html">HashMethod</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashmethodset.html">HashMethodSet</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hashstatemethodset.html">HashStateMethodSet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashmethodgetsize.html">HashMethodGetSize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashmethodset.html">HashMethodSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashpack-hashunpack.html">HashPack, HashUnpack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashstatemethodset.html">HashStateMethodSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashsqueeze.html">HashSqueeze</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashupdate.html">HashUpdate</a></li>
 </ul>
 </div>
+</section>
 </section>
 
 
@@ -862,11 +1114,11 @@ algorithm from the SHA-2 family) instead of SHA-1 or MD5.</p>
       </div>
     </a>
     <a class="right-next"
-       href="hashgetsize.html"
+       href="hashduplicate.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">HashGetSize</p>
+        <p class="prev-next-title">HashDuplicate</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -876,6 +1128,21 @@ algorithm from the SHA-2 family) instead of SHA-1 or MD5.</p>
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
