@@ -48,9 +48,11 @@ Filename="ippcp"
 Filenames=["h9", "p8", "s8", "w7", "e9", "k0", "k1", "l9", "m7", "n8", "y8", "g9"]
 
 DeprecatedCodePaths= {
-  "n8" : "m7", # SSSE3 -> SSE3 64-bit
+  "m7" : "y8", # SSSE3 -> SSE4.2 64-bit
+  "n8" : "y8", # SSSE3 -> SSE4.2 64-bit
   "e9" : "y8", # AVX -> SSE4.2 64-bit
-  "s8" : "w7", # SSSE3 -> SSE2 32-bit
+  "w7" : "p8", # SSSE3 -> SSE4.2 32-bit
+  "s8" : "p8", # SSSE3 -> SSE4.2 32-bit
   "g9" : "p8" # AVX -> SSE4.2 32-bit
 }
 
@@ -79,7 +81,7 @@ for name in Filenames:
   if name in DeprecatedCodePaths:
     OUT.write(f"""
 #if !defined(_NO_IPP_DEPRECATED)
-#pragma message (\"code path {name} is deprecated, lower optimizations level {DeprecatedCodePaths[name]} is used\")
+#pragma message (\"code path {name} is deprecated, {DeprecatedCodePaths[name]} optimizations level is used\")
 #endif
 """)
     name = DeprecatedCodePaths[name]
