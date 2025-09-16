@@ -33,10 +33,11 @@
 
 ### Linux* OS
 - [Common tools](#common-tools)
-- Intel® oneAPI DPC++/C++ Compiler latest for Linux\* OS
+- Intel® oneAPI DPC++/C++ Compiler 2025.2 for Linux\* OS
 - GCC 8.5
 - GCC 11.5
-- GCC 14.2
+- GCC 14.3
+- GCC 15.1
 - Clang 9.0
 - Clang 12.0
 - Clang 16.0
@@ -46,9 +47,9 @@
 
 ### Windows* OS
 - [Common tools](#common-tools)
-- Intel® oneAPI DPC++/C++ Compiler latest for Windows\* OS
+- Intel® oneAPI DPC++/C++ Compiler 2025.2 for Windows\* OS
 - Microsoft Visual C++ Compiler\* version 19.29 provided by Microsoft Visual Studio\* 2019 version 16.11
-- Microsoft Visual C++ Compiler\* version 19.43 provided by Microsoft Visual Studio\* 2022 version 17.13
+- Microsoft Visual C++ Compiler\* version 19.44 provided by Microsoft Visual Studio\* 2022 version 17.14
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.21 or higher is required to build using Microsoft Visual Studio\* 2022.
 
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
@@ -61,6 +62,11 @@
 The software was validated on:
 
 - Red Hat\* Enterprise Linux\* 8
+> **NOTE:** Support of Red Hat\* Enterprise Linux\* 8 was deprecated and will be removed in the future. Testing will be migrated to Red Hat\* Enterprise Linux\* 9.
+
+> **NOTE:** Additionally, the k1 code path of the multi-buffer library is validated on the FreeBSD operating system with the GNU 13.2 compiler.
+
+> **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
 
 To build the Intel® Cryptography Primitives Library on Linux\* OS, complete the following steps:
 1. Clone the source code from GitHub\* as follows:

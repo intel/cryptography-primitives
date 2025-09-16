@@ -136,6 +136,8 @@ By default, the dispatcher chooses the most appropriate optimization for the cur
 
 > **NOTE:** Due to the significant shift in the industry towards 64-bit architecture, the support of 32-bit libraries is deprecated in the Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.9 release. No new features (only critical security fixes) are targeted for 32-bit libraries and testing scope is limited by Linux OS & Clang compiler.
 
+> **NOTE:** w7 and m7 code paths have been deprecated in the 1.3.0 release and will be removed in future releases.
+
 ### CPU Feature Dispatching
 
 Besides CPU dispatching that lets the library choose the general instruction set targeted implementation (for example, Intel SSE4.2, Intel AVX-512, and others), there is more granular dispatching that allows configuring usage of particular CPU features within a single instruction set. For example, Intel AVX-512 instruction set contains a VAES (AES Vector Extensions) feature subset, but not all CPUs that have Intel AVX-512 on board support VAES, so the library can automatically detect it in a runtime and enable corresponding optimizations if the feature subset is available.
