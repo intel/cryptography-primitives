@@ -95,6 +95,18 @@ versa.
    Recommendation: use a more secure hash algorithm (for example, any
    algorithm from the SHA-2 family) instead of SHA-1 or MD5.
 
+Examples
+--------
+
+1. Usage of the hash API to digest a message with extendable output length (XOF) SHAKE128.
+
+.. literalinclude:: ../../examples/hash/xof_shake128_hash_rmf.cpp
+   :language: cpp
+
+2. Usage of the hash API to digest a message using SM3 standard.
+
+.. literalinclude:: ../../examples/hash/sm3_hash_rmf.cpp
+   :language: cpp
 
 .. rubric:: Related Information
 
@@ -104,14 +116,15 @@ versa.
    :maxdepth: 1
 
 
-   hashgetsize
-   hashinit
-   hashpack-hashunpack
    hashduplicate
-   hashupdate
-   hashfinal
+   hashgetsize
    hashgettag
+   hashfinal
+   hashinit
    hashmethod
-   hashmethodset
-   hashstatemethodset
    hashmethodgetsize
+   hashmethodset
+   hashpack-hashunpack
+   hashstatemethodset
+   hashsqueeze
+   hashupdate
