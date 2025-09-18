@@ -61,7 +61,7 @@ int main(void)
             "ippsMLKEM_KeyGen/ippsMLKEM_Encaps/ippsMLKEM_Decaps",
             "ML-KEM scheme with IPPCP_ML_KEM_512 parameter",
             "RDRAND instruction is not supported by the CPU but is required\n for this example.");
-        return ippStsNoOperation;
+        return status;
     }
 
 
