@@ -44,11 +44,11 @@ __IPPCP_INLINE IppStatus mlkemMemoryConsumption(const IppsMLKEMState* pMLKEMCtx,
     sts = ippsHashGetSizeOptimal_rmf(&hashCtxSizeShake, ippsHashMethod_SHAKE256(3 * 256 * 8));
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
     /* keyGen memory consumption */
-    locKeygenBytes =
-        eta1 * 64 + 3 * k * (int)sizeof(Ipp16sPoly) + hashCtxSizeShake + 5 * CP_ML_KEM_ALIGNMENT;
+    locKeygenBytes = eta1 * 64 + 3 * k * (int)sizeof(Ipp16sPoly) + (int)sizeof(Ipp16sPoly) +
+                     hashCtxSizeShake + 5 * CP_ML_KEM_ALIGNMENT;
 
     /* Encaps memory consumption */
-    locEncapsBytes = 4 * (k * (int)sizeof(Ipp16sPoly)) + eta1 * 64 + 3 * (int)sizeof(Ipp16sPoly) +
+    locEncapsBytes = 4 * (k * (int)sizeof(Ipp16sPoly)) + eta1 * 64 + 4 * (int)sizeof(Ipp16sPoly) +
                      hashCtxSizeShake + 9 * CP_ML_KEM_ALIGNMENT;
 
     /* Decaps memory consumption */
@@ -57,7 +57,7 @@ __IPPCP_INLINE IppStatus mlkemMemoryConsumption(const IppsMLKEMState* pMLKEMCtx,
     int hashCtxSizeSHA3_512 = 0;
     sts = ippsHashGetSizeOptimal_rmf(&hashCtxSizeSHA3_512, ippsHashMethod_SHA3_512());
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
-    locDecapsBytes = IPP_MAX(hashCtxSizeShake, hashCtxSizeSHA3_512) + 2 * (int)sizeof(Ipp16sPoly) +
+    locDecapsBytes = IPP_MAX(hashCtxSizeShake, hashCtxSizeSHA3_512) + 3 * (int)sizeof(Ipp16sPoly) +
                      2 * (k * (int)sizeof(Ipp16sPoly)) + 32 * (d_u * k + d_v) + locEncapsBytes +
                      3 * CP_ML_KEM_ALIGNMENT;
 

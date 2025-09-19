@@ -54,6 +54,12 @@ struct _cpMLKEMState {
  */
 typedef enum { nttTransform, noNttTransform } nttTransformFlag;
 
+/*
+ * Stuff enumerator used in cp_matrixAGen() to conditionally generate
+ * transposed matrix A
+ */
+typedef enum { matrixAOrigin, matrixATransposed } matrixAGenType;
+
 /* State ID set\check helpers */
 #define CP_ML_KEM_SET_ID(pCtx)   ((pCtx)->idCtx = (Ipp32u)idCtxMLKEM ^ (Ipp32u)IPP_UINT_PTR(pCtx))
 #define CP_ML_KEM_VALID_ID(pCtx) ((((pCtx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR(pCtx)) == idCtxMLKEM)
@@ -85,13 +91,39 @@ typedef struct {
 //        Stuff functions
 //-------------------------------//
 
-#define CP_CHECK_FREE_RET(IN_RET_CONDITION, IN_STATUS, IN_P_STORAGE) \
-    {                                                                \
-        if (IN_RET_CONDITION) {                                      \
-            cp_mlkemStorageReleaseAll(IN_P_STORAGE);                 \
-            return IN_STATUS;                                        \
-        }                                                            \
+#define CP_CHECK_FREE_RET(IN_RET_CONDITION, IN_STATUS, IN_P_STORAGE)        \
+    {                                                                       \
+        if (IN_RET_CONDITION) {                                             \
+            IppStatus releaseSts = cp_mlkemStorageReleaseAll(IN_P_STORAGE); \
+            return (IN_STATUS) | releaseSts;                                \
+        }                                                                   \
     }
+
+/* Memory allocation helpers for poly and polyvec */
+/* clang-format off */
+#define CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(NAME, SIZE, STORAGE)                                  \
+    Ipp16sPoly*(NAME) = (Ipp16sPoly*)cp_mlkemStorageAllocate((STORAGE),                          \
+                                             (SIZE) * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT); \
+    CP_CHECK_FREE_RET((NAME) == NULL, ippStsMemAllocErr, (STORAGE));                             \
+    (NAME) = IPP_ALIGNED_PTR((NAME), CP_ML_KEM_ALIGNMENT);
+/* clang-format on */
+
+#define CP_ML_KEM_ALLOCATE_ALIGNED_POLY(NAME, STORAGE) \
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC((NAME), 1, (STORAGE))
+
+/* Memory release helpers for poly and polyvec */
+#define CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(SIZE, STORAGE, STATUS) \
+    (STATUS) |=                                                  \
+        cp_mlkemStorageRelease((STORAGE), (SIZE) * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
+
+#define CP_ML_KEM_RELEASE_ALIGNED_POLY(STORAGE, STATUS) \
+    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(1, (STORAGE), (STATUS))
+
+#ifdef __GNUC__
+#define ASM_VOLATILE(a) __asm__ __volatile__(a);
+#else
+#define ASM_VOLATILE(a)
+#endif
 
 /*
  * Memory allocation primitive working with _cpMLKEMStorage structure.
@@ -127,7 +159,10 @@ __IPPCP_INLINE IppStatus cp_mlkemStorageRelease(_cpMLKEMStorage* storage, Ipp64s
     PurgeBlock(storage->pStorageData + storage->bytesUsed - bytesRelease, (int)bytesRelease);
 
     storage->bytesUsed -= bytesRelease;
-    return ippStsNoErr;
+    ASM_VOLATILE("" ::: "memory")
+
+    // Check that the memory was released and zeroized as intended
+    return (*(storage->pStorageData + storage->bytesUsed) == 0) ? ippStsNoErr : ippStsMemAllocErr;
 }
 
 /*
@@ -136,17 +171,23 @@ __IPPCP_INLINE IppStatus cp_mlkemStorageRelease(_cpMLKEMStorage* storage, Ipp64s
  *
  * Note: the operation release the whole buffer, safe to be used for an empty storage.
  */
-__IPPCP_INLINE void cp_mlkemStorageReleaseAll(_cpMLKEMStorage* storage)
+__IPPCP_INLINE IppStatus cp_mlkemStorageReleaseAll(_cpMLKEMStorage* storage)
 {
     // Zeroize the buffer (minimum amount between bytesUsed and bytesCapacity)
     PurgeBlock(storage->pStorageData,
                IPP_MIN((int)storage->bytesUsed, (int)storage->bytesCapacity));
     storage->bytesUsed = 0;
+    ASM_VOLATILE("" ::: "memory")
+
+    return (*(storage->pStorageData + storage->bytesUsed) == 0) ? ippStsNoErr : ippStsMemAllocErr;
 }
 
 //-------------------------------//
 // Kernel functions declaration
 //-------------------------------//
+
+#define cp_mlkemBarrettReduce OWNAPI(cp_mlkemBarrettReduce)
+IPP_OWN_DECL(Ipp16s, cp_mlkemBarrettReduce, (Ipp32s x))
 
 #define cp_polyAdd OWNAPI(cp_polyAdd)
 IPP_OWN_DECL(void, cp_polyAdd, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16sPoly* h))
@@ -169,7 +210,9 @@ IPP_OWN_DECL(IppStatus, cp_Decompress, (Ipp16u * out, const Ipp16s in, const Ipp
 #define cp_byteEncode OWNAPI(cp_byteEncode)
 IPP_OWN_DECL(IppStatus, cp_byteEncode, (Ipp8u * B, const Ipp16u d, const Ipp16sPoly* pPolyF))
 #define cp_byteDecode OWNAPI(cp_byteDecode)
-IPP_OWN_DECL(IppStatus, cp_byteDecode, (Ipp16sPoly * pPolyF, const Ipp16u d, const Ipp8u* B))
+IPP_OWN_DECL(IppStatus,
+             cp_byteDecode,
+             (Ipp16sPoly * pPolyF, const Ipp16u d, const Ipp8u* B, const int bByteSize))
 
 #define cp_samplePolyCBD OWNAPI(cp_samplePolyCBD)
 IPP_OWN_DECL(IppStatus, cp_samplePolyCBD, (Ipp16sPoly * pPoly, const Ipp8u* pSeed, const Ipp8u eta))
@@ -180,7 +223,7 @@ IPP_OWN_DECL(IppStatus, cp_SampleNTT,
 
 #define cp_matrixAGen OWNAPI(cp_matrixAGen)
 IPP_OWN_DECL(IppStatus, cp_matrixAGen,
-            (Ipp16sPoly * matrixA, Ipp8u rho_j_i[34], IppsMLKEMState* mlkemCtx))
+            (Ipp16sPoly * matrixA, Ipp8u rho_j_i[34], matrixAGenType matrixType, IppsMLKEMState* mlkemCtx))
 /* clang-format on */
 
 #define cp_NTT OWNAPI(cp_NTT)

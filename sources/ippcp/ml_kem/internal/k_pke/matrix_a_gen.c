@@ -82,16 +82,17 @@ IPP_OWN_DEFN(IppStatus, cp_SampleNTT,
 /*
  * Generates the matrix A for the ML KEM scheme.
  *
- * Input:  rho_j_i  - byte array of size 34 bytes, where the first 32 bytes are the seed
- *                    and the last two bytes are indices i and j
- *         mlkemCtx - pointer to state.
+ * Input:  rho_j_i    - byte array of size 34 bytes, where the first 32 bytes are the seed
+ *                      and the last two bytes are indices i and j
+ *         matrixType - flag reflecting the type of matrix to be generated
+ *         mlkemCtx   - pointer to state.
  * Output: matrixA - output pointer to the matrix A of size k*k elements
  *
  * Note:  cp_SampleNTT is the main computation kernel.
  */
 /* clang-format off */
 IPP_OWN_DEFN(IppStatus, cp_matrixAGen,
-            (Ipp16sPoly * matrixA, Ipp8u rho_j_i[34], IppsMLKEMState* mlkemCtx))
+            (Ipp16sPoly * matrixA, Ipp8u rho_j_i[34], matrixAGenType matrixType, IppsMLKEMState* mlkemCtx))
 /* clang-format on */
 {
     IppStatus sts = ippStsNoErr;
@@ -99,8 +100,13 @@ IPP_OWN_DEFN(IppStatus, cp_matrixAGen,
 
     for (Ipp8u i = 0; i < k; i++) {
         for (Ipp8u j = 0; j < k; j++) {
-            rho_j_i[32]            = j;
-            rho_j_i[33]            = i;
+            if (matrixType == matrixAOrigin) {
+                rho_j_i[32] = j;
+                rho_j_i[33] = i;
+            } else { // matrixType == matrixATransposed
+                rho_j_i[32] = i;
+                rho_j_i[33] = j;
+            }
             Ipp16sPoly* pMatrixAij = &matrixA[i * k + j];
 
             /* A[i, j] <- cp_SampleNTT(rho||i||j) */

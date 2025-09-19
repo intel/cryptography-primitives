@@ -91,8 +91,11 @@ IPPFUN(IppStatus, ippsMLKEM_KeyGen, (Ipp8u * pEncKey,
     PurgeBlock(z, sizeof(z));
 
     /* Clear temporary storage */
-    cp_mlkemStorageReleaseAll(pStorage);
-    pStorage->pStorageData = NULL;
+    IppStatus memReleaseSts = cp_mlkemStorageReleaseAll(pStorage);
+    pStorage->pStorageData  = NULL;
+    if (memReleaseSts != ippStsNoErr) {
+        return memReleaseSts;
+    }
 
     return sts;
 }

@@ -42,6 +42,11 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
     const Ipp8u eta1          = mlkemCtx->params.eta1;
     _cpMLKEMStorage* pStorage = &mlkemCtx->storage;
 
+    /* Allocate memory for temporary objects */
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(vectorS, k, pStorage)
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(vectorE, k, pStorage)
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(t, k, pStorage)
+
     /* (rho,sigma) <- G(d||k) */
     // stores 32 bytes of rho, 32 bytes of sigma and 1 byte of N
     Ipp8u rho_sigma_N[65];
@@ -58,42 +63,26 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
     Ipp8u rho_j_i[34];
     CopyBlock(pRho, rho_j_i, 32);
     Ipp16sPoly* matrixA = (Ipp16sPoly*)(mlkemCtx->pA); // vectors accessing pointer
-    cp_matrixAGen(matrixA, rho_j_i, mlkemCtx);
-
-    /* Generate vectors s and e */
+    cp_matrixAGen(matrixA, rho_j_i, matrixAOrigin, mlkemCtx);
 
     /* Generate vector s */
-    Ipp16sPoly* vectorS =
-        (Ipp16sPoly*)cp_mlkemStorageAllocate(pStorage,
-                                             k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(vectorS == NULL, ippStsMemAllocErr, pStorage);
-    vectorS = IPP_ALIGNED_PTR(vectorS, CP_ML_KEM_ALIGNMENT);
     cp_polyVecGen(vectorS, pSigma_N, &N, eta1, mlkemCtx, nttTransform);
 
     /* Generate vector e */
-    Ipp16sPoly* vectorE =
-        (Ipp16sPoly*)cp_mlkemStorageAllocate(pStorage,
-                                             k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(vectorE == NULL, ippStsMemAllocErr, pStorage);
-    vectorE = IPP_ALIGNED_PTR(vectorE, CP_ML_KEM_ALIGNMENT);
     cp_polyVecGen(vectorE, pSigma_N, &N, eta1, mlkemCtx, nttTransform);
 
     /* t` = A` * s` + e` */
-    Ipp16sPoly* t =
-        (Ipp16sPoly*)cp_mlkemStorageAllocate(pStorage,
-                                             k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(t == NULL, ippStsMemAllocErr, pStorage);
-    t = IPP_ALIGNED_PTR(t, CP_ML_KEM_ALIGNMENT);
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLY(tmpPoly, pStorage)
     for (Ipp8u i = 0; i < k; i++) {
         cp_multiplyNTT(CP_MATRIX_A_GET_I_J(matrixA, i, 0), &vectorS[0], &t[i]);
 
         for (Ipp8u j = 1; j < k; j++) {
-            Ipp16sPoly tmpPoly;
-            cp_multiplyNTT(CP_MATRIX_A_GET_I_J(matrixA, i, j), &vectorS[j], &tmpPoly);
-            cp_polyAdd(&tmpPoly, &t[i], &t[i]);
+            cp_multiplyNTT(CP_MATRIX_A_GET_I_J(matrixA, i, j), &vectorS[j], tmpPoly);
+            cp_polyAdd(tmpPoly, &t[i], &t[i]);
         }
         cp_polyAdd(&vectorE[i], &t[i], &t[i]);
     }
+    CP_ML_KEM_RELEASE_ALIGNED_POLY(pStorage, sts) // Ipp16sPoly tmpPoly
 
     for (Ipp8u i = 0; i < k; i++) {
         sts = cp_byteEncode(outDecKey + i * 384, 12, &vectorS[i]);
@@ -103,12 +92,9 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
     CopyBlock(pRho, outEncKey + 384 * k, 32);
 
     /* Release locally used storage */
-    /* clang-format off */
-    sts  = cp_mlkemStorageRelease(pStorage, // Ipp16sPoly vectorS[k], vectorE[k]
-                                  2 * (k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT));
-    sts |= cp_mlkemStorageRelease(pStorage, // Ipp16sPoly t[k]
-                                  k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    /* clang-format on */
+    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly vectorS[k]
+    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly vectorE[k]
+    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly t[k]
 
     return sts;
 }

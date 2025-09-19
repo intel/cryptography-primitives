@@ -33,9 +33,9 @@ IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
             Ipp16s zeta = cp_zetas_ntt[i];
             i++;
             for (Ipp16u j = start; j < start + len; j++) {
-                Ipp16s t           = (zeta * f->values[j + len]) % CP_ML_KEM_Q;
-                f->values[j + len] = (f->values[j] - t) % CP_ML_KEM_Q;
-                f->values[j]       = (f->values[j] + t) % CP_ML_KEM_Q;
+                Ipp16s t           = cp_mlkemBarrettReduce((Ipp32s)zeta * f->values[j + len]);
+                f->values[j + len] = cp_mlkemBarrettReduce((Ipp32s)(f->values[j] - t));
+                f->values[j]       = cp_mlkemBarrettReduce((Ipp32s)(f->values[j] + t));
             }
         }
     }
@@ -57,14 +57,14 @@ IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
             i--;
             for (Ipp16u j = start; j < start + len; j++) {
                 Ipp16s t           = f->values[j];
-                f->values[j]       = (t + f->values[j + len]) % CP_ML_KEM_Q;
-                f->values[j + len] = (f->values[j + len] - t) % CP_ML_KEM_Q;
-                f->values[j + len] = (zeta * f->values[j + len]) % CP_ML_KEM_Q;
+                f->values[j]       = cp_mlkemBarrettReduce((Ipp32s)(t + f->values[j + len]));
+                f->values[j + len] = cp_mlkemBarrettReduce((Ipp32s)(f->values[j + len] - t));
+                f->values[j + len] = cp_mlkemBarrettReduce((Ipp32s)zeta * f->values[j + len]);
             }
         }
     }
     for (Ipp16u n = 0; n < 256; n++) {
-        f->values[n] = (f->values[n] * 3303) % CP_ML_KEM_Q;
+        f->values[n] = cp_mlkemBarrettReduce((Ipp32s)f->values[n] * 3303);
     }
 }
 
@@ -103,12 +103,12 @@ IPP_OWN_DEFN(void, cp_baseCaseMultiply, (Ipp16s a0, Ipp16s a1,
                                          Ipp16s* c0_ptr, Ipp16s* c1_ptr))
 /* clang-format on */
 {
-    Ipp32s tmpC0 = ((Ipp64s)a1 * (Ipp64s)b1) % CP_ML_KEM_Q;
-    tmpC0        = ((Ipp64s)gamma * tmpC0) % CP_ML_KEM_Q;
-    tmpC0        = tmpC0 + ((Ipp64s)a0 * (Ipp64s)b0 % CP_ML_KEM_Q);
+    Ipp32s tmpC0 = cp_mlkemBarrettReduce((Ipp32s)a1 * b1);
+    tmpC0        = cp_mlkemBarrettReduce((Ipp32s)gamma * tmpC0);
+    tmpC0        = tmpC0 + cp_mlkemBarrettReduce((Ipp32s)a0 * b0);
 
-    Ipp32s tmpC1 = ((Ipp32s)a0 * (Ipp32s)b1) % CP_ML_KEM_Q;
-    tmpC1        = tmpC1 + ((Ipp32s)a1 * (Ipp32s)b0 % CP_ML_KEM_Q);
-    *c0_ptr      = tmpC0 % CP_ML_KEM_Q;
-    *c1_ptr      = tmpC1 % CP_ML_KEM_Q;
+    Ipp32s tmpC1 = cp_mlkemBarrettReduce((Ipp32s)a0 * b1);
+    tmpC1        = tmpC1 + cp_mlkemBarrettReduce((Ipp32s)a1 * b0);
+    *c0_ptr      = cp_mlkemBarrettReduce(tmpC0);
+    *c1_ptr      = cp_mlkemBarrettReduce(tmpC1);
 }

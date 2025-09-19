@@ -69,8 +69,7 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
 
     /* 5: m` <- K-PKE.Decrypt(dkPKE, c) */
     Ipp8u message[32];
-    sts = cp_KPKE_Decrypt(message, pPKE_DecKey, ciphertext, mlkemCtx);
-    CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
+    IppStatus decryptSts = cp_KPKE_Decrypt(message, pPKE_DecKey, ciphertext, mlkemCtx);
 
     /* 6: (K`, r`) <- G(m`||h) */
 
@@ -116,16 +115,12 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
 
     /* 9-10: if c != c` then K` <- K`` */
     BNU_CHUNK_T is_equal = cpIsEquBlock_ct(ciphertext, ciphertext1, ciphertext_size);
-    if (is_equal) {
-        CopyBlock(K1, K, CP_SHARED_SECRET_BYTES);
-    } else {
-        CopyBlock(K2, K, CP_SHARED_SECRET_BYTES);
-    }
+    MASKED_COPY_BNU(K, is_equal, K1, K2, CP_SHARED_SECRET_BYTES);
 
     /* Release locally used storage */
     sts = cp_mlkemStorageRelease(pStorage, hash_size + CP_ML_KEM_ALIGNMENT); // hash_state
     sts |= cp_mlkemStorageRelease(pStorage,
                                   ciphertext_size + CP_ML_KEM_ALIGNMENT);    // ciphertext1
 
-    return sts;
+    return sts | decryptSts;
 }

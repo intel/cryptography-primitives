@@ -68,8 +68,11 @@ IPPFUN(IppStatus, ippsMLKEM_Decaps, (const Ipp8u* pDecKey,
     sts = cp_MLKEMdecaps_internal(pSharedSecret, pCipherText, pDecKey, pMLKEMCtx);
 
     /* Clear temporary storage */
-    cp_mlkemStorageReleaseAll(pStorage);
-    pStorage->pStorageData = NULL;
+    IppStatus memReleaseSts = cp_mlkemStorageReleaseAll(pStorage);
+    pStorage->pStorageData  = NULL;
+    if (memReleaseSts != ippStsNoErr) {
+        return memReleaseSts;
+    }
 
     return sts;
 }

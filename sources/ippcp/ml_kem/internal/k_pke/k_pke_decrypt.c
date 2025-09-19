@@ -44,19 +44,21 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_Decrypt, (Ipp8u * message,
     const Ipp8u d_v           = mlkemCtx->params.d_v;
     _cpMLKEMStorage* pStorage = &mlkemCtx->storage;
 
+    /* Allocate memory for temporary objects */
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(u, k, pStorage)
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLY(v, pStorage)
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(s, k, pStorage)
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLY(w, pStorage)
+
     /* 1: c1 <- c[0 : 32*d_{u}*k] */
     Ipp8u* c1 = (Ipp8u*)ciphertext;
     /* 2: c2 <- c[32*d_{u}*k : 32(d_{u}*k + d_{v})] */
     Ipp8u* c2 = c1 + (32 * d_u * k);
 
     /* 3: u` <- Decompress_{d_{u}}(cp_byteDecode_{d_{u}}(c1)) */
-    Ipp16sPoly* u =
-        (Ipp16sPoly*)cp_mlkemStorageAllocate(pStorage,
-                                             k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(u == NULL, ippStsMemAllocErr, pStorage);
-    u = IPP_ALIGNED_PTR(u, CP_ML_KEM_ALIGNMENT);
     for (Ipp8u i = 0; i < k; i++) {
-        cp_byteDecode(&u[i], d_u, c1 + i * 32 * d_u);
+        sts = cp_byteDecode(&u[i], d_u, c1 + i * 32 * d_u, 32 * d_u * (k - i));
+        IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
         for (Ipp32u j = 0; j < 256; j++) {
             sts = cp_Decompress((Ipp16u*)&u[i].values[j], u[i].values[j], d_u);
@@ -65,42 +67,29 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_Decrypt, (Ipp8u * message,
     }
 
     /* 4: v` <- Decompress_{d_{v}}(cp_byteDecode_{d_{v}}(c2)) */
-    Ipp16sPoly* v =
-        (Ipp16sPoly*)cp_mlkemStorageAllocate(pStorage, sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(v == NULL, ippStsMemAllocErr, pStorage);
-    v = IPP_ALIGNED_PTR(v, CP_ML_KEM_ALIGNMENT);
-    cp_byteDecode(v, d_v, c2);
+    sts = cp_byteDecode(v, d_v, c2, 32 * d_v);
+    IPP_BADARG_RET((sts != ippStsNoErr), sts);
     for (Ipp32u j = 0; j < 256; j++) {
-
         sts = cp_Decompress((Ipp16u*)&v->values[j], v->values[j], d_v);
         IPP_BADARG_RET((sts != ippStsNoErr), sts);
     }
 
     /* 5: s` <- cp_byteDecode_{12}(dk_{pke}) */
-    Ipp16sPoly* s =
-        (Ipp16sPoly*)cp_mlkemStorageAllocate(pStorage,
-                                             k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(s == NULL, ippStsMemAllocErr, pStorage);
-    s = IPP_ALIGNED_PTR(s, CP_ML_KEM_ALIGNMENT);
-
     for (Ipp8u i = 0; i < k; i++) {
-        cp_byteDecode(&s[i], 12, pPKE_DecKey + 384 * i);
+        sts = cp_byteDecode(&s[i], 12, pPKE_DecKey + 384 * i, 384 * (k - i));
+        IPP_BADARG_RET((sts != ippStsNoErr), sts);
     }
 
     /* 6: w <- v` - cp_NTT^{-1}(s`^{T} * cp_NTT(u`)) */
-    Ipp16sPoly* w =
-        (Ipp16sPoly*)cp_mlkemStorageAllocate(pStorage, sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(w == NULL, ippStsMemAllocErr, pStorage);
-    w = IPP_ALIGNED_PTR(w, CP_ML_KEM_ALIGNMENT);
-
     cp_NTT(&u[0]);
     cp_multiplyNTT(&s[0], &u[0], w);
+    CP_ML_KEM_ALLOCATE_ALIGNED_POLY(tmpPoly, pStorage)
     for (Ipp8u i = 1; i < k; i++) {
         cp_NTT(&u[i]);
-        Ipp16sPoly tmpPoly;
-        cp_multiplyNTT(&s[i], &u[i], &tmpPoly);
-        cp_polyAdd(&tmpPoly, w, w);
+        cp_multiplyNTT(&s[i], &u[i], tmpPoly);
+        cp_polyAdd(tmpPoly, w, w);
     }
+    CP_ML_KEM_RELEASE_ALIGNED_POLY(pStorage, sts) // Ipp16sPoly tmpPoly
     cp_inverseNTT(w);
     cp_polySub(v, w, w);
 
@@ -113,16 +102,10 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_Decrypt, (Ipp8u * message,
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
     /* Release locally used storage */
-    /* clang-format off */
-    sts  = cp_mlkemStorageRelease(pStorage, // Ipp16sPoly u[k]
-                                  k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT); 
-    sts |= cp_mlkemStorageRelease(pStorage, // Ipp16sPoly v
-                                  sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    sts |= cp_mlkemStorageRelease(pStorage, // Ipp16sPoly s[k]
-                                  k * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    sts |= cp_mlkemStorageRelease(pStorage, // Ipp16sPoly w
-                                  sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-    /* clang-format on */
+    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly u[k]
+    CP_ML_KEM_RELEASE_ALIGNED_POLY(pStorage, sts)       // Ipp16sPoly v
+    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly s[k]
+    CP_ML_KEM_RELEASE_ALIGNED_POLY(pStorage, sts)       // Ipp16sPoly w
 
     return sts;
 }
