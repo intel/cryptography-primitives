@@ -44,7 +44,7 @@
     <link rel="icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="CMAC Functions" href="cmac-functions.html" />
+    <link rel="next" title="HKDF_extract" href="hkdf_extract.html" />
     <link rel="prev" title="HMAC_Message" href="hmac_message.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -794,28 +794,28 @@ infoLen, const IppsHashMethod* pMethod);</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
 <tr class="row-odd"><td><p>ikm</p></td>
-<td><p>Pointer to the input key message.</p></td>
+<td><p>Pointer to the input keying material.</p></td>
 </tr>
 <tr class="row-even"><td><p>ikmLen</p></td>
-<td><p>Length of the input key message in bytes.</p></td>
+<td><p>Length of the input keying material in bytes.</p></td>
 </tr>
 <tr class="row-odd"><td><p>okm</p></td>
-<td><p>Pointer to the output key message.</p></td>
+<td><p>Pointer to the output keying material.</p></td>
 </tr>
 <tr class="row-even"><td><p>okmLen</p></td>
-<td><p>Length of needed output key message in bytes.</p></td>
+<td><p>Length of needed output keying material in bytes.</p></td>
 </tr>
 <tr class="row-odd"><td><p>salt</p></td>
-<td><p>Pointer to salt message.</p></td>
+<td><p>Pointer to salt value.</p></td>
 </tr>
 <tr class="row-even"><td><p>saltLen</p></td>
-<td><p>Length of salt message in bytes.</p></td>
+<td><p>Length of salt value in bytes.</p></td>
 </tr>
 <tr class="row-odd"><td><p>info</p></td>
-<td><p>Pointer to the info message.</p></td>
+<td><p>Pointer to the info.</p></td>
 </tr>
 <tr class="row-even"><td><p>infoLen</p></td>
-<td><p>Length of the info message in bytes.</p></td>
+<td><p>Length of the info in bytes.</p></td>
 </tr>
 <tr class="row-odd"><td><p>pMethod</p></td>
 <td><p>Pointer to the hash method context.</p></td>
@@ -826,7 +826,7 @@ infoLen, const IppsHashMethod* pMethod);</p>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>The function computes the output message as a part of the Hashed
+<p>The function computes the output keying material as a part of the Hashed
 Message Authentication Code (HMAC)-based key derivation function
 (HKDF) as specified in <a class="reference internal" href="bibliography.html#term-RFC-5869"><span class="xref std std-term">RFC 5869</span></a>.</p>
 </section>
@@ -873,11 +873,11 @@ Message Authentication Code (HMAC)-based key derivation function
       </div>
     </a>
     <a class="right-next"
-       href="cmac-functions.html"
+       href="hkdf_extract.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">CMAC Functions</p>
+        <p class="prev-next-title">HKDF_extract</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
