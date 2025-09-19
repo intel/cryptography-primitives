@@ -96,3 +96,5 @@ functions transform it to a position-independent form and vice versa:
    hmac_gettag
    hmac_message
    hkdf
+   hkdf_extract
+   hkdf_expand

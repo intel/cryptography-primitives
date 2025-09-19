@@ -33,21 +33,21 @@ Parameters
    :header-rows: 0
 
    * - ikm
-     - Pointer to the input key message.
+     - Pointer to the input keying material.
    * - ikmLen
-     - Length of the input key message in bytes.
+     - Length of the input keying material in bytes.
    * - okm
-     - Pointer to the output key message.
+     - Pointer to the output keying material.
    * - okmLen
-     - Length of needed output key message in bytes.
+     - Length of needed output keying material in bytes.
    * - salt
-     - Pointer to salt message.
+     - Pointer to salt value.
    * - saltLen
-     - Length of salt message in bytes.
+     - Length of salt value in bytes.
    * - info
-     - Pointer to the info message.
+     - Pointer to the info.
    * - infoLen
-     - Length of the info message in bytes.
+     - Length of the info in bytes.
    * - pMethod
      - Pointer to the hash method context.
 
@@ -58,7 +58,7 @@ Description
 -----------
 
 
-The function computes the output message as a part of the Hashed
+The function computes the output keying material as a part of the Hashed
 Message Authentication Code (HMAC)-based key derivation function
 (HKDF) as specified in :term:`RFC 5869 <[RFC 5869]>`.
 

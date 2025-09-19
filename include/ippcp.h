@@ -639,6 +639,16 @@ IPPAPI(IppStatus, ippsHKDF,(const Ipp8u* ikm, int ikmLen,
                             const Ipp8u* info, int infoLen,
                             const IppsHashMethod* pMethod))
 
+IPPAPI(IppStatus, ippsHKDF_extract,(const Ipp8u* ikm, int ikm_len,
+                                    Ipp8u* prk, const Ipp8u* salt, int salt_len,
+                                    const IppsHashMethod* pMethod))
+
+IPPAPI(IppStatus, ippsHKDF_expand,(const Ipp8u* prk, int prk_len,
+                                   Ipp8u* okm, int okm_len,
+                                   const Ipp8u* info, int info_len,
+                                   const IppsHashMethod* pMethod))
+
+
 /*
 // =========================================================
 // Big Number Integer Arithmetic

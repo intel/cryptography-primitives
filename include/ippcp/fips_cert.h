@@ -246,7 +246,9 @@ enum FIPS_IPPCP_FUNC {
     MLKEM_KeyGen,
     MLKEM_Encaps,
     MLKEM_Decaps,
-    HashSqueeze_rmf
+    HashSqueeze_rmf,
+    HKDF_extract,
+    HKDF_expand
 };
 
 /**
