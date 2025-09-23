@@ -198,7 +198,7 @@ include_directories(
     ${INTERNAL_INCLUDE_DIR}/single_cpu/crypto_mb
     $<$<C_COMPILER_ID:Intel>:$ENV{ROOT}/compiler/include $ENV{ROOT}/compiler/include/icc>
     $<$<NOT:$<C_COMPILER_ID:Intel>>:${CMAKE_SYSTEM_INCLUDE_PATH}>
-    $<$<OR:$<C_COMPILER_ID:Intel>,$<BOOL:${MSVC_IDE}>>:$ENV{INCLUDE}>
+    $<$<AND:$<NOT:$<C_COMPILER_ID:IntelLLVM>>,$<BOOL:${MSVC_IDE}>>:$ENV{INCLUDE}>
 )
 
 add_subdirectory(src)

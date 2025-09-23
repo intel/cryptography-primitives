@@ -262,7 +262,7 @@ set (C_INCLUDE_DIRECTORIES
     ${IPP_CRYPTO_SOURCES_DIR}/crypto_mb/include
     $<$<C_COMPILER_ID:Intel>:$ENV{ROOT}/compiler/include $ENV{ROOT}/compiler/include/icc>
     $<$<NOT:$<C_COMPILER_ID:Intel>>:${CMAKE_SYSTEM_INCLUDE_PATH}>
-    $<$<OR:$<C_COMPILER_ID:Intel>,$<BOOL:${MSVC_IDE}>>:$ENV{INCLUDE}>
+    $<$<AND:$<NOT:$<C_COMPILER_ID:IntelLLVM>>,$<BOOL:${MSVC_IDE}>>:$ENV{INCLUDE}>
     )
 
 set (ASM_INCLUDE_DIRECTORIES
