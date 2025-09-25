@@ -13,7 +13,7 @@ Syntax
 ------
 
 
-IppStatus ippsHKDF_extact(const Ipp8u\* ikm, int ikmLen, Ipp8u\* prk, const
+IppStatus ippsHKDF_extract(const Ipp8u\* ikm, int ikmLen, Ipp8u\* prk, const
 Ipp8u\* salt, int saltLen, const IppsHashMethod\* pMethod);
 
 
