@@ -4,10 +4,8 @@
   - [Common tools](#common-tools)
   - [Linux\* OS](#linux-os)
   - [Windows\* OS](#windows-os)
-  - [macOS\*](#macos)
 - [Building Intel® Cryptography Primitives Library on Linux\* OS](#building-intel-cryptography-primitives-library-on-linux-os)
 - [Building Intel® Cryptography Primitives Library on Windows\* OS](#building-intel-cryptography-primitives-library-on-windows-os)
-- [Building Intel® Cryptography Primitives Library on macOS\*](#building-intel-cryptography-primitives-library-on-macos)
 - [CMake Build Options](#cmake-build-options)
   - [Common for all operating systems](#common-for-all-operating-systems)
   - [Windows\* OS](#windows-os-1)
@@ -54,9 +52,6 @@
 
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
 
-### macOS*
-- [Common tools](#common-tools)
-- Intel® C++ Compiler Classic 2021.9 for macOS\*
 ## Building Intel® Cryptography Primitives Library on Linux\* OS
 
 The software was validated on:
@@ -160,58 +155,13 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
     *Build from Visual Studio\*:*
     Open the Microsoft Visual Studio\* solution `Intel(R) IPP Crypto.sln`, choose project (build target) from the Solution Explorer and run the build.
 
-## Building Intel® Cryptography Primitives Library on macOS\*
-
-> **NOTE:** Intel® Cryptography Primitives Library stopped macOS\* validation and maintenance based on the announcement in the [Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.9 release notes](https://www.intel.com/content/www/us/en/developer/articles/release-notes/intel-ipp-previous-release-notes.html#inpage-nav-1-1).\
-The Intel® IPP Cryptography 2021.10 release is the last release validated on macOS\* 12.0.\
-For further macOS\* testing and maintenance we are relying on contributions from the community. For more details, see [Contributing Rules](./CONTRIBUTING.md).
-
-To build the Intel® Cryptography Primitives Library on macOS\*, complete the following steps:
-
-1. Clone the source code from GitHub\* as follows:
-
-    ``` bash
-    git clone --recursive https://github.com/intel/cryptography-primitives
-    ```
-
-2. Set the environment variables for one of the supported C/C++ compilers.
-
-   *Example for Intel® Compiler:*
-
-    ```bash
-    source /opt/intel/bin/compilervars.sh intel64
-    ```
-
-    For details, refer to the [Intel® C++ Compiler Developer Guide and Reference](https://www.intel.com/content/www/us/en/docs/cpp-compiler/developer-guide-reference/current/specifying-the-location-of-compiler-components.html)
-
-3. Run CMake\* in the command line.
-
-    *Examples*:
-
-    For Intel® C++ Compiler:
-
-    ``` bash
-    CC=icc CXX=icpc cmake CMakeLists.txt -B_build -DARCH=intel64
-    ```
-
-    For the complete list of supported CMake options, refer to the [CMake Build Options](#cmake-build-options) section.
-
-4. Navigate to the build folder specified in the CMake command line and start the build:
-
-    ```bash
-    cd _build
-    make all
-    ```
-
-    You can find the built libraries in the `<build_dir>/.build/<RELEASE|DEBUG>/lib` directory.
-
 ## CMake Build Options
 
 ### Common for all operating systems
 
 - `-B<build-dir>` - defines the build directory. This is the directory where CMake puts the generated Microsoft Visual Studio\* solution or makefiles.
 
-- `-DARCH=<ia32|intel64>` - on Linux* OS and macOS*, defines the target architecture for the build of the Intel® Cryptography Primitives Library.
+- `-DARCH=<ia32|intel64>` - on Linux* OS defines the target architecture for the build of the Intel® Cryptography Primitives Library.
     > **NOTE:** On Windows* OS, use `-G`/`-A`  instead. See the description of these options [below](#windows-os-1).
 
     > **NOTE:** Due to the significant shift in the industry towards 64-bit architecture, the support of 32-bit libraries is deprecated in the Intel® IPP Cryptography 2021.9 release and targeted to be removed after one year deprecation notice period.

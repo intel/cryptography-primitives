@@ -37,7 +37,6 @@
 ├── sources
 │   ├── cmake                                < OS-specific CMake files
 │   │   ├── linux
-│   │   ├── macosx
 │   │   └── windows
 │   ├── dispatcher                           < CPU dispatcher generator
 │   ├── gen_cpu_spc_header                   < Single CPU headers generator
