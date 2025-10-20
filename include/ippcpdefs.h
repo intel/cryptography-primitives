@@ -429,6 +429,7 @@ typedef signed int IppStatus;
 #define ippStsNoOperation                    1 /* No operation has been executed. */
 #define ippStsDivByZero                      2 /* Zero value(s) for the divisor in the Div function. */
 #define ippStsWaterfall                     43 /* Cannot load required library, waterfall is used. */
+#define ippStsSizeWrn                       48 /* The size does not allow to perform full operation. */
 #define ippStsFeaturesCombination           51 /* Wrong combination of features. */
 
 #ifdef __cplusplus
@@ -967,6 +968,7 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
 
     typedef struct _cpLMSSignatureState IppsLMSSignatureState;
     typedef struct _cpLMSPublicKeyState IppsLMSPublicKeyState;
+    typedef struct _cpLMSPrivateKeyState IppsLMSPrivateKeyState;
 #endif // IPPCP_PREVIEW_LMS
 
 /*

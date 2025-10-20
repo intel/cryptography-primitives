@@ -240,11 +240,11 @@ file(GLOB LIBRARY_C_SOURCES_ORIGINAL
     ${IPP_CRYPTO_SOURCES_DIR}/gfpec/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/gfpec/*/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/sms4/*.c
-    ${IPP_CRYPTO_SOURCES_DIR}/xmss/*.c
-    ${IPP_CRYPTO_SOURCES_DIR}/lms/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/ml_kem/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/ml_kem/*/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/ml_kem/*/*/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/stateful_sig/*/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/stateful_sig/*.c
 )
 
 file(GLOB LIBRARY_ASM_SOURCES_ORIGINAL

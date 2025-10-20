@@ -20,7 +20,7 @@
 #include "owndefs.h"
 #include "pcptool.h"
 
-#include "stateful_sig_common/common.h"
+#define ADRS_SIZE 32
 
 // WOTS+ algorithms params. See 3.1.1. XMSS spec.
 typedef struct {
@@ -93,14 +93,6 @@ IPP_OWN_DECL(IppStatus, cp_xmss_WOTS_pkFromSig, (const Ipp8u* M,
                                                  Ipp8u* out,
                                                  Ipp8u* temp_buf,
                                                  cpWOTSParams* params))
-/* clang-format on */
-
-#define cp_xmss_rand_num OWNAPI(cp_xmss_rand_num)
-/* clang-format off */
-IPP_OWN_DECL(IppStatus, cp_xmss_rand_num, (Ipp8u* out,
-                                           Ipp32s byteSize,
-                                           IppBitSupplier rndFunc,
-                                           void* pRndParam))
 /* clang-format on */
 
 #define cp_xmss_WOTS_genSK OWNAPI(cp_xmss_WOTS_genSK)

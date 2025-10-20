@@ -1346,6 +1346,33 @@ IPPAPI(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
                                   int*  pIsSignValid,
                                   const IppsLMSPublicKeyState* pKey,
                                   Ipp8u* pBuffer))
+
+IPPAPI(IppStatus, ippsLMSKeyGenBufferGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
+IPPAPI(IppStatus, ippsLMSSignBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
+
+IPPAPI(IppStatus, ippsLMSPrivateKeyStateGetSize, (Ipp32s* pSize,
+                                                  const IppsLMSAlgoType lmsType,
+                                                  Ipp32s extraBufSize))
+
+IPPAPI(IppStatus, ippsLMSInitKeyPair, (const IppsLMSAlgoType lmsType,
+                                       Ipp32s extraBufSize,
+                                       IppsLMSPrivateKeyState* pPrvKey,
+                                       IppsLMSPublicKeyState* pPubKey))
+IPPAPI(IppStatus, ippsLMSInitSignature, (const IppsLMSAlgoType lmsType, IppsLMSSignatureState* pSign))
+
+IPPAPI(IppStatus, ippsLMSKeyGen, (IppsLMSPrivateKeyState* pPrvKey,
+                                  IppsLMSPublicKeyState* pPubKey,
+                                  IppBitSupplier rndFunc,
+                                  void* pRndParam,
+                                  Ipp8u* pBuffer))
+IPPAPI(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
+                                const Ipp32s msgLen,
+                                IppsLMSPrivateKeyState* pPrvKey,
+                                IppsLMSSignatureState* pSign,
+                                IppBitSupplier rndFunc,
+                                void* pRndParam,
+                                Ipp8u* pBuffer))
+
 #endif // IPPCP_PREVIEW_LMS
 
 #ifdef IPPCP_PREVIEW_ML_KEM

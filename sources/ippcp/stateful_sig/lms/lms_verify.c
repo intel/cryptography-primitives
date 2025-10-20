@@ -13,7 +13,8 @@
 * See the License for the  specific  language  governing  permissions  and
 * limitations under the License.
 *************************************************************************/
-#include "lms_internal/lms.h"
+#include "stateful_sig/lms_internal/lms.h"
+#include "stateful_sig/common.h"
 
 /*F*
 //    Name: ippsLMSVerify

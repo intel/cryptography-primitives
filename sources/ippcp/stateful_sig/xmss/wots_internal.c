@@ -18,7 +18,8 @@
 #include "owncp.h"
 #include "pcpbnumisc.h"
 #include "pcpprng.h"
-#include "xmss_internal/wots.h"
+#include "stateful_sig/xmss_internal/wots.h"
+#include "stateful_sig/common.h"
 
 /*
  * A byte string can be considered as a string of base w numbers, i.e.,
@@ -288,29 +289,6 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_WOTS_pkFromSig, (const Ipp8u* M,
     // null chain address for next call
     cp_xmss_set_chain_address(adrs, 0);
     return retCode;
-}
-
-/*
- * Generates byteSize random Ipp8u numbers using rndFunc and pRndParam parameters.
- * If rndFunc is NULL the function uses library-based solutions by default.
- *
- * Output parameters:
- *    out   resulted byteSize bytes array with random numbers
- */
-
-/* clang-format off */
-IPP_OWN_DEFN(IppStatus, cp_xmss_rand_num, (Ipp8u* out,
-                                           Ipp32s byteSize,
-                                           IppBitSupplier rndFunc,
-                                           void* pRndParam))
-/* clang-format on */
-{
-
-    int bitSize = byteSize * /*bit size of 1 byte*/ 8;
-    if (rndFunc == NULL) {
-        return ippsPRNGenRDRAND((Ipp32u*)out, bitSize, pRndParam);
-    }
-    return rndFunc((Ipp32u*)out, bitSize, pRndParam);
 }
 
 /*

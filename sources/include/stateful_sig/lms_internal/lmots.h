@@ -20,7 +20,17 @@
 #include "owndefs.h"
 #include "pcptool.h"
 
-#include "stateful_sig_common/common.h"
+#define CP_CKSM_BYTESIZE         (2)
+#define CP_PK_I_BYTESIZE         (16)
+#define CP_LMS_MAX_HASH_BYTESIZE (32)
+#define CP_LMS_ALIGNMENT         ((int)sizeof(Ipp32u))
+
+/* Constants used to distinguish hashes in the system */
+#define D_PBLC (0x8080)
+#define D_MESG (0x8181)
+#define D_LEAF (0x8282)
+#define D_INTR (0x8383)
+#define D_PRIV (0xFF)
 
 /*
  * LMOTS algorithms params. "Table 1" LMS spec.
@@ -155,5 +165,31 @@ __IPPCP_INLINE Ipp32u cpCksm(Ipp8u* S, cpLMOTSParams lmotsParams)
 
     return cksmQ;
 }
+
+#define cp_lms_H OWNAPI(cp_lms_H)
+/* clang-format off */
+IPP_OWN_DECL(IppStatus, cp_lms_H, (Ipp8u* I_q, const Ipp32s I_q_len,
+                                   Ipp32u val1, const Ipp32s val1Len,
+                                   Ipp8u* val2, const Ipp32s val2Len,
+                                   const Ipp8u* pMsg, const Ipp32s msgLen,
+                                   Ipp8u* out,
+                                   const IppsHashMethod* hash_method))
+/* clang-format on */
+
+#define cp_lms_OTS_genPK OWNAPI(cp_lms_OTS_genPK)
+/* clang-format off */
+IPP_OWN_DECL(IppStatus, cp_lms_OTS_genPK, (Ipp8u* secret_seed,
+                                           Ipp8u* pI, Ipp32u q,
+                                           Ipp8u* out, Ipp8u* temp_buf,
+                                           const cpLMOTSParams* params))
+/* clang-format on */
+
+#define cp_lms_OTS_sign OWNAPI(cp_lms_OTS_sign)
+/* clang-format off */
+IPP_OWN_DECL(IppStatus, cp_lms_OTS_sign, (const Ipp8u* pMsg, const Ipp32s msgLen,
+                                          Ipp8u* secret_seed,
+                                          Ipp8u* pI, Ipp32u q, Ipp8u* pC, Ipp8u* pY,
+                                          Ipp8u* temp_buf, const cpLMOTSParams* params))
+/* clang-format on */
 
 #endif /* #ifndef IPPCP_LMOTS_H_ */

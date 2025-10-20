@@ -243,6 +243,8 @@ enum FIPS_IPPCP_FUNC {
     XMSSVerify,
     XMSSKeyGen,
     XMSSSign,
+    LMSKeyGen,
+    LMSSign,
     MLKEM_KeyGen,
     MLKEM_Encaps,
     MLKEM_Decaps,

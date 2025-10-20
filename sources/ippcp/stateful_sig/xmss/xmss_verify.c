@@ -15,7 +15,8 @@
 *************************************************************************/
 
 #include "owndefs.h"
-#include "xmss_internal/xmss.h"
+#include "stateful_sig/xmss_internal/xmss.h"
+#include "stateful_sig/common.h"
 
 /*F*
 //    Name: ippsXMSSVerify

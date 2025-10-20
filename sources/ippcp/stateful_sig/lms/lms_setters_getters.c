@@ -15,7 +15,7 @@
 *************************************************************************/
 
 #include "owndefs.h"
-#include "lms_internal/lms.h"
+#include "stateful_sig/lms_internal/lms.h"
 
 /*F*
 //    Name: ippsLMSBufferGetSize
@@ -160,10 +160,11 @@ IPPFUN(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s * pSize, const IppsLMSAl
     ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
-    *pSize = (Ipp32s)sizeof(IppsLMSSignatureState) +
-             (Ipp32s)(lmotsParams.n * lmsParams.h) +  /*_pAuthPath*/
-             (Ipp32s)lmotsParams.n +                  /* C */
-             (Ipp32s)(lmotsParams.n * lmotsParams.p); /* Y */
+    Ipp32s lmots_sign_size = (Ipp32s)(lmotsParams.n                              // C
+                                      + lmotsParams.n * lmotsParams.p)           // Y
+                             + CP_LMS_ALIGNMENT;
+    *pSize = (Ipp32s)(sizeof(IppsLMSSignatureState) + lmsParams.m * lmsParams.h) // path
+             + lmots_sign_size;                                                  // lmots_sig
 
     return ippcpSts;
 }
@@ -201,7 +202,8 @@ IPPFUN(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s * pSize, const IppsLMSAl
     ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
-    *pSize = (Ipp32s)sizeof(IppsLMSPublicKeyState) + (Ipp32s)lmsParams.m; /* T1 */
+    *pSize = (Ipp32s)sizeof(IppsLMSPublicKeyState) +
+             /* T1 */ (Ipp32s)lmsParams.m;
 
     return ippcpSts;
 }
@@ -341,6 +343,295 @@ IPPFUN(IppStatus, ippsLMSSetSignatureState, (const IppsLMSAlgoType lmsType,
     Ipp32s ySize    = (Ipp32s)(lmotsParams.n * lmotsParams.p);
     locLMOTSSig->pY = (Ipp8u*)pState->_pAuthPath + authPathSize + cSize;
     CopyBlock(pY, locLMOTSSig->pY, ySize);
+
+    return ippcpSts;
+}
+
+/*F*
+//    Name: ippsLMSKeyGenBufferGetSize
+//
+// Purpose: Get the LMS temporary buffer size needed for ippsLMSKeyGen (bytes).
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//    ippStsBadArgErr         lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8
+//                            lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1
+//                            lmsType.lmsOIDAlgo   > LMS_SHA256_M24_H25
+//                            lmsType.lmsOIDAlgo   < LMS_SHA256_M32_H5
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize             pointer to the work buffer's byte size
+//    lmsType           structure with LMS parameters lmotsOIDAlgo and lmsOIDAlgo
+//
+*F*/
+
+IPPFUN(IppStatus, ippsLMSKeyGenBufferGetSize, (Ipp32s * pSize, const IppsLMSAlgoType lmsType))
+{
+    IppStatus ippcpSts = ippStsNoErr;
+
+    /* Input parameters check */
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
+
+    /* Set LMOTS and LMS parameters */
+    cpLMOTSParams lmotsParams;
+    ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+    cpLMSParams lmsParams;
+    ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+    Ipp32u n = lmotsParams.n;
+    Ipp32u p = lmotsParams.p;
+    Ipp32u h = lmsParams.h;
+
+    *pSize = (Ipp32s)(2 * CP_PK_I_BYTESIZE + 4 + 2 + n + n + h + 1 + h * n + n * p + n +
+                      (4 + 2 + 1 + n + n * p));
+
+    return ippcpSts;
+}
+
+/*F*
+//    Name: ippsLMSSignBufferGetSize
+//
+// Purpose: Get the LMS temporary buffer size needed for ippsLMSSign (bytes).
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//    ippStsBadArgErr         lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8
+//                            lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1
+//    ippStsLengthErr         maxMessageLength < 1
+//                            maxMessageLength > (Ipp32s)(IPP_MAX_32S) -
+//                            - (byteSizeI + 4(q byteSize) + 2(D_MESG byteSize) + n(C byteSize))
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize             pointer to the work buffer's byte size
+//    maxMessageLength  maximum length of the processing message
+//    lmsType           structure with LMS parameters lmotsOIDAlgo and lmsOIDAlgo
+//
+*F*/
+
+IPPFUN(IppStatus,
+       ippsLMSSignBufferGetSize,
+       (Ipp32s * pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
+{
+    IppStatus ippcpSts = ippStsNoErr;
+
+    /* Input parameters check */
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
+
+    /* Set LMOTS parameters */
+    cpLMOTSParams lmotsParams;
+    ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+    Ipp32u n                 = lmotsParams.n; // LMOTS n
+    Ipp32s key_gen_temp_size = 0;
+
+    /* Check message length */
+    IPP_BADARG_RET(maxMessageLength < 1, ippStsLengthErr);
+    // this restriction is needed to avoid overflow of Ipp32s
+    // maxMessageLength must be less than    IPP_MAX_32S       - (CP_PK_I_BYTESIZE + q + D_MESG +      C       )
+    IPP_BADARG_RET(maxMessageLength > (Ipp32s)((IPP_MAX_32S) - (CP_PK_I_BYTESIZE + 4 + 2 + n)),
+                   ippStsLengthErr);
+
+    ippcpSts = ippsLMSKeyGenBufferGetSize(&key_gen_temp_size, lmsType);
+
+    *pSize =
+        (Ipp32s)(IPP_MAX(CP_PK_I_BYTESIZE + 4 + 2 + n + IPP_MAX((Ipp32u)maxMessageLength, 1 + n),
+                         (Ipp32u)key_gen_temp_size));
+    return ippcpSts;
+}
+
+/*F*
+//    Name: ippsLMSPrivateKeyStateGetSize
+//
+// Purpose: Provides the LMS private key state size (bytes).
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//    ippStsBadArgErr         lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8
+//                            lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1
+//    ippStsLengthErr         extraBufSize < 0
+//    ippStsSizeWrn           extraBufSize % lmsParams.m != 0
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize             pointer to the size
+//    lmsType           structure with LMS parameters lmotsOIDAlgo and lmsOIDAlgo
+//    extraBufSize      size of the extra buffer for the private key
+//
+*F*/
+
+IPPFUN(IppStatus,
+       ippsLMSPrivateKeyStateGetSize,
+       (Ipp32s * pSize, const IppsLMSAlgoType lmsType, Ipp32s extraBufSize))
+{
+    IppStatus ippcpSts = ippStsNoErr;
+
+    /* Input parameters check */
+    IPP_BAD_PTR1_RET(pSize);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
+    IPP_BADARG_RET(extraBufSize < 0, ippStsLengthErr);
+
+    /* Set LMS parameters */
+    cpLMOTSParams lmotsParams;
+    ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+    // Data are kept in the extra buffer by chunks equal lmotsParams.n.
+    // There is no sense to keep space for less than lmotsParams.n bytes
+    IPP_BADARG_RET((extraBufSize % (Ipp32s)lmotsParams.n) != 0, ippStsSizeWrn);
+    // rounding to lmotsParams.n
+    extraBufSize = (extraBufSize / (Ipp32s)lmotsParams.n) * (Ipp32s)lmotsParams.n;
+
+    *pSize = (Ipp32s)(sizeof(IppsLMSPrivateKeyState) + lmotsParams.n + CP_PK_I_BYTESIZE) +
+             extraBufSize + 2 * CP_LMS_ALIGNMENT;
+
+    return ippcpSts;
+}
+
+/*F*
+//    Name: ippsLMSInitKeyPair
+//
+// Purpose: Init LMS public and private keys states.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pPrvKey == NULL or pPubKey == NULL
+//    ippStsBadArgErr         lmsType.lmotsOIDAlgo > Max value for IppsLMOTSAlgo
+//                            lmsType.lmotsOIDAlgo < Min value for IppsLMOTSAlgo
+//                            lmsType.lmsOIDAlgo > Max value for IppsLMSAlgo
+//                            lmsType.lmsOIDAlgo < Min value for IppsLMSAlgo
+//    ippStsLengthErr         extraBufSize < 0
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    lmsType        id of LMS set of parameters (algorithm)
+//    pPrvKey        pointer to the LMS private key state
+//    pPubKey        pointer to the LMS public key state
+//    extraBufSize   size of the extra buffer for the private key
+//
+*F*/
+
+IPPFUN(IppStatus,
+       ippsLMSInitKeyPair,
+       (const IppsLMSAlgoType lmsType,
+        Ipp32s extraBufSize,
+        IppsLMSPrivateKeyState* pPrvKey,
+        IppsLMSPublicKeyState* pPubKey))
+{
+    IppStatus ippcpSts = ippStsNoErr;
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
+    IPP_BADARG_RET(extraBufSize < 0, ippStsLengthErr);
+
+    /* Input parameters check */
+    IPP_BAD_PTR2_RET(pPrvKey, pPubKey);
+
+    /* Set LMS parameters */
+    cpLMOTSParams lmotsParams;
+    ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+    cpLMSParams lmsParams;
+    ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+    CP_LMS_SET_CTX_ID(pPrvKey);
+    pPrvKey->lmsOIDAlgo   = lmsType.lmsOIDAlgo;
+    pPrvKey->lmotsOIDAlgo = lmsType.lmotsOIDAlgo;
+
+    Ipp8u* ptr = (Ipp8u*)pPrvKey;
+
+    /* allocate internal contexts */
+    ptr += sizeof(IppsLMSPrivateKeyState);
+
+    pPrvKey->pSecretSeed = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), CP_LMS_ALIGNMENT));
+    ptr += lmotsParams.n;
+
+    pPrvKey->pI = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), CP_LMS_ALIGNMENT));
+    ptr += CP_PK_I_BYTESIZE;
+
+    pPrvKey->pExtraBuf = ptr;
+    // rounding to lmsParams.m
+    extraBufSize          = (extraBufSize / (Ipp32s)lmsParams.m) * (Ipp32s)lmsParams.m;
+    pPrvKey->extraBufSize = extraBufSize;
+
+    CP_LMS_SET_CTX_ID(pPubKey);
+    pPubKey->lmsOIDAlgo   = lmsType.lmsOIDAlgo;
+    pPubKey->lmotsOIDAlgo = lmsType.lmotsOIDAlgo;
+
+    ptr = (Ipp8u*)pPubKey;
+    ptr += sizeof(IppsLMSPublicKeyState);
+
+    pPubKey->T1 = ptr;
+
+    return ippcpSts;
+}
+
+/*F*
+//    Name: ippsLMSInitSignature
+//
+// Purpose: Init the LMS signature state.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSign == NULL
+//    ippStsBadArgErr         lmsType.lmotsOIDAlgo > Max value for IppsLMOTSAlgo
+//    ippStsBadArgErr         lmsType.lmotsOIDAlgo < Min value for IppsLMOTSAlgo
+//    ippStsBadArgErr         lmsType.lmsOIDAlgo > Max value for IppsLMSAlgo
+//    ippStsBadArgErr         lmsType.lmsOIDAlgo < Min value for IppsLMSAlgo
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    lmsType        id of LMS set of parameters (algorithm)
+//    pSign          pointer to the LMS signature state
+//
+*F*/
+
+IPPFUN(IppStatus,
+       ippsLMSInitSignature,
+       (const IppsLMSAlgoType lmsType, IppsLMSSignatureState* pSign))
+{
+    IppStatus ippcpSts = ippStsNoErr;
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
+
+    IPP_BAD_PTR1_RET(pSign);
+
+    /* Set LMOTS parameters */
+    cpLMOTSParams lmotsParams;
+    ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+    CP_LMS_SET_CTX_ID(pSign);
+    pSign->_lmsOIDAlgo = lmsType.lmsOIDAlgo;
+    pSign->_q          = 0;
+
+    Ipp8u* ptr = (Ipp8u*)pSign;
+
+    /* allocate internal contexts */
+    ptr += sizeof(IppsLMSSignatureState);
+
+    pSign->_lmotsSig._lmotsOIDAlgo = lmsType.lmotsOIDAlgo;
+    pSign->_lmotsSig.pC            = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), CP_LMS_ALIGNMENT));
+    ptr += lmotsParams.n;
+
+    pSign->_lmotsSig.pY = ptr;
+    ptr += lmotsParams.n * lmotsParams.p;
+
+    pSign->_pAuthPath = ptr;
 
     return ippcpSts;
 }

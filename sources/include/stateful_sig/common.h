@@ -14,6 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
+#ifndef IPPCP_STATEFUL_SIG_COMMON_H_
+#define IPPCP_STATEFUL_SIG_COMMON_H_
+
+#include "owndefs.h"
+#include "pcptool.h"
+
 /*
  * Represent the `in` value as the `out` array that length is `outlen`
  * !Works only for big-endian data!
@@ -25,8 +31,6 @@
  *    out      resulted array of bytes
  */
 
-#define ADRS_SIZE 32
-
 __IPPCP_INLINE void cp_to_byte(Ipp8u* out, Ipp32s outlen, Ipp32u in)
 {
     /* Iterate over out in decreasing order, for big-endianness. */
@@ -35,3 +39,13 @@ __IPPCP_INLINE void cp_to_byte(Ipp8u* out, Ipp32s outlen, Ipp32u in)
         in     = in >> /*bitsize of 1 byte*/ 8;
     }
 }
+
+#define cp_rand_num OWNAPI(cp_rand_num)
+/* clang-format off */
+IPP_OWN_DECL(IppStatus, cp_rand_num, (Ipp32u* out,
+                                      Ipp32s byteSize,
+                                      IppBitSupplier rndFunc,
+                                      void* pRndParam))
+/* clang-format on */
+
+#endif // IPPCP_STATEFUL_SIG_COMMON_H_

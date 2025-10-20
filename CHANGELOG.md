@@ -2,6 +2,9 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 1.4.0
+- Added key and signature generations for the Leighton-Micali Hash-Based Signatures (LMS) algorithm.
+
 ## Intel(R) Cryptography Primitives Library 1.3.0
 - Added support for ML-KEM scheme with Key Generation, Encapsulation and Decapsulation functionality implemented according to the FIPS 203.
 - Added API for hash squeezing for Extendable-output functions (XOF) from the Keccak family.

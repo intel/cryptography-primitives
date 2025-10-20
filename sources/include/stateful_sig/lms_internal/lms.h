@@ -19,18 +19,7 @@
 
 #include "owndefs.h"
 #include "owncp.h"
-#include "lms_internal/lmots.h"
-
-#define CP_CKSM_BYTESIZE         (2)
-#define CP_PK_I_BYTESIZE         (16)
-#define CP_LMS_MAX_HASH_BYTESIZE (32)
-#define CP_SIG_MAX_Y_WORDSIZE    (265)
-
-/* Constants used to distinguish hashes in the system */
-#define D_PBLC (0x8080)
-#define D_MESG (0x8181)
-#define D_LEAF (0x8282)
-#define D_INTR (0x8383)
+#include "lmots.h"
 
 /* LMS algorithms params. "Table 2" LMS spec. */
 typedef struct {
@@ -38,6 +27,23 @@ typedef struct {
     Ipp32u h;
     IppsHashMethod* hash_method;
 } cpLMSParams;
+
+/*
+ * Non-specified format of LMS private key:
+ *  | u32str(type) || u32str(otstype) ||    idx   ||   extraBufSize   ||   Secret seed   ||          pI        ||   extra buffer   |
+ *  |   4 bytes    ||     4 bytes     ||  4 bytes ||     4 bytes      ||     n bytes     ||  CP_PK_I_BYTESIZE  ||   extraBufSize   |
+ */
+
+struct _cpLMSPrivateKeyState {
+    Ipp32u _idCtx; // Private key ctx identifier
+    IppsLMSAlgo lmsOIDAlgo;
+    IppsLMOTSAlgo lmotsOIDAlgo;
+    Ipp32u idx;
+    Ipp32s extraBufSize; // size of memory under pExtraBuf
+    Ipp8u* pSecretSeed;
+    Ipp8u* pI;
+    Ipp8u* pExtraBuf;
+};
 
 /*
  * Standard format of LMS public key:
@@ -63,9 +69,9 @@ struct _cpLMSSignatureState {
     _cpLMOTSSignatureState _lmotsSig;
     IppsLMSAlgo _lmsOIDAlgo;
     Ipp8u* _pAuthPath;
-    // path[0] ||  path[1] ||...||  path[h-1]
     //                  C
     //   Y[0]   ||   Y[1]   ||...||  Y[p-1]
+    // path[0] ||  path[1] ||...||  path[h-1]
 };
 
 /* Defines to handle contexts IDs */
@@ -129,5 +135,31 @@ __IPPCP_INLINE IppStatus setLMSParams(IppsLMSAlgo lmsOIDAlgo, cpLMSParams* param
 
     return ippStsNoErr;
 }
+
+#define cp_lms_H_tree OWNAPI(cp_lms_H_tree)
+/* clang-format off */
+IPP_OWN_DECL(IppStatus, cp_lms_H_tree, (Ipp8u* I,
+                                        Ipp32u val1,
+                                        Ipp32u val2, const Ipp32s val2Len,
+                                        Ipp8u* val3, const Ipp32s val3Len,
+                                        Ipp8u* pMsg, const Ipp32s msgLen,
+                                        Ipp8u* out,
+                                        const IppsHashMethod* hash_method))
+/* clang-format on */
+
+#define cp_lms_tree_hash OWNAPI(cp_lms_tree_hash)
+/* clang-format off */
+IPP_OWN_DECL(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
+                                           Ipp8u* pSecretSeed,
+                                           Ipp8u* pI,
+                                           Ipp8u* out,
+                                           Ipp32u idx_leaf,
+                                           Ipp8u* temp_buf,
+                                           Ipp8u* pAuxiliaryMem,
+                                           Ipp32s aux_size,
+                                           const cpLMSParams* lmsParams,
+                                           const cpLMOTSParams* lmotsParams))
+/* clang-format on */
+
 
 #endif /* #ifndef IPPCP_LMS_H_ */

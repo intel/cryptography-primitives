@@ -501,6 +501,13 @@ ippsLMSPublicKeyStateGetSize
 ippsLMSSetPublicKeyState
 ippsLMSSetSignatureState
 ippsLMSVerify
+ippsLMSKeyGenBufferGetSize
+ippsLMSSignBufferGetSize
+ippsLMSPrivateKeyStateGetSize
+ippsLMSInitSignature
+ippsLMSInitKeyPair
+ippsLMSKeyGen
+ippsLMSSign
 ippsHKDF
 ippsHKDF_extract
 ippsHKDF_expand

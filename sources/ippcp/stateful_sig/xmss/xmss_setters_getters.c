@@ -15,7 +15,7 @@
 *************************************************************************/
 
 #include "owndefs.h"
-#include "xmss_internal/xmss.h"
+#include "stateful_sig/xmss_internal/xmss.h"
 
 /*F*
 //    Name: ippsXMSSSetPublicKeyState

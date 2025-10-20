@@ -15,7 +15,8 @@
 *************************************************************************/
 
 #include "owndefs.h"
-#include "xmss_internal/xmss.h"
+#include "stateful_sig/xmss_internal/xmss.h"
+#include "stateful_sig/common.h"
 
 /*F*
 //    Name: ippsXMSSKeyGen
@@ -91,11 +92,12 @@ IPPFUN(IppStatus, ippsXMSSKeyGen, (IppsXMSSPrivateKeyState* pPrvKey,
 
     // fill private key fields
     pPrvKey->idx = 0;
-    retCode      = cp_xmss_rand_num(pPrvKey->pSecretSeed, n, rndFunc, pRndParam);
+
+    retCode = cp_rand_num((Ipp32u*)pPrvKey->pSecretSeed, n, rndFunc, pRndParam);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
-    retCode = cp_xmss_rand_num(pPrvKey->pSK_PRF, n, rndFunc, pRndParam);
+    retCode = cp_rand_num((Ipp32u*)pPrvKey->pSK_PRF, n, rndFunc, pRndParam);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
-    retCode = cp_xmss_rand_num(pPrvKey->pPublicSeed, n, rndFunc, pRndParam);
+    retCode = cp_rand_num((Ipp32u*)pPrvKey->pPublicSeed, n, rndFunc, pRndParam);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
     Ipp32s pBufferSize;
