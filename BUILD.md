@@ -164,7 +164,7 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
 - `-DARCH=<ia32|intel64>` - on Linux* OS defines the target architecture for the build of the Intel® Cryptography Primitives Library.
     > **NOTE:** On Windows* OS, use `-G`/`-A`  instead. See the description of these options [below](#windows-os-1).
 
-    > **NOTE:** Due to the significant shift in the industry towards 64-bit architecture, the support of 32-bit libraries is deprecated in the Intel® IPP Cryptography 2021.9 release and targeted to be removed after one year deprecation notice period.
+    > **NOTE:** Due to the significant shift in the industry towards 64-bit architecture, the support of 32-bit libraries is deprecated in the Intel® Integrated Performance Primitives Cryptography 2021.9 release and targeted to be removed after one year deprecation notice period.
 
 - `-DMERGED_BLD:BOOL=<on|off>` - optional. Defines the configuration of the Intel® Cryptography Primitives Library to build:
 
