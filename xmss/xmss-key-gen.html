@@ -828,6 +828,12 @@ the value returned by <code class="docutils literal notranslate"><span class="pr
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>This function generates private and public XMSS keys.</p>
+<p>This function uses internally the random number generator (RNG) provided by
+the user through the <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code> parameter, please see
+<a class="reference internal" href="../user-s-implementation-of-a-pseudorandom-number.html#users-implementation-of-a-pseudorandom-num-gen"><span class="std std-ref">User’s Implementation of a RNG</span></a>
+for more information regarding creation the customer’s defined RNG object.
+If <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code> is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, the internal default random number generator
+based on <code class="docutils literal notranslate"><span class="pre">RDRAND</span></code> hardware instruction is used.</p>
 <p><code class="docutils literal notranslate"><span class="pre">pPrvKey</span></code> and <code class="docutils literal notranslate"><span class="pre">pPubKey</span></code> are output parameters.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

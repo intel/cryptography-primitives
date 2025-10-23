@@ -44,7 +44,7 @@
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="LMS Verification" href="verify.html" />
+    <link rel="next" title="LMS Key Generation" href="key-gen.html" />
     <link rel="prev" title="Initialize XMSS Signature State" href="../xmss/xmss-init-sig-state.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -759,7 +759,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-key-generation-and-signing">Example 1. Key Generation and Signing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-verification">Example 2. Verification</a></li>
 </ul>
             </nav>
         </div>
@@ -774,10 +775,52 @@ document.write(`
   <section id="lms">
 <span id="lms-index"></span><h1>LMS<a class="headerlink" href="#lms" title="Link to this heading">#</a></h1>
 <p>Functions such as <a class="reference external" href="https://www.rfc-editor.org/info/rfc8554">LMS</a>
-signature verification and special
+key generation, signing, signature verification and special
 functions like getters and setters that are required to call algorithms have been implemented.</p>
-<section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p class="notetiphead rubric">Important</p>
+<p>LMS is a stateful algorithm, so users are responsible for storing memory
+for signatures, private keys, and public keys. It is especially important that
+the private key state memory is protected on the user’s side.
+See more details in <a class="reference external" href="https://datatracker.ietf.org/doc/rfc8554">RFC 8554</a>.</p>
+</div>
+<section id="example-1-key-generation-and-signing">
+<h2>Example 1. Key Generation and Signing<a class="headerlink" href="#example-1-key-generation-and-signing" title="Link to this heading">#</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define IPPCP_PREVIEW_LMS</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ippcp.h&quot;</span>
+
+<span class="p">...</span>
+
+<span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">alg_id</span><span class="p">;</span>
+<span class="n">alg_id</span><span class="p">.</span><span class="n">prmLmotsAlg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IppsLMOTSAlgo</span><span class="o">::</span><span class="n">LMOTS_SHA256_N32_W8</span><span class="p">;</span>
+<span class="n">alg_id</span><span class="p">.</span><span class="n">prmLmsAlg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IppsLMSAlgo</span><span class="o">::</span><span class="n">LMS_SHA256_M24_H10</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">extra_buf_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">320</span><span class="p">;</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSKeyGenBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSizeKeyGen</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSSignBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSizeSign</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSVerifyBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSizeVerify</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSPrivateKeyStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">privKeySize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">,</span><span class="w"> </span><span class="n">extra_buf_size</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSPublicKeyStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pubKeySize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSSignatureStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">signSize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSInitKeyPair</span><span class="p">(</span><span class="n">alg_id</span><span class="p">,</span><span class="w"> </span><span class="n">extra_buf_size</span><span class="p">,</span><span class="w"> </span><span class="n">pPrvKey</span><span class="p">,</span><span class="w"> </span><span class="n">pPubKey</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSInitSignature</span><span class="p">(</span><span class="n">alg_id</span><span class="p">,</span><span class="w"> </span><span class="n">pSignature</span><span class="p">);</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSKeyGen</span><span class="p">(</span><span class="n">pPrvKey</span><span class="p">,</span><span class="w"> </span><span class="n">pPubKey</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">pScratchKeyGenBuffer</span><span class="p">);</span>
+
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSSign</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">pPrvKey</span><span class="p">,</span><span class="w"> </span><span class="n">pSignature</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">pScratchSignBuffer</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">is_valid</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSVerify</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">pSignature</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">is_valid</span><span class="p">,</span><span class="w"> </span><span class="n">pPubKey</span><span class="p">,</span><span class="w"> </span><span class="n">pScratchVerifyBuffer</span><span class="p">);</span>
+
+<span class="p">...</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2-verification">
+<h2>Example 2. Verification<a class="headerlink" href="#example-2-verification" title="Link to this heading">#</a></h2>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define IPPCP_PREVIEW_LMS</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ippcp.h&quot;</span>
 <span class="p">...</span>
@@ -788,7 +831,7 @@ functions like getters and setters that are required to call algorithms have bee
 
 <span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSVerifyBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buffSize</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
 
-<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSPublicKeyStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ippcpPubKeySize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
+<span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSPublicKeyStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pubKeySize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
 
 <span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsLMSSignatureStateGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sigBuffSize</span><span class="p">,</span><span class="w"> </span><span class="n">alg_id</span><span class="p">);</span>
 
@@ -804,13 +847,16 @@ functions like getters and setters that are required to call algorithms have bee
 </div>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="key-gen.html">LMS Key Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sign.html">LMS Signature Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="verify.html">LMS Verification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="enum.html">Supported LMS Algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pub-key-get-size.html">Get Size Of LMS Public Key</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sig-get-size.html">Get Size Of LMS Signature State</a></li>
+<li class="toctree-l1"><a class="reference internal" href="key-sig-get-size.html">Get Size Of LMS Keys and Signature States</a></li>
 <li class="toctree-l1"><a class="reference internal" href="buffer-get-size.html">Get Size Of Temporary Buffer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="set-pub-key-state.html">Set LMS Public Key State</a></li>
 <li class="toctree-l1"><a class="reference internal" href="set-sig-state.html">Set LMS Signature State</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init-key-state.html">Initialize LMS Key Pair State</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init-sig-state.html">Initialize LMS Signature State</a></li>
 </ul>
 </div>
 </section>
@@ -837,11 +883,11 @@ functions like getters and setters that are required to call algorithms have bee
       </div>
     </a>
     <a class="right-next"
-       href="verify.html"
+       href="key-gen.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">LMS Verification</p>
+        <p class="prev-next-title">LMS Key Generation</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -861,7 +907,8 @@ functions like getters and setters that are required to call algorithms have bee
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-key-generation-and-signing">Example 1. Key Generation and Signing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-verification">Example 2. Verification</a></li>
 </ul>
   </nav></div>
 

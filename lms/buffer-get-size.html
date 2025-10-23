@@ -45,7 +45,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Set LMS Public Key State" href="set-pub-key-state.html" />
-    <link rel="prev" title="Get Size Of LMS Signature State" href="sig-get-size.html" />
+    <link rel="prev" title="Get Size Of LMS Keys and Signature States" href="key-sig-get-size.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -777,11 +777,20 @@ document.write(`
                   
   <section id="get-size-of-temporary-buffer">
 <span id="lms-buffer-get-size"></span><h1>Get Size Of Temporary Buffer<a class="headerlink" href="#get-size-of-temporary-buffer" title="Link to this heading">#</a></h1>
-<p>Get the size of the temporary buffer that is required for
-the <code class="docutils literal notranslate"><span class="pre">ippsLMSVerify</span></code> function (bytes).</p>
+<p>Get the size for the temporary buffer (bytes).</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading">#</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSVerifyBufferGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSBufferGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span>
+<span class="w">                                </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">maxMessageLength</span><span class="p">,</span>
+<span class="w">                                </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSKeyGenBufferGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSSignBufferGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span>
+<span class="w">                                    </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">maxMessageLength</span><span class="p">,</span>
+<span class="w">                                    </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSVerifyBufferGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span>
 <span class="w">                                      </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">maxMessageLength</span><span class="p">,</span>
 <span class="w">                                      </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
 </pre></div>
@@ -796,12 +805,13 @@ the <code class="docutils literal notranslate"><span class="pre">ippsLMSVerify</
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
 <tr class="row-odd"><td><p>pSize</p></td>
-<td><p>Pointer to the signature state size.</p></td>
+<td><p>Pointer to the temporary buffer size.</p></td>
 </tr>
 <tr class="row-even"><td><p>maxMessageLength</p></td>
-<td><p>Maximum length of the message that needs to be verified.
+<td><p>Maximum length of the message.
 It can be the maximum length of all messages that can potentially
-be passed to the verification function.</p></td>
+be passed to the corresponding function, e.g.
+<code class="docutils literal notranslate"><span class="pre">ippsLMSSign</span></code>, <code class="docutils literal notranslate"><span class="pre">ippsLMSKeyGen</span></code> or <code class="docutils literal notranslate"><span class="pre">ippsLMSVerify</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>OIDAlgo</p></td>
 <td><p>LMS Algorithm ID. It defines a set of LMS parameters.
@@ -813,8 +823,16 @@ See <a class="reference internal" href="enum.html#lms-enum"><span class="std std
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>This function gets the size of the temporary buffer.
-The result is stored to <code class="docutils literal notranslate"><span class="pre">*pSize</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsLMSBufferGetSize</span></code> is deprecated. Please refer to
+<a class="reference internal" href="../deprecated-functions.html#appendix-b-deprecated-functions"><span class="std std-ref">Deprecated Functions</span></a>
+section for the recommendations for transition.</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ippsLMSKeyGenBufferGetSize</span></code> gets the size of the temporary buffer required for <code class="docutils literal notranslate"><span class="pre">ippsLMSKeyGen</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsLMSSignBufferGetSize</span></code> gets the size of the temporary buffer required for <code class="docutils literal notranslate"><span class="pre">ippsLMSSign</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsLMSVerifyBufferGetSize</span></code> gets the size of the temporary buffer required for <code class="docutils literal notranslate"><span class="pre">ippsLMSVerify</span></code>.</p>
+<p>The result is stored to <code class="docutils literal notranslate"><span class="pre">*pSize</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>
@@ -862,12 +880,12 @@ where <code class="docutils literal notranslate"><span class="pre">n</span></cod
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="sig-get-size.html"
+       href="key-sig-get-size.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Get Size Of LMS Signature State</p>
+        <p class="prev-next-title">Get Size Of LMS Keys and Signature States</p>
       </div>
     </a>
     <a class="right-next"

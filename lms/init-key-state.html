@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Get Size Of LMS Public Key &#8212; Documentation for Intel® oneAPI Programming Guide</title>
+    <title>Initialize LMS Key Pair State &#8212; Documentation for Intel® oneAPI Programming Guide</title>
   
   
   
@@ -40,12 +40,12 @@
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'lms/pub-key-get-size';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'lms/init-key-state';</script>
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Get Size Of LMS Signature State" href="sig-get-size.html" />
-    <link rel="prev" title="Supported LMS Algorithms" href="enum.html" />
+    <link rel="next" title="Initialize LMS Signature State" href="init-sig-state.html" />
+    <link rel="prev" title="Set LMS Signature State" href="set-sig-state.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -749,7 +749,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Get Size Of LMS Public Key</h1>
+    <h1>Initialize LMS Key Pair State</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -775,12 +775,14 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="get-size-of-lms-public-key">
-<span id="lms-pub-key-get-size"></span><h1>Get Size Of LMS Public Key<a class="headerlink" href="#get-size-of-lms-public-key" title="Link to this heading">#</a></h1>
-<p>Get the LMS public key state size (bytes).</p>
+  <section id="initialize-lms-key-pair-state">
+<span id="lms-init-key-state"></span><h1>Initialize LMS Key Pair State<a class="headerlink" href="#initialize-lms-key-pair-state" title="Link to this heading">#</a></h1>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading">#</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSSPublicKeyStateGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSInitKeyPair</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">extraBufSize</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">IppsLMSPrivateKeyState</span><span class="o">*</span><span class="w"> </span><span class="n">pPrvKey</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">IppsLMSPublicKeyState</span><span class="o">*</span><span class="w"> </span><span class="n">pPubKey</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -792,26 +794,45 @@ document.write(`
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
-<tr class="row-odd"><td><p>pSize</p></td>
-<td><p>Pointer to the public key state size.</p></td>
-</tr>
-<tr class="row-even"><td><p>OIDAlgo</p></td>
+<tr class="row-odd"><td><p>OIDAlgo</p></td>
 <td><p>LMS Algorithm ID. It defines a set of LMS parameters.
 See <a class="reference internal" href="enum.html#lms-enum"><span class="std std-ref">Supported LMS Algorithms</span></a> for more information.</p></td>
+</tr>
+<tr class="row-even"><td><p>extraBufSize</p></td>
+<td><p>Size of extra buffer allocated as part of the private key state.
+It is useful for storing tree nodes that are near the root. The larger this value,
+the less execution time for signature generation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>pPrvKey</p></td>
+<td><p>Pointer to the <code class="docutils literal notranslate"><span class="pre">IppsLMSPrivateKeyState</span></code> context.
+Size is greater or equal to the value returned by
+the <a class="reference internal" href="key-sig-get-size.html#lms-states-get-size"><span class="std std-ref">ippsLMSPrivateKeyStateGetSize</span></a> function.</p></td>
+</tr>
+<tr class="row-even"><td><p>pPubKey</p></td>
+<td><p>Pointer to the <code class="docutils literal notranslate"><span class="pre">IppsLMSPublicKeyState</span></code> context.
+Size is greater or equal to the value returned by
+the <a class="reference internal" href="key-sig-get-size.html#lms-states-get-size"><span class="std std-ref">ippsLMSPublicKeyStateGetSize</span></a> function.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span></code> must be a multiple of the OTS parameter <code class="docutils literal notranslate"><span class="pre">n</span></code>.
+If it is not, the value will be reduced to the nearest lower multiple of <code class="docutils literal notranslate"><span class="pre">n</span></code>.
+Example: if <code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">==</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">+</span> <span class="pre">2</span></code> then
+<code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">==</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">n</span></code> will be used inside the implementation
+and the function will output the <code class="docutils literal notranslate"><span class="pre">ippStsSizeWrn</span></code> warning status.</p>
+</div>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>This function gets the size of the public key state that is defined by <code class="docutils literal notranslate"><span class="pre">OIDAlgo</span></code>.
-The result is stored to <code class="docutils literal notranslate"><span class="pre">*pSize</span></code>.</p>
+<p>This function initializes states for private and public keys.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>
-<p>This is a <a class="reference internal" href="../preview-features.html#experimental"><span class="std std-ref">Preview Feature</span></a>.
-You need to enable the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_LMS</span></code> macro to use the feature.</p>
+<p>You need to enable the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_LMS</span></code> macro to use the feature.
+For more information, see <a class="reference internal" href="../preview-features.html#experimental"><span class="std std-ref">Preview Features</span></a>.</p>
 </div>
 </section>
 <section id="return-values">
@@ -819,13 +840,15 @@ You need to enable the <code class="docutils literal notranslate"><span class="p
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
 <tr class="row-odd"><td><p>ippStsNoErr</p></td>
-<td><p>Indicates no error. All single operations executed without errors.
-Any other value indicates an error or warning.</p></td>
+<td><p>Indicates no error. All single operations executed without errors. Any other value indicates an error or warning.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsNullPtrErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">pSize</span></code> is a NULL pointer.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pPrvKey</span></code> or <code class="docutils literal notranslate"><span class="pre">pPubKey</span></code> is a NULL pointer.</p></td>
 </tr>
-<tr class="row-odd"><td><p>ippStsBadArgErr</p></td>
+<tr class="row-odd"><td><p>ippStsLengthErr</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>ippStsBadArgErr</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">OIDAlgo.lmotsOIDAlgo</span> <span class="pre">&lt;</span> <span class="pre">the</span> <span class="pre">minimum</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">IppsLMOTSAlgo</span></code>,
 <code class="docutils literal notranslate"><span class="pre">OIDAlgo.lmotsOIDAlgo</span> <span class="pre">&gt;</span> <span class="pre">the</span> <span class="pre">maximum</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">IppsLMOTSAlgo</span></code>,
 <code class="docutils literal notranslate"><span class="pre">OIDAlgo.prmLmsAlg</span> <span class="pre">&lt;</span> <span class="pre">the</span> <span class="pre">minimum</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">IppsLMSAlgo</span></code> or
@@ -849,20 +872,20 @@ Any other value indicates an error or warning.</p></td>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="enum.html"
+       href="set-sig-state.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Supported LMS Algorithms</p>
+        <p class="prev-next-title">Set LMS Signature State</p>
       </div>
     </a>
     <a class="right-next"
-       href="sig-get-size.html"
+       href="init-sig-state.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Get Size Of LMS Signature State</p>
+        <p class="prev-next-title">Initialize LMS Signature State</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

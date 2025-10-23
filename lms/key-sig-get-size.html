@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Get Size Of LMS Signature State &#8212; Documentation for Intel® oneAPI Programming Guide</title>
+    <title>Get Size Of LMS Keys and Signature States &#8212; Documentation for Intel® oneAPI Programming Guide</title>
   
   
   
@@ -40,12 +40,12 @@
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'lms/sig-get-size';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'lms/key-sig-get-size';</script>
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Get Size Of Temporary Buffer" href="buffer-get-size.html" />
-    <link rel="prev" title="Get Size Of LMS Public Key" href="pub-key-get-size.html" />
+    <link rel="prev" title="Supported LMS Algorithms" href="enum.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -749,7 +749,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Get Size Of LMS Signature State</h1>
+    <h1>Get Size Of LMS Keys and Signature States</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -775,12 +775,16 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="get-size-of-lms-signature-state">
-<span id="lms-sig-get-size"></span><h1>Get Size Of LMS Signature State<a class="headerlink" href="#get-size-of-lms-signature-state" title="Link to this heading">#</a></h1>
-<p>Get the LMS signature state size (bytes).</p>
+  <section id="get-size-of-lms-keys-and-signature-states">
+<span id="lms-states-get-size"></span><h1>Get Size Of LMS Keys and Signature States<a class="headerlink" href="#get-size-of-lms-keys-and-signature-states" title="Link to this heading">#</a></h1>
+<p>Get the size (bytes) for following LMS states: public key, private key and signature.</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading">#</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSSignatureStateGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSPublicKeyStateGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSPrivateKeyStateGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">,</span><span class="w"> </span><span class="n">Ipp32s</span><span class="w"> </span><span class="n">extraBufSize</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsLMSSignatureStateGetSize</span><span class="w"> </span><span class="p">(</span><span class="n">Ipp32s</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsLMSAlgoType</span><span class="w"> </span><span class="n">OIDAlgo</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -793,25 +797,39 @@ document.write(`
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
 <tr class="row-odd"><td><p>pSize</p></td>
-<td><p>Pointer to the signature state size.</p></td>
+<td><p>Pointer to the state size.</p></td>
 </tr>
-<tr class="row-even"><td><p>OIDAlgo</p></td>
+<tr class="row-even"><td><p>extraBufSize</p></td>
+<td><p>Size of extra buffer allocated as part of the private key state.
+It is useful for storing tree nodes that are near the root. The larger this value,
+the less execution time for signature generation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>OIDAlgo</p></td>
 <td><p>LMS Algorithm ID. It defines a set of LMS parameters.
 See <a class="reference internal" href="enum.html#lms-enum"><span class="std std-ref">Supported LMS Algorithms</span></a> for more information.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span></code> must be a multiple of the OTS parameter <code class="docutils literal notranslate"><span class="pre">n</span></code>.
+If it is not, the value will be reduced to the nearest lower multiple of <code class="docutils literal notranslate"><span class="pre">n</span></code>.
+Example: if <code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">==</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">+</span> <span class="pre">2</span></code> then
+<code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">==</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">n</span></code> will be used inside the implementation
+and the function will output the <code class="docutils literal notranslate"><span class="pre">ippStsSizeWrn</span></code> warning status.</p>
+</div>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>This function gets the size of the signature state that is defined by <code class="docutils literal notranslate"><span class="pre">OIDAlgo</span></code>.
-The result is stored to <code class="docutils literal notranslate"><span class="pre">*pSize</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsLMSPublicKeyStateGetSize</span></code>  gets the size of the public key state that is defined by <code class="docutils literal notranslate"><span class="pre">OIDAlgo</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsLMSPrivateKeyStateGetSize</span></code> gets the size of the private key state.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsLMSSignatureStateGetSize</span></code>  gets the size of the signature state.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>
-<p>This is a <a class="reference internal" href="../preview-features.html#experimental"><span class="std std-ref">Preview Feature</span></a>.
-You need to enable the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_LMS</span></code> macro to use the feature.</p>
+<p>You need to enable the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_LMS</span></code> macro to use the feature.
+For more information, see <a class="reference internal" href="../preview-features.html#experimental"><span class="std std-ref">Preview Features</span></a>.</p>
 </div>
 </section>
 <section id="return-values">
@@ -831,6 +849,12 @@ Any other value indicates an error or warning.</p></td>
 <code class="docutils literal notranslate"><span class="pre">OIDAlgo.prmLmsAlg</span> <span class="pre">&lt;</span> <span class="pre">the</span> <span class="pre">minimum</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">IppsLMSAlgo</span></code> or
 <code class="docutils literal notranslate"><span class="pre">OIDAlgo.prmLmsAlg</span> <span class="pre">&gt;</span> <span class="pre">the</span> <span class="pre">maximum</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">IppsLMSAlgo</span></code>.</p></td>
 </tr>
+<tr class="row-even"><td><p>ippStsLengthErr</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippStsSizeWrn</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span></code> is not a multiple of the OTS parameter <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -849,12 +873,12 @@ Any other value indicates an error or warning.</p></td>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pub-key-get-size.html"
+       href="enum.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Get Size Of LMS Public Key</p>
+        <p class="prev-next-title">Supported LMS Algorithms</p>
       </div>
     </a>
     <a class="right-next"

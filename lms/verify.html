@@ -45,7 +45,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Supported LMS Algorithms" href="enum.html" />
-    <link rel="prev" title="LMS" href="index.html" />
+    <link rel="prev" title="LMS Signature Generation" href="sign.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -806,7 +806,7 @@ document.write(`
 <tr class="row-odd"><td><p>pSign</p></td>
 <td><p>Pointer to the <code class="docutils literal notranslate"><span class="pre">IppsLMSSignatureState</span></code> context for each verification operation.
 Size is greater or equal to the value returned by
-the <a class="reference internal" href="sig-get-size.html#lms-sig-get-size"><span class="std std-ref">ippsLMSSignatureStateGetSize</span></a> function.</p></td>
+the <a class="reference internal" href="key-sig-get-size.html#lms-states-get-size"><span class="std std-ref">ippsLMSSignatureStateGetSize</span></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p>pIsSignValid</p></td>
 <td><p>Pointer to the verification result.</p></td>
@@ -814,11 +814,12 @@ the <a class="reference internal" href="sig-get-size.html#lms-sig-get-size"><spa
 <tr class="row-odd"><td><p>pKey</p></td>
 <td><p>Pointer to the <code class="docutils literal notranslate"><span class="pre">IppsLMSPublicKeyState</span></code> context for each verification operation.
 Size is greater or equal to the value returned by
-the <a class="reference internal" href="pub-key-get-size.html#lms-pub-key-get-size"><span class="std std-ref">ippsLMSPublicKeyStateGetSize</span></a> function.</p></td>
+the <a class="reference internal" href="key-sig-get-size.html#lms-states-get-size"><span class="std std-ref">ippsLMSPublicKeyStateGetSize</span></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p>pBuffer</p></td>
 <td><p>Pointer to the temporary buffer. Size is greater or equal to
-the value returned by the <a class="reference internal" href="buffer-get-size.html#lms-buffer-get-size"><span class="std std-ref">ippsLMSVerifyBufferGetSize</span></a> function.</p></td>
+the value returned by
+the <a class="reference internal" href="buffer-get-size.html#lms-buffer-get-size"><span class="std std-ref">ippsLMSVerifyBufferGetSize</span></a> function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -857,7 +858,7 @@ or <code class="docutils literal notranslate"><span class="pre">q</span></code> 
 </tr>
 <tr class="row-odd"><td><p>ippStsLengthErr</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">msgLen</span> <span class="pre">&lt;</span> <span class="pre">1</span></code> or
-<code class="docutils literal notranslate"><span class="pre">msgLen</span> <span class="pre">&lt;</span> <span class="pre">IPP_MAX_32S</span> <span class="pre">-</span> <span class="pre">(22</span> <span class="pre">+</span> <span class="pre">n)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">msgLen</span> <span class="pre">&gt;</span> <span class="pre">IPP_MAX_32S</span> <span class="pre">-</span> <span class="pre">(22</span> <span class="pre">+</span> <span class="pre">n)</span></code>,
 where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the LM-OTS parameter.</p></td>
 </tr>
 </tbody>
@@ -878,12 +879,12 @@ where <code class="docutils literal notranslate"><span class="pre">n</span></cod
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="sign.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">LMS</p>
+        <p class="prev-next-title">LMS Signature Generation</p>
       </div>
     </a>
     <a class="right-next"
