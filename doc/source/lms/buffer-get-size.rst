@@ -3,13 +3,22 @@
 Get Size Of Temporary Buffer
 ============================
 
-Get the size of the temporary buffer that is required for
-the ``ippsLMSVerify`` function (bytes).
+Get the size for the temporary buffer (bytes).
 
 Syntax
 ------
 
 .. code:: cpp
+
+    IppStatus ippsLMSBufferGetSize (Ipp32s* pSize,
+                                    Ipp32s maxMessageLength,
+                                    const IppsLMSAlgoType OIDAlgo);
+
+    IppStatus ippsLMSKeyGenBufferGetSize (Ipp32s* pSize, const IppsLMSAlgoType OIDAlgo);
+
+    IppStatus ippsLMSSignBufferGetSize (Ipp32s* pSize,
+                                        Ipp32s maxMessageLength,
+                                        const IppsLMSAlgoType OIDAlgo);
 
     IppStatus ippsLMSVerifyBufferGetSize (Ipp32s* pSize,
                                           Ipp32s maxMessageLength,
@@ -27,11 +36,12 @@ Parameters
    :header-rows: 0
 
    * - pSize
-     - Pointer to the signature state size.
+     - Pointer to the temporary buffer size.
    * - maxMessageLength
-     - Maximum length of the message that needs to be verified.
+     - Maximum length of the message.
        It can be the maximum length of all messages that can potentially
-       be passed to the verification function.
+       be passed to the corresponding function, e.g.
+       ``ippsLMSSign``, ``ippsLMSKeyGen`` or ``ippsLMSVerify``.
    * - OIDAlgo
      - LMS Algorithm ID. It defines a set of LMS parameters.
        See :ref:`Supported LMS Algorithms <lms-enum>` for more information.
@@ -39,8 +49,20 @@ Parameters
 Description
 -----------
 
-This function gets the size of the temporary buffer.
+.. note::
+
+   ``ippsLMSBufferGetSize`` is deprecated. Please refer to
+   :ref:`Deprecated Functions <appendix-b-deprecated-functions>`
+   section for the recommendations for transition.
+
+``ippsLMSKeyGenBufferGetSize`` gets the size of the temporary buffer required for ``ippsLMSKeyGen``.
+
+``ippsLMSSignBufferGetSize`` gets the size of the temporary buffer required for ``ippsLMSSign``.
+
+``ippsLMSVerifyBufferGetSize`` gets the size of the temporary buffer required for ``ippsLMSVerify``.
+
 The result is stored to ``*pSize``.
+
 
 .. note::
 

@@ -53,6 +53,13 @@ Description
 
 This function generates private and public XMSS keys.
 
+This function uses internally the random number generator (RNG) provided by
+the user through the ``rndFunc`` parameter, please see
+:ref:`User's Implementation of a RNG <users-implementation-of-a-pseudorandom-num-gen>`
+for more information regarding creation the customer's defined RNG object.
+If ``rndFunc`` is ``NULL``, the internal default random number generator
+based on ``RDRAND`` hardware instruction is used.
+
 ``pPrvKey`` and ``pPubKey`` are output parameters.
 
 .. note::

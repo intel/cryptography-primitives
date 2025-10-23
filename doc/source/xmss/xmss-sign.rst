@@ -28,9 +28,9 @@ Parameters
    :header-rows: 0
 
    * -     pMsg
-     -  Pointer to the array of messages that are signed.
+     -  Pointer to the message that is signed.
    * -     msgLen
-     -  Message length.
+     -  Message length in bytes.
    * -     pPrvKey
      -  Pointer to the initialized ``IppsXMSSPrivateKeyState`` context.
         Size is greater or equal to the value returned by ``ippsXMSSPrivateKeyStateGetSize``.

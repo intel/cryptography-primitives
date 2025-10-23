@@ -35,16 +35,17 @@ Parameters
    * - pSign
      - Pointer to the ``IppsLMSSignatureState`` context for each verification operation.
        Size is greater or equal to the value returned by
-       the :ref:`ippsLMSSignatureStateGetSize <lms-sig-get-size>` function.
+       the :ref:`ippsLMSSignatureStateGetSize <lms-states-get-size>` function.
    * - pIsSignValid
      - Pointer to the verification result.
    * - pKey
      - Pointer to the ``IppsLMSPublicKeyState`` context for each verification operation.
        Size is greater or equal to the value returned by
-       the :ref:`ippsLMSPublicKeyStateGetSize <lms-pub-key-get-size>` function.
+       the :ref:`ippsLMSPublicKeyStateGetSize <lms-states-get-size>` function.
    * - pBuffer
      - Pointer to the temporary buffer. Size is greater or equal to
-       the value returned by the :ref:`ippsLMSVerifyBufferGetSize <lms-buffer-get-size>` function.
+       the value returned by
+       the :ref:`ippsLMSVerifyBufferGetSize <lms-buffer-get-size>` function.
 
 Description
 -----------
@@ -81,5 +82,5 @@ Return Values
      - ``pSign`` or ``pKey`` contexts are invalid.
    * - ippStsLengthErr
      - ``msgLen < 1`` or
-       ``msgLen < IPP_MAX_32S - (22 + n)``,
+       ``msgLen > IPP_MAX_32S - (22 + n)``,
        where ``n`` is the LM-OTS parameter.

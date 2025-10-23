@@ -1,16 +1,14 @@
-.. _lms-pub-key-get-size:
+.. _lms-init-sig-state:
 
-Get Size Of LMS Public Key
-==========================
-
-Get the LMS public key state size (bytes).
+Initialize LMS Signature State
+==============================
 
 Syntax
 ------
 
 .. code:: cpp
 
-    IppStatus ippsLMSSPublicKeyStateGetSize (Ipp32s* pSize, const IppsLMSAlgoType OIDAlgo);
+    IppStatus ippsLMSInitSignature (const IppsLMSAlgoType OIDAlgo, IppsLMSSignatureState* pSign);
 
 Include Files
 -------------
@@ -23,25 +21,26 @@ Parameters
 .. list-table::
    :header-rows: 0
 
-   * - pSize
-     - Pointer to the public key state size.
    * - OIDAlgo
      - LMS Algorithm ID. It defines a set of LMS parameters.
        See :ref:`Supported LMS Algorithms <lms-enum>` for more information.
+   * - pSign
+     - Pointer to the ``IppsLMSSignatureState`` context.
+       Size is greater or equal to the value returned by
+       the :ref:`ippsLMSSignatureStateGetSize <lms-states-get-size>` function.
 
 Description
 -----------
 
-This function gets the size of the public key state that is defined by ``OIDAlgo``.
-The result is stored to ``*pSize``.
+This function initializes the LMS signature state.
 
 .. note::
 
    .. rubric:: Important
       :class: NoteTipHead
 
-   This is a :ref:`Preview Feature <experimental>`.
    You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.
+   For more information, see :ref:`Preview Features <experimental>`.
 
 Return Values
 -------------
@@ -53,7 +52,7 @@ Return Values
      - Indicates no error. All single operations executed without errors.
        Any other value indicates an error or warning.
    * - ippStsNullPtrErr
-     - ``pSize`` is a NULL pointer.
+     - ``pSign`` is a NULL pointer.
    * - ippStsBadArgErr
      - ``OIDAlgo.lmotsOIDAlgo < the minimum value for IppsLMOTSAlgo``,
        ``OIDAlgo.lmotsOIDAlgo > the maximum value for IppsLMOTSAlgo``,
