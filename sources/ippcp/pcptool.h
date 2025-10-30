@@ -85,17 +85,31 @@ __IPPCP_INLINE void PadBlock(Ipp8u paddingByte, void* pDst, cpSize numBytes)
         d[k] = paddingByte;
 }
 
+/*
+// zeroization
+*/
+
+// WARNING: do not call PurgeBlockInternal directly, use PurgeBlock instead
 #if !((_IPP >= _IPP_W7) || (_IPP32E >= _IPP32E_M7))
-__IPPCP_INLINE void PurgeBlock(void* pDst, int len)
+__IPPCP_INLINE void PurgeBlockInternal(void* pDst, int len)
 {
     int n;
     for (n = 0; n < len; n++)
         ((Ipp8u*)pDst)[n] = 0;
 }
 #else
-#define PurgeBlock OWNAPI(PurgeBlock)
-IPP_OWN_DECL(void, PurgeBlock, (void* pDst, int len))
+#define PurgeBlockInternal OWNAPI(PurgeBlockInternal)
+IPP_OWN_DECL(void, PurgeBlockInternal, (void* pDst, int len))
 #endif
+
+// Note: the input validation of the input parameters is expected to be done by the caller
+__IPPCP_INLINE void PurgeBlock(void* pDst, int len)
+{
+    // Force the compiler to always read and dereference `purgeblock_fp` and
+    // make no assumptions about the function it points to.
+    void (*volatile purgeblock_fp)(void*, int) = PurgeBlockInternal;
+    (*purgeblock_fp)(pDst, len);
+}
 
 /* fill block */
 __IPPCP_INLINE void FillBlock16(Ipp8u filler, const void* pSrc, void* pDst, int len)

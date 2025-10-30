@@ -35,8 +35,9 @@ segment .text align=IPP_ALIGN_FACTOR
 
 ;***************************************************************
 ;* Purpose:     Clear memory block
+;* Do not call directly, use PurgeBlock instead.
 ;*
-;* void PurgeBlock(Ipp8u *pDst, int len)
+;* void PurgeBlockInternal(Ipp8u *pDst, int len)
 ;*
 ;***************************************************************
 
@@ -44,7 +45,7 @@ segment .text align=IPP_ALIGN_FACTOR
 ;; Lib = W7
 ;;
 align IPP_ALIGN_FACTOR
-IPPASM PurgeBlock,PUBLIC
+IPPASM PurgeBlockInternal,PUBLIC
   USES_GPR edi
 
 %xdefine pDst [esp + ARG_1 + 0*sizeof(dword)] ; target address
@@ -73,7 +74,7 @@ IPPASM PurgeBlock,PUBLIC
 .quit:
    REST_GPR
    ret
-ENDFUNC PurgeBlock
+ENDFUNC PurgeBlockInternal
 
 %endif
 
