@@ -819,9 +819,10 @@ the <a class="reference internal" href="key-sig-get-size.html#lms-states-get-siz
 The function should be defined as:
 <code class="docutils literal notranslate"><span class="pre">IppStatus</span> <span class="pre">rndFunc(Ipp8u*</span> <span class="pre">pRnd,</span> <span class="pre">int</span> <span class="pre">size,</span> <span class="pre">void*</span> <span class="pre">pRndParam)</span></code>.
 This function must be cryptographically secure.
+Security strength must be <code class="docutils literal notranslate"><span class="pre">8*n</span></code> bits, where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the length of the hash function output.
 The <code class="docutils literal notranslate"><span class="pre">size</span></code> parameter is the size of the buffer in bytes.
 The <code class="docutils literal notranslate"><span class="pre">pRndParam</span></code> parameter is a pointer to the user-defined parameter.
-If <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code> is NULL then <code class="docutils literal notranslate"><span class="pre">ippsPRNGenRDRAND</span></code> is used as a random number generator.</p></td>
+If <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code> is NULL then <code class="docutils literal notranslate"><span class="pre">TRNGenRDSEED</span></code> is used as a random number generator.</p></td>
 </tr>
 <tr class="row-even"><td><p>pRndParam</p></td>
 <td><p>Pointer to the user-defined parameter for the random number generator function.
