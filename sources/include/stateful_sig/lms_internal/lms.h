@@ -30,7 +30,7 @@ typedef struct {
 
 /*
  * Non-specified format of LMS private key:
- *  | u32str(type) || u32str(otstype) ||    idx   ||   extraBufSize   ||   Secret seed   ||          pI        ||   extra buffer   |
+ *  | u32str(type) || u32str(otstype) ||     q    ||   extraBufSize   ||   Secret seed   ||          pI        ||   extra buffer   |
  *  |   4 bytes    ||     4 bytes     ||  4 bytes ||     4 bytes      ||     n bytes     ||  CP_PK_I_BYTESIZE  ||   extraBufSize   |
  */
 
@@ -38,7 +38,7 @@ struct _cpLMSPrivateKeyState {
     Ipp32u _idCtx; // Private key ctx identifier
     IppsLMSAlgo lmsOIDAlgo;
     IppsLMOTSAlgo lmotsOIDAlgo;
-    Ipp32u idx;
+    Ipp32u q;
     Ipp32s extraBufSize; // size of memory under pExtraBuf
     Ipp8u* pSecretSeed;
     Ipp8u* pI;
@@ -75,8 +75,18 @@ struct _cpLMSSignatureState {
 };
 
 /* Defines to handle contexts IDs */
-#define CP_LMS_SET_CTX_ID(ctx)   ((ctx)->_idCtx = (Ipp32u)idCtxLMS ^ (Ipp32u)IPP_UINT_PTR(ctx))
-#define CP_LMS_VALID_CTX_ID(ctx) ((((ctx)->_idCtx) ^ (Ipp32u)IPP_UINT_PTR(ctx)) == (Ipp32u)idCtxLMS)
+#define CP_LMS_SET_PRIV_KEY_CTX_ID(ctx) \
+    ((ctx)->_idCtx = (Ipp32u)idCtxPrivKeyLMS ^ (Ipp32u)IPP_UINT_PTR(ctx))
+#define CP_LMS_SET_PUB_KEY_CTX_ID(ctx) \
+    ((ctx)->_idCtx = (Ipp32u)idCtxPubKeyLMS ^ (Ipp32u)IPP_UINT_PTR(ctx))
+#define CP_LMS_SET_SIGN_CTX_ID(ctx) \
+    ((ctx)->_idCtx = (Ipp32u)idCtxSignLMS ^ (Ipp32u)IPP_UINT_PTR(ctx))
+#define CP_LMS_VALID_PRIV_KEY_CTX_ID(ctx) \
+    ((((ctx)->_idCtx) ^ (Ipp32u)IPP_UINT_PTR(ctx)) == (Ipp32u)idCtxPrivKeyLMS)
+#define CP_LMS_VALID_PUB_KEY_CTX_ID(ctx) \
+    ((((ctx)->_idCtx) ^ (Ipp32u)IPP_UINT_PTR(ctx)) == (Ipp32u)idCtxPubKeyLMS)
+#define CP_LMS_VALID_SIGN_CTX_ID(ctx) \
+    ((((ctx)->_idCtx) ^ (Ipp32u)IPP_UINT_PTR(ctx)) == (Ipp32u)idCtxSignLMS)
 
 /*
  * Set LMS parameters

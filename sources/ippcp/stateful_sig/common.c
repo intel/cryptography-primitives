@@ -34,7 +34,7 @@ IPP_OWN_DEFN(IppStatus, cp_rand_num, (Ipp32u* out,
 {
     int bitSize = byteSize * /*bit size of 1 byte*/ 8;
     if (rndFunc == NULL) {
-        return ippsPRNGenRDRAND(out, bitSize, pRndParam);
+        return ippsTRNGenRDSEED(out, bitSize, pRndParam);
     }
     return rndFunc((Ipp32u*)out, bitSize, pRndParam);
 }

@@ -40,6 +40,7 @@
 //    pPrvKey        pointer to the private key
 //    pSign          pointer to the signature
 //    rndFunc        function pointer to generate random numbers. It can be NULL
+//                   Security strength must be 8*n bits
 //    pRndParam      parameters for rndFunc. It can be NULL
 //    pBuffer        pointer to the temporary memory
 //
@@ -55,18 +56,18 @@ IPPFUN(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
                                 Ipp8u* pBuffer))
 /* clang-format on */
 {
-    IppStatus ippcpSts = ippStsNoErr;
+    IppStatus ippcpSts = ippStsErr;
 
     /* Check if any of input pointers are NULL */
     IPP_BAD_PTR4_RET(pMsg, pPrvKey, pSign, pBuffer)
     /* Check msg length */
     IPP_BADARG_RET(msgLen < 1, ippStsLengthErr)
-    IPP_BADARG_RET(!CP_LMS_VALID_CTX_ID(pPrvKey), ippStsContextMatchErr);
-    IPP_BADARG_RET(!CP_LMS_VALID_CTX_ID(pSign), ippStsContextMatchErr);
-    IPP_BADARG_RET(pPrvKey->lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
-    IPP_BADARG_RET(pPrvKey->lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
-    IPP_BADARG_RET(pPrvKey->lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
-    IPP_BADARG_RET(pPrvKey->lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
+    IPP_BADARG_RET(!CP_LMS_VALID_PRIV_KEY_CTX_ID(pPrvKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!CP_LMS_VALID_SIGN_CTX_ID(pSign), ippStsContextMatchErr);
+    IPP_BADARG_RET(pPrvKey->lmsOIDAlgo >= LMS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(pPrvKey->lmsOIDAlgo <= LMS_MIN, ippStsBadArgErr);
+    IPP_BADARG_RET(pPrvKey->lmotsOIDAlgo >= LMOTS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(pPrvKey->lmotsOIDAlgo <= LMOTS_MIN, ippStsBadArgErr);
 
     // Set LMOTS and LMS parameters
     cpLMSParams lmsParams;
@@ -85,12 +86,20 @@ IPPFUN(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
     ippcpSts                  = ippsLMSSignBufferGetSize(&pBufferSize, msgLen, algoTypes);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
-    // set idx of current private key
-    pSign->_q = pPrvKey->idx;
+    // set q of current private key
+    // pass the error if we are out of secret keys
+    // Note: there is no overflow since the maximum value for h is 25 according to the Spec
+    if (pPrvKey->q >= (Ipp32u)(1 << h)) {
+        return ippStsOutOfRangeErr;
+    }
+    pSign->_q = pPrvKey->q;
 
     // fill _lmotsSig
     ippcpSts = cp_rand_num((Ipp32u*)pSign->_lmotsSig.pC, (Ipp32s)n, rndFunc, pRndParam);
-    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+    if (ippStsNoErr != ippcpSts) {
+        PurgeBlock(pSign->_lmotsSig.pC, (Ipp32s)n); // zeroize C if error occurs
+        return ippcpSts;
+    }
 
     ippcpSts = cp_lms_OTS_sign(
         pMsg,
@@ -103,6 +112,7 @@ IPPFUN(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
         pBuffer,
         &lmotsParams); // temp size: CP_PK_I_BYTESIZE + 4 + 2 + n + max(msgLen, 1 + n)
     if (ippStsNoErr != ippcpSts) {
+        PurgeBlock(pSign->_lmotsSig.pC, (Ipp32s)n); // zeroize C if error occurs
         PurgeBlock(pBuffer, pBufferSize);
         return ippcpSts;
     }
@@ -112,23 +122,27 @@ IPPFUN(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
                                 pPrvKey->pSecretSeed,
                                 pPrvKey->pI,
                                 pSign->_pAuthPath,
-                                pPrvKey->idx,
+                                pPrvKey->q,
                                 pBuffer,
                                 pPrvKey->pExtraBuf,
                                 pPrvKey->extraBufSize,
                                 &lmsParams,
                                 &lmotsParams);
-    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+    if (ippStsNoErr != ippcpSts) {
+        PurgeBlock(pSign->_lmotsSig.pC, (Ipp32s)n); // zeroize C if error occurs
+        PurgeBlock(pBuffer, pBufferSize);
+        return ippcpSts;
+    }
 
     // zeroize the temporary memory if everything else was successful
     PurgeBlock(pBuffer, pBufferSize);
 
     // during the next call another private key should be used to sign
-    pPrvKey->idx++;
+    pPrvKey->q++;
 
     // pass the error if we are out of secret keys
-    // Note: there is no overflow since the maximum value for h is 20 according to the Spec
-    if (pPrvKey->idx == (Ipp32u)(1 << h)) {
+    // Note: there is no overflow since the maximum value for h is 25 according to the Spec
+    if (pPrvKey->q >= (Ipp32u)(1 << h)) {
         return ippStsOutOfRangeErr;
     }
 

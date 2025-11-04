@@ -34,6 +34,7 @@
 //    pPrvKey      pointer to the private key state
 //    pPubKey      pointer to the public key state
 //    rndFunc      function pointer to generate random numbers. It can be NULL
+//                 Security strength must be 8*n bits
 //    pRndParam    parameters for rndFunc. It can be NULL
 //    pBuffer      pointer to the temporary memory
 //
@@ -47,16 +48,16 @@ IPPFUN(IppStatus, ippsLMSKeyGen, (IppsLMSPrivateKeyState* pPrvKey,
                                   Ipp8u* pBuffer))
 /* clang-format on */
 {
-    IppStatus ippcpSts = ippStsNoErr;
+    IppStatus ippcpSts = ippStsErr;
 
     /* Check if any of input pointers are NULL */
     IPP_BAD_PTR3_RET(pPrvKey, pPubKey, pBuffer)
-    IPP_BADARG_RET(!CP_LMS_VALID_CTX_ID(pPrvKey), ippStsContextMatchErr);
-    IPP_BADARG_RET(!CP_LMS_VALID_CTX_ID(pPubKey), ippStsContextMatchErr);
-    IPP_BADARG_RET(pPrvKey->lmsOIDAlgo > LMS_SHA256_M24_H25, ippStsBadArgErr);
-    IPP_BADARG_RET(pPrvKey->lmsOIDAlgo < LMS_SHA256_M32_H5, ippStsBadArgErr);
-    IPP_BADARG_RET(pPrvKey->lmotsOIDAlgo > LMOTS_SHA256_N24_W8, ippStsBadArgErr);
-    IPP_BADARG_RET(pPrvKey->lmotsOIDAlgo < LMOTS_SHA256_N32_W1, ippStsBadArgErr);
+    IPP_BADARG_RET(!CP_LMS_VALID_PRIV_KEY_CTX_ID(pPrvKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!CP_LMS_VALID_PUB_KEY_CTX_ID(pPubKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(pPrvKey->lmsOIDAlgo >= LMS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(pPrvKey->lmsOIDAlgo <= LMS_MIN, ippStsBadArgErr);
+    IPP_BADARG_RET(pPrvKey->lmotsOIDAlgo >= LMOTS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(pPrvKey->lmotsOIDAlgo <= LMOTS_MIN, ippStsBadArgErr);
 
     // Set LMOTS and LMS parameters
     cpLMSParams lmsParams;
@@ -74,13 +75,20 @@ IPPFUN(IppStatus, ippsLMSKeyGen, (IppsLMSPrivateKeyState* pPrvKey,
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
     // fill private key fields
-    pPrvKey->idx = 0;
+    pPrvKey->q = 0;
 
     ippcpSts = cp_rand_num((Ipp32u*)pPrvKey->pSecretSeed, (Ipp32s)n, rndFunc, pRndParam);
-    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
-    ippcpSts = cp_rand_num((Ipp32u*)pPrvKey->pI, CP_PK_I_BYTESIZE, rndFunc, pRndParam);
-    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+    if (ippStsNoErr != ippcpSts) {
+        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)n); // zeroize the secret seed if error occurs
+        return ippcpSts;
+    }
 
+    ippcpSts = cp_rand_num((Ipp32u*)pPrvKey->pI, CP_PK_I_BYTESIZE, rndFunc, pRndParam);
+    if (ippStsNoErr != ippcpSts) {
+        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pI, CP_PK_I_BYTESIZE);   // zeroize the I if error occurs
+        return ippcpSts;
+    }
     // calculate the public key as a root of the LMS tree
     ippcpSts = cp_lms_tree_hash(/*isKeyGen*/ 1,
                                 pPrvKey->pSecretSeed,
@@ -92,9 +100,12 @@ IPPFUN(IppStatus, ippsLMSKeyGen, (IppsLMSPrivateKeyState* pPrvKey,
                                 pPrvKey->extraBufSize,
                                 &lmsParams,
                                 &lmotsParams);
-    PurgeBlock(pBuffer, pBufferSize); // zeroize the temporary memory
-    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
-
+    PurgeBlock(pBuffer, pBufferSize);                // zeroize the temporary memory
+    if (ippStsNoErr != ippcpSts) {
+        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pI, CP_PK_I_BYTESIZE);   // zeroize the I if error occurs
+        return ippcpSts;
+    }
     // copy I from private key to public
     CopyBlock(pPrvKey->pI, pPubKey->I, CP_PK_I_BYTESIZE);
 

@@ -68,6 +68,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H_tree, (
  * Builds the LMS tree. The function calls from keygen or sign functions
  * The algorithm use auxiliary memory to store nodes of the built tree.
  * It significantly reduces calculations on the sign stage and significantly
+ * improves the performance by storing already calculated tree nodes.
  *
  * Input parameters:
  *    isKeyGen      parameter == 1 if the function is called from keygen function.
@@ -80,7 +81,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H_tree, (
  *    pAuxiliaryMem auxiliary memory to store nodes of the tree.
  *                  If isKeyGen == 1, nodes are written to pAuxiliaryMem
  *                  If isKeyGen == 0, nodes are read from pAuxiliaryMem
- *    aux_size      size of pAuxiliaryMem
+ *    aux_size      size of pAuxiliaryMem (bytes)
  *    lmsParams     LMS parameters
  *    lmotsParams   OTS parameters
  *
@@ -100,7 +101,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
                                            const cpLMOTSParams* lmotsParams))
 /* clang-format on */
 {
-    IppStatus retCode = ippStsNoErr;
+    IppStatus retCode = ippStsErr;
     const Ipp32u n    = lmotsParams->n;
     const Ipp32s n_s  = (Ipp32s)n;
     const Ipp32u h    = lmsParams->h;

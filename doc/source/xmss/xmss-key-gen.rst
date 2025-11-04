@@ -40,7 +40,7 @@ Parameters
         This function must be cryptographically secure.
         The ``size`` parameter is the size of the buffer in bytes.
         The ``pRndParam`` parameter is a pointer to the user-defined parameter.
-        If ``rndFunc`` is NULL then ``ippsPRNGenRDRAND`` is used as a random number generator.
+        If ``rndFunc`` is NULL then ``TRNGenRDSEED`` is used as a random number generator.
    * -     pRndParam
      -  Pointer to the user-defined parameter for the random number generator function.
         It can be a NULL pointer.

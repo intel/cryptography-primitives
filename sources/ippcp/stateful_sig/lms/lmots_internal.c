@@ -77,7 +77,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
             Ipp8u* out, Ipp8u* temp_buf, const cpLMOTSParams* params))
 /* clang-format on */
 {
-    IppStatus retCode   = ippStsNoErr;
+    IppStatus retCode   = ippStsErr;
     const Ipp32s nParam = (Ipp32s)params->n;
     const Ipp32u wParam = params->w;
     const Ipp32u pParam = params->p;
@@ -162,7 +162,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_sign, (
                     Ipp8u* temp_buf, const cpLMOTSParams* params))
 /* clang-format on */
 {
-    IppStatus retCode   = ippStsNoErr;
+    IppStatus retCode   = ippStsErr;
     const Ipp32s nParam = (Ipp32s)params->n;
     const Ipp32u wParam = params->w;
     const Ipp32u pParam = params->p;

@@ -94,15 +94,34 @@ IPPFUN(IppStatus, ippsXMSSKeyGen, (IppsXMSSPrivateKeyState* pPrvKey,
     pPrvKey->idx = 0;
 
     retCode = cp_rand_num((Ipp32u*)pPrvKey->pSecretSeed, n, rndFunc, pRndParam);
-    IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+    if (ippStsNoErr != retCode) {
+        PurgeBlock(pPrvKey->pSecretSeed, n); // zeroize the secret seed if error occurs
+        return retCode;
+    }
+
     retCode = cp_rand_num((Ipp32u*)pPrvKey->pSK_PRF, n, rndFunc, pRndParam);
-    IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+    if (ippStsNoErr != retCode) {
+        PurgeBlock(pPrvKey->pSecretSeed, n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pSK_PRF, n);     // zeroize the SK_PRF if error occurs
+        return retCode;
+    }
+
     retCode = cp_rand_num((Ipp32u*)pPrvKey->pPublicSeed, n, rndFunc, pRndParam);
-    IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+    if (ippStsNoErr != retCode) {
+        PurgeBlock(pPrvKey->pSecretSeed, n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pSK_PRF, n);     // zeroize the SK_PRF if error occurs
+        PurgeBlock(pPrvKey->pPublicSeed, n); // zeroize the public seed if error occurs
+        return retCode;
+    }
 
     Ipp32s pBufferSize;
     retCode = ippsXMSSKeyGenBufferGetSize(&pBufferSize, pPrvKey->OIDAlgo);
-    IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+    if (ippStsNoErr != retCode) {
+        PurgeBlock(pPrvKey->pSecretSeed, n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pSK_PRF, n);     // zeroize the SK_PRF if error occurs
+        PurgeBlock(pPrvKey->pPublicSeed, n); // zeroize the public seed if error occurs
+        return retCode;
+    }
 
     retCode = cp_xmss_tree_hash(/*isKeyGen*/ 1,
                                 pPrvKey,
@@ -112,8 +131,13 @@ IPPFUN(IppStatus, ippsXMSSKeyGen, (IppsXMSSPrivateKeyState* pPrvKey,
                                 pBuffer,
                                 h,
                                 &params);
-    PurgeBlock(pBuffer, pBufferSize); // zeroize the temporary memory
-    IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+    PurgeBlock(pBuffer, pBufferSize);        // zeroize the temporary memory
+    if (ippStsNoErr != retCode) {
+        PurgeBlock(pPrvKey->pSecretSeed, n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pSK_PRF, n);     // zeroize the SK_PRF if error occurs
+        PurgeBlock(pPrvKey->pPublicSeed, n); // zeroize the public seed if error occurs
+        return retCode;
+    }
 
     // fill public key fields
     CopyBlock(pPrvKey->pRoot, pPubKey->pRoot, n);

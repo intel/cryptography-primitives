@@ -933,10 +933,11 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
 #ifdef IPPCP_PREVIEW_LMS
     /* Parameters set is based on two articles:
      *  RFC8554 (https://www.rfc-editor.org/info/rfc8554)
-     *  https://datatracker.ietf.org/doc/html/draft-fluhrer-lms-more-parm-sets-00
+     *  RFC9858 (https://datatracker.ietf.org/doc/rfc9858)
      */
     typedef enum
     {
+        LMOTS_MIN           = 0,
         LMOTS_SHA256_N32_W1 = 1,
         LMOTS_SHA256_N32_W2 = 2,
         LMOTS_SHA256_N32_W4 = 3,
@@ -944,11 +945,13 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
         LMOTS_SHA256_N24_W1 = 5,
         LMOTS_SHA256_N24_W2 = 6,
         LMOTS_SHA256_N24_W4 = 7,
-        LMOTS_SHA256_N24_W8 = 8
+        LMOTS_SHA256_N24_W8 = 8,
+        LMOTS_MAX           = 9
     } IppsLMOTSAlgo;
 
     typedef enum
     {
+        LMS_MIN            = 4,
         LMS_SHA256_M32_H5  = 5,
         LMS_SHA256_M32_H10 = 6,
         LMS_SHA256_M32_H15 = 7,
@@ -958,7 +961,8 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
         LMS_SHA256_M24_H10 = 11,
         LMS_SHA256_M24_H15 = 12,
         LMS_SHA256_M24_H20 = 13,
-        LMS_SHA256_M24_H25 = 14
+        LMS_SHA256_M24_H25 = 14,
+        LMS_MAX            = 15
     } IppsLMSAlgo;
 
     typedef struct {

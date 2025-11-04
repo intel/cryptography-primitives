@@ -102,6 +102,12 @@ IPPFUN(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
         0, 0, 0, 0,             // 24; 28
         0, 0, 0, 0              // 28; 32
     };
+    // pass the error if we are out of secret keys
+    // Note: there is no overflow since the maximum value for h is 20 according to the Spec
+    if (pPrvKey->idx >= (Ipp32u)(1 << h)) {
+        return ippStsOutOfRangeErr;
+    }
+
     // idx
     pSign->idx = pPrvKey->idx;
 
@@ -165,7 +171,7 @@ IPPFUN(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
 
     // pass the error if we are out of secret keys
     // Note: there is no overflow since the maximum value for h is 20 according to the Spec
-    if (pPrvKey->idx == (Ipp32u)(1 << h)) {
+    if (pPrvKey->idx >= (Ipp32u)(1 << h)) {
         return ippStsOutOfRangeErr;
     }
 

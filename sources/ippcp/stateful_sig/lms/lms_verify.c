@@ -53,7 +53,7 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
                                   Ipp8u* pBuffer))
 /* clang-format on */
 {
-    IppStatus ippcpSts = ippStsNoErr;
+    IppStatus ippcpSts = ippStsErr;
 
     /* Check if any of input pointers are NULL */
     IPP_BAD_PTR4_RET(pMsg, pSign, pIsSignValid, pKey)
@@ -61,8 +61,8 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
     IPP_BAD_PTR1_RET(pBuffer)
     /* Check msg length */
     IPP_BADARG_RET(msgLen < 1, ippStsLengthErr)
-    IPP_BADARG_RET(!CP_LMS_VALID_CTX_ID(pSign), ippStsContextMatchErr);
-    IPP_BADARG_RET(!CP_LMS_VALID_CTX_ID(pKey), ippStsContextMatchErr);
+    IPP_BADARG_RET(!CP_LMS_VALID_SIGN_CTX_ID(pSign), ippStsContextMatchErr);
+    IPP_BADARG_RET(!CP_LMS_VALID_PUB_KEY_CTX_ID(pKey), ippStsContextMatchErr);
     *pIsSignValid = 0;
 
     /*              Parse public key(Pk)             */
