@@ -47,11 +47,47 @@
 #define CH(x, y, z)  (((x) & (y)) ^ (~(x) & (z)))
 #define MAJ(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 
+#ifndef __riscv
+
 #define SUM0(x) (ROR64((x), 28) ^ ROR64((x), 34) ^ ROR64((x), 39))
 #define SUM1(x) (ROR64((x), 14) ^ ROR64((x), 18) ^ ROR64((x), 41))
 
 #define SIG0(x) (ROR64((x), 1) ^ ROR64((x), 8) ^ LSR64((x), 7))
 #define SIG1(x) (ROR64((x), 19) ^ ROR64((x), 61) ^ LSR64((x), 6))
+
+#else // __riscv
+
+static inline Ipp64u _sha512sig0(Ipp64u rs1)
+{
+    Ipp64u rd;
+    __asm__("sha512sig0  %0, %1" : "=r"(rd) : "r"(rs1));
+    return rd;
+}
+static inline Ipp64u _sha512sig1(Ipp64u rs1)
+{
+    Ipp64u rd;
+    __asm__("sha512sig1  %0, %1" : "=r"(rd) : "r"(rs1));
+    return rd;
+}
+static inline Ipp64u _sha512sum0(Ipp64u rs1)
+{
+    Ipp64u rd;
+    __asm__("sha512sum0  %0, %1" : "=r"(rd) : "r"(rs1));
+    return rd;
+}
+static inline Ipp64u _sha512sum1(Ipp64u rs1)
+{
+    Ipp64u rd;
+    __asm__("sha512sum1  %0, %1" : "=r"(rd) : "r"(rs1));
+    return rd;
+}
+
+#define SUM0(x) (_sha512sum0(x))
+#define SUM1(x) (_sha512sum1(x))
+#define SIG0(x) (_sha512sig0(x))
+#define SIG1(x) (_sha512sig1(x))
+
+#endif // __riscv
 
 #define SHA512_UPDATE(i) \
     wdat[i & 15] += SIG1(wdat[(i + 14) & 15]) + wdat[(i + 9) & 15] + SIG0(wdat[(i + 1) & 15])
