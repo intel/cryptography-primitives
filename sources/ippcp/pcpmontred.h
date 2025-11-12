@@ -43,11 +43,11 @@
                                           BNU_CHUNK_T m0))
 /* clang-format on */
 
-__IPPCP_INLINE void cpMontRed_BNU_opt(BNU_CHUNK_T* pR,
-                                      BNU_CHUNK_T* pProduct,
-                                      const BNU_CHUNK_T* pModulus,
-                                      cpSize nsM,
-                                      BNU_CHUNK_T m0)
+IPPCP_INLINE void cpMontRed_BNU_opt(BNU_CHUNK_T* pR,
+                                    BNU_CHUNK_T* pProduct,
+                                    const BNU_CHUNK_T* pModulus,
+                                    cpSize nsM,
+                                    BNU_CHUNK_T m0)
 {
 #if (_ADCOX_NI_ENABLING_ == _FEATURE_ON_)
     cpMontRedAdx_BNU(pR, pProduct, pModulus, nsM, m0);

@@ -29,7 +29,7 @@
 
 // Prevent code expansion from inline functions for clang compiler
 #if defined(__clang__) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
-#define __IPPCP_INLINE static __attribute__((noinline))
+#define IPPCP_INLINE static __attribute__((noinline))
 #endif
 
 #include "owndefs.h"
@@ -162,7 +162,7 @@ static const Ipp32u RconTbl[] = { BYTE0_TO_WORD(0x01), BYTE0_TO_WORD(0x02), BYTE
 //    ^(tbl)[2][ EBYTE((x),2) ] \
 //    ^(tbl)[3][ EBYTE((x),3) ] )
 
-__IPPCP_INLINE Ipp32u InvMixColumn(Ipp32u x)
+IPPCP_INLINE Ipp32u InvMixColumn(Ipp32u x)
 {
     Ipp32u x_mul_2 = xtime4(x);
     Ipp32u x_mul_4 = xtime4(x_mul_2);
@@ -317,5 +317,5 @@ IPP_OWN_DEFN(void, ExpandRijndaelKey, (const Ipp8u* pKey,
 }
 
 #if defined(__clang__) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
-#undef __IPPCP_INLINE
+#undef IPPCP_INLINE
 #endif

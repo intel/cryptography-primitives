@@ -18,13 +18,13 @@
 #include "hash/pcphash_rmf.h"
 
 // Check all the ippsRSASign_PKCS1v15_rmf parameters and align pPrvKey, pPubKey pointers
-__IPPCP_INLINE IppStatus SingleSignPkcs1v15RmfPreproc(const Ipp8u* pMsg,
-                                                      int msgLen,
-                                                      Ipp8u* pSign,
-                                                      const IppsRSAPrivateKeyState** pPrvKey,
-                                                      const IppsRSAPublicKeyState** pPubKey,
-                                                      const IppsHashMethod* pMethod,
-                                                      Ipp8u* pScratchBuffer)
+IPPCP_INLINE IppStatus SingleSignPkcs1v15RmfPreproc(const Ipp8u* pMsg,
+                                                    int msgLen,
+                                                    Ipp8u* pSign,
+                                                    const IppsRSAPrivateKeyState** pPrvKey,
+                                                    const IppsRSAPublicKeyState** pPubKey,
+                                                    const IppsHashMethod* pMethod,
+                                                    Ipp8u* pScratchBuffer)
 {
     /* test private key context */
     IPP_BAD_PTR3_RET(*pPrvKey, pScratchBuffer, pMethod);
@@ -52,13 +52,13 @@ __IPPCP_INLINE IppStatus SingleSignPkcs1v15RmfPreproc(const Ipp8u* pMsg,
 }
 
 // Check all the ippsRSAVerify_PKCS1v15_rmf parameters, set valid=0, align pKey pointer
-__IPPCP_INLINE IppStatus SingleVerifyPkcs1v15RmfPreproc(const Ipp8u* pMsg,
-                                                        int msgLen,
-                                                        const Ipp8u* pSign,
-                                                        int* pIsValid,
-                                                        const IppsRSAPublicKeyState** pKey,
-                                                        const IppsHashMethod* pMethod,
-                                                        Ipp8u* pScratchBuffer)
+IPPCP_INLINE IppStatus SingleVerifyPkcs1v15RmfPreproc(const Ipp8u* pMsg,
+                                                      int msgLen,
+                                                      const Ipp8u* pSign,
+                                                      int* pIsValid,
+                                                      const IppsRSAPublicKeyState** pKey,
+                                                      const IppsHashMethod* pMethod,
+                                                      Ipp8u* pScratchBuffer)
 {
     /* test public key context */
     IPP_BAD_PTR3_RET(*pKey, pScratchBuffer, pMethod);

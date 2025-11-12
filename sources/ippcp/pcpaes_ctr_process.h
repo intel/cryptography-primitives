@@ -61,7 +61,7 @@
 //    counter will updated on return
 //
 */
-__IPPCP_INLINE void MaskCounter128(Ipp8u* pMaskIV, int ctrBtSize)
+IPPCP_INLINE void MaskCounter128(Ipp8u* pMaskIV, int ctrBtSize)
 {
     /* construct ctr mask */
     int maskPosition = (MBS_RIJ128 * 8 - ctrBtSize) / 8;

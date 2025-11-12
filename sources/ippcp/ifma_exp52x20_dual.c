@@ -34,10 +34,10 @@
 #define DAMM ifma256_amm52x20_dual
 #define DAMS ifma256_ams52x20_dual
 
-__IPPCP_INLINE void extract_multiplier_n(Ipp64u* red_Y,
-                                         const Ipp64u red_table[1U << EXP_WIN_SIZE][2][LEN52],
-                                         int red_table_idx,
-                                         int tbl_idx)
+IPPCP_INLINE void extract_multiplier_n(Ipp64u* red_Y,
+                                       const Ipp64u red_table[1U << EXP_WIN_SIZE][2][LEN52],
+                                       int red_table_idx,
+                                       int tbl_idx)
 {
     U64 idx     = set64(red_table_idx);
     U64 cur_idx = set64(0);

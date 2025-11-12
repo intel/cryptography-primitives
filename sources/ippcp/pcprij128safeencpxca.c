@@ -266,7 +266,7 @@ static void FwdSubByte(Ipp8u blk[16])
 
 /* inplace ShifttRows operation */
 /* int ShiftRowsInx[] = {0,5,10,15, 4,9,14,3, 8,13,2,7, 12,1,6,11}; */
-__IPPCP_INLINE void FwdShiftRows(Ipp8u blk[16])
+IPPCP_INLINE void FwdShiftRows(Ipp8u blk[16])
 {
     Ipp8u x = blk[1];
     blk[1]  = blk[5];

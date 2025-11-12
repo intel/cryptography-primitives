@@ -202,16 +202,16 @@ extern const Ipp8u* cpHashIV[];
 extern const cpHashAttr cpHashAlgAttr[];
 
 /* IV size helper */
-__IPPCP_INLINE int cpHashIvSize(IppHashAlgId algID) { return cpHashAlgAttr[algID].ivSize; }
+IPPCP_INLINE int cpHashIvSize(IppHashAlgId algID) { return cpHashAlgAttr[algID].ivSize; }
 
 /* hash size helper */
-__IPPCP_INLINE int cpHashSize(IppHashAlgId algID) { return cpHashAlgAttr[algID].hashSize; }
+IPPCP_INLINE int cpHashSize(IppHashAlgId algID) { return cpHashAlgAttr[algID].hashSize; }
 
 /* message block size helper */
-__IPPCP_INLINE int cpHashMBS(IppHashAlgId algID) { return cpHashAlgAttr[algID].msgBlkSize; }
+IPPCP_INLINE int cpHashMBS(IppHashAlgId algID) { return cpHashAlgAttr[algID].msgBlkSize; }
 
 /* maps algID into enabled IppHashAlgId value */
-__IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
+IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
 {
     /* maps algID into the valid range */
     algID = (((int)ippHashAlg_Unknown < (int)algID) && ((int)algID < (int)ippHashAlg_MaxNo))
@@ -221,7 +221,7 @@ __IPPCP_INLINE IppHashAlgId cpValidHashAlg(IppHashAlgId algID)
 }
 
 /* check if algID is from SHA3 family */
-__IPPCP_INLINE IppBool cpIsSHA3AlgID(IppHashAlgId algID)
+IPPCP_INLINE IppBool cpIsSHA3AlgID(IppHashAlgId algID)
 {
     if (algID == ippHashAlg_SHA3_224 || algID == ippHashAlg_SHA3_256 ||
         algID == ippHashAlg_SHA3_384 || algID == ippHashAlg_SHA3_512 ||
@@ -231,7 +231,7 @@ __IPPCP_INLINE IppBool cpIsSHA3AlgID(IppHashAlgId algID)
 }
 
 /* check if algID is SHAKE128 or SHAKE256 */
-__IPPCP_INLINE IppBool cpIsSHAKEAlgID(IppHashAlgId algID)
+IPPCP_INLINE IppBool cpIsSHAKEAlgID(IppHashAlgId algID)
 {
     if (algID == ippHashAlg_SHAKE128 || algID == ippHashAlg_SHAKE256)
         return ippTrue;

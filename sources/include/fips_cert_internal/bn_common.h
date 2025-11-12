@@ -33,11 +33,11 @@
  * \param[in] data_word_len length of integer big number in 32bit size
  *
  */
-__IPPCP_INLINE IppStatus ippcp_init_set_bn(IppsBigNumState* pbn,
-                                           int max_word_len,
-                                           IppsBigNumSGN sgn,
-                                           const Ipp32u* pdata,
-                                           int data_word_len)
+IPPCP_INLINE IppStatus ippcp_init_set_bn(IppsBigNumState* pbn,
+                                         int max_word_len,
+                                         IppsBigNumSGN sgn,
+                                         const Ipp32u* pdata,
+                                         int data_word_len)
 {
     IppStatus sts;
     sts = ippsBigNumInit(max_word_len, pbn);

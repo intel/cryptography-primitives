@@ -27,10 +27,10 @@
  *         decapsBytes  - decaps memory consumption, optional
  * Returns: ippStsNoErr on success, otherwise an error code.
  */
-__IPPCP_INLINE IppStatus mlkemMemoryConsumption(const IppsMLKEMState* pMLKEMCtx,
-                                                int* keygenBytes,
-                                                int* encapsBytes,
-                                                int* decapsBytes)
+IPPCP_INLINE IppStatus mlkemMemoryConsumption(const IppsMLKEMState* pMLKEMCtx,
+                                              int* keygenBytes,
+                                              int* encapsBytes,
+                                              int* decapsBytes)
 {
     IppStatus sts    = ippStsNoErr;
     const Ipp8u k    = pMLKEMCtx->params.k;

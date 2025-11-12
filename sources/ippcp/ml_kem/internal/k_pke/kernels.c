@@ -29,7 +29,7 @@
 /*
  * Perform division of x by divisor with the rounding of x to the nearest integer
  */
-__IPPCP_INLINE Ipp16s cp_divAndRoundToNearestInt(Ipp32s x, Ipp32s divisor)
+IPPCP_INLINE Ipp16s cp_divAndRoundToNearestInt(Ipp32s x, Ipp32s divisor)
 {
     return (Ipp16s)((x + (divisor >> 1)) / divisor);
 }

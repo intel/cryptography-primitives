@@ -539,7 +539,7 @@ static __NOINLINE void clear_secret_context(Ipp16u* wval,
     return;
 }
 
-__IPPCP_INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b)
+IPPCP_INLINE mask8 is_eq_mask(const Ipp32s a, const Ipp32s b)
 {
     const Ipp32s eq  = a ^ b;
     const Ipp32s v   = ~eq & (eq - 1);
@@ -703,9 +703,9 @@ IPP_OWN_DEFN(void, gesm2_mul, (PSM2_POINT_IFMA* r,
 #define BP_WIN_SIZE BASE_POINT_WIN_SIZE
 #define BP_N_ENTRY  BASE_POINT_N_ENTRY
 
-__IPPCP_INLINE void extract_point_affine(PSM2_AFFINE_POINT_IFMA* r,
-                                         const SINGLE_PSM2_AFFINE_POINT_IFMA* tbl,
-                                         const Ipp32s digit)
+IPPCP_INLINE void extract_point_affine(PSM2_AFFINE_POINT_IFMA* r,
+                                       const SINGLE_PSM2_AFFINE_POINT_IFMA* tbl,
+                                       const Ipp32s digit)
 {
     const Ipp32s idx = digit - 1;
 

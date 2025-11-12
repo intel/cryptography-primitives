@@ -35,10 +35,10 @@
 // stores to/retrieves from pScrambleEntry position
 // pre-computed data if fixed window method is used
 */
-__IPPCP_INLINE void cpScramblePut(Ipp8u* pArray,
-                                  cpSize colummSize,
-                                  const Ipp32u* pData,
-                                  cpSize dataSize)
+IPPCP_INLINE void cpScramblePut(Ipp8u* pArray,
+                                cpSize colummSize,
+                                const Ipp32u* pData,
+                                cpSize dataSize)
 {
     int i;
     switch (colummSize) {
@@ -102,10 +102,10 @@ __IPPCP_INLINE void cpScramblePut(Ipp8u* pArray,
 #define u16_to_u32(w0, w1, x)   ((x) = (w0), (x) |= ((w1) << 16))
 #define u32_to_u64(dw0, dw1, x) ((x) = (Ipp64u)(dw0), (x) |= (((Ipp64u)(dw1)) << 32))
 
-__IPPCP_INLINE void cpScrambleGet(Ipp32u* pData,
-                                  cpSize dataSize,
-                                  const Ipp8u* pArray,
-                                  cpSize colummSize)
+IPPCP_INLINE void cpScrambleGet(Ipp32u* pData,
+                                cpSize dataSize,
+                                const Ipp8u* pArray,
+                                cpSize colummSize)
 {
     int i;
     switch (colummSize) {

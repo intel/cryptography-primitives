@@ -29,7 +29,7 @@
 #include "pcpmask_ct.h"
 
 /* copy data block */
-__IPPCP_INLINE void CopyBlock(const void* pSrc, void* pDst, cpSize numBytes)
+IPPCP_INLINE void CopyBlock(const void* pSrc, void* pDst, cpSize numBytes)
 {
     const Ipp8u* s = (Ipp8u*)pSrc;
     Ipp8u* d       = (Ipp8u*)pDst;
@@ -38,7 +38,7 @@ __IPPCP_INLINE void CopyBlock(const void* pSrc, void* pDst, cpSize numBytes)
         d[k] = s[k];
 }
 
-__IPPCP_INLINE void CopyBlock8(const void* pSrc, void* pDst)
+IPPCP_INLINE void CopyBlock8(const void* pSrc, void* pDst)
 {
     int k;
     for (k = 0; k < 8; k++)
@@ -49,7 +49,7 @@ __IPPCP_INLINE void CopyBlock8(const void* pSrc, void* pDst)
  * copy data block of 16 bytes
  * Note: source and destination are not required to be aligned to 16-byte boundaries
 */
-__IPPCP_INLINE void CopyBlock16(const void* pSrc, void* pDst)
+IPPCP_INLINE void CopyBlock16(const void* pSrc, void* pDst)
 {
 #if (_IPP > _IPP_PX || _IPP32E > _IPP32E_PX)
     const __m128i src = _mm_loadu_si128((__m128i const*)pSrc);
@@ -61,13 +61,13 @@ __IPPCP_INLINE void CopyBlock16(const void* pSrc, void* pDst)
 #endif
 }
 
-__IPPCP_INLINE void CopyBlock24(const void* pSrc, void* pDst)
+IPPCP_INLINE void CopyBlock24(const void* pSrc, void* pDst)
 {
     int k;
     for (k = 0; k < 24; k++)
         ((Ipp8u*)pDst)[k] = ((Ipp8u*)pSrc)[k];
 }
-__IPPCP_INLINE void CopyBlock32(const void* pSrc, void* pDst)
+IPPCP_INLINE void CopyBlock32(const void* pSrc, void* pDst)
 {
     int k;
     for (k = 0; k < 32; k++)
@@ -77,7 +77,7 @@ __IPPCP_INLINE void CopyBlock32(const void* pSrc, void* pDst)
 /*
 // padding data block
 */
-__IPPCP_INLINE void PadBlock(Ipp8u paddingByte, void* pDst, cpSize numBytes)
+IPPCP_INLINE void PadBlock(Ipp8u paddingByte, void* pDst, cpSize numBytes)
 {
     Ipp8u* d = (Ipp8u*)pDst;
     cpSize k;
@@ -91,7 +91,7 @@ __IPPCP_INLINE void PadBlock(Ipp8u paddingByte, void* pDst, cpSize numBytes)
 
 // WARNING: do not call PurgeBlockInternal directly, use PurgeBlock instead
 #if !((_IPP >= _IPP_W7) || (_IPP32E >= _IPP32E_M7))
-__IPPCP_INLINE void PurgeBlockInternal(void* pDst, int len)
+IPPCP_INLINE void PurgeBlockInternal(void* pDst, int len)
 {
     int n;
     for (n = 0; n < len; n++)
@@ -103,7 +103,7 @@ IPP_OWN_DECL(void, PurgeBlockInternal, (void* pDst, int len))
 #endif
 
 // Note: the input validation of the input parameters is expected to be done by the caller
-__IPPCP_INLINE void PurgeBlock(void* pDst, int len)
+IPPCP_INLINE void PurgeBlock(void* pDst, int len)
 {
     // Force the compiler to always read and dereference `purgeblock_fp` and
     // make no assumptions about the function it points to.
@@ -112,7 +112,7 @@ __IPPCP_INLINE void PurgeBlock(void* pDst, int len)
 }
 
 /* fill block */
-__IPPCP_INLINE void FillBlock16(Ipp8u filler, const void* pSrc, void* pDst, int len)
+IPPCP_INLINE void FillBlock16(Ipp8u filler, const void* pSrc, void* pDst, int len)
 {
     int n;
     for (n = 0; n < len; n++)
@@ -122,7 +122,7 @@ __IPPCP_INLINE void FillBlock16(Ipp8u filler, const void* pSrc, void* pDst, int 
 }
 
 /* xor block */
-__IPPCP_INLINE void XorBlock(const void* pSrc1, const void* pSrc2, void* pDst, int len)
+IPPCP_INLINE void XorBlock(const void* pSrc1, const void* pSrc2, void* pDst, int len)
 {
     const Ipp8u* p1 = (const Ipp8u*)pSrc1;
     const Ipp8u* p2 = (const Ipp8u*)pSrc2;
@@ -138,11 +138,11 @@ __IPPCP_INLINE void XorBlock(const void* pSrc1, const void* pSrc2, void* pDst, i
  *  |len| specifies how many bytes of |pSrc1| shall be xor-ed to |pSrc2|. It must not
  *  be more than |blockSize|, and this condition should be ensured outside.
  */
-__IPPCP_INLINE void XorBlockMirror(const void* pSrc1,
-                                   const void* pSrc2,
-                                   void* pDst,
-                                   int blockSize,
-                                   int len)
+IPPCP_INLINE void XorBlockMirror(const void* pSrc1,
+                                 const void* pSrc2,
+                                 void* pDst,
+                                 int blockSize,
+                                 int len)
 {
     const Ipp8u* p1 = (const Ipp8u*)pSrc1;
     const Ipp8u* p2 = (const Ipp8u*)pSrc2;
@@ -151,7 +151,7 @@ __IPPCP_INLINE void XorBlockMirror(const void* pSrc1,
     for (k = 0; k < len; k++)
         d[blockSize - k - 1] = (Ipp8u)(p1[k] ^ p2[blockSize - k - 1]);
 }
-__IPPCP_INLINE void XorBlock8(const void* pSrc1, const void* pSrc2, void* pDst)
+IPPCP_INLINE void XorBlock8(const void* pSrc1, const void* pSrc2, void* pDst)
 {
     const Ipp8u* p1 = (const Ipp8u*)pSrc1;
     const Ipp8u* p2 = (const Ipp8u*)pSrc2;
@@ -165,7 +165,7 @@ __IPPCP_INLINE void XorBlock8(const void* pSrc1, const void* pSrc2, void* pDst)
  * xor data block of 16 bytes
  * Note: sources and destination are not required to be aligned to 16-byte boundaries
 */
-__IPPCP_INLINE void XorBlock16(const void* pSrc1, const void* pSrc2, void* pDst)
+IPPCP_INLINE void XorBlock16(const void* pSrc1, const void* pSrc2, void* pDst)
 {
 #if (_IPP > _IPP_PX || _IPP32E > _IPP32E_PX)
     const __m128i p1 = _mm_loadu_si128((__m128i const*)pSrc1);
@@ -182,7 +182,7 @@ __IPPCP_INLINE void XorBlock16(const void* pSrc1, const void* pSrc2, void* pDst)
 #endif
 }
 
-__IPPCP_INLINE void XorBlock24(const void* pSrc1, const void* pSrc2, void* pDst)
+IPPCP_INLINE void XorBlock24(const void* pSrc1, const void* pSrc2, void* pDst)
 {
     const Ipp8u* p1 = (const Ipp8u*)pSrc1;
     const Ipp8u* p2 = (const Ipp8u*)pSrc2;
@@ -191,7 +191,7 @@ __IPPCP_INLINE void XorBlock24(const void* pSrc1, const void* pSrc2, void* pDst)
     for (k = 0; k < 24; k++)
         d[k] = (Ipp8u)(p1[k] ^ p2[k]);
 }
-__IPPCP_INLINE void XorBlock32(const void* pSrc1, const void* pSrc2, void* pDst)
+IPPCP_INLINE void XorBlock32(const void* pSrc1, const void* pSrc2, void* pDst)
 {
     const Ipp8u* p1 = (const Ipp8u*)pSrc1;
     const Ipp8u* p2 = (const Ipp8u*)pSrc2;
@@ -203,7 +203,7 @@ __IPPCP_INLINE void XorBlock32(const void* pSrc1, const void* pSrc2, void* pDst)
 
 
 /* compare (equivalence) */
-__IPPCP_INLINE int EquBlock(const void* pSrc1, const void* pSrc2, int len)
+IPPCP_INLINE int EquBlock(const void* pSrc1, const void* pSrc2, int len)
 {
     const Ipp8u* p1 = (const Ipp8u*)pSrc1;
     const Ipp8u* p2 = (const Ipp8u*)pSrc2;
@@ -217,7 +217,7 @@ __IPPCP_INLINE int EquBlock(const void* pSrc1, const void* pSrc2, int len)
 
 /* addition (incrementation) functions for CTR mode of diffenent block ciphers */
 /* constant execution time version */
-__IPPCP_INLINE void StdIncrement(Ipp8u* pCounter, int blkBitSize, int numSize)
+IPPCP_INLINE void StdIncrement(Ipp8u* pCounter, int blkBitSize, int numSize)
 {
     int maskPosition = (blkBitSize - numSize) / 8;
     Ipp8u maskVal    = (Ipp8u)(0xFF >> (blkBitSize - numSize) % 8);
@@ -239,10 +239,7 @@ __IPPCP_INLINE void StdIncrement(Ipp8u* pCounter, int blkBitSize, int numSize)
 }
 
 /* vb */
-__IPPCP_INLINE void ompStdIncrement64(void* pInitCtrVal,
-                                      void* pCurrCtrVal,
-                                      int ctrNumBitSize,
-                                      int n)
+IPPCP_INLINE void ompStdIncrement64(void* pInitCtrVal, void* pCurrCtrVal, int ctrNumBitSize, int n)
 {
     int k;
     Ipp64u cntr;
@@ -290,10 +287,7 @@ __IPPCP_INLINE void ompStdIncrement64(void* pInitCtrVal,
 
 
 /* vb */
-__IPPCP_INLINE void ompStdIncrement128(void* pInitCtrVal,
-                                       void* pCurrCtrVal,
-                                       int ctrNumBitSize,
-                                       int n)
+IPPCP_INLINE void ompStdIncrement128(void* pInitCtrVal, void* pCurrCtrVal, int ctrNumBitSize, int n)
 {
     int k;
     Ipp64u low;
@@ -373,7 +367,7 @@ __IPPCP_INLINE void ompStdIncrement128(void* pInitCtrVal,
 
 #if 0
 /* vb */
-__IPPCP_INLINE void ompStdIncrement192( void* pInitCtrVal, void* pCurrCtrVal,
+IPPCP_INLINE void ompStdIncrement192( void* pInitCtrVal, void* pCurrCtrVal,
                                 int ctrNumBitSize, int n )
 {
     int    k;
@@ -499,7 +493,7 @@ __IPPCP_INLINE void ompStdIncrement192( void* pInitCtrVal, void* pCurrCtrVal,
 
 #if 0
 /* vb */
-__IPPCP_INLINE void ompStdIncrement256( void* pInitCtrVal, void* pCurrCtrVal,
+IPPCP_INLINE void ompStdIncrement256( void* pInitCtrVal, void* pCurrCtrVal,
                                  int ctrNumBitSize, int n )
 {
     int    k;

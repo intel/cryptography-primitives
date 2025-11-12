@@ -112,10 +112,7 @@ __ALIGN32 static const Ipp8u _shuff_mask_256[] = { 15, 14, 13, 12, 11, 10, 9,  8
 // output:
 //   __m256i part of the multiplication result
 */
-__IPPCP_INLINE __m256i avx2_internal_mul(__m256i GH,
-                                         const __m256i HK,
-                                         __m256i* tmpX0,
-                                         __m256i* tmpX5)
+IPPCP_INLINE __m256i avx2_internal_mul(__m256i GH, const __m256i HK, __m256i* tmpX0, __m256i* tmpX5)
 {
     __m256i tmpX2, tmpX3, tmpX4;
 
@@ -135,7 +132,7 @@ __IPPCP_INLINE __m256i avx2_internal_mul(__m256i GH,
 // input/output:
 //   __m128i *hash0, __m128i *hash1 - contains the two parts of the GHASH
 */
-__IPPCP_INLINE void reduction(__m128i* hash0, __m128i* hash1)
+IPPCP_INLINE void reduction(__m128i* hash0, __m128i* hash1)
 {
     __m128i T1, T2, T3;
 
@@ -175,7 +172,7 @@ __IPPCP_INLINE void reduction(__m128i* hash0, __m128i* hash1)
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm16(__m256i* GH, const __m256i* HK)
+IPPCP_INLINE __m128i avx2_clmul_gcm16(__m256i* GH, const __m256i* HK)
 {
     __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
     tmpX2 = _mm256_shuffle_epi32(GH[0], SHUFD_MASK);
@@ -225,7 +222,7 @@ __IPPCP_INLINE __m128i avx2_clmul_gcm16(__m256i* GH, const __m256i* HK)
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm8(__m256i* GH, const __m256i* HK)
+IPPCP_INLINE __m128i avx2_clmul_gcm8(__m256i* GH, const __m256i* HK)
 {
     __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
     tmpX2 = _mm256_shuffle_epi32(GH[0], SHUFD_MASK);
@@ -271,7 +268,7 @@ __IPPCP_INLINE __m128i avx2_clmul_gcm8(__m256i* GH, const __m256i* HK)
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm4(__m256i* GH, const __m256i* HK)
+IPPCP_INLINE __m128i avx2_clmul_gcm4(__m256i* GH, const __m256i* HK)
 {
     __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
     tmpX2 = _mm256_shuffle_epi32(GH[0], SHUFD_MASK);
@@ -316,7 +313,7 @@ __IPPCP_INLINE __m128i avx2_clmul_gcm4(__m256i* GH, const __m256i* HK)
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm2(__m256i* GH, const __m256i* HK)
+IPPCP_INLINE __m128i avx2_clmul_gcm2(__m256i* GH, const __m256i* HK)
 {
     __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
     tmpX2 = _mm256_shuffle_epi32(GH[0], SHUFD_MASK);
@@ -358,7 +355,7 @@ __IPPCP_INLINE __m128i avx2_clmul_gcm2(__m256i* GH, const __m256i* HK)
 // output:
 //    __m128i GH[0]
 */
-__IPPCP_INLINE __m128i avx2_clmul_gcm(__m256i* GH, const __m256i* HK)
+IPPCP_INLINE __m128i avx2_clmul_gcm(__m256i* GH, const __m256i* HK)
 {
     __m256i tmpX0, tmpX2, tmpX3, tmpX4, tmpX5;
     tmpX2 = _mm256_shuffle_epi32(GH[0], SHUFD_MASK);

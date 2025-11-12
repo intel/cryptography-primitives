@@ -34,15 +34,15 @@
 #include "ippcpdefs.h"
 #endif
 
-#if !defined(__IPPCP_INLINE)
+#if !defined(IPPCP_INLINE)
 #if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(_MSC_VER)
-#define __IPPCP_INLINE static __inline
+#define IPPCP_INLINE static __inline
 #elif defined(__GNUC__)
-#define __IPPCP_INLINE static __inline__
+#define IPPCP_INLINE static __inline__
 #else
-#define __IPPCP_INLINE static
+#define IPPCP_INLINE static
 #endif
-#endif /*__IPPCP_INLINE*/
+#endif /*IPPCP_INLINE*/
 
 /* TODO: to check ICX compiler */
 #if !defined(__NOINLINE)
@@ -55,15 +55,15 @@
 #endif
 #endif /*__NOINLINE*/
 
-#if !defined(__FORCEINLINE)
+#if !defined(IPPCP_FORCEINLINE)
 #if defined(_MSC_VER)
-#define __FORCEINLINE __forceinline
+#define IPPCP_FORCEINLINE __forceinline
 #elif defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || defined(__GNUC__)
-#define __FORCEINLINE __IPPCP_INLINE __attribute__((always_inline))
+#define IPPCP_FORCEINLINE IPPCP_INLINE __attribute__((always_inline))
 #else
-#define __FORCEINLINE
+#define IPPCP_FORCEINLINE
 #endif
-#endif /*__FORCEINLINE*/
+#endif /*IPPCP_FORCEINLINE*/
 
 #if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER)
 #define __RESTRICT restrict
@@ -282,7 +282,7 @@
 #endif
 
 #if ((_IPP_ARCH == _IPP_ARCH_IA32))
-__IPPCP_INLINE Ipp32s IPP_INT_PTR(const void* ptr)
+IPPCP_INLINE Ipp32s IPP_INT_PTR(const void* ptr)
 {
     union {
         void* Ptr;
@@ -292,7 +292,7 @@ __IPPCP_INLINE Ipp32s IPP_INT_PTR(const void* ptr)
     return dd.Int;
 }
 
-__IPPCP_INLINE Ipp32u IPP_UINT_PTR(const void* ptr)
+IPPCP_INLINE Ipp32u IPP_UINT_PTR(const void* ptr)
 {
     union {
         void* Ptr;
@@ -302,7 +302,7 @@ __IPPCP_INLINE Ipp32u IPP_UINT_PTR(const void* ptr)
     return dd.Int;
 }
 #elif ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LRB2))
-__IPPCP_INLINE Ipp64s IPP_INT_PTR(const void* ptr)
+IPPCP_INLINE Ipp64s IPP_INT_PTR(const void* ptr)
 {
     union {
         void* Ptr;
@@ -312,7 +312,7 @@ __IPPCP_INLINE Ipp64s IPP_INT_PTR(const void* ptr)
     return dd.Int;
 }
 
-__IPPCP_INLINE Ipp64u IPP_UINT_PTR(const void* ptr)
+IPPCP_INLINE Ipp64u IPP_UINT_PTR(const void* ptr)
 {
     union {
         void* Ptr;

@@ -178,7 +178,7 @@ typedef int cpSize;
 /* test if library's feature is ON */
 int cpGetFeature(Ipp64u Feature);
 /* test CPU cryptography features */
-__IPPCP_INLINE Ipp32u IsFeatureEnabled(Ipp64u niMmask) { return (Ipp32u)cpGetFeature(niMmask); }
+IPPCP_INLINE Ipp32u IsFeatureEnabled(Ipp64u niMmask) { return (Ipp32u)cpGetFeature(niMmask); }
 
 #define IPPCP_GET_NUM_THREADS()            (ippcpGetEnabledNumThreads())
 #define IPPCP_OMP_NUM_THREADS()            num_threads(IPPCP_GET_NUM_THREADS())

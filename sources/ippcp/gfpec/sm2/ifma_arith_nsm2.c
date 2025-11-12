@@ -197,13 +197,13 @@ IPP_OWN_DEFN(fesm2, fesm2_from_mont_norder, (const fesm2 a))
     return r;
 }
 
-__IPPCP_INLINE fesm2 mul_norder_norm(const fesm2 a, const fesm2 b)
+IPPCP_INLINE fesm2 mul_norder_norm(const fesm2 a, const fesm2 b)
 {
     const fesm2 r = fesm2_mul_norder(a, b);
     return ifma_lnorm52(r);
 }
 
-__IPPCP_INLINE fesm2 sqr_norder_norm(const fesm2 a)
+IPPCP_INLINE fesm2 sqr_norder_norm(const fesm2 a)
 {
     const fesm2 r = fesm2_mul_norder(a, a);
     return ifma_lnorm52(r);

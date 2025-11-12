@@ -190,13 +190,13 @@ IPP_OWN_DECL(const cpPrecompAP*, gfpec_precom_sm2_radix52_fun, (void))
 /*
 // get/release n points from/to the pool
 */
-__IPPCP_INLINE BNU_CHUNK_T* cpEcGFpGetPool(int n, IppsGFpECState* pEC)
+IPPCP_INLINE BNU_CHUNK_T* cpEcGFpGetPool(int n, IppsGFpECState* pEC)
 {
     BNU_CHUNK_T* pPool = ECP_POOL(pEC);
     ECP_POOL(pEC) += n * GFP_FELEN(GFP_PMA(ECP_GFP(pEC))) * 3;
     return pPool;
 }
-__IPPCP_INLINE void cpEcGFpReleasePool(int n, IppsGFpECState* pEC)
+IPPCP_INLINE void cpEcGFpReleasePool(int n, IppsGFpECState* pEC)
 {
     int chunk_size = n * GFP_FELEN(GFP_PMA(ECP_GFP(pEC))) * 3;
     ECP_POOL(pEC) -= chunk_size;
@@ -205,10 +205,10 @@ __IPPCP_INLINE void cpEcGFpReleasePool(int n, IppsGFpECState* pEC)
     ZEXPAND_BNU(ECP_POOL(pEC), 0, chunk_size);
 }
 
-__IPPCP_INLINE IppsGFpECPoint* cpEcGFpInitPoint(IppsGFpECPoint* pPoint,
-                                                BNU_CHUNK_T* pData,
-                                                int flags,
-                                                const IppsGFpECState* pEC)
+IPPCP_INLINE IppsGFpECPoint* cpEcGFpInitPoint(IppsGFpECPoint* pPoint,
+                                              BNU_CHUNK_T* pData,
+                                              int flags,
+                                              const IppsGFpECState* pEC)
 {
     ECP_POINT_SET_ID(pPoint);
     ECP_POINT_FLAGS(pPoint) = flags;
@@ -218,9 +218,9 @@ __IPPCP_INLINE IppsGFpECPoint* cpEcGFpInitPoint(IppsGFpECPoint* pPoint,
 }
 
 /* copy one point into another */
-__IPPCP_INLINE IppsGFpECPoint* gfec_CopyPoint(IppsGFpECPoint* pPointR,
-                                              const IppsGFpECPoint* pPointA,
-                                              int elemLen)
+IPPCP_INLINE IppsGFpECPoint* gfec_CopyPoint(IppsGFpECPoint* pPointR,
+                                            const IppsGFpECPoint* pPointA,
+                                            int elemLen)
 {
     cpGFpElementCopy(ECP_POINT_DATA(pPointR), ECP_POINT_DATA(pPointA), 3 * elemLen);
     ECP_POINT_FLAGS(pPointR) = ECP_POINT_FLAGS(pPointA);
@@ -228,7 +228,7 @@ __IPPCP_INLINE IppsGFpECPoint* gfec_CopyPoint(IppsGFpECPoint* pPointR,
 }
 
 
-__IPPCP_INLINE IppsGFpECPoint* gfec_SetPointAtInfinity(IppsGFpECPoint* pPoint)
+IPPCP_INLINE IppsGFpECPoint* gfec_SetPointAtInfinity(IppsGFpECPoint* pPoint)
 {
     int elemLen = ECP_POINT_FELEN(pPoint);
     cpGFpElementPad(ECP_POINT_X(pPoint), elemLen, 0);
@@ -242,7 +242,7 @@ __IPPCP_INLINE IppsGFpECPoint* gfec_SetPointAtInfinity(IppsGFpECPoint* pPoint)
 // test infinity:
 //    IsProjectivePointAtInfinity
 */
-__IPPCP_INLINE int gfec_IsPointAtInfinity(const IppsGFpECPoint* pPoint)
+IPPCP_INLINE int gfec_IsPointAtInfinity(const IppsGFpECPoint* pPoint)
 {
     return GFP_IS_ZERO(ECP_POINT_Z(pPoint), ECP_POINT_FELEN(pPoint));
 }
@@ -250,7 +250,7 @@ __IPPCP_INLINE int gfec_IsPointAtInfinity(const IppsGFpECPoint* pPoint)
 
 
 /* signed encode */
-__IPPCP_INLINE void booth_recode(Ipp8u* sign, Ipp8u* digit, Ipp8u in, int w)
+IPPCP_INLINE void booth_recode(Ipp8u* sign, Ipp8u* digit, Ipp8u in, int w)
 {
     Ipp8u s = (Ipp8u)(~((in >> w) - 1));
     int d   = (1 << (w + 1)) - in - 1;
@@ -298,19 +298,19 @@ IPP_OWN_DECL (int, gfec_ComparePoint, (const IppsGFpECPoint* pP, const IppsGFpEC
 IPP_OWN_DECL (int, gfec_IsPointOnCurve, (const IppsGFpECPoint* pP, IppsGFpECState* pEC))
 /* clang-format on */
 
-__IPPCP_INLINE IppsGFpECPoint* gfec_DblPoint(IppsGFpECPoint* pR,
-                                             const IppsGFpECPoint* pP,
-                                             IppsGFpECState* pEC)
+IPPCP_INLINE IppsGFpECPoint* gfec_DblPoint(IppsGFpECPoint* pR,
+                                           const IppsGFpECPoint* pP,
+                                           IppsGFpECState* pEC)
 {
     gfec_point_double(ECP_POINT_X(pR), ECP_POINT_X(pP), pEC);
     ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;
     return pR;
 }
 
-__IPPCP_INLINE IppsGFpECPoint* gfec_AddPoint(IppsGFpECPoint* pR,
-                                             const IppsGFpECPoint* pP,
-                                             const IppsGFpECPoint* pQ,
-                                             IppsGFpECState* pEC)
+IPPCP_INLINE IppsGFpECPoint* gfec_AddPoint(IppsGFpECPoint* pR,
+                                           const IppsGFpECPoint* pP,
+                                           const IppsGFpECPoint* pQ,
+                                           IppsGFpECState* pEC)
 {
     gfec_point_add(ECP_POINT_X(pR), ECP_POINT_X(pP), ECP_POINT_X(pQ), pEC);
     ECP_POINT_FLAGS(pR) = gfec_IsPointAtInfinity(pR) ? 0 : ECP_FINITE_POINT;

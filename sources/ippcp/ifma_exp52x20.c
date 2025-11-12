@@ -34,9 +34,9 @@
 #define AMM ifma256_amm52x20
 #define AMS ifma256_ams52x20
 
-__IPPCP_INLINE void extract_multiplier(Ipp64u* red_Y,
-                                       const Ipp64u red_table[1U << EXP_WIN_SIZE][LEN52],
-                                       int red_table_idx)
+IPPCP_INLINE void extract_multiplier(Ipp64u* red_Y,
+                                     const Ipp64u red_table[1U << EXP_WIN_SIZE][LEN52],
+                                     int red_table_idx)
 {
     U64 idx     = set64(red_table_idx);
     U64 cur_idx = set64(0);

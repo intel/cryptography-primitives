@@ -147,7 +147,7 @@
 *F*/
 #if defined(_ALG_SM3_COMPACT_)
 
-__IPPCP_INLINE Ipp32u MagicFF(int s, Ipp32u a, Ipp32u b, Ipp32u c)
+IPPCP_INLINE Ipp32u MagicFF(int s, Ipp32u a, Ipp32u b, Ipp32u c)
 {
     switch (s) {
     case 0:
@@ -156,7 +156,7 @@ __IPPCP_INLINE Ipp32u MagicFF(int s, Ipp32u a, Ipp32u b, Ipp32u c)
         return FF2(a, b, c);
     }
 }
-__IPPCP_INLINE Ipp32u MagicGG(int s, Ipp32u e, Ipp32u f, Ipp32u g)
+IPPCP_INLINE Ipp32u MagicGG(int s, Ipp32u e, Ipp32u f, Ipp32u g)
 {
     switch (s) {
     case 0:

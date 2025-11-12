@@ -34,7 +34,7 @@
 #if !defined(_PCP_AES_CMAC_STUFF_H_)
 #define _PCP_AES_CMAC_STUFF_H_
 
-__IPPCP_INLINE int cpSizeofCtx_AESCMAC(void) { return sizeof(IppsAES_CMACState); }
+IPPCP_INLINE int cpSizeofCtx_AESCMAC(void) { return sizeof(IppsAES_CMACState); }
 
 static void init(IppsAES_CMACState* pCtx)
 {

@@ -154,7 +154,7 @@ IPP_OWN_DECL(IppStatus, cp_xmss_tree_hash, (Ipp8u isKeyGen,
  *    params    WOTS parameters (w, log2_w, n, len, len_1, hash_method)
  */
 
-__IPPCP_INLINE IppStatus cp_xmss_set_params(IppsXMSSAlgo OIDAlgo, Ipp32s* h, cpWOTSParams* params)
+IPPCP_INLINE IppStatus cp_xmss_set_params(IppsXMSSAlgo OIDAlgo, Ipp32s* h, cpWOTSParams* params)
 {
 
     // Digits below are from the XMSS algo spec

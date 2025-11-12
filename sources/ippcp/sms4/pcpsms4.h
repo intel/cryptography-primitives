@@ -65,7 +65,7 @@ struct _cpSMS4 {
 #define SMS4_ALIGNMENT (4)
 
 /* size of SMS4 context */
-__IPPCP_INLINE int cpSizeofCtx_SMS4(void) { return sizeof(IppsSMS4Spec); }
+IPPCP_INLINE int cpSizeofCtx_SMS4(void) { return sizeof(IppsSMS4Spec); }
 
 /* SMS4 constants */
 extern const __ALIGN64 Ipp8u SMS4_Sbox[16 * 16];
@@ -78,7 +78,7 @@ extern const Ipp32u SMS4_CK[32];
 #include "pcpbnuimpl.h"
 #define SELECTION_BITS ((sizeof(BNU_CHUNK_T) / sizeof(Ipp8u)) - 1)
 
-__IPPCP_INLINE Ipp8u getSboxValue(Ipp8u x)
+IPPCP_INLINE Ipp8u getSboxValue(Ipp8u x)
 {
     BNU_CHUNK_T selection  = 0;
     const Ipp8u* SboxEntry = SMS4_Sbox;
@@ -91,7 +91,7 @@ __IPPCP_INLINE Ipp8u getSboxValue(Ipp8u x)
     return (Ipp8u)(selection & 0xFF);
 }
 
-__IPPCP_INLINE Ipp32u cpSboxT_SMS4(Ipp32u x)
+IPPCP_INLINE Ipp32u cpSboxT_SMS4(Ipp32u x)
 {
     Ipp32u y = getSboxValue(x & 0xFF);
     y |= (Ipp32u)(getSboxValue((x >> 8) & 0xFF) << 8);
@@ -104,20 +104,20 @@ __IPPCP_INLINE Ipp32u cpSboxT_SMS4(Ipp32u x)
    - linear Linear
    - mixer Mix (permutation T in the SMS4 standard phraseology)
 */
-__IPPCP_INLINE Ipp32u cpExpKeyLinear_SMS4(Ipp32u x) { return x ^ ROL32(x, 13) ^ ROL32(x, 23); }
+IPPCP_INLINE Ipp32u cpExpKeyLinear_SMS4(Ipp32u x) { return x ^ ROL32(x, 13) ^ ROL32(x, 23); }
 
-__IPPCP_INLINE Ipp32u cpExpKeyMix_SMS4(Ipp32u x) { return cpExpKeyLinear_SMS4(cpSboxT_SMS4(x)); }
+IPPCP_INLINE Ipp32u cpExpKeyMix_SMS4(Ipp32u x) { return cpExpKeyLinear_SMS4(cpSboxT_SMS4(x)); }
 
 /* cipher transformations:
    - linear Linear
    - mixer Mix (permutation T in the SMS4 standard phraseology)
 */
-__IPPCP_INLINE Ipp32u cpCipherLinear_SMS4(Ipp32u x)
+IPPCP_INLINE Ipp32u cpCipherLinear_SMS4(Ipp32u x)
 {
     return x ^ ROL32(x, 2) ^ ROL32(x, 10) ^ ROL32(x, 18) ^ ROL32(x, 24);
 }
 
-__IPPCP_INLINE Ipp32u cpCipherMix_SMS4(Ipp32u x) { return cpCipherLinear_SMS4(cpSboxT_SMS4(x)); }
+IPPCP_INLINE Ipp32u cpCipherMix_SMS4(Ipp32u x) { return cpCipherLinear_SMS4(cpSboxT_SMS4(x)); }
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 

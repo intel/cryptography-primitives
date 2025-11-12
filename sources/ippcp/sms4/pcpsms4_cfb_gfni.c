@@ -79,16 +79,16 @@ static void cpSMS4_CFB_dec_gfni128x4(Ipp8u* pDst,
                                      const Ipp32u* pRKey,
                                      Ipp8u* pIV);
 
-__FORCEINLINE Ipp64u broadcast_16to64(Ipp16u mask16)
+IPPCP_FORCEINLINE Ipp64u broadcast_16to64(Ipp16u mask16)
 {
     Ipp64u mask64 = (Ipp64u)mask16;
     mask64        = (mask64 << 48) | (mask64 << 32) | (mask64 << 16) | mask64;
     return mask64;
 }
 
-__FORCEINLINE __m512i getInputBlocks(__m128i* const currentState,
-                                     const __m512i* const pCipherBlocks,
-                                     __mmask16 blocksCompressMask)
+IPPCP_FORCEINLINE __m512i getInputBlocks(__m128i* const currentState,
+                                         const __m512i* const pCipherBlocks,
+                                         __mmask16 blocksCompressMask)
 {
     /* extract 128-bit cipher blocks */
     __m128i c0 = _mm512_extracti64x2_epi64(*pCipherBlocks, 0);

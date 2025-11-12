@@ -30,7 +30,7 @@
 
 
 /* Auxilirary function */
-__IPPCP_INLINE int cpGetBitSize(Ipp32u offset, Ipp32u val)
+IPPCP_INLINE int cpGetBitSize(Ipp32u offset, Ipp32u val)
 {
     int bitSize = 31;
     if (val == 0)

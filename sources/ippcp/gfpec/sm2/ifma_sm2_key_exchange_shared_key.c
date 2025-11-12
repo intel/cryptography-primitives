@@ -26,10 +26,10 @@
 
 
 
-__IPPCP_INLINE void ifma_sm2_set_affine_point_radix52(PSM2_POINT_IFMA* rp,
-                                                      const BNU_CHUNK_T* x,
-                                                      const BNU_CHUNK_T* y,
-                                                      ifmaArithMethod* method)
+IPPCP_INLINE void ifma_sm2_set_affine_point_radix52(PSM2_POINT_IFMA* rp,
+                                                    const BNU_CHUNK_T* x,
+                                                    const BNU_CHUNK_T* y,
+                                                    ifmaArithMethod* method)
 
 {
     ifma_import to_radix52 = method->import_to52;
@@ -45,10 +45,10 @@ __IPPCP_INLINE void ifma_sm2_set_affine_point_radix52(PSM2_POINT_IFMA* rp,
     return;
 }
 
-__IPPCP_INLINE void ifma_sm2_get_affine(BNU_CHUNK_T* x,
-                                        BNU_CHUNK_T* y,
-                                        const PSM2_POINT_IFMA* p,
-                                        ifmaArithMethod* method)
+IPPCP_INLINE void ifma_sm2_get_affine(BNU_CHUNK_T* x,
+                                      BNU_CHUNK_T* y,
+                                      const PSM2_POINT_IFMA* p,
+                                      ifmaArithMethod* method)
 {
     /* extract affine coordinate */
     fesm2 loc_x, loc_y;

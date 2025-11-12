@@ -53,7 +53,7 @@ static const __ALIGN64 Ipp64u PSM2_R[PSM2_LEN52] = { 0x0000000001000000,
  * 0xFF - is equal one
  * 0x00 - is no equal one
  */
-__IPPCP_INLINE mask8 sm2_is_msb(const mask8 a) { return (mask8)((mask8)0 - (a >> 7)); }
+IPPCP_INLINE mask8 sm2_is_msb(const mask8 a) { return (mask8)((mask8)0 - (a >> 7)); }
 
 /**
  * \brief
@@ -63,7 +63,7 @@ __IPPCP_INLINE mask8 sm2_is_msb(const mask8 a) { return (mask8)((mask8)0 - (a >>
  * 0xFF - is zero value
  * 0x00 - no equal zero
  */
-__IPPCP_INLINE mask8 sm2_is_zero_i64(const m512 a)
+IPPCP_INLINE mask8 sm2_is_zero_i64(const m512 a)
 {
     const mask8 mask = cmp_i64_mask(a, setzero_i64(), _MM_CMPINT_NE);
     return sm2_is_msb((~mask & (mask - 1)));

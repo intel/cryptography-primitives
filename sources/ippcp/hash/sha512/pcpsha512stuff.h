@@ -86,7 +86,7 @@ static __ALIGN16 const Ipp64u sha512_cnt[] = {
 };
 
 /* setup init hash value */
-__IPPCP_INLINE void hashInit(Ipp64u* pHash, const Ipp64u* iv)
+IPPCP_INLINE void hashInit(Ipp64u* pHash, const Ipp64u* iv)
 {
     pHash[0] = iv[0];
     pHash[1] = iv[1];

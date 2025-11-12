@@ -133,7 +133,7 @@ IPP_OWN_DECL(IppStatus, cp_xmss_WOTS_sign, (const Ipp8u* M,
  *    x   double precision floating point value
  */
 
-__IPPCP_INLINE Ipp32s cp_xmss_ceil(double x)
+IPPCP_INLINE Ipp32s cp_xmss_ceil(double x)
 {
     Ipp32s int_val = (Ipp32s)x;
     if (int_val == x || x <= 0.0) {
@@ -154,7 +154,7 @@ __IPPCP_INLINE Ipp32s cp_xmss_ceil(double x)
  *    adrs      changed array of bytes
  */
 
-__IPPCP_INLINE void cp_xmss_set_adrs_idx(Ipp8u* adrs, Ipp32u value, int word_id)
+IPPCP_INLINE void cp_xmss_set_adrs_idx(Ipp8u* adrs, Ipp32u value, int word_id)
 {
     adrs[4 * word_id + 3] = (Ipp8u)value & 0xff;
     adrs[4 * word_id + 2] = (Ipp8u)(value >> 8) & 0xff;
@@ -173,7 +173,7 @@ __IPPCP_INLINE void cp_xmss_set_adrs_idx(Ipp8u* adrs, Ipp32u value, int word_id)
  *    word_id   int32 idx in the input array
  */
 
-__IPPCP_INLINE Ipp32u cp_xmss_get_adrs_idx(Ipp8u* input, int word_id)
+IPPCP_INLINE Ipp32u cp_xmss_get_adrs_idx(Ipp8u* input, int word_id)
 {
     Ipp32u idx = input[4 * word_id];
     idx        = (idx << 8) | input[4 * word_id + 1];
@@ -192,7 +192,7 @@ __IPPCP_INLINE Ipp32u cp_xmss_get_adrs_idx(Ipp8u* input, int word_id)
  *    word_id   int32 idx in the adrs array
  */
 
-__IPPCP_INLINE Ipp8u cp_xmss_set_adrs_1_byte(int word_id) { return (Ipp8u)(4 * word_id + 3); }
+IPPCP_INLINE Ipp8u cp_xmss_set_adrs_1_byte(int word_id) { return (Ipp8u)(4 * word_id + 3); }
 
 // description of internals for OTS Hash / L-tree / Hash tree address is following
 // +-----------------------------------------------------+
@@ -212,61 +212,55 @@ __IPPCP_INLINE Ipp8u cp_xmss_set_adrs_1_byte(int word_id) { return (Ipp8u)(4 * w
 // +-----------------------------------------------------+
 
 // 3: tree type
-__IPPCP_INLINE void cp_xmss_set_tree_type(Ipp8u* adrs, Ipp8u value)
+IPPCP_INLINE void cp_xmss_set_tree_type(Ipp8u* adrs, Ipp8u value)
 {
     adrs[cp_xmss_set_adrs_1_byte(3)] = value;
 }
 
 // 4: OTS address / L-tree address
-__IPPCP_INLINE void cp_xmss_set_ots_address(Ipp8u* adrs, Ipp32u value)
+IPPCP_INLINE void cp_xmss_set_ots_address(Ipp8u* adrs, Ipp32u value)
 {
     cp_xmss_set_adrs_idx(adrs, value, 4);
 }
 
-__IPPCP_INLINE void cp_xmss_set_ltree_address(Ipp8u* adrs, Ipp32u value)
+IPPCP_INLINE void cp_xmss_set_ltree_address(Ipp8u* adrs, Ipp32u value)
 {
     cp_xmss_set_adrs_idx(adrs, value, 4);
 }
 
 // 5: chain address / tree height
-__IPPCP_INLINE void cp_xmss_set_chain_address(Ipp8u* adrs, Ipp8u value)
+IPPCP_INLINE void cp_xmss_set_chain_address(Ipp8u* adrs, Ipp8u value)
 {
     adrs[cp_xmss_set_adrs_1_byte(5)] = value;
 }
 
-__IPPCP_INLINE void cp_xmss_set_tree_height(Ipp8u* adrs, Ipp8u value)
+IPPCP_INLINE void cp_xmss_set_tree_height(Ipp8u* adrs, Ipp8u value)
 {
     adrs[cp_xmss_set_adrs_1_byte(5)] = value;
 }
 
-__IPPCP_INLINE Ipp8u cp_xmss_get_tree_height(Ipp8u* adrs)
-{
-    return adrs[cp_xmss_set_adrs_1_byte(5)];
-}
+IPPCP_INLINE Ipp8u cp_xmss_get_tree_height(Ipp8u* adrs) { return adrs[cp_xmss_set_adrs_1_byte(5)]; }
 
 // 6: hash address / tree index
-__IPPCP_INLINE void cp_xmss_set_hash_address(Ipp8u* adrs, Ipp8u value)
+IPPCP_INLINE void cp_xmss_set_hash_address(Ipp8u* adrs, Ipp8u value)
 {
     adrs[cp_xmss_set_adrs_1_byte(6)] = value;
 }
 
-__IPPCP_INLINE void cp_xmss_set_tree_index_8(Ipp8u* adrs, Ipp8u value)
+IPPCP_INLINE void cp_xmss_set_tree_index_8(Ipp8u* adrs, Ipp8u value)
 {
     adrs[cp_xmss_set_adrs_1_byte(6)] = value;
 }
 
-__IPPCP_INLINE void cp_xmss_set_tree_index_32(Ipp8u* adrs, Ipp32u value)
+IPPCP_INLINE void cp_xmss_set_tree_index_32(Ipp8u* adrs, Ipp32u value)
 {
     cp_xmss_set_adrs_idx(adrs, value, 6);
 }
 
-__IPPCP_INLINE Ipp32u cp_xmss_get_tree_index(Ipp8u* input)
-{
-    return cp_xmss_get_adrs_idx(input, 6);
-}
+IPPCP_INLINE Ipp32u cp_xmss_get_tree_index(Ipp8u* input) { return cp_xmss_get_adrs_idx(input, 6); }
 
 // 7: keyAndMask
-__IPPCP_INLINE void cp_xmss_set_key_and_mask(Ipp8u* adrs, Ipp8u value)
+IPPCP_INLINE void cp_xmss_set_key_and_mask(Ipp8u* adrs, Ipp8u value)
 {
     adrs[cp_xmss_set_adrs_1_byte(7)] = value;
 }

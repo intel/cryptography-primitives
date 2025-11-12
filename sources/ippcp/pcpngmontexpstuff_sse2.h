@@ -41,13 +41,13 @@
 
 
 /* number of "diSize" chunks in "bitSize" bit string */
-__IPPCP_INLINE int cpDigitNum_sse2(int bitSize, int digSize)
+IPPCP_INLINE int cpDigitNum_sse2(int bitSize, int digSize)
 {
     return (bitSize + digSize - 1) / digSize;
 }
 
 /* number of "RSA_SSE2_DIGIT_SIZE" chunks in "bitSize" bit string matched for AMM */
-__IPPCP_INLINE cpSize numofVariable_sse2(int modulusBits)
+IPPCP_INLINE cpSize numofVariable_sse2(int modulusBits)
 {
     cpSize ammBitSize =
         2 + cpDigitNum_sse2(modulusBits, BITSIZE(BNU_CHUNK_T)) * BITSIZE(BNU_CHUNK_T);
@@ -56,7 +56,7 @@ __IPPCP_INLINE cpSize numofVariable_sse2(int modulusBits)
 }
 
 /* buffer corresponding to numofVariable_sse2() */
-__IPPCP_INLINE cpSize numofVariableBuff_sse2(int numV) { return numV + 4 + (numV & 1); }
+IPPCP_INLINE cpSize numofVariableBuff_sse2(int numV) { return numV + 4 + (numV & 1); }
 
 /* clang-format off */
 /* exponentiation buffer size */

@@ -106,7 +106,7 @@ IPP_OWN_DECL(BNU_CHUNK_T, gsMontFactor, (BNU_CHUNK_T m0))
 //    poolReq   Required pool
 *F*/
 
-__IPPCP_INLINE BNU_CHUNK_T* gsModPoolAlloc(gsModEngine* pME, int poolReq)
+IPPCP_INLINE BNU_CHUNK_T* gsModPoolAlloc(gsModEngine* pME, int poolReq)
 {
     BNU_CHUNK_T* pPool = MOD_BUFFER(pME, pME->poolLenUsed);
 
@@ -131,7 +131,7 @@ __IPPCP_INLINE BNU_CHUNK_T* gsModPoolAlloc(gsModEngine* pME, int poolReq)
 //    poolReq   Required pool
 *F*/
 
-__IPPCP_INLINE void gsModPoolFree(gsModEngine* pME, int poolReq)
+IPPCP_INLINE void gsModPoolFree(gsModEngine* pME, int poolReq)
 {
     if (pME->poolLenUsed < poolReq)
         poolReq = pME->poolLenUsed;

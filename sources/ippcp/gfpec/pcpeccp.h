@@ -29,10 +29,10 @@
 #include "gfpec/pcpgfpecstuff.h"
 
 
-__IPPCP_INLINE IppsBigNumState* cpConstructBN(IppsBigNumState* pBN,
-                                              cpSize len,
-                                              BNU_CHUNK_T* pData,
-                                              BNU_CHUNK_T* pBuffer)
+IPPCP_INLINE IppsBigNumState* cpConstructBN(IppsBigNumState* pBN,
+                                            cpSize len,
+                                            BNU_CHUNK_T* pData,
+                                            BNU_CHUNK_T* pBuffer)
 {
     BN_SET_ID(pBN);
     BN_SIGN(pBN)   = ippBigNumPOS;
@@ -163,12 +163,12 @@ extern const BNU_CHUNK_T h_secp384r1_p[];
 extern const BNU_CHUNK_T h_secp521r1_p[];
 extern const BNU_CHUNK_T h_tpmSM2_p256_p[];
 
-__IPPCP_INLINE BNU_CHUNK_T* cpModAdd_BNU(BNU_CHUNK_T* pR,
-                                         const BNU_CHUNK_T* pA,
-                                         const BNU_CHUNK_T* pB,
-                                         const BNU_CHUNK_T* pM,
-                                         int ns,
-                                         BNU_CHUNK_T* pBuffer)
+IPPCP_INLINE BNU_CHUNK_T* cpModAdd_BNU(BNU_CHUNK_T* pR,
+                                       const BNU_CHUNK_T* pA,
+                                       const BNU_CHUNK_T* pB,
+                                       const BNU_CHUNK_T* pM,
+                                       int ns,
+                                       BNU_CHUNK_T* pBuffer)
 {
     BNU_CHUNK_T e = cpAdd_BNU(pR, pA, pB, ns);
     e -= cpSub_BNU(pBuffer, pR, pM, ns);
@@ -176,12 +176,12 @@ __IPPCP_INLINE BNU_CHUNK_T* cpModAdd_BNU(BNU_CHUNK_T* pR,
     return pR;
 }
 
-__IPPCP_INLINE BNU_CHUNK_T* cpModSub_BNU(BNU_CHUNK_T* pR,
-                                         const BNU_CHUNK_T* pA,
-                                         const BNU_CHUNK_T* pB,
-                                         const BNU_CHUNK_T* pM,
-                                         int ns,
-                                         BNU_CHUNK_T* pBuffer)
+IPPCP_INLINE BNU_CHUNK_T* cpModSub_BNU(BNU_CHUNK_T* pR,
+                                       const BNU_CHUNK_T* pA,
+                                       const BNU_CHUNK_T* pB,
+                                       const BNU_CHUNK_T* pM,
+                                       int ns,
+                                       BNU_CHUNK_T* pBuffer)
 {
     BNU_CHUNK_T e = cpSub_BNU(pR, pA, pB, ns);
     cpAdd_BNU(pBuffer, pR, pM, ns);

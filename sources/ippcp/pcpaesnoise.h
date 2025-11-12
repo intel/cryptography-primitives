@@ -47,7 +47,7 @@ typedef struct _cpAESNoiseParams {
 #define AES_NOISE_LEVEL(ctx) ((ctx)->noiseLevel)
 
 /* size of _cpAESNoiseParams structure */
-__IPPCP_INLINE int cpSizeofNoise_Params(void) { return sizeof(cpAESNoiseParams); }
+IPPCP_INLINE int cpSizeofNoise_Params(void) { return sizeof(cpAESNoiseParams); }
 
 #define _ippcpDelay OWNAPI(_ippcpDelay)
 IPP_OWN_DECL(void, _ippcpDelay, (Ipp32u value))

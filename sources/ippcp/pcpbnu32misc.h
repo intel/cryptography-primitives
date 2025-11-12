@@ -34,7 +34,7 @@
 #define cpNLZ_BNU32 OWNAPI(cpNLZ_BNU32)
 IPP_OWN_DECL(cpSize, cpNLZ_BNU32, (Ipp32u x))
 #else
-__IPPCP_INLINE cpSize cpNLZ_BNU32(Ipp32u x) { return (cpSize)_lzcnt_u32(x); }
+IPPCP_INLINE cpSize cpNLZ_BNU32(Ipp32u x) { return (cpSize)_lzcnt_u32(x); }
 #endif
 
 /*   Name: cpFix_BNU32
@@ -49,7 +49,7 @@ __IPPCP_INLINE cpSize cpNLZ_BNU32(Ipp32u x) { return (cpSize)_lzcnt_u32(x); }
 //    nsA      size of BNU
 //
 */
-__IPPCP_INLINE int cpFix_BNU32(const Ipp32u* pA, int nsA)
+IPPCP_INLINE int cpFix_BNU32(const Ipp32u* pA, int nsA)
 {
     Ipp32u zscan = (Ipp32u)(-1);
     int outLen   = nsA;
@@ -64,7 +64,7 @@ __IPPCP_INLINE int cpFix_BNU32(const Ipp32u* pA, int nsA)
 
 /* most significant BNU bit */
 #if 0
-__IPPCP_INLINE int cpMSBit_BNU32(const Ipp32u* pA, cpSize nsA)
+IPPCP_INLINE int cpMSBit_BNU32(const Ipp32u* pA, cpSize nsA)
 {
    FIX_BNU(pA, nsA);
    return nsA*BITSIZE(Ipp32u) - cpNLZ_BNU32(pA[nsA-1]) -1;
@@ -72,7 +72,7 @@ __IPPCP_INLINE int cpMSBit_BNU32(const Ipp32u* pA, cpSize nsA)
 #endif
 
 #if 0
-__IPPCP_INLINE int cpCmp_BNU32(const Ipp32u* pA, cpSize nsA, const Ipp32u* pB, cpSize nsB)
+IPPCP_INLINE int cpCmp_BNU32(const Ipp32u* pA, cpSize nsA, const Ipp32u* pB, cpSize nsB)
 {
    if(nsA!=nsB)
       return nsA>nsB? 1 : -1;

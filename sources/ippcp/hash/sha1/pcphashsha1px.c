@@ -61,7 +61,7 @@
     }
 
 #if defined(_ALG_SHA1_COMPACT_)
-__IPPCP_INLINE Ipp32u MagicFun(int s, Ipp32u b, Ipp32u c, Ipp32u d)
+IPPCP_INLINE Ipp32u MagicFun(int s, Ipp32u b, Ipp32u c, Ipp32u d)
 {
     switch (s) {
     case 0:

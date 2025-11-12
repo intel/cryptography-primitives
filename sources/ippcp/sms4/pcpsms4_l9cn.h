@@ -96,7 +96,7 @@ static __ALIGN32 Ipp8u affineOut[] = { 0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d,
 //
 */
 
-__FORCEINLINE __m256i affine(__m256i x, __m256i maskLO, __m256i maskHI)
+IPPCP_FORCEINLINE __m256i affine(__m256i x, __m256i maskLO, __m256i maskHI)
 {
     __m256i T1 = _mm256_and_si256(_mm256_srli_epi64(x, 4), M256(lowBits4));
     __m256i T0 = _mm256_and_si256(x, M256(lowBits4));
@@ -105,7 +105,7 @@ __FORCEINLINE __m256i affine(__m256i x, __m256i maskLO, __m256i maskHI)
     return _mm256_xor_si256(T0, T1);
 }
 
-__FORCEINLINE __m256i AES_ENC_LAST(__m256i x, __m128i key)
+IPPCP_FORCEINLINE __m256i AES_ENC_LAST(__m256i x, __m128i key)
 {
     __m128i t0 = _mm256_extracti128_si256(x, 0);
     __m128i t1 = _mm256_extracti128_si256(x, 1);
@@ -134,7 +134,7 @@ __FORCEINLINE __m256i AES_ENC_LAST(__m256i x, __m128i key)
 //
 */
 
-__FORCEINLINE __m256i sBox(__m256i block)
+IPPCP_FORCEINLINE __m256i sBox(__m256i block)
 {
     block = affine(block, M256(inpMaskLO), M256(inpMaskHI));
     block = AES_ENC_LAST(block, M128(encKey));
@@ -144,7 +144,7 @@ __FORCEINLINE __m256i sBox(__m256i block)
     return block;
 }
 
-__FORCEINLINE __m256i L(__m256i x)
+IPPCP_FORCEINLINE __m256i L(__m256i x)
 {
     __m256i T = _mm256_xor_si256(_mm256_slli_epi32(x, 2), _mm256_srli_epi32(x, 30));
 

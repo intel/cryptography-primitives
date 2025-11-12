@@ -101,7 +101,7 @@ static __ALIGN64 Ipp8u affineOut[] = {
 // sBox
 */
 
-__FORCEINLINE __m512i sBox512(__m512i block)
+IPPCP_FORCEINLINE __m512i sBox512(__m512i block)
 {
     block = _mm512_gf2p8affine_epi64_epi8(block, M512(affineIn), 0x65);
     block = _mm512_gf2p8affineinv_epi64_epi8(block, M512(affineOut), 0xd3);
@@ -110,7 +110,7 @@ __FORCEINLINE __m512i sBox512(__m512i block)
 
 /*
 // Not used in current pipeline
-__FORCEINLINE __m256i sBox256(__m256i block)
+IPPCP_FORCEINLINE __m256i sBox256(__m256i block)
 {
    block = _mm256_gf2p8affine_epi64_epi8(block, M256(affineIn), 0x65);
    block = _mm256_gf2p8affineinv_epi64_epi8(block, M256(affineOut), 0xd3);
@@ -119,7 +119,7 @@ __FORCEINLINE __m256i sBox256(__m256i block)
 }
 */
 
-__FORCEINLINE __m128i sBox128(__m128i block)
+IPPCP_FORCEINLINE __m128i sBox128(__m128i block)
 {
     block = _mm_gf2p8affine_epi64_epi8(block, M128(affineIn), 0x65);
     block = _mm_gf2p8affineinv_epi64_epi8(block, M128(affineOut), 0xd3);
@@ -130,7 +130,7 @@ __FORCEINLINE __m128i sBox128(__m128i block)
 // L
 */
 
-__FORCEINLINE __m512i L512(__m512i x)
+IPPCP_FORCEINLINE __m512i L512(__m512i x)
 {
     __m512i rolled0 = _mm512_rol_epi32(x, 2);
     __m512i rolled1 = _mm512_rol_epi32(x, 10);
@@ -143,7 +143,7 @@ __FORCEINLINE __m512i L512(__m512i x)
 
 /*
 // Not used in current pipeline
-__FORCEINLINE __m256i L256(__m256i x)
+IPPCP_FORCEINLINE __m256i L256(__m256i x)
 {
    __m256i T = _mm256_xor_si256(_mm256_slli_epi32(x, 2), _mm256_srli_epi32(x,30));
 
@@ -159,7 +159,7 @@ __FORCEINLINE __m256i L256(__m256i x)
 }
 */
 
-__FORCEINLINE __m128i L128(__m128i x)
+IPPCP_FORCEINLINE __m128i L128(__m128i x)
 {
     __m128i rolled0 = _mm_rol_epi32(x, 2);
     __m128i rolled1 = _mm_rol_epi32(x, 10);

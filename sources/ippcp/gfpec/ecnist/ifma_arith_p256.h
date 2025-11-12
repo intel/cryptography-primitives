@@ -70,7 +70,7 @@ IPP_OWN_DECL(m512, ifma_amm52_p256, (const m512 a, const m512 b))
  *
  * \param[in]  a   value (in radix 2^52)
  */
-__IPPCP_INLINE IPP_OWN_DEFN(m512, ifma_ams52_p256, (const m512 a)) { return ifma_amm52_p256(a, a); }
+IPPCP_INLINE IPP_OWN_DEFN(m512, ifma_ams52_p256, (const m512 a)) { return ifma_amm52_p256(a, a); }
 
 /**
  * \brief
@@ -83,7 +83,7 @@ __IPPCP_INLINE IPP_OWN_DEFN(m512, ifma_ams52_p256, (const m512 a)) { return ifma
  * \param[in]  a2  value (in radix 2^52)
  */
 /* clang-format off */
-__IPPCP_INLINE IPP_OWN_DEFN(void, ifma_ams52_dual_p256, (m512* r1,
+IPPCP_INLINE IPP_OWN_DEFN(void, ifma_ams52_dual_p256, (m512* r1,
                                                          const m512 a1,
                                                          m512* r2,
                                                          const m512 a2))

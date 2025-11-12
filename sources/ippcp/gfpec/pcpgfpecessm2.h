@@ -51,7 +51,7 @@ struct _cpStateECES_SM2 {
 /* clang-format on */
 
 /* get a byte, update 0-kdf status */
-__IPPCP_INLINE Ipp8u cpECES_SM2KdfNextByte(IppsECESState_SM2* pState)
+IPPCP_INLINE Ipp8u cpECES_SM2KdfNextByte(IppsECESState_SM2* pState)
 {
     if (pState->kdfIndex == IPP_SM3_DIGEST_BITSIZE / BYTESIZE) {
         ++pState->kdfCounter;

@@ -53,7 +53,7 @@ struct _cpAES_XTS {
     ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxAESXTS)
 
 /* size of AES-XTS context */
-__IPPCP_INLINE int cpSizeof_AES_XTS_Ctx(void) { return sizeof(IppsAES_XTSSpec); }
+IPPCP_INLINE int cpSizeof_AES_XTS_Ctx(void) { return sizeof(IppsAES_XTSSpec); }
 
 static int IsLegalGeometry(int startCipherBlkNo, int bitLen, int duBitsize)
 {

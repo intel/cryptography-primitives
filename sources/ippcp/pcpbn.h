@@ -68,7 +68,7 @@ IPP_OWN_DECL(void, cpPackBigNumCtx, (const IppsBigNumState* pBN, Ipp8u* pBuffer)
 IPP_OWN_DECL(void, cpUnpackBigNumCtx, (const Ipp8u* pBuffer, IppsBigNumState* pBN))
 
 /* copy BN */
-__IPPCP_INLINE IppsBigNumState* cpBN_copy(IppsBigNumState* pDst, const IppsBigNumState* pSrc)
+IPPCP_INLINE IppsBigNumState* cpBN_copy(IppsBigNumState* pDst, const IppsBigNumState* pSrc)
 {
     BN_SIGN(pDst) = BN_SIGN(pSrc);
     BN_SIZE(pDst) = BN_SIZE(pSrc);
@@ -76,7 +76,7 @@ __IPPCP_INLINE IppsBigNumState* cpBN_copy(IppsBigNumState* pDst, const IppsBigNu
     return pDst;
 }
 /* set BN to zero */
-__IPPCP_INLINE IppsBigNumState* cpBN_zero(IppsBigNumState* pBN)
+IPPCP_INLINE IppsBigNumState* cpBN_zero(IppsBigNumState* pBN)
 {
     BN_SIGN(pBN) = ippBigNumPOS;
     BN_SIZE(pBN) = 1;
@@ -84,7 +84,7 @@ __IPPCP_INLINE IppsBigNumState* cpBN_zero(IppsBigNumState* pBN)
     return pBN;
 }
 /* fixup BN */
-__IPPCP_INLINE IppsBigNumState* cpBN_fix(IppsBigNumState* pBN)
+IPPCP_INLINE IppsBigNumState* cpBN_fix(IppsBigNumState* pBN)
 {
     cpSize len = BN_SIZE(pBN);
     FIX_BNU(BN_NUMBER(pBN), len);
@@ -92,7 +92,7 @@ __IPPCP_INLINE IppsBigNumState* cpBN_fix(IppsBigNumState* pBN)
     return pBN;
 }
 /* set BN to chunk */
-__IPPCP_INLINE IppsBigNumState* cpBN_chunk(IppsBigNumState* pBN, BNU_CHUNK_T a)
+IPPCP_INLINE IppsBigNumState* cpBN_chunk(IppsBigNumState* pBN, BNU_CHUNK_T a)
 {
     BN_SIGN(pBN) = ippBigNumPOS;
     BN_SIZE(pBN) = 1;
@@ -101,7 +101,7 @@ __IPPCP_INLINE IppsBigNumState* cpBN_chunk(IppsBigNumState* pBN, BNU_CHUNK_T a)
     return pBN;
 }
 /* set BN to 2^m */
-__IPPCP_INLINE IppsBigNumState* cpBN_power2(IppsBigNumState* pBN, int power)
+IPPCP_INLINE IppsBigNumState* cpBN_power2(IppsBigNumState* pBN, int power)
 {
     cpSize size = BITS_BNU_CHUNK(power + 1);
     if (BN_ROOM(pBN) >= size) {
@@ -115,14 +115,14 @@ __IPPCP_INLINE IppsBigNumState* cpBN_power2(IppsBigNumState* pBN, int power)
 }
 
 /* bitsize of BN */
-__IPPCP_INLINE int cpBN_bitsize(const IppsBigNumState* pA)
+IPPCP_INLINE int cpBN_bitsize(const IppsBigNumState* pA)
 {
     int bitsize = BITSIZE_BNU(BN_NUMBER(pA), BN_SIZE(pA));
     return bitsize;
 }
 
 /* returns -1/0/+1 depemding on A~B comparison */
-__IPPCP_INLINE int cpBN_cmp(const IppsBigNumState* pA, const IppsBigNumState* pB)
+IPPCP_INLINE int cpBN_cmp(const IppsBigNumState* pA, const IppsBigNumState* pB)
 {
     IppsBigNumSGN signA = BN_SIGN(pA);
     IppsBigNumSGN signB = BN_SIGN(pB);
@@ -135,7 +135,7 @@ __IPPCP_INLINE int cpBN_cmp(const IppsBigNumState* pA, const IppsBigNumState* pB
 }
 
 /* returns -1/0/+1 depemding on A comparison  0</==0/>0 */
-__IPPCP_INLINE int cpBN_tst(const IppsBigNumState* pA)
+IPPCP_INLINE int cpBN_tst(const IppsBigNumState* pA)
 {
     if (1 == BN_SIZE(pA) && 0 == BN_NUMBER(pA)[0])
         return 0;
@@ -145,13 +145,13 @@ __IPPCP_INLINE int cpBN_tst(const IppsBigNumState* pA)
 
 
 // some addition functions
-__IPPCP_INLINE int IsZero_BN(const IppsBigNumState* pA)
+IPPCP_INLINE int IsZero_BN(const IppsBigNumState* pA)
 {
     return (BN_SIZE(pA) == 1) && (BN_NUMBER(pA)[0] == 0);
 }
-__IPPCP_INLINE int IsOdd_BN(const IppsBigNumState* pA) { return BN_NUMBER(pA)[0] & 1; }
+IPPCP_INLINE int IsOdd_BN(const IppsBigNumState* pA) { return BN_NUMBER(pA)[0] & 1; }
 
-__IPPCP_INLINE IppsBigNumState* BN_Word(IppsBigNumState* pBN, BNU_CHUNK_T w)
+IPPCP_INLINE IppsBigNumState* BN_Word(IppsBigNumState* pBN, BNU_CHUNK_T w)
 {
     BN_SIGN(pBN) = ippBigNumPOS;
     BN_SIZE(pBN) = 1;
@@ -159,17 +159,17 @@ __IPPCP_INLINE IppsBigNumState* BN_Word(IppsBigNumState* pBN, BNU_CHUNK_T w)
     BN_NUMBER(pBN)[0] = w;
     return pBN;
 }
-__IPPCP_INLINE IppsBigNumState* BN_Set(const BNU_CHUNK_T* pData, cpSize len, IppsBigNumState* pBN)
+IPPCP_INLINE IppsBigNumState* BN_Set(const BNU_CHUNK_T* pData, cpSize len, IppsBigNumState* pBN)
 {
     BN_SIGN(pBN) = ippBigNumPOS;
     BN_SIZE(pBN) = len;
     ZEXPAND_COPY_BNU(BN_NUMBER(pBN), BN_ROOM(pBN), pData, len);
     return pBN;
 }
-__IPPCP_INLINE IppsBigNumState* BN_Make(BNU_CHUNK_T* pData,
-                                        BNU_CHUNK_T* pBuffer,
-                                        cpSize len,
-                                        IppsBigNumState* pBN)
+IPPCP_INLINE IppsBigNumState* BN_Make(BNU_CHUNK_T* pData,
+                                      BNU_CHUNK_T* pBuffer,
+                                      cpSize len,
+                                      IppsBigNumState* pBN)
 {
     BN_SET_ID(pBN);
     BN_SIGN(pBN)   = ippBigNumPOS;

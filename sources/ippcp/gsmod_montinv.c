@@ -31,7 +31,7 @@
 #include "gsmodstuff.h"
 #include "pcpmask_ct.h"
 
-__IPPCP_INLINE BNU_CHUNK_T* cpPow2_ct(int bit, BNU_CHUNK_T* dst, int len)
+IPPCP_INLINE BNU_CHUNK_T* cpPow2_ct(int bit, BNU_CHUNK_T* dst, int len)
 {
     int slot          = bit / BNU_CHUNK_BITS;
     BNU_CHUNK_T value = (BNU_CHUNK_T)1 << (bit % BNU_CHUNK_BITS);

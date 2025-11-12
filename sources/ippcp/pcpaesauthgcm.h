@@ -149,13 +149,13 @@ struct _cpAES_GCM {
     ((((context)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((context))) == (Ipp32u)idCtxAESGCM)
 
 #if 0
-__IPPCP_INLINE void IncrementCounter32(Ipp8u* pCtr)
+IPPCP_INLINE void IncrementCounter32(Ipp8u* pCtr)
 {
     int i;
     for(i=BLOCK_SIZE-1; i>=CTR_POS && 0==(Ipp8u)(++pCtr[i]); i--) ;
 }
 #endif
-__IPPCP_INLINE void IncrementCounter32(Ipp8u* pCtr)
+IPPCP_INLINE void IncrementCounter32(Ipp8u* pCtr)
 {
     Ipp32u* pCtr32 = (Ipp32u*)pCtr;
     Ipp32u ctrVal  = pCtr32[3];

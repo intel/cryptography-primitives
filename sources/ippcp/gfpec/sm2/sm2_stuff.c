@@ -101,7 +101,7 @@ IPP_OWN_DEFN(IppStatus, computeZa_user_id_hash_sm2, (Ipp8u* pZa_digest,
 
 #define SIZE_CT (4)
 
-__IPPCP_INLINE void convert_ct_to_big_endian(Ipp8u pCt[SIZE_CT], const Ipp32u ct)
+IPPCP_INLINE void convert_ct_to_big_endian(Ipp8u pCt[SIZE_CT], const Ipp32u ct)
 {
     pCt[0] = (Ipp8u)(ct >> 24);
     pCt[1] = (Ipp8u)(ct >> 16);

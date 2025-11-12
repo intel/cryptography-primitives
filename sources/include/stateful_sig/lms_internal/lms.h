@@ -102,7 +102,7 @@ struct _cpLMSSignatureState {
  * Output parameters:
  *    params    LMS parameters (h, m, hash_method)
  */
-__IPPCP_INLINE IppStatus setLMSParams(IppsLMSAlgo lmsOIDAlgo, cpLMSParams* params)
+IPPCP_INLINE IppStatus setLMSParams(IppsLMSAlgo lmsOIDAlgo, cpLMSParams* params)
 {
     /* Set h */
     switch (lmsOIDAlgo % 5) {

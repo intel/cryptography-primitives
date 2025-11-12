@@ -18,15 +18,15 @@
 #include "hash/pcphash_rmf.h"
 
 // Check all the ippsRSASign_PSS_rmf parameters and align pPrvKey, pPubKey pointers
-__IPPCP_INLINE IppStatus SingleSignPssRmfPreproc(const Ipp8u* pMsg,
-                                                 int msgLen,
-                                                 const Ipp8u* pSalt,
-                                                 int saltLen,
-                                                 Ipp8u* pSign,
-                                                 const IppsRSAPrivateKeyState** pPrvKey,
-                                                 const IppsRSAPublicKeyState** pPubKey,
-                                                 const IppsHashMethod* pMethod,
-                                                 Ipp8u* pScratchBuffer)
+IPPCP_INLINE IppStatus SingleSignPssRmfPreproc(const Ipp8u* pMsg,
+                                               int msgLen,
+                                               const Ipp8u* pSalt,
+                                               int saltLen,
+                                               Ipp8u* pSign,
+                                               const IppsRSAPrivateKeyState** pPrvKey,
+                                               const IppsRSAPublicKeyState** pPubKey,
+                                               const IppsHashMethod* pMethod,
+                                               Ipp8u* pScratchBuffer)
 {
     /* test message length */
     IPP_BADARG_RET((msgLen < 0), ippStsLengthErr);
@@ -58,13 +58,13 @@ __IPPCP_INLINE IppStatus SingleSignPssRmfPreproc(const Ipp8u* pMsg,
 }
 
 // Check all the ippsRSAVerify_PSS_rmf parameters, set valid=0, align pKey pointer
-__IPPCP_INLINE IppStatus SingleVerifyPssRmfPreproc(const Ipp8u* pMsg,
-                                                   int msgLen,
-                                                   const Ipp8u* pSign,
-                                                   int* pIsValid,
-                                                   const IppsRSAPublicKeyState** pKey,
-                                                   const IppsHashMethod* pMethod,
-                                                   Ipp8u* pScratchBuffer)
+IPPCP_INLINE IppStatus SingleVerifyPssRmfPreproc(const Ipp8u* pMsg,
+                                                 int msgLen,
+                                                 const Ipp8u* pSign,
+                                                 int* pIsValid,
+                                                 const IppsRSAPublicKeyState** pKey,
+                                                 const IppsHashMethod* pMethod,
+                                                 Ipp8u* pScratchBuffer)
 {
     /* test message length */
     IPP_BADARG_RET((msgLen < 0), ippStsLengthErr);

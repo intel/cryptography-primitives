@@ -43,7 +43,7 @@ static const Ipp64u KECCAK_ROUND_CONSTANTS[KECCAK_ROUNDS] = {
 };
 
 // Left-rotates a 64-bit lane by a specified amount
-__IPPCP_INLINE Ipp64u cp_rotl64(Ipp64u lane, Ipp64u bits)
+IPPCP_INLINE Ipp64u cp_rotl64(Ipp64u lane, Ipp64u bits)
 {
     assert((0 < bits) && (bits < 64));
 

@@ -61,11 +61,11 @@
 //
 *F*/
 
-__IPPCP_INLINE BNU_CHUNK_T cpMul_BNU_school(BNU_CHUNK_T* pR,
-                                            const BNU_CHUNK_T* pA,
-                                            cpSize nsA,
-                                            const BNU_CHUNK_T* pB,
-                                            cpSize nsB)
+IPPCP_INLINE BNU_CHUNK_T cpMul_BNU_school(BNU_CHUNK_T* pR,
+                                          const BNU_CHUNK_T* pA,
+                                          cpSize nsA,
+                                          const BNU_CHUNK_T* pB,
+                                          cpSize nsB)
 {
 #if (_ADCOX_NI_ENABLING_ == _FEATURE_ON_)
     return cpMulAdx_BNU_school(pR, pA, nsA, pB, nsB);
@@ -97,7 +97,7 @@ __IPPCP_INLINE BNU_CHUNK_T cpMul_BNU_school(BNU_CHUNK_T* pR,
 //
 *F*/
 
-__IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU_school(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA)
+IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU_school(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pA, cpSize nsA)
 {
 #if (_ADCOX_NI_ENABLING_ == _FEATURE_ON_)
     return cpSqrAdx_BNU_school(pR, pA, nsA);
@@ -119,20 +119,20 @@ __IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU_school(BNU_CHUNK_T* pR, const BNU_CHUNK_T* 
 /*
 // multiplication/squaring wrappers
 */
-__IPPCP_INLINE BNU_CHUNK_T cpMul_BNU(BNU_CHUNK_T* pR,
-                                     const BNU_CHUNK_T* pA,
-                                     cpSize nsA,
-                                     const BNU_CHUNK_T* pB,
-                                     cpSize nsB,
-                                     BNU_CHUNK_T* pBuffer)
+IPPCP_INLINE BNU_CHUNK_T cpMul_BNU(BNU_CHUNK_T* pR,
+                                   const BNU_CHUNK_T* pA,
+                                   cpSize nsA,
+                                   const BNU_CHUNK_T* pB,
+                                   cpSize nsB,
+                                   BNU_CHUNK_T* pBuffer)
 {
     IPP_UNREFERENCED_PARAMETER(pBuffer);
     return cpMul_BNU_school(pR, pA, nsA, pB, nsB);
 }
-__IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T* pR,
-                                     const BNU_CHUNK_T* pA,
-                                     cpSize nsA,
-                                     BNU_CHUNK_T* pBuffer)
+IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T* pR,
+                                   const BNU_CHUNK_T* pA,
+                                   cpSize nsA,
+                                   BNU_CHUNK_T* pBuffer)
 {
     IPP_UNREFERENCED_PARAMETER(pBuffer);
     return cpSqr_BNU_school(pR, pA, nsA);
@@ -156,7 +156,7 @@ __IPPCP_INLINE BNU_CHUNK_T cpSqr_BNU(BNU_CHUNK_T* pR,
 //
 *F*/
 
-__IPPCP_INLINE cpSize
+IPPCP_INLINE cpSize
 cpDiv_BNU(BNU_CHUNK_T* pQ, cpSize* pnsQ, BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_T* pB, cpSize nsB)
 {
     int nsR = cpDiv_BNU32((Ipp32u*)pQ,
@@ -194,7 +194,7 @@ cpDiv_BNU(BNU_CHUNK_T* pQ, cpSize* pnsQ, BNU_CHUNK_T* pA, cpSize nsA, BNU_CHUNK_
 //
 *F*/
 
-__IPPCP_INLINE cpSize cpMod_BNU(BNU_CHUNK_T* pX, cpSize nsX, BNU_CHUNK_T* pModulus, cpSize nsM)
+IPPCP_INLINE cpSize cpMod_BNU(BNU_CHUNK_T* pX, cpSize nsX, BNU_CHUNK_T* pModulus, cpSize nsM)
 {
     return cpDiv_BNU(NULL, NULL, pX, nsX, pModulus, nsM);
 }

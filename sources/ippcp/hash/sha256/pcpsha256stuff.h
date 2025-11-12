@@ -52,7 +52,7 @@ static __ALIGN16 const Ipp32u sha256_cnt[] = {
 
 
 /* setup init hash value */
-__IPPCP_INLINE void hashInit(Ipp32u* pHash, const Ipp32u* iv)
+IPPCP_INLINE void hashInit(Ipp32u* pHash, const Ipp32u* iv)
 {
     pHash[0] = iv[0];
     pHash[1] = iv[1];

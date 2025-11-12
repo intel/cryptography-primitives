@@ -121,11 +121,11 @@ IPP_OWN_DECL(void, ifma_ec_nistp521_add_point_affine, (P521_POINT_IFMA* r,
 #include "gfpec/pcpgfpstuff.h"
 #include "gfpec/pcpgfpecstuff.h"
 
-__IPPCP_INLINE void recode_point_to_mont52(P521_POINT_IFMA* pR,
-                                           const BNU_CHUNK_T* pP,
-                                           BNU_CHUNK_T* pPool,
-                                           ifmaArithMethod_p521* method,
-                                           gsModEngine* pME)
+IPPCP_INLINE void recode_point_to_mont52(P521_POINT_IFMA* pR,
+                                         const BNU_CHUNK_T* pP,
+                                         BNU_CHUNK_T* pPool,
+                                         ifmaArithMethod_p521* method,
+                                         gsModEngine* pME)
 {
     ifma_import to_radix52 = method->import_to52;
     ifma_encode p_to_mont  = method->encode;
@@ -149,11 +149,11 @@ __IPPCP_INLINE void recode_point_to_mont52(P521_POINT_IFMA* pR,
     p_to_mont(&(pR->z), pR->z);
 }
 
-__IPPCP_INLINE void recode_point_to_mont64(IppsGFpECPoint* pR,
-                                           P521_POINT_IFMA* pP,
-                                           BNU_CHUNK_T* pPool,
-                                           ifmaArithMethod_p521* method,
-                                           gsModEngine* pME)
+IPPCP_INLINE void recode_point_to_mont64(IppsGFpECPoint* pR,
+                                         P521_POINT_IFMA* pP,
+                                         BNU_CHUNK_T* pPool,
+                                         ifmaArithMethod_p521* method,
+                                         gsModEngine* pME)
 {
     ifma_export to_radix64  = method->export_to64;
     ifma_decode p_from_mont = method->decode;

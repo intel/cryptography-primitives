@@ -131,7 +131,7 @@ typedef struct {
  *        bytesNeeded - number of bytes needed for allocation
  * Output: pointer to allocated memory or NULL if not enough space
  */
-__IPPCP_INLINE Ipp8u* cp_mlkemStorageAllocate(_cpMLKEMStorage* storage, Ipp64s bytesNeeded)
+IPPCP_INLINE Ipp8u* cp_mlkemStorageAllocate(_cpMLKEMStorage* storage, Ipp64s bytesNeeded)
 {
     if (storage->bytesCapacity - storage->bytesUsed < bytesNeeded) {
         return NULL; // Not enough space
@@ -147,7 +147,7 @@ __IPPCP_INLINE Ipp8u* cp_mlkemStorageAllocate(_cpMLKEMStorage* storage, Ipp64s b
  *         bytesRelease - number of bytes to release
  * Output: ippStsNoErr if release is successful, ippStsMemAllocErr if release size is incorrect
  */
-__IPPCP_INLINE IppStatus cp_mlkemStorageRelease(_cpMLKEMStorage* storage, Ipp64s bytesRelease)
+IPPCP_INLINE IppStatus cp_mlkemStorageRelease(_cpMLKEMStorage* storage, Ipp64s bytesRelease)
 {
     if (bytesRelease > storage->bytesUsed) {
         return ippStsMemAllocErr; // Not correct release size
@@ -171,7 +171,7 @@ __IPPCP_INLINE IppStatus cp_mlkemStorageRelease(_cpMLKEMStorage* storage, Ipp64s
  *
  * Note: the operation release the whole buffer, safe to be used for an empty storage.
  */
-__IPPCP_INLINE IppStatus cp_mlkemStorageReleaseAll(_cpMLKEMStorage* storage)
+IPPCP_INLINE IppStatus cp_mlkemStorageReleaseAll(_cpMLKEMStorage* storage)
 {
     // Zeroize the buffer (minimum amount between bytesUsed and bytesCapacity)
     PurgeBlock(storage->pStorageData,

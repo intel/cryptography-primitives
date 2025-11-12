@@ -35,7 +35,7 @@
 /*
 // optimal size of fixed window exponentiation
 */
-__IPPCP_INLINE cpSize gsMontExp_WinSize(cpSize bitsize)
+IPPCP_INLINE cpSize gsMontExp_WinSize(cpSize bitsize)
 {
 #if defined(_USE_WINDOW_EXP_)
     // new computations
@@ -61,10 +61,10 @@ __IPPCP_INLINE cpSize gsMontExp_WinSize(cpSize bitsize)
 /*
 // Montgomery encoding/decoding
 */
-__IPPCP_INLINE cpSize gsMontEnc_BNU(BNU_CHUNK_T* pR,
-                                    const BNU_CHUNK_T* pXreg,
-                                    cpSize nsX,
-                                    const gsModEngine* pMont)
+IPPCP_INLINE cpSize gsMontEnc_BNU(BNU_CHUNK_T* pR,
+                                  const BNU_CHUNK_T* pXreg,
+                                  cpSize nsX,
+                                  const gsModEngine* pMont)
 {
     cpSize nsM = MOD_LEN(pMont);
     ZEXPAND_COPY_BNU(pR, nsM, pXreg, nsX);
@@ -72,16 +72,16 @@ __IPPCP_INLINE cpSize gsMontEnc_BNU(BNU_CHUNK_T* pR,
     return nsM;
 }
 
-__IPPCP_INLINE cpSize gsMontDec_BNU(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pXmont, gsModEngine* pMont)
+IPPCP_INLINE cpSize gsMontDec_BNU(BNU_CHUNK_T* pR, const BNU_CHUNK_T* pXmont, gsModEngine* pMont)
 {
     cpSize nsM = MOD_LEN(pMont);
     MOD_METHOD(pMont)->decode(pR, pXmont, (gsModEngine*)pMont);
     return nsM;
 }
 
-__IPPCP_INLINE void gsMontEnc_BN(IppsBigNumState* pRbn,
-                                 const IppsBigNumState* pXbn,
-                                 gsModEngine* pMont)
+IPPCP_INLINE void gsMontEnc_BN(IppsBigNumState* pRbn,
+                               const IppsBigNumState* pXbn,
+                               gsModEngine* pMont)
 {
     BNU_CHUNK_T* pR = BN_NUMBER(pRbn);
     cpSize nsM      = MOD_LEN(pMont);

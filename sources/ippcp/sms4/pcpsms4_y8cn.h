@@ -72,7 +72,7 @@ static __ALIGN16 Ipp8u affineOut[] = { 0x19, 0x8b, 0x6c, 0x1e, 0x51, 0x8e, 0x2d,
 //
 */
 
-__FORCEINLINE __m128i affine(__m128i x, __m128i maskLO, __m128i maskHI)
+IPPCP_FORCEINLINE __m128i affine(__m128i x, __m128i maskLO, __m128i maskHI)
 {
     __m128i T1 = _mm_and_si128(_mm_srli_epi64(x, 4), M128(lowBits4));
     __m128i T0 = _mm_and_si128(x, M128(lowBits4));
@@ -99,7 +99,7 @@ __FORCEINLINE __m128i affine(__m128i x, __m128i maskLO, __m128i maskHI)
 //
 */
 
-__FORCEINLINE __m128i sBox(__m128i block)
+IPPCP_FORCEINLINE __m128i sBox(__m128i block)
 {
     block = affine(block, M128(inpMaskLO), M128(inpMaskHI));
     block = _mm_aesenclast_si128(block, M128(encKey));
@@ -110,7 +110,7 @@ __FORCEINLINE __m128i sBox(__m128i block)
 }
 
 #if (_IPP == _IPP_I0)
-__FORCEINLINE __m128i L(__m128i x)
+IPPCP_FORCEINLINE __m128i L(__m128i x)
 {
     __m128i T = _mm_slli_epi32(x, 2);
     T         = _mm_xor_si128(T, _mm_srli_epi32(x, 30));
@@ -130,7 +130,7 @@ static __ALIGN16 Ipp8u ROL8[]  = { 3, 0, 1, 2, 7, 4, 5, 6, 11, 8, 9, 10, 15, 12,
 static __ALIGN16 Ipp8u ROL16[] = { 2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13 };
 static __ALIGN16 Ipp8u ROL24[] = { 1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8, 13, 14, 15, 12 };
 
-__FORCEINLINE __m128i L(__m128i x)
+IPPCP_FORCEINLINE __m128i L(__m128i x)
 {
     __m128i rol2  = _mm_xor_si128(_mm_slli_epi32(x, 2), _mm_srli_epi32(x, 30));
     __m128i rol24 = _mm_shuffle_epi8(x, M128(ROL24));

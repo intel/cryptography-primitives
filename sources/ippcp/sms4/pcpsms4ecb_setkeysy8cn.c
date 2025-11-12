@@ -35,7 +35,7 @@
 
 #include "sms4/pcpsms4_y8cn.h"
 
-__IPPCP_INLINE __m128i Ltag(__m128i x)
+IPPCP_INLINE __m128i Ltag(__m128i x)
 {
     __m128i T = _mm_slli_epi32(x, 13);
     T         = _mm_xor_si128(T, _mm_srli_epi32(x, 19));
