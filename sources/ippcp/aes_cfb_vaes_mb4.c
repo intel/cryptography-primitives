@@ -30,9 +30,11 @@
         case 14:                                              \
             (b0) = _mm512_aesenc_epi128((b0), tkeys[-4]);     \
             (b0) = _mm512_aesenc_epi128((b0), tkeys[-3]);     \
+            IPPCP_FALLTHROUGH;                                \
         case 12:                                              \
             (b0) = _mm512_aesenc_epi128((b0), tkeys[-2]);     \
             (b0) = _mm512_aesenc_epi128((b0), tkeys[-1]);     \
+            IPPCP_FALLTHROUGH;                                \
         default:                                              \
             (b0) = _mm512_aesenc_epi128((b0), tkeys[0]);      \
             (b0) = _mm512_aesenc_epi128((b0), tkeys[1]);      \

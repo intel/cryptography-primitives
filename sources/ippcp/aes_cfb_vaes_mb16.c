@@ -40,6 +40,7 @@
             (b1) = _mm512_aesenc_epi128((b1), tkeys[-3][1]);        \
             (b2) = _mm512_aesenc_epi128((b2), tkeys[-3][2]);        \
             (b3) = _mm512_aesenc_epi128((b3), tkeys[-3][3]);        \
+            IPPCP_FALLTHROUGH;                                      \
         case 12:                                                    \
             (b0) = _mm512_aesenc_epi128((b0), tkeys[-2][0]);        \
             (b1) = _mm512_aesenc_epi128((b1), tkeys[-2][1]);        \
@@ -50,6 +51,7 @@
             (b1) = _mm512_aesenc_epi128((b1), tkeys[-1][1]);        \
             (b2) = _mm512_aesenc_epi128((b2), tkeys[-1][2]);        \
             (b3) = _mm512_aesenc_epi128((b3), tkeys[-1][3]);        \
+            IPPCP_FALLTHROUGH;                                      \
         default:                                                    \
             (b0) = _mm512_aesenc_epi128((b0), tkeys[0][0]);         \
             (b1) = _mm512_aesenc_epi128((b1), tkeys[0][1]);         \

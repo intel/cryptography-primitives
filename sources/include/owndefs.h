@@ -657,7 +657,6 @@ extern double __intel_castu64_f64(unsigned __int64 val);
 #define _IPP_DATA 1
 #endif
 
-
 /* OSX-32, OSX-64 */
 #elif defined(OSX32) || defined(OSXEM64T)
 #if (defined(_Y8))
@@ -670,6 +669,24 @@ extern double __intel_castu64_f64(unsigned __int64 val);
 #define _IPP_DATA 1
 #endif
 
+/* macro for switch constructions */
+#if !defined(IPPCP_FALLTHROUGH)
+#if !defined(_WIN32) && !defined(_WIN64)
+
+#if __STDC_VERSION__ >= 202311L // C23
+#define IPPCP_FALLTHROUGH [[fallthrough]]
+#else
+#define IPPCP_FALLTHROUGH __attribute__((fallthrough))
+#endif
+
+#else
+
+#define IPPCP_FALLTHROUGH \
+    do {                  \
+    } while (0)
+#endif
+
+#endif
 
 #if defined(__cplusplus)
 }

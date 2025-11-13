@@ -1069,9 +1069,11 @@ static int cpSMS4_ECB_gfni128_tail(Ipp8u* pOut, const Ipp8u* pInp, int len, cons
     case (3 * MBS_SMS4):
         TMP[3] =
             _mm_shuffle_epi8(_mm_loadu_si128((__m128i*)(pInp + 2 * MBS_SMS4)), M128(swapBytes));
+        IPPCP_FALLTHROUGH;
     case (2 * MBS_SMS4):
         TMP[2] =
             _mm_shuffle_epi8(_mm_loadu_si128((__m128i*)(pInp + 1 * MBS_SMS4)), M128(swapBytes));
+        IPPCP_FALLTHROUGH;
     case (1 * MBS_SMS4):
         TMP[1] =
             _mm_shuffle_epi8(_mm_loadu_si128((__m128i*)(pInp + 0 * MBS_SMS4)), M128(swapBytes));
@@ -1137,8 +1139,10 @@ static int cpSMS4_ECB_gfni128_tail(Ipp8u* pOut, const Ipp8u* pInp, int len, cons
     switch (len) {
     case (3 * MBS_SMS4):
         _mm_storeu_si128((__m128i*)(pOut + 2 * MBS_SMS4), TMP[2]);
+        IPPCP_FALLTHROUGH;
     case (2 * MBS_SMS4):
         _mm_storeu_si128((__m128i*)(pOut + 1 * MBS_SMS4), TMP[3]);
+        IPPCP_FALLTHROUGH;
     case (1 * MBS_SMS4):
         _mm_storeu_si128((__m128i*)(pOut + 0 * MBS_SMS4), TMP[4]);
         break;
