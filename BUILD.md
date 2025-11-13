@@ -36,10 +36,10 @@
 - GCC 11.5
 - GCC 14.3
 - GCC 15.1
-- Clang 9.0
 - Clang 12.0
 - Clang 16.0
 - Clang 18.1
+- Clang 21.1
 - GNU binutils 2.32
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
 
