@@ -116,13 +116,12 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
     Ipp8u *node, *temp_node;
     // Note: there is no overflow since the maximum value for h is 25 according to the Spec
     for (Ipp32u i = 0; i < (Ipp32u)(1 << h); i++) {
-        Ipp8u b;
         if ((isKeyGen == 0) && (aux_size > 0) && (idx_leaf != i)) {
-            b                = 0;
+            Ipp8u b          = 0;
             Ipp32u h_local   = 0;
             Ipp32u j_local   = i;
             Ipp32u idx_local = idx_leaf;
-            while (!b || h_local < h - 1) {
+            while (h_local < h - 1) {
                 if ((idx_local ^ 1) == j_local) {
                     Ipp32u aux_idx = ((1 << (h - h_local)) - 2) + j_local;
                     if (aux_idx * n < (Ipp32u)aux_size - n) {
