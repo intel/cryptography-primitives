@@ -151,5 +151,15 @@
 
 %idefine sizeof(_x_) _x_%+_size
 
+; Macro that handles empty compilation sources (e.g. architecture specific implementations)
+%macro IPPCP_EMPTY_NASM_FILE_HANDLER 0
+%ifdef IPPCP_NASM_DEBUG
+nop
+%endif ; IPPCP_NASM_DEBUG
+%endmacro
+
+; Apply to all files, only for debug builds
+IPPCP_EMPTY_NASM_FILE_HANDLER
+
 %endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;; End of file "asmdefs.inc" ;;;;;;;;;;;;;;;;;;;;;;;;;;

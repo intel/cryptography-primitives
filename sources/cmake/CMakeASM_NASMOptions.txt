@@ -19,7 +19,6 @@
 #
 
 if (UNIX)
-  set(CMAKE_ASM_NASM_DEBUG_OPTIONS -g)
   if (APPLE)
     set(CMAKE_ASM_NASM_OBJECT_FORMAT macho64)
   else()
@@ -36,6 +35,9 @@ else() # Windows
     set(CMAKE_ASM_NASM_OBJECT_FORMAT win64)
   endif()
 endif()
+
+# Enable debug info
+set(CMAKE_ASM_NASM_DEBUG_OPTIONS -g -DIPPCP_NASM_DEBUG)
 
 
 set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <INCLUDES> <FLAGS> <DEFINES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
