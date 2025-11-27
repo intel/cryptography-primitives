@@ -25,3 +25,8 @@ if((NOT MERGED_BLD) AND (NOT "${IPPCP_CUSTOM_BUILD}" STREQUAL ""))
     set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -D${feature}")
   endforeach(feature ${IPPCP_CUSTOM_BUILD})
 endif()
+
+# Enable RISC-V specific instructions
+if(IPPCP_SHA512_RISCV_FALLBACK_ON)
+  set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_SHA512_RISCV_FALLBACK_ON")
+endif()

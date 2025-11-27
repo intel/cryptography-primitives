@@ -47,11 +47,20 @@
 #define CH(x, y, z)  (((x) & (y)) ^ (~(x) & (z)))
 #define MAJ(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 
+#if (defined IPPCP_SHA512_RISCV_FALLBACK_ON && (defined(__riscv) && defined(__riscv_zknh)))
+
+// Custom RISCV definitions for SUM0/SUM1 and SIG0/SIG1 to be added by components compiling this source for RISCV
+#include "riscv_defs.h"
+
+#else // non-RISCV or RISCV without crypto extensions
+
 #define SUM0(x) (ROR64((x), 28) ^ ROR64((x), 34) ^ ROR64((x), 39))
 #define SUM1(x) (ROR64((x), 14) ^ ROR64((x), 18) ^ ROR64((x), 41))
 
 #define SIG0(x) (ROR64((x), 1) ^ ROR64((x), 8) ^ LSR64((x), 7))
 #define SIG1(x) (ROR64((x), 19) ^ ROR64((x), 61) ^ LSR64((x), 6))
+
+#endif // __riscv
 
 #define SHA512_UPDATE(i) \
     wdat[i & 15] += SIG1(wdat[(i + 14) & 15]) + wdat[(i + 9) & 15] + SIG0(wdat[(i + 1) & 15])
