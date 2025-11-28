@@ -29,7 +29,7 @@ This library consists of highly-optimized kernels taking advantage of Intel’s 
 
 ### Linux* OS
 - [Common tools](#common-tools)
-- Intel® oneAPI DPC++/C++ Compiler 2025.2 for Linux\* OS
+- Intel® oneAPI DPC++/C++ Compiler 2025.3.0 for Linux\* OS
 - GCC 8.5
 - GCC 11.5
 - GCC 14.3
@@ -45,7 +45,7 @@ This library consists of highly-optimized kernels taking advantage of Intel’s 
 
 ### Windows* OS
 - [Common tools](#common-tools)
-- Intel® oneAPI DPC++/C++ Compiler 2025.2 for Windows\* OS
+- Intel® oneAPI DPC++/C++ Compiler 2025.3.0 for Windows\* OS
 - Microsoft Visual C++ Compiler\* version 19.29 provided by Microsoft Visual Studio\* 2019 version 16.11
 - Microsoft Visual C++ Compiler\* version 19.43 provided by Microsoft Visual Studio\* 2022 version 17.13
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.21 or higher is required to build using Microsoft Visual Studio\* 2022.
