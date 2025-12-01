@@ -842,6 +842,13 @@ calls to <a class="reference internal" href="hashinit.html#hashinit"><span class
 and <a class="reference internal" href="hashmessage.html#hashmessage"><span class="std std-ref">HashMessage</span></a>.
 See table <a class="reference internal" href="one-way-hash-primitives.html#one-way-hash-primitives"><span class="std std-ref">HashMethod Functions</span></a>
 for an explanation of the values returned by the HashMethod functions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread-safe due to internal structure reinitialization.
+For optimal performance and thread safety, cache the returned pointer to a separate
+variable and reuse it across calls. Alternatively, manual heap allocation for
+method storage offers similar performance but requires careful memory management.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>

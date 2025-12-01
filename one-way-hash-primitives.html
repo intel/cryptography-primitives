@@ -887,6 +887,13 @@ See <a class="reference internal" href="hashmethod.html#hashmethod"><span class=
 the syntax.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>For optimal performance when using hash methods multiple times, cache the method
+pointer to a separate variable from the initialization function and reuse it across
+calls. Alternatively, manual heap allocation for method storage offers similar
+performance to pointer caching but requires careful memory management.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Functions that have the <code class="docutils literal notranslate"><span class="pre">_TT</span></code> suffix in their names return pointers
 to dynamically dispatched IppsHashMethod structures. These structures
 check for support of the Intel® Secure Hash Algorithm - New Instructions (Intel® SHA-NI)

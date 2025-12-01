@@ -831,6 +831,12 @@ values of the modulus <code class="docutils literal notranslate"><span class="pr
 </tbody>
 </table>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is not thread-safe due to internal structure reinitialization.
+Cache the returned pointer to a separate variable to avoid repeated calls in
+multithreaded environments.</p>
+</div>
 </section>
 </section>
 
