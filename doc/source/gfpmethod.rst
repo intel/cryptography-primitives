@@ -79,4 +79,10 @@ values of the modulus ``q``.
      -  Arbitrary modulus ``q``
 
 
+.. note::
+
+   This function is not thread-safe due to internal structure reinitialization. 
+   Cache the returned pointer to a separate variable to avoid repeated calls in 
+   multithreaded environments.
+
 

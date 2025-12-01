@@ -140,6 +140,15 @@ See table :ref:`HashMethod Functions <one-way-hash-primitives>`
 for an explanation of the values returned by the HashMethod functions.
 
 
+.. note::
+
+
+   This function is not thread-safe due to internal structure reinitialization. 
+   For optimal performance and thread safety, cache the returned pointer to a separate 
+   variable and reuse it across calls. Alternatively, manual heap allocation for 
+   method storage offers similar performance but requires careful memory management.
+
+
 Return Values
 -------------
 

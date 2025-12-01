@@ -219,13 +219,23 @@ static gsModMethod* gsArithGF_p192r1(void)
 
 IPPFUN(const IppsGFpMethod*, ippsGFpMethod_p192r1, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsGFpMethod method = { cpID_PrimeP192r1, 192, secp192r1_p, NULL, NULL };
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
 
 #if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_M7)
     method.arith = gsArithGF_p192r1();
 #else
     method.arith = gsArithGFp();
 #endif
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
 
     return &method;
 }

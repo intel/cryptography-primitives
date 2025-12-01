@@ -688,6 +688,19 @@ extern double __intel_castu64_f64(unsigned __int64 val);
 
 #endif
 
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
+#include <intrin.h>
+#define CP_PREVENT_REORDER() _ReadWriteBarrier()
+#else
+#if ((_IPP >= _IPP_W7) || (_IPP32E == _IPP32E_M7))
+#include <emmintrin.h>
+#define CP_PREVENT_REORDER() _mm_mfence()
+#else
+#define CP_PREVENT_REORDER() __asm__ __volatile__("" ::: "memory")
+#endif
+#endif
+
+
 #if defined(__cplusplus)
 }
 #endif

@@ -42,8 +42,12 @@
 //          Pointer to SM3 hash-method.
 //
 *F*/
+
 IPPFUN(const IppsHashMethod*, ippsHashMethod_SM3_TT, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsHashMethod method = { ippHashAlg_SM3,
                                      IPP_SM3_DIGEST_BITSIZE / 8,
                                      MBS_SM3,
@@ -54,19 +58,27 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SM3_TT, (void))
                                      NULL,
                                      NULL };
 
+#if (_SM3_ENABLING_ == _FEATURE_TICKTOCK_ || _SM3_ENABLING_ == _FEATURE_ON_)
+    if (IsFeatureEnabled(ippCPUID_AVX2SM3))
+        method.hashUpdate = sm3_hashUpdate_ni;
+    else
+        method.hashUpdate = sm3_hashUpdate;
+#endif
+
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
+
     // don't merge `method` initialization with function pointers assignment
     // to prevent relocations (indirect calls) to be generated in the binary
-    method.hashInit = sm3_hashInit;
-#if (_SM3_ENABLING_ == _FEATURE_TICKTOCK_ || _SM3_ENABLING_ == _FEATURE_ON_)
-    if (IsFeatureEnabled(ippCPUID_AVX2SM3)) {
-        method.hashUpdate = sm3_hashUpdate_ni;
-    } else
-#endif
-    {
-        method.hashUpdate = sm3_hashUpdate;
-    }
+    method.hashInit   = sm3_hashInit;
+    method.hashUpdate = sm3_hashUpdate;
     method.hashOctStr = sm3_hashOctString;
     method.msgLenRep  = sm3_msgRep;
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
 
     return &method;
 }

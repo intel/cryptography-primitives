@@ -41,8 +41,12 @@
 //          Pointer to SHA1 hash-method.
 //
 *F*/
+
 IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA1, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsHashMethod method = { ippHashAlg_SHA1,
                                      IPP_SHA1_DIGEST_BITSIZE / 8,
                                      MBS_SHA1,
@@ -52,11 +56,18 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA1, (void))
                                      NULL,
                                      NULL,
                                      NULL };
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
 
     method.hashInit   = sha1_hashInit;
     method.hashUpdate = sha1_hashUpdate;
     method.hashOctStr = sha1_hashOctString;
     method.msgLenRep  = sha1_msgRep;
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
 
     return &method;
 }

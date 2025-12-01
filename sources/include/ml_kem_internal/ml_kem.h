@@ -119,12 +119,6 @@ typedef struct {
 #define CP_ML_KEM_RELEASE_ALIGNED_POLY(STORAGE, STATUS) \
     CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(1, (STORAGE), (STATUS))
 
-#ifdef __GNUC__
-#define ASM_VOLATILE(a) __asm__ __volatile__(a);
-#else
-#define ASM_VOLATILE(a)
-#endif
-
 /*
  * Memory allocation primitive working with _cpMLKEMStorage structure.
  * Input: storage     - pointer to _cpMLKEMStorage structure
@@ -159,7 +153,7 @@ IPPCP_INLINE IppStatus cp_mlkemStorageRelease(_cpMLKEMStorage* storage, Ipp64s b
     PurgeBlock(storage->pStorageData + storage->bytesUsed - bytesRelease, (int)bytesRelease);
 
     storage->bytesUsed -= bytesRelease;
-    ASM_VOLATILE("" ::: "memory")
+    CP_PREVENT_REORDER();
 
     // Check that the memory was released and zeroized as intended
     return (*(storage->pStorageData + storage->bytesUsed) == 0) ? ippStsNoErr : ippStsMemAllocErr;
@@ -177,7 +171,7 @@ IPPCP_INLINE IppStatus cp_mlkemStorageReleaseAll(_cpMLKEMStorage* storage)
     PurgeBlock(storage->pStorageData,
                IPP_MIN((int)storage->bytesUsed, (int)storage->bytesCapacity));
     storage->bytesUsed = 0;
-    ASM_VOLATILE("" ::: "memory")
+    CP_PREVENT_REORDER();
 
     return (*(storage->pStorageData + storage->bytesUsed) == 0) ? ippStsNoErr : ippStsMemAllocErr;
 }

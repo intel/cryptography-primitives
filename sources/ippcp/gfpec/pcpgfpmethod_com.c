@@ -20,6 +20,7 @@
 //
 */
 #include "owncp.h"
+#include "owndefs.h"
 
 #include "gfpec/pcpgfpmethod.h"
 
@@ -35,7 +36,19 @@
 
 IPPFUN(const IppsGFpMethod*, ippsGFpMethod_pArb, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsGFpMethod method = { cpID_Prime, 0, NULL, NULL, NULL };
-    method.arith                = gsArithGFp();
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
+
+    method.arith = gsArithGFp();
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
+
     return &method;
 }

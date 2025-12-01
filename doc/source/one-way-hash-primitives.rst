@@ -122,6 +122,15 @@ the syntax.
 .. note::
 
 
+   For optimal performance when using hash methods multiple times, cache the method 
+   pointer to a separate variable from the initialization function and reuse it across 
+   calls. Alternatively, manual heap allocation for method storage offers similar 
+   performance to pointer caching but requires careful memory management.
+
+
+.. note::
+
+
    Functions that have the ``_TT`` suffix in their names return pointers
    to dynamically dispatched IppsHashMethod structures. These structures
    check for support of the Intel® Secure Hash Algorithm - New Instructions (Intel® SHA-NI)

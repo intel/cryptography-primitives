@@ -39,11 +39,24 @@
 
 IPP_OWN_DEFN(IppsBigNumState*, cpBN_ThreeRef, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsBigNumStateChunk cpChunk_BN3 = {
         {idCtxUnknown, ippBigNumPOS, 1, 1, &cpChunk_BN3.value, &cpChunk_BN3.temporary},
         3,
         0
     };
+
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &cpChunk_BN3.bn;
+    }
+
     BN_SET_ID(&cpChunk_BN3.bn);
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
+
     return &cpChunk_BN3.bn;
 }

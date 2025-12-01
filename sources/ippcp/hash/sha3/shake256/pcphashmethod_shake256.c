@@ -34,6 +34,9 @@
 
 IPPFUN(const IppsHashMethod*, ippsHashMethod_SHAKE256, (int digestBitsize))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     IPP_BADARG_RET(digestBitsize <= 0, NULL);
     /* test if digestBitsize is not byte aligned */
     IPP_BADARG_RET(digestBitsize % 8, NULL);
@@ -49,14 +52,22 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHAKE256, (int digestBitsize))
                                      NULL,
                                      NULL };
     /* clang-format on */
+    method.hashLen = digestBitsize / 8;
+
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
 
     // don't merge `method` initialization with function pointers assignment
     // to prevent relocations (indirect calls) to be generated in the binary
-    method.hashLen    = digestBitsize / 8;
     method.hashInit   = cp_sha3_hashInit;
     method.hashUpdate = cp_shake256_hashUpdate;
     method.hashOctStr = cp_sha3_hashOctString;
     method.msgLenRep  = NULL;
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
 
     return &method;
 }

@@ -20,6 +20,7 @@
 //
 */
 #include "owncp.h"
+#include "owndefs.h"
 
 #include "gfpec/pcpgfpxmethod_binom_mulc.h"
 #include "gfpec/pcpgfpxmethod_com.h"
@@ -180,7 +181,19 @@ static gsModMethod* gsPolyArith_binom2(void)
 
 IPPFUN(const IppsGFpMethod*, ippsGFpxMethod_binom2, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsGFpMethod method = { cpID_Binom, 2, NULL, NULL, NULL };
-    method.arith                = gsPolyArith_binom2();
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
+
+    method.arith = gsPolyArith_binom2();
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
+
     return &method;
 }

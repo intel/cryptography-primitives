@@ -45,6 +45,9 @@
 IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA256_NI, (void))
 {
 #if (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA_NI_ENABLING_ == _FEATURE_ON_)
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsHashMethod method = { ippHashAlg_SHA256,
                                      IPP_SHA256_DIGEST_BITSIZE / 8,
                                      MBS_SHA256,
@@ -54,6 +57,10 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA256_NI, (void))
                                      NULL,
                                      NULL,
                                      NULL };
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
 
     // don't merge `method` initialization with function pointers assignment
     // to prevent relocations (indirect calls) to be generated in the binary
@@ -61,6 +68,9 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA256_NI, (void))
     method.hashUpdate = sha256_ni_hashUpdate;
     method.hashOctStr = sha256_hashOctString;
     method.msgLenRep  = sha256_msgRep;
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
 
     return &method;
 #else

@@ -33,6 +33,9 @@
 
 IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA3_224, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsHashMethod method = { ippHashAlg_SHA3_224,
                                      IPP_SHA3_224_DIGEST_BITSIZE / 8,
                                      MBS_SHA3_224,
@@ -42,6 +45,10 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA3_224, (void))
                                      NULL,
                                      NULL,
                                      NULL };
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
 
     // don't merge `method` initialization with function pointers assignment
     // to prevent relocations (indirect calls) to be generated in the binary
@@ -49,6 +56,9 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA3_224, (void))
     method.hashUpdate = cp_sha3_224_hashUpdate;
     method.hashOctStr = cp_sha3_hashOctString;
     method.msgLenRep  = NULL;
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
 
     return &method;
 }

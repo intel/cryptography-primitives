@@ -19,6 +19,7 @@
 //     GF(p) methods
 //
 */
+#include "owndefs.h"
 
 #include "gfpec/pcpgfpmethod_256.h"
 
@@ -35,12 +36,23 @@
 
 IPPFUN(const IppsGFpMethod*, ippsGFpMethod_p256bn, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsGFpMethod method = { cpID_Prime, 256, tpmBN_p256p_p, NULL, NULL };
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
 
 #if (_IPP32E >= _IPP32E_M7)
     method.arith = gsArithGF_p256();
 #else
     method.arith = gsArithGFp();
 #endif
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
+
     return &method;
 }

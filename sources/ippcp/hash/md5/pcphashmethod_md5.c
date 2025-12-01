@@ -44,22 +44,33 @@
 //          Pointer to MD5 hash-method.
 //
 *F*/
+
 IPPFUN(const IppsHashMethod*, ippsHashMethod_MD5, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsHashMethod method = { ippHashAlg_MD5,
                                      IPP_MD5_DIGEST_BITSIZE / 8,
                                      MBS_MD5,
                                      MLR_MD5,
                                      IPP_MD5_STATE_BYTESIZE,
-                                     0,
-                                     0,
-                                     0,
-                                     0 };
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     NULL };
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
 
     method.hashInit   = md5_hashInit;
     method.hashUpdate = md5_hashUpdate;
     method.hashOctStr = md5_hashOctString;
     method.msgLenRep  = md5_msgRep;
+
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
 
     return &method;
 }

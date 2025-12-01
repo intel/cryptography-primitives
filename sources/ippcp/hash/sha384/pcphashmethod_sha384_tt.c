@@ -46,6 +46,9 @@
 
 IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA384_TT, (void))
 {
+    /* Prevents re-initialization for better multi-threaded/repeated call performance */
+    static volatile int isInitialized = 0;
+
     static IppsHashMethod method = { ippHashAlg_SHA384,
                                      IPP_SHA384_DIGEST_BITSIZE / 8,
                                      MBS_SHA512,
@@ -56,6 +59,18 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA384_TT, (void))
                                      NULL,
                                      NULL };
 
+#if (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA512_ENABLING_ == _FEATURE_ON_)
+    if (IsFeatureEnabled(ippCPUID_AVX2SHA512))
+        method.hashUpdate = sha512_hashUpdate_ni;
+    else
+        method.hashUpdate = sha512_hashUpdate;
+#endif
+
+    if (isInitialized) {
+        CP_PREVENT_REORDER();
+        return &method;
+    }
+
     // don't merge `method` initialization with function pointers assignment
     // to prevent relocations (indirect calls) to be generated in the binary
     method.hashInit   = sha512_384_hashInit;
@@ -63,10 +78,8 @@ IPPFUN(const IppsHashMethod*, ippsHashMethod_SHA384_TT, (void))
     method.hashOctStr = sha512_384_hashOctString;
     method.msgLenRep  = sha512_msgRep;
 
-#if (_SHA512_ENABLING_ == _FEATURE_TICKTOCK_ || _SHA512_ENABLING_ == _FEATURE_ON_)
-    if (IsFeatureEnabled(ippCPUID_AVX2SHA512))
-        method.hashUpdate = sha512_hashUpdate_ni;
-#endif
+    CP_PREVENT_REORDER();
+    isInitialized = 1;
 
     return &method;
 }
