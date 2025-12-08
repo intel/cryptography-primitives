@@ -125,8 +125,8 @@ CPU = {
 SUPPORTED_CPUS = {
     IPP: {
         INTEL64: {
-            WINDOWS: [SSE3, SSE42, AVX2, AVX512BW],
-            LINUX: [SSE3, SSE42, AVX2, AVX512BW],
+            WINDOWS: [SSE42, AVX2, AVX512BW],
+            LINUX: [SSE42, AVX2, AVX512BW],
         },
     },
     IPPCP: {
