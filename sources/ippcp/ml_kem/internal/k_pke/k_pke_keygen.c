@@ -65,8 +65,12 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
     Ipp16sPoly* matrixA = (Ipp16sPoly*)(mlkemCtx->pA); // vectors accessing pointer
     cp_matrixAGen(matrixA, rho_j_i, matrixAOrigin, mlkemCtx);
 
-    /* Generate vector s */
+    /* Generate vector s and write to output */
     cp_polyVecGen(vectorS, pSigma_N, &N, eta1, mlkemCtx, nttTransform);
+    for (Ipp8u i = 0; i < k; i++) {
+        sts = cp_byteEncode(outDecKey + i * 384, 12, &vectorS[i]);
+        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    }
 
     /* Generate vector e */
     cp_polyVecGen(vectorE, pSigma_N, &N, eta1, mlkemCtx, nttTransform);
@@ -85,8 +89,7 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
     CP_ML_KEM_RELEASE_ALIGNED_POLY(pStorage, sts) // Ipp16sPoly tmpPoly
 
     for (Ipp8u i = 0; i < k; i++) {
-        sts = cp_byteEncode(outDecKey + i * 384, 12, &vectorS[i]);
-        sts |= cp_byteEncode(outEncKey + i * 384, 12, &t[i]);
+        sts = cp_byteEncode(outEncKey + i * 384, 12, &t[i]);
         IPP_BADARG_RET((sts != ippStsNoErr), sts);
     }
     CopyBlock(pRho, outEncKey + 384 * k, 32);

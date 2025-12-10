@@ -74,9 +74,20 @@ typedef enum { matrixAOrigin, matrixATransposed } matrixAGenType;
 
 #define CP_ML_KEM_ALIGNMENT ((int)sizeof(void*))
 
+#define CP_ML_KEM_NUM_BUFFERS (4)
+
 /* Matrix A access helper */
 #define CP_MATRIX_A_GET_I_J(MATRIX_I_J, IDX_I, IDX_J) \
     (&(MATRIX_I_J)[(IDX_I) * mlkemCtx->params.k + (IDX_J)])
+
+// Memory optimized implementation is only used for the old platforms
+#ifndef CP_ML_KEM_MEMORY_OPTIMIZED
+#if (_IPP32E >= _IPP32E_K0)
+#define CP_ML_KEM_MEMORY_OPTIMIZED (0)
+#else
+#define CP_ML_KEM_MEMORY_OPTIMIZED (1)
+#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #ifndef CP_ML_KEM_MEMORY_OPTIMIZED */
 
 //-------------------------------//
 //      Internal data types
@@ -176,26 +187,76 @@ IPPCP_INLINE IppStatus cp_mlkemStorageReleaseAll(_cpMLKEMStorage* storage)
     return (*(storage->pStorageData + storage->bytesUsed) == 0) ? ippStsNoErr : ippStsMemAllocErr;
 }
 
+/*
+// Barrett reduction for fixed n = CP_ML_KEM_Q
+//   res = x mod n, where bitsize(x) <= 2*k and bitsize(n) <= k.
+//
+//   Let k >= ceil(log2(n)) = 13, and base b = 2
+//   Pre-computed mu = floor(b^(2*k)/n) = floor(2^26/3329) = 20158
+//   1. t = floor(x*mu/b^(2*k))
+//   2. t = floor(x*mu/b^(2*k)) * n
+//   3. res = x - floor(x*mu/b^(2*k)) * n
+//   4. if res >= n then res -= n 
+//   5. return res
+//
+// Input:  number to be reduced of maximum size 25 bits
+// Output: number in Z_{q}, q = 3329
+//
+//  Before Barrett processing, input value x is mapped the to the positive values, after which
+//      min x = (-(3328*3328)-3328) + (CP_ML_KEM_Q * CP_ML_KEM_Q) -> 3329 (12 bits)
+//      max x = (3328*3328+3328) + (CP_ML_KEM_Q * CP_ML_KEM_Q) -> 22161153 (25 bits)
+//
+*/
+
+#define CP_ML_KEM_BARRETT_K (13)
+// b^(2*k) = 2^26
+#define CP_ML_KEM_BARRETT_B_POW_2xK ((Ipp32s)1 << (2 * CP_ML_KEM_BARRETT_K))
+// Pre-computed mu = floor(b^(2*k)/n)
+#define CP_ML_KEM_BARRETT_MU ((Ipp64s)(CP_ML_KEM_BARRETT_B_POW_2xK / CP_ML_KEM_Q))
+
+IPPCP_INLINE Ipp16s cp_mlkemBarrettReduce(Ipp32s x)
+{
+    // Map x to the positive values
+    x += CP_ML_KEM_Q * CP_ML_KEM_Q;
+
+    // 1. t = floor((mu*x)/2^26)
+    Ipp32s t = (Ipp32s)((CP_ML_KEM_BARRETT_MU * (Ipp64s)x) >> (2 * CP_ML_KEM_BARRETT_K));
+    // 2. t = floor((mu*x)/2^26) * n
+    t = t * CP_ML_KEM_Q;
+    // 3. res = x - floor((mu*x)/2^26)*n
+    Ipp16s res = (Ipp16s)(x - t);
+    // 4. if res >= n then res -= n
+    res -= CP_ML_KEM_Q;
+    res += (res >> 15) & CP_ML_KEM_Q;
+
+    return res;
+}
+
+/*
+ * Formula 2.3: Adds/Subtracts polynomials f and g and place the result in h.
+ *
+ * Input:  f, g - polynomials Z_{q}^{256}.
+ * Output: h    - polynomial Z_{q}^{256}.
+ *
+ * Note: the coefficients of the resulting polynomial are reduced:
+ *          h[i] = f[i] +/- g[i] (mod CP_ML_KEM_Q)
+ */
+IPPCP_INLINE void cp_polyAdd(const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16sPoly* h)
+{
+    for (Ipp32u i = 0; i < 256; i++) {
+        h->values[i] = cp_mlkemBarrettReduce((Ipp32s)(f->values[i] + g->values[i]));
+    }
+}
+IPPCP_INLINE void cp_polySub(const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16sPoly* h)
+{
+    for (Ipp32u i = 0; i < 256; i++) {
+        h->values[i] = cp_mlkemBarrettReduce((Ipp32s)(f->values[i] - g->values[i]));
+    }
+}
+
 //-------------------------------//
 // Kernel functions declaration
 //-------------------------------//
-
-#define cp_mlkemBarrettReduce OWNAPI(cp_mlkemBarrettReduce)
-IPP_OWN_DECL(Ipp16s, cp_mlkemBarrettReduce, (Ipp32s x))
-
-#define cp_polyAdd OWNAPI(cp_polyAdd)
-IPP_OWN_DECL(void, cp_polyAdd, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16sPoly* h))
-#define cp_polySub OWNAPI(cp_polySub)
-IPP_OWN_DECL(void, cp_polySub, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16sPoly* h))
-
-#define cp_bitsToBytes OWNAPI(cp_bitsToBytes)
-IPP_OWN_DECL(void, cp_bitsToBytes, (const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u numElmBitArr))
-/* clang-format off */
-#define cp_bytesToBits OWNAPI(cp_bytesToBits)
-IPP_OWN_DECL(void, cp_bytesToBits,
-            (const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u numElmByteArr, const Ipp32u outByteSize))
-/* clang-format on */
-
 #define cp_Compress OWNAPI(cp_Compress)
 IPP_OWN_DECL(IppStatus, cp_Compress, (Ipp16u * out, const Ipp16s in, const Ipp16u d))
 #define cp_Decompress OWNAPI(cp_Decompress)
@@ -210,14 +271,10 @@ IPP_OWN_DECL(IppStatus,
 
 #define cp_samplePolyCBD OWNAPI(cp_samplePolyCBD)
 IPP_OWN_DECL(IppStatus, cp_samplePolyCBD, (Ipp16sPoly * pPoly, const Ipp8u* pSeed, const Ipp8u eta))
-#define cp_SampleNTT OWNAPI(cp_SampleNTT)
 /* clang-format off */
-IPP_OWN_DECL(IppStatus, cp_SampleNTT,
-            (Ipp16sPoly * polyA, const Ipp8u B[34], IppsMLKEMState* mlkemCtx))
-
 #define cp_matrixAGen OWNAPI(cp_matrixAGen)
 IPP_OWN_DECL(IppStatus, cp_matrixAGen,
-            (Ipp16sPoly * matrixA, Ipp8u rho_j_i[34], matrixAGenType matrixType, IppsMLKEMState* mlkemCtx))
+            (Ipp16sPoly* matrixA, Ipp8u rho_j_i[34], matrixAGenType matrixType, IppsMLKEMState* mlkemCtx))
 /* clang-format on */
 
 #define cp_NTT OWNAPI(cp_NTT)
@@ -225,11 +282,6 @@ IPP_OWN_DECL(void, cp_NTT, (Ipp16sPoly * f))
 #define cp_inverseNTT OWNAPI(cp_inverseNTT)
 IPP_OWN_DECL(void, cp_inverseNTT, (Ipp16sPoly * f))
 
-#define cp_baseCaseMultiply OWNAPI(cp_baseCaseMultiply)
-/* clang-format off */
-IPP_OWN_DECL(void, cp_baseCaseMultiply,
-            (Ipp16s a0, Ipp16s a1, Ipp16s b0, Ipp16s b1, Ipp16s gamma, Ipp16s* c0_ptr, Ipp16s* c1_ptr))
-/* clang-format on */
 #define cp_multiplyNTT OWNAPI(cp_multiplyNTT)
 IPP_OWN_DECL(void, cp_multiplyNTT, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16sPoly* h))
 

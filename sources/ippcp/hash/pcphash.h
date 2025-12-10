@@ -56,7 +56,7 @@
 #define IPP_SM3_STATE_BYTESIZE        32
 #define IPP_SHA512_224_STATE_BYTESIZE 64
 #define IPP_SHA512_256_STATE_BYTESIZE 64
-#define IPP_SHA3_STATE_BYTESIZE       200
+#define IPP_SHA3_STATE_BYTESIZE       208
 #define IPP_HASH_STATE_BYTESIZE_MAX   (IPP_SHA3_STATE_BYTESIZE)
 
 /* size of processed message length representation (bytes) */

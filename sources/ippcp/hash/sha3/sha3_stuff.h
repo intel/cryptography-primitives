@@ -44,4 +44,92 @@ IPP_OWN_DECL(void, cp_sha3_hashInit, (void* pHash))
 #define cp_sha3_hashOctString OWNAPI(cp_sha3_hashOctString)
 IPP_OWN_DECL(void, cp_sha3_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
 
+#if (_IPP32E >= _IPP32E_K0)
+/* Single-buffer SHA3 and SHAKE kernels optimized with AVX512VL */
+
+// Hash message
+#define cp_SHA3_SHAKE256_HashMessage OWNAPI(cp_SHA3_SHAKE256_HashMessage)
+IPP_OWN_DECL(void,
+             cp_SHA3_SHAKE256_HashMessage,
+             (Ipp8u * output, Ipp64u outlen, const Ipp8u* input, Ipp64u inplen))
+
+// Absorb (Update)
+#define cp_SHA3_256_Absorb OWNAPI(cp_SHA3_256_Absorb)
+IPP_OWN_DECL(void, cp_SHA3_256_Absorb, (void* state, const Ipp8u* input, Ipp64u inlen))
+#define cp_SHA3_384_Absorb OWNAPI(cp_SHA3_384_Absorb)
+IPP_OWN_DECL(void, cp_SHA3_384_Absorb, (void* state, const Ipp8u* input, Ipp64u inlen))
+#define cp_SHA3_512_Absorb OWNAPI(cp_SHA3_512_Absorb)
+IPP_OWN_DECL(void, cp_SHA3_512_Absorb, (void* state, const Ipp8u* input, Ipp64u inlen))
+#define cp_SHA3_SHAKE128_Absorb OWNAPI(cp_SHA3_SHAKE128_Absorb)
+IPP_OWN_DECL(void, cp_SHA3_SHAKE128_Absorb, (void* state, const Ipp8u* input, Ipp64u inlen))
+#define cp_SHA3_SHAKE256_Absorb OWNAPI(cp_SHA3_SHAKE256_Absorb)
+IPP_OWN_DECL(void, cp_SHA3_SHAKE256_Absorb, (void* state, const Ipp8u* input, Ipp64u inlen))
+
+/* Multi-buffer SHA3 kernels optimized with AVX512VL */
+#define STATE_x4_SIZE (((25 * 4) + 1) * 8)
+
+typedef struct {
+    /** Internal state. */
+    Ipp8u* ctx;
+} cpSHA3_SHAKE128Ctx_mb4;
+
+typedef struct {
+    /** Internal state. */
+    Ipp8u* ctx;
+} cpSHA3_SHAKE256Ctx_mb4;
+
+// Init
+#define cp_SHA3_SHAKE128_InitMB4 OWNAPI(cp_SHA3_SHAKE128_InitMB4)
+IPP_OWN_DECL(void, cp_SHA3_SHAKE128_InitMB4, (cpSHA3_SHAKE128Ctx_mb4 * state))
+#define cp_SHA3_SHAKE256_InitMB4 OWNAPI(cp_SHA3_SHAKE256_InitMB4)
+IPP_OWN_DECL(void, cp_SHA3_SHAKE256_InitMB4, (cpSHA3_SHAKE256Ctx_mb4 * state))
+
+
+// Absorb (Update)
+#define cp_SHA3_SHAKE128_AbsorbMB4 OWNAPI(cp_SHA3_SHAKE128_AbsorbMB4)
+IPP_OWN_DECL(void,
+             cp_SHA3_SHAKE128_AbsorbMB4,
+             (cpSHA3_SHAKE128Ctx_mb4 * state,
+              const Ipp8u* in0,
+              const Ipp8u* in1,
+              const Ipp8u* in2,
+              const Ipp8u* in3,
+              Ipp64u inlen))
+#define cp_SHA3_SHAKE256_AbsorbMB4 OWNAPI(cp_SHA3_SHAKE256_AbsorbMB4)
+IPP_OWN_DECL(void,
+             cp_SHA3_SHAKE256_AbsorbMB4,
+             (cpSHA3_SHAKE256Ctx_mb4 * state,
+              const Ipp8u* in0,
+              const Ipp8u* in1,
+              const Ipp8u* in2,
+              const Ipp8u* in3,
+              Ipp64u inlen))
+
+// Finalize
+#define cp_SHA3_SHAKE128_FinalizeMB4 OWNAPI(cp_SHA3_SHAKE128_FinalizeMB4)
+IPP_OWN_DECL(void, cp_SHA3_SHAKE128_FinalizeMB4, (cpSHA3_SHAKE128Ctx_mb4 * state))
+#define cp_SHA3_SHAKE256_FinalizeMB4 OWNAPI(cp_SHA3_SHAKE256_FinalizeMB4)
+IPP_OWN_DECL(void, cp_SHA3_SHAKE256_FinalizeMB4, (cpSHA3_SHAKE256Ctx_mb4 * state))
+
+// Squeeze
+#define cp_SHA3_SHAKE128_SqueezeMB4 OWNAPI(cp_SHA3_SHAKE128_SqueezeMB4)
+IPP_OWN_DECL(void,
+             cp_SHA3_SHAKE128_SqueezeMB4,
+             (Ipp8u * out0,
+              Ipp8u* out1,
+              Ipp8u* out2,
+              Ipp8u* out3,
+              Ipp64u outlen,
+              cpSHA3_SHAKE128Ctx_mb4* state))
+#define cp_SHA3_SHAKE256_SqueezeMB4 OWNAPI(cp_SHA3_SHAKE256_SqueezeMB4)
+IPP_OWN_DECL(void,
+             cp_SHA3_SHAKE256_SqueezeMB4,
+             (Ipp8u * out0,
+              Ipp8u* out1,
+              Ipp8u* out2,
+              Ipp8u* out3,
+              Ipp64u outlen,
+              cpSHA3_SHAKE256Ctx_mb4* state))
+#endif /* #if (_IPP32E >= _IPP32E_K0) */
+
 #endif /* #if !defined(_SHA3_STUFF_H) */

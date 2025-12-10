@@ -39,67 +39,6 @@ IPPCP_INLINE Ipp16s cp_divAndRoundToNearestInt(Ipp32s x, Ipp32s divisor)
 //-------------------------------//
 
 /*
-// Barrett reduction for fixed n = CP_ML_KEM_Q
-//   res = x mod n, where bitsize(x) <= 2*k and bitsize(n) <= k.
-//
-//   Let k = ceil(log2(n)) = 12 and base b = 2
-//   Pre-computed mu = floor(b^(2*k)/n) = floor(2^24/3329) = 5039
-//   1. t = floor(x*mu/b^(2*k))
-//   2. t = floor(x*mu/b^(2*k)) * n
-//   3. res = x - floor(x*mu/b^(2*k)) * n
-//   4. if res >= n then res -= n 
-//   5. return res
-//
-// Input:  number to be reduced of maximum size 24 bits
-// Output: number in Z_{q}, q = 3329
-*/
-
-#define CP_ML_KEM_BARRETT_K (12)
-// b^(2*k) = 2^24
-#define CP_ML_KEM_BARRETT_B_POW_2xK ((Ipp32s)1 << (2 * CP_ML_KEM_BARRETT_K))
-// Pre-computed mu = floor(b^(2*k)/n)
-#define CP_ML_KEM_BARRETT_MU ((Ipp64s)(CP_ML_KEM_BARRETT_B_POW_2xK / CP_ML_KEM_Q))
-
-IPP_OWN_DEFN(Ipp16s, cp_mlkemBarrettReduce, (Ipp32s x))
-{
-    // 1. t = floor((mu*x)/2^24)
-    Ipp32s t = (Ipp32s)((CP_ML_KEM_BARRETT_MU * (Ipp64s)x) >> (2 * CP_ML_KEM_BARRETT_K));
-    // 2. t = floor((mu*x)/2^24) * n
-    t = t * CP_ML_KEM_Q;
-    // 3. res = x - floor((mu*x)/2^24)*n
-    Ipp16s res = (Ipp16s)(x - t);
-
-    // 4. if res >= n then res -= n
-    res -= CP_ML_KEM_Q;
-    res += (res >> 15) & CP_ML_KEM_Q;
-    res += (res >> 15) & CP_ML_KEM_Q;
-
-    return res;
-}
-
-/*
- * Formula 2.3: Adds/Subtracts polynomials f and g and place the result in h.
- *
- * Input:  f, g - polynomials Z_{q}^{256}.
- * Output: h    - polynomial Z_{q}^{256}.
- *
- * Note: the coefficients of the resulting polynomial are reduced:
- *          h[i] = f[i] +/- g[i] (mod CP_ML_KEM_Q)
- */
-IPP_OWN_DEFN(void, cp_polyAdd, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16sPoly* h))
-{
-    for (Ipp32u i = 0; i < 256; i++) {
-        h->values[i] = cp_mlkemBarrettReduce((Ipp32s)(f->values[i] + g->values[i]));
-    }
-}
-IPP_OWN_DEFN(void, cp_polySub, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16sPoly* h))
-{
-    for (Ipp32u i = 0; i < 256; i++) {
-        h->values[i] = cp_mlkemBarrettReduce((Ipp32s)(f->values[i] - g->values[i]));
-    }
-}
-
-/*
  * Algorithm 3: Converts a bit array (of a length that is a multiple of eight) into an array of bytes.
  *
  * Input: bit array {0, 1}^{8*l}
@@ -107,7 +46,7 @@ IPP_OWN_DEFN(void, cp_polySub, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ipp16s
  *
  * Note: works inplace (pInp == pOut), buffer's length has to be numElmBitArr bytes
  */
-IPP_OWN_DEFN(void, cp_bitsToBytes, (const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u numElmBitArr))
+IPPCP_INLINE void cp_bitsToBytes(const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u numElmBitArr)
 {
     Ipp32u numElmByteArr = BITS2WORD8_SIZE(numElmBitArr);
     for (Ipp32u i = 0; i < numElmByteArr; i++) {
@@ -127,9 +66,11 @@ IPP_OWN_DEFN(void, cp_bitsToBytes, (const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u
  *
  * Note: works inplace (pInp == pOut), buffer's length has to be 8*numElmByteArr bytes
  */
-/* clang-format off */
-IPP_OWN_DEFN(void, cp_bytesToBits,
-            (const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u numElmByteArr, const Ipp32u outByteSize))
+/* clang-format on */
+IPPCP_INLINE void cp_bytesToBits(const Ipp8u* pInp,
+                                 Ipp8u* pOut,
+                                 const Ipp32u numElmByteArr,
+                                 const Ipp32u outByteSize)
 /* clang-format on */
 {
     for (Ipp32u i = 0; i < numElmByteArr; i++) {
@@ -199,29 +140,43 @@ IPP_OWN_DEFN(IppStatus, cp_Decompress, (Ipp16u * out, const Ipp16s in, const Ipp
  * Note: To reduce memory usage, the result is processed by chunk of size lcm(d, 8) 
          which is suitable for any d(maximum chunk of size 88 is required for d = 11) 
  */
+
+// Allow bigger buffer allocation for the latest platforms to speed up processing
+#if CP_ML_KEM_MEMORY_OPTIMIZED
 #define CP_B_BUFFERSIZE_MAX (88)
+#else
+#define CP_B_BUFFERSIZE_MAX (256 * CP_D_MAX)
+#endif /* #if CP_ML_KEM_MEMORY_OPTIMIZED */
+
 IPP_OWN_DEFN(IppStatus, cp_byteEncode, (Ipp8u * B, const Ipp16u d, const Ipp16sPoly* pPolyF))
 {
     IPP_BADARG_RET(((d < CP_D_MIN) || (d > CP_D_MAX)), ippStsOutOfRangeErr);
 
-    Ipp32u bits_accumulated      = 0;
-    Ipp8u b[CP_B_BUFFERSIZE_MAX] = { 0 };
+    Ipp32u bits_accumulated = 0;
+    Ipp8u b[CP_B_BUFFERSIZE_MAX];
 
     /* Encode polynomial to byte array */
     for (Ipp32u i = 0; i < 256; i++) {
-        /* map to positive standard representatives */
-        Ipp16u a = (Ipp16u)cp_mlkemBarrettReduce((Ipp32s)(pPolyF->values[i] + CP_ML_KEM_Q));
+        Ipp16u a = (Ipp16u)pPolyF->values[i];
 
         for (Ipp32u j = 0; j < d; j++, bits_accumulated++) {
-            b[bits_accumulated] = (a & 1);
-            a                   = (a - b[bits_accumulated]) >> 1;
+            /* Similar to the spec's logic:
+             *      b[bits_accumulated] = (a & 1);
+             *      a                   = (a - b[bits_accumulated]) >> 1;
+             * The original write-modify pattern was replaced with a direct bit extraction.
+             */
+            b[bits_accumulated] = (Ipp8u)((a >> j) & 1);
         }
+
+// Process the buffer b to reuse the memory reduced for old platforms
+#if CP_ML_KEM_MEMORY_OPTIMIZED
         /* Check if we filled the current chunk for cp_bitsToBytes processing */
         if ((bits_accumulated & 7) == 0) {
             cp_bitsToBytes(b, B, bits_accumulated);
             B += BITS2WORD8_SIZE(bits_accumulated);
             bits_accumulated = 0;
         }
+#endif
     }
 
     /* Process the last chunk which may be 0 or not full(less than lcm(d, 8)) */
@@ -291,11 +246,8 @@ IPP_OWN_DEFN(IppStatus, cp_samplePolyCBD, (Ipp16sPoly * pPoly, const Ipp8u* pSee
         for (Ipp8u j = 0; j < eta; j++) {
             y += seedBits[2 * (i & 7) * eta + eta + j];
         }
-        // Ensure the result is in the canonical positive representation
-        Ipp16s result   = x - y;
-        Ipp16s neg_mask = result >> 15;
-        result += (neg_mask & CP_ML_KEM_Q);
-
+        // The result will be mapped to the canonical positive representation in the reduction step
+        Ipp16s result    = x - y;
         pPoly->values[i] = cp_mlkemBarrettReduce((Ipp32s)result);
     }
 

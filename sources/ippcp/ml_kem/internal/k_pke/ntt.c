@@ -33,9 +33,10 @@ IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
             Ipp16s zeta = cp_zetas_ntt[i];
             i++;
             for (Ipp16u j = start; j < start + len; j++) {
-                Ipp16s t           = cp_mlkemBarrettReduce((Ipp32s)zeta * f->values[j + len]);
-                f->values[j + len] = cp_mlkemBarrettReduce((Ipp32s)(f->values[j] - t));
-                f->values[j]       = cp_mlkemBarrettReduce((Ipp32s)(f->values[j] + t));
+                // delay reduction, as the minimum possible value here will be in the function's range
+                Ipp32s t           = (Ipp32s)zeta * f->values[j + len];
+                f->values[j + len] = cp_mlkemBarrettReduce(((Ipp32s)f->values[j] - t));
+                f->values[j]       = cp_mlkemBarrettReduce(((Ipp32s)f->values[j] + t));
             }
         }
     }
@@ -56,9 +57,10 @@ IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
             Ipp16s zeta = cp_zetas_ntt[i];
             i--;
             for (Ipp16u j = start; j < start + len; j++) {
-                Ipp16s t           = f->values[j];
-                f->values[j]       = cp_mlkemBarrettReduce((Ipp32s)(t + f->values[j + len]));
-                f->values[j + len] = cp_mlkemBarrettReduce((Ipp32s)(f->values[j + len] - t));
+                Ipp16s t     = f->values[j];
+                f->values[j] = cp_mlkemBarrettReduce((Ipp32s)(t + f->values[j + len]));
+                // delay reduction, as the minimum possible value here will be in the function's range
+                f->values[j + len] = f->values[j + len] - t;
                 f->values[j + len] = cp_mlkemBarrettReduce((Ipp32s)zeta * f->values[j + len]);
             }
         }
@@ -66,6 +68,30 @@ IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
     for (Ipp16u n = 0; n < 256; n++) {
         f->values[n] = cp_mlkemBarrettReduce((Ipp32s)f->values[n] * 3303);
     }
+}
+
+/*
+ * Algorithm 12: Computes the product of two degree-one polynomials with respect to
+ *               a quadratic modulus.
+ *
+ * Input:  a0, a1         - coefficients of the first polynomial
+ *         b0, b1         - coefficients of the second polynomial
+ *         gamma          - zeta^((2*BitReverse_7(i) + 1)) mod q
+ * Output: c0_ptr, c1_ptr - pointers to the resulting coefficients
+ */
+/* clang-format off */
+IPPCP_INLINE void cp_baseCaseMultiply(Ipp16s a0, Ipp16s a1,
+                                        Ipp16s b0, Ipp16s b1,
+                                        Ipp16s gamma,
+                                        Ipp16s* c0_ptr, Ipp16s* c1_ptr)
+/* clang-format on */
+{
+    Ipp32s tmpC0 = cp_mlkemBarrettReduce((Ipp32s)a1 * b1);
+    tmpC0        = cp_mlkemBarrettReduce((Ipp32s)gamma * tmpC0);
+    *c0_ptr      = cp_mlkemBarrettReduce(tmpC0 + (Ipp32s)a0 * b0);
+
+    Ipp32s tmpC1 = cp_mlkemBarrettReduce((Ipp32s)a0 * b1);
+    *c1_ptr      = cp_mlkemBarrettReduce((Ipp32s)a1 * b0 + tmpC1);
 }
 
 /*
@@ -85,30 +111,4 @@ IPP_OWN_DEFN(void, cp_multiplyNTT, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ip
                             &h->values[2 * i],
                             &h->values[2 * i + 1]);
     }
-}
-
-/*
- * Algorithm 12: Computes the product of two degree-one polynomials with respect to
- *               a quadratic modulus.
- *
- * Input:  a0, a1         - coefficients of the first polynomial
- *         b0, b1         - coefficients of the second polynomial
- *         gamma          - zeta^((2*BitReverse_7(i) + 1)) mod q
- * Output: c0_ptr, c1_ptr - pointers to the resulting coefficients
- */
-/* clang-format off */
-IPP_OWN_DEFN(void, cp_baseCaseMultiply, (Ipp16s a0, Ipp16s a1,
-                                         Ipp16s b0, Ipp16s b1,
-                                         Ipp16s gamma,
-                                         Ipp16s* c0_ptr, Ipp16s* c1_ptr))
-/* clang-format on */
-{
-    Ipp32s tmpC0 = cp_mlkemBarrettReduce((Ipp32s)a1 * b1);
-    tmpC0        = cp_mlkemBarrettReduce((Ipp32s)gamma * tmpC0);
-    tmpC0        = tmpC0 + cp_mlkemBarrettReduce((Ipp32s)a0 * b0);
-
-    Ipp32s tmpC1 = cp_mlkemBarrettReduce((Ipp32s)a0 * b1);
-    tmpC1        = tmpC1 + cp_mlkemBarrettReduce((Ipp32s)a1 * b0);
-    *c0_ptr      = cp_mlkemBarrettReduce(tmpC0);
-    *c1_ptr      = cp_mlkemBarrettReduce(tmpC1);
 }

@@ -26,7 +26,12 @@
 IPP_OWN_DEFN(static void, cp_sha3_384_hashUpdate, (void* pHash, const Ipp8u* pMsg, int msgLen))
 {
     int block_size = MBS_SHA3_384;
+#if (_IPP32E >= _IPP32E_K0)
+    IPP_UNREFERENCED_PARAMETER(block_size);
+    cp_SHA3_384_Absorb(&pHash, pMsg, (Ipp64u)msgLen);
+#else
     cpUpdateSHA3(pHash, pMsg, msgLen, &block_size);
+#endif
 }
 
 #endif /* _PCP_SHA3_384_STUFF_H */
