@@ -77,6 +77,9 @@ IppsHashState or IppsHashState_rmf context. Call the
 :ref:`HashGetSize <hashgetsize>`
 function prior to HashPack to determine the size of the buffer.
 
+.. note::
+
+   The \*pCtx context has to be initialized before calling ippsHashUnpack_rmf.
 
 .. note::
 

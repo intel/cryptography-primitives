@@ -51,9 +51,16 @@ IPPFUN(IppStatus, ippsHashUnpack_rmf, (const Ipp8u* pBuffer, IppsHashState_rmf* 
     /* test pointers */
     IPP_BAD_PTR2_RET(pState, pBuffer);
 
+    // check state
+    HASH_VALID_ID(pState, idCtxHash);
+
     int context_size = 0;
     ippsHashGetSizeOptimal_rmf(&context_size, HASH_METHOD(pState));
+    // copy data from the buffer except the method pointer
+    const IppsHashMethod* pMethod = HASH_METHOD(pState);
     CopyBlock(pBuffer, pState, context_size);
+    HASH_METHOD(pState) = pMethod;
+
     HASH_SET_ID(pState, idCtxHash);
 
     /* setup pointers to buffer and hash */
