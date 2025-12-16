@@ -71,16 +71,17 @@ __mmask16 sm4_gcm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],
         __m512i len_updade = maskz_expandloadu_epi32(
             0x4444,
             (void*)(aad_len_rearranged + i * 4)); /* Load aad len to low part of _m512iistry */
-        __m512i len_context = loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), i));
+        __m512i len_context = loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), (int64u)i));
 
         len_context = add_epi64(len_context, len_updade);
-        storeu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), i), len_context);
+        storeu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), (int64u)i), len_context);
 
         __mmask8 overflow_mask_part = cmp_epi64_mask(max_aad_len, len_context, _MM_CMPINT_LT);
 
-        overflow_mask_part = (overflow_mask_part & 0x02) >> 1 | (overflow_mask_part & 0x08) >> 2 |
-                             (overflow_mask_part & 0x20) >> 3 | (overflow_mask_part & 0x80) >> 4;
-        overflow_mask = overflow_mask | overflow_mask_part << (i * 4);
+        overflow_mask_part =
+            (__mmask8)((overflow_mask_part & 0x02) >> 1 | (overflow_mask_part & 0x08) >> 2 |
+                       (overflow_mask_part & 0x20) >> 3 | (overflow_mask_part & 0x80) >> 4);
+        overflow_mask = (__mmask8)(overflow_mask | overflow_mask_part << (i * 4));
     }
 
     /* Process full blocks of AADs */

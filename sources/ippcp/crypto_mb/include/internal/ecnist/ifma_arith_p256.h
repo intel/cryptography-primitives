@@ -218,10 +218,10 @@ __MBX_INLINE mbx_status MBX_SET_STS_BY_U64(mbx_status prev_status, U64 input, mb
 {
     int64u input_parts[MB_WIDTH];
     // Extract 64-bit parts
-    input_parts[0] = _mm256_extract_epi64(input, 0);
-    input_parts[1] = _mm256_extract_epi64(input, 1);
-    input_parts[2] = _mm256_extract_epi64(input, 2);
-    input_parts[3] = _mm256_extract_epi64(input, 3);
+    input_parts[0] = (int64u)_mm256_extract_epi64(input, 0);
+    input_parts[1] = (int64u)_mm256_extract_epi64(input, 1);
+    input_parts[2] = (int64u)_mm256_extract_epi64(input, 2);
+    input_parts[3] = (int64u)_mm256_extract_epi64(input, 3);
 
     int numb;
     for (numb = 0; numb < MB_WIDTH; numb++) {

@@ -38,7 +38,7 @@ static const int32u SM4_CK[32] = {
     {                                                                            \
         /* (Ki+1 ^ Ki+2 ^ Ki+3 ^ CKi) */                                         \
         (TMP) = _mm512_xor_epi32(_mm512_xor_epi32(_mm512_xor_epi32(K1, K2), K3), \
-                                 _mm512_set1_epi32(CK));                         \
+                                 _mm512_set1_epi32((int)(CK)));                  \
         /* T'(Ki+1 ^ Ki+2 ^ Ki+3 ^ CKi) */                                       \
         (TMP) = sBox512(TMP);                                                    \
         (TMP) = _mm512_xor_epi32(TMP, Lkey512(TMP));                             \
@@ -67,10 +67,10 @@ mbx_status16 internal_avx512_sm4_set_round_keys_mb16(int32u* key_sched[SM4_ROUND
     TRANSPOSE_16x4_I32_EPI32(&z0, &z1, &z2, &z3, pa_inp_key, mb_mask);
 
     /* (K0, K1, K2, K3) = (MK0 ^ FK0, MK1 ^ FK1, MK2 ^ FK2, MK3 ^ FK3) */
-    z0 = _mm512_xor_epi32(z0, _mm512_set1_epi32(SM4_FK[0]));
-    z1 = _mm512_xor_epi32(z1, _mm512_set1_epi32(SM4_FK[1]));
-    z2 = _mm512_xor_epi32(z2, _mm512_set1_epi32(SM4_FK[2]));
-    z3 = _mm512_xor_epi32(z3, _mm512_set1_epi32(SM4_FK[3]));
+    z0 = _mm512_xor_epi32(z0, _mm512_set1_epi32((int)(SM4_FK[0])));
+    z1 = _mm512_xor_epi32(z1, _mm512_set1_epi32((int)(SM4_FK[1])));
+    z2 = _mm512_xor_epi32(z2, _mm512_set1_epi32((int)(SM4_FK[2])));
+    z3 = _mm512_xor_epi32(z3, _mm512_set1_epi32((int)(SM4_FK[3])));
 
     const int32u* pCK   = SM4_CK;
     const __m512i* p_rk = (const __m512i*)key_sched;

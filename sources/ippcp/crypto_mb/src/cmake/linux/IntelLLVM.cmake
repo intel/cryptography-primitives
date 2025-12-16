@@ -16,7 +16,7 @@
 
 # Security Linker flags
 
-set(LINK_FLAG_SECURITY "") 
+set(LINK_FLAG_SECURITY "")
 # Data relocation and protection (RELRO)
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,relro -Wl,-z,now")
 # Stack execution protection
@@ -34,9 +34,11 @@ set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fpic -fPIC")
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fcf-protection=full")
 # Enables important warning and error messages relevant to security during compilation
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wall -Wimplicit-fallthrough")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wconversion -Wall")
 # Warnings=errors
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Werror")
+# Enabling additional warnings
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wimplicit-fallthrough -Wconversion -Wextra")
 
 # Linker flags
 

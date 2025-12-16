@@ -246,9 +246,10 @@ mbx_status16 sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
 
     /* Store first ciphertext block for next round */
     for (int i = 0; i < SM4_LINES; i++) {
-        STORED_CT[i]       = _mm512_setzero_epi32();
-        __m128i data_block = _mm_maskz_loadu_epi32(0x000F * (0x1 & loc_mb_mask), loc_inp[i]);
-        STORED_CT[i]       = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
+        STORED_CT[i] = _mm512_setzero_epi32();
+        __m128i data_block =
+            _mm_maskz_loadu_epi32((__mmask8)(0x000F * (0x1 & loc_mb_mask)), loc_inp[i]);
+        STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
         loc_mb_mask >>= 1;
     }
 
@@ -465,19 +466,19 @@ static void sm4_cbc_dec_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES],
         tmp_mask =
             _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
         /* Will be loaded 4 blocks of data */
-        M128(block_mask) = _mm_maskz_set1_epi8(tmp_mask, 0xFF);
+        M128(block_mask) = _mm_maskz_set1_epi8(tmp_mask, (char)0xFF);
         tmp_mask =
             _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(3), _MM_CMPINT_EQ);
         /* Will be loaded 3 blocks of data */
-        M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, 0x3F);
+        M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, (char)0x3F);
         tmp_mask =
             _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(2), _MM_CMPINT_EQ);
         /* Will be loaded 2 blocks of data */
-        M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, 0xF);
+        M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, (char)0xF);
         tmp_mask =
             _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(1), _MM_CMPINT_EQ);
         /* Will be loaded 1 block of data */
-        M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, 0x3);
+        M128(block_mask) = _mm_mask_set1_epi8(M128(block_mask), tmp_mask, (char)0x3);
 
         TMP[0] = _mm512_maskz_loadu_epi64(block_mask[0], loc_inp[0]);
         TMP[1] = _mm512_maskz_loadu_epi64(block_mask[1], loc_inp[1]);

@@ -67,7 +67,7 @@ int OWNAPI(mbx_exp_BufferSize)(int modulusBits)
                           + (1 << EXP_WIN_SIZE) * len52 * 8 /* pre-computed table*/
 
                           ) *
-                         sizeof(int64u);
+                         (int)(sizeof(int64u));
         return bufferSize;
     } else
         return 0;

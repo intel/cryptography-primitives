@@ -149,7 +149,7 @@ mbx_status16 internal_avx512_sm3_update_mb16(const int8u* const msg_pa[16],
                 sm3_avx512_mb16(HASH_VALUE(p_state), (const int8u**)p_buffer, p_proc_len);
                 idx = _mm512_mask_set1_epi32(
                     idx,
-                    ~_mm512_cmp_epi32_mask(proc_len, zero_buffer, _MM_CMPINT_LE),
+                    (__mmask16)~_mm512_cmp_epi32_mask(proc_len, zero_buffer, _MM_CMPINT_LE),
                     0);
             }
         }

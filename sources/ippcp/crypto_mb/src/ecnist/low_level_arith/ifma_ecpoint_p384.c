@@ -150,9 +150,10 @@ void MB_FUNC_NAME(ifma_ec_nistp384_add_point_)(P384_POINT* r,
     sub(H, U2, U1);  /* H = U2-U1 */
 
     /* check if affine (p.x:p.y) == (q.x:q.y) and and do doubling if this happens */
-    __mb_mask x_are_equal      = MB_FUNC_NAME(is_zero_FE384_)(H);
-    __mb_mask y_are_equal      = MB_FUNC_NAME(is_zero_FE384_)(R);
-    __mb_mask points_are_equal = (x_are_equal & y_are_equal & (~p_at_infinity) & (~q_at_infinity));
+    __mb_mask x_are_equal = MB_FUNC_NAME(is_zero_FE384_)(H);
+    __mb_mask y_are_equal = MB_FUNC_NAME(is_zero_FE384_)(R);
+    __mb_mask points_are_equal =
+        (__mb_mask)((x_are_equal & y_are_equal & (~p_at_infinity) & (~q_at_infinity)));
 
     P384_POINT P2;
     MB_FUNC_NAME(set_point_to_infinity_)(&P2);
@@ -422,7 +423,7 @@ void MB_FUNC_NAME(ifma_ec_nistp384_mul_point_)(P384_POINT* r,
 
     /* first window */
     U64 wvalue = loadu64(&scalar[chunk_no]);
-    wvalue     = and64(srli64(wvalue, chunk_shift), idx_mask);
+    wvalue     = and64(srli64(wvalue, (int32u)chunk_shift), idx_mask);
 
     U64 dvalue;
     __mb_mask dsign;

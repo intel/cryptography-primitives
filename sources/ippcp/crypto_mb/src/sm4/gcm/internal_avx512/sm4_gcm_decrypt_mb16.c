@@ -70,17 +70,18 @@ __mmask16 sm4_gcm_decrypt_mb16(int8u* pa_out[SM4_LINES],
     for (int i = 0; i < 4; i++) {
         /* Load txt len to high part of registry */
         __m512i len_updade  = maskz_expandloadu_epi32(0x1111, (void*)(in_len_rearranged + i * 4));
-        __m512i len_context = loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), i));
+        __m512i len_context = loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), (int64u)i));
 
         len_context = add_epi64(len_context, len_updade);
 
-        storeu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), i), len_context);
+        storeu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), (int64u)i), len_context);
 
         __mmask8 overflow_mask_part = cmp_epi64_mask(max_txt_len, len_context, _MM_CMPINT_LE);
 
-        overflow_mask_part = (overflow_mask_part & 0x01) | (overflow_mask_part & 0x04) >> 1 |
-                             (overflow_mask_part & 0x10) >> 2 | (overflow_mask_part & 0x40) >> 3;
-        overflow_mask = overflow_mask | overflow_mask_part << (i * 4);
+        overflow_mask_part =
+            (__mmask8)((overflow_mask_part & 0x01) | (overflow_mask_part & 0x04) >> 1 |
+                       (overflow_mask_part & 0x10) >> 2 | (overflow_mask_part & 0x40) >> 3);
+        overflow_mask = (__mmask8)(overflow_mask | overflow_mask_part << (i * 4));
     }
 
     /* Update intermediate ghash value with full blocks of given data */

@@ -153,7 +153,7 @@ static __mb_mask nistp384_ecdsa_verify_mb8(U64 sign_r[], U64 sign_s[], U64 msg[]
     MB_FUNC_NAME(ifma_fastred52_pn384_)(sign_r_restored, sign_r_restored);
 
     /* sign_r_restored != sign_r */
-    signature_err_mask |= ~(MB_FUNC_NAME(cmp_eq_FE384_)(sign_r_restored, sign_r));
+    signature_err_mask |= (__mb_mask) ~(MB_FUNC_NAME(cmp_eq_FE384_)(sign_r_restored, sign_r));
 
     return signature_err_mask;
 }

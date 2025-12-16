@@ -104,10 +104,10 @@ void sm4_gcm_precompute_hashkey_mb16(const mbx_sm4_key_schedule* key_sched,
     __mmask16 cmp_mask_1 = cmpeq_epi32_mask(T1_1, M512(two_one));
     __mmask16 cmp_mask_2 = cmpeq_epi32_mask(T1_2, M512(two_one));
     __mmask16 cmp_mask_3 = cmpeq_epi32_mask(T1_3, M512(two_one));
-    T1_0                 = mask_set1_epi32(T1_0, cmp_mask_0, 0xFFFFFFFF);
-    T1_1                 = mask_set1_epi32(T1_1, cmp_mask_1, 0xFFFFFFFF);
-    T1_2                 = mask_set1_epi32(T1_2, cmp_mask_2, 0xFFFFFFFF);
-    T1_3                 = mask_set1_epi32(T1_3, cmp_mask_3, 0xFFFFFFFF);
+    T1_0                 = mask_set1_epi32(T1_0, cmp_mask_0, (int)0xFFFFFFFF);
+    T1_1                 = mask_set1_epi32(T1_1, cmp_mask_1, (int)0xFFFFFFFF);
+    T1_2                 = mask_set1_epi32(T1_2, cmp_mask_2, (int)0xFFFFFFFF);
+    T1_3                 = mask_set1_epi32(T1_3, cmp_mask_3, (int)0xFFFFFFFF);
 
     T1_0               = and(T1_0, M512(gcm_poly));
     T1_1               = and(T1_1, M512(gcm_poly));

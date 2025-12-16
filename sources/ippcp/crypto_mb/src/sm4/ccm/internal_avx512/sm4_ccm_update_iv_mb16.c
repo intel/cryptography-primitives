@@ -39,8 +39,8 @@ void sm4_ccm_update_iv_mb16(const int8u* const pa_iv[SM4_LINES],
             unsigned L;
             int iv_len_i = iv_len[i];
 
-            L     = 15 - iv_len_i;
-            flags = L - 1;
+            L     = 15U - (unsigned)iv_len_i;
+            flags = (int8u)(L - 1);
             /* Update CTR0 for each lane */
             int8u* ctr0_nonce_ptr = (int8u*)&(ctr0[i]);
             PadBlock(0, ctr0_nonce_ptr, 16);

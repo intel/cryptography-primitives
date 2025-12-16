@@ -37,7 +37,7 @@
 */
 
 
-/* 
+/*
 // to Montgomery conversion constant
 // r = 2^(P256_LEN52*DIGIT_SIZE) mod p256
 */
@@ -167,7 +167,7 @@ void MB_FUNC_NAME(ifma_ec_nistp256_add_point_)(P256_POINT* r,
     __mb_mask y_are_equal = MB_FUNC_NAME(is_zero_FE256_)(R);
     /* clang-format off */
     __mb_mask points_are_equal = and_mb_mask(and_mb_mask(and_mb_mask(x_are_equal, y_are_equal),
-                                                         not_mb_mask(p_at_infinity)), 
+                                                         not_mb_mask(p_at_infinity)),
                                              not_mb_mask(q_at_infinity));
     /* clang-format on */
 
@@ -420,7 +420,7 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(P256_POINT* r,
 
     /* first window */
     U64 wvalue = loadu64(&scalar[chunk_no]);
-    wvalue     = and64(srli64(wvalue, chunk_shift), idx_mask);
+    wvalue     = and64(srli64(wvalue, (int32u)chunk_shift), idx_mask);
 
     U64 dvalue;
     __mb_mask dsign;
@@ -446,8 +446,8 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(P256_POINT* r,
 /* AVX-IFMA don't supported _mm512_shrdv_epi64 */
 #if ((_MBX == _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
         {
-            U64 t_lo_ = srli64(wvalue, chunk_shift);
-            U64 t_hi_ = slli64(loadu64(&scalar[chunk_no + 1]), (64 - chunk_shift));
+            U64 t_lo_ = srli64(wvalue, (int32u)chunk_shift);
+            U64 t_hi_ = slli64(loadu64(&scalar[chunk_no + 1]), (int32u)(64 - chunk_shift));
             wvalue    = or64(t_lo_, t_hi_);
         }
 #else
@@ -514,7 +514,7 @@ __MBX_INLINE void MB_FUNC_NAME(booth_recode_bp_)(__mb_mask* sign, U64* dvalue, U
     U64 d       = sub64(sub64(set1(1 << (BP_WIN_SIZE + 1)), wvalue), one);
     d           = mask_mov64(wvalue, s, d);
     U64 odd     = and64(d, one);
-    d           = add64(srli64(d, 1), odd);
+    d           = add64(srli64(d, 1U), odd);
 
     *sign   = s;
     *dvalue = d;
@@ -616,8 +616,8 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_pointbase_)(P256_POINT* r, const U64 scal
 /* AVX-IFMA don't supported _mm512_shrdv_epi64 */
 #if ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
         {
-            U64 t_lo_ = srli64(wvalue, chunk_shift);
-            U64 t_hi_ = slli64(loadu64(&scalar[chunk_no + 1]), (64 - chunk_shift));
+            U64 t_lo_ = srli64(wvalue, (int32u)chunk_shift);
+            U64 t_hi_ = slli64(loadu64(&scalar[chunk_no + 1]), (int32u)(64 - chunk_shift));
             wvalue    = or64(t_lo_, t_hi_);
         }
 #else

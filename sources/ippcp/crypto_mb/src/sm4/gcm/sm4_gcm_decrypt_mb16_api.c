@@ -47,11 +47,11 @@ mbx_status16 OWNAPI(mbx_sm4_gcm_decrypt_mb16)(int8u* pa_out[SM4_LINES],
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_out[buf_no] == NULL || pa_in[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            mb_mask &= ~(0x1 << rearrangeOrder[buf_no]);
+            mb_mask &= (int16u) ~(0x1 << rearrangeOrder[buf_no]);
         }
         if (in_len[buf_no] < 0) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-            mb_mask &= ~(0x1 << rearrangeOrder[buf_no]);
+            mb_mask &= (int16u) ~(0x1 << rearrangeOrder[buf_no]);
         }
         /* We take elements from the SM4_GCM_CONTEXT_LEN(p_context) array by the formula [1+buf_no*2], because of the
          * layout of length data in the context. Refer to sources/ippcp/crypto_mb/include/crypto_mb/sm4_gcm.h file for details.
@@ -64,7 +64,7 @@ mbx_status16 OWNAPI(mbx_sm4_gcm_decrypt_mb16)(int8u* pa_out[SM4_LINES],
              (int64u)in_len[buf_no])) {
 
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-            mb_mask &= ~(0x1 << rearrangeOrder[buf_no]);
+            mb_mask &= (int16u) ~(0x1 << rearrangeOrder[buf_no]);
         }
     }
 

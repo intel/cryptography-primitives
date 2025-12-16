@@ -116,7 +116,7 @@ static void ed25519_nonce(int8u* pa_nonce[8],
         SHA512Init(&pState);
         SHA512Update(az, 32, &pState);
         if (msg)
-            SHA512Update(msg, mlen, &pState);
+            SHA512Update(msg, (int)mlen, &pState);
 
         SHA512Final(pa_nonce[n], &pState);
     }
@@ -142,7 +142,7 @@ static void ed25519_hash_r_pub_msg(int8u* pa_hram[8],
         if (public)
             SHA512Update((const int8u*)public, sizeof(ed25519_public_key), &pState);
         if (msg)
-            SHA512Update(msg, mlen, &pState);
+            SHA512Update(msg, (int)mlen, &pState);
         SHA512Final(pa_hram[n], &pState);
     }
 }
@@ -291,7 +291,7 @@ mbx_status MB_FUNC_NAME(internal_avx512_ed25519_verify_)(
         for (int n = NE_LEN64; n > 0; n--) {
             k |= cmp64_mask(n_mb[n - 1], s_mb[n - 1], _MM_CMPINT_NLE);
         }
-        status |= MBX_SET_STS_BY_MASK(status, ~k, MBX_STATUS_MISMATCH_PARAM_ERR);
+        status |= MBX_SET_STS_BY_MASK(status, (__mmask8)~k, MBX_STATUS_MISMATCH_PARAM_ERR);
 
         /* continue processing if there are correct parameters */
         if (MBX_IS_ANY_OK_STS(status)) {
@@ -300,7 +300,7 @@ mbx_status MB_FUNC_NAME(internal_avx512_ed25519_verify_)(
             k = ge52_ext_decompress(&pubA_mb, pubfe_mb);
             fe52_neg(pubA_mb.X, pubA_mb.X);
             fe52_neg(pubA_mb.T, pubA_mb.T);
-            status |= MBX_SET_STS_BY_MASK(status, ~k, MBX_STATUS_SIGNATURE_ERR);
+            status |= MBX_SET_STS_BY_MASK(status, (__mmask8)~k, MBX_STATUS_SIGNATURE_ERR);
 
             if (MBX_IS_ANY_OK_STS(status)) {
                 /* R = [h]A + [s]G */
@@ -313,7 +313,7 @@ mbx_status MB_FUNC_NAME(internal_avx512_ed25519_verify_)(
 
                 /* check that recovered r- and input r- components are equal each other */
                 k = fe52_mb_is_equ(checkR_mb, inputR_mb);
-                status |= MBX_SET_STS_BY_MASK(status, ~k, MBX_STATUS_SIGNATURE_ERR);
+                status |= MBX_SET_STS_BY_MASK(status, (__mmask8)~k, MBX_STATUS_SIGNATURE_ERR);
             }
         }
     }

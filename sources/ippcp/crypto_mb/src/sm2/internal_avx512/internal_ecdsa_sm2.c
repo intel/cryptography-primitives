@@ -79,8 +79,8 @@ static void sm2_ecdsa_compute_z_digest(int8u* pa_z_digest[8],
     for (int i = 0; i < 8; ++i) {
         int entl = ((user_id_len[i] * 8) & 0xFFFF);
 
-        entl_data[i][1] = entl & 0xFF;
-        entl_data[i][0] = entl >> 8;
+        entl_data[i][1] = (int8u)entl & 0xFF;
+        entl_data[i][0] = (int8u)(entl >> 8);
 
         pa_entl[i] = &(entl_data[i][0]);
     }
@@ -304,7 +304,7 @@ static mbx_status sm2_ecdsa_verify_mb8(U64 sign_r[],
     MB_FUNC_NAME(ifma_frommont52_nsm2_)(sign_r_restored, sign_r_restored);
 
     /* check equal */
-    signature_err_mask |= ~(MB_FUNC_NAME(cmp_eq_FESM2_)(sign_r_restored, sign_r));
+    signature_err_mask |= (__mb_mask) ~(MB_FUNC_NAME(cmp_eq_FESM2_)(sign_r_restored, sign_r));
 
     status |= MBX_SET_STS_BY_MASK(status, signature_err_mask, MBX_STATUS_SIGNATURE_ERR);
     return status;

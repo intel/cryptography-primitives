@@ -203,9 +203,9 @@ void sm4_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
     __mmask16 loc_mb_mask = 0;
 
     for (int i = 0; i < SM4_LINES; i++) {
-        __mmask16 tmp = mb_mask & (0x1 << rearrangeOrder[i]);
-        tmp           = tmp >> rearrangeOrder[i];
-        loc_mb_mask   = loc_mb_mask | tmp << i;
+        __mmask16 tmp = mb_mask & (__mmask16)(0x1 << rearrangeOrder[i]);
+        tmp           = (__mmask16)(tmp >> rearrangeOrder[i]);
+        loc_mb_mask   = (__mmask16)(loc_mb_mask | tmp << i);
     }
 
     mb_mask = loc_mb_mask;
@@ -216,7 +216,7 @@ void sm4_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
     /* Create the local copy of the input data length in bytes and set it to zero for non-valid buffers */
     __m512i loc_len;
     loc_len = loadu(len);
-    loc_len = mask_set1_epi32(loc_len, ~mb_mask, 0);
+    loc_len = mask_set1_epi32(loc_len, (__mmask16)~mb_mask, 0);
 
     /* input blocks loc_blks[] = ceil(loc_len[]/SM4_BLOCK_SIZE) */
     int32u loc_blks[SM4_LINES];

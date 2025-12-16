@@ -176,7 +176,7 @@ void EXP52x10_mb8(int64u out[][8],
 
         /* process 1-st exp window - just init result */
         __m512i red_table_idx = _mm512_load_si512(expz[exp_chunk_no]);
-        red_table_idx         = _mm512_srli_epi64(red_table_idx, exp_chunk_shift);
+        red_table_idx         = _mm512_srli_epi64(red_table_idx, (int32u)exp_chunk_shift);
 
         extract_multiplier_mb8(red_Y, red_table, (int64u*)(&red_table_idx));
 

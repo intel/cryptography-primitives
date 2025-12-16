@@ -47,11 +47,11 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_get_tag_mb16)(int8u* pa_tag[SM4_LINES],
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_tag[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         } else {
             if (tag_len[buf_no] < 4 || tag_len[buf_no] > 16 || tag_len[buf_no] & 0x1) {
                 status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-                mb_mask &= ~(0x1 << buf_no);
+                mb_mask &= (int16u) ~(0x1 << buf_no);
             }
         }
     }

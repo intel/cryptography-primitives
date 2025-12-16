@@ -55,10 +55,10 @@ void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
     __mmask8 eq_0_mask_hi = cmp_epi64_mask(len_hi, setzero(), _MM_CMPINT_EQ);
     __mmask8 eq_0_mask_lo = cmp_epi64_mask(len_lo, setzero(), _MM_CMPINT_EQ);
 
-    __mmask16 eq_12_mask = eq_12_mask_lo << 8 | eq_12_mask_hi;
-    __mmask16 eq_0_mask  = eq_0_mask_lo << 8 | eq_0_mask_hi;
+    __mmask16 eq_12_mask = (__mmask16)(eq_12_mask_lo << 8 | eq_12_mask_hi);
+    __mmask16 eq_0_mask  = (__mmask16)(eq_0_mask_lo << 8 | eq_0_mask_hi);
 
-    __mmask16 load_mask = ~eq_12_mask | ~eq_0_mask;
+    __mmask16 load_mask = (__mmask16)(~eq_12_mask | ~eq_0_mask);
 
     /* Finalize IVs of length != 96 bit */
     if (load_mask) {
@@ -79,40 +79,40 @@ void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
       */
 
         /* Begin of explicitly unrolled loop */
-        __m128i input_block_0 = _mm_maskz_set1_epi64(1, *(iv_len + (0 + 4 * 0)) << 3);
-        __m128i input_block_1 = _mm_maskz_set1_epi64(1, *(iv_len + (0 + 4 * 1)) << 3);
-        __m128i input_block_2 = _mm_maskz_set1_epi64(1, *(iv_len + (0 + 4 * 2)) << 3);
-        __m128i input_block_3 = _mm_maskz_set1_epi64(1, *(iv_len + (0 + 4 * 3)) << 3);
+        __m128i input_block_0 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (0 + 4 * 0)) << 3));
+        __m128i input_block_1 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (0 + 4 * 1)) << 3));
+        __m128i input_block_2 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (0 + 4 * 2)) << 3));
+        __m128i input_block_3 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (0 + 4 * 3)) << 3));
 
         iv_blocks_4_0 = insert32x4(iv_blocks_4_0, input_block_0, 0);
         iv_blocks_4_1 = insert32x4(iv_blocks_4_1, input_block_1, 0);
         iv_blocks_4_2 = insert32x4(iv_blocks_4_2, input_block_2, 0);
         iv_blocks_4_3 = insert32x4(iv_blocks_4_3, input_block_3, 0);
 
-        input_block_0 = _mm_maskz_set1_epi64(1, *(iv_len + (1 + 4 * 0)) << 3);
-        input_block_1 = _mm_maskz_set1_epi64(1, *(iv_len + (1 + 4 * 1)) << 3);
-        input_block_2 = _mm_maskz_set1_epi64(1, *(iv_len + (1 + 4 * 2)) << 3);
-        input_block_3 = _mm_maskz_set1_epi64(1, *(iv_len + (1 + 4 * 3)) << 3);
+        input_block_0 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (1 + 4 * 0)) << 3));
+        input_block_1 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (1 + 4 * 1)) << 3));
+        input_block_2 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (1 + 4 * 2)) << 3));
+        input_block_3 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (1 + 4 * 3)) << 3));
 
         iv_blocks_4_0 = insert32x4(iv_blocks_4_0, input_block_0, 1);
         iv_blocks_4_1 = insert32x4(iv_blocks_4_1, input_block_1, 1);
         iv_blocks_4_2 = insert32x4(iv_blocks_4_2, input_block_2, 1);
         iv_blocks_4_3 = insert32x4(iv_blocks_4_3, input_block_3, 1);
 
-        input_block_0 = _mm_maskz_set1_epi64(1, *(iv_len + (2 + 4 * 0)) << 3);
-        input_block_1 = _mm_maskz_set1_epi64(1, *(iv_len + (2 + 4 * 1)) << 3);
-        input_block_2 = _mm_maskz_set1_epi64(1, *(iv_len + (2 + 4 * 2)) << 3);
-        input_block_3 = _mm_maskz_set1_epi64(1, *(iv_len + (2 + 4 * 3)) << 3);
+        input_block_0 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (2 + 4 * 0)) << 3));
+        input_block_1 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (2 + 4 * 1)) << 3));
+        input_block_2 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (2 + 4 * 2)) << 3));
+        input_block_3 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (2 + 4 * 3)) << 3));
 
         iv_blocks_4_0 = insert32x4(iv_blocks_4_0, input_block_0, 2);
         iv_blocks_4_1 = insert32x4(iv_blocks_4_1, input_block_1, 2);
         iv_blocks_4_2 = insert32x4(iv_blocks_4_2, input_block_2, 2);
         iv_blocks_4_3 = insert32x4(iv_blocks_4_3, input_block_3, 2);
 
-        input_block_0 = _mm_maskz_set1_epi64(1, *(iv_len + (3 + 4 * 0)) << 3);
-        input_block_1 = _mm_maskz_set1_epi64(1, *(iv_len + (3 + 4 * 1)) << 3);
-        input_block_2 = _mm_maskz_set1_epi64(1, *(iv_len + (3 + 4 * 2)) << 3);
-        input_block_3 = _mm_maskz_set1_epi64(1, *(iv_len + (3 + 4 * 3)) << 3);
+        input_block_0 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (3 + 4 * 0)) << 3));
+        input_block_1 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (3 + 4 * 1)) << 3));
+        input_block_2 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (3 + 4 * 2)) << 3));
+        input_block_3 = _mm_maskz_set1_epi64(1, (long long)(*(iv_len + (3 + 4 * 3)) << 3));
 
         iv_blocks_4_0 = insert32x4(iv_blocks_4_0, input_block_0, 3);
         iv_blocks_4_1 = insert32x4(iv_blocks_4_1, input_block_1, 3);
@@ -133,25 +133,25 @@ void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
         iv_blocks_4_2 = shuffle_epi8(iv_blocks_4_2, M512(swapEndianness));
         iv_blocks_4_3 = shuffle_epi8(iv_blocks_4_3, M512(swapEndianness));
 
-        __mmask8 store_mask_0 = 0x03 * (0x1 & ((load_mask >> 0 * 4) >> 0)) |
-                                0x0C * (0x1 & ((load_mask >> 0 * 4) >> 1)) |
-                                0x30 * (0x1 & ((load_mask >> 0 * 4) >> 2)) |
-                                0xC0 * (0x1 & ((load_mask >> 0 * 4) >> 3));
+        __mmask8 store_mask_0 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 0 * 4) >> 0)) |
+                                           0x0C * (0x1 & ((load_mask >> 0 * 4) >> 1)) |
+                                           0x30 * (0x1 & ((load_mask >> 0 * 4) >> 2)) |
+                                           0xC0 * (0x1 & ((load_mask >> 0 * 4) >> 3)));
 
-        __mmask8 store_mask_1 = 0x03 * (0x1 & ((load_mask >> 1 * 4) >> 0)) |
-                                0x0C * (0x1 & ((load_mask >> 1 * 4) >> 1)) |
-                                0x30 * (0x1 & ((load_mask >> 1 * 4) >> 2)) |
-                                0xC0 * (0x1 & ((load_mask >> 1 * 4) >> 3));
+        __mmask8 store_mask_1 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 1 * 4) >> 0)) |
+                                           0x0C * (0x1 & ((load_mask >> 1 * 4) >> 1)) |
+                                           0x30 * (0x1 & ((load_mask >> 1 * 4) >> 2)) |
+                                           0xC0 * (0x1 & ((load_mask >> 1 * 4) >> 3)));
 
-        __mmask8 store_mask_2 = 0x03 * (0x1 & ((load_mask >> 2 * 4) >> 0)) |
-                                0x0C * (0x1 & ((load_mask >> 2 * 4) >> 1)) |
-                                0x30 * (0x1 & ((load_mask >> 2 * 4) >> 2)) |
-                                0xC0 * (0x1 & ((load_mask >> 2 * 4) >> 3));
+        __mmask8 store_mask_2 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 2 * 4) >> 0)) |
+                                           0x0C * (0x1 & ((load_mask >> 2 * 4) >> 1)) |
+                                           0x30 * (0x1 & ((load_mask >> 2 * 4) >> 2)) |
+                                           0xC0 * (0x1 & ((load_mask >> 2 * 4) >> 3)));
 
-        __mmask8 store_mask_3 = 0x03 * (0x1 & ((load_mask >> 3 * 4) >> 0)) |
-                                0x0C * (0x1 & ((load_mask >> 3 * 4) >> 1)) |
-                                0x30 * (0x1 & ((load_mask >> 3 * 4) >> 2)) |
-                                0xC0 * (0x1 & ((load_mask >> 3 * 4) >> 3));
+        __mmask8 store_mask_3 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 3 * 4) >> 0)) |
+                                           0x0C * (0x1 & ((load_mask >> 3 * 4) >> 1)) |
+                                           0x30 * (0x1 & ((load_mask >> 3 * 4) >> 2)) |
+                                           0xC0 * (0x1 & ((load_mask >> 3 * 4) >> 3)));
 
         mask_storeu_epi64(j0 + 0, store_mask_0, iv_blocks_4_0);
         mask_storeu_epi64(j0 + 4, store_mask_1, iv_blocks_4_1);
@@ -164,9 +164,10 @@ void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
         __m128i iv_block;
 
         for (int i = 0; i < SM4_LINES; i++) {
-            iv_block =
-                _mm_mask_loadu_epi8(M128(one_f), 0x0FFF * (0x1 & eq_12_mask), (void*)pa_iv[i]);
-            _mm_mask_storeu_epi8(j0 + i, 0xFFFF * (0x1 & eq_12_mask), iv_block);
+            iv_block = _mm_mask_loadu_epi8(M128(one_f),
+                                           (__mmask16)(0x0FFF * (0x1 & eq_12_mask)),
+                                           (void*)pa_iv[i]);
+            _mm_mask_storeu_epi8(j0 + i, (__mmask16)(0xFFFF * (0x1 & eq_12_mask)), iv_block);
             eq_12_mask >>= 1;
         }
     }

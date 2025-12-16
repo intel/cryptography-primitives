@@ -30,7 +30,8 @@ void sm3_mask_init_mb8(SM3_CTX_mb8* p_state, __mmask8 mb_mask)
         _mm256_mask_set1_epi32(_mm256_loadu_si256((__m256i*)HASH_BUFFIDX(p_state)), mb_mask, 0));
 
     /* clear summary message length */
-    _mm512_storeu_si512(MSG_LEN(p_state), _mm512_maskz_loadu_epi64(~mb_mask, MSG_LEN(p_state)));
+    _mm512_storeu_si512(MSG_LEN(p_state),
+                        _mm512_maskz_loadu_epi64((__mmask8)~mb_mask, MSG_LEN(p_state)));
 
     /* clear buffer */
     for (int i = 0; i < SM3_NUM_BUFFERS8; i++) {

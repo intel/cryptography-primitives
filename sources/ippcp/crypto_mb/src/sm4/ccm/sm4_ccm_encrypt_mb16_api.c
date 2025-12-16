@@ -48,21 +48,21 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_encrypt_mb16)(int8u* pa_out[SM4_LINES],
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_out[buf_no] == NULL || pa_in[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
             continue;
         }
 
         if (in_len[buf_no] < 0) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
             continue;
         }
 
-        processed_len[buf_no] += in_len[buf_no];
+        processed_len[buf_no] += (int64u)(in_len[buf_no]);
         /* Check if total processed length will exceed the total message length passed at init */
         if (processed_len[buf_no] > msg_len[buf_no]) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
     }
 

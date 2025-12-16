@@ -101,7 +101,7 @@ mbx_status OWNAPI(mbx_rsa_public_mb8)(const int8u* const from_pa[8],
 
         /* check if allocated buffer) */
         if (NULL == buffer) {
-            buffer = (int8u*)(malloc(meth->buffSize));
+            buffer = (int8u*)(malloc((int64u)(meth->buffSize)));
             if (NULL == buffer) {
                 status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
                 return status;
@@ -213,7 +213,7 @@ mbx_status OWNAPI(mbx_rsa_private_mb8)(const int8u* const from_pa[8],
 
         /* check if allocated buffer) */
         if (NULL == buffer) {
-            buffer = (int8u*)(malloc(meth->buffSize));
+            buffer = (int8u*)(malloc((int64u)(meth->buffSize)));
             if (NULL == buffer) {
                 status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
                 return status;
@@ -334,7 +334,7 @@ mbx_status OWNAPI(mbx_rsa_private_crt_mb8)(const int8u* const from_pa[8],
 
         /* check if allocated buffer) */
         if (NULL == buffer) {
-            buffer = (int8u*)(malloc(meth->buffSize));
+            buffer = (int8u*)(malloc((int64u)(meth->buffSize)));
             if (NULL == buffer) {
                 status = MBX_SET_STS_ALL(MBX_STATUS_NULL_PARAM_ERR);
                 return status;

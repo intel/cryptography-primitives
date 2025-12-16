@@ -39,7 +39,7 @@ mbx_status16 OWNAPI(mbx_sm4_set_key_mb16)(mbx_sm4_key_schedule* key_sched,
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_key[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
     }
 
@@ -72,7 +72,7 @@ mbx_status16 OWNAPI(mbx_sm4_xts_set_keys_mb16)(mbx_sm4_key_schedule* key_sched1,
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_key[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
     }
 

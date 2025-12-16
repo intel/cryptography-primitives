@@ -43,11 +43,11 @@ mbx_status16 OWNAPI(mbx_sm4_gcm_update_aad_mb16)(const int8u* const pa_aad[SM4_L
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_aad[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            mb_mask &= ~(0x1 << rearrangeOrder[buf_no]);
+            mb_mask &= (int16u) ~(0x1 << rearrangeOrder[buf_no]);
         }
         if (aad_len[buf_no] < 0) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-            mb_mask &= ~(0x1 << rearrangeOrder[buf_no]);
+            mb_mask &= (int16u) ~(0x1 << rearrangeOrder[buf_no]);
         }
     }
 

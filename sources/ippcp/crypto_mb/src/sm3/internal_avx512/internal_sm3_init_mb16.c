@@ -35,9 +35,10 @@ mbx_status16 internal_avx512_sm3_mask_init_mb16(SM3_CTX_mb16* p_state, __mmask16
         _mm512_mask_set1_epi32(_mm512_loadu_si512(HASH_BUFFIDX(p_state)), mb_mask, 0));
 
     /* clear summary message length */
-    _mm512_storeu_si512(MSG_LEN(p_state), _mm512_maskz_loadu_epi64(~mb_mask8[0], MSG_LEN(p_state)));
+    _mm512_storeu_si512(MSG_LEN(p_state),
+                        _mm512_maskz_loadu_epi64((__mmask8)(~mb_mask8[0]), MSG_LEN(p_state)));
     _mm512_storeu_si512(MSG_LEN(p_state) + 8,
-                        _mm512_maskz_loadu_epi64(~mb_mask8[1], MSG_LEN(p_state) + 8));
+                        _mm512_maskz_loadu_epi64((__mmask8)~mb_mask8[1], MSG_LEN(p_state) + 8));
 
 
     /* clear buffer */

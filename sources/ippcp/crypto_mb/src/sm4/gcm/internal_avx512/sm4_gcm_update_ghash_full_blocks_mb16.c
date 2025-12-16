@@ -41,13 +41,13 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     /* Begin of explicitly unrolled loop */
 
     __m128i input_block_0 =
-        _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_0), (void*)pa_input[0 + 4 * 0]);
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_0)), (void*)pa_input[0 + 4 * 0]);
     __m128i input_block_1 =
-        _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_1), (void*)pa_input[0 + 4 * 1]);
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_1)), (void*)pa_input[0 + 4 * 1]);
     __m128i input_block_2 =
-        _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_2), (void*)pa_input[0 + 4 * 2]);
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_2)), (void*)pa_input[0 + 4 * 2]);
     __m128i input_block_3 =
-        _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_3), (void*)pa_input[0 + 4 * 3]);
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)), (void*)pa_input[0 + 4 * 3]);
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
     input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
@@ -64,10 +64,14 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_0), (void*)pa_input[1 + 4 * 0]);
-    input_block_1 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_1), (void*)pa_input[1 + 4 * 1]);
-    input_block_2 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_2), (void*)pa_input[1 + 4 * 2]);
-    input_block_3 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_3), (void*)pa_input[1 + 4 * 3]);
+    input_block_0 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_0)), (void*)pa_input[1 + 4 * 0]);
+    input_block_1 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_1)), (void*)pa_input[1 + 4 * 1]);
+    input_block_2 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_2)), (void*)pa_input[1 + 4 * 2]);
+    input_block_3 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)), (void*)pa_input[1 + 4 * 3]);
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
     input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
@@ -84,10 +88,14 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_0), (void*)pa_input[2 + 4 * 0]);
-    input_block_1 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_1), (void*)pa_input[2 + 4 * 1]);
-    input_block_2 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_2), (void*)pa_input[2 + 4 * 2]);
-    input_block_3 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_3), (void*)pa_input[2 + 4 * 3]);
+    input_block_0 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_0)), (void*)pa_input[2 + 4 * 0]);
+    input_block_1 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_1)), (void*)pa_input[2 + 4 * 1]);
+    input_block_2 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_2)), (void*)pa_input[2 + 4 * 2]);
+    input_block_3 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)), (void*)pa_input[2 + 4 * 3]);
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
     input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
@@ -104,10 +112,14 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_0), (void*)pa_input[3 + 4 * 0]);
-    input_block_1 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_1), (void*)pa_input[3 + 4 * 1]);
-    input_block_2 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_2), (void*)pa_input[3 + 4 * 2]);
-    input_block_3 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_3), (void*)pa_input[3 + 4 * 3]);
+    input_block_0 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_0)), (void*)pa_input[3 + 4 * 0]);
+    input_block_1 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_1)), (void*)pa_input[3 + 4 * 1]);
+    input_block_2 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_2)), (void*)pa_input[3 + 4 * 2]);
+    input_block_3 =
+        _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)), (void*)pa_input[3 + 4 * 3]);
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
     input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
@@ -144,13 +156,13 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
 
     /* Begin of explicitly unrolled loop */
 
-    __m128i input_block_0 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_0),
+    __m128i input_block_0 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_0)),
                                                  (void*)(pa_input[0 + 4 * 0] + block_number * 16));
-    __m128i input_block_1 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_1),
+    __m128i input_block_1 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_1)),
                                                  (void*)(pa_input[0 + 4 * 1] + block_number * 16));
-    __m128i input_block_2 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_2),
+    __m128i input_block_2 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_2)),
                                                  (void*)(pa_input[0 + 4 * 2] + block_number * 16));
-    __m128i input_block_3 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_3),
+    __m128i input_block_3 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)),
                                                  (void*)(pa_input[0 + 4 * 3] + block_number * 16));
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
@@ -168,13 +180,13 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_0),
+    input_block_0 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_0)),
                                          (void*)(pa_input[1 + 4 * 0] + block_number * 16));
-    input_block_1 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_1),
+    input_block_1 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_1)),
                                          (void*)(pa_input[1 + 4 * 1] + block_number * 16));
-    input_block_2 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_2),
+    input_block_2 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_2)),
                                          (void*)(pa_input[1 + 4 * 2] + block_number * 16));
-    input_block_3 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_3),
+    input_block_3 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)),
                                          (void*)(pa_input[1 + 4 * 3] + block_number * 16));
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
@@ -192,13 +204,13 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_0),
+    input_block_0 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_0)),
                                          (void*)(pa_input[2 + 4 * 0] + block_number * 16));
-    input_block_1 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_1),
+    input_block_1 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_1)),
                                          (void*)(pa_input[2 + 4 * 1] + block_number * 16));
-    input_block_2 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_2),
+    input_block_2 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_2)),
                                          (void*)(pa_input[2 + 4 * 2] + block_number * 16));
-    input_block_3 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_3),
+    input_block_3 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)),
                                          (void*)(pa_input[2 + 4 * 3] + block_number * 16));
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
@@ -216,13 +228,13 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_0),
+    input_block_0 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_0)),
                                          (void*)(pa_input[3 + 4 * 0] + block_number * 16));
-    input_block_1 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_1),
+    input_block_1 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_1)),
                                          (void*)(pa_input[3 + 4 * 1] + block_number * 16));
-    input_block_2 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_2),
+    input_block_2 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_2)),
                                          (void*)(pa_input[3 + 4 * 2] + block_number * 16));
-    input_block_3 = _mm_maskz_loadu_epi8(0xFFFF * (0x1 & load_mask_3),
+    input_block_3 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)),
                                          (void*)(pa_input[3 + 4 * 3] + block_number * 16));
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
@@ -273,8 +285,9 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
         __mmask16 less_16_mask = cmp_epi32_mask((*input_len), set1_epi32(16), _MM_CMPINT_LT);
         __mmask16 stream_mask  = max_stream_len_mask | less_16_mask;
 
-        load_mask = load_mask * (load_mask != 0) | max_stream_len_mask * (stream_mask == 0xFFFF) *
-                                                       (load_mask == 0) * (less_16_mask != 0xFFFF);
+        load_mask = (__mmask16)(load_mask * (load_mask != 0) |
+                                max_stream_len_mask * (stream_mask == 0xFFFF) * (load_mask == 0) *
+                                    (less_16_mask != 0xFFFF));
         stream_len =
             stream_len + i * (stream_mask == 0xFFFF) * (stream_len == 0) * (less_16_mask != 0xFFFF);
     }
@@ -446,25 +459,25 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
 
         /* Reduction complete, store result */
 
-        __mmask8 store_mask_0 = 0x03 * (0x1 & ((load_mask >> 0 * 4) >> 0)) | //
-                                0x0C * (0x1 & ((load_mask >> 0 * 4) >> 1)) | //
-                                0x30 * (0x1 & ((load_mask >> 0 * 4) >> 2)) | //
-                                0xC0 * (0x1 & ((load_mask >> 0 * 4) >> 3));  //
+        __mmask8 store_mask_0 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 0 * 4) >> 0)) | //
+                                           0x0C * (0x1 & ((load_mask >> 0 * 4) >> 1)) | //
+                                           0x30 * (0x1 & ((load_mask >> 0 * 4) >> 2)) | //
+                                           0xC0 * (0x1 & ((load_mask >> 0 * 4) >> 3))); //
 
-        __mmask8 store_mask_1 = 0x03 * (0x1 & ((load_mask >> 1 * 4) >> 0)) | //
-                                0x0C * (0x1 & ((load_mask >> 1 * 4) >> 1)) | //
-                                0x30 * (0x1 & ((load_mask >> 1 * 4) >> 2)) | //
-                                0xC0 * (0x1 & ((load_mask >> 1 * 4) >> 3));  //
+        __mmask8 store_mask_1 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 1 * 4) >> 0)) | //
+                                           0x0C * (0x1 & ((load_mask >> 1 * 4) >> 1)) | //
+                                           0x30 * (0x1 & ((load_mask >> 1 * 4) >> 2)) | //
+                                           0xC0 * (0x1 & ((load_mask >> 1 * 4) >> 3))); //
 
-        __mmask8 store_mask_2 = 0x03 * (0x1 & ((load_mask >> 2 * 4) >> 0)) | //
-                                0x0C * (0x1 & ((load_mask >> 2 * 4) >> 1)) | //
-                                0x30 * (0x1 & ((load_mask >> 2 * 4) >> 2)) | //
-                                0xC0 * (0x1 & ((load_mask >> 2 * 4) >> 3));  //
+        __mmask8 store_mask_2 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 2 * 4) >> 0)) | //
+                                           0x0C * (0x1 & ((load_mask >> 2 * 4) >> 1)) | //
+                                           0x30 * (0x1 & ((load_mask >> 2 * 4) >> 2)) | //
+                                           0xC0 * (0x1 & ((load_mask >> 2 * 4) >> 3))); //
 
-        __mmask8 store_mask_3 = 0x03 * (0x1 & ((load_mask >> 3 * 4) >> 0)) | //
-                                0x0C * (0x1 & ((load_mask >> 3 * 4) >> 1)) | //
-                                0x30 * (0x1 & ((load_mask >> 3 * 4) >> 2)) | //
-                                0xC0 * (0x1 & ((load_mask >> 3 * 4) >> 3));  //
+        __mmask8 store_mask_3 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 3 * 4) >> 0)) | //
+                                           0x0C * (0x1 & ((load_mask >> 3 * 4) >> 1)) | //
+                                           0x30 * (0x1 & ((load_mask >> 3 * 4) >> 2)) | //
+                                           0xC0 * (0x1 & ((load_mask >> 3 * 4) >> 3))); //
 
         mask_storeu_epi64(ghash + 0, store_mask_0, T4_0);
         mask_storeu_epi64(ghash + 4, store_mask_1, T4_1);
@@ -476,8 +489,8 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
         (*input_len) =
             mask_sub_epi32((*input_len), load_mask, (*input_len), set1_epi32(16 * stream_len));
 
-        __mmask8 ptr_update_mask_lo = load_mask & 0xFF;
-        __mmask8 ptr_update_mask_hi = (load_mask >> 8) & 0xFF;
+        __mmask8 ptr_update_mask_lo = (__mmask8)(load_mask & 0xFF);
+        __mmask8 ptr_update_mask_hi = (__mmask8)((load_mask >> 8) & 0xFF);
 
         __m512i loc_pa_input_lo = loadu(pa_input);
         __m512i loc_pa_input_hi = loadu(pa_input + 8);
@@ -504,9 +517,9 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
             __mmask16 less_16_mask = cmp_epi32_mask((*input_len), set1_epi32(16), _MM_CMPINT_LT);
             __mmask16 stream_mask  = max_stream_len_mask | less_16_mask;
 
-            load_mask =
-                load_mask * (load_mask != 0) | max_stream_len_mask * (stream_mask == 0xFFFF) *
-                                                   (load_mask == 0) * (less_16_mask != 0xFFFF);
+            load_mask  = (__mmask16)(load_mask * (load_mask != 0) |
+                                    max_stream_len_mask * (stream_mask == 0xFFFF) *
+                                        (load_mask == 0) * (less_16_mask != 0xFFFF));
             stream_len = stream_len +
                          i * (stream_mask == 0xFFFF) * (stream_len == 0) * (less_16_mask != 0xFFFF);
         }

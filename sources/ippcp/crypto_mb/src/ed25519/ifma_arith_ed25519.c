@@ -312,14 +312,16 @@ void ifma_ed25519_mul_basepoint(ge52_ext_mb* r, const U64 scalar[])
 
     __mb_mask carry = 0; /* used in conversion to signed value */
 
+    const int size_of_int64 = (int)(sizeof(int64u));
+
     for (int n = 0; n < FE_LEN64; n++) {
         /* scalar value*/
         U64 scalarV = loadu64(&scalar[n]);
 
-        for (int m = 0; m < sizeof(int64u); m++) {
+        for (int m = 0; m < size_of_int64; m++) {
             /* set if last byte processed */
-            __mb_mask last_byte =
-                (__mb_mask)(isEqu((n * sizeof(int64u) + m), FE_LEN64 * sizeof(int64u) - 1));
+            __mb_mask last_byte = (__mb_mask)(isEqu((int32u)(n * size_of_int64 + m),
+                                                    (int32u)(FE_LEN64 * size_of_int64 - 1)));
 
             /* extract 2 half-bytes */
             U64 q_even = and64_const(scalarV, 0x0f);
@@ -334,7 +336,7 @@ void ifma_ed25519_mul_basepoint(ge52_ext_mb* r, const U64 scalar[])
 
             q_odd = mask_add64(q_odd, carry, q_odd, set1(1));
             carry = cmp64_mask(set1(8), q_odd, _MM_CMPINT_LE);
-            carry &= ~last_byte; /* avoid sign conversion for the last half-byte*/
+            carry &= (__mb_mask)~last_byte; /* avoid sign conversion for the last half-byte*/
             q_odd = mask_sub64(q_odd, carry, q_odd, set1(0x10));
 
             /* extract points from the pre-computed table */
@@ -467,7 +469,7 @@ void ifma_ed25519_mul_point(ge52_ext_mb* r, const ge52_ext_mb* p, const U64 scal
    // first window
    */
     U64 wvalue = loadu64(&scalar[chunk_no]);
-    wvalue     = and64(srli64(wvalue, chunk_shift), idx_mask);
+    wvalue     = and64(srli64(wvalue, (int32u)chunk_shift), idx_mask);
 
     booth_recode(&dsign, &dvalue, wvalue);
     extract_cached_point(&cached, tbl, dvalue, dsign);

@@ -149,9 +149,10 @@ void MB_FUNC_NAME(ifma_ec_sm2_add_point_)(SM2_POINT* r, const SM2_POINT* p, cons
 
 
     /* check if affine (p.x:p.y) == (q.x:q.y) and and do doubling if this happens */
-    __mb_mask x_are_equal      = MB_FUNC_NAME(is_zero_FESM2_)(H);
-    __mb_mask y_are_equal      = MB_FUNC_NAME(is_zero_FESM2_)(R);
-    __mb_mask points_are_equal = (x_are_equal & y_are_equal & (~p_at_infinity) & (~q_at_infinity));
+    __mb_mask x_are_equal = MB_FUNC_NAME(is_zero_FESM2_)(H);
+    __mb_mask y_are_equal = MB_FUNC_NAME(is_zero_FESM2_)(R);
+    __mb_mask points_are_equal =
+        (__mb_mask)((x_are_equal & y_are_equal & (~p_at_infinity) & (~q_at_infinity)));
 
     SM2_POINT P2;
     MB_FUNC_NAME(set_point_to_infinity_)(&P2);
@@ -415,7 +416,7 @@ void MB_FUNC_NAME(ifma_ec_sm2_mul_point_)(SM2_POINT* r, const SM2_POINT* p, cons
 
     /* first window */
     U64 wvalue = loadu64(&scalar[chunk_no]);
-    wvalue     = and64(srli64(wvalue, chunk_shift), idx_mask);
+    wvalue     = and64(srli64(wvalue, (int32u)chunk_shift), idx_mask);
 
     U64 dvalue;
     __mb_mask dsign;

@@ -42,12 +42,12 @@ mbx_status16 OWNAPI(mbx_sm4_encrypt_ctr128_mb16)(int8u* pa_out[SM4_LINES],
         if (pa_out[buf_no] == NULL || pa_inp[buf_no] == NULL || pa_ctr[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
             /* Do not process empty buffers */
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
         if (len[buf_no] < 0) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
             /* Do not process non-valid buffers */
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
     }
 

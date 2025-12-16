@@ -42,16 +42,16 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     /* Begin of explicitly unrolled loop */
 
     __m128i input_block_0 = _mm_maskz_loadu_epi8(
-        (0xFFFF >> (16 - *((int*)input_len + (0 + 4 * 0)))) * (0x1 & load_mask_0),
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (0 + 4 * 0)))) * (0x1 & load_mask_0)),
         (void*)pa_input[0 + 4 * 0]);
     __m128i input_block_1 = _mm_maskz_loadu_epi8(
-        (0xFFFF >> (16 - *((int*)input_len + (0 + 4 * 1)))) * (0x1 & load_mask_1),
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (0 + 4 * 1)))) * (0x1 & load_mask_1)),
         (void*)pa_input[0 + 4 * 1]);
     __m128i input_block_2 = _mm_maskz_loadu_epi8(
-        (0xFFFF >> (16 - *((int*)input_len + (0 + 4 * 2)))) * (0x1 & load_mask_2),
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (0 + 4 * 2)))) * (0x1 & load_mask_2)),
         (void*)pa_input[0 + 4 * 2]);
     __m128i input_block_3 = _mm_maskz_loadu_epi8(
-        (0xFFFF >> (16 - *((int*)input_len + (0 + 4 * 3)))) * (0x1 & load_mask_3),
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (0 + 4 * 3)))) * (0x1 & load_mask_3)),
         (void*)pa_input[0 + 4 * 3]);
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
@@ -69,18 +69,18 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (1 + 4 * 0)))) *
-                                             (0x1 & load_mask_0),
-                                         (void*)pa_input[1 + 4 * 0]);
-    input_block_1 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (1 + 4 * 1)))) *
-                                             (0x1 & load_mask_1),
-                                         (void*)pa_input[1 + 4 * 1]);
-    input_block_2 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (1 + 4 * 2)))) *
-                                             (0x1 & load_mask_2),
-                                         (void*)pa_input[1 + 4 * 2]);
-    input_block_3 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (1 + 4 * 3)))) *
-                                             (0x1 & load_mask_3),
-                                         (void*)pa_input[1 + 4 * 3]);
+    input_block_0 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (1 + 4 * 0)))) * (0x1 & load_mask_0)),
+        (void*)pa_input[1 + 4 * 0]);
+    input_block_1 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (1 + 4 * 1)))) * (0x1 & load_mask_1)),
+        (void*)pa_input[1 + 4 * 1]);
+    input_block_2 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (1 + 4 * 2)))) * (0x1 & load_mask_2)),
+        (void*)pa_input[1 + 4 * 2]);
+    input_block_3 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (1 + 4 * 3)))) * (0x1 & load_mask_3)),
+        (void*)pa_input[1 + 4 * 3]);
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
     input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
@@ -97,18 +97,18 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (2 + 4 * 0)))) *
-                                             (0x1 & load_mask_0),
-                                         (void*)pa_input[2 + 4 * 0]);
-    input_block_1 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (2 + 4 * 1)))) *
-                                             (0x1 & load_mask_1),
-                                         (void*)pa_input[2 + 4 * 1]);
-    input_block_2 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (2 + 4 * 2)))) *
-                                             (0x1 & load_mask_2),
-                                         (void*)pa_input[2 + 4 * 2]);
-    input_block_3 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (2 + 4 * 3)))) *
-                                             (0x1 & load_mask_3),
-                                         (void*)pa_input[2 + 4 * 3]);
+    input_block_0 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (2 + 4 * 0)))) * (0x1 & load_mask_0)),
+        (void*)pa_input[2 + 4 * 0]);
+    input_block_1 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (2 + 4 * 1)))) * (0x1 & load_mask_1)),
+        (void*)pa_input[2 + 4 * 1]);
+    input_block_2 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (2 + 4 * 2)))) * (0x1 & load_mask_2)),
+        (void*)pa_input[2 + 4 * 2]);
+    input_block_3 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (2 + 4 * 3)))) * (0x1 & load_mask_3)),
+        (void*)pa_input[2 + 4 * 3]);
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
     input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
@@ -125,18 +125,18 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     load_mask_2 >>= 1;
     load_mask_3 >>= 1;
 
-    input_block_0 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (3 + 4 * 0)))) *
-                                             (0x1 & load_mask_0),
-                                         (void*)pa_input[3 + 4 * 0]);
-    input_block_1 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (3 + 4 * 1)))) *
-                                             (0x1 & load_mask_1),
-                                         (void*)pa_input[3 + 4 * 1]);
-    input_block_2 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (3 + 4 * 2)))) *
-                                             (0x1 & load_mask_2),
-                                         (void*)pa_input[3 + 4 * 2]);
-    input_block_3 = _mm_maskz_loadu_epi8((0xFFFF >> (16 - *((int*)input_len + (3 + 4 * 3)))) *
-                                             (0x1 & load_mask_3),
-                                         (void*)pa_input[3 + 4 * 3]);
+    input_block_0 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (3 + 4 * 0)))) * (0x1 & load_mask_0)),
+        (void*)pa_input[3 + 4 * 0]);
+    input_block_1 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (3 + 4 * 1)))) * (0x1 & load_mask_1)),
+        (void*)pa_input[3 + 4 * 1]);
+    input_block_2 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (3 + 4 * 2)))) * (0x1 & load_mask_2)),
+        (void*)pa_input[3 + 4 * 2]);
+    input_block_3 = _mm_maskz_loadu_epi8(
+        (__mmask16)((0xFFFF >> (16 - *((int*)input_len + (3 + 4 * 3)))) * (0x1 & load_mask_3)),
+        (void*)pa_input[3 + 4 * 3]);
 
     input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
     input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
@@ -172,7 +172,8 @@ void sm4_gcm_update_ghash_partial_blocks_mb16(__m128i ghash[SM4_LINES],
                                &data_blocks_4_2,
                                &data_blocks_4_3 };
 
-    __mmask16 load_mask = ~cmp_epi32_mask((*input_len), setzero(), _MM_CMPINT_EQ) & mb_mask;
+    __mmask16 load_mask =
+        (__mmask16)~cmp_epi32_mask((*input_len), setzero(), _MM_CMPINT_EQ) & mb_mask;
 
     if (load_mask) {
 
@@ -190,25 +191,25 @@ void sm4_gcm_update_ghash_partial_blocks_mb16(__m128i ghash[SM4_LINES],
 
         sm4_gcm_ghash_mul_single_block_mb16(data_blocks, hashkeys);
 
-        __mmask8 store_mask_0 = 0x03 * (0x1 & ((load_mask >> 0 * 4) >> 0)) | //
-                                0x0C * (0x1 & ((load_mask >> 0 * 4) >> 1)) | //
-                                0x30 * (0x1 & ((load_mask >> 0 * 4) >> 2)) | //
-                                0xC0 * (0x1 & ((load_mask >> 0 * 4) >> 3));  //
+        __mmask8 store_mask_0 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 0 * 4) >> 0)) | //
+                                           0x0C * (0x1 & ((load_mask >> 0 * 4) >> 1)) | //
+                                           0x30 * (0x1 & ((load_mask >> 0 * 4) >> 2)) | //
+                                           0xC0 * (0x1 & ((load_mask >> 0 * 4) >> 3))); //
 
-        __mmask8 store_mask_1 = 0x03 * (0x1 & ((load_mask >> 1 * 4) >> 0)) | //
-                                0x0C * (0x1 & ((load_mask >> 1 * 4) >> 1)) | //
-                                0x30 * (0x1 & ((load_mask >> 1 * 4) >> 2)) | //
-                                0xC0 * (0x1 & ((load_mask >> 1 * 4) >> 3));  //
+        __mmask8 store_mask_1 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 1 * 4) >> 0)) | //
+                                           0x0C * (0x1 & ((load_mask >> 1 * 4) >> 1)) | //
+                                           0x30 * (0x1 & ((load_mask >> 1 * 4) >> 2)) | //
+                                           0xC0 * (0x1 & ((load_mask >> 1 * 4) >> 3))); //
 
-        __mmask8 store_mask_2 = 0x03 * (0x1 & ((load_mask >> 2 * 4) >> 0)) | //
-                                0x0C * (0x1 & ((load_mask >> 2 * 4) >> 1)) | //
-                                0x30 * (0x1 & ((load_mask >> 2 * 4) >> 2)) | //
-                                0xC0 * (0x1 & ((load_mask >> 2 * 4) >> 3));  //
+        __mmask8 store_mask_2 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 2 * 4) >> 0)) | //
+                                           0x0C * (0x1 & ((load_mask >> 2 * 4) >> 1)) | //
+                                           0x30 * (0x1 & ((load_mask >> 2 * 4) >> 2)) | //
+                                           0xC0 * (0x1 & ((load_mask >> 2 * 4) >> 3))); //
 
-        __mmask8 store_mask_3 = 0x03 * (0x1 & ((load_mask >> 3 * 4) >> 0)) | //
-                                0x0C * (0x1 & ((load_mask >> 3 * 4) >> 1)) | //
-                                0x30 * (0x1 & ((load_mask >> 3 * 4) >> 2)) | //
-                                0xC0 * (0x1 & ((load_mask >> 3 * 4) >> 3));  //
+        __mmask8 store_mask_3 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 3 * 4) >> 0)) | //
+                                           0x0C * (0x1 & ((load_mask >> 3 * 4) >> 1)) | //
+                                           0x30 * (0x1 & ((load_mask >> 3 * 4) >> 2)) | //
+                                           0xC0 * (0x1 & ((load_mask >> 3 * 4) >> 3))); //
 
         mask_storeu_epi64(ghash + 0, store_mask_0, data_blocks_4_0);
         mask_storeu_epi64(ghash + 4, store_mask_1, data_blocks_4_1);

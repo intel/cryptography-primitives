@@ -28,7 +28,7 @@ mbx_status16 OWNAPI(mbx_sm4_xts_encrypt_mb16)(int8u* pa_out[SM4_LINES],
                                               const mbx_sm4_key_schedule* key_sched2,
                                               const int8u* pa_tweak[SM4_LINES])
 {
-    unsigned buf_no;
+    int buf_no;
     mbx_status16 status = 0;
     int16u mb_mask      = 0xFFFF;
 
@@ -42,17 +42,17 @@ mbx_status16 OWNAPI(mbx_sm4_xts_encrypt_mb16)(int8u* pa_out[SM4_LINES],
         if (pa_out[buf_no] == NULL || pa_inp[buf_no] == NULL || pa_tweak[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
             /* Do not process empty buffers */
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
         if (len[buf_no] < SM4_BLOCK_SIZE) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
             /* Do not process non-valid buffers */
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
         if (len[buf_no] > SM4_XTS_MAX_SIZE) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
             /* Do not process non-valid buffers */
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
     }
 

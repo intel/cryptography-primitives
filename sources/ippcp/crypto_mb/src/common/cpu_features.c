@@ -364,7 +364,7 @@ MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo)
         {arr_algo_width_l9,
          (unsigned)sizeof(arr_algo_width_l9) / sizeof(algo_width_map)}, // L9 = index 1
     };
-    int num_width = 0;
+    MBX_ALGO_INFO num_width = 0;
 
     /* check CPU feature */
     if (0 == k1_applicable && 0 == l9_applicable)
@@ -384,7 +384,7 @@ MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo)
         if (algo != tbl[i].algo)
             continue;
 
-        num_width = tbl[i].width;
+        num_width = (MBX_ALGO_INFO)(tbl[i].width);
         break;
     }
 

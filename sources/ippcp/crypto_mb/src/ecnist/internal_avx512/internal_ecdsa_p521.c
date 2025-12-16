@@ -155,7 +155,7 @@ static __mb_mask nistp521_ecdsa_verify_mb8(U64 sign_r[], U64 sign_s[], U64 msg[]
     MB_FUNC_NAME(ifma_fastred52_pn521_)(sign_r_restored, sign_r_restored);
 
     /* sign_r_restored != sign_r */
-    signature_err_mask |= ~(MB_FUNC_NAME(cmp_eq_FE521_)(sign_r_restored, sign_r));
+    signature_err_mask |= (__mb_mask) ~(MB_FUNC_NAME(cmp_eq_FE521_)(sign_r_restored, sign_r));
 
     return signature_err_mask;
 }

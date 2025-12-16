@@ -552,17 +552,17 @@ void MB_FUNC_NAME(ifma_add52_n521_)(U64 R[], const U64 A[], const U64 B[])
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r10, ((U64*)(n521_x2))[10], lt);
 
     /* {r0 - r10} -= 2*p */
-    r0  = mask_sub64(r0, ~lt, r0, ((U64*)(n521_x2))[0]);
-    r1  = mask_sub64(r1, ~lt, r1, ((U64*)(n521_x2))[1]);
-    r2  = mask_sub64(r2, ~lt, r2, ((U64*)(n521_x2))[2]);
-    r3  = mask_sub64(r3, ~lt, r3, ((U64*)(n521_x2))[3]);
-    r4  = mask_sub64(r4, ~lt, r4, ((U64*)(n521_x2))[4]);
-    r5  = mask_sub64(r5, ~lt, r5, ((U64*)(n521_x2))[5]);
-    r6  = mask_sub64(r6, ~lt, r6, ((U64*)(n521_x2))[6]);
-    r7  = mask_sub64(r7, ~lt, r7, ((U64*)(n521_x2))[7]);
-    r8  = mask_sub64(r8, ~lt, r8, ((U64*)(n521_x2))[8]);
-    r9  = mask_sub64(r9, ~lt, r9, ((U64*)(n521_x2))[9]);
-    r10 = mask_sub64(r10, ~lt, r10, ((U64*)(n521_x2))[10]);
+    r0  = mask_sub64(r0, (__mb_mask)~lt, r0, ((U64*)(n521_x2))[0]);
+    r1  = mask_sub64(r1, (__mb_mask)~lt, r1, ((U64*)(n521_x2))[1]);
+    r2  = mask_sub64(r2, (__mb_mask)~lt, r2, ((U64*)(n521_x2))[2]);
+    r3  = mask_sub64(r3, (__mb_mask)~lt, r3, ((U64*)(n521_x2))[3]);
+    r4  = mask_sub64(r4, (__mb_mask)~lt, r4, ((U64*)(n521_x2))[4]);
+    r5  = mask_sub64(r5, (__mb_mask)~lt, r5, ((U64*)(n521_x2))[5]);
+    r6  = mask_sub64(r6, (__mb_mask)~lt, r6, ((U64*)(n521_x2))[6]);
+    r7  = mask_sub64(r7, (__mb_mask)~lt, r7, ((U64*)(n521_x2))[7]);
+    r8  = mask_sub64(r8, (__mb_mask)~lt, r8, ((U64*)(n521_x2))[8]);
+    r9  = mask_sub64(r9, (__mb_mask)~lt, r9, ((U64*)(n521_x2))[9]);
+    r10 = mask_sub64(r10, (__mb_mask)~lt, r10, ((U64*)(n521_x2))[10]);
 
     /* normalize r0 - r7 */
     NORM_ASHIFTR(r, 0, 1)
@@ -656,7 +656,7 @@ void MB_FUNC_NAME(ifma_sub52_n521_)(U64 R[], const U64 A[], const U64 B[])
 
 void MB_FUNC_NAME(ifma_neg52_n521_)(U64 R[], const U64 A[])
 {
-    __mb_mask nz_mask = ~MB_FUNC_NAME(is_zero_FE521_)(A);
+    __mb_mask nz_mask = (__mb_mask)~MB_FUNC_NAME(is_zero_FE521_)(A);
 
     /* {r0 - r10} = 2*p - A */
     U64 r0  = mask_sub64(A[0], nz_mask, ((U64*)(n521_x2))[0], A[0]);
@@ -730,17 +730,17 @@ void MB_FUNC_NAME(ifma_fastred52_pn521_)(U64 R[], const U64 A[])
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r9, get_zero64(), lt);
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r10, get_zero64(), lt);
 
-    r0  = mask_mov64(A[0], ~lt, r0);
-    r1  = mask_mov64(A[1], ~lt, r1);
-    r2  = mask_mov64(A[2], ~lt, r2);
-    r3  = mask_mov64(A[3], ~lt, r3);
-    r4  = mask_mov64(A[4], ~lt, r4);
-    r5  = mask_mov64(A[5], ~lt, r5);
-    r6  = mask_mov64(A[6], ~lt, r6);
-    r7  = mask_mov64(A[7], ~lt, r7);
-    r8  = mask_mov64(A[8], ~lt, r8);
-    r9  = mask_mov64(A[9], ~lt, r9);
-    r10 = mask_mov64(A[10], ~lt, r10);
+    r0  = mask_mov64(A[0], (__mb_mask)~lt, r0);
+    r1  = mask_mov64(A[1], (__mb_mask)~lt, r1);
+    r2  = mask_mov64(A[2], (__mb_mask)~lt, r2);
+    r3  = mask_mov64(A[3], (__mb_mask)~lt, r3);
+    r4  = mask_mov64(A[4], (__mb_mask)~lt, r4);
+    r5  = mask_mov64(A[5], (__mb_mask)~lt, r5);
+    r6  = mask_mov64(A[6], (__mb_mask)~lt, r6);
+    r7  = mask_mov64(A[7], (__mb_mask)~lt, r7);
+    r8  = mask_mov64(A[8], (__mb_mask)~lt, r8);
+    r9  = mask_mov64(A[9], (__mb_mask)~lt, r9);
+    r10 = mask_mov64(A[10], (__mb_mask)~lt, r10);
 
     /* normalize r0 - r7 */
     NORM_ASHIFTR(r, 0, 1)
@@ -779,7 +779,7 @@ __mb_mask MB_FUNC_NAME(ifma_cmp_lt_n521_)(const U64 a[])
 __mb_mask MB_FUNC_NAME(ifma_check_range_n521_)(const U64 A[])
 {
     __mb_mask mask = MB_FUNC_NAME(is_zero_FE521_)(A);
-    mask |= ~MB_FUNC_NAME(ifma_cmp_lt_n521_)(A);
+    mask |= (__mb_mask)~MB_FUNC_NAME(ifma_cmp_lt_n521_)(A);
 
     return mask;
 }

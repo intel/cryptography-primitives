@@ -63,7 +63,8 @@ mbx_status internal_avx512_nistp384_ecdh_ssl_mb8(int8u* pa_shared_key[8],
     MB_FUNC_NAME(ifma_tomont52_p384_)(P.Z, P.Z);
 
     /* check if P does not belong to EC */
-    __mb_mask not_on_curve_mask = ~MB_FUNC_NAME(ifma_is_on_curve_p384_)(&P, use_jproj_coords);
+    __mb_mask not_on_curve_mask =
+        (__mb_mask)~MB_FUNC_NAME(ifma_is_on_curve_p384_)(&P, use_jproj_coords);
     /* set points out of EC to infinity */
     MB_FUNC_NAME(mask_set_point_to_infinity_)(&P, not_on_curve_mask);
     /* update status */
@@ -139,7 +140,8 @@ mbx_status internal_avx512_nistp384_ecdh_mb8(int8u* pa_shared_key[8],
     MB_FUNC_NAME(ifma_tomont52_p384_)(P.Z, P.Z);
 
     /* check if P does not belong to EC */
-    __mb_mask not_on_curve_mask = ~MB_FUNC_NAME(ifma_is_on_curve_p384_)(&P, use_jproj_coords);
+    __mb_mask not_on_curve_mask =
+        (__mb_mask)~MB_FUNC_NAME(ifma_is_on_curve_p384_)(&P, use_jproj_coords);
     /* set points out of EC to infinity */
     MB_FUNC_NAME(mask_set_point_to_infinity_)(&P, not_on_curve_mask);
     /* update status */

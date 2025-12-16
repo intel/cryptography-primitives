@@ -228,7 +228,7 @@ mbx_status16 sm4_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
     /* Create the local copy of the input data length in bytes and set it to zero for non-valid buffers */
     __m512i loc_len;
     loc_len = _mm512_loadu_si512(len);
-    loc_len = _mm512_mask_set1_epi32(loc_len, ~mb_mask, 0);
+    loc_len = _mm512_mask_set1_epi32(loc_len, (__mmask16)~mb_mask, 0);
 
     /* input blocks loc_blks[] = ceil(loc_len[]/SM4_BLOCK_SIZE) */
     int32u loc_blks[SM4_LINES];

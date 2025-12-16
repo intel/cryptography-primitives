@@ -41,23 +41,23 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_init_mb16)(const sm4_key* const pa_key[SM4_LINES
     for (buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         if (pa_key[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
             continue;
         }
         if (pa_iv[buf_no] == NULL) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
             continue;
         }
         if ((iv_len[buf_no] < MIN_CCM_IV_LENGTH || iv_len[buf_no] > MAX_CCM_IV_LENGTH)) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
             continue;
         }
         if ((tag_len[buf_no] < MIN_CCM_TAG_LENGTH) || (tag_len[buf_no] > MAX_CCM_TAG_LENGTH) ||
             (tag_len[buf_no] & 0x1)) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
             continue;
         }
 
@@ -68,7 +68,7 @@ mbx_status16 OWNAPI(mbx_sm4_ccm_init_mb16)(const sm4_key* const pa_key[SM4_LINES
 
         if (msg_len[buf_no] > max_len) {
             status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
-            mb_mask &= ~(0x1 << buf_no);
+            mb_mask &= (int16u) ~(0x1 << buf_no);
         }
     }
 

@@ -111,10 +111,10 @@
 
     __MBX_INLINE U64 set1(unsigned long long a) { return _mm512_set1_epi64((long long)a); }
 
-    __MBX_INLINE U64 srli64(U64 a, int s) { return _mm512_srli_epi64(a, s); }
+    __MBX_INLINE U64 srli64(U64 a, unsigned int s) { return _mm512_srli_epi64(a, s); }
+    __MBX_INLINE U64 slli64(U64 a, unsigned int s) { return _mm512_slli_epi64(a, s); }
 
     #define srai64  _mm512_srai_epi64
-    #define slli64  _mm512_slli_epi64
 
     __MBX_INLINE U64 and64_const(U64 a, unsigned long long mask)
     {
@@ -150,7 +150,7 @@
 
     /* Mask manipulation operations */
     __MBX_INLINE __mb_mask not_mb_mask(__mb_mask a) {
-        return ~a;
+        return (__mb_mask)(~a);
     }
 
     __MBX_INLINE __mb_mask and_mb_mask(__mb_mask a, __mb_mask b) {
@@ -228,7 +228,6 @@
     #define set64   _mm256_set1_epi64x
 
     #define srai64  _mm256_srai_epi64_wrapper
-    #define slli64  _mm256_slli_epi64
 
     #define or64         _mm256_or_si256
     #define and64        _mm256_and_si256
@@ -273,8 +272,12 @@
     }
 #endif /* #if (_MBX_AVX_IFMA_SUPPORTED) */
 
-    __MBX_INLINE U64 srli64(U64 a, int s) {
-        return _mm256_srli_epi64(a, s);
+    __MBX_INLINE U64 slli64(U64 a, unsigned int s) {
+        return _mm256_slli_epi64(a, (int)s);
+    }
+
+    __MBX_INLINE U64 srli64(U64 a, unsigned int s) {
+        return _mm256_srli_epi64(a, (int)s);
     }
 
     __MBX_INLINE U64 add64(U64 a, U64 b) {
@@ -299,7 +302,7 @@
 
     /* Mask manipulation operations */
     __MBX_INLINE __mb_mask not_mb_mask(__mb_mask a) {
-        return xor64(a, set64(ALL_ONES_64));
+        return xor64(a, set64((long long)ALL_ONES_64));
     }
 
     __MBX_INLINE __mb_mask and_mb_mask(__mb_mask a, __mb_mask b) {
@@ -345,13 +348,13 @@
 
     __MBX_INLINE U64 _mm256_srai_epi64_wrapper(U64 A, const int imm)
     {
-        const U64 sign_bit_mask    = and64(A, set64(1ULL << 63));
+        const U64 sign_bit_mask    = and64(A, set64((long long)(1ULL << 63)));
         const U64 is_not_sign_mask = cmpeq64(sign_bit_mask, get_zero64());
-        const U64 shifted_in_bits  = set64(ALL_ONES_64 << (64 - imm));
+        const U64 shifted_in_bits  = set64((long long)(ALL_ONES_64 << (64 - imm)));
         const U64 or_mask          = andnot64(is_not_sign_mask, shifted_in_bits);
 
         // logical shift right
-        A = srli64(A, imm);
+        A = srli64(A, (int32u)imm);
         // put sign bits into the most significant imm number of bits
         A = or64(A, or_mask);
 

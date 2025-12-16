@@ -57,7 +57,7 @@ mbx_status16 sm4_ccm_encrypt_mb16(int8u* pa_out[SM4_LINES],
     for (i = 0; i < SM4_LINES; i++) {
         hash_ptrs[i]     = (int8u*)&hash[i];
         pa_ctr[i]        = (int8u*)&ctr[i];
-        full_hash_len[i] = in_len[i] & 0xFFFFFFF0; /* Get full block lengths */
+        full_hash_len[i] = in_len[i] & (int)0xFFFFFFF0; /* Get full block lengths */
     }
     sm4_cbc_mac_kernel_mb16(hash,
                             (const int8u* const*)pa_in,
@@ -75,7 +75,7 @@ mbx_status16 sm4_ccm_encrypt_mb16(int8u* pa_out[SM4_LINES],
         PadBlock(0, pa_padded_hash[i], SM4_BLOCK_SIZE);
         CopyBlock(pa_in[i] + full_hash_len[i], pa_padded_hash[i], partial_hash_len[i]);
         full_hash_len[i] = SM4_BLOCK_SIZE;
-        partial_block_mask |= (1 << i);
+        partial_block_mask |= (__mmask16)(1 << i);
     }
     if (partial_block_mask != 0) {
         sm4_cbc_mac_kernel_mb16(hash,

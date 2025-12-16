@@ -27,7 +27,7 @@ __MBX_INLINE void reverse_inplace(int8u* inpout, int len)
 {
     int midpoint = len / 2;
     for (int n = 0; n < midpoint; n++) {
-        int x               = inpout[n];
+        int8u x             = inpout[n];
         inpout[n]           = inpout[len - 1 - n];
         inpout[len - 1 - n] = x;
     }
@@ -35,7 +35,7 @@ __MBX_INLINE void reverse_inplace(int8u* inpout, int len)
 
 __MBX_INLINE BIGNUM* BN_bnu2bn(int64u* val, int len, BIGNUM* ret)
 {
-    len = len * sizeof(int64u);
+    len = len * (int)(sizeof(int64u));
     reverse_inplace((int8u*)val, len);
     ret = BN_bin2bn((int8u*)val, len, ret);
     reverse_inplace((int8u*)val, len);

@@ -72,7 +72,7 @@ void AMS4x52x30_diagonal_stitched_with_extract_mb4(int64u* out_mb,
                                                    const __m256i idx_target0)
 {
     const int N             = 30;
-    const size_t N_x4_sz    = (N * 4 * sizeof(uint64_t));
+    const int64u N_x4_sz    = ((int64u)N * 4U * sizeof(uint64_t));
     const __m256i* pMulTbl  = (const __m256i*)&MulTbl[0][0];
     const __m256i* pMulTblx = (const __m256i*)&MulTblx[0][0];
 

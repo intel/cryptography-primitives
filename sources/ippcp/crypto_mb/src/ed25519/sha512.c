@@ -106,8 +106,8 @@ static void sha512_final(DigestSHA512 pHash,
     /* message length representation */
     const int64u beLenHi = ENDIANNESS64(LSL64(lenHi, 3) | LSR64(lenLo, 63 - 3));
     const int64u beLenLo = ENDIANNESS64(LSL64(lenLo, 3));
-    CopyBlock(&beLenHi, &buffer[bufferLen - 2 * sizeof(int64u)], sizeof(int64u));
-    CopyBlock(&beLenLo, &buffer[bufferLen - 1 * sizeof(int64u)], sizeof(int64u));
+    CopyBlock(&beLenHi, &buffer[bufferLen - 2 * (int)(sizeof(int64u))], sizeof(int64u));
+    CopyBlock(&beLenLo, &buffer[bufferLen - 1 * (int)(sizeof(int64u))], sizeof(int64u));
 
     /* complete hash computation */
     sha512_update(pHash, buffer, bufferLen);

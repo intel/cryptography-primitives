@@ -280,12 +280,12 @@ static __ALIGN64 const int64u xts_next_tweak_permq_enc[] = {
 
 /* Workaround for gcc91, got the error: implicit declaration of function ‘_mm512_div_epi32’ */
 #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
-#define GET_NUM_BLOCKS(OUT, LEN, BLOCK_SIZE)     \
-    {                                            \
-        int32u blocks[SM4_LINES];                \
-        for (int i = 0; i < SM4_LINES; i++)      \
-            blocks[i] = (LEN)[i] / (BLOCK_SIZE); \
-        (OUT) = _mm512_loadu_si512(blocks);      \
+#define GET_NUM_BLOCKS(OUT, LEN, BLOCK_SIZE)               \
+    {                                                      \
+        int32u blocks[SM4_LINES];                          \
+        for (int i = 0; i < SM4_LINES; i++)                \
+            blocks[i] = (int32u)((LEN)[i]) / (BLOCK_SIZE); \
+        (OUT) = _mm512_loadu_si512(blocks);                \
     }
 #else
 #define GET_NUM_BLOCKS(OUT, LEN, BLOCK_SIZE) \
@@ -560,47 +560,67 @@ __MBX_INLINE void TRANSPOSE_16x4_I32_EPI32(__m512i* t0,
     __mmask16 loc_mb_mask = mb_mask;
 
     // L0 - L3
-    __m512i z0 = _mm512_maskz_loadu_epi32(0x000F * (0x1 & loc_mb_mask), p_inp[0]);
+    __m512i z0 = _mm512_maskz_loadu_epi32((__mmask16)(0x000F * (0x1 & loc_mb_mask)), p_inp[0]);
     loc_mb_mask >>= 1;
-    __m512i z1 = _mm512_maskz_loadu_epi32(0x000F * (0x1 & loc_mb_mask), p_inp[1]);
+    __m512i z1 = _mm512_maskz_loadu_epi32((__mmask16)(0x000F * (0x1 & loc_mb_mask)), p_inp[1]);
     loc_mb_mask >>= 1;
-    __m512i z2 = _mm512_maskz_loadu_epi32(0x000F * (0x1 & loc_mb_mask), p_inp[2]);
+    __m512i z2 = _mm512_maskz_loadu_epi32((__mmask16)(0x000F * (0x1 & loc_mb_mask)), p_inp[2]);
     loc_mb_mask >>= 1;
-    __m512i z3 = _mm512_maskz_loadu_epi32(0x000F * (0x1 & loc_mb_mask), p_inp[3]);
+    __m512i z3 = _mm512_maskz_loadu_epi32((__mmask16)(0x000F * (0x1 & loc_mb_mask)), p_inp[3]);
     loc_mb_mask >>= 1;
 
     // L4 - L7
-    z0 = _mm512_mask_loadu_epi32(z0, 0x00F0 * (0x1 & loc_mb_mask), (__m128i*)p_inp[4] - 1);
+    z0 = _mm512_mask_loadu_epi32(z0,
+                                 (__mmask16)(0x00F0 * (0x1 & loc_mb_mask)),
+                                 (__m128i*)p_inp[4] - 1);
     loc_mb_mask >>= 1;
-    z1 = _mm512_mask_loadu_epi32(z1, 0x00F0 * (0x1 & loc_mb_mask), (__m128i*)p_inp[5] - 1);
+    z1 = _mm512_mask_loadu_epi32(z1,
+                                 (__mmask16)(0x00F0 * (0x1 & loc_mb_mask)),
+                                 (__m128i*)p_inp[5] - 1);
     loc_mb_mask >>= 1;
-    z2 = _mm512_mask_loadu_epi32(z2, 0x00F0 * (0x1 & loc_mb_mask), (__m128i*)p_inp[6] - 1);
+    z2 = _mm512_mask_loadu_epi32(z2,
+                                 (__mmask16)(0x00F0 * (0x1 & loc_mb_mask)),
+                                 (__m128i*)p_inp[6] - 1);
     loc_mb_mask >>= 1;
-    z3 = _mm512_mask_loadu_epi32(z3, 0x00F0 * (0x1 & loc_mb_mask), (__m128i*)p_inp[7] - 1);
+    z3 = _mm512_mask_loadu_epi32(z3,
+                                 (__mmask16)(0x00F0 * (0x1 & loc_mb_mask)),
+                                 (__m128i*)p_inp[7] - 1);
     loc_mb_mask >>= 1;
 
     // L8 - Lb
-    z0 = _mm512_mask_loadu_epi32(z0, 0x0F00 * (0x1 & loc_mb_mask), (__m128i*)p_inp[8] - 2);
+    z0 = _mm512_mask_loadu_epi32(z0,
+                                 (__mmask16)(0x0F00 * (0x1 & loc_mb_mask)),
+                                 (__m128i*)p_inp[8] - 2);
     loc_mb_mask >>= 1;
-    z1 = _mm512_mask_loadu_epi32(z1, 0x0F00 * (0x1 & loc_mb_mask), (__m128i*)p_inp[9] - 2);
+    z1 = _mm512_mask_loadu_epi32(z1,
+                                 (__mmask16)(0x0F00 * (0x1 & loc_mb_mask)),
+                                 (__m128i*)p_inp[9] - 2);
     loc_mb_mask >>= 1;
-    z2 = _mm512_mask_loadu_epi32(z2, 0x0F00 * (0x1 & loc_mb_mask), (__m128i*)p_inp[10] - 2);
+    z2 = _mm512_mask_loadu_epi32(z2,
+                                 (__mmask16)(0x0F00 * (0x1 & loc_mb_mask)),
+                                 (__m128i*)p_inp[10] - 2);
     loc_mb_mask >>= 1;
-    z3 = _mm512_mask_loadu_epi32(z3, 0x0F00 * (0x1 & loc_mb_mask), (__m128i*)p_inp[11] - 2);
+    z3 = _mm512_mask_loadu_epi32(z3,
+                                 (__mmask16)(0x0F00 * (0x1 & loc_mb_mask)),
+                                 (__m128i*)p_inp[11] - 2);
     loc_mb_mask >>= 1;
 
     // Lc - Lf
-    *t0 = ENDIANNESS_16x32(
-        _mm512_mask_loadu_epi32(z0, 0xF000 * (0x1 & loc_mb_mask), (__m128i*)p_inp[12] - 3));
+    *t0 = ENDIANNESS_16x32(_mm512_mask_loadu_epi32(z0,
+                                                   (__mmask16)(0xF000 * (0x1 & loc_mb_mask)),
+                                                   (__m128i*)p_inp[12] - 3));
     loc_mb_mask >>= 1;
-    *t1 = ENDIANNESS_16x32(
-        _mm512_mask_loadu_epi32(z1, 0xF000 * (0x1 & loc_mb_mask), (__m128i*)p_inp[13] - 3));
+    *t1 = ENDIANNESS_16x32(_mm512_mask_loadu_epi32(z1,
+                                                   (__mmask16)(0xF000 * (0x1 & loc_mb_mask)),
+                                                   (__m128i*)p_inp[13] - 3));
     loc_mb_mask >>= 1;
-    *t2 = ENDIANNESS_16x32(
-        _mm512_mask_loadu_epi32(z2, 0xF000 * (0x1 & loc_mb_mask), (__m128i*)p_inp[14] - 3));
+    *t2 = ENDIANNESS_16x32(_mm512_mask_loadu_epi32(z2,
+                                                   (__mmask16)(0xF000 * (0x1 & loc_mb_mask)),
+                                                   (__m128i*)p_inp[14] - 3));
     loc_mb_mask >>= 1;
-    *t3 = ENDIANNESS_16x32(
-        _mm512_mask_loadu_epi32(z3, 0xF000 * (0x1 & loc_mb_mask), (__m128i*)p_inp[15] - 3));
+    *t3 = ENDIANNESS_16x32(_mm512_mask_loadu_epi32(z3,
+                                                   (__mmask16)(0xF000 * (0x1 & loc_mb_mask)),
+                                                   (__m128i*)p_inp[15] - 3));
     loc_mb_mask >>= 1;
 
     z0 = _mm512_unpacklo_epi32(*t0, *t1);
@@ -663,8 +683,8 @@ __MBX_INLINE void TRANSPOSE_4x16_I32_EPI32(__m512i* t0,
                                            __mmask16 mb_mask)
 {
 
-#define STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti)                       \
-    _mm512_mask_storeu_epi32(OUT, (store_mask) * (0x1 & (loc_mb_mask)), Ti); \
+#define STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti)                                    \
+    _mm512_mask_storeu_epi32(OUT, (__mmask16)((store_mask) * (0x1 & (loc_mb_mask))), Ti); \
     (loc_mb_mask) >>= 1;
 
     __mmask16 loc_mb_mask = mb_mask;
@@ -756,8 +776,9 @@ __MBX_INLINE void TRANSPOSE_4x16_I32_O128_EPI32(__m512i* t0,
                                                 __mmask16 mb_mask)
 {
 
-#define STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti)                       \
-    _mm512_mask_storeu_epi32(OUT, (store_mask) * (0x1 & (loc_mb_mask)), Ti); \
+#undef STORE_RESULT
+#define STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti)                                    \
+    _mm512_mask_storeu_epi32(OUT, (__mmask16)((store_mask) * (0x1 & (loc_mb_mask))), Ti); \
     (loc_mb_mask) >>= 1;
 
     __mmask16 loc_mb_mask = mb_mask;
@@ -807,8 +828,8 @@ __MBX_INLINE void TRANSPOSE_4x16_I32_EPI8(__m512i t0,
                                           __mmask16 mb_mask)
 {
 
-#define STORE_RESULT_EPI8(OUT, store_mask, loc_mb_mask, Ti)                 \
-    _mm512_mask_storeu_epi8(OUT, (store_mask) * (0x1 & (loc_mb_mask)), Ti); \
+#define STORE_RESULT_EPI8(OUT, store_mask, loc_mb_mask, Ti)                              \
+    _mm512_mask_storeu_epi8(OUT, (__mmask64)((store_mask) * (0x1 & (loc_mb_mask))), Ti); \
     (loc_mb_mask) >>= 1;
 
     __mmask16 loc_mb_mask = mb_mask;
@@ -876,11 +897,11 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI32(__m512i* t0,
                                                    __mmask16 mb_mask)
 {
 
-#define XOR_AND_STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti, IV, TMP)       \
-    TMP = _mm512_maskz_loadu_epi32((store_mask) * (0x1 & (loc_mb_mask)), IV); \
-    _mm512_mask_storeu_epi32(OUT,                                             \
-                             (store_mask) * (0x1 & (loc_mb_mask)),            \
-                             _mm512_xor_epi32(Ti, TMP));                      \
+#define XOR_AND_STORE_RESULT(OUT, store_mask, loc_mb_mask, Ti, IV, TMP)                    \
+    TMP = _mm512_maskz_loadu_epi32((__mmask16)((store_mask) * (0x1 & (loc_mb_mask))), IV); \
+    _mm512_mask_storeu_epi32(OUT,                                                          \
+                             (__mmask16)((store_mask) * (0x1 & (loc_mb_mask))),            \
+                             _mm512_xor_epi32(Ti, TMP));                                   \
     (loc_mb_mask) >>= 1;
 
     __m512i z0 = _mm512_setzero_si512();
@@ -950,9 +971,11 @@ __MBX_INLINE void TRANSPOSE_AND_XOR_4x16_I32_EPI8(__m512i t0,
                                                   __mmask16 mb_mask)
 {
 
-#define XOR_AND_STORE_RESULT_EPI8(OUT, store_mask, loc_mb_mask, Ti, IV, TMP)                       \
-    TMP = _mm512_maskz_loadu_epi8((store_mask) * (0x1 & (loc_mb_mask)), IV);                       \
-    _mm512_mask_storeu_epi8(OUT, (store_mask) * (0x1 & (loc_mb_mask)), _mm512_xor_epi32(Ti, TMP)); \
+#define XOR_AND_STORE_RESULT_EPI8(OUT, store_mask, loc_mb_mask, Ti, IV, TMP)              \
+    TMP = _mm512_maskz_loadu_epi8((__mmask64)((store_mask) * (0x1 & (loc_mb_mask))), IV); \
+    _mm512_mask_storeu_epi8(OUT,                                                          \
+                            (__mmask64)((store_mask) * (0x1 & (loc_mb_mask))),            \
+                            _mm512_xor_epi32(Ti, TMP));                                   \
     (loc_mb_mask) >>= 1;
 
     __m512i z0 = _mm512_setzero_si512();

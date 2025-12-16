@@ -121,7 +121,7 @@ void fe52_mb_sub_mod25519(fe52_mb vr, const fe52_mb va, const fe52_mb vb)
 //__MBX_INLINE
 void fe52_mb_neg_mod25519(fe52_mb vr, const fe52_mb va)
 {
-    __mb_mask non_zero = ~fe52_mb_is_zero(va);
+    __mb_mask non_zero = (__mb_mask)~fe52_mb_is_zero(va);
 
     /* r = is_zero? a : p-a */
     U64 r0 = mask_sub64(va[0], non_zero, loadu64(VPRIME25519_LO), va[0]);

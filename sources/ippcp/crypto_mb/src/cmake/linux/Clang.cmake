@@ -16,7 +16,7 @@
 
 # Security Linker flags
 
-set(LINK_FLAG_SECURITY "") 
+set(LINK_FLAG_SECURITY "")
 # Data relocation and protection (RELRO)
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,relro -Wl,-z,now")
 # Stack execution protection
@@ -37,7 +37,9 @@ set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -fpic -fPIC")
 # Enables important warning and error messages relevant to security during compilation
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wall")
 # Warnings=errors
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Werror -Wimplicit-fallthrough")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Werror")
+# Enabling additional warnings
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wimplicit-fallthrough -Wconversion -Wextra")
 
 # Linker flags
 
@@ -56,7 +58,7 @@ set(CMAKE_C_FLAGS " -falign-functions=32")
 
 # -ffreestanding flag removed for clang because it causes compilation error in combination with -D_FORTIFY_SOURCE=2
 # and limits.h and stdlib.h headers because of wrong value of MB_LEN_MAX defined in limits.h and checked in stdlib.h
-# This issue is reprodusable with clang9. Flag is not removed for other compilers to prevent other possible issues. 
+# This issue is reprodusable with clang9. Flag is not removed for other compilers to prevent other possible issues.
 
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
 

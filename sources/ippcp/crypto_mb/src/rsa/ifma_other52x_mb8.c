@@ -2201,8 +2201,8 @@ static __mmask8 left_gt_right_mb8(__m512i left_hi,
                                   __m512i right_lo)
 {
     __mmask8 k0 = _mm512_cmpneq_epi64_mask(left_hi, right_hi);
-    __mmask8 k1 = (k0 & _mm512_cmpgt_epu64_mask(left_hi, right_hi)) |
-                  (~k0 & _mm512_cmpgt_epu64_mask(left_lo, right_lo));
+    __mmask8 k1 = (__mmask8)((k0 & _mm512_cmpgt_epu64_mask(left_hi, right_hi)) |
+                             (~k0 & _mm512_cmpgt_epu64_mask(left_lo, right_lo)));
     return k1;
 }
 
@@ -2389,7 +2389,7 @@ void ifma_montRR52x_mb8(int64u pRR[][8], int64u pM[][8], int convBitLen)
 
     /* set 2^(ifmaBitLen*2) */
     zero_mb8(pwr2_mb8, pwrLen);
-    _mm512_store_si512(pwr2_mb8[pwrLen - 1], _mm512_slli_epi64(_mm512_set1_epi64(1), s));
+    _mm512_store_si512(pwr2_mb8[pwrLen - 1], _mm512_slli_epi64(_mm512_set1_epi64(1), (int32u)s));
 
     /* 2^(ifmaBitLen*2) mod M */
     ifma_mreduce52x_mb8(pwr2_mb8, pwrLen, pM, ifmaLen);
@@ -2408,10 +2408,10 @@ __MBX_INLINE __m256i _mm256_cvtpd_epi64_wrapper(__m256d A)
     const __m128d lo = _mm256_castpd256_pd128(A);
     const __m128d hi = _mm256_extractf128_pd(A, 1);
 
-    const int64u lo0 = _mm_cvtsd_si64(lo);
-    const int64u lo1 = _mm_cvtsd_si64(_mm_shuffle_pd(lo, lo, 1));
-    const int64u hi0 = _mm_cvtsd_si64(hi);
-    const int64u hi1 = _mm_cvtsd_si64(_mm_shuffle_pd(hi, hi, 1));
+    const long long lo0 = _mm_cvtsd_si64(lo);
+    const long long lo1 = _mm_cvtsd_si64(_mm_shuffle_pd(lo, lo, 1));
+    const long long hi0 = _mm_cvtsd_si64(hi);
+    const long long hi1 = _mm_cvtsd_si64(_mm_shuffle_pd(hi, hi, 1));
 
     const __m128i l = _mm_insert_epi64(_mm_cvtsi64_si128(lo0), lo1, 1);
     const __m128i h = _mm_insert_epi64(_mm_cvtsi64_si128(hi0), hi1, 1);
@@ -2490,7 +2490,7 @@ __MBX_INLINE void ifma_modsub52xN_mb4(int64u res[][4],
                                       const int64u inpA[][4],
                                       const int64u inpB[][4],
                                       const int64u inpM[][4],
-                                      const int64u msd_mask,
+                                      const long long msd_mask,
                                       const int len52)
 {
     __m256i* pr = (__m256i*)res;
@@ -2927,7 +2927,7 @@ static __m256i __div_104_by_52_256b(__m256i Ah, __m256i Al, __m256i B, __m256i* 
     dah = _mm256_cvtepu64_pd_wrapper(Ah);
     dal = _mm256_cvtepu64_pd_wrapper(Al);
 
-    const int rounding_mode = _MM_GET_ROUNDING_MODE();
+    const unsigned int rounding_mode = _MM_GET_ROUNDING_MODE();
 
     // get reciprocal of B, RZ mode
     const __m256d d_one = _mm256_set1_pd((double)1.0);
@@ -3098,7 +3098,7 @@ __MBX_INLINE __m256i lzcnt_epi64(const __m256i a)
 {
     __m256i lzcnt      = _mm256_setzero_si256();
     __m256i stop_count = _mm256_setzero_si256();
-    __m256i vmask      = _mm256_set1_epi64x(1ULL << 63);
+    __m256i vmask      = _mm256_set1_epi64x(1LL << 63);
     const __m256i vone = _mm256_set1_epi64x(1);
     int i;
 

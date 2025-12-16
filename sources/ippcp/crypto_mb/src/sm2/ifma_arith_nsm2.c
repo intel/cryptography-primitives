@@ -177,11 +177,11 @@ void MB_FUNC_NAME(ifma_fastred52_pnsm2_)(U64 R[], const U64 A[])
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r3, get_zero64(), lt);
     lt           = MB_FUNC_NAME(lt_mbx_digit_)(r4, get_zero64(), lt);
 
-    r0 = mask_mov64(A[0], ~lt, r0);
-    r1 = mask_mov64(A[1], ~lt, r1);
-    r2 = mask_mov64(A[2], ~lt, r2);
-    r3 = mask_mov64(A[3], ~lt, r3);
-    r4 = mask_mov64(A[4], ~lt, r4);
+    r0 = mask_mov64(A[0], (__mb_mask)~lt, r0);
+    r1 = mask_mov64(A[1], (__mb_mask)~lt, r1);
+    r2 = mask_mov64(A[2], (__mb_mask)~lt, r2);
+    r3 = mask_mov64(A[3], (__mb_mask)~lt, r3);
+    r4 = mask_mov64(A[4], (__mb_mask)~lt, r4);
 
     /* normalize r0 - r4 */
     NORM_ASHIFTR(r, 0, 1)
@@ -204,7 +204,7 @@ __mb_mask MB_FUNC_NAME(ifma_cmp_lt_nsm2_)(const U64 a[])
 __mb_mask MB_FUNC_NAME(ifma_check_range_nsm2_)(const U64 A[])
 {
     __mb_mask mask = MB_FUNC_NAME(is_zero_FESM2_)(A);
-    mask |= ~MB_FUNC_NAME(ifma_cmp_lt_nsm2_)(A);
+    mask |= (__mb_mask)~MB_FUNC_NAME(ifma_cmp_lt_nsm2_)(A);
 
     return mask;
 }

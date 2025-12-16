@@ -444,7 +444,7 @@ int8u ifma_BNU_transpose_copy(int64u out_mb8[][8], const int64u* const bn[8], in
     int len = NUMBER_OF_DIGITS(bitLen, 64);
     int n;
     for (n = 0; len > 0; n += 8, out_mb8 += 8) {
-        __mmask8 kread = (len >= 8) ? 0xFF : (__mmask8)((1 << len) - 1);
+        __mmask8 kread = (len >= 8) ? 0xFF : (__mmask8)((1U << len) - 1U);
 
         __m512i X0 = _mm512_maskz_loadu_epi64(kread & kbn[0], bn[0] + n);
         __m512i X1 = _mm512_maskz_loadu_epi64(kread & kbn[1], bn[1] + n);
@@ -506,7 +506,7 @@ int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const bn[8], int
     int len = NUMBER_OF_DIGITS(bitLen, 64);
     int n;
     for (n = 0; len > 0; n += 8, out_mb8 += 8) {
-        __mmask8 k = (len >= 8) ? 0xFF : (1 << len) - 1;
+        __mmask8 k = (len >= 8) ? 0xFF : (__mmask8)((1U << len) - 1U);
 
         __m512i X0 = _mm512_maskz_loadu_epi64(k & kbn[0], inp[0] + n);
         __m512i X1 = _mm512_maskz_loadu_epi64(k & kbn[1], inp[1] + n);
@@ -710,8 +710,8 @@ __MBX_INLINE void transform_4sb_to_mb4(U64 out_mb4[],
             // repeat one byte
             /* clang-format off */
             const __m128i cvt104b_2x52b =
-                        _mm_set_epi8(0xff, 0x0c, 0x0b, 0x0a, 0x09, 0x08, 0x07, 0x06,
-                                     0xff, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00);
+                        _mm_set_epi8((char)0xff, (char)0x0c, (char)0x0b, (char)0x0a, (char)0x09, (char)0x08, (char)0x07, (char)0x06,
+                                     (char)0xff, (char)0x06, (char)0x05, (char)0x04, (char)0x03, (char)0x02, (char)0x01, (char)0x00);
             /* clang-format on */
 
             for (int k = 0; k < 4; k++) {
@@ -918,10 +918,10 @@ __MBX_INLINE void transform_mb4_to_4sb(int8u* out[4],
             // repeat one byte
             /* clang-format off */
             const __m256i shift_2nd_52b =
-                    _mm256_set_epi8(0xff, 0xff, 0xff, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a,
-                                    0x09, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-                                    0xff, 0xff, 0xff, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a,
-                                    0x09, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+                    _mm256_set_epi8((char)0xff, (char)0xff, (char)0xff, (char)0x0e, (char)0x0d, (char)0x0c, (char)0x0b, (char)0x0a,
+                                    (char)0x09, (char)0x08, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff,
+                                    (char)0xff, (char)0xff, (char)0xff, (char)0x0e, (char)0x0d, (char)0x0c, (char)0x0b, (char)0x0a,
+                                    (char)0x09, (char)0x08, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff);
             /* clang-format on */
 
             for (int n = 0; n < 4; n++) {
@@ -967,8 +967,8 @@ __MBX_INLINE void transform_mb4_to_4sb(int8u* out[4],
 
                 if (L2 == PROC_LEN) {
                     _mm_storeu_si128((__m128i*)&ptr[0], _mm256_castsi256_si128(X[n]));
-                    *((int64u*)&ptr[16]) = _mm256_extract_epi64(X[n], 2);
-                    *((int16u*)&ptr[24]) = _mm256_extract_epi16(X[n], 12);
+                    *((int64u*)&ptr[16]) = (int64u)_mm256_extract_epi64(X[n], 2);
+                    *((int16u*)&ptr[24]) = (int16u)_mm256_extract_epi16(X[n], 12);
                 } else {
                     union {
                         int8u buffer[32];
@@ -993,8 +993,8 @@ __MBX_INLINE void transform_mb4_to_4sb(int8u* out[4],
 
                 if (L2 == PROC_LEN2) {
                     _mm_storeu_si128((__m128i*)&ptr[0], _mm256_castsi256_si128(X[n]));
-                    *((int64u*)&ptr[16]) = _mm256_extract_epi64(X[n], 2);
-                    *((int16u*)&ptr[24]) = _mm256_extract_epi16(X[n], 12);
+                    *((int64u*)&ptr[16]) = (int64u)_mm256_extract_epi64(X[n], 2);
+                    *((int16u*)&ptr[24]) = (int16u)_mm256_extract_epi16(X[n], 12);
                 } else {
                     union {
                         int8u buffer[32];

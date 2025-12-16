@@ -73,7 +73,7 @@ __mmask16 sm4_gcm_update_iv_mb16(const int8u* const pa_iv[SM4_LINES],
 
     __mmask8 mask_overflow_hi = cmp_epi64_mask(max_iv_len, full_iv_len, _MM_CMPINT_LT);
 
-    __mmask16 mask_overflow = mask_overflow_hi << 8 | mask_overflow_lo;
+    __mmask16 mask_overflow = (__mmask16)(mask_overflow_hi << 8 | mask_overflow_lo);
 
     /* Process full blocks of IVs */
     sm4_gcm_update_ghash_full_blocks_mb16(j0,

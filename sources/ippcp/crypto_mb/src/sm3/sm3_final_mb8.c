@@ -67,7 +67,7 @@ mbx_status sm3_final_mb8(int8u* hash_pa[8], SM3_CTX_mb8* p_state)
     __m256i buffer_len_m256 = _mm256_mask_set1_epi32(_mm256_set1_epi32(SM3_MSG_BLOCK_SIZE * 2),
                                                      tmp_mask,
                                                      SM3_MSG_BLOCK_SIZE);
-    buffer_len_m256         = _mm256_mask_set1_epi32(buffer_len_m256, ~mb_mask8, 0);
+    buffer_len_m256         = _mm256_mask_set1_epi32(buffer_len_m256, (__mmask8)~mb_mask8, 0);
 
     _mm256_storeu_si256((__m256i*)input_len, input_len_m256);
     _mm256_storeu_si256((__m256i*)buffer_len, buffer_len_m256);

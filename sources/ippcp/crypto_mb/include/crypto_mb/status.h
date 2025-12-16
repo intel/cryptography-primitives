@@ -59,7 +59,7 @@ __MBX_INLINE mbx_status MBX_SET_STS_BY_MASK(mbx_status status, int8u mask, mbx_s
     int numb;
 
     for (numb = 0; numb < 8; numb++) {
-        mbx_status buf_stt = (0 - ((mask >> numb) & 1)) & sttVal;
+        mbx_status buf_stt = ((mbx_status)(0 - ((mask >> numb) & 1)) & sttVal);
         status             = MBX_SET_STS(status, numb, buf_stt);
     }
     return status;
@@ -123,7 +123,7 @@ __MBX_INLINE mbx_status16 MBX_SET_STS16_BY_MASK(mbx_status16 status,
 {
     int numb;
     for (numb = 0; numb < 16; numb++) {
-        mbx_status16 buf_stt = (0 - ((mask >> numb) & 1)) & sttVal;
+        mbx_status16 buf_stt = (mbx_status16)((0 - ((mask >> numb) & 1))) & sttVal;
         status               = MBX_SET_STS16(status, numb, buf_stt);
     }
     return status;

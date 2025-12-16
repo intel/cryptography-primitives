@@ -192,7 +192,7 @@ static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES],
         tmp_mask =
             _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
         /* Will be loaded 4 blocks of data */
-        M128(block_mask) = _mm_maskz_set1_epi8(tmp_mask, 0xFF);
+        M128(block_mask) = _mm_maskz_set1_epi8(tmp_mask, (char)0xFF);
         tmp_mask =
             _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(3), _MM_CMPINT_EQ);
         /* Will be loaded 3 blocks of data */

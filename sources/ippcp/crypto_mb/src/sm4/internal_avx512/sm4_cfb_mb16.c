@@ -300,9 +300,10 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
 
     /* Store first ciphertext block for next round */
     for (int i = 0; i < SM4_LINES; i++) {
-        STORED_CT[i]       = _mm512_setzero_epi32();
-        __m128i data_block = _mm_maskz_loadu_epi32(0x000F * (0x1 & loc_mb_mask), loc_inp[i]);
-        STORED_CT[i]       = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
+        STORED_CT[i] = _mm512_setzero_epi32();
+        __m128i data_block =
+            _mm_maskz_loadu_epi32((__mmask8)(0x000F * (0x1 & loc_mb_mask)), loc_inp[i]);
+        STORED_CT[i] = _mm512_inserti64x2(STORED_CT[i], data_block, 3);
         loc_mb_mask >>= 1;
     }
 

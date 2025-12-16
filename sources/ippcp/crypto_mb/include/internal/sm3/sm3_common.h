@@ -155,14 +155,14 @@ __MBX_INLINE void MASK_TRANSPOSE_8X8_I32(int32u* out[8],
     TRANSPOSE_8X8_I32(&v0, &v1, &v2, &v3, &v4, &v5, &v6, &v7);
 
     /* mask store hashes to the first 8 buffers */
-    _mm256_mask_storeu_epi32((void*)out[0], (__mmask8)(((mb_mask >> 0) & 1)) * 0xFF, v0);
-    _mm256_mask_storeu_epi32((void*)out[1], (__mmask8)(((mb_mask >> 1) & 1)) * 0xFF, v1);
-    _mm256_mask_storeu_epi32((void*)out[2], (__mmask8)(((mb_mask >> 2) & 1)) * 0xFF, v2);
-    _mm256_mask_storeu_epi32((void*)out[3], (__mmask8)(((mb_mask >> 3) & 1)) * 0xFF, v3);
-    _mm256_mask_storeu_epi32((void*)out[4], (__mmask8)(((mb_mask >> 4) & 1)) * 0xFF, v4);
-    _mm256_mask_storeu_epi32((void*)out[5], (__mmask8)(((mb_mask >> 5) & 1)) * 0xFF, v5);
-    _mm256_mask_storeu_epi32((void*)out[6], (__mmask8)(((mb_mask >> 6) & 1)) * 0xFF, v6);
-    _mm256_mask_storeu_epi32((void*)out[7], (__mmask8)(((mb_mask >> 7) & 1)) * 0xFF, v7);
+    _mm256_mask_storeu_epi32((void*)out[0], (__mmask8)(((mb_mask >> 0) & 1) * 0xFF), v0);
+    _mm256_mask_storeu_epi32((void*)out[1], (__mmask8)(((mb_mask >> 1) & 1) * 0xFF), v1);
+    _mm256_mask_storeu_epi32((void*)out[2], (__mmask8)(((mb_mask >> 2) & 1) * 0xFF), v2);
+    _mm256_mask_storeu_epi32((void*)out[3], (__mmask8)(((mb_mask >> 3) & 1) * 0xFF), v3);
+    _mm256_mask_storeu_epi32((void*)out[4], (__mmask8)(((mb_mask >> 4) & 1) * 0xFF), v4);
+    _mm256_mask_storeu_epi32((void*)out[5], (__mmask8)(((mb_mask >> 5) & 1) * 0xFF), v5);
+    _mm256_mask_storeu_epi32((void*)out[6], (__mmask8)(((mb_mask >> 6) & 1) * 0xFF), v6);
+    _mm256_mask_storeu_epi32((void*)out[7], (__mmask8)(((mb_mask >> 7) & 1) * 0xFF), v7);
 }
 
 __MBX_INLINE void TRANSPOSE_8X16_I32(int32u* out[16], const int32u* const inp[8], __mmask16 mb_mask)
@@ -179,14 +179,14 @@ __MBX_INLINE void TRANSPOSE_8X16_I32(int32u* out[16], const int32u* const inp[8]
     TRANSPOSE_8X8_I32(&v0, &v1, &v2, &v3, &v4, &v5, &v6, &v7);
 
     /* mask store hashes to the first 8 buffers */
-    _mm256_mask_storeu_epi32((void*)out[0], (__mmask8)(((mb_mask >> 0) & 1)) * 0xFF, v0);
-    _mm256_mask_storeu_epi32((void*)out[1], (__mmask8)(((mb_mask >> 1) & 1)) * 0xFF, v1);
-    _mm256_mask_storeu_epi32((void*)out[2], (__mmask8)(((mb_mask >> 2) & 1)) * 0xFF, v2);
-    _mm256_mask_storeu_epi32((void*)out[3], (__mmask8)(((mb_mask >> 3) & 1)) * 0xFF, v3);
-    _mm256_mask_storeu_epi32((void*)out[4], (__mmask8)(((mb_mask >> 4) & 1)) * 0xFF, v4);
-    _mm256_mask_storeu_epi32((void*)out[5], (__mmask8)(((mb_mask >> 5) & 1)) * 0xFF, v5);
-    _mm256_mask_storeu_epi32((void*)out[6], (__mmask8)(((mb_mask >> 6) & 1)) * 0xFF, v6);
-    _mm256_mask_storeu_epi32((void*)out[7], (__mmask8)(((mb_mask >> 7) & 1)) * 0xFF, v7);
+    _mm256_mask_storeu_epi32((void*)out[0], (__mmask8)(((mb_mask >> 0) & 1) * 0xFF), v0);
+    _mm256_mask_storeu_epi32((void*)out[1], (__mmask8)(((mb_mask >> 1) & 1) * 0xFF), v1);
+    _mm256_mask_storeu_epi32((void*)out[2], (__mmask8)(((mb_mask >> 2) & 1) * 0xFF), v2);
+    _mm256_mask_storeu_epi32((void*)out[3], (__mmask8)(((mb_mask >> 3) & 1) * 0xFF), v3);
+    _mm256_mask_storeu_epi32((void*)out[4], (__mmask8)(((mb_mask >> 4) & 1) * 0xFF), v4);
+    _mm256_mask_storeu_epi32((void*)out[5], (__mmask8)(((mb_mask >> 5) & 1) * 0xFF), v5);
+    _mm256_mask_storeu_epi32((void*)out[6], (__mmask8)(((mb_mask >> 6) & 1) * 0xFF), v6);
+    _mm256_mask_storeu_epi32((void*)out[7], (__mmask8)(((mb_mask >> 7) & 1) * 0xFF), v7);
 
     v0 = _mm256_loadu_si256((__m256i*)inp[0] + 1);
     v1 = _mm256_loadu_si256((__m256i*)inp[1] + 1);
@@ -201,14 +201,14 @@ __MBX_INLINE void TRANSPOSE_8X16_I32(int32u* out[16], const int32u* const inp[8]
     TRANSPOSE_8X8_I32(&v0, &v1, &v2, &v3, &v4, &v5, &v6, &v7);
 
     /* mask store hashes to the last 8 buffers */
-    _mm256_mask_storeu_epi32((void*)out[8], (__mmask8)(((mb_mask >> 8) & 1)) * 0xFF, v0);
-    _mm256_mask_storeu_epi32((void*)out[9], (__mmask8)(((mb_mask >> 9) & 1)) * 0xFF, v1);
-    _mm256_mask_storeu_epi32((void*)out[10], (__mmask8)(((mb_mask >> 10) & 1)) * 0xFF, v2);
-    _mm256_mask_storeu_epi32((void*)out[11], (__mmask8)(((mb_mask >> 11) & 1)) * 0xFF, v3);
-    _mm256_mask_storeu_epi32((void*)out[12], (__mmask8)(((mb_mask >> 12) & 1)) * 0xFF, v4);
-    _mm256_mask_storeu_epi32((void*)out[13], (__mmask8)(((mb_mask >> 13) & 1)) * 0xFF, v5);
-    _mm256_mask_storeu_epi32((void*)out[14], (__mmask8)(((mb_mask >> 14) & 1)) * 0xFF, v6);
-    _mm256_mask_storeu_epi32((void*)out[15], (__mmask8)(((mb_mask >> 15) & 1)) * 0xFF, v7);
+    _mm256_mask_storeu_epi32((void*)out[8], (__mmask8)(((mb_mask >> 8) & 1) * 0xFF), v0);
+    _mm256_mask_storeu_epi32((void*)out[9], (__mmask8)(((mb_mask >> 9) & 1) * 0xFF), v1);
+    _mm256_mask_storeu_epi32((void*)out[10], (__mmask8)(((mb_mask >> 10) & 1) * 0xFF), v2);
+    _mm256_mask_storeu_epi32((void*)out[11], (__mmask8)(((mb_mask >> 11) & 1) * 0xFF), v3);
+    _mm256_mask_storeu_epi32((void*)out[12], (__mmask8)(((mb_mask >> 12) & 1) * 0xFF), v4);
+    _mm256_mask_storeu_epi32((void*)out[13], (__mmask8)(((mb_mask >> 13) & 1) * 0xFF), v5);
+    _mm256_mask_storeu_epi32((void*)out[14], (__mmask8)(((mb_mask >> 14) & 1) * 0xFF), v6);
+    _mm256_mask_storeu_epi32((void*)out[15], (__mmask8)(((mb_mask >> 15) & 1) * 0xFF), v7);
 }
 
 #endif /* #if (_MBX>=_MBX_K1) */

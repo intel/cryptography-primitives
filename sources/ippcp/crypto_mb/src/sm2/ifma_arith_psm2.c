@@ -496,7 +496,7 @@ __mb_mask MB_FUNC_NAME(ifma_cmp_lt_psm2_)(const U64 a[])
 __mb_mask MB_FUNC_NAME(ifma_check_range_psm2_)(const U64 A[])
 {
     __mb_mask mask = MB_FUNC_NAME(is_zero_FESM2_)(A);
-    mask |= ~MB_FUNC_NAME(ifma_cmp_lt_psm2_)(A);
+    mask |= (__mb_mask)~MB_FUNC_NAME(ifma_cmp_lt_psm2_)(A);
 
     return mask;
 }

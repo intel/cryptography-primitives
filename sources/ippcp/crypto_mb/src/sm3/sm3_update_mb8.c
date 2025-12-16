@@ -126,7 +126,7 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
                 sm3_avx512_mb8(HASH_VALUE(p_state), (const int8u**)p_buffer, p_proc_len);
                 idx = _mm256_mask_set1_epi32(
                     idx,
-                    ~_mm256_cmp_epi32_mask(proc_len, _mm256_setzero_si256(), 2),
+                    (__mmask8)~_mm256_cmp_epi32_mask(proc_len, _mm256_setzero_si256(), 2),
                     _MM_CMPINT_EQ);
             }
         }

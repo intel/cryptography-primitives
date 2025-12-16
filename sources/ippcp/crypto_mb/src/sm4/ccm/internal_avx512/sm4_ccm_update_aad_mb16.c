@@ -55,7 +55,7 @@ mbx_status16 sm4_ccm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],
     __mmask8 msg_len_overflow_hi_mask =
         _mm512_cmp_epi64_mask(max_msg16b_len, loadu(msg_len + 8), _MM_CMPINT_LE);
     __mmask16 msg_len_overflow_mask =
-        (__mmask16)msg_len_overflow_hi_mask << 8 | (__mmask16)msg_len_overflow_lo_mask;
+        (__mmask16)((msg_len_overflow_hi_mask << 8) | msg_len_overflow_lo_mask);
 
     additional_len_mask = _mm512_kand(additional_len_mask, mb_mask);
 
@@ -78,9 +78,9 @@ mbx_status16 sm4_ccm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],
 
         int8u flags = tmp[i][0];
 
-        int8u tag_len_enc = (tag_len[i] - 2) >> 1;
+        int8u tag_len_enc = (int8u)((tag_len[i] - 2) >> 1);
 
-        flags |= (tag_len_enc) << 3;
+        flags |= (int8u)((tag_len_enc) << 3);
         auth_lens[i]  = SM4_BLOCK_SIZE;
         block_ptrs[i] = tmp[i];
         hash_ptrs[i]  = (int8u*)&hash[i];
@@ -110,7 +110,7 @@ mbx_status16 sm4_ccm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],
     /* Check if message is longer than 2^16 - 1 and set the length appropriately in block 0 */
     if (msg_len_overflow_mask) {
         for (i = 0; i < SM4_LINES; i++) {
-            const unsigned num_bits_msg_len = 15 - iv_len[i];
+            const unsigned num_bits_msg_len = 15U - (unsigned)(iv_len[i]);
             const int64u max_len =
                 (num_bits_msg_len == 8) ? 0xFFFFFFFFFFFFFFFF : (1ULL << (num_bits_msg_len << 3));
 
@@ -136,7 +136,7 @@ mbx_status16 sm4_ccm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],
                 auth_lens[i] = additional_lens[i] & 0xfff0; /* Multiple of 16 bytes */
                 additional_lens[i] -= auth_lens[i];
                 if (auth_lens[i] == 0)
-                    additional_len_mask &= ~(1 << i);
+                    additional_len_mask &= (__mmask16) ~(1 << i);
             }
         }
 

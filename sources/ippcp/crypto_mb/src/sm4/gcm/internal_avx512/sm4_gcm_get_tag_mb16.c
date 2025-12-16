@@ -101,7 +101,8 @@ mbx_status16 sm4_gcm_get_tag_mb16(int8u* pa_out[SM4_LINES],
     for (int i = 0; i < SM4_LINES; i++) {
         __m128i one_block = M128((__m128i*)tag_blocks + i);
 
-        __mmask16 tagMask = ~(0xFFFF << (tag_len[rearrangeOrder[i]])) * ((mb_mask >> i) & 0x1);
+        __mmask16 tagMask =
+            (__mmask16)(~(0xFFFF << (tag_len[rearrangeOrder[i]])) * ((mb_mask >> i) & 0x1));
         _mm_mask_storeu_epi8((void*)(pa_out[rearrangeOrder[i]]), tagMask, one_block);
     }
 
