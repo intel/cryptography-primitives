@@ -113,16 +113,16 @@ static void cpPrecomputeMultiExp(BNU_CHUNK_T* pTable,
 
 static int cpGetMaxBitsizeExponent(const BNU_CHUNK_T* ppE[], int nsE[], int nItems)
 {
-    int n, tmp;
-    Ipp32u mask;
+    int n;
+    BNU_CHUNK_T mask, tmp;
     /* find out the longest exponent */
-    int expBitSize = BITSIZE_BNU(ppE[0], nsE[0]);
+    BNU_CHUNK_T expBitSize = (BNU_CHUNK_T)BITSIZE_BNU(ppE[0], nsE[0]);
     for (n = 1; n < nItems; n++) {
-        tmp        = BITSIZE_BNU(ppE[n], nsE[n]);
-        mask       = (Ipp32u)cpIsMsb_ct((BNU_CHUNK_T)(expBitSize - tmp));
-        expBitSize = (int)(((BNU_CHUNK_T)expBitSize & ~mask) | ((BNU_CHUNK_T)tmp & mask));
+        tmp        = (BNU_CHUNK_T)BITSIZE_BNU(ppE[n], nsE[n]);
+        mask       = cpIsMsb_ct(expBitSize - tmp);
+        expBitSize = (expBitSize & ~mask) | (tmp & mask);
     }
-    return expBitSize;
+    return (int)expBitSize;
 }
 
 /* sscm version */

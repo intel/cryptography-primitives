@@ -37,7 +37,13 @@ __MBX_INLINE BIGNUM* BN_bnu2bn(int64u* val, int len, BIGNUM* ret)
 {
     len = len * (int)(sizeof(int64u));
     reverse_inplace((int8u*)val, len);
+
+#ifndef OPENSSL_IS_BORINGSSL
     ret = BN_bin2bn((int8u*)val, len, ret);
+#else
+    ret = BN_bin2bn((int8u*)val, (int64u)len, ret);
+#endif
+
     reverse_inplace((int8u*)val, len);
     return ret;
 }

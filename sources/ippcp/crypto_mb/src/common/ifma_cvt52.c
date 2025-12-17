@@ -202,7 +202,7 @@ int8u ifma_BN_to_mb8(int64u out_mb8[][8], const BIGNUM* const bn[8], int bitLen)
     int i;
     for (i = 0; i < 8; ++i) {
         if (NULL != bn[i]) {
-            byteLens[i] = BN_num_bytes(bn[i]);
+            byteLens[i] = (int)(BN_num_bytes(bn[i]));
             assert(byteLens[i] <= byteLen);
 
 #ifndef BN_OPENSSL_PATCH
@@ -778,7 +778,7 @@ int8u ifma_BN_to_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], int bitLen)
 
     for (i = 0; i < 4; ++i) {
         if (NULL != bn[i]) {
-            byteLens[i] = BN_num_bytes(bn[i]);
+            byteLens[i] = (int)(BN_num_bytes(bn[i]));
             assert(byteLens[i] <= byteLen);
 
 #ifndef BN_OPENSSL_PATCH
