@@ -33,8 +33,7 @@
 /*
 // define BNU chunk data type
 */
-#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64) || \
-     (_IPP_ARCH == _IPP_ARCH_LRB) || (_IPP_ARCH == _IPP_ARCH_LRB2))
+#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64))
 typedef Ipp64u BNU_CHUNK_T;
 typedef Ipp64s BNS_CHUNK_T;
 #define BNU_CHUNK_LOG2 (6)

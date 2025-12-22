@@ -35,7 +35,7 @@
 
 %if (_ENABLE_ALG_SHA256_)
 %if (_SHA_NI_ENABLING_ == _FEATURE_OFF_) || (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_)
-%if (_IPP >= _IPP_M5) && (_IPP < _IPP_V8)
+%if (_IPP >= _IPP_W7) && (_IPP < _IPP_V8)
 
 ;;
 ;; SIG0(x) = ROR32(x, 7) ^ ROR32(x,18) ^ LSR(x, 3)
@@ -400,7 +400,7 @@ IPPASM UpdateSHA256,PUBLIC
    ret
 ENDFUNC UpdateSHA256
 
-%endif    ;; (_IPP >= _IPP_M5) && (_IPP < _IPP_V8)
+%endif    ;; (_IPP >= _IPP_W7) && (_IPP < _IPP_V8)
 %endif    ;; _FEATURE_OFF_ / _FEATURE_TICKTOCK_
 %endif    ;; _ENABLE_ALG_SHA256_
 

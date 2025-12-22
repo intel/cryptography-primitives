@@ -30,12 +30,7 @@ extern "C" {
 */
 
 #if defined(_ARCH_IA32)
-#define M5_FM (0)
-#ifdef _IPP_QUARK
-#define PX_FM (0)
-#else
 #define PX_FM (ippCPUID_MMX | ippCPUID_SSE)
-#endif
 #define W7_FM (PX_FM | ippCPUID_SSE2)
 #define V8_FM (W7_FM | ippCPUID_SSE3 | ippCPUID_SSSE3)
 #define S8_FM (V8_FM | ippCPUID_MOVBE)
@@ -59,8 +54,6 @@ extern "C" {
 #define K0_FM (L9_FM | ippCPUID_AVX512F | ippCPUID_AVX512CD | ippCPUID_AVX512VL | ippCPUID_AVX512BW | ippCPUID_AVX512DQ | ippAVX512_ENABLEDBYOS)
 /* clang-format on */
 
-#elif defined(_ARCH_LRB2)
-#define PX_FM (ippCPUID_KNC)
 #else
 #error undefined architecture
 #endif
@@ -81,48 +74,17 @@ extern "C" {
 #define AVX3M_MSK (AVX2_MSK | ippCPUID_AVX512F | ippCPUID_AVX512CD | ippCPUID_AVX512PF | ippCPUID_AVX512ER)
 #define AVX3I_MSK (AVX3X_MSK | ippCPUID_SHA | ippCPUID_AVX512VBMI | ippCPUID_AVX512VBMI2 | ippCPUID_AVX512IFMA | ippCPUID_AVX512GFNI | ippCPUID_AVX512VAES | ippCPUID_AVX512VCLMUL)
 /* clang-format on */
-#if defined(_ARCH_IA32) && !defined(OSX32)
+#if defined(_ARCH_IA32)
 enum lib_enum { LIB_W7 = 0, LIB_P8 = 1, LIB_H9 = 2, LIB_NOMORE };
 #define LIB_PX LIB_W7
-#elif defined(OSX32)
-enum lib_enum { LIB_P8 = 0, LIB_H9 = 1, LIB_NOMORE };
-#define LIB_PX LIB_S8
-#define LIB_W7 LIB_S8
-#elif defined(_ARCH_EM64T) && !defined(OSXEM64T)
+#elif defined(_ARCH_EM64T)
 enum lib_enum { LIB_M7 = 0, LIB_Y8 = 1, LIB_L9 = 2, LIB_K0 = 3, LIB_K1 = 4, LIB_NOMORE };
 #define LIB_PX LIB_M7
-#elif defined(OSXEM64T)
-enum lib_enum { LIB_Y8 = 0, LIB_L9 = 1, LIB_K0 = 2, LIB_K1 = 3, LIB_NOMORE };
-#define LIB_PX LIB_Y8
-#define LIB_M7 LIB_Y8
-#define LIB_N8 LIB_Y8
-#elif defined(_ARCH_LRB2)
-enum lib_enum { LIB_PX = 0, LIB_B2 = 1, LIB_NOMORE };
-#define LIB_MIC LIB_B2
 #else
 #error "lib_enum isn't defined!"
 #endif
 
 #if defined(_ARCH_IA32)
-/* OSX supports starting with Intel® architecture formerly codenamed Penryn only*/
-#if defined(OSX32)
-#define LIB_MMX   LIB_S8
-#define LIB_SSE   LIB_S8
-#define LIB_SSE2  LIB_S8
-#define LIB_SSE3  LIB_S8
-#define LIB_ATOM  LIB_S8
-#define LIB_SSSE3 LIB_S8
-#define LIB_SSE41 LIB_S8
-#define LIB_SSE42 LIB_P8
-#define LIB_AVX   LIB_G9
-#define LIB_AVX2  LIB_H9
-
-/* no ia32 library for Intel® Xeon® Phi(TM) processor (formerly Knight Landing) */
-#define LIB_AVX3M LIB_H9
-
-#define LIB_AVX3X LIB_H9 /* no ia32 library for Intel® Xeon® processor (formerly Skylake) */
-#define LIB_AVX3I LIB_H9 /* no ia32 library for Intel® Xeon® processor (formerly Icelake) */
-#else
 #define LIB_MMX   LIB_W7
 #define LIB_SSE   LIB_W7
 #define LIB_SSE2  LIB_W7
@@ -138,25 +100,7 @@ enum lib_enum { LIB_PX = 0, LIB_B2 = 1, LIB_NOMORE };
 #define LIB_AVX3M LIB_H9
 #define LIB_AVX3X LIB_H9 /* no ia32 library for Intel® Xeon® processor (formerly Skylake) */
 #define LIB_AVX3I LIB_H9 /* no ia32 library for Intel® Xeon® processor (formerly Icelake) */
-#endif
 #elif defined(_ARCH_EM64T)
-#if defined(OSXEM64T)    /* OSX supports starting PNR only */
-#define LIB_MMX   LIB_N8
-#define LIB_SSE   LIB_N8
-#define LIB_SSE2  LIB_N8
-#define LIB_SSE3  LIB_N8
-#define LIB_ATOM  LIB_N8
-#define LIB_SSSE3 LIB_N8
-#define LIB_SSE41 LIB_N8
-#define LIB_SSE42 LIB_Y8
-#define LIB_AVX   LIB_E9
-#define LIB_AVX2  LIB_L9
-
-/* AVX2 code branch is used for Intel® Xeon® Phi(TM) processor (formerly Knight Landing) */
-#define LIB_AVX3M LIB_L9
-#define LIB_AVX3X LIB_K0
-#define LIB_AVX3I LIB_K1
-#else
 #define LIB_MMX   LIB_M7
 #define LIB_SSE   LIB_M7
 #define LIB_SSE2  LIB_M7
@@ -172,9 +116,6 @@ enum lib_enum { LIB_PX = 0, LIB_B2 = 1, LIB_NOMORE };
 #define LIB_AVX3M LIB_L9
 #define LIB_AVX3X LIB_K0
 #define LIB_AVX3I LIB_K1
-#endif
-#elif defined(_ARCH_LRB2)
-#define LIB_MIC LIB_B2
 #endif
 
 //gres: #if defined( _IPP_DYNAMIC )
@@ -228,11 +169,6 @@ static const _TCHAR* dllNames[DLL_NOMORE] = { _T(IPP_LIB_PREFIX()) _T("w7")
 static const _TCHAR* dllNames[DLL_NOMORE] = { _T("lib") _T(IPP_LIB_PREFIX()) _T("w7.so"),
                                               _T("lib") _T(IPP_LIB_PREFIX()) _T("p8.so"),
                                               _T("lib") _T(IPP_LIB_PREFIX()) _T("h9.so") };
-#elif defined(OSX32)
-static const _TCHAR* dllNames[DLL_NOMORE] = { _T("lib") _T(IPP_LIB_PREFIX()) _T("p8")
-                                                                             _T(".dylib"),
-                                              _T("lib") _T(IPP_LIB_PREFIX()) _T("h9")
-                                                                             _T(".dylib") };
 #elif defined(WIN32E)
 static const _TCHAR* dllNames[DLL_NOMORE] = { _T(IPP_LIB_PREFIX()) _T("m7")
                                                                    _T(".dll"),
@@ -244,15 +180,6 @@ static const _TCHAR* dllNames[DLL_NOMORE] = { _T(IPP_LIB_PREFIX()) _T("m7")
                                                                    _T(".dll"),
                                               _T(IPP_LIB_PREFIX()) _T("k1")
                                                                    _T(".dll") };
-#elif defined(OSXEM64T)
-static const _TCHAR* dllNames[DLL_NOMORE] = { _T("lib") _T(IPP_LIB_PREFIX()) _T("y8")
-                                                                             _T(".dylib"),
-                                              _T("lib") _T(IPP_LIB_PREFIX()) _T("l9")
-                                                                             _T(".dylib"),
-                                              _T("lib") _T(IPP_LIB_PREFIX()) _T("k0")
-                                                                             _T(".dylib"),
-                                              _T("lib") _T(IPP_LIB_PREFIX()) _T("k1")
-                                                                             _T(".dylib") };
 #elif defined(LINUX32E)
 static const _TCHAR* dllNames[DLL_NOMORE] = { _T("lib") _T(IPP_LIB_PREFIX()) _T("m7.so"),
                                               _T("lib") _T(IPP_LIB_PREFIX()) _T("y8.so"),

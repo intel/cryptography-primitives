@@ -39,19 +39,15 @@ IPPCP_INLINE cpSize gsMontExp_WinSize(cpSize bitsize)
 {
 #if defined(_USE_WINDOW_EXP_)
     // new computations
-    return
-#if (_IPP != \
-     _IPP_M5) /*limited by 6 or 4 (LOG_CACHE_LINE_SIZE); we use it for windowing-exp imtigation */
-        bitsize > 4096 ? 6 :  /* 4096- .. .  */
-            bitsize > 2666 ? 5
-                           :  /* 2666 - 4095 */
-#endif
-            bitsize > 717 ? 4
-                          :   /*  717 - 2665 */
-            bitsize > 178 ? 3
-                          :   /*  178 - 716  */
-            bitsize > 41 ? 2
-                         : 1; /*   41 - 177  */
+    return bitsize > 4096 ? 6 :  /* 4096- .. .  */
+               bitsize > 2666 ? 5
+                              :  /* 2666 - 4095 */
+               bitsize > 717 ? 4
+                             :   /*  717 - 2665 */
+               bitsize > 178 ? 3
+                             :   /*  178 - 716  */
+               bitsize > 41 ? 2
+                            : 1; /*   41 - 177  */
 #else
     IPP_UNREFERENCED_PARAMETER(bitsize);
     return 1;

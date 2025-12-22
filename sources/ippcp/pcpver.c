@@ -27,10 +27,7 @@
 
 /* clang-format off */
 #if ( _IPP_ARCH == _IPP_ARCH_IA32 ) || ( _IPP_ARCH == _IPP_ARCH_LP32 )
-    #if ( _IPP == _IPP_M5 )             /* Intel® Quark(TM) processor - ia32 */
-        #define CRYPTO_LIB_CPU_TYPE() "m5"
-        #define CRYPTO_LIB_CPU_DESCR() "586"
-    #elif ( _IPP == _IPP_H9 )           /* Intel® Advanced Vector Extensions 2 - ia32 */
+    #if ( _IPP == _IPP_H9 )           /* Intel® Advanced Vector Extensions 2 - ia32 */
         #define CRYPTO_LIB_CPU_TYPE() "h9"
         #define CRYPTO_LIB_CPU_DESCR() "AVX2"
     #elif ( _IPP == _IPP_G9 )           /* Intel® Advanced Vector Extensions - ia32 */

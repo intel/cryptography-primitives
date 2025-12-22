@@ -15,13 +15,8 @@
 #=========================================================================
 
 if(UNIX)
-    if(APPLE)
-        set(OS_STRING "macosx")
-        set(OS_DEFAULT_COMPILER Intel)
-    else()
-        set(OS_STRING "linux")
-        set(OS_DEFAULT_COMPILER GNU)
-    endif()
+    set(OS_STRING "linux")
+    set(OS_DEFAULT_COMPILER GNU)
 else()
     set(OS_STRING "windows")
     set(OS_DEFAULT_COMPILER Intel)

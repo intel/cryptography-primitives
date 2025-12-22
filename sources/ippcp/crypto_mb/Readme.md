@@ -52,10 +52,6 @@ This library consists of highly-optimized kernels taking advantage of Intel’s 
 
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
 
-### macOS*
-- [Common tools](#common-tools)
-- Intel® C++ Compiler Classic 2021.9 for macOS\*
-
 ## Installation
 
 You can install the Crypto Multi-buffer library in two different ways:

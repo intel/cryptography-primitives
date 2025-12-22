@@ -34,7 +34,7 @@
 %include "pcpvariant.inc"
 
 %if (_ENABLE_ALG_MD5_)
-%if (_IPP >= _IPP_M5)
+%if (_IPP >= _IPP_W7)
 
 ;;
 ;; Magic functions defined in RFC 1321

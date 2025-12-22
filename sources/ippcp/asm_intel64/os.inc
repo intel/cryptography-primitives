@@ -29,7 +29,7 @@
 %endif
 %endif
 
-;; code is the same for linux and macos
+;; code is the same for linux
 %ifndef LINUX
 %ifidn __OUTPUT_FORMAT__, macho64
 %define LINUX

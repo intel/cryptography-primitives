@@ -31,7 +31,7 @@
 /*
 // data processing function.
 */
-#if !((_IPP >= _IPP_M5) || (_IPP32E >= _IPP32E_M7))
+#if !((_IPP >= _IPP_W7) || (_IPP32E >= _IPP32E_M7))
 
 /* clang-format off */
 IPP_OWN_DEFN(void, ARCFourProcessData, (const Ipp8u *pSrc,
@@ -69,4 +69,4 @@ IPP_OWN_DEFN(void, ARCFourProcessData, (const Ipp8u *pSrc,
     }
 }
 
-#endif /* #if !((_IPP>=_IPP_M5) || (_IPP32E>=_IPP32E_M7)) */
+#endif /* #if !((_IPP>=_IPP_W7) || (_IPP32E>=_IPP32E_M7)) */

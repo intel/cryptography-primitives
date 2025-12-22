@@ -20,7 +20,6 @@
 %include "noexec_stack.inc"
 
 %assign _IPP_PX 0    ; pure C-code ia32
-%assign _IPP_M5 1    ; Intel(R) Quark(TM) processor - ia32
 %assign _IPP_W7 8    ; Intel(R) Streaming SIMD Extensions 2 - ia32
 %assign _IPP_T7 16   ; Intel(R) Streaming SIMD Extensions 3 - ia32
 %assign _IPP_V8 32   ; Supplemental Streaming SIMD Extensions 3 (SSSE3)
@@ -44,9 +43,7 @@
 %assign _IPP _IPP_PX
 %assign _IPP32E _IPP32E_PX
 
-%ifdef _M5 ; Intel(R) Quark(TM) processor - ia32
-  %assign _IPP _IPP_M5
-%elifdef _W7 ; Intel(R) Streaming SIMD Extensions 2 - ia32
+%ifdef _W7 ; Intel(R) Streaming SIMD Extensions 2 - ia32
   %assign _IPP _IPP_W7
 %elifdef _T7 ; Intel(R) Streaming SIMD Extensions 3 - ia32
   %assign _IPP _IPP_T7
@@ -110,12 +107,10 @@
   %assign IPP_BINARY_FORMAT 0
 %elifidn __OUTPUT_FORMAT__, elf64
   %assign IPP_BINARY_FORMAT 1
-%elifidn __OUTPUT_FORMAT__, macho64
-  %assign IPP_BINARY_FORMAT 2
 %elifidn __OUTPUT_FORMAT__, win32
-  %assign IPP_BINARY_FORMAT 3
+  %assign IPP_BINARY_FORMAT 2
 %elifidn __OUTPUT_FORMAT__, win64
-  %assign IPP_BINARY_FORMAT 4
+  %assign IPP_BINARY_FORMAT 3
 %else
   %fatal Unsupported output format: __OUTPUT_FORMAT__. Shall be: elf32, elf64, win32, win64, macho64
 %endif

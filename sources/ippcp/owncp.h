@@ -54,13 +54,8 @@ typedef int cpSize;
 */
 
 /* size of cache line (bytes) */
-#if (_IPP == _IPP_M5)
-#define CACHE_LINE_SIZE     (16)
-#define LOG_CACHE_LINE_SIZE (4)
-#else
 #define CACHE_LINE_SIZE     (64)
 #define LOG_CACHE_LINE_SIZE (6)
-#endif
 
 /* swap data & pointers */
 //NOLINTBEGIN(bugprone-macro-parentheses)
@@ -165,8 +160,7 @@ typedef int cpSize;
 #endif
 
 /* define 64-bit constant or pair of 32-bit depending on architecture */
-#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64) || \
-     (_IPP_ARCH == _IPP_ARCH_LRB) || (_IPP_ARCH == _IPP_ARCH_LRB2))
+#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64))
 #define LL(lo, hi) (((Ipp64u)(lo)) | ((Ipp64u)(hi) << 32))
 #define L_(lo)     ((Ipp64u)(lo))
 #else

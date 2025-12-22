@@ -34,7 +34,7 @@
 
 %if (_ENABLE_ALG_SHA1_)
 %if (_SHA_NI_ENABLING_ == _FEATURE_OFF_) || (_SHA_NI_ENABLING_ == _FEATURE_TICKTOCK_)
-%if (_IPP >= _IPP_M5)
+%if (_IPP >= _IPP_W7)
 
 ;;
 ;; Magic functions defined in FIPS 180-1
@@ -513,7 +513,7 @@ IPPASM UpdateSHA1,PUBLIC
    ret
 ENDFUNC UpdateSHA1
 
-%endif    ;; _IPP >= _IPP_M5
+%endif    ;; _IPP >= _IPP_W7
 %endif    ;; _FEATURE_OFF_ / _FEATURE_TICKTOCK_
 %endif    ;; _ENABLE_ALG_SHA1_
 

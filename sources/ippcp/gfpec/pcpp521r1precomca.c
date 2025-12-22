@@ -43,8 +43,7 @@ extern const __ALIGN64 P521_POINT_AFFINE ec_p521r1_precomputed[105][16];
 #if !defined(_DISABLE_ECP_521R1_HARDCODED_BP_TBL_)
 /* see ippcp_baseptbl.cpp test for generation details */
 
-#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64) || \
-     (_IPP_ARCH == _IPP_ARCH_LRB) || (_IPP_ARCH == _IPP_ARCH_LRB2))
+#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64))
 const __ALIGN64 P521_POINT_AFFINE ec_p521r1_precomputed[105][16] = {
     /* digit=0 base_pwr=2^0 */
     /* clang-format off */

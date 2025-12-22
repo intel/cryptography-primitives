@@ -262,16 +262,6 @@ static int cpGetFeatures(Ipp64u* pFeaturesMask)
             /* test if Intel® AVX-512 is supported by OS */
             if (cp_is_avx512_extension())
                 mask |= ippAVX512_ENABLEDBYOS;
-
-#if defined(OSXEM64T)
-            else {
-                /* submit some avx512f instructions, returns 0 */
-                mask |= cp_issue_avx512_instruction();
-                /* and check OS support again */
-                if (cp_is_avx512_extension())
-                    mask |= ippAVX512_ENABLEDBYOS;
-            }
-#endif
         }
     }
     mask = (flgFMA && flgINT && flgGPR) ? (mask | ippCPUID_AVX2)
@@ -394,7 +384,7 @@ IppStatus owncpFeaturesToIdx(Ipp64u* cpuFeatures, int* index)
                     if (ippCPUID_SSE == (*cpuFeatures & ippCPUID_SSE)) {
                         mask   = SSE_MSK;
                         *index = LIB_SSE;
-#if (defined(WIN32E) || defined(LINUX32E) || defined(OSXEM64T)) && !(defined(_ARCH_LRB2))
+#if defined(WIN32E) || defined(LINUX32E)
                         ownStatus =
                             ippStsNotSupportedCpu; /* the lowest CPU supported by Intel Cryptography Primitives Library must at least support Intel® SSE2 for x64 */
 #endif

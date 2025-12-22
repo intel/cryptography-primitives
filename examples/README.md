@@ -11,7 +11,7 @@ Only merged library (cmake option `-DMERGED_BLD:BOOL=ON`) builds are supported f
 1. Navigate to the library sources root and run cmake to generate a library build procedure with the `-DBUILD_EXAMPLES:BOOL=ON`
    option.
 
-   On Linux\*/macOS\*:
+   On Linux\*:
 
     `cmake CMakeLists.txt -B_build -DARCH=intel64 -DMERGED_BLD:BOOL=ON -DBUILD_EXAMPLES:BOOL=ON`
 
@@ -24,7 +24,7 @@ Only merged library (cmake option `-DMERGED_BLD:BOOL=ON`) builds are supported f
 
    For the list of supported compiler versions or other cmake build options, please refer to the library root [BUILD.md](../BUILD.md) file.
 
-2. On Linux\*/macOS\*, build with `make -j8 <target>`. You can use the following targets:
+2. On Linux\*, build with `make -j8 <target>`. You can use the following targets:
 
    - To build an individual example, use targets started with the *example_* string (like *example_aes-256-ctr-encryption*).
 
@@ -45,7 +45,7 @@ Only merged library (cmake option `-DMERGED_BLD:BOOL=ON`) builds are supported f
 
 1. Navigate to the *examples* folder and run the cmake command below.
 
-   On Linux\*/macOS\*:
+   On Linux\*:
 
    `cmake CMakeLists.txt -B_build`
 

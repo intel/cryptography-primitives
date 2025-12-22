@@ -8,6 +8,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - ML-KEM key generation, encapsulation and decapsulation were optimized with Intel(R) Advanced Vector Extensions 512 (Intel(R) AVX-512) instructions.
 - Fixed the issue with `ippsHashUnpack_rmf`.
   The function could cause segmentation faults in some scenarios.
+- Cleaned-up the library from the outdated macOS specific code
 
 ## Intel(R) Cryptography Primitives Library 1.3.0
 - Added support for ML-KEM scheme with Key Generation, Encapsulation and Decapsulation functionality implemented according to the FIPS 203.

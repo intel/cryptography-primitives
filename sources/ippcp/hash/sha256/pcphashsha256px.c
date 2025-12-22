@@ -33,9 +33,9 @@
 
 #if defined(_ENABLE_ALG_SHA256_) || defined(_ENABLE_ALG_SHA224_)
 
-#if !((_IPP == _IPP_M5) || (_IPP == _IPP_W7) || (_IPP == _IPP_T7) || (_IPP == _IPP_V8) ||       \
-      (_IPP == _IPP_P8) || (_IPP == _IPP_S8) || (_IPP >= _IPP_G9) || (_IPP32E == _IPP32E_M7) || \
-      (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) || (_IPP32E == _IPP32E_N8) ||          \
+#if !((_IPP == _IPP_W7) || (_IPP == _IPP_T7) || (_IPP == _IPP_V8) || (_IPP == _IPP_P8) || \
+      (_IPP == _IPP_S8) || (_IPP >= _IPP_G9) || (_IPP32E == _IPP32E_M7) ||                \
+      (_IPP32E == _IPP32E_U8) || (_IPP32E == _IPP32E_Y8) || (_IPP32E == _IPP32E_N8) ||    \
       (_IPP32E >= _IPP32E_E9))
 
 /*

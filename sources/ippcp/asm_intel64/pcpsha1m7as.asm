@@ -173,11 +173,7 @@
   %xdefine %%regF %7
   %xdefine %%nr %8
 
-  %ifndef _VXWORKS
   %assign %%immCNT  08F1BBCDCh
-  %else
-  %assign %%immCNT  -1894007588
-  %endif
    mov      r13d,%%immCNT
    MAGIC_F2 %%regF,%%regB,%%regC,%%regD,%%regT  ;; FUN  = MAGIC_Fi(B,C,D)
    ror      %%regB,(32-30)
@@ -200,11 +196,7 @@
   %xdefine %%regF %7
   %xdefine %%nr %8
 
-  %ifndef _VXWORKS
   %assign %%immCNT  0CA62C1D6h
-  %else
-  %assign %%immCNT  -899497514
-  %endif
    mov      r13d,%%immCNT
    MAGIC_F3 {%%regF},{%%regB},{%%regC},{%%regD}       ;; FUN  = MAGIC_Fi(B,C,D)
    ror      %%regB,(32-30)

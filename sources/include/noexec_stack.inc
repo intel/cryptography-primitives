@@ -36,11 +36,7 @@ section .note.GNU-stack noalloc noexec nowrite progbits
 
 ; noexec stack
 %ifdef LINUX32E
-  %ifndef OSXEM64T
-    %ifndef _ARCH_KNC
 section .note.GNU-stack noalloc noexec nowrite progbits
-    %endif
-  %endif
 %endif
 
 %endif ; __NOEXEC_STACK_INC__

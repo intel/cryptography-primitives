@@ -53,7 +53,7 @@ ALIGNMODE p6,16
   ; The __cdecl calling convention name decoration (to have interoperability with C).
   ; Only public functions are decorated
   %ifidni %%visibility, PUBLIC
-    %if ((IPP_BINARY_FORMAT == 2) || (IPP_BINARY_FORMAT == 3)) ; WIN32 or OSXEM64T
+    %if (IPP_BINARY_FORMAT == 2) ; WIN32
       %xdefine %%func_name _%[%%func_name]
       %assign %%decoration_length %%decoration_length+1
     %endif
@@ -82,10 +82,10 @@ ALIGNMODE p6,16
   %endif
   %%func_name:
 
-  ; CET enabling (macOS not supported)
-  %if ((IPP_BINARY_FORMAT == 0) || (IPP_BINARY_FORMAT == 3)) ; elf32/win32
+  ; CET enabling
+  %if ((IPP_BINARY_FORMAT == 0) || (IPP_BINARY_FORMAT == 2)) ; elf32/win32
     db 0F3h, 00Fh, 01Eh, 0FBh ; endbr32
-  %elif ((IPP_BINARY_FORMAT == 1) || (IPP_BINARY_FORMAT == 4)) ; elf64/win64
+  %elif ((IPP_BINARY_FORMAT == 1) || (IPP_BINARY_FORMAT == 3)) ; elf64/win64
     db 0F3h, 00Fh, 01Eh, 0FAh ; endbr64
   %endif
 %endmacro
@@ -106,7 +106,7 @@ ALIGNMODE p6,16
   ; __cdecl on WIN32/OSXEM64T obligates to have undersore prefix decoration.
   ; Only PUBLIC functions are decorated.
   %ifidni %%visibility, PUBLIC
-    %if ((IPP_BINARY_FORMAT == 2) || (IPP_BINARY_FORMAT == 3)) ; WIN32 or OSXEM64T
+    %if (IPP_BINARY_FORMAT == 2) ; WIN32
       %xdefine %%func_name _%1
     %endif
   %endif

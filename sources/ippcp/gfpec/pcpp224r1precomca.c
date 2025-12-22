@@ -43,8 +43,7 @@ extern const __ALIGN64 P224_POINT_AFFINE ec_p224r1_precomputed[33][64];
 #if !defined(_DISABLE_ECP_224R1_HARDCODED_BP_TBL_)
 /* see ippcp_baseptbl.cpp test for generation details */
 
-#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64) || \
-     (_IPP_ARCH == _IPP_ARCH_LRB) || (_IPP_ARCH == _IPP_ARCH_LRB2))
+#if ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LP64))
 const __ALIGN64 P224_POINT_AFFINE ec_p224r1_precomputed[33][64] = {
     /* digit=0 base_pwr=2^0 */
     /* clang-format off */

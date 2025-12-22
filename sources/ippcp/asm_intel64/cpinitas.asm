@@ -118,11 +118,7 @@ DECLARE_FUNC cp_issue_avx512_instruction,PUBLIC
          ret
 ENDFUNC cp_issue_avx512_instruction
 
-%ifdef OSXEM64T
-  extern _ippcpInit
-%else
   extern ippcpInit
-%endif
 
 ;####################################################################
 ;#          void ippSafeInit( );                                    #
@@ -139,14 +135,10 @@ DECLARE_FUNC ippcpSafeInit,PUBLIC
         push r8
         push r9
 %ifdef LINUX32E
-  %ifdef OSXEM64T
-    call _ippcpInit
+  %ifdef IPP_PIC
+    call ippcpInit wrt ..plt
   %else
-    %ifdef IPP_PIC
-      call ippcpInit wrt ..plt
-    %else
-      call ippcpInit
-    %endif
+    call ippcpInit
   %endif
 %else
   call ippcpInit

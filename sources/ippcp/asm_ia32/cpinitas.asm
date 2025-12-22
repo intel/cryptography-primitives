@@ -104,7 +104,6 @@ DECLARE_FUNC cp_is_avx512_extension,PUBLIC
 ENDFUNC cp_is_avx512_extension
 
 %ifdef LINUX32
-  %ifndef OSX32
 
 align LOCAL_ALIGN_FACTOR
 DECLARE_FUNC __ashldi3,PUBLIC,WEAK
@@ -570,7 +569,6 @@ DECLARE_FUNC __muldi3,PUBLIC,WEAK
         ret
 ENDFUNC __muldi3
 
-  %endif;  IFNDEF OSX32
 %endif; IFDEF LINUX32
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

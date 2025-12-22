@@ -19,14 +19,10 @@
 #
 
 if (UNIX)
-  if (APPLE)
-    set(CMAKE_ASM_NASM_OBJECT_FORMAT macho64)
+  if (${ARCH} MATCHES "ia32")
+    set(CMAKE_ASM_NASM_OBJECT_FORMAT elf32)
   else()
-    if (${ARCH} MATCHES "ia32")
-      set(CMAKE_ASM_NASM_OBJECT_FORMAT elf32)
-    else()
-      set(CMAKE_ASM_NASM_OBJECT_FORMAT elf64)
-    endif()
+    set(CMAKE_ASM_NASM_OBJECT_FORMAT elf64)
   endif()
 else() # Windows
   if (${ARCH} MATCHES "ia32")

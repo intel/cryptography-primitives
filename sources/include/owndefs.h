@@ -25,11 +25,6 @@
 #ifndef __OWNDEFS_H__
 #define __OWNDEFS_H__
 
-#if defined(_VXWORKS)
-#include <vxWorks.h>
-#undef NONE
-#endif
-
 #ifndef IPPCPDEFS_H__
 #include "ippcpdefs.h"
 #endif
@@ -83,7 +78,6 @@
 
 /* ia32 */
 #define _IPP_PX 0   /* pure C-code*/
-#define _IPP_M5 1   /* Intel® Quark(TM) processor*/
 #define _IPP_W7 8   /* Intel® Streaming SIMD Extensions 2 (Intel® SSE2)*/
 #define _IPP_T7 16  /* Intel® Streaming SIMD Extensions 3 (Intel® SSE3)*/
 #define _IPP_V8 32  /* Supplemental Streaming SIMD Extensions 3 (SSSE3)*/
@@ -137,12 +131,7 @@
 #endif
 
 /* ia32 */
-#if defined(_M5) /* Intel® Quark(TM) processor */
-#define _IPP         _IPP_M5
-#define _IPP32E      _IPP32E_PX
-#define OWNAPI(name) m5_##name
-
-#elif defined(_W7) /* Intel® SSE2 */
+#if defined(_W7) /* Intel® SSE2 */
 #define _IPP         _IPP_W7
 #define _IPP32E      _IPP32E_PX
 #define OWNAPI(name) w7_##name
@@ -261,8 +250,6 @@
 
 #define _IPP_ARCH_IA32  1
 #define _IPP_ARCH_EM64T 4
-#define _IPP_ARCH_LRB   16
-#define _IPP_ARCH_LRB2  128
 #define _IPP_ARCH_LP64  0
 
 #if defined(_ARCH_IA32)
@@ -301,7 +288,7 @@ IPPCP_INLINE Ipp32u IPP_UINT_PTR(const void* ptr)
     dd.Ptr = (void*)ptr;
     return dd.Int;
 }
-#elif ((_IPP_ARCH == _IPP_ARCH_EM64T) || (_IPP_ARCH == _IPP_ARCH_LRB2))
+#elif (_IPP_ARCH == _IPP_ARCH_EM64T)
 IPPCP_INLINE Ipp64s IPP_INT_PTR(const void* ptr)
 {
     union {
@@ -645,21 +632,9 @@ extern double __intel_castu64_f64(unsigned __int64 val);
 
 #if defined(_MERGED_BLD)
 #if !defined(_IPP_DYNAMIC)
-/* WIN-32, WIN-64 */
-#if defined(WIN32) || defined(WIN32E)
+/* WIN-32, WIN-64, LIN-32, LIN-64 */
+#if defined(WIN32) || defined(WIN32E) || defined(linux)
 #if (defined(_W7) || defined(_M7))
-#define _IPP_DATA 1
-#endif
-
-#elif defined(linux)
-/* LIN-32, LIN-64 */
-#if (defined(_W7) || defined(_M7))
-#define _IPP_DATA 1
-#endif
-
-/* OSX-32, OSX-64 */
-#elif defined(OSX32) || defined(OSXEM64T)
-#if (defined(_Y8))
 #define _IPP_DATA 1
 #endif
 #endif

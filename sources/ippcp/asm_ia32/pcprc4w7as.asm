@@ -30,7 +30,7 @@
 %include "asmdefs.inc"
 %include "ia_emm.inc"
 
-%if (_IPP >= _IPP_M5) && (_IPP < _IPP_V8)
+%if (_IPP >= _IPP_W7) && (_IPP < _IPP_V8)
 
 segment .text align=IPP_ALIGN_FACTOR
 
