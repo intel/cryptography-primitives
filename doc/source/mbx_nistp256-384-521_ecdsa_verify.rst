@@ -59,7 +59,7 @@ Include Files
 ``crypto_mb/ec_nistp384.h``
 
 
-``crypto_mb/ec_nistp512.h``
+``crypto_mb/ec_nistp521.h``
 
 
 Parameters
