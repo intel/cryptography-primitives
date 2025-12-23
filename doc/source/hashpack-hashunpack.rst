@@ -102,7 +102,7 @@ Return Values
    * -     ippStsMemErr
      -     Indicates an error condition if the value of bufSize is less than the size of the IppsHashState context.
    * -     ippStsContextMatchErr
-     -     Indicates an error condition in a ippsHashPack_rmf call if the context parameter does not match the operation.
+     -     Indicates an error condition in ippsHashPack_rmf and ippsHashUnpack_rmf calls if the context parameter does not match the operation.
    * -     ippStsNoMem
      -     Indicates an error condition if the value of bufferSize is less than the size of the IppsHashState_rmf context.
    * -     ippStsNotSupportedModeErr

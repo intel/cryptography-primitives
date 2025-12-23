@@ -39,6 +39,7 @@
 // Returns:                Reason:
 //    ippStsNullPtrErr        pBuffer == NULL
 //                            pState == NULL
+//    ippStsContextMatchErr   pState has wrong context
 //    ippStsNoErr             no errors
 //
 // Parameters:
@@ -52,7 +53,7 @@ IPPFUN(IppStatus, ippsHashUnpack_rmf, (const Ipp8u* pBuffer, IppsHashState_rmf* 
     IPP_BAD_PTR2_RET(pState, pBuffer);
 
     // check state
-    HASH_VALID_ID(pState, idCtxHash);
+    IPP_BADARG_RET(!HASH_VALID_ID(pState, idCtxHash), ippStsContextMatchErr);
 
     int context_size = 0;
     ippsHashGetSizeOptimal_rmf(&context_size, HASH_METHOD(pState));
