@@ -672,6 +672,8 @@ typedef IppStatus (IPP_CALL *IppBitSupplier)(Ipp32u* pRand, int nBits, void* pEb
 #define MIN_RSA_SIZE (8)
 #define MAX_RSA_SIZE (16*1024)
 
+#define IPPCP_RSA_PKCS1V15_PREHASHED (-1)
+
 typedef struct _cpRSA IppsRSAState;
 
 /* key types */

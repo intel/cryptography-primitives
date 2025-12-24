@@ -37,9 +37,9 @@ Parameters
    :header-rows: 0
 
    * -     pMsg
-     -  Pointer to the message that has been signed.
+     -  Pointer to the message that has been signed, or pointer to the pre-hashed message digest.
    * -     msgLen
-     -  Length of the message \*pMsg in octets.
+     -  Length of the message \*pMsg in octets, or IPPCP_RSA_PKCS1V15_PREHASHED if \*pMsg contains a pre-hashed message digest (ippsRSAVerify_PKCS1v15_rmf only).
    * -     pSign
      -  Pointer to the signature string to be verified.
    * -     pIsSignValid
@@ -76,6 +76,13 @@ input message, as defined :term:`PKCS 1.2.1 <[PKCS 1.2.1]>`.
 
    This function has a *reduced memory footprint* version. To learn
    more, see :ref:`Reduced Memory Footprint Functions <one-way-hash-primitives>`.
+
+
+The ippsRSAVerify_PKCS1v15_rmf function supports two modes of operation:
+
+- Standard mode: When msgLen >= 0, the function hashes the input message internally using the specified hash method before verification.
+
+- Pre-hashed mode: When msgLen == IPPCP_RSA_PKCS1V15_PREHASHED, the function treats pMsg as a pre-computed hash digest and bypasses internal hashing. In this mode, pMsg must point to a hash digest of exactly pMethod->hashLen bytes.
 
 
 Return Values

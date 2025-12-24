@@ -74,7 +74,7 @@ IPPCP_INLINE IppStatus SingleVerifyPkcs1v15RmfPreproc(const Ipp8u* pMsg,
     /* test data pointer */
     IPP_BAD_PTR3_RET(pMsg, pSign, pIsValid);
     /* test length */
-    IPP_BADARG_RET(msgLen < 0, ippStsLengthErr);
+    IPP_BADARG_RET(msgLen < IPPCP_RSA_PKCS1V15_PREHASHED, ippStsLengthErr);
 
     *pIsValid = 0;
 
