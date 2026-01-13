@@ -22,8 +22,6 @@ to you in using cryptography functions of Intel® Cryptography Primitives Librar
    [3GPP 2006]
       *Specification of the 3GPP Confidentiality and Integrity Algorithms
       UEA2 & UIA2. Document 2: SNOW 3G Specification*. September 2006.
-      Available from
-      http://www.gsmworld.com/using/algorithms/docs/snow_3g_spec.pdf.
 
 
    .. _ac:
