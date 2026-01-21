@@ -4,7 +4,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 
 ## Intel(R) Cryptography Primitives Library 1.4.0
 - Added key and signature generations for the Leighton-Micali Hash-Based Signatures (LMS) algorithm.
-- Added initialization checks for static variables in methods regulating hashing and arithmetics over GF(q) to optimize multi-call usage scenarios.
+- Added initialization checks for static variables in methods regulating hashing and arithmetic over GF(q) to optimize multi-call usage scenarios.
 - ML-KEM key generation, encapsulation and decapsulation were optimized with Intel(R) Advanced Vector Extensions 512 (Intel(R) AVX-512) instructions.
 - Extended ippsRSAVerify_PKCS1v15_rmf function to support pre-hashed message verification.
 - Fixed the issue with `ippsHashUnpack_rmf`.
