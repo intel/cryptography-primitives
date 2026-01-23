@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>RSA_SetPublicKey, RSA_SetPrivateKeyType1, RSA_SetPrivateKeyType2 &#8212; Documentation for Intel® oneAPI Programming Guide</title>
+    <title>RSA_SetPublicKeyPart, RSA_SetPrivateKeyType1Part, RSA_SetPrivateKeyType2Part &#8212; Documentation for Intel® oneAPI Programming Guide</title>
   
   
   
@@ -40,12 +40,10 @@
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'rsa_setpublickey-rsa-setprivatekeytype1-rsa';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'rsa_setpublickeypart-privatekeytype1part-type2part';</script>
     <link rel="icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="RSA_GetPublicKey, RSA_GetPrivateKeyType1, RSA_GetPrivateKeyType2" href="rsa_getpublickey-rsa_getprivatekeytype1-rsa.html" />
-    <link rel="prev" title="RSA_InitPublicKey, RSA_InitPrivateKeyType1, RSA_InitPrivateKeyType2" href="rsa_initpublickey-rsa_initprivatekeytype1-rsa.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -108,6 +106,8 @@
       
       
       
+        
+      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -155,7 +155,7 @@
  </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <ul class="current nav bd-sidenav">
+        <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="introducing-intel-cryptography-primitives.html">Introducing Intel® Cryptography Primitives Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting-help-and-support.html">Getting Help and Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notational-conventions.html">Notational Conventions</a></li>
@@ -191,7 +191,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="performance-test-tool-perfsys-cli-options.html">Performance Test Tool (perfsys) Command Line Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preview-features.html">Preview Features</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="overview-1.html">Overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="basic-features.html">Basic Features</a></li>
 
@@ -345,7 +345,7 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="public-key-cryptography-functions.html">Public Key Cryptography Functions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="public-key-cryptography-functions.html">Public Key Cryptography Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="big-number-arithmetic.html">Big Number Arithmetic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="bignumgetsize.html">BigNumGetSize</a></li>
 <li class="toctree-l4"><a class="reference internal" href="bignuminit.html">BigNumInit</a></li>
@@ -410,8 +410,8 @@
 <li class="toctree-l4"><a class="reference internal" href="example-using-prime-number-generation-functions.html">Example of Using Prime Number Generation Functions</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="rsa-algorithm-functions.html">RSA Algorithm Functions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l4 current active"><a class="reference internal" href="functions-for-building-rsa-system.html">Functions for Building RSA System</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="rsa-algorithm-functions.html">RSA Algorithm Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="functions-for-building-rsa-system.html">Functions for Building RSA System</a></li>
 <li class="toctree-l4"><a class="reference internal" href="rsa-primitives.html">RSA Primitives</a></li>
 <li class="toctree-l4"><a class="reference internal" href="rsa-encryption-schemes.html">RSA Encryption Schemes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="rsa-signature-schemes.html">RSA Signature Schemes</a></li>
@@ -749,7 +749,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>RSA_SetPublicKey, RSA_SetPrivateKeyType1, RSA_SetPrivateKeyType2</h1>
+    <h1>RSA_SetPublicKeyPart, RSA_SetPrivateKeyType1Part, RSA_SetPrivateKeyType2Part</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -762,6 +762,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#syntax">Syntax</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#include-files">Include Files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#valid-keytag-values">Valid keyTag Values</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#return-values">Return Values</a></li>
 </ul>
@@ -775,19 +776,17 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="rsa-setpublickey-rsa-setprivatekeytype1-rsa-setprivatekeytype2">
-<span id="rsa-setpublickey-privatekeytype1-type2"></span><h1>RSA_SetPublicKey, RSA_SetPrivateKeyType1, RSA_SetPrivateKeyType2<a class="headerlink" href="#rsa-setpublickey-rsa-setprivatekeytype1-rsa-setprivatekeytype2" title="Link to this heading">#</a></h1>
-<p>Set up an RSA key in the existing RSA key context.</p>
+  <section id="rsa-setpublickeypart-rsa-setprivatekeytype1part-rsa-setprivatekeytype2part">
+<span id="rsa-setpublickeypart-privatekeytype1part-type2part"></span><h1>RSA_SetPublicKeyPart, RSA_SetPrivateKeyType1Part, RSA_SetPrivateKeyType2Part<a class="headerlink" href="#rsa-setpublickeypart-rsa-setprivatekeytype1part-rsa-setprivatekeytype2part" title="Link to this heading">#</a></h1>
+<p>Set up individual components of an RSA key in the existing RSA key context.</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading">#</a></h2>
-<p>IppStatus ippsRSA_SetPublicKey(const IppsBigNumState* pModulus, const
-IppsBigNumState* pPublicExp, IppsRSAPublicKeyState* pKey);</p>
-<p>IppStatus ippsRSA_SetPrivateKeyType1(const IppsBigNumState* pModulus,
-const IppsBigNumState* pPrivateExp, IppsRSAPrivateKeyState* pKey);</p>
-<p>IppStatus ippsRSA_SetPrivateKeyType2(const IppsBigNumState* pFactorP,
-const IppsBigNumState* pFactorQ, const IppsBigNumState* pCrtExpP,
-const IppsBigNumState* pCrtExpQ, const IppsBigNumState* pInverseQ,
-IppsRSAPrivateKeyState* pKey);</p>
+<p>IppStatus ippsRSA_SetPublicKeyPart(IppRSAKeyTag keyTag, const
+IppsBigNumState* pValue, IppsRSAPublicKeyState* pKey);</p>
+<p>IppStatus ippsRSA_SetPrivateKeyType1Part(IppRSAKeyTag keyTag, const
+IppsBigNumState* pValue, IppsRSAPrivateKeyState* pKey);</p>
+<p>IppStatus ippsRSA_SetPrivateKeyType2Part(IppRSAKeyTag keyTag, const
+IppsBigNumState* pValue, IppsRSAPrivateKeyState* pKey);</p>
 </section>
 <section id="include-files">
 <h2>Include Files<a class="headerlink" href="#include-files" title="Link to this heading">#</a></h2>
@@ -797,23 +796,11 @@ IppsRSAPrivateKeyState* pKey);</p>
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
-<tr class="row-odd"><td><p>pModulus</p></td>
-<td><p>The composite RSA modulus <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p></td>
+<tr class="row-odd"><td><p>keyTag</p></td>
+<td><p>Specifies which component of the key to set. See table below for valid values per function.</p></td>
 </tr>
-<tr class="row-even"><td><p>pPublicExp</p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">e</span></code> component of the RSA public key.</p></td>
-</tr>
-<tr class="row-odd"><td><p>pPrivateExp</p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">d</span></code> component of the type 1 RSA private key.</p></td>
-</tr>
-<tr class="row-even"><td><p>pFactorP, pFactorQ</p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">p</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> factors of the RSA modulus <code class="docutils literal notranslate"><span class="pre">n</span></code> = <code class="docutils literal notranslate"><span class="pre">p</span></code>*<code class="docutils literal notranslate"><span class="pre">q</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>pCrtExpP, pCrtExpQ</p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">dP</span></code> and <code class="docutils literal notranslate"><span class="pre">dQ</span></code> components of the quintuple (<code class="docutils literal notranslate"><span class="pre">p,q,dP,dQ,qInv</span></code>), which defines a type 2 private key.</p></td>
-</tr>
-<tr class="row-even"><td><p>pInverseQ</p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">qInv</span></code> component of the quintuple (<code class="docutils literal notranslate"><span class="pre">p,q,dP,dQ,qInv</span></code>).</p></td>
+<tr class="row-even"><td><p>pValue</p></td>
+<td><p>Pointer to the big number containing the component value to be set.</p></td>
 </tr>
 <tr class="row-odd"><td><p>pKey</p></td>
 <td><p>Pointer to the IppsRSAPublicKeyState or IppsRSAPrivateKeyState context.</p></td>
@@ -822,27 +809,76 @@ IppsRSAPrivateKeyState* pKey);</p>
 </table>
 </div>
 </section>
+<section id="valid-keytag-values">
+<h2>Valid keyTag Values<a class="headerlink" href="#valid-keytag-values" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Valid keyTag Values</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RSA_SetPublicKeyPart</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyN</span></code></p></td>
+<td><p>RSA modulus <code class="docutils literal notranslate"><span class="pre">n</span></code></p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyE</span></code></p></td>
+<td><p>RSA public exponent <code class="docutils literal notranslate"><span class="pre">e</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>RSA_SetPrivateKeyType1Part</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyN</span></code></p></td>
+<td><p>RSA modulus <code class="docutils literal notranslate"><span class="pre">n</span></code></p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyD</span></code></p></td>
+<td><p>RSA private exponent <code class="docutils literal notranslate"><span class="pre">d</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>RSA_SetPrivateKeyType2Part</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyP</span></code></p></td>
+<td><p>First prime factor <code class="docutils literal notranslate"><span class="pre">p</span></code></p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyQ</span></code></p></td>
+<td><p>Second prime factor <code class="docutils literal notranslate"><span class="pre">q</span></code></p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyDp</span></code></p></td>
+<td><p>CRT exponent <code class="docutils literal notranslate"><span class="pre">dP</span></code> = <code class="docutils literal notranslate"><span class="pre">d</span></code> mod (<code class="docutils literal notranslate"><span class="pre">p</span></code>-1)</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyDq</span></code></p></td>
+<td><p>CRT exponent <code class="docutils literal notranslate"><span class="pre">dQ</span></code> = <code class="docutils literal notranslate"><span class="pre">d</span></code> mod (<code class="docutils literal notranslate"><span class="pre">q</span></code>-1)</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ippRSAkeyQinv</span></code></p></td>
+<td><p>CRT coefficient <code class="docutils literal notranslate"><span class="pre">qInv</span></code> = <code class="docutils literal notranslate"><span class="pre">q</span></code><sup>-1</sup> mod <code class="docutils literal notranslate"><span class="pre">p</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>The RSA_SetPublicKey function sets up the RSA public key (<code class="docutils literal notranslate"><span class="pre">n</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span></code>)
-in the IppsRSAPublicKeyState context, that is, copies the <code class="docutils literal notranslate"><span class="pre">n</span></code> and
-<code class="docutils literal notranslate"><span class="pre">e</span></code> components supplied by the user into the context.</p>
-<p>The RSA_SetPrivateKeyType1 function sets up the RSA type 1 private key
-(<code class="docutils literal notranslate"><span class="pre">n</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>) in the IppsRSAPrivateKeyState context, that is, copies
-the <code class="docutils literal notranslate"><span class="pre">n</span></code> and <code class="docutils literal notranslate"><span class="pre">d</span></code> components supplied by the user into the context.</p>
-<p>The RSA_SetPrivateKeyType2 function sets up the RSA type 2 private key
-(<code class="docutils literal notranslate"><span class="pre">p,q,dP,dQ,qInv</span></code>) in the IppsRSAPrivateKeyState context, that is,
-copies user-supplied <code class="docutils literal notranslate"><span class="pre">p</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> factors of the RSA composite
-modulus into the context, computes the rest of the key components, and
-copies them into the context:</p>
+<p>These functions provide component-by-component setup of RSA keys, offering
+greater flexibility compared to setting all components at once.</p>
+<p>The RSA_SetPublicKeyPart function sets up individual components of the RSA
+public key (<code class="docutils literal notranslate"><span class="pre">n</span></code>, <code class="docutils literal notranslate"><span class="pre">e</span></code>) in the IppsRSAPublicKeyState context. Components
+can be set in any order.</p>
+<p>The RSA_SetPrivateKeyType1Part function sets up individual components of
+the RSA type 1 private key (<code class="docutils literal notranslate"><span class="pre">n</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>) in the IppsRSAPrivateKeyState
+context. Components can be set in any order.</p>
+<p>The RSA_SetPrivateKeyType2Part function sets up individual components of
+the RSA type 2 private key in the IppsRSAPrivateKeyState context with the
+following behavior:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dP</span></code> = <code class="docutils literal notranslate"><span class="pre">q</span></code> mod (<code class="docutils literal notranslate"><span class="pre">p</span></code>-1)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dQ</span></code> = <code class="docutils literal notranslate"><span class="pre">p</span></code> mod (<code class="docutils literal notranslate"><span class="pre">q</span></code>-1)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">qInv</span></code> = 1/<code class="docutils literal notranslate"><span class="pre">q</span></code> mod <code class="docutils literal notranslate"><span class="pre">p</span></code></p></li>
+<li><p>Components can be set in any order</p></li>
+<li><p>When both prime factors <code class="docutils literal notranslate"><span class="pre">p</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> and CRT components (<code class="docutils literal notranslate"><span class="pre">dP</span></code>, <code class="docutils literal notranslate"><span class="pre">dQ</span></code>, <code class="docutils literal notranslate"><span class="pre">qInv</span></code>) are set, the modulus <code class="docutils literal notranslate"><span class="pre">n</span></code> = <code class="docutils literal notranslate"><span class="pre">p</span></code> x <code class="docutils literal notranslate"><span class="pre">q</span></code> is automatically computed</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Component-by-component alternatives are available: <a class="reference internal" href="rsa_setpublickeypart-privatekeytype1part-type2part.html#rsa-setpublickeypart-privatekeytype1part-type2part"><span class="std std-ref">RSA_SetPublicKeyPart, RSA_SetPrivateKeyType1Part, RSA_SetPrivateKeyType2Part</span></a>. These functions allow individual key components to be set in any order with immediate validation.</p>
+<p>For setting all key components at once, use the corresponding batch functions: <a class="reference internal" href="rsa_setpublickey-rsa-setprivatekeytype1-rsa.html#rsa-setpublickey-privatekeytype1-type2"><span class="std std-ref">RSA_SetPublicKey, RSA_SetPrivateKeyType1, RSA_SetPrivateKeyType2</span></a>.</p>
 </div>
 </section>
 <section id="return-values">
@@ -858,11 +894,14 @@ copies them into the context:</p>
 <tr class="row-odd"><td><p>ippStsContextMatchErr</p></td>
 <td><p>Indicates an error condition if any of the context parameters does not match the operation.</p></td>
 </tr>
-<tr class="row-even"><td><p>ippStsSizeErr</p></td>
-<td><p>Indicates an error condition if the bit length of a key component specified by the pModulus, pPublicExp, pPrivateExp, pFactorP, or pFactorQ pointer exceeds the bit length specified at the initialization.</p></td>
+<tr class="row-even"><td><p>ippStsBadArgErr</p></td>
+<td><p>Indicates an error condition if the keyTag parameter is invalid for the respective key type.</p></td>
 </tr>
-<tr class="row-odd"><td><p>ippStsOutOfRangeErr</p></td>
-<td><p>Indicates an error condition if any key component is not positive.</p></td>
+<tr class="row-odd"><td><p>ippStsSizeErr</p></td>
+<td><p>Indicates an error condition if the bit length of the component value exceeds the maximum allowed size for that component.</p></td>
+</tr>
+<tr class="row-even"><td><p>ippStsOutOfRangeErr</p></td>
+<td><p>Indicates an error condition if the component value is not positive.</p></td>
 </tr>
 </tbody>
 </table>
@@ -881,24 +920,6 @@ copies them into the context:</p>
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="rsa_initpublickey-rsa_initprivatekeytype1-rsa.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">RSA_InitPublicKey, RSA_InitPrivateKeyType1, RSA_InitPrivateKeyType2</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="rsa_getpublickey-rsa_getprivatekeytype1-rsa.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">RSA_GetPublicKey, RSA_GetPrivateKeyType1, RSA_GetPrivateKeyType2</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
@@ -918,6 +939,7 @@ copies them into the context:</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#syntax">Syntax</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#include-files">Include Files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#valid-keytag-values">Valid keyTag Values</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#return-values">Return Values</a></li>
 </ul>
