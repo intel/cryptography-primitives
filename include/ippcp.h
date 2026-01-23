@@ -752,6 +752,9 @@ IPPAPI(IppStatus, ippsRSA_InitPublicKey,(int rsaModulusBitSize, int publicExpBit
 IPPAPI(IppStatus, ippsRSA_SetPublicKey,(const IppsBigNumState* pModulus,
                                         const IppsBigNumState* pPublicExp,
                                         IppsRSAPublicKeyState* pKey))
+IPPAPI(IppStatus, ippsRSA_SetPublicKeyPart,(IppRSAKeyTag keyTag,
+                                            const IppsBigNumState* pValue,
+                                            IppsRSAPublicKeyState* pKey))
 IPPAPI(IppStatus, ippsRSA_GetPublicKey,(IppsBigNumState* pModulus,
                                         IppsBigNumState* pPublicExp,
                                   const IppsRSAPublicKeyState* pKey))
@@ -762,6 +765,9 @@ IPPAPI(IppStatus, ippsRSA_InitPrivateKeyType1,(int rsaModulusBitSize, int privat
 IPPAPI(IppStatus, ippsRSA_SetPrivateKeyType1,(const IppsBigNumState* pModulus,
                                               const IppsBigNumState* pPrivateExp,
                                               IppsRSAPrivateKeyState* pKey))
+IPPAPI(IppStatus, ippsRSA_SetPrivateKeyType1Part,(IppRSAKeyTag keyTag,
+                                                  const IppsBigNumState* pValue,
+                                                  IppsRSAPrivateKeyState* pKey))
 IPPAPI(IppStatus, ippsRSA_GetPrivateKeyType1,(IppsBigNumState* pModulus,
                                               IppsBigNumState* pPrivateExp,
                                         const IppsRSAPrivateKeyState* pKey))
@@ -775,6 +781,9 @@ IPPAPI(IppStatus, ippsRSA_SetPrivateKeyType2,(const IppsBigNumState* pFactorP,
                                               const IppsBigNumState* pCrtExpQ,
                                               const IppsBigNumState* pInverseQ,
                                               IppsRSAPrivateKeyState* pKey))
+IPPAPI(IppStatus, ippsRSA_SetPrivateKeyType2Part,(IppRSAKeyTag keyTag,
+                                                  const IppsBigNumState* pValue,
+                                                  IppsRSAPrivateKeyState* pKey))
 IPPAPI(IppStatus, ippsRSA_GetPrivateKeyType2,(IppsBigNumState* pFactorP,
                                               IppsBigNumState* pFactorQ,
                                               IppsBigNumState* pCrtExpP,

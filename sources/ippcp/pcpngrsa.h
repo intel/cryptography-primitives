@@ -52,7 +52,7 @@ struct _cpRSA_public_key {
 #define RSA_PUB_KEY_NMONT(x)     ((x)->pMontN)
 
 #define RSA_PUB_KEY_VALID_ID(x) ((((x)->id) ^ (Ipp32u)IPP_UINT_PTR((x))) == (Ipp32u)idCtxRSA_PubKey)
-#define RSA_PUB_KEY_IS_SET(x)   (RSA_PUB_KEY_BITSIZE_N((x)) > 0)
+#define RSA_PUB_KEY_IS_SET(x)   (RSA_PUB_KEY_BITSIZE_N((x)) > 0 && RSA_PUB_KEY_BITSIZE_E((x)) > 0)
 
 /* alignment */
 #define RSA_PUBLIC_KEY_ALIGNMENT ((int)(sizeof(void*)))
@@ -98,7 +98,20 @@ struct _cpRSA_private_key {
 #define RSA_PRV_KEY2_VALID_ID(x) \
     ((((x)->id) ^ (Ipp32u)IPP_UINT_PTR((x))) == (Ipp32u)idCtxRSA_PrvKey2)
 #define RSA_PRV_KEY_VALID_ID(x) (RSA_PRV_KEY1_VALID_ID((x)) || RSA_PRV_KEY2_VALID_ID((x)))
-#define RSA_PRV_KEY_IS_SET(x)   (RSA_PRV_KEY_BITSIZE_N((x)) > 0)
+
+#define RSA_PRV_KEY2_READY(x)                                            \
+    (RSA_PRV_KEY_BITSIZE_P((x)) > 0 && RSA_PRV_KEY_BITSIZE_Q((x)) > 0 && \
+     (RSA_PRV_KEY_DP((x))[0] != 0 || RSA_PRV_KEY_DP((x))[1] != 0) &&     \
+     (RSA_PRV_KEY_DQ((x))[0] != 0 || RSA_PRV_KEY_DQ((x))[1] != 0) &&     \
+     (RSA_PRV_KEY_INVQ((x))[0] != 0 || RSA_PRV_KEY_INVQ((x))[1] != 0))
+
+#define RSA_PRV_KEY1_IS_SET(x) (RSA_PRV_KEY_BITSIZE_N((x)) > 0 && RSA_PRV_KEY_BITSIZE_D((x)) > 0)
+#define RSA_PRV_KEY2_IS_SET(x) (RSA_PRV_KEY_BITSIZE_N((x)) > 0)
+
+#define RSA_PRV_KEY_IS_SET(x)                                \
+    (RSA_PRV_KEY1_VALID_ID((x))   ? RSA_PRV_KEY1_IS_SET((x)) \
+     : RSA_PRV_KEY2_VALID_ID((x)) ? RSA_PRV_KEY2_IS_SET((x)) \
+                                  : 0)
 
 /* alignment */
 #define RSA_PRIVATE_KEY_ALIGNMENT ((int)(sizeof(void*)))

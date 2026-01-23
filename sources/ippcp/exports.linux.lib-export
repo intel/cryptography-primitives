@@ -308,14 +308,17 @@ EXTERN (ippsPrimeSet_BN)
 EXTERN (ippsRSA_GetSizePublicKey)
 EXTERN (ippsRSA_InitPublicKey)
 EXTERN (ippsRSA_SetPublicKey)
+EXTERN (ippsRSA_SetPublicKeyPart)
 EXTERN (ippsRSA_GetPublicKey)
 EXTERN (ippsRSA_GetSizePrivateKeyType1)
 EXTERN (ippsRSA_InitPrivateKeyType1)
 EXTERN (ippsRSA_SetPrivateKeyType1)
+EXTERN (ippsRSA_SetPrivateKeyType1Part)
 EXTERN (ippsRSA_GetPrivateKeyType1)
 EXTERN (ippsRSA_GetSizePrivateKeyType2)
 EXTERN (ippsRSA_InitPrivateKeyType2)
 EXTERN (ippsRSA_SetPrivateKeyType2)
+EXTERN (ippsRSA_SetPrivateKeyType2Part)
 EXTERN (ippsRSA_GetPrivateKeyType2)
 EXTERN (ippsRSA_GetBufferSizePublicKey)
 EXTERN (ippsRSA_GetBufferSizePrivateKey)
@@ -839,14 +842,17 @@ VERSION {
    ippsRSA_GetSizePublicKey;
    ippsRSA_InitPublicKey;
    ippsRSA_SetPublicKey;
+   ippsRSA_SetPublicKeyPart;
    ippsRSA_GetPublicKey;
    ippsRSA_GetSizePrivateKeyType1;
    ippsRSA_InitPrivateKeyType1;
    ippsRSA_SetPrivateKeyType1;
+   ippsRSA_SetPrivateKeyType1Part;
    ippsRSA_GetPrivateKeyType1;
    ippsRSA_GetSizePrivateKeyType2;
    ippsRSA_InitPrivateKeyType2;
    ippsRSA_SetPrivateKeyType2;
+   ippsRSA_SetPrivateKeyType2Part;
    ippsRSA_GetPrivateKeyType2;
    ippsRSA_GetBufferSizePublicKey;
    ippsRSA_GetBufferSizePrivateKey;

@@ -87,6 +87,11 @@ copies them into the context:
 -  ``qInv`` = 1/``q`` mod ``p``
 
 
+.. note::
+
+   Component-by-component alternatives are available: :ref:`RSA_SetPublicKeyPart, RSA_SetPrivateKeyType1Part, RSA_SetPrivateKeyType2Part <rsa_setpublickeypart-privatekeytype1part-type2part>`. These functions allow individual key components to be set in any order with immediate validation.
+
+
 Return Values
 -------------
 
