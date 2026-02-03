@@ -826,6 +826,10 @@ function prior to HMAC_Pack to determine the size of the buffer.</p>
 <p>This function has a <em>reduced memory footprint</em> version. To learn
 more, see <a class="reference internal" href="one-way-hash-primitives.html#one-way-hash-primitives"><span class="std std-ref">Reduced Memory Footprint Functions</span></a>.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The *pCtx context has to be initialized before calling ippsHMACUnpack_rmf.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>
