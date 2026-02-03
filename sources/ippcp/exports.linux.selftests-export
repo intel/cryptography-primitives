@@ -528,6 +528,7 @@ EXTERN (ippsMLKEM_Init)
 EXTERN (ippsMLKEM_KeyGen)
 EXTERN (ippsMLKEM_Encaps)
 EXTERN (ippsMLKEM_Decaps)
+EXTERN (ippsPBKDF2_PKCS5v2)
 
 EXTERN (ippcp_is_fips_approved_func)
 EXTERN (fips_selftest_ippsAESEncryptDecrypt_get_size)
@@ -1121,6 +1122,7 @@ VERSION {
    ippsMLKEM_KeyGen;
    ippsMLKEM_Encaps;
    ippsMLKEM_Decaps;
+   ippsPBKDF2_PKCS5v2;
 
    ippcp_is_fips_approved_func;
    fips_selftest_ippsAESEncryptDecrypt_get_size;

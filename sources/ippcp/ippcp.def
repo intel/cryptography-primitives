@@ -530,3 +530,4 @@ ippsMLKEM_Init
 ippsMLKEM_KeyGen
 ippsMLKEM_Encaps
 ippsMLKEM_Decaps
+ippsPBKDF2_PKCS5v2

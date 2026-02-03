@@ -530,6 +530,7 @@ ippsMLKEM_Init
 ippsMLKEM_KeyGen
 ippsMLKEM_Encaps
 ippsMLKEM_Decaps
+ippsPBKDF2_PKCS5v2
 
 ippcp_is_fips_approved_func
 

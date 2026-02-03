@@ -233,7 +233,6 @@ to you in using cryptography functions of Intel® Cryptography Primitives Librar
       for Message Authentication*. RFC 2401, February 1997. Available from
       https://www.rfc-editor.org/info/rfc2104.
 
-
    [RFC 3566]
       Frankel, Sheila, and Howard C. Herbert. *The AES-XCBC-MAC-96
       Algorithm and Its Use With IPsec*. RFC 3566, September 1996.
@@ -252,6 +251,14 @@ to you in using cryptography functions of Intel® Cryptography Primitives Librar
       H. Krawczyk, P. Eronen. *HMAC-based Extract-and-Expand Key
       Derivation Function (HKDF)*. RFC 5869, May 2010. Available from
       https://www.rfc-editor.org/info/rfc5869.
+
+   .. _rfc-8018:
+
+   [RFC 8018]
+      K. Moriarty, Ed., B. Kaliski, A. Rusch. *PKCS #5: Password-Based
+      Cryptography Specification Version 2.1*. RFC 8018,
+      January 2017. Available from
+      https://www.rfc-editor.org/info/rfc8018.
 
    .. _sec1:
 

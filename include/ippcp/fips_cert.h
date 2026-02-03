@@ -250,7 +250,8 @@ enum FIPS_IPPCP_FUNC {
     MLKEM_Decaps,
     HashSqueeze_rmf,
     HKDF_extract,
-    HKDF_expand
+    HKDF_expand,
+    PBKDF2_PKCS5v2
 };
 
 /**

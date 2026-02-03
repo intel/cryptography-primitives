@@ -231,3 +231,4 @@ the syntax.
    hash-functions
    hash-functions-for-non-streaming-messages
    mask-generation-functions
+   pkcs5-pbkdf2

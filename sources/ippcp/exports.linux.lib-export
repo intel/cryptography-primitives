@@ -528,6 +528,7 @@ EXTERN (ippsMLKEM_Init)
 EXTERN (ippsMLKEM_KeyGen)
 EXTERN (ippsMLKEM_Encaps)
 EXTERN (ippsMLKEM_Decaps)
+EXTERN (ippsPBKDF2_PKCS5v2)
 
 VERSION {
  {
@@ -1062,6 +1063,7 @@ VERSION {
    ippsMLKEM_KeyGen;
    ippsMLKEM_Encaps;
    ippsMLKEM_Decaps;
+   ippsPBKDF2_PKCS5v2;
   local: *;
  };
 }

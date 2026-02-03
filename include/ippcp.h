@@ -639,6 +639,7 @@ IPPAPI(IppStatus, ippsHKDF,(const Ipp8u* ikm, int ikmLen,
                             const Ipp8u* info, int infoLen,
                             const IppsHashMethod* pMethod))
 
+
 IPPAPI(IppStatus, ippsHKDF_extract,(const Ipp8u* ikm, int ikm_len,
                                     Ipp8u* prk, const Ipp8u* salt, int salt_len,
                                     const IppsHashMethod* pMethod))
@@ -647,6 +648,14 @@ IPPAPI(IppStatus, ippsHKDF_expand,(const Ipp8u* prk, int prk_len,
                                    Ipp8u* okm, int okm_len,
                                    const Ipp8u* info, int info_len,
                                    const IppsHashMethod* pMethod))
+
+
+/* Password-based cryptography key derivation function PKCS5-PBKDF2 */
+IPPAPI(IppStatus, ippsPBKDF2_PKCS5v2,(const Ipp8u* pass, int passLen,
+                                     Ipp8u* odk,  int odkLen,
+                                     const Ipp8u* salt, int saltLen,
+                                     int c,
+                                     const IppsHashMethod* pMethod))
 
 
 /*
