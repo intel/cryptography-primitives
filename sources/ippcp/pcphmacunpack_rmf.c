@@ -39,6 +39,7 @@
 // Returns:                Reason:
 //    ippStsNullPtrErr        pBuffer == NULL
 //                            pCtx == NULL
+//    ippStsContextMatchErr   pCtx->idCtx != idCtxHash
 //    ippStsNoErr             no errors
 //
 // Parameters:
@@ -50,8 +51,11 @@ IPPFUN(IppStatus, ippsHMACUnpack_rmf, (const Ipp8u* pBuffer, IppsHMACState_rmf* 
 {
     /* test pointers */
     IPP_BAD_PTR2_RET(pCtx, pBuffer);
+    IPP_BADARG_RET(!HASH_VALID_ID(HASH_CTX(pCtx), idCtxHash), ippStsContextMatchErr);
 
+    const IppsHashMethod* pMethod = HASH_METHOD(HASH_CTX(pCtx));
     CopyBlock(pBuffer, pCtx, sizeof(IppsHMACState_rmf));
+    HASH_METHOD(HASH_CTX(pCtx)) = pMethod;
 
     /* Set IppsHMACState_rmf context id */
     HMAC_SET_CTX_ID(pCtx);

@@ -39,14 +39,14 @@ Parameters
 ----------
 
 
-.. list-table:: 
+.. list-table::
    :header-rows: 0
 
-   * -     pCtx   
+   * -     pCtx
      -  Pointer to the IppsHMACState or IppsHMACState_rmf context.
-   * -     pBuffer   
+   * -     pBuffer
      -  Pointer to the user-defined buffer.
-   * -     bufSize   
+   * -     bufSize
      -  The size of the user-defined buffer in bytes.
 
 
@@ -73,20 +73,24 @@ function prior to HMAC_Pack to determine the size of the buffer.
    This function has a *reduced memory footprint* version. To learn
    more, see :ref:`Reduced Memory Footprint Functions <one-way-hash-primitives>`.
 
+.. note::
+
+   The \*pCtx context has to be initialized before calling ippsHMACUnpack_rmf.
+
 
 Return Values
 -------------
 
 
-.. list-table:: 
+.. list-table::
    :header-rows: 0
 
-   * -     ippStsNoErr   
-     -      Indicates no error. Any other value indicates an error or warning.   
-   * -     ippStsNullPtrErr   
-     -      Indicates an error condition if any of the specified pointers is NULL.    
-   * -     ippStsMemErr   
-     -      Indicates an error condition if the value of bufSize is less than the size of the IppsHMACState or IppsHMACState_rmf context.    
+   * -     ippStsNoErr
+     -      Indicates no error. Any other value indicates an error or warning.
+   * -     ippStsNullPtrErr
+     -      Indicates an error condition if any of the specified pointers is NULL.
+   * -     ippStsMemErr
+     -      Indicates an error condition if the value of bufSize is less than the size of the IppsHMACState or IppsHMACState_rmf context.
 
 
 

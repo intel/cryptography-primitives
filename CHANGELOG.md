@@ -6,7 +6,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Added key and signature generations for the Leighton-Micali Hash-Based Signatures (LMS) algorithm.
 - Added initialization checks for static variables in methods regulating hashing and arithmetic over GF(q) to optimize multi-call usage scenarios.
 - ML-KEM key generation, encapsulation and decapsulation were optimized with Intel(R) Advanced Vector Extensions 512 (Intel(R) AVX-512) instructions.
-- Fixed the issue with `ippsHashUnpack_rmf`.
+- Fixed the issue with `ippsHashUnpack_rmf` and `ippsHMACUnpack_rmf`.
   The function could cause segmentation faults in some scenarios.
 - Cleaned-up the library from the outdated macOS specific code.
 - Added RSA partial key setting functions to enable incremental construction of RSA keys by setting individual components separately.
