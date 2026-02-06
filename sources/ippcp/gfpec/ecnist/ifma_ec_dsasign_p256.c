@@ -71,19 +71,15 @@ IPP_OWN_DEFN(IppStatus, gfec_SignDSA_nistp256_avx512, (const IppsBigNumState* pM
 
     __ALIGN64 P256_POINT_IFMA P;
 
-    if (ECP_PREMULBP(pEC)) {
-        ifma_ec_nistp256_mul_pointbase(&P, (Ipp8u*)pExtendedScalar, orderBits);
-    } else {
-        BNU_CHUNK_T* pPool = cpGFpGetPool(3, pME);
+    BNU_CHUNK_T* pPool = cpGFpGetPool(3, pME);
 
-        /* Convert base point to a new Montgomery domain */
-        __ALIGN64 P256_POINT_IFMA G52;
-        recode_point_to_mont52(&G52, ECP_G(pEC), pPool, pmeth, pME);
+    /* Convert base point to a new Montgomery domain */
+    __ALIGN64 P256_POINT_IFMA G52;
+    recode_point_to_mont52(&G52, ECP_G(pEC), pPool, pmeth, pME);
 
-        ifma_ec_nistp256_mul_point(&P, &G52, (Ipp8u*)pExtendedScalar, orderBits);
+    ifma_ec_nistp256_mul_point(&P, &G52, (Ipp8u*)pExtendedScalar, orderBits);
 
-        cpGFpReleasePool(3, pME);
-    }
+    cpGFpReleasePool(3, pME);
 
     /*
    // signR = int(ephPublic.x) (mod order)

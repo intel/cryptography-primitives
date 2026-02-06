@@ -59,6 +59,7 @@ IPP_OWN_DECL(void, ifma_ec_nistp256_mul_point, (P256_POINT_IFMA* r,
                                                 const Ipp8u* pExtendedScalar,
                                                 const int scalarBitSize))
 /* clang-format on */
+
 /**
  * \brief
  *
@@ -108,23 +109,33 @@ IPP_OWN_DECL(int, ifma_ec_nistp256_is_on_curve, (const P256_POINT_IFMA* p,
  *
  * Point doubling on p256r1 curve (Enhanced Montgomery Algorithm, see [1])
  *
- * \param[out] r point in projective coordinates
- * \param[in]  p point in projective coordinates
- */
-IPP_OWN_DECL(void, ifma_ec_nistp256_dbl_point, (P256_POINT_IFMA * r, const P256_POINT_IFMA* p))
-
-/**
- * \brief
- *
- * Point addition on p256r1 curve (Enhanced Montgomery Algorithm, see [1])
- *
- * \param[out] r result point
- * \param[in]  p first point
- * \param[in]  q second point
+ * \param[out] out_R_X X coordinate of result point
+ * \param[out] out_R_Y Y coordinate of result point
+ * \param[out] out_R_Z Z coordinate of result point
+ * \param[in]  in_P_X  X coordinate of input point
+ * \param[in]  in_P_Y  Y coordinate of input point
+ * \param[in]  in_P_Z  Z coordinate of input point
  */
 /* clang-format off */
-IPP_OWN_DECL(void, ifma_ec_nistp256_add_point, (P256_POINT_IFMA* r,
-                                                const P256_POINT_IFMA* p,
+IPP_OWN_DECL(void, ifma_ec_nistp256_dbl_point, (m512* out_R_X,
+                                                m512* out_R_Y,
+                                                m512* out_R_Z,
+                                                const m512* in_P_X,
+                                                const m512* in_P_Y,
+                                                const m512* in_P_Z))
+/* clang-format on */
+
+/**
+ *  \brief
+ *
+ * Point addition on p256r1 curve (Enhanced Montgomery Algorithm, see [1])
+ * Computes p = p + q (in-place).
+ *
+ * \param[in/out] p first point (modified in-place)
+ * \param[in]     q second point
+ */
+/* clang-format off */
+IPP_OWN_DECL(void, ifma_ec_nistp256_add_point, (P256_POINT_IFMA* p,
                                                 const P256_POINT_IFMA* q))
 /* clang-format on */
 

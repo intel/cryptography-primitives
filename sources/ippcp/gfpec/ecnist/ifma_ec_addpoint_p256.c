@@ -41,13 +41,14 @@ IPP_OWN_DEFN(IppsGFpECPoint*, gfec_AddPoint_nistp256_avx512, (IppsGFpECPoint* pR
     recode_point_to_mont52(&P, ECP_POINT_DATA(pP), pPool, pmeth, pME);
 
     if (pP == pQ) {
-        ifma_ec_nistp256_dbl_point(&R, &P);
+        ifma_ec_nistp256_dbl_point(&R.x, &R.y, &R.z, &P.x, &P.y, &P.z);
     } else {
         __ALIGN64 P256_POINT_IFMA Q;
 
         recode_point_to_mont52(&Q, ECP_POINT_DATA(pQ), pPool, pmeth, pME);
 
-        ifma_ec_nistp256_add_point(&R, &P, &Q);
+        R = P;                              /* copy P to R */
+        ifma_ec_nistp256_add_point(&R, &Q); /* R = R + Q */
     }
 
     recode_point_to_mont64(pR, &R, pPool, pmeth, pME);
