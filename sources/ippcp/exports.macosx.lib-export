@@ -508,3 +508,12 @@ _ippsMLKEM_Init
 _ippsMLKEM_KeyGen
 _ippsMLKEM_Encaps
 _ippsMLKEM_Decaps
+_ippsMLDSA_GetSize
+_ippsMLDSA_GetInfo
+_ippsMLDSA_Init
+_ippsMLDSA_KeyGenBufferGetSize
+_ippsMLDSA_SignBufferGetSize
+_ippsMLDSA_VerifyBufferGetSize
+_ippsMLDSA_KeyGen
+_ippsMLDSA_Sign
+_ippsMLDSA_Verify

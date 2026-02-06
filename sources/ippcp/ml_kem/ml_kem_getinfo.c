@@ -19,7 +19,7 @@
 #include "ippcpdefs.h"
 
 #include "pcptool.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 
 /*F*
 //    Name: ippsMLKEM_GetInfo

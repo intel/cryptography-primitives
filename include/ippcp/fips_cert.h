@@ -251,7 +251,10 @@ enum FIPS_IPPCP_FUNC {
     HashSqueeze_rmf,
     HKDF_extract,
     HKDF_expand,
-    PBKDF2_PKCS5v2
+    PBKDF2_PKCS5v2,
+    MLDSA_KeyGen,
+    MLDSA_Sign,
+    MLDSA_Verify
 };
 
 /**

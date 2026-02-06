@@ -18,7 +18,7 @@
 #include "owndefs.h"
 
 #include "pcptool.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 
 /*F*
 //    Name: ippsMLKEM_KeyGen
@@ -91,7 +91,7 @@ IPPFUN(IppStatus, ippsMLKEM_KeyGen, (Ipp8u * pEncKey,
     PurgeBlock(z, sizeof(z));
 
     /* Clear temporary storage */
-    IppStatus memReleaseSts = cp_mlkemStorageReleaseAll(pStorage);
+    IppStatus memReleaseSts = cp_mlStorageReleaseAll(pStorage);
     pStorage->pStorageData  = NULL;
     if (memReleaseSts != ippStsNoErr) {
         return memReleaseSts;

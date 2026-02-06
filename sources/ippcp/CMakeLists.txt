@@ -177,7 +177,7 @@ if(IPP_REVISION)
 endif()
 
 # Enable tech-preview feature in the library
-set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_PREVIEW_XMSS -DIPPCP_PREVIEW_LMS -DIPPCP_PREVIEW_ML_KEM")
+set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_PREVIEW_XMSS -DIPPCP_PREVIEW_LMS -DIPPCP_PREVIEW_ML_KEM -DIPPCP_PREVIEW_ML_DSA")
 
 set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -D_NO_IPP_DEPRECATED") # do not warn about ippcp deprecated functions
 # set BN_OPENSSL_DISABLE for Intel Cryptography Primitives Library
@@ -227,6 +227,8 @@ file(GLOB LIBRARY_C_SOURCES_ORIGINAL
     ${IPP_CRYPTO_SOURCES_DIR}/ml_kem/*/*/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/stateful_sig/*/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/stateful_sig/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/ml_dsa/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/ml_dsa/*/*.c
 )
 
 file(GLOB LIBRARY_ASM_SOURCES_ORIGINAL

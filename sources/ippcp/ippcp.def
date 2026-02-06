@@ -531,3 +531,12 @@ ippsMLKEM_KeyGen
 ippsMLKEM_Encaps
 ippsMLKEM_Decaps
 ippsPBKDF2_PKCS5v2
+ippsMLDSA_GetSize
+ippsMLDSA_GetInfo
+ippsMLDSA_Init
+ippsMLDSA_KeyGenBufferGetSize
+ippsMLDSA_SignBufferGetSize
+ippsMLDSA_VerifyBufferGetSize
+ippsMLDSA_KeyGen
+ippsMLDSA_Sign
+ippsMLDSA_Verify

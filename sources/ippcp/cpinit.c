@@ -478,6 +478,7 @@ static struct {
 /* -9702 */ {MSG_NO_SHARED, "No shared libraries were found in the Waterfall procedure"},
 /* -9701 */ {MSG_NO_DLL, "No DLLs were found in the Waterfall procedure"},
 /* -9700 */ {MSG_LOAD_DLL_ERR, "Error at loading of %s library"},
+/* -1018 */ {ippStsMLDSAMaxIterations, "ippStsMLDSAMaxIterations: The ML-DSA iterations reach maximum. Data weren't generated successfully"},
 /* -1017 */ {ippStsInvalidPoint, "ippStsInvalidPoint ECC: Invalid point (out of EC)"},
 /* -1016 */ {ippStsQuadraticNonResidueErr, "ippStsQuadraticNonResidueErr: SQRT operation on quadratic non-residue value"},
 /* -1015 */ {ippStsPointAtInfinity, "ippStsPointAtInfinity: Point at infinity is detected"},

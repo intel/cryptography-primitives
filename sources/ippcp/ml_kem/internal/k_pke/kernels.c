@@ -21,7 +21,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 
 #define CP_D_MAX (12)
 #define CP_D_MIN (1)

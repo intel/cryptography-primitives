@@ -1415,6 +1415,47 @@ IPPAPI(IppStatus, ippsMLKEM_Decaps, (const Ipp8u* pDecKey, const Ipp8u* pCipherT
 
 #endif // IPPCP_PREVIEW_ML_KEM
 
+#ifdef IPPCP_PREVIEW_ML_DSA
+/* Module-Lattice-Based Digital Signature Algorithm */
+
+IPPAPI(IppStatus, ippsMLDSA_GetSize, (int* pSize))
+IPPAPI(IppStatus, ippsMLDSA_GetInfo, (IppsMLDSAInfo* pInfo, IppsMLDSAParamSet schemeType))
+
+IPPAPI(IppStatus, ippsMLDSA_Init, (IppsMLDSAState* pMLDSAState, Ipp32s maxMessageLength, IppsMLDSAParamSet schemeType))
+
+IPPAPI(IppStatus, ippsMLDSA_KeyGenBufferGetSize, (int* pSize, const IppsMLDSAState* pMLDSAState))
+IPPAPI(IppStatus, ippsMLDSA_SignBufferGetSize, (int* pSize, const IppsMLDSAState* pMLDSAState))
+IPPAPI(IppStatus, ippsMLDSA_VerifyBufferGetSize, (int* pSize, const IppsMLDSAState* pMLDSAState))
+
+IPPAPI(IppStatus, ippsMLDSA_KeyGen, (Ipp8u* pPubKey,
+                                     Ipp8u* pPrvKey,
+                                     IppsMLDSAState* pMLDSAState,
+                                     Ipp8u* pScratchBuffer,
+                                     IppBitSupplier rndFunc,
+                                     void* pRndParam))
+
+IPPAPI(IppStatus, ippsMLDSA_Sign, (const Ipp8u* pMsg,
+                                   const Ipp32s msgLen,
+                                   const Ipp8u* pCtx,
+                                   const Ipp32s ctxLen,
+                                   const Ipp8u* pPrvKey,
+                                   Ipp8u* pSign,
+                                   IppsMLDSAState* pMLDSAState,
+                                   Ipp8u* pScratchBuffer,
+                                   IppBitSupplier rndFunc,
+                                   void* pRndParam))
+
+IPPAPI(IppStatus, ippsMLDSA_Verify, (const Ipp8u* pMsg,
+                                     const Ipp32s msgLen,
+                                     const Ipp8u* pCtx,
+                                     const Ipp32s ctxLen,
+                                     const Ipp8u* pPubKey,
+                                     const Ipp8u* pSign,
+                                     int* pIsSignValid,
+                                     IppsMLDSAState* pMLDSAState,
+                                     Ipp8u* pScratchBuffer))
+#endif // IPPCP_PREVIEW_ML_DSA
+
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
 #pragma warning(pop)
 #endif

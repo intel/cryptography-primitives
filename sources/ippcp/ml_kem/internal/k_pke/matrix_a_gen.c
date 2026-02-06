@@ -17,7 +17,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 #include "hash/pcphash_rmf.h"
 #include "hash/sha3/sha3_stuff.h"
 
@@ -129,7 +129,7 @@ IPPCP_INLINE IppStatus cp_SampleNTT(Ipp16sPoly* polyA, const Ipp8u B[34], IppsML
     sts                               = ippsHashGetSizeOptimal_rmf(&hash_size, hash_method);
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
     IppsHashState_rmf* hash_state =
-        (IppsHashState_rmf*)cp_mlkemStorageAllocate(pStorage, hash_size + CP_ML_KEM_ALIGNMENT);
+        (IppsHashState_rmf*)cp_mlStorageAllocate(pStorage, hash_size + CP_ML_KEM_ALIGNMENT);
     CP_CHECK_FREE_RET(hash_state == NULL, ippStsMemAllocErr, pStorage);
     hash_state = IPP_ALIGNED_PTR(hash_state, CP_ML_KEM_ALIGNMENT);
     sts        = ippsHashInit_rmf(hash_state, hash_method);
@@ -154,7 +154,7 @@ IPPCP_INLINE IppStatus cp_SampleNTT(Ipp16sPoly* polyA, const Ipp8u B[34], IppsML
     }
 
     /* Release locally used storage */
-    sts = cp_mlkemStorageRelease(pStorage, hash_size + CP_ML_KEM_ALIGNMENT); // hash_state
+    sts = cp_mlStorageRelease(pStorage, hash_size + CP_ML_KEM_ALIGNMENT); // hash_state
 
     return sts;
 }

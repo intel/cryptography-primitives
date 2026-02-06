@@ -17,10 +17,10 @@
 #ifndef _IPPCP_ML_KEM_MEMORY_CONSUMPTION_H_
 #define _IPPCP_ML_KEM_MEMORY_CONSUMPTION_H_
 
-#include "ml_kem_internal/ml_kem.h"
+#include "ml_kem.h"
 
 /*
- * Memory consumption query function. The memory will be used to store temporary objects. 
+ * Memory consumption query function. The memory will be used to store temporary objects.
  * Input:  pMLKEMCtx    - input pointer to ML-KEM context
  * Output: keygenBytes  - keyGen memory consumption, optional
  *         encapsBytes  - encaps memory consumption, optional

@@ -21,7 +21,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 #include "hash/sha3/sha3_stuff.h"
 
 #if (_IPP32E >= _IPP32E_K0)
@@ -160,7 +160,7 @@ IPPCP_INLINE IppStatus cp_polyGenInternal(Ipp16sPoly* pOutPoly,
     IppStatus sts             = ippStsNoErr;
     _cpMLKEMStorage* pStorage = &mlkemCtx->storage;
 
-    Ipp8u* prfOutput = cp_mlkemStorageAllocate(pStorage, eta * 64 + CP_ML_KEM_ALIGNMENT);
+    Ipp8u* prfOutput = cp_mlStorageAllocate(pStorage, eta * 64 + CP_ML_KEM_ALIGNMENT);
     CP_CHECK_FREE_RET(prfOutput == NULL, ippStsMemAllocErr, pStorage);
     prfOutput = IPP_ALIGNED_PTR(prfOutput, CP_ML_KEM_ALIGNMENT);
 
@@ -180,8 +180,8 @@ IPPCP_INLINE IppStatus cp_polyGenInternal(Ipp16sPoly* pOutPoly,
         /* 18: y` <- cp_NTT(𝐲) */
         cp_NTT(pOutPoly);
     }
-    sts = cp_mlkemStorageRelease(pStorage, // Ipp8u prfOutput[eta * 64]
-                                 eta * 64 + CP_ML_KEM_ALIGNMENT);
+    sts = cp_mlStorageRelease(pStorage, // Ipp8u prfOutput[eta * 64]
+                              eta * 64 + CP_ML_KEM_ALIGNMENT);
 
     return sts;
 }

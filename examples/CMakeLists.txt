@@ -46,6 +46,7 @@ set(IPPCP_EXAMPLES
   post-quantum/lms_m32_h5_w8_verification.cpp
   post-quantum/lms_m24_h15_w4_keygen_sign.cpp
   post-quantum/ml_kem_512_keygen_encaps_decaps.cpp
+  post-quantum/ml_dsa_87_keygen_sign_verify.cpp
   # Elliptic curve algorithms examples
   ecdsa/ecdsa-256r1-sign.cpp
   )

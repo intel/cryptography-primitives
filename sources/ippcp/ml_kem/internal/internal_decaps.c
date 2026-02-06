@@ -21,7 +21,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 
 /*
  * Uses the decapsulation key to produce a shared secret key from a ciphertext.
@@ -93,7 +93,7 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
     CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
 
     IppsHashState_rmf* hash_state =
-        (IppsHashState_rmf*)cp_mlkemStorageAllocate(pStorage, hash_size + CP_ML_KEM_ALIGNMENT);
+        (IppsHashState_rmf*)cp_mlStorageAllocate(pStorage, hash_size + CP_ML_KEM_ALIGNMENT);
     CP_CHECK_FREE_RET(hash_state == NULL, ippStsMemAllocErr, pStorage);
     hash_state = IPP_ALIGNED_PTR(hash_state, CP_ML_KEM_ALIGNMENT);
 
@@ -107,7 +107,7 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
     CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
 
     /* 8: c` <- K-PKE.Encrypt(ekPKE, m`, r`) */
-    Ipp8u* ciphertext1 = cp_mlkemStorageAllocate(pStorage, ciphertext_size + CP_ML_KEM_ALIGNMENT);
+    Ipp8u* ciphertext1 = cp_mlStorageAllocate(pStorage, ciphertext_size + CP_ML_KEM_ALIGNMENT);
     CP_CHECK_FREE_RET(ciphertext1 == NULL, ippStsMemAllocErr, pStorage);
     ciphertext1 = IPP_ALIGNED_PTR(ciphertext1, CP_ML_KEM_ALIGNMENT);
     sts         = cp_KPKE_Encrypt(ciphertext1, pPKE_EncKey, message, r_N, mlkemCtx);
@@ -118,9 +118,9 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
     MASKED_COPY_BNU(K, is_equal, K1, K2, CP_SHARED_SECRET_BYTES);
 
     /* Release locally used storage */
-    sts = cp_mlkemStorageRelease(pStorage, hash_size + CP_ML_KEM_ALIGNMENT); // hash_state
-    sts |= cp_mlkemStorageRelease(pStorage,
-                                  ciphertext_size + CP_ML_KEM_ALIGNMENT);    // ciphertext1
+    sts = cp_mlStorageRelease(pStorage, hash_size + CP_ML_KEM_ALIGNMENT); // hash_state
+    sts |= cp_mlStorageRelease(pStorage,
+                               ciphertext_size + CP_ML_KEM_ALIGNMENT);    // ciphertext1
 
     return sts | decryptSts;
 }

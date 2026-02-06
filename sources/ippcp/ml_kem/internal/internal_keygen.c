@@ -21,7 +21,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 
 /*
  * Uses randomness to generate an encapsulation key and a corresponding decapsulation key.

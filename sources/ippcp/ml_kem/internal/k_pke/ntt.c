@@ -16,13 +16,13 @@
 
 #include "owncp.h"
 #include "owndefs.h"
-#include "ml_kem_internal/ml_kem.h"
-#include "ml_kem_internal/zetas.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/zetas.h"
 
 /*
  * Algorithm 9: NTT(f) - Computes the NTT representation f` of the given polynomial f in R_{q}.
  *
- * Input/Output: f - polynomial Z_{q}^{256}, which is transformed to 
+ * Input/Output: f - polynomial Z_{q}^{256}, which is transformed to
  *                   its NTT representation f` in T_{q}.
  */
 IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
@@ -30,7 +30,7 @@ IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
     Ipp16u i = 1;
     for (Ipp16u len = 128; len >= 2; len /= 2) {
         for (Ipp16u start = 0; start < 256; start += 2 * len) {
-            Ipp16s zeta = cp_zetas_ntt[i];
+            Ipp16s zeta = cp_mlkem_zetas_ntt[i];
             i++;
             for (Ipp16u j = start; j < start + len; j++) {
                 // delay reduction, as the minimum possible value here will be in the function's range
@@ -46,7 +46,7 @@ IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
  * Algorithm 10: NTT{-1}(f`) - Computes the polynomial f in R_{q} that corresponds to the
  *                             given NTT representation f` in T_{q}.
  *
- * Input/Output: f - polynomial in T_{q}, which is transformed to 
+ * Input/Output: f - polynomial in T_{q}, which is transformed to
  *                   the normal representation Z_{q}^{256}.
  */
 IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
@@ -54,7 +54,7 @@ IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
     Ipp8u i = 127;
     for (Ipp16u len = 2; len <= 128; len *= 2) {
         for (Ipp16u start = 0; start < 256; start += 2 * len) {
-            Ipp16s zeta = cp_zetas_ntt[i];
+            Ipp16s zeta = cp_mlkem_zetas_ntt[i];
             i--;
             for (Ipp16u j = start; j < start + len; j++) {
                 Ipp16s t     = f->values[j];
@@ -107,7 +107,7 @@ IPP_OWN_DEFN(void, cp_multiplyNTT, (const Ipp16sPoly* f, const Ipp16sPoly* g, Ip
                             f->values[2 * i + 1],
                             g->values[2 * i],
                             g->values[2 * i + 1],
-                            cp_zetas_multiply_ntt[i],
+                            cp_mlkem_zetas_multiply_ntt[i],
                             &h->values[2 * i],
                             &h->values[2 * i + 1]);
     }

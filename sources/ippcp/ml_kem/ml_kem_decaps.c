@@ -18,7 +18,7 @@
 #include "owndefs.h"
 
 #include "pcptool.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 
 /*F*
 //    Name: ippsMLKEM_Decaps
@@ -68,7 +68,7 @@ IPPFUN(IppStatus, ippsMLKEM_Decaps, (const Ipp8u* pDecKey,
     sts = cp_MLKEMdecaps_internal(pSharedSecret, pCipherText, pDecKey, pMLKEMCtx);
 
     /* Clear temporary storage */
-    IppStatus memReleaseSts = cp_mlkemStorageReleaseAll(pStorage);
+    IppStatus memReleaseSts = cp_mlStorageReleaseAll(pStorage);
     pStorage->pStorageData  = NULL;
     if (memReleaseSts != ippStsNoErr) {
         return memReleaseSts;

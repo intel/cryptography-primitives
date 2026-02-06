@@ -20,7 +20,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"
-#include "ml_kem_internal/ml_kem.h"
+#include "stateless_pqc/ml_kem_internal/ml_kem.h"
 #include "hash/pcphash_rmf.h"
 
 /*
@@ -45,10 +45,10 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_Decrypt, (Ipp8u * message,
     _cpMLKEMStorage* pStorage = &mlkemCtx->storage;
 
     /* Allocate memory for temporary objects */
-    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(u, k, pStorage)
-    CP_ML_KEM_ALLOCATE_ALIGNED_POLY(v, pStorage)
-    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(s, k, pStorage)
-    CP_ML_KEM_ALLOCATE_ALIGNED_POLY(w, pStorage)
+    CP_ML_ALLOCATE_ALIGNED_POLYVEC(u, k, pStorage)
+    CP_ML_ALLOCATE_ALIGNED_POLY(v, pStorage)
+    CP_ML_ALLOCATE_ALIGNED_POLYVEC(s, k, pStorage)
+    CP_ML_ALLOCATE_ALIGNED_POLY(w, pStorage)
 
     /* 1: c1 <- c[0 : 32*d_{u}*k] */
     Ipp8u* c1 = (Ipp8u*)ciphertext;
@@ -83,13 +83,13 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_Decrypt, (Ipp8u * message,
     /* 6: w <- v` - cp_NTT^{-1}(s`^{T} * cp_NTT(u`)) */
     cp_NTT(&u[0]);
     cp_multiplyNTT(&s[0], &u[0], w);
-    CP_ML_KEM_ALLOCATE_ALIGNED_POLY(tmpPoly, pStorage)
+    CP_ML_ALLOCATE_ALIGNED_POLY(tmpPoly, pStorage)
     for (Ipp8u i = 1; i < k; i++) {
         cp_NTT(&u[i]);
         cp_multiplyNTT(&s[i], &u[i], tmpPoly);
         cp_polyAdd(tmpPoly, w, w);
     }
-    CP_ML_KEM_RELEASE_ALIGNED_POLY(pStorage, sts) // Ipp16sPoly tmpPoly
+    CP_ML_RELEASE_ALIGNED_POLY(pStorage, sts) // Ipp16sPoly tmpPoly
     cp_inverseNTT(w);
     cp_polySub(v, w, w);
 
@@ -102,10 +102,10 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_Decrypt, (Ipp8u * message,
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
     /* Release locally used storage */
-    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly u[k]
-    CP_ML_KEM_RELEASE_ALIGNED_POLY(pStorage, sts)       // Ipp16sPoly v
-    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly s[k]
-    CP_ML_KEM_RELEASE_ALIGNED_POLY(pStorage, sts)       // Ipp16sPoly w
+    CP_ML_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly u[k]
+    CP_ML_RELEASE_ALIGNED_POLY(pStorage, sts)       // Ipp16sPoly v
+    CP_ML_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly s[k]
+    CP_ML_RELEASE_ALIGNED_POLY(pStorage, sts)       // Ipp16sPoly w
 
     return sts;
 }

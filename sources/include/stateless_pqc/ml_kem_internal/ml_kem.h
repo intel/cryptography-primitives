@@ -21,6 +21,20 @@
 #include "pcptool.h"
 
 typedef struct {
+    Ipp8u* pStorageData;   // pointer to the actual memory (placed in the working buffers)
+    Ipp64s bytesCapacity;  // bytesize of the storage for current operation
+    Ipp64s bytesUsed;      // number of used bytes in the storage for current operation
+    Ipp64s keyGenCapacity; // total bytesize of the storage for keyGen operation
+    Ipp64s encapsCapacity; // total bytesize of the storage for encaps operation
+    Ipp64s decapsCapacity; // total bytesize of the storage for decaps operation
+} _cpMLKEMStorage;
+
+#define POLY_VALUE_T Ipp16s
+#define STORAGE_T    _cpMLKEMStorage
+
+#include "stateless_pqc/common.h"
+
+typedef struct {
     Ipp16u n;
     Ipp16u q;
     Ipp8u k;
@@ -29,15 +43,6 @@ typedef struct {
     Ipp16u d_u;
     Ipp8u d_v;
 } _cpMLKEMParams;
-
-typedef struct {
-    Ipp8u* pStorageData;   // pointer to the actual memory (placed in the working buffers)
-    Ipp64s bytesCapacity;  // bytesize of the storage for current operation
-    Ipp64s bytesUsed;      // number of used bytes in the storage for current operation
-    Ipp64s keyGenCapacity; // total bytesize of the storage for keyGen operation
-    Ipp64s encapsCapacity; // total bytesize of the storage for encaps operation
-    Ipp64s decapsCapacity; // total bytesize of the storage for decaps operation
-} _cpMLKEMStorage;
 
 struct _cpMLKEMState {
     _cpMLKEMParams params;   // ML KEM parameters
@@ -50,7 +55,7 @@ struct _cpMLKEMState {
 
 /*
  * Stuff enumerator used to conditionally apply NTT transformation
- * to a generated vector 
+ * to a generated vector
  */
 typedef enum { nttTransform, noNttTransform } nttTransformFlag;
 
@@ -66,13 +71,13 @@ typedef enum { matrixAOrigin, matrixATransposed } matrixAGenType;
 
 /* ML-KEM constants */
 #define CP_ML_KEM_Q            (3329)
-#define CP_ML_KEM_N            (256)
+#define CP_ML_KEM_N            CP_ML_N
 #define CP_ML_KEM_ETA2         (2)
 #define CP_ML_KEM_ETA_MAX      (3)
 #define CP_RAND_DATA_BYTES     (32)
 #define CP_SHARED_SECRET_BYTES (32)
 
-#define CP_ML_KEM_ALIGNMENT ((int)sizeof(void*))
+#define CP_ML_KEM_ALIGNMENT CP_ML_ALIGNMENT
 
 #define CP_ML_KEM_NUM_BUFFERS (4)
 
@@ -94,98 +99,11 @@ typedef enum { matrixAOrigin, matrixATransposed } matrixAGenType;
 //-------------------------------//
 
 /* Polynomial of 256 elements of Ipp16s */
-typedef struct {
-    Ipp16s values[256];
-} Ipp16sPoly;
+typedef IppPoly Ipp16sPoly;
 
 //-------------------------------//
 //        Stuff functions
 //-------------------------------//
-
-#define CP_CHECK_FREE_RET(IN_RET_CONDITION, IN_STATUS, IN_P_STORAGE)        \
-    {                                                                       \
-        if (IN_RET_CONDITION) {                                             \
-            IppStatus releaseSts = cp_mlkemStorageReleaseAll(IN_P_STORAGE); \
-            return (IN_STATUS) | releaseSts;                                \
-        }                                                                   \
-    }
-
-/* Memory allocation helpers for poly and polyvec */
-/* clang-format off */
-#define CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC(NAME, SIZE, STORAGE)                                  \
-    Ipp16sPoly*(NAME) = (Ipp16sPoly*)cp_mlkemStorageAllocate((STORAGE),                          \
-                                             (SIZE) * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT); \
-    CP_CHECK_FREE_RET((NAME) == NULL, ippStsMemAllocErr, (STORAGE));                             \
-    (NAME) = IPP_ALIGNED_PTR((NAME), CP_ML_KEM_ALIGNMENT);
-/* clang-format on */
-
-#define CP_ML_KEM_ALLOCATE_ALIGNED_POLY(NAME, STORAGE) \
-    CP_ML_KEM_ALLOCATE_ALIGNED_POLYVEC((NAME), 1, (STORAGE))
-
-/* Memory release helpers for poly and polyvec */
-#define CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(SIZE, STORAGE, STATUS) \
-    (STATUS) |=                                                  \
-        cp_mlkemStorageRelease((STORAGE), (SIZE) * sizeof(Ipp16sPoly) + CP_ML_KEM_ALIGNMENT);
-
-#define CP_ML_KEM_RELEASE_ALIGNED_POLY(STORAGE, STATUS) \
-    CP_ML_KEM_RELEASE_ALIGNED_POLYVEC(1, (STORAGE), (STATUS))
-
-/*
- * Memory allocation primitive working with _cpMLKEMStorage structure.
- * Input: storage     - pointer to _cpMLKEMStorage structure
- *        bytesNeeded - number of bytes needed for allocation
- * Output: pointer to allocated memory or NULL if not enough space
- */
-IPPCP_INLINE Ipp8u* cp_mlkemStorageAllocate(_cpMLKEMStorage* storage, Ipp64s bytesNeeded)
-{
-    if (storage->bytesCapacity - storage->bytesUsed < bytesNeeded) {
-        return NULL; // Not enough space
-    }
-    Ipp8u* pOutMemory = storage->pStorageData + storage->bytesUsed;
-    storage->bytesUsed += bytesNeeded;
-    return pOutMemory;
-}
-
-/*
- * Memory release primitive working with _cpMLKEMStorage structure, zeroizes the released buffer.
- * Input:  storage      - pointer to _cpMLKEMStorage structure
- *         bytesRelease - number of bytes to release
- * Output: ippStsNoErr if release is successful, ippStsMemAllocErr if release size is incorrect
- */
-IPPCP_INLINE IppStatus cp_mlkemStorageRelease(_cpMLKEMStorage* storage, Ipp64s bytesRelease)
-{
-    if (bytesRelease > storage->bytesUsed) {
-        return ippStsMemAllocErr; // Not correct release size
-    }
-
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX <- bytesCapacity
-    // XXXXXXXXXXXXXXXXXXXXXXXXXXX                 <- bytesUsed
-    //                    00000000                 <- bytesRelease
-    PurgeBlock(storage->pStorageData + storage->bytesUsed - bytesRelease, (int)bytesRelease);
-
-    storage->bytesUsed -= bytesRelease;
-    CP_PREVENT_REORDER();
-
-    // Check that the memory was released and zeroized as intended
-    return (*(storage->pStorageData + storage->bytesUsed) == 0) ? ippStsNoErr : ippStsMemAllocErr;
-}
-
-/*
- * Memory release primitive working with _cpMLKEMStorage structure, zeroizes the released buffer.
- * Input:  storage - pointer to _cpMLKEMStorage structure
- *
- * Note: the operation release the whole buffer, safe to be used for an empty storage.
- */
-IPPCP_INLINE IppStatus cp_mlkemStorageReleaseAll(_cpMLKEMStorage* storage)
-{
-    // Zeroize the buffer (minimum amount between bytesUsed and bytesCapacity)
-    PurgeBlock(storage->pStorageData,
-               IPP_MIN((int)storage->bytesUsed, (int)storage->bytesCapacity));
-    storage->bytesUsed = 0;
-    CP_PREVENT_REORDER();
-
-    return (*(storage->pStorageData + storage->bytesUsed) == 0) ? ippStsNoErr : ippStsMemAllocErr;
-}
 
 /*
 // Barrett reduction for fixed n = CP_ML_KEM_Q
@@ -196,7 +114,7 @@ IPPCP_INLINE IppStatus cp_mlkemStorageReleaseAll(_cpMLKEMStorage* storage)
 //   1. t = floor(x*mu/b^(2*k))
 //   2. t = floor(x*mu/b^(2*k)) * n
 //   3. res = x - floor(x*mu/b^(2*k)) * n
-//   4. if res >= n then res -= n 
+//   4. if res >= n then res -= n
 //   5. return res
 //
 // Input:  number to be reduced of maximum size 25 bits

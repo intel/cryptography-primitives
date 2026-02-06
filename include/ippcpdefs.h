@@ -438,6 +438,7 @@ typedef signed int IppStatus;
 
 #endif /* IPPSTATUS_H__ */
 
+#define ippStsMLDSAMaxIterations         -1018 /* The ML-DSA iterations reach maximum. Data weren't generated successfully. */
 #define ippStsInvalidPoint               -1017 /* ippStsInvalidPoint ECC: Invalid point (out of EC).*/
 #define ippStsQuadraticNonResidueErr     -1016 /* SQRT operation on quadratic non-residue value. */
 #define ippStsPointAtInfinity            -1015 /* Point at infinity is detected. */
@@ -901,6 +902,9 @@ IPPAPI( int, ippcpGetEnabledNumThreads, ( void ) )
     #ifndef IPPCP_PREVIEW_ML_KEM
     #define IPPCP_PREVIEW_ML_KEM  (1)
     #endif
+    #ifndef IPPCP_PREVIEW_ML_DSA
+    #define IPPCP_PREVIEW_ML_DSA  (1)
+    #endif
 #endif
 
 /*
@@ -999,6 +1003,28 @@ typedef struct {
 
 typedef struct _cpMLKEMState IppsMLKEMState;
 #endif // IPPCP_PREVIEW_ML_KEM
+
+/*
+// =========================================================
+// ML-DSA
+// =========================================================
+*/
+#ifdef IPPCP_PREVIEW_ML_DSA
+
+typedef enum {
+    ML_DSA_44  = 1,
+    ML_DSA_65  = 2,
+    ML_DSA_87  = 3
+} IppsMLDSAParamSet;
+
+typedef struct {
+   int publicKeySize;
+   int privateKeySize;
+   int signatureSize;
+} IppsMLDSAInfo;
+
+typedef struct _cpMLDSAState IppsMLDSAState;
+#endif // IPPCP_PREVIEW_ML_DSA
 
 #ifdef __cplusplus
 }

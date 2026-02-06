@@ -18,74 +18,69 @@
 #include "owndefs.h"
 
 #include "pcptool.h"
-#include "stateless_pqc/ml_kem_internal/ml_kem.h"
+
+#include "stateless_pqc/ml_dsa/ml_dsa.h"
 
 /*F*
-//    Name: ippsMLKEM_Encaps
+//    Name: ippsMLDSA_KeyGen
 //
-// Purpose: Uses the encapsulation key to generate a shared secret key and an associated ciphertext.
+// Purpose: Generates public and private keys.
 //
 // Returns:                Reason:
-//    ippStsNullPtrErr           pEncKey == NULL
-//                               pCipherText == NULL
-//                               pSharedSecret == NULL
-//                               pMLKEMCtx == NULL
+//    ippStsNullPtrErr           pPubKey == NULL
+//                               pPrvKey == NULL
+//                               pMLDSAState == NULL
 //                               pScratchBuffer == NULL
-//    ippStsContextMatchErr      pMLKEMCtx is not initialized
+//    ippStsContextMatchErr      pMLDSAState is not initialized
 //    ippStsMemAllocErr          an internal functional error, see documentation for more details
 //    ippStsNotSupportedModeErr  unsupported RDRAND instruction
 //    ippStsErr                  random bit sequence can't be generated
-//    An error that may be returned by rndFunc
-//    ippStsNoErr             no errors
+//    A error that may be returned by rndFunc
+//    ippStsNoErr                no errors
 //
 // Parameters:
-//    pEncKey        - input pointer to encapsulation key of size 384*k + 32 bytes
-//    pCipherText    - output pointer to the produced ciphertext of length 32*(d_{u}*k + d_{v})) bytes
-//    pSharedSecret  - output pointer to the produced shared secret of length 32 bytes
-//    pMLKEMCtx      - input pointer to ML KEM context
-//    pScratchBuffer - input pointer to the working buffer of size queried ippsMLKEM_EncapsBufferGetSize()
+//    pPubKey        - output pointer to the produced public key
+//    pPrvKey        - output pointer to the produced private key
+//    pMLDSAState    - input pointer to ML DSA state
+//    pScratchBuffer - input pointer to the working buffer of size queried ippsMLDSA_KeyGenBufferGetSize()
 //    rndFunc        - input function pointer to generate random numbers, can be NULL
 //    pRndParam      - input parameters for rndFunc, can be NULL
 //
 *F*/
 /* clang-format off */
-IPPFUN(IppStatus, ippsMLKEM_Encaps, (const Ipp8u* pEncKey,
-                                     Ipp8u* pCipherText,
-                                     Ipp8u* pSharedSecret,
-                                     IppsMLKEMState* pMLKEMCtx,
+IPPFUN(IppStatus, ippsMLDSA_KeyGen, (Ipp8u* pPubKey,
+                                     Ipp8u* pPrvKey,
+                                     IppsMLDSAState* pMLDSAState,
                                      Ipp8u* pScratchBuffer,
                                      IppBitSupplier rndFunc,
                                      void* pRndParam))
 /* clang-format on */
 {
-    IppStatus sts = ippStsNoErr;
+    IppStatus sts = ippStsErr;
 
-    /* Test input pointers */
-    IPP_BAD_PTR4_RET(pCipherText, pSharedSecret, pEncKey, pMLKEMCtx);
-    IPP_BAD_PTR1_RET(pScratchBuffer);
+    /* Test input parameters */
+    IPP_BAD_PTR4_RET(pMLDSAState, pPubKey, pPrvKey, pScratchBuffer);
     /* Test the provided state */
-    IPP_BADARG_RET(!CP_ML_KEM_VALID_ID(pMLKEMCtx), ippStsContextMatchErr);
+    IPP_BADARG_RET(!CP_ML_DSA_VALID_ID(pMLDSAState), ippStsContextMatchErr);
 
     /* Initialize the temporary storage */
-    _cpMLKEMStorage* pStorage = &pMLKEMCtx->storage;
-    pStorage->pStorageData    = IPP_ALIGNED_PTR(pScratchBuffer, CP_ML_KEM_ALIGNMENT);
-    pStorage->bytesCapacity   = pStorage->encapsCapacity;
-
-    /* m <-- 32 random bytes */
-    __ALIGN32 Ipp8u m[CP_RAND_DATA_BYTES];
+    _cpMLDSAStorage* pStorage = &pMLDSAState->storage;
+    pStorage->pStorageData    = pScratchBuffer;
+    pStorage->bytesCapacity   = pStorage->keyGenCapacity;
 
     /* Random nonce data */
+    __ALIGN32 Ipp8u ksi[CP_RAND_DATA_BYTES] = { 0 };
     if (rndFunc == NULL) {
-        sts = ippsPRNGenRDRAND((Ipp32u*)m, CP_RAND_DATA_BYTES * 8, NULL);
+        sts = ippsTRNGenRDSEED((Ipp32u*)ksi, CP_RAND_DATA_BYTES * 8, NULL);
     } else {
-        sts = rndFunc((Ipp32u*)m, CP_RAND_DATA_BYTES * 8, pRndParam);
+        sts = rndFunc((Ipp32u*)ksi, CP_RAND_DATA_BYTES * 8, pRndParam);
     }
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
-    sts = cp_MLKEMencaps_internal(pSharedSecret, pCipherText, pEncKey, m, pMLKEMCtx);
+    sts = cp_MLDSA_keyGen_internal(ksi, pPubKey, pPrvKey, pMLDSAState);
 
     /* Zeroization of sensitive data */
-    PurgeBlock(m, sizeof(m));
+    PurgeBlock(ksi, sizeof(ksi));
 
     /* Clear temporary storage */
     IppStatus memReleaseSts = cp_mlStorageReleaseAll(pStorage);

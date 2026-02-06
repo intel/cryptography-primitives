@@ -529,6 +529,15 @@ EXTERN (ippsMLKEM_KeyGen)
 EXTERN (ippsMLKEM_Encaps)
 EXTERN (ippsMLKEM_Decaps)
 EXTERN (ippsPBKDF2_PKCS5v2)
+EXTERN (ippsMLDSA_GetSize)
+EXTERN (ippsMLDSA_GetInfo)
+EXTERN (ippsMLDSA_Init)
+EXTERN (ippsMLDSA_KeyGenBufferGetSize)
+EXTERN (ippsMLDSA_SignBufferGetSize)
+EXTERN (ippsMLDSA_VerifyBufferGetSize)
+EXTERN (ippsMLDSA_KeyGen)
+EXTERN (ippsMLDSA_Sign)
+EXTERN (ippsMLDSA_Verify)
 
 VERSION {
  {
@@ -1064,6 +1073,15 @@ VERSION {
    ippsMLKEM_Encaps;
    ippsMLKEM_Decaps;
    ippsPBKDF2_PKCS5v2;
+   ippsMLDSA_GetSize;
+   ippsMLDSA_GetInfo;
+   ippsMLDSA_Init;
+   ippsMLDSA_KeyGenBufferGetSize;
+   ippsMLDSA_SignBufferGetSize;
+   ippsMLDSA_VerifyBufferGetSize;
+   ippsMLDSA_KeyGen;
+   ippsMLDSA_Sign;
+   ippsMLDSA_Verify;
   local: *;
  };
 }
