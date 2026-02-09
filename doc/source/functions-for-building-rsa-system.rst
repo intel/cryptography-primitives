@@ -41,6 +41,7 @@ keys.
    rsa_getsizepublickey-rsa_getsizeprivatekeytype1
    rsa_initpublickey-rsa_initprivatekeytype1-rsa
    rsa_setpublickey-rsa-setprivatekeytype1-rsa
+   rsa_setpublickeypart-privatekeytype1part-type2part
    rsa_getpublickey-rsa_getprivatekeytype1-rsa
    rsa_getbuffersizepublickey-rsa
    rsa_mb_getbuffersizepublickey-rsa-mb
