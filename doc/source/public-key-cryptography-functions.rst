@@ -16,4 +16,4 @@ Public Key Cryptography Functions
    rsa-algorithm-functions
    discrete-logarithm-based-cryptography-functions
    elliptic-curve-cryptography-functions
-   post-quantum-functions
+   pkcs/index

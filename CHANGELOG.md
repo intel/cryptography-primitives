@@ -11,8 +11,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Cleaned-up the library from the outdated macOS specific code.
 - Added RSA partial key setting functions to enable incremental construction of RSA keys by setting individual components separately.
 - Extended ippsRSAVerify_PKCS1v15_rmf function to support pre-hashed message verification.
-- Add new pkcs5-pbkdf2 key derivation function as part of PKCS-5, RFC-8018
-- Cleaned-up the library from the outdated macOS specific code
+- Added a new pkcs5-pbkdf2 key derivation function as part of PKCS-5, RFC-8018
 - Added support for ML-DSA scheme with Key Generation, Signing and Verification functionality implemented according to the FIPS 204.
 
 ## Intel(R) Cryptography Primitives Library 1.3.0

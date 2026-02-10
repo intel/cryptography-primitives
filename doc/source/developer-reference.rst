@@ -14,6 +14,7 @@ Intel® Cryptography Primitives Library API Reference
    public-key-cryptography-functions
    finite-field-arithmetic
    mitigation-for-frequency-throttling
+   post-quantum-functions
    multi-buffer-cryptography-functions
    support-functions-and-classes
    deprecated-functions

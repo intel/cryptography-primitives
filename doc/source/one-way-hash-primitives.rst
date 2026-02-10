@@ -97,8 +97,8 @@ hash algorithm as shown in the table below.
 
 
 
-`* - supported by reduced memory footprint functions only. The support of the SHA3 family 
-algorithm was added only for reduced memory footprint(_rmf) functions, the functionality 
+`* - supported by reduced memory footprint functions only. The support of the SHA3 family
+algorithm was added only for reduced memory footprint(_rmf) functions, the functionality
 of the deprecated API was not extended.`
 
 
@@ -122,9 +122,9 @@ the syntax.
 .. note::
 
 
-   For optimal performance when using hash methods multiple times, cache the method 
-   pointer to a separate variable from the initialization function and reuse it across 
-   calls. Alternatively, manual heap allocation for method storage offers similar 
+   For optimal performance when using hash methods multiple times, cache the method
+   pointer to a separate variable from the initialization function and reuse it across
+   calls. Alternatively, manual heap allocation for method storage offers similar
    performance to pointer caching but requires careful memory management.
 
 
@@ -231,4 +231,3 @@ the syntax.
    hash-functions
    hash-functions-for-non-streaming-messages
    mask-generation-functions
-   pkcs5_pbkdf2
