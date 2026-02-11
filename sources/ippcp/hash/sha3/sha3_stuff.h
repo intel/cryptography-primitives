@@ -54,6 +54,8 @@ IPP_OWN_DECL(void,
              (Ipp8u * output, Ipp64u outlen, const Ipp8u* input, Ipp64u inplen))
 
 // Absorb (Update)
+#define cp_SHA3_224_Absorb OWNAPI(cp_SHA3_224_Absorb)
+IPP_OWN_DECL(void, cp_SHA3_224_Absorb, (void* state, const Ipp8u* input, Ipp64u inlen))
 #define cp_SHA3_256_Absorb OWNAPI(cp_SHA3_256_Absorb)
 IPP_OWN_DECL(void, cp_SHA3_256_Absorb, (void* state, const Ipp8u* input, Ipp64u inlen))
 #define cp_SHA3_384_Absorb OWNAPI(cp_SHA3_384_Absorb)

@@ -36,6 +36,7 @@
 %define arg10 [rsp + ARG_10]
 
 ;; SHA3 rates
+%define SHA3_224_RATE 144
 %define SHA3_256_RATE 136
 %define SHA3_384_RATE 104
 %define SHA3_512_RATE 72
@@ -102,9 +103,12 @@
         vpxorq  ymm16, ymm16, ymm31
 %endif
 %if %%RATE > SHA3_256_RATE
-        ;; SHAKE128 RATE
+        ;; SHA3_224 RATE
         vmovq   xmm31, [%%INPUT + %%OFFSET + 8*17]
         vpxorq  ymm17, ymm17, ymm31
+%endif
+%if %%RATE > SHA3_224_RATE
+        ;; SHAKE128 RATE
         vmovq   xmm31, [%%INPUT + %%OFFSET + 8*18]
         vpxorq  ymm18, ymm18, ymm31
         vmovq   xmm31, [%%INPUT + %%OFFSET + 8*19]

@@ -36,6 +36,89 @@ section .text align=IPP_ALIGN_FACTOR
 
 ;;
 ;; void
+;; cp_SHA3_224_Absorb(void *state, const Ipp8u *input, Ipp64u inlen);
+;; Input:
+;;   - state/arg1: pointer to the state
+;;   - input/arg2: pointer to the input message
+;;   - inlen/arg3: length of the input message in bytes
+align IPP_ALIGN_FACTOR
+IPPASM cp_SHA3_224_Absorb, PUBLIC
+        USES_GPR NONVOLATILE_REGS_LIN64_GPR NONVOLATILE_REGS_WIN64_GPR
+        USES_XMM_AVX NONVOLATILE_REGS_WIN64_YMM
+        COMP_ABI 3
+
+        mov     arg1, [arg1]            ; state.ctx into arg1
+
+        ; check for partially processed block
+        mov     r14, [arg1 + 8*25]
+        or      r14, r14                ; s[25] == 0?
+        je      .absorb_main_loop_start
+
+        ; process remaining bytes if message long enough
+        mov     r12, SHA3_224_RATE      ; c = rate - s[25]
+        sub     r12, r14                ; r12 = capacity
+
+        cmp     arg3, r12               ; if mlen < capacity then cannot permute yet
+        jb      .absorb_skip_permute
+
+        mov     r10, arg3
+        lea     r13, [arg1 + r14]       ; r13 = state + s[25]
+        mov     arg3, arg2
+        CALL_IPPASM    keccak_1600_partial_add
+        mov     arg3, r10
+
+        CALL_IPPASM    keccak_1600_load_state
+        CALL_IPPASM    keccak1600_block_64bit
+
+        mov     qword [arg1 + 8*25], 0  ; clear s[25]
+        jmp     .absorb_partial_block_done
+
+.absorb_skip_permute:
+        mov     r11, arg3               ; copy message length to r11
+        xor     r12, r12                ; zero message offset
+        add     [arg1 + 8*25], r11      ; store partially processed length in s[25]
+        add     arg1, r14               ; state += s[25]
+        jmp     .absorb_final_partial_add
+
+.absorb_main_loop_start:
+        CALL_IPPASM    keccak_1600_load_state
+
+.absorb_partial_block_done:
+        mov     r11, arg3               ; copy message length to r11
+        xor     r12, r12                ; zero message offset
+
+        ; Process the input message in blocks
+align IPP_ALIGN_FACTOR
+.absorb_while_loop:
+        cmp     r11, SHA3_224_RATE      ; compare mlen to rate
+        jb      .absorb_while_loop_done
+
+        ABSORB_BYTES arg2, r12, SHA3_224_RATE   ; input, offset, rate
+
+        sub     r11, SHA3_224_RATE              ; Subtract the rate from the remaining length
+        add     r12, SHA3_224_RATE              ; Adjust the pointer to the next block of the input message
+        CALL_IPPASM    keccak1600_block_64bit   ; Perform the Keccak permutation
+        jmp     .absorb_while_loop
+
+align IPP_ALIGN_FACTOR
+.absorb_while_loop_done:
+
+        CALL_IPPASM    keccak_1600_save_state
+        add     [arg1 + 8*25], r11      ; store partially processed length in s[25]
+
+.absorb_final_partial_add:
+        add     arg2, r12
+        mov     r13, arg1
+        mov     r12, r11
+        CALL_IPPASM    keccak_1600_partial_add
+
+        REST_XMM_AVX
+        REST_GPR
+        ret
+ENDFUNC cp_SHA3_224_Absorb
+
+;;
+;; void
 ;; cp_SHA3_256_Absorb(void *state, const Ipp8u *input, Ipp64u inlen);
 ;; Input:
 ;;   - state/arg1: pointer to the state
