@@ -17,3 +17,4 @@ Public Key Cryptography Functions
    discrete-logarithm-based-cryptography-functions
    elliptic-curve-cryptography-functions
    pkcs/index
+   drbg/hash-drbg-index
