@@ -229,6 +229,8 @@ file(GLOB LIBRARY_C_SOURCES_ORIGINAL
     ${IPP_CRYPTO_SOURCES_DIR}/stateful_sig/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/ml_dsa/*.c
     ${IPP_CRYPTO_SOURCES_DIR}/ml_dsa/*/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/drbg/*.c
+    ${IPP_CRYPTO_SOURCES_DIR}/drbg/*/*.c
 )
 
 file(GLOB LIBRARY_ASM_SOURCES_ORIGINAL
@@ -398,7 +400,7 @@ foreach(opt ${PLATFORM_LIST})
                                            ${LIBRARY_C_SOURCES_${opt}}
                                            ${IPPCP_FIPS_CERT_LIBRARY_C_SOURCES}
                                            $<TARGET_OBJECTS:${IPPCP_DYN_ITER_ASMOBJS}>)
-      
+
       ## gres: copy LINK_FLAG_DYNAMIC_LINUX
       set(LINK_FLAGS ${LINK_FLAG_DYNAMIC_LINUX})
       ## add export file

@@ -714,7 +714,6 @@ A more secure alternative is available: ippsPRNGenRDRAND and ippsTRNGenRDSEED."
 
 IPPAPI(IppStatus, ippsPRNGGetSize,(int* pSize))
 IPPAPI(IppStatus, ippsPRNGInit,   (int seedBits, IppsPRNGState* pCtx))
-
 IPPAPI(IppStatus, ippsPRNGSetModulus,(const IppsBigNumState* pMod, IppsPRNGState* pCtx))
 IPPAPI(IppStatus, ippsPRNGSetH0,     (const IppsBigNumState* pH0,  IppsPRNGState* pCtx))
 IPPAPI(IppStatus, ippsPRNGSetAugment,(const IppsBigNumState* pAug, IppsPRNGState* pCtx))
@@ -729,6 +728,52 @@ IPPAPI(IppStatus, ippsPRNGenRDRAND,   (Ipp32u* pRand, int nBits, void* pCtx))
 IPPAPI(IppStatus, ippsPRNGenRDRAND_BN,(IppsBigNumState* pRand, int nBits, void* pCtx))
 IPPAPI(IppStatus, ippsTRNGenRDSEED,   (Ipp32u* pRand, int nBits, void* pCtx))
 IPPAPI(IppStatus, ippsTRNGenRDSEED_BN,(IppsBigNumState* pRand, int nBits, void* pCtx))
+
+IPPAPI(IppStatus, ippsHashDRBG_EntropyInputCtxGetSize, (int* pEntrInputSize,
+                                                        const int entrInputBufBitsLen,
+                                                        const IppsHashMethod* pHashMethod))
+IPPAPI(IppStatus, ippsHashDRBG_EntropyInputCtxInit, (IppsHashDRBG_EntropyInputCtx* pEntrInputCtx,
+                                                     const int entrInputBitsLen,
+                                                     IppEntropyInputSupplier getEntropyInput))
+IPPAPI(IppStatus, ippsHashDRBG_GetSize, (int* pSize, const IppsHashMethod* pHashMethod))
+IPPAPI(IppStatus, ippsHashDRBG_Init, (const IppsHashMethod* pHashMethod,
+                                      IppsHashDRBGState* pDrbgCtx))
+IPPAPI(IppStatus, ippsHashDRBG_Instantiate, (const int requestedInstSecurityStrength,
+                                             const int predictionResistanceFlag,
+                                             const Ipp8u* persStr,
+                                             const int persStrBitsLen,
+                                             IppsHashDRBG_EntropyInputCtx* pEntrInputCtx,
+                                             IppsHashDRBGState* pDrbgCtx))
+IPPAPI(IppStatus, ippsHashDRBG_Uninstantiate, (IppsHashDRBGState* pDrbgCtx))
+IPPAPI(IppStatus, ippsHashDRBG_Reseed, (const int predictionResistanceRequest,
+                                        const Ipp8u* addlInput,
+                                        const int addlInputBitsLen,
+                                        IppsHashDRBG_EntropyInputCtx* pEntrInputCtx,
+                                        IppsHashDRBGState* pDrbgCtx))
+IPPAPI(IppStatus, ippsHashDRBG_Gen, (Ipp32u* pRand,
+                                     int nBits,
+                                     const int requestedSecurityStrength,
+                                     const int predictionResistanceRequest,
+                                     const Ipp8u* addlInput,
+                                     const int addlInputBitsLen,
+                                     IppsHashDRBG_EntropyInputCtx* pEntrInputCtx,
+                                     IppsHashDRBGState* pDrbgCtx))
+IPPAPI(IppStatus, ippsHashDRBG_GenBN, (IppsBigNumState* pRand,
+                                       int nBits,
+                                       const int requestedSecurityStrength,
+                                       const int predictionResistanceRequest,
+                                       const Ipp8u* addlInput,
+                                       const int addlInputBitsLen,
+                                       IppsHashDRBG_EntropyInputCtx* pEntrInputCtx,
+                                       IppsHashDRBGState* pDrbgCtx))
+IPPAPI(IppStatus, ippsHashDRBG_InstantiateTest, (IppsHashDRBG_EntropyInputCtx* pEntrInputCtxTempBuf,
+                                                 IppsHashDRBGState* pDrbgCtxTempBuf))
+IPPAPI(IppStatus, ippsHashDRBG_ReseedTest, (IppsHashDRBG_EntropyInputCtx* pEntrInputCtxTempBuf,
+                                            IppsHashDRBGState* pDrbgCtxTempBuf))
+IPPAPI(IppStatus, ippsHashDRBG_GenTest, (Ipp32u* pRand,
+                                         int nBits,
+                                         IppsHashDRBG_EntropyInputCtx* pEntrInputCtxTempBuf,
+                                         IppsHashDRBGState* pDrbgCtxTempBuf))
 
 /* Probable Prime Number Generation */
 IPPAPI(IppStatus, ippsPrimeGetSize,(int nMaxBits, int* pSize))

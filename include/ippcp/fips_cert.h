@@ -254,7 +254,12 @@ enum FIPS_IPPCP_FUNC {
     PBKDF2_PKCS5v2,
     MLDSA_KeyGen,
     MLDSA_Sign,
-    MLDSA_Verify
+    MLDSA_Verify,
+    HashDRBG_Instantiate,
+    HashDRBG_Uninstantiate,
+    HashDRBG_Reseed,
+    HashDRBG_Gen,
+    HashDRBG_GenBN
 };
 
 /**

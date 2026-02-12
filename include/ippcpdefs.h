@@ -438,6 +438,7 @@ typedef signed int IppStatus;
 
 #endif /* IPPSTATUS_H__ */
 
+#define ippStsHashOperationErr           -1019 /* Hash DRBG: an internal error that can occur when hashing */
 #define ippStsMLDSAMaxIterations         -1018 /* The ML-DSA iterations reach maximum. Data weren't generated successfully. */
 #define ippStsInvalidPoint               -1017 /* ippStsInvalidPoint ECC: Invalid point (out of EC).*/
 #define ippStsQuadraticNonResidueErr     -1016 /* SQRT operation on quadratic non-residue value. */
@@ -634,13 +635,17 @@ typedef enum {
    ippSlidingWindows = 1, IppsSlidingWindows = 1
 } IppsExpMethod;
 
-typedef struct _cpBigNum      IppsBigNumState;
-typedef struct _cpMontgomery  IppsMontState;
-typedef struct _cpPRNG        IppsPRNGState;
-typedef struct _cpPrime       IppsPrimeState;
+typedef struct _cpBigNum          IppsBigNumState;
+typedef struct _cpMontgomery      IppsMontState;
+typedef struct _cpPRNG            IppsPRNGState;
+typedef struct _cpPrime           IppsPrimeState;
+typedef struct _cpHashDRBG        IppsHashDRBGState;
+typedef struct _cpEntropyInputCtx IppsHashDRBG_EntropyInputCtx;
 
 /*  External Bit Supplier */
 typedef IppStatus (IPP_CALL *IppBitSupplier)(Ipp32u* pRand, int nBits, void* pEbsParams);
+/* External entropyInput Supplier */
+typedef IppStatus (IPP_CALL *IppEntropyInputSupplier)(Ipp8u* entropyInput, int* entropyInputBitsLen, const int minEntropyInBits, const int maxBitsLen, const int predictionResistanceRequest);
 
 #define IPP_IS_EQ (0)
 #define IPP_IS_GT (1)

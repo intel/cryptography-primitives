@@ -282,6 +282,18 @@ EXTERN (ippsMontGet)
 EXTERN (ippsMontForm)
 EXTERN (ippsMontMul)
 EXTERN (ippsMontExp)
+EXTERN (ippsHashDRBG_EntropyInputCtxGetSize)
+EXTERN (ippsHashDRBG_EntropyInputCtxInit)
+EXTERN (ippsHashDRBG_GetSize)
+EXTERN (ippsHashDRBG_Init)
+EXTERN (ippsHashDRBG_Instantiate)
+EXTERN (ippsHashDRBG_Uninstantiate)
+EXTERN (ippsHashDRBG_Reseed)
+EXTERN (ippsHashDRBG_Gen)
+EXTERN (ippsHashDRBG_GenBN)
+EXTERN (ippsHashDRBG_InstantiateTest)
+EXTERN (ippsHashDRBG_ReseedTest)
+EXTERN (ippsHashDRBG_GenTest)
 EXTERN (ippsPRNGGetSize)
 EXTERN (ippsPRNGInit)
 EXTERN (ippsPRNGSetModulus)
@@ -885,6 +897,18 @@ VERSION {
    ippsMontForm;
    ippsMontMul;
    ippsMontExp;
+   ippsHashDRBG_EntropyInputCtxGetSize;
+   ippsHashDRBG_EntropyInputCtxInit;
+   ippsHashDRBG_GetSize;
+   ippsHashDRBG_Init;
+   ippsHashDRBG_Instantiate;
+   ippsHashDRBG_Uninstantiate;
+   ippsHashDRBG_Reseed;
+   ippsHashDRBG_Gen;
+   ippsHashDRBG_GenBN;
+   ippsHashDRBG_InstantiateTest;
+   ippsHashDRBG_ReseedTest;
+   ippsHashDRBG_GenTest;
    ippsPRNGGetSize;
    ippsPRNGInit;
    ippsPRNGSetModulus;

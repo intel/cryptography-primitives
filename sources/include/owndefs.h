@@ -393,7 +393,9 @@ typedef enum {
     idCtxPubKeyLMS,
     idCtxSignLMS,
     idCtxMLKEM,
-    idCtxMLDSA
+    idCtxMLDSA,
+    idCtxHashDRBGEntrInput,
+    idCtxHashDRBG
 } IppCtxId;
 
 
