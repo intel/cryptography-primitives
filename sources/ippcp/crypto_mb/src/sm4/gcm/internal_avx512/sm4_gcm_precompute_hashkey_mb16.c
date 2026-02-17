@@ -32,6 +32,11 @@ void sm4_gcm_precompute_hashkey_mb16(const mbx_sm4_key_schedule* key_sched,
     const __m512i* p_rk = (const __m512i*)key_sched;
     __m512i tmp;
 
+    /* Load the constant values */
+    const __m512i two_one_m512i    = _mm512_loadu_si512(two_one);
+    const __m512i gcm_poly_m512i   = _mm512_loadu_si512(gcm_poly);
+    const __m512i swap_order_m512i = _mm512_loadu_si512(swapWordsOrder);
+
     /* Encrypt zero blocks */
     __m512i hashkey_blocks_4_0 = setzero();
     __m512i hashkey_blocks_4_1 = setzero();
@@ -66,10 +71,10 @@ void sm4_gcm_precompute_hashkey_mb16(const mbx_sm4_key_schedule* key_sched,
     hashkey_blocks_4_2 = unpacklo_epi64(T1_1, T1_3);
     hashkey_blocks_4_3 = unpackhi_epi64(T1_1, T1_3);
 
-    hashkey_blocks_4_0 = shuffle_epi8(hashkey_blocks_4_0, M512(swapWordsOrder));
-    hashkey_blocks_4_1 = shuffle_epi8(hashkey_blocks_4_1, M512(swapWordsOrder));
-    hashkey_blocks_4_2 = shuffle_epi8(hashkey_blocks_4_2, M512(swapWordsOrder));
-    hashkey_blocks_4_3 = shuffle_epi8(hashkey_blocks_4_3, M512(swapWordsOrder));
+    hashkey_blocks_4_0 = shuffle_epi8(hashkey_blocks_4_0, swap_order_m512i);
+    hashkey_blocks_4_1 = shuffle_epi8(hashkey_blocks_4_1, swap_order_m512i);
+    hashkey_blocks_4_2 = shuffle_epi8(hashkey_blocks_4_2, swap_order_m512i);
+    hashkey_blocks_4_3 = shuffle_epi8(hashkey_blocks_4_3, swap_order_m512i);
 
     /* compute hashkeys >> 1 mod poly */
     T1_0               = srli_epi64(hashkey_blocks_4_0, 63);
@@ -100,19 +105,19 @@ void sm4_gcm_precompute_hashkey_mb16(const mbx_sm4_key_schedule* key_sched,
     T1_2 = shuffle_epi32(T2_2, 0b00100100);
     T1_3 = shuffle_epi32(T2_3, 0b00100100);
 
-    __mmask16 cmp_mask_0 = cmpeq_epi32_mask(T1_0, M512(two_one));
-    __mmask16 cmp_mask_1 = cmpeq_epi32_mask(T1_1, M512(two_one));
-    __mmask16 cmp_mask_2 = cmpeq_epi32_mask(T1_2, M512(two_one));
-    __mmask16 cmp_mask_3 = cmpeq_epi32_mask(T1_3, M512(two_one));
+    __mmask16 cmp_mask_0 = cmpeq_epi32_mask(T1_0, two_one_m512i);
+    __mmask16 cmp_mask_1 = cmpeq_epi32_mask(T1_1, two_one_m512i);
+    __mmask16 cmp_mask_2 = cmpeq_epi32_mask(T1_2, two_one_m512i);
+    __mmask16 cmp_mask_3 = cmpeq_epi32_mask(T1_3, two_one_m512i);
     T1_0                 = mask_set1_epi32(T1_0, cmp_mask_0, (int)0xFFFFFFFF);
     T1_1                 = mask_set1_epi32(T1_1, cmp_mask_1, (int)0xFFFFFFFF);
     T1_2                 = mask_set1_epi32(T1_2, cmp_mask_2, (int)0xFFFFFFFF);
     T1_3                 = mask_set1_epi32(T1_3, cmp_mask_3, (int)0xFFFFFFFF);
 
-    T1_0               = and(T1_0, M512(gcm_poly));
-    T1_1               = and(T1_1, M512(gcm_poly));
-    T1_2               = and(T1_2, M512(gcm_poly));
-    T1_3               = and(T1_3, M512(gcm_poly));
+    T1_0               = and(T1_0, gcm_poly_m512i);
+    T1_1               = and(T1_1, gcm_poly_m512i);
+    T1_2               = and(T1_2, gcm_poly_m512i);
+    T1_3               = and(T1_3, gcm_poly_m512i);
     hashkey_blocks_4_0 = xor(hashkey_blocks_4_0, T1_0);
     hashkey_blocks_4_1 = xor(hashkey_blocks_4_1, T1_1);
     hashkey_blocks_4_2 = xor(hashkey_blocks_4_2, T1_2);

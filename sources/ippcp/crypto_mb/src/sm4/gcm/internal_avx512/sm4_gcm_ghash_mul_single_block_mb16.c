@@ -81,12 +81,15 @@ void sm4_gcm_ghash_mul_single_block_mb16(__m512i* data_blocks[], __m512i* hashke
     *(data_blocks[2]) = xor(*(data_blocks[2]), T2_2);
     *(data_blocks[3]) = xor(*(data_blocks[3]), T2_3);
 
+    /* Load the constant value */
+    const __m512i gcm_poly2_mm512i = _mm512_loadu_si512(gcm_poly2);
+
     /* first phase of the reduction */
 
-    T2_0 = clmul(M512(gcm_poly2), *(data_blocks[0]), 0x01);
-    T2_1 = clmul(M512(gcm_poly2), *(data_blocks[1]), 0x01);
-    T2_2 = clmul(M512(gcm_poly2), *(data_blocks[2]), 0x01);
-    T2_3 = clmul(M512(gcm_poly2), *(data_blocks[3]), 0x01);
+    T2_0 = clmul(gcm_poly2_mm512i, *(data_blocks[0]), 0x01);
+    T2_1 = clmul(gcm_poly2_mm512i, *(data_blocks[1]), 0x01);
+    T2_2 = clmul(gcm_poly2_mm512i, *(data_blocks[2]), 0x01);
+    T2_3 = clmul(gcm_poly2_mm512i, *(data_blocks[3]), 0x01);
 
     T2_0 = bslli_epi128(T2_0, 8);
     T2_1 = bslli_epi128(T2_1, 8);
@@ -100,20 +103,20 @@ void sm4_gcm_ghash_mul_single_block_mb16(__m512i* data_blocks[], __m512i* hashke
 
     /* second phase of the reduction */
 
-    T2_0 = clmul(M512(gcm_poly2), *(data_blocks[0]), 0x00);
-    T2_1 = clmul(M512(gcm_poly2), *(data_blocks[1]), 0x00);
-    T2_2 = clmul(M512(gcm_poly2), *(data_blocks[2]), 0x00);
-    T2_3 = clmul(M512(gcm_poly2), *(data_blocks[3]), 0x00);
+    T2_0 = clmul(gcm_poly2_mm512i, *(data_blocks[0]), 0x00);
+    T2_1 = clmul(gcm_poly2_mm512i, *(data_blocks[1]), 0x00);
+    T2_2 = clmul(gcm_poly2_mm512i, *(data_blocks[2]), 0x00);
+    T2_3 = clmul(gcm_poly2_mm512i, *(data_blocks[3]), 0x00);
 
     T2_0 = bsrli_epi128(T2_0, 4);
     T2_1 = bsrli_epi128(T2_1, 4);
     T2_2 = bsrli_epi128(T2_2, 4);
     T2_3 = bsrli_epi128(T2_3, 4);
 
-    *(data_blocks[0]) = clmul(M512(gcm_poly2), *(data_blocks[0]), 0x10);
-    *(data_blocks[1]) = clmul(M512(gcm_poly2), *(data_blocks[1]), 0x10);
-    *(data_blocks[2]) = clmul(M512(gcm_poly2), *(data_blocks[2]), 0x10);
-    *(data_blocks[3]) = clmul(M512(gcm_poly2), *(data_blocks[3]), 0x10);
+    *(data_blocks[0]) = clmul(gcm_poly2_mm512i, *(data_blocks[0]), 0x10);
+    *(data_blocks[1]) = clmul(gcm_poly2_mm512i, *(data_blocks[1]), 0x10);
+    *(data_blocks[2]) = clmul(gcm_poly2_mm512i, *(data_blocks[2]), 0x10);
+    *(data_blocks[3]) = clmul(gcm_poly2_mm512i, *(data_blocks[3]), 0x10);
 
     *(data_blocks[0]) = bslli_epi128(*(data_blocks[0]), 4);
     *(data_blocks[1]) = bslli_epi128(*(data_blocks[1]), 4);

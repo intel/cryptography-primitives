@@ -54,15 +54,18 @@ mbx_status16 sm4_gcm_get_tag_mb16(int8u* pa_out[SM4_LINES],
     hashkeys_4_2     = loadu(hashkey + 8);
     hashkeys_4_3     = loadu(hashkey + 12);
 
+    /* Load the constant value */
+    const __m128i bytes_to_bits_shift_m128i = _mm_loadu_si128((const __m128i*)bytes_to_bits_shift);
+
     /* Convert length in bytes to length in bits */
     data_len_blocks_4_0 = sll_epi32(loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), 0)),
-                                    M128(bytes_to_bits_shift));
+                                    bytes_to_bits_shift_m128i);
     data_len_blocks_4_1 = sll_epi32(loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), 1)),
-                                    M128(bytes_to_bits_shift));
+                                    bytes_to_bits_shift_m128i);
     data_len_blocks_4_2 = sll_epi32(loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), 2)),
-                                    M128(bytes_to_bits_shift));
+                                    bytes_to_bits_shift_m128i);
     data_len_blocks_4_3 = sll_epi32(loadu(BUFFER_REG_NUM(SM4_GCM_CONTEXT_LEN(p_context), 3)),
-                                    M128(bytes_to_bits_shift));
+                                    bytes_to_bits_shift_m128i);
 
     /* XOR with accumulated GHASH value */
     __m128i* ghash = SM4_GCM_CONTEXT_GHASH(p_context);
@@ -75,10 +78,13 @@ mbx_status16 sm4_gcm_get_tag_mb16(int8u* pa_out[SM4_LINES],
     /* Update GHASH value */
     sm4_gcm_ghash_mul_single_block_mb16(data_blocks, hashkeys);
 
-    data_len_blocks_4_0 = shuffle_epi8(data_len_blocks_4_0, M512(swapEndianness));
-    data_len_blocks_4_1 = shuffle_epi8(data_len_blocks_4_1, M512(swapEndianness));
-    data_len_blocks_4_2 = shuffle_epi8(data_len_blocks_4_2, M512(swapEndianness));
-    data_len_blocks_4_3 = shuffle_epi8(data_len_blocks_4_3, M512(swapEndianness));
+    /* Load the constant value */
+    const __m512i swap_endianness_m512i = _mm512_loadu_si512(swapEndianness);
+
+    data_len_blocks_4_0 = shuffle_epi8(data_len_blocks_4_0, swap_endianness_m512i);
+    data_len_blocks_4_1 = shuffle_epi8(data_len_blocks_4_1, swap_endianness_m512i);
+    data_len_blocks_4_2 = shuffle_epi8(data_len_blocks_4_2, swap_endianness_m512i);
+    data_len_blocks_4_3 = shuffle_epi8(data_len_blocks_4_3, swap_endianness_m512i);
 
     __m512i j0_blocks[4];
 
@@ -99,7 +105,7 @@ mbx_status16 sm4_gcm_get_tag_mb16(int8u* pa_out[SM4_LINES],
 
     /* Store result */
     for (int i = 0; i < SM4_LINES; i++) {
-        __m128i one_block = M128((__m128i*)tag_blocks + i);
+        __m128i one_block = _mm_loadu_si128((const __m128i*)tag_blocks + i);
 
         __mmask16 tagMask =
             (__mmask16)(~(0xFFFF << (tag_len[rearrangeOrder[i]])) * ((mb_mask >> i) & 0x1));

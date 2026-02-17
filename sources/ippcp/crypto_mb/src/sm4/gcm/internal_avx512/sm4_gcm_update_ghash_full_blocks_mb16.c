@@ -28,6 +28,9 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     __mmask16 load_mask_2 = load_mask >> 2 * 4;
     __mmask16 load_mask_3 = load_mask >> 3 * 4;
 
+    /* Load 128 bits from 512 */
+    const __m128i swap_endianness_m128i = _mm_loadu_si128((const __m128i*)swapEndianness);
+
     *(data_blocks[0]) = setzero();
     *(data_blocks[1]) = setzero();
     *(data_blocks[2]) = setzero();
@@ -49,10 +52,10 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     __m128i input_block_3 =
         _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)), (void*)pa_input[0 + 4 * 3]);
 
-    input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
-    input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
-    input_block_2 = _mm_shuffle_epi8(input_block_2, M128(swapEndianness));
-    input_block_3 = _mm_shuffle_epi8(input_block_3, M128(swapEndianness));
+    input_block_0 = _mm_shuffle_epi8(input_block_0, swap_endianness_m128i);
+    input_block_1 = _mm_shuffle_epi8(input_block_1, swap_endianness_m128i);
+    input_block_2 = _mm_shuffle_epi8(input_block_2, swap_endianness_m128i);
+    input_block_3 = _mm_shuffle_epi8(input_block_3, swap_endianness_m128i);
 
     *(data_blocks[0]) = insert32x4(*(data_blocks[0]), input_block_0, 0);
     *(data_blocks[1]) = insert32x4(*(data_blocks[1]), input_block_1, 0);
@@ -73,10 +76,10 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     input_block_3 =
         _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)), (void*)pa_input[1 + 4 * 3]);
 
-    input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
-    input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
-    input_block_2 = _mm_shuffle_epi8(input_block_2, M128(swapEndianness));
-    input_block_3 = _mm_shuffle_epi8(input_block_3, M128(swapEndianness));
+    input_block_0 = _mm_shuffle_epi8(input_block_0, swap_endianness_m128i);
+    input_block_1 = _mm_shuffle_epi8(input_block_1, swap_endianness_m128i);
+    input_block_2 = _mm_shuffle_epi8(input_block_2, swap_endianness_m128i);
+    input_block_3 = _mm_shuffle_epi8(input_block_3, swap_endianness_m128i);
 
     *(data_blocks[0]) = insert32x4(*(data_blocks[0]), input_block_0, 1);
     *(data_blocks[1]) = insert32x4(*(data_blocks[1]), input_block_1, 1);
@@ -97,10 +100,10 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     input_block_3 =
         _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)), (void*)pa_input[2 + 4 * 3]);
 
-    input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
-    input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
-    input_block_2 = _mm_shuffle_epi8(input_block_2, M128(swapEndianness));
-    input_block_3 = _mm_shuffle_epi8(input_block_3, M128(swapEndianness));
+    input_block_0 = _mm_shuffle_epi8(input_block_0, swap_endianness_m128i);
+    input_block_1 = _mm_shuffle_epi8(input_block_1, swap_endianness_m128i);
+    input_block_2 = _mm_shuffle_epi8(input_block_2, swap_endianness_m128i);
+    input_block_3 = _mm_shuffle_epi8(input_block_3, swap_endianness_m128i);
 
     *(data_blocks[0]) = insert32x4(*(data_blocks[0]), input_block_0, 2);
     *(data_blocks[1]) = insert32x4(*(data_blocks[1]), input_block_1, 2);
@@ -121,10 +124,10 @@ __MBX_INLINE void read_first(__m512i* data_blocks[4],
     input_block_3 =
         _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)), (void*)pa_input[3 + 4 * 3]);
 
-    input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
-    input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
-    input_block_2 = _mm_shuffle_epi8(input_block_2, M128(swapEndianness));
-    input_block_3 = _mm_shuffle_epi8(input_block_3, M128(swapEndianness));
+    input_block_0 = _mm_shuffle_epi8(input_block_0, swap_endianness_m128i);
+    input_block_1 = _mm_shuffle_epi8(input_block_1, swap_endianness_m128i);
+    input_block_2 = _mm_shuffle_epi8(input_block_2, swap_endianness_m128i);
+    input_block_3 = _mm_shuffle_epi8(input_block_3, swap_endianness_m128i);
 
     *(data_blocks[0]) = insert32x4(*(data_blocks[0]), input_block_0, 3);
     *(data_blocks[1]) = insert32x4(*(data_blocks[1]), input_block_1, 3);
@@ -143,6 +146,9 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
     __mmask16 load_mask_1 = load_mask >> 1 * 4;
     __mmask16 load_mask_2 = load_mask >> 2 * 4;
     __mmask16 load_mask_3 = load_mask >> 3 * 4;
+
+    /* Load 128 bits from 512 */
+    const __m128i swap_endianness_m128i = _mm_loadu_si128((const __m128i*)swapEndianness);
 
     *(data_blocks[0]) = setzero();
     *(data_blocks[1]) = setzero();
@@ -165,10 +171,10 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
     __m128i input_block_3 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)),
                                                  (void*)(pa_input[0 + 4 * 3] + block_number * 16));
 
-    input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
-    input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
-    input_block_2 = _mm_shuffle_epi8(input_block_2, M128(swapEndianness));
-    input_block_3 = _mm_shuffle_epi8(input_block_3, M128(swapEndianness));
+    input_block_0 = _mm_shuffle_epi8(input_block_0, swap_endianness_m128i);
+    input_block_1 = _mm_shuffle_epi8(input_block_1, swap_endianness_m128i);
+    input_block_2 = _mm_shuffle_epi8(input_block_2, swap_endianness_m128i);
+    input_block_3 = _mm_shuffle_epi8(input_block_3, swap_endianness_m128i);
 
     *(data_blocks[0]) = insert32x4(*(data_blocks[0]), input_block_0, 0);
     *(data_blocks[1]) = insert32x4(*(data_blocks[1]), input_block_1, 0);
@@ -189,10 +195,10 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
     input_block_3 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)),
                                          (void*)(pa_input[1 + 4 * 3] + block_number * 16));
 
-    input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
-    input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
-    input_block_2 = _mm_shuffle_epi8(input_block_2, M128(swapEndianness));
-    input_block_3 = _mm_shuffle_epi8(input_block_3, M128(swapEndianness));
+    input_block_0 = _mm_shuffle_epi8(input_block_0, swap_endianness_m128i);
+    input_block_1 = _mm_shuffle_epi8(input_block_1, swap_endianness_m128i);
+    input_block_2 = _mm_shuffle_epi8(input_block_2, swap_endianness_m128i);
+    input_block_3 = _mm_shuffle_epi8(input_block_3, swap_endianness_m128i);
 
     *(data_blocks[0]) = insert32x4(*(data_blocks[0]), input_block_0, 1);
     *(data_blocks[1]) = insert32x4(*(data_blocks[1]), input_block_1, 1);
@@ -213,10 +219,10 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
     input_block_3 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)),
                                          (void*)(pa_input[2 + 4 * 3] + block_number * 16));
 
-    input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
-    input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
-    input_block_2 = _mm_shuffle_epi8(input_block_2, M128(swapEndianness));
-    input_block_3 = _mm_shuffle_epi8(input_block_3, M128(swapEndianness));
+    input_block_0 = _mm_shuffle_epi8(input_block_0, swap_endianness_m128i);
+    input_block_1 = _mm_shuffle_epi8(input_block_1, swap_endianness_m128i);
+    input_block_2 = _mm_shuffle_epi8(input_block_2, swap_endianness_m128i);
+    input_block_3 = _mm_shuffle_epi8(input_block_3, swap_endianness_m128i);
 
     *(data_blocks[0]) = insert32x4(*(data_blocks[0]), input_block_0, 2);
     *(data_blocks[1]) = insert32x4(*(data_blocks[1]), input_block_1, 2);
@@ -237,10 +243,10 @@ __MBX_INLINE void read_next(__m512i* data_blocks[4],
     input_block_3 = _mm_maskz_loadu_epi8((__mmask16)(0xFFFF * (0x1 & load_mask_3)),
                                          (void*)(pa_input[3 + 4 * 3] + block_number * 16));
 
-    input_block_0 = _mm_shuffle_epi8(input_block_0, M128(swapEndianness));
-    input_block_1 = _mm_shuffle_epi8(input_block_1, M128(swapEndianness));
-    input_block_2 = _mm_shuffle_epi8(input_block_2, M128(swapEndianness));
-    input_block_3 = _mm_shuffle_epi8(input_block_3, M128(swapEndianness));
+    input_block_0 = _mm_shuffle_epi8(input_block_0, swap_endianness_m128i);
+    input_block_1 = _mm_shuffle_epi8(input_block_1, swap_endianness_m128i);
+    input_block_2 = _mm_shuffle_epi8(input_block_2, swap_endianness_m128i);
+    input_block_3 = _mm_shuffle_epi8(input_block_3, swap_endianness_m128i);
 
     *(data_blocks[0]) = insert32x4(*(data_blocks[0]), input_block_0, 3);
     *(data_blocks[1]) = insert32x4(*(data_blocks[1]), input_block_1, 3);
@@ -277,6 +283,9 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
     __m512i T1_1, T2_1, T3_1, T4_1;
     __m512i T1_2, T2_2, T3_2, T4_2;
     __m512i T1_3, T2_3, T3_3, T4_3;
+
+    /* Load the constant value */
+    const __m512i gcm_poly2_mm512i = _mm512_loadu_si512(gcm_poly2);
 
     /* Calculate how many blocks can be processed with delayed reduction */
     for (int i = 8; i > 0; i--) {
@@ -410,10 +419,10 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
 
         /* First phase of the reduction */
 
-        T3_0 = clmul(M512(gcm_poly2), T2_0, 0x01);
-        T3_1 = clmul(M512(gcm_poly2), T2_1, 0x01);
-        T3_2 = clmul(M512(gcm_poly2), T2_2, 0x01);
-        T3_3 = clmul(M512(gcm_poly2), T2_3, 0x01);
+        T3_0 = clmul(gcm_poly2_mm512i, T2_0, 0x01);
+        T3_1 = clmul(gcm_poly2_mm512i, T2_1, 0x01);
+        T3_2 = clmul(gcm_poly2_mm512i, T2_2, 0x01);
+        T3_3 = clmul(gcm_poly2_mm512i, T2_3, 0x01);
 
         T3_0 = bslli_epi128(T3_0, 8);
         T3_1 = bslli_epi128(T3_1, 8);
@@ -427,20 +436,20 @@ void sm4_gcm_update_ghash_full_blocks_mb16(__m128i ghash[SM4_LINES],
 
         /* Second phase of the reduction */
 
-        T3_0 = clmul(M512(gcm_poly2), T2_0, 0x00);
-        T3_1 = clmul(M512(gcm_poly2), T2_1, 0x00);
-        T3_2 = clmul(M512(gcm_poly2), T2_2, 0x00);
-        T3_3 = clmul(M512(gcm_poly2), T2_3, 0x00);
+        T3_0 = clmul(gcm_poly2_mm512i, T2_0, 0x00);
+        T3_1 = clmul(gcm_poly2_mm512i, T2_1, 0x00);
+        T3_2 = clmul(gcm_poly2_mm512i, T2_2, 0x00);
+        T3_3 = clmul(gcm_poly2_mm512i, T2_3, 0x00);
 
         T3_0 = bsrli_epi128(T3_0, 4);
         T3_1 = bsrli_epi128(T3_1, 4);
         T3_2 = bsrli_epi128(T3_2, 4);
         T3_3 = bsrli_epi128(T3_3, 4);
 
-        T4_0 = clmul(M512(gcm_poly2), T2_0, 0x10);
-        T4_1 = clmul(M512(gcm_poly2), T2_1, 0x10);
-        T4_2 = clmul(M512(gcm_poly2), T2_2, 0x10);
-        T4_3 = clmul(M512(gcm_poly2), T2_3, 0x10);
+        T4_0 = clmul(gcm_poly2_mm512i, T2_0, 0x10);
+        T4_1 = clmul(gcm_poly2_mm512i, T2_1, 0x10);
+        T4_2 = clmul(gcm_poly2_mm512i, T2_2, 0x10);
+        T4_3 = clmul(gcm_poly2_mm512i, T2_3, 0x10);
 
         T4_0 = bslli_epi128(T4_0, 4);
         T4_1 = bslli_epi128(T4_1, 4);

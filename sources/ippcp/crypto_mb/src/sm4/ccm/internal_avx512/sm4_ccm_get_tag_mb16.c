@@ -55,10 +55,13 @@ static void sm4_encrypt_ctr0_mb16(SM4_CCM_CTX_mb16* p_context, __m512i* s0_block
     s0_blocks[2] = unpacklo_epi64(T1_1, T1_3);
     s0_blocks[3] = unpackhi_epi64(T1_1, T1_3);
 
-    s0_blocks[0] = shuffle_epi8(s0_blocks[0], M512(swapEndianness));
-    s0_blocks[1] = shuffle_epi8(s0_blocks[1], M512(swapEndianness));
-    s0_blocks[2] = shuffle_epi8(s0_blocks[2], M512(swapEndianness));
-    s0_blocks[3] = shuffle_epi8(s0_blocks[3], M512(swapEndianness));
+    /* Load the constant value */
+    const __m512i swap_endianness_m512i = _mm512_loadu_si512(swapEndianness);
+
+    s0_blocks[0] = shuffle_epi8(s0_blocks[0], swap_endianness_m512i);
+    s0_blocks[1] = shuffle_epi8(s0_blocks[1], swap_endianness_m512i);
+    s0_blocks[2] = shuffle_epi8(s0_blocks[2], swap_endianness_m512i);
+    s0_blocks[3] = shuffle_epi8(s0_blocks[3], swap_endianness_m512i);
 
     T1_0 = _mm512_shuffle_i64x2(s0_blocks[0], s0_blocks[1], 0x44);
     T1_1 = _mm512_shuffle_i64x2(s0_blocks[0], s0_blocks[1], 0xEE);
@@ -100,7 +103,7 @@ mbx_status16 sm4_ccm_get_tag_mb16(int8u* pa_out[SM4_LINES],
 
     /* Store result */
     for (int i = 0; i < SM4_LINES; i++) {
-        __m128i one_block = M128((__m128i*)tag_blocks + i);
+        __m128i one_block = _mm_loadu_si128((const __m128i*)tag_blocks + i);
 
         __mmask16 tagMask = (__mmask16)(~(0xFFFF << (tag_len[i])) * ((mb_mask >> i) & 0x1));
         _mm_mask_storeu_epi8((void*)(pa_out[i]), tagMask, one_block);

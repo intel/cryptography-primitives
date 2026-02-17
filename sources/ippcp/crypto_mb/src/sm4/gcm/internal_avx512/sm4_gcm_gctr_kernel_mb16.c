@@ -40,45 +40,50 @@ static void sm4_gctr_mask_kernel_mb16(__m512i* CTR,
                                       __mmask16 mb_mask)
 {
     __m512i TMP[20];
+
+    /* Load the constant values */
+    const __m512i swap_m512i       = _mm512_loadu_si512(swapBytes);
+    const __m512i swap_order_m512i = _mm512_loadu_si512(swapWordsOrder);
+
     while (tmp_mask) {
         *CTR       = inc_block32(*CTR, inc);
         *(CTR + 1) = inc_block32(*(CTR + 1), inc);
         *(CTR + 2) = inc_block32(*(CTR + 2), inc);
         *(CTR + 3) = inc_block32(*(CTR + 3), inc);
-        TMP[0]     = shuffle_epi8(*CTR, M512(swapWordsOrder));
-        TMP[1]     = shuffle_epi8(*(CTR + 1), M512(swapWordsOrder));
-        TMP[2]     = shuffle_epi8(*(CTR + 2), M512(swapWordsOrder));
-        TMP[3]     = shuffle_epi8(*(CTR + 3), M512(swapWordsOrder));
+        TMP[0]     = shuffle_epi8(*CTR, swap_order_m512i);
+        TMP[1]     = shuffle_epi8(*(CTR + 1), swap_order_m512i);
+        TMP[2]     = shuffle_epi8(*(CTR + 2), swap_order_m512i);
+        TMP[3]     = shuffle_epi8(*(CTR + 3), swap_order_m512i);
         TRANSPOSE_INP_512(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         *(CTR + 4) = inc_block32(*(CTR + 4), inc);
         *(CTR + 5) = inc_block32(*(CTR + 5), inc);
         *(CTR + 6) = inc_block32(*(CTR + 6), inc);
         *(CTR + 7) = inc_block32(*(CTR + 7), inc);
-        TMP[0]     = shuffle_epi8(*(CTR + 4), M512(swapWordsOrder));
-        TMP[1]     = shuffle_epi8(*(CTR + 5), M512(swapWordsOrder));
-        TMP[2]     = shuffle_epi8(*(CTR + 6), M512(swapWordsOrder));
-        TMP[3]     = shuffle_epi8(*(CTR + 7), M512(swapWordsOrder));
+        TMP[0]     = shuffle_epi8(*(CTR + 4), swap_order_m512i);
+        TMP[1]     = shuffle_epi8(*(CTR + 5), swap_order_m512i);
+        TMP[2]     = shuffle_epi8(*(CTR + 6), swap_order_m512i);
+        TMP[3]     = shuffle_epi8(*(CTR + 7), swap_order_m512i);
         TRANSPOSE_INP_512(TMP[8], TMP[9], TMP[10], TMP[11], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         *(CTR + 8)  = inc_block32(*(CTR + 8), inc);
         *(CTR + 9)  = inc_block32(*(CTR + 9), inc);
         *(CTR + 10) = inc_block32(*(CTR + 10), inc);
         *(CTR + 11) = inc_block32(*(CTR + 11), inc);
-        TMP[0]      = shuffle_epi8(*(CTR + 8), M512(swapWordsOrder));
-        TMP[1]      = shuffle_epi8(*(CTR + 9), M512(swapWordsOrder));
-        TMP[2]      = shuffle_epi8(*(CTR + 10), M512(swapWordsOrder));
-        TMP[3]      = shuffle_epi8(*(CTR + 11), M512(swapWordsOrder));
+        TMP[0]      = shuffle_epi8(*(CTR + 8), swap_order_m512i);
+        TMP[1]      = shuffle_epi8(*(CTR + 9), swap_order_m512i);
+        TMP[2]      = shuffle_epi8(*(CTR + 10), swap_order_m512i);
+        TMP[3]      = shuffle_epi8(*(CTR + 11), swap_order_m512i);
         TRANSPOSE_INP_512(TMP[12], TMP[13], TMP[14], TMP[15], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         *(CTR + 12) = inc_block32(*(CTR + 12), inc);
         *(CTR + 13) = inc_block32(*(CTR + 13), inc);
         *(CTR + 14) = inc_block32(*(CTR + 14), inc);
         *(CTR + 15) = inc_block32(*(CTR + 15), inc);
-        TMP[0]      = shuffle_epi8(*(CTR + 12), M512(swapWordsOrder));
-        TMP[1]      = shuffle_epi8(*(CTR + 13), M512(swapWordsOrder));
-        TMP[2]      = shuffle_epi8(*(CTR + 14), M512(swapWordsOrder));
-        TMP[3]      = shuffle_epi8(*(CTR + 15), M512(swapWordsOrder));
+        TMP[0]      = shuffle_epi8(*(CTR + 12), swap_order_m512i);
+        TMP[1]      = shuffle_epi8(*(CTR + 13), swap_order_m512i);
+        TMP[2]      = shuffle_epi8(*(CTR + 14), swap_order_m512i);
+        TMP[3]      = shuffle_epi8(*(CTR + 15), swap_order_m512i);
         TRANSPOSE_INP_512(TMP[16], TMP[17], TMP[18], TMP[19], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         SM4_KERNEL(TMP, p_rk, 1);
@@ -89,99 +94,102 @@ static void sm4_gctr_mask_kernel_mb16(__m512i* CTR,
         int* p_loc_len = (int*)&loc_len;
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
-        TMP[0] = shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = shuffle_epi8(TMP[0], swap_m512i);
+        TMP[1] = shuffle_epi8(TMP[1], swap_m512i);
+        TMP[2] = shuffle_epi8(TMP[2], swap_m512i);
+        TMP[3] = shuffle_epi8(TMP[3], swap_m512i);
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[0],
+        mask_storeu_epi8(loc_out[0],
                          stream_mask,
                          xor(TMP[0], maskz_loadu_epi8(stream_mask, loc_inp[0])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[1],
+        mask_storeu_epi8(loc_out[1],
                          stream_mask,
                          xor(TMP[1], maskz_loadu_epi8(stream_mask, loc_inp[1])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[2],
+        mask_storeu_epi8(loc_out[2],
                          stream_mask,
                          xor(TMP[2], maskz_loadu_epi8(stream_mask, loc_inp[2])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[3],
+        mask_storeu_epi8(loc_out[3],
                          stream_mask,
                          xor(TMP[3], maskz_loadu_epi8(stream_mask, loc_inp[3])));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[8], TMP[9], TMP[10], TMP[11]);
-        TMP[0] = shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = shuffle_epi8(TMP[0], swap_m512i);
+        TMP[1] = shuffle_epi8(TMP[1], swap_m512i);
+        TMP[2] = shuffle_epi8(TMP[2], swap_m512i);
+        TMP[3] = shuffle_epi8(TMP[3], swap_m512i);
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[4],
+        mask_storeu_epi8(loc_out[4],
                          stream_mask,
                          xor(TMP[0], maskz_loadu_epi8(stream_mask, loc_inp[4])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[5],
+        mask_storeu_epi8(loc_out[5],
                          stream_mask,
                          xor(TMP[1], maskz_loadu_epi8(stream_mask, loc_inp[5])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[6],
+        mask_storeu_epi8(loc_out[6],
                          stream_mask,
                          xor(TMP[2], maskz_loadu_epi8(stream_mask, loc_inp[6])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[7],
+        mask_storeu_epi8(loc_out[7],
                          stream_mask,
                          xor(TMP[3], maskz_loadu_epi8(stream_mask, loc_inp[7])));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[12], TMP[13], TMP[14], TMP[15]);
-        TMP[0] = shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = shuffle_epi8(TMP[0], swap_m512i);
+        TMP[1] = shuffle_epi8(TMP[1], swap_m512i);
+        TMP[2] = shuffle_epi8(TMP[2], swap_m512i);
+        TMP[3] = shuffle_epi8(TMP[3], swap_m512i);
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[8],
+        mask_storeu_epi8(loc_out[8],
                          stream_mask,
                          xor(TMP[0], maskz_loadu_epi8(stream_mask, loc_inp[8])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[9],
+        mask_storeu_epi8(loc_out[9],
                          stream_mask,
                          xor(TMP[1], maskz_loadu_epi8(stream_mask, loc_inp[9])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[10],
+        mask_storeu_epi8(loc_out[10],
                          stream_mask,
                          xor(TMP[2], maskz_loadu_epi8(stream_mask, loc_inp[10])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[11],
+        mask_storeu_epi8(loc_out[11],
                          stream_mask,
                          xor(TMP[3], maskz_loadu_epi8(stream_mask, loc_inp[11])));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[16], TMP[17], TMP[18], TMP[19]);
-        TMP[0] = shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = shuffle_epi8(TMP[3], M512(swapBytes));
+        TMP[0] = shuffle_epi8(TMP[0], swap_m512i);
+        TMP[1] = shuffle_epi8(TMP[1], swap_m512i);
+        TMP[2] = shuffle_epi8(TMP[2], swap_m512i);
+        TMP[3] = shuffle_epi8(TMP[3], swap_m512i);
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[12],
+        mask_storeu_epi8(loc_out[12],
                          stream_mask,
                          xor(TMP[0], maskz_loadu_epi8(stream_mask, loc_inp[12])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[13],
+        mask_storeu_epi8(loc_out[13],
                          stream_mask,
                          xor(TMP[1], maskz_loadu_epi8(stream_mask, loc_inp[13])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[14],
+        mask_storeu_epi8(loc_out[14],
                          stream_mask,
                          xor(TMP[2], maskz_loadu_epi8(stream_mask, loc_inp[14])));
         UPDATE_STREAM_MASK_64(stream_mask, p_loc_len)
-        mask_storeu_epi8((__m512i*)loc_out[15],
+        mask_storeu_epi8(loc_out[15],
                          stream_mask,
                          xor(TMP[3], maskz_loadu_epi8(stream_mask, loc_inp[15])));
 
         /* Update pointers to data */
-        M512(loc_inp)     = add_epi64(loadu(loc_inp), set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) = add_epi64(loadu(loc_inp + 8), set1_epi64(4 * SM4_BLOCK_SIZE));
+        _mm512_storeu_si512((void*)loc_inp,
+                            add_epi64(loadu(loc_inp), set1_epi64(4 * SM4_BLOCK_SIZE)));
+        _mm512_storeu_si512((void*)(loc_inp + 8),
+                            add_epi64(loadu(loc_inp + 8), set1_epi64(4 * SM4_BLOCK_SIZE)));
 
-        M512(loc_out)     = add_epi64(loadu(loc_out), set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_out + 8) = add_epi64(loadu(loc_out + 8), set1_epi64(4 * SM4_BLOCK_SIZE));
+        _mm512_storeu_si512(loc_out, add_epi64(loadu(loc_out), set1_epi64(4 * SM4_BLOCK_SIZE)));
+        _mm512_storeu_si512((loc_out + 8),
+                            add_epi64(loadu(loc_out + 8), set1_epi64(4 * SM4_BLOCK_SIZE)));
 
         /* Update number of blocks left and processing mask */
         loc_len  = sub_epi32(loc_len, set1_epi32(4 * SM4_BLOCK_SIZE));
@@ -213,6 +221,10 @@ void sm4_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
     const int8u* loc_inp[SM4_LINES];
     int8u* loc_out[SM4_LINES];
 
+    /* Load the constant values */
+    const __m512i swap_m512i       = _mm512_loadu_si512(swapBytes);
+    const __m512i swap_order_m512i = _mm512_loadu_si512(swapWordsOrder);
+
     /* Create the local copy of the input data length in bytes and set it to zero for non-valid buffers */
     __m512i loc_len;
     loc_len = loadu(len);
@@ -223,11 +235,11 @@ void sm4_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
     storeu(loc_blks, srli_epi32(add_epi32(loc_len, set1_epi32(SM4_BLOCK_SIZE - 1)), 4));
 
     /* Local copies of the pointers to input and output buffers */
-    storeu((void*)loc_inp, loadu(pa_inp));
-    storeu((void*)(loc_inp + 8), loadu(pa_inp + 8));
+    _mm512_storeu_si512((void*)loc_inp, loadu(pa_inp));
+    _mm512_storeu_si512((void*)(loc_inp + 8), loadu(pa_inp + 8));
 
-    storeu(loc_out, loadu(pa_out));
-    storeu(loc_out + 8, loadu(pa_out + 8));
+    _mm512_storeu_si512(loc_out, loadu(pa_out));
+    _mm512_storeu_si512((loc_out + 8), loadu(pa_out + 8));
 
     /* Pointer p_rk is set to the beginning of the key schedule */
     const __m512i* p_rk = (const __m512i*)key_sched;
@@ -263,91 +275,94 @@ void sm4_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
         CTR[1] = inc_block32(CTR[1], inc);
         CTR[2] = inc_block32(CTR[2], inc);
         CTR[3] = inc_block32(CTR[3], inc);
-        TMP[0] = shuffle_epi8(CTR[0], M512(swapWordsOrder));
-        TMP[1] = shuffle_epi8(CTR[1], M512(swapWordsOrder));
-        TMP[2] = shuffle_epi8(CTR[2], M512(swapWordsOrder));
-        TMP[3] = shuffle_epi8(CTR[3], M512(swapWordsOrder));
+        TMP[0] = shuffle_epi8(CTR[0], swap_order_m512i);
+        TMP[1] = shuffle_epi8(CTR[1], swap_order_m512i);
+        TMP[2] = shuffle_epi8(CTR[2], swap_order_m512i);
+        TMP[3] = shuffle_epi8(CTR[3], swap_order_m512i);
         TRANSPOSE_INP_512(TMP[4], TMP[5], TMP[6], TMP[7], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         CTR[4] = inc_block32(CTR[4], inc);
         CTR[5] = inc_block32(CTR[5], inc);
         CTR[6] = inc_block32(CTR[6], inc);
         CTR[7] = inc_block32(CTR[7], inc);
-        TMP[0] = shuffle_epi8(CTR[4], M512(swapWordsOrder));
-        TMP[1] = shuffle_epi8(CTR[5], M512(swapWordsOrder));
-        TMP[2] = shuffle_epi8(CTR[6], M512(swapWordsOrder));
-        TMP[3] = shuffle_epi8(CTR[7], M512(swapWordsOrder));
+        TMP[0] = shuffle_epi8(CTR[4], swap_order_m512i);
+        TMP[1] = shuffle_epi8(CTR[5], swap_order_m512i);
+        TMP[2] = shuffle_epi8(CTR[6], swap_order_m512i);
+        TMP[3] = shuffle_epi8(CTR[7], swap_order_m512i);
         TRANSPOSE_INP_512(TMP[8], TMP[9], TMP[10], TMP[11], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         CTR[8]  = inc_block32(CTR[8], inc);
         CTR[9]  = inc_block32(CTR[9], inc);
         CTR[10] = inc_block32(CTR[10], inc);
         CTR[11] = inc_block32(CTR[11], inc);
-        TMP[0]  = shuffle_epi8(CTR[8], M512(swapWordsOrder));
-        TMP[1]  = shuffle_epi8(CTR[9], M512(swapWordsOrder));
-        TMP[2]  = shuffle_epi8(CTR[10], M512(swapWordsOrder));
-        TMP[3]  = shuffle_epi8(CTR[11], M512(swapWordsOrder));
+        TMP[0]  = shuffle_epi8(CTR[8], swap_order_m512i);
+        TMP[1]  = shuffle_epi8(CTR[9], swap_order_m512i);
+        TMP[2]  = shuffle_epi8(CTR[10], swap_order_m512i);
+        TMP[3]  = shuffle_epi8(CTR[11], swap_order_m512i);
         TRANSPOSE_INP_512(TMP[12], TMP[13], TMP[14], TMP[15], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         CTR[12] = inc_block32(CTR[12], inc);
         CTR[13] = inc_block32(CTR[13], inc);
         CTR[14] = inc_block32(CTR[14], inc);
         CTR[15] = inc_block32(CTR[15], inc);
-        TMP[0]  = shuffle_epi8(CTR[12], M512(swapWordsOrder));
-        TMP[1]  = shuffle_epi8(CTR[13], M512(swapWordsOrder));
-        TMP[2]  = shuffle_epi8(CTR[14], M512(swapWordsOrder));
-        TMP[3]  = shuffle_epi8(CTR[15], M512(swapWordsOrder));
+        TMP[0]  = shuffle_epi8(CTR[12], swap_order_m512i);
+        TMP[1]  = shuffle_epi8(CTR[13], swap_order_m512i);
+        TMP[2]  = shuffle_epi8(CTR[14], swap_order_m512i);
+        TMP[3]  = shuffle_epi8(CTR[15], swap_order_m512i);
         TRANSPOSE_INP_512(TMP[16], TMP[17], TMP[18], TMP[19], TMP[0], TMP[1], TMP[2], TMP[3]);
 
         SM4_KERNEL(TMP, p_rk, 1);
         p_rk -= SM4_ROUNDS;
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[4], TMP[5], TMP[6], TMP[7]);
-        TMP[0] = shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = shuffle_epi8(TMP[3], M512(swapBytes));
-        storeu((__m512i*)loc_out[0], xor(TMP[0], loadu(loc_inp[0])));
-        storeu((__m512i*)loc_out[1], xor(TMP[1], loadu(loc_inp[1])));
-        storeu((__m512i*)loc_out[2], xor(TMP[2], loadu(loc_inp[2])));
-        storeu((__m512i*)loc_out[3], xor(TMP[3], loadu(loc_inp[3])));
+        TMP[0] = shuffle_epi8(TMP[0], swap_m512i);
+        TMP[1] = shuffle_epi8(TMP[1], swap_m512i);
+        TMP[2] = shuffle_epi8(TMP[2], swap_m512i);
+        TMP[3] = shuffle_epi8(TMP[3], swap_m512i);
+        storeu(loc_out[0], xor(TMP[0], loadu(loc_inp[0])));
+        storeu(loc_out[1], xor(TMP[1], loadu(loc_inp[1])));
+        storeu(loc_out[2], xor(TMP[2], loadu(loc_inp[2])));
+        storeu(loc_out[3], xor(TMP[3], loadu(loc_inp[3])));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[8], TMP[9], TMP[10], TMP[11]);
-        TMP[0] = shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = shuffle_epi8(TMP[3], M512(swapBytes));
-        storeu((__m512i*)loc_out[4], xor(TMP[0], loadu(loc_inp[4])));
-        storeu((__m512i*)loc_out[5], xor(TMP[1], loadu(loc_inp[5])));
-        storeu((__m512i*)loc_out[6], xor(TMP[2], loadu(loc_inp[6])));
-        storeu((__m512i*)loc_out[7], xor(TMP[3], loadu(loc_inp[7])));
+        TMP[0] = shuffle_epi8(TMP[0], swap_m512i);
+        TMP[1] = shuffle_epi8(TMP[1], swap_m512i);
+        TMP[2] = shuffle_epi8(TMP[2], swap_m512i);
+        TMP[3] = shuffle_epi8(TMP[3], swap_m512i);
+        storeu(loc_out[4], xor(TMP[0], loadu(loc_inp[4])));
+        storeu(loc_out[5], xor(TMP[1], loadu(loc_inp[5])));
+        storeu(loc_out[6], xor(TMP[2], loadu(loc_inp[6])));
+        storeu(loc_out[7], xor(TMP[3], loadu(loc_inp[7])));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[12], TMP[13], TMP[14], TMP[15]);
-        TMP[0] = shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = shuffle_epi8(TMP[3], M512(swapBytes));
-        storeu((__m512i*)loc_out[8], xor(TMP[0], loadu(loc_inp[8])));
-        storeu((__m512i*)loc_out[9], xor(TMP[1], loadu(loc_inp[9])));
-        storeu((__m512i*)loc_out[10], xor(TMP[2], loadu(loc_inp[10])));
-        storeu((__m512i*)loc_out[11], xor(TMP[3], loadu(loc_inp[11])));
+        TMP[0] = shuffle_epi8(TMP[0], swap_m512i);
+        TMP[1] = shuffle_epi8(TMP[1], swap_m512i);
+        TMP[2] = shuffle_epi8(TMP[2], swap_m512i);
+        TMP[3] = shuffle_epi8(TMP[3], swap_m512i);
+        storeu(loc_out[8], xor(TMP[0], loadu(loc_inp[8])));
+        storeu(loc_out[9], xor(TMP[1], loadu(loc_inp[9])));
+        storeu(loc_out[10], xor(TMP[2], loadu(loc_inp[10])));
+        storeu(loc_out[11], xor(TMP[3], loadu(loc_inp[11])));
 
         TRANSPOSE_OUT_512(TMP[0], TMP[1], TMP[2], TMP[3], TMP[16], TMP[17], TMP[18], TMP[19]);
-        TMP[0] = shuffle_epi8(TMP[0], M512(swapBytes));
-        TMP[1] = shuffle_epi8(TMP[1], M512(swapBytes));
-        TMP[2] = shuffle_epi8(TMP[2], M512(swapBytes));
-        TMP[3] = shuffle_epi8(TMP[3], M512(swapBytes));
-        storeu((__m512i*)loc_out[12], xor(TMP[0], loadu(loc_inp[12])));
-        storeu((__m512i*)loc_out[13], xor(TMP[1], loadu(loc_inp[13])));
-        storeu((__m512i*)loc_out[14], xor(TMP[2], loadu(loc_inp[14])));
-        storeu((__m512i*)loc_out[15], xor(TMP[3], loadu(loc_inp[15])));
+        TMP[0] = shuffle_epi8(TMP[0], swap_m512i);
+        TMP[1] = shuffle_epi8(TMP[1], swap_m512i);
+        TMP[2] = shuffle_epi8(TMP[2], swap_m512i);
+        TMP[3] = shuffle_epi8(TMP[3], swap_m512i);
+        storeu(loc_out[12], xor(TMP[0], loadu(loc_inp[12])));
+        storeu(loc_out[13], xor(TMP[1], loadu(loc_inp[13])));
+        storeu(loc_out[14], xor(TMP[2], loadu(loc_inp[14])));
+        storeu(loc_out[15], xor(TMP[3], loadu(loc_inp[15])));
 
         /* Update pointers to data */
-        M512(loc_inp)     = add_epi64(loadu(loc_inp), set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) = add_epi64(loadu(loc_inp + 8), set1_epi64(4 * SM4_BLOCK_SIZE));
+        _mm512_storeu_si512((void*)loc_inp,
+                            add_epi64(loadu(loc_inp), set1_epi64(4 * SM4_BLOCK_SIZE)));
+        _mm512_storeu_si512((void*)(loc_inp + 8),
+                            add_epi64(loadu(loc_inp + 8), set1_epi64(4 * SM4_BLOCK_SIZE)));
 
-        M512(loc_out)     = add_epi64(loadu(loc_out), set1_epi64(4 * SM4_BLOCK_SIZE));
-        M512(loc_out + 8) = add_epi64(loadu(loc_out + 8), set1_epi64(4 * SM4_BLOCK_SIZE));
+        _mm512_storeu_si512(loc_out, add_epi64(loadu(loc_out), set1_epi64(4 * SM4_BLOCK_SIZE)));
+        _mm512_storeu_si512((loc_out + 8),
+                            add_epi64(loadu(loc_out + 8), set1_epi64(4 * SM4_BLOCK_SIZE)));
 
         /* Update number of blocks left and processing mask */
         loc_len = sub_epi32(loc_len, set1_epi32(4 * SM4_BLOCK_SIZE));

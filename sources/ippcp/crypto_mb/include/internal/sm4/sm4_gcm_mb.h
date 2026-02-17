@@ -102,7 +102,7 @@ mbx_status16 internal_avx512_sm4_gcm_init_mb16(const sm4_key* const pa_key[SM4_L
 
 __MBX_INLINE __m512i inc_block32(__m512i x, const int8u* increment)
 {
-    return mask_add_epi32(x, 0x1111, x, M512(increment));
+    return mask_add_epi32(x, 0x1111, x, _mm512_loadu_si512(increment));
 }
 
 static __ALIGN64 const int8u initialInc[] = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

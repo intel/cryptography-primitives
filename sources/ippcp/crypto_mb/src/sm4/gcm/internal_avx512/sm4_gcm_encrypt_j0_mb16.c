@@ -69,10 +69,13 @@ void sm4_encrypt_j0_mb16(SM4_GCM_CTX_mb16* p_context)
     j0_blocks[2] = unpacklo_epi64(T1_1, T1_3);
     j0_blocks[3] = unpackhi_epi64(T1_1, T1_3);
 
-    j0_blocks[0] = shuffle_epi8(j0_blocks[0], M512(swapBytes));
-    j0_blocks[1] = shuffle_epi8(j0_blocks[1], M512(swapBytes));
-    j0_blocks[2] = shuffle_epi8(j0_blocks[2], M512(swapBytes));
-    j0_blocks[3] = shuffle_epi8(j0_blocks[3], M512(swapBytes));
+    /* Load the constant value */
+    const __m512i swap_m512i = loadu(swapBytes);
+
+    j0_blocks[0] = shuffle_epi8(j0_blocks[0], swap_m512i);
+    j0_blocks[1] = shuffle_epi8(j0_blocks[1], swap_m512i);
+    j0_blocks[2] = shuffle_epi8(j0_blocks[2], swap_m512i);
+    j0_blocks[3] = shuffle_epi8(j0_blocks[3], swap_m512i);
 
     storeu(j0 + 0, j0_blocks[0]);
     storeu(j0 + 4, j0_blocks[1]);

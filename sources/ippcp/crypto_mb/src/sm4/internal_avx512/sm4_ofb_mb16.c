@@ -73,15 +73,19 @@ mbx_status16 sm4_ofb_kernel_mb16(int8u* pa_out[SM4_LINES],
         TRANSPOSE_AND_XOR_4x16_I32_EPI8(iv0, iv1, iv2, iv3, loc_out, loc_inp, p_loc_len, tmp_mask);
 
         /* Update pointers to data */
-        M512(loc_inp) =
-            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(SM4_BLOCK_SIZE));
-        M512(loc_inp + 8) =
-            _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+        _mm512_storeu_si512(
+            (void*)loc_inp,
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp), _mm512_set1_epi64(SM4_BLOCK_SIZE)));
+        _mm512_storeu_si512(
+            (void*)(loc_inp + 8),
+            _mm512_add_epi64(_mm512_loadu_si512(loc_inp + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE)));
 
-        M512(loc_out) =
-            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(SM4_BLOCK_SIZE));
-        M512(loc_out + 8) =
-            _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE));
+        _mm512_storeu_si512(
+            loc_out,
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out), _mm512_set1_epi64(SM4_BLOCK_SIZE)));
+        _mm512_storeu_si512(
+            (loc_out + 8),
+            _mm512_add_epi64(_mm512_loadu_si512(loc_out + 8), _mm512_set1_epi64(SM4_BLOCK_SIZE)));
 
         /* Update number of blocks left and processing mask */
         loc_len = _mm512_sub_epi32(loc_len, _mm512_set1_epi32(SM4_BLOCK_SIZE));

@@ -40,6 +40,9 @@ void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
 
     int64u* iv_len = SM4_GCM_CONTEXT_LEN(p_context);
 
+    /* Load the constant value */
+    const __m512i swap_endianness_m512i = _mm512_loadu_si512(swapEndianness);
+
     __m512i hashkeys_4_0, hashkeys_4_1, hashkeys_4_2, hashkeys_4_3;
     __m512i* hashkeys[] = { &hashkeys_4_0, &hashkeys_4_1, &hashkeys_4_2, &hashkeys_4_3 };
 
@@ -128,10 +131,10 @@ void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
 
         sm4_gcm_ghash_mul_single_block_mb16(data_blocks, hashkeys);
 
-        iv_blocks_4_0 = shuffle_epi8(iv_blocks_4_0, M512(swapEndianness));
-        iv_blocks_4_1 = shuffle_epi8(iv_blocks_4_1, M512(swapEndianness));
-        iv_blocks_4_2 = shuffle_epi8(iv_blocks_4_2, M512(swapEndianness));
-        iv_blocks_4_3 = shuffle_epi8(iv_blocks_4_3, M512(swapEndianness));
+        iv_blocks_4_0 = shuffle_epi8(iv_blocks_4_0, swap_endianness_m512i);
+        iv_blocks_4_1 = shuffle_epi8(iv_blocks_4_1, swap_endianness_m512i);
+        iv_blocks_4_2 = shuffle_epi8(iv_blocks_4_2, swap_endianness_m512i);
+        iv_blocks_4_3 = shuffle_epi8(iv_blocks_4_3, swap_endianness_m512i);
 
         __mmask8 store_mask_0 = (__mmask8)(0x03 * (0x1 & ((load_mask >> 0 * 4) >> 0)) |
                                            0x0C * (0x1 & ((load_mask >> 0 * 4) >> 1)) |
@@ -163,8 +166,10 @@ void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
     if (eq_12_mask != 0 && pa_iv != NULL) {
         __m128i iv_block;
 
+        __m128i one_f_m128i = _mm_loadu_si128((const __m128i*)&one_f[0]);
+
         for (int i = 0; i < SM4_LINES; i++) {
-            iv_block = _mm_mask_loadu_epi8(M128(one_f),
+            iv_block = _mm_mask_loadu_epi8(one_f_m128i,
                                            (__mmask16)(0x0FFF * (0x1 & eq_12_mask)),
                                            (void*)pa_iv[i]);
             _mm_mask_storeu_epi8(j0 + i, (__mmask16)(0xFFFF * (0x1 & eq_12_mask)), iv_block);
@@ -173,10 +178,18 @@ void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
     }
 
     /* Store initial counter */
-    storeu(ctr + 0, inc_block32(shuffle_epi8(loadu(j0 + 0), M512(swapEndianness)), initialInc));
-    storeu(ctr + 4, inc_block32(shuffle_epi8(loadu(j0 + 4), M512(swapEndianness)), initialInc));
-    storeu(ctr + 8, inc_block32(shuffle_epi8(loadu(j0 + 8), M512(swapEndianness)), initialInc));
-    storeu(ctr + 12, inc_block32(shuffle_epi8(loadu(j0 + 12), M512(swapEndianness)), initialInc));
+    storeu(
+        ctr + 0,
+        inc_block32(shuffle_epi8(_mm512_loadu_si512(j0 + 0), swap_endianness_m512i), initialInc));
+    storeu(
+        ctr + 4,
+        inc_block32(shuffle_epi8(_mm512_loadu_si512(j0 + 4), swap_endianness_m512i), initialInc));
+    storeu(
+        ctr + 8,
+        inc_block32(shuffle_epi8(_mm512_loadu_si512(j0 + 8), swap_endianness_m512i), initialInc));
+    storeu(
+        ctr + 12,
+        inc_block32(shuffle_epi8(_mm512_loadu_si512(j0 + 12), swap_endianness_m512i), initialInc));
 
     sm4_encrypt_j0_mb16(p_context);
 

@@ -113,6 +113,7 @@ SSE42 = "sse42"
 AVX2 = "avx2"
 AVX512BW = "avx512bw"
 AVX512IFMA = "avx512ifma"
+AVX10_2 = "avx10.2"
 
 CPU = {
     SSE3: {INTEL64: "m7"},
@@ -120,13 +121,14 @@ CPU = {
     AVX2: {INTEL64: "l9"},
     AVX512BW: {INTEL64: "k0"},
     AVX512IFMA: {INTEL64: "k1"},
+    AVX10_2: {INTEL64: "d1"},
 }
 
 SUPPORTED_CPUS = {
     IPP: {
         INTEL64: {
-            WINDOWS: [SSE42, AVX2, AVX512BW],
-            LINUX: [SSE42, AVX2, AVX512BW],
+            WINDOWS: [SSE42, AVX2, AVX512BW, AVX10_2],
+            LINUX: [SSE42, AVX2, AVX512BW, AVX10_2],
         },
     },
     IPPCP: {
@@ -138,6 +140,7 @@ SUPPORTED_CPUS = {
 }
 
 CPUID = {
+    AVX10_2: "APX_FEATURES",
     AVX512IFMA: "AVX3I_FEATURES",
     AVX512BW: "AVX3X_FEATURES",
     AVX2: "ippCPUID_AVX2",

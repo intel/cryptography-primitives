@@ -26,16 +26,6 @@
 
 #if (_MBX >= _MBX_K1)
 
-#ifndef M128
-#define M128(mem) (*((__m128i*)(mem)))
-#endif
-#ifndef M256
-#define M256(mem) (*((__m256i*)(mem)))
-#endif
-#ifndef M512
-#define M512(mem) (*((__m512i*)(mem)))
-#endif
-
 #define loadu  _mm512_loadu_si512
 #define storeu _mm512_storeu_si512
 
@@ -267,16 +257,16 @@ static __ALIGN64 const int64u xts_next_tweak_permq_enc[] = {
         SM4_ONE_ROUND_MASKED((X3), (X0), (X1), (X2), (TMP), (MASK), ((RK) + (sign) * 3)); \
     }
 
-#define EXPAND_ONE_RKEY(X, p_rk)                                                    \
-    {                                                                               \
-        (X)[0] = _mm512_permutexvar_epi32(M512(idx_0_3), _mm512_loadu_si512(p_rk)); \
-        (X)[1] = _mm512_permutexvar_epi32(M512(idx_4_7), _mm512_loadu_si512(p_rk)); \
-        (X)[2] = _mm512_permutexvar_epi32(M512(idx_8_b), _mm512_loadu_si512(p_rk)); \
-        (X)[3] = _mm512_permutexvar_epi32(M512(idx_c_f), _mm512_loadu_si512(p_rk)); \
+#define EXPAND_ONE_RKEY(X, p_rk)                                                                  \
+    {                                                                                             \
+        (X)[0] = _mm512_permutexvar_epi32(_mm512_loadu_si512(idx_0_3), _mm512_loadu_si512(p_rk)); \
+        (X)[1] = _mm512_permutexvar_epi32(_mm512_loadu_si512(idx_4_7), _mm512_loadu_si512(p_rk)); \
+        (X)[2] = _mm512_permutexvar_epi32(_mm512_loadu_si512(idx_8_b), _mm512_loadu_si512(p_rk)); \
+        (X)[3] = _mm512_permutexvar_epi32(_mm512_loadu_si512(idx_c_f), _mm512_loadu_si512(p_rk)); \
     }
 
-#define ENDIANNESS_16x32(x)    _mm512_shuffle_epi8((x), M512(swapBytes));
-#define CHANGE_ORDER_BLOCKS(x) _mm512_shuffle_epi8((x), M512(swapEndianness));
+#define ENDIANNESS_16x32(x)    _mm512_shuffle_epi8((x), _mm512_loadu_si512(swapBytes));
+#define CHANGE_ORDER_BLOCKS(x) _mm512_shuffle_epi8((x), _mm512_loadu_si512(swapEndianness));
 
 /* Workaround for gcc91, got the error: implicit declaration of function ‘_mm512_div_epi32’ */
 #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
@@ -393,8 +383,8 @@ mbx_status16 internal_avx512_sm4_xts_set_keys_mb16(mbx_sm4_key_schedule* key_sch
 // The transformation based on SM4 sbox algebraic structure, parameters were computed manually
 __MBX_INLINE __m512i sBox512(__m512i block)
 {
-    block = _mm512_gf2p8affine_epi64_epi8(block, M512(affineIn), 0x65);
-    block = _mm512_gf2p8affineinv_epi64_epi8(block, M512(affineOut), 0xd3);
+    block = _mm512_gf2p8affine_epi64_epi8(block, _mm512_loadu_si512(affineIn), 0x65);
+    block = _mm512_gf2p8affineinv_epi64_epi8(block, _mm512_loadu_si512(affineOut), 0xd3);
     return block;
 }
 
@@ -414,7 +404,7 @@ __MBX_INLINE __m512i Lkey512(__m512i x)
 
 __MBX_INLINE __m512i IncBlock512(__m512i x, const int8u* increment)
 {
-    __m512i t          = _mm512_add_epi64(x, M512(increment));
+    __m512i t          = _mm512_add_epi64(x, _mm512_loadu_si512(increment));
     __mmask8 carryMask = _mm512_cmplt_epu64_mask(t, x);
     carryMask          = (__mmask8)(carryMask << 1);
     t = _mm512_add_epi64(t, _mm512_mask_set1_epi64(_mm512_setzero_si512(), carryMask, 1));
@@ -516,38 +506,38 @@ __MBX_INLINE __m512i IncBlock512(__m512i x, const int8u* increment)
 // Transpose functions
 */
 
-#define TRANSPOSE_INP_512(K0, K1, K2, K3, T0, T1, T2, T3)   \
-    K0   = _mm512_unpacklo_epi32(T0, T1);                   \
-    (K1) = _mm512_unpacklo_epi32(T2, T3);                   \
-    (K2) = _mm512_unpackhi_epi32(T0, T1);                   \
-    (K3) = _mm512_unpackhi_epi32(T2, T3);                   \
-                                                            \
-    (T0) = _mm512_unpacklo_epi64(K0, K1);                   \
-    (T1) = _mm512_unpacklo_epi64(K2, K3);                   \
-    (T2) = _mm512_unpackhi_epi64(K0, K1);                   \
-    (T3) = _mm512_unpackhi_epi64(K2, K3);                   \
-                                                            \
-    (K2) = _mm512_permutexvar_epi32(M512(permMask_in), T1); \
-    (K1) = _mm512_permutexvar_epi32(M512(permMask_in), T2); \
-    (K3) = _mm512_permutexvar_epi32(M512(permMask_in), T3); \
-    (K0) = _mm512_permutexvar_epi32(M512(permMask_in), T0)
+#define TRANSPOSE_INP_512(K0, K1, K2, K3, T0, T1, T2, T3)                 \
+    K0   = _mm512_unpacklo_epi32(T0, T1);                                 \
+    (K1) = _mm512_unpacklo_epi32(T2, T3);                                 \
+    (K2) = _mm512_unpackhi_epi32(T0, T1);                                 \
+    (K3) = _mm512_unpackhi_epi32(T2, T3);                                 \
+                                                                          \
+    (T0) = _mm512_unpacklo_epi64(K0, K1);                                 \
+    (T1) = _mm512_unpacklo_epi64(K2, K3);                                 \
+    (T2) = _mm512_unpackhi_epi64(K0, K1);                                 \
+    (T3) = _mm512_unpackhi_epi64(K2, K3);                                 \
+                                                                          \
+    (K2) = _mm512_permutexvar_epi32(_mm512_loadu_si512(permMask_in), T1); \
+    (K1) = _mm512_permutexvar_epi32(_mm512_loadu_si512(permMask_in), T2); \
+    (K3) = _mm512_permutexvar_epi32(_mm512_loadu_si512(permMask_in), T3); \
+    (K0) = _mm512_permutexvar_epi32(_mm512_loadu_si512(permMask_in), T0)
 
-#define TRANSPOSE_OUT_512(T0, T1, T2, T3, K0, K1, K2, K3)    \
-    (T0) = _mm512_shuffle_i32x4(K0, K1, 0x44);               \
-    (T1) = _mm512_shuffle_i32x4(K0, K1, 0xee);               \
-    (T2) = _mm512_shuffle_i32x4(K2, K3, 0x44);               \
-    (T3) = _mm512_shuffle_i32x4(K2, K3, 0xee);               \
-                                                             \
-    (K0) = _mm512_shuffle_i32x4(T0, T2, 0x88);               \
-    (K1) = _mm512_shuffle_i32x4(T0, T2, 0xdd);               \
-    (K2) = _mm512_shuffle_i32x4(T1, T3, 0x88);               \
-    (K3) = _mm512_shuffle_i32x4(T1, T3, 0xdd);               \
-                                                             \
-    (K0) = _mm512_permutexvar_epi32(M512(permMask_out), K0); \
-    (K1) = _mm512_permutexvar_epi32(M512(permMask_out), K1); \
-    (K2) = _mm512_permutexvar_epi32(M512(permMask_out), K2); \
-    (K3) = _mm512_permutexvar_epi32(M512(permMask_out), K3); \
-                                                             \
+#define TRANSPOSE_OUT_512(T0, T1, T2, T3, K0, K1, K2, K3)                  \
+    (T0) = _mm512_shuffle_i32x4(K0, K1, 0x44);                             \
+    (T1) = _mm512_shuffle_i32x4(K0, K1, 0xee);                             \
+    (T2) = _mm512_shuffle_i32x4(K2, K3, 0x44);                             \
+    (T3) = _mm512_shuffle_i32x4(K2, K3, 0xee);                             \
+                                                                           \
+    (K0) = _mm512_shuffle_i32x4(T0, T2, 0x88);                             \
+    (K1) = _mm512_shuffle_i32x4(T0, T2, 0xdd);                             \
+    (K2) = _mm512_shuffle_i32x4(T1, T3, 0x88);                             \
+    (K3) = _mm512_shuffle_i32x4(T1, T3, 0xdd);                             \
+                                                                           \
+    (K0) = _mm512_permutexvar_epi32(_mm512_loadu_si512(permMask_out), K0); \
+    (K1) = _mm512_permutexvar_epi32(_mm512_loadu_si512(permMask_out), K1); \
+    (K2) = _mm512_permutexvar_epi32(_mm512_loadu_si512(permMask_out), K2); \
+    (K3) = _mm512_permutexvar_epi32(_mm512_loadu_si512(permMask_out), K3); \
+                                                                           \
     (T0) = (K0), (T1) = (K1), (T2) = (K2), (T3) = (K3)
 
 __MBX_INLINE void TRANSPOSE_16x4_I32_EPI32(__m512i* t0,
