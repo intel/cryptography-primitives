@@ -47,6 +47,10 @@ mbx_status ifma_exp_mb(int64u* const out_pa[8],
     }
 
     /* test exp length */
+    if (exp_bits <= 0 || mod_bits <= 0) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
+        return status;
+    }
     if (exp_bits > mod_bits) {
         status = MBX_SET_STS_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
         return status;
