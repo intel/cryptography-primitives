@@ -7,7 +7,9 @@ Intel® Cryptography Primitives Library is a secure, fast and lightweight librar
 ## Key Features
 The library provides a comprehensive set of routines commonly used for cryptographic operations, including:
  - Post-Quantum Cryptography Functions:
-    - Hash-based signature algorithms (XMSS, LMS)
+    - Digital signature algorithms
+       - Stateful (XMSS, LMS).
+       - Stateless (ML-DSA).
     - Key encapsulation mechanism (ML-KEM)
  - Symmetric Cryptography Primitive Functions:
     - AES (ECB, CBC, CTR, OFB, CFB, XTS, GCM, CCM, SIV)
