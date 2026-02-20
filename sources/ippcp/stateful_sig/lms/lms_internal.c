@@ -105,6 +105,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
     const Ipp32u n    = lmotsParams->n;
     const Ipp32s n_s  = (Ipp32s)n;
     const Ipp32u h    = lmsParams->h;
+    const Ipp32s h_s  = (Ipp32s)h;
 
     Ipp8u* I_r = temp_buf;
     CopyBlock(pI, I_r, CP_PK_I_BYTESIZE);
@@ -123,8 +124,9 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
             Ipp32u idx_local = idx_leaf;
             while (h_local < h - 1) {
                 if ((idx_local ^ 1) == j_local) {
-                    Ipp32u aux_idx = ((1 << (h - h_local)) - 2) + j_local;
-                    if (aux_idx * n < (Ipp32u)aux_size - n) {
+                    Ipp32s aux_idx = (Ipp32s)(((1 << (h - h_local)) - 2) + j_local);
+                    if (aux_idx * n_s < aux_size - n_s) {
+                        /* The node was pre-calculated on KeyGen step */
                         b = 1;
                     }
                     break;
@@ -141,10 +143,10 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
         Ipp32u r = (1 << h) + i;  // r = 2^h + i
         node     = stack + h * n; // size: n
         // 2*2^0 + 2*2^1 + 2*2^2 +... + 2*2^(h-1) = 2 * ((1 << h) - 1)
-        Ipp32u aux_idx = ((1 << h) - 2) + i;
+        Ipp32s aux_idx = (Ipp32s)(((1 << h) - 2) + i);
 
-        if ((isKeyGen == 0) && (aux_idx * n < (Ipp32u)aux_size - n)) {
-            CopyBlock(pAuxiliaryMem + aux_idx * n, node, n_s);
+        if ((isKeyGen == 0) && (aux_idx * n_s < aux_size - n_s)) {
+            CopyBlock(pAuxiliaryMem + aux_idx * n_s, node, n_s);
         } else {
             temp_node = node + n_s;
             // public key generation
@@ -173,8 +175,8 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
         if (isKeyGen == 0 && (idx_leaf ^ 1) == i) {
             CopyBlock(node, out, n_s);
         }
-        if (isKeyGen == 1 && aux_idx * n < (Ipp32u)aux_size - n) {
-            CopyBlock(node, pAuxiliaryMem + aux_idx * n, n_s);
+        if ((isKeyGen == 1) && (aux_idx * n_s < aux_size - n_s)) {
+            CopyBlock(node, pAuxiliaryMem + aux_idx * n_s, n_s);
         }
 
         // calculate a root of sub-tree
@@ -186,9 +188,9 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
             j >>= 1;      // j = j / 2
             r >>= 1;      // r = r / 2
 
-            aux_idx = ((1 << (h - heights[stack_size] - 1)) - 2) + j;
-            if (isKeyGen == 0 && aux_idx * n <= (Ipp32u)aux_size - n) {
-                CopyBlock(pAuxiliaryMem + aux_idx * n, node, n_s);
+            aux_idx = (Ipp32s)(((1 << (h - heights[stack_size] - 1)) - 2) + j);
+            if ((isKeyGen == 0) && (aux_idx >= 0) && (aux_idx * n_s <= aux_size - n_s)) {
+                CopyBlock(pAuxiliaryMem + aux_idx * n_s, node, n_s);
             } else {
                 retCode = cp_lms_H_tree(I_r,
                                         r,
@@ -202,13 +204,13 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
                                         lmsParams->hash_method);
                 IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
             }
-            if (isKeyGen == 1 && aux_idx * n <= (Ipp32u)aux_size - n) {
-                CopyBlock(node, pAuxiliaryMem + aux_idx * n, n_s);
+            if (isKeyGen == 1 && (aux_idx >= 0) && (aux_idx * n_s <= aux_size - n_s)) {
+                CopyBlock(node, pAuxiliaryMem + aux_idx * n_s, n_s);
             }
 
             heights[stack_size]++;
 
-            if (isKeyGen == 0 && ((idx_leaf >> heights[stack_size]) ^ 1) == j) {
+            if ((isKeyGen == 0) && (((idx_leaf >> heights[stack_size]) ^ 1) == j)) {
                 CopyBlock(node, out + (heights[stack_size]) * n_s, n_s);
             }
         }
@@ -220,11 +222,11 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
     if (isKeyGen == 1) {
         CopyBlock(stack, out, n_s);
     } else if (aux_size > 0) {
-        for (Ipp32u h_local = 0; h_local < h; h_local++) {
+        for (Ipp32s h_local = 0; h_local < h_s; h_local++) {
             Ipp32u j_local = (idx_leaf >> h_local) ^ 1;
-            Ipp32u aux_idx = ((1 << (h - h_local)) - 2) + j_local;
-            if (aux_idx * n < (Ipp32u)aux_size - n) {
-                CopyBlock(pAuxiliaryMem + (aux_idx * n), out + (h_local * n), n_s);
+            Ipp32s aux_idx = (Ipp32s)(((1 << (h_s - h_local)) - 2) + j_local);
+            if ((aux_idx >= 0) && (aux_idx * n_s < aux_size - n_s)) {
+                CopyBlock(pAuxiliaryMem + (aux_idx * n_s), out + (h_local * n_s), n_s);
             }
         }
     }

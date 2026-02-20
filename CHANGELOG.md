@@ -2,6 +2,9 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 1.5.0
+- Fixed an issue in LMS key and signature generation for certain values of `extraBufSize`.
+
 ## Intel(R) Cryptography Primitives Library 1.4.0
 - Added key and signature generations for the Leighton-Micali Hash-Based Signatures (LMS) algorithm.
 - Added initialization checks for static variables in methods regulating hashing and arithmetic over GF(q) to optimize multi-call usage scenarios.
