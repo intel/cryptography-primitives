@@ -26,12 +26,6 @@ mbx_status16 internal_avx512_sm3_msg_digest_mb16(const int8u* const msg_pa[16],
                                                  int8u* hash_pa[16])
 {
     mbx_status16 status = 0;
-    for (int buf_no = 0; buf_no < SM3_NUM_BUFFERS; buf_no++) {
-        if ((len[buf_no] && !hash_pa[buf_no]) || (len[buf_no] && !msg_pa[buf_no])) {
-            status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
-            return status;
-        }
-    }
 
     /* initialize the context of SM3 hash */
     SM3_CTX_mb16 p_state;

@@ -38,6 +38,19 @@ mbx_status sm3_update_mb8(const int8u* const msg_pa[8], int len[8], SM3_CTX_mb8*
         return status;
     }
 
+    for (int buf_no = 0; buf_no < SM3_NUM_BUFFERS8; buf_no++) {
+        /* Check the negative input length */
+        if (len[buf_no] < 0) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
+            return status;
+        }
+        /* Check the positive input length and NULL input message */
+        if (len[buf_no] && !msg_pa[buf_no]) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+            return status;
+        }
+    }
+
     __ALIGN64 const int8u* loc_src[SM3_NUM_BUFFERS8];
 
     __m256i loc_len = _mm256_loadu_si256((__m256i*)len);

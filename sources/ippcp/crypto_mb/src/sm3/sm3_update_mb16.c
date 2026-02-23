@@ -38,6 +38,19 @@ mbx_status16 OWNAPI(mbx_sm3_update_mb16)(const int8u* const msg_pa[16],
         return status;
     }
 
+    for (int buf_no = 0; buf_no < SM3_NUM_BUFFERS; buf_no++) {
+        /* Check the negative input length */
+        if (len[buf_no] < 0) {
+            status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
+            return status;
+        }
+        /* Check the positive input length and NULL input message */
+        if (len[buf_no] && !msg_pa[buf_no]) {
+            status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+            return status;
+        }
+    }
+
 #if (_MBX >= _MBX_K1)
     status |= internal_avx512_sm3_update_mb16(msg_pa, len, p_state);
 #else

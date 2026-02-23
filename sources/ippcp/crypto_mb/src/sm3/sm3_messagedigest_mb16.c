@@ -27,10 +27,23 @@ mbx_status16 OWNAPI(mbx_sm3_msg_digest_mb16)(const int8u* const msg_pa[16],
 {
     mbx_status16 status = 0;
 
-    /* test input pointers */
+    /* test input parameters */
     if (NULL == msg_pa || NULL == len || NULL == hash_pa) {
         status = MBX_SET_STS16_ALL(MBX_STATUS_NULL_PARAM_ERR);
         return status;
+    }
+
+    for (int buf_no = 0; buf_no < SM3_NUM_BUFFERS; buf_no++) {
+        /* check the negative input length */
+        if (len[buf_no] < 0) {
+            status = MBX_SET_STS16(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
+            return status;
+        }
+        /* check the positive input length and NULL input buffers */
+        if (len[buf_no] && (!hash_pa[buf_no] || !msg_pa[buf_no])) {
+            status = MBX_SET_STS16(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+            return status;
+        }
     }
 
 #if (_MBX >= _MBX_K1)
