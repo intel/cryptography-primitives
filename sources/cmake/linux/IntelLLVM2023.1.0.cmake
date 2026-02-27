@@ -96,7 +96,7 @@ set(CMAKE_C_FLAGS_RELEASE " -O3 -ffast-math -DNDEBUG -Wall -Wno-unused-function 
 # Enabling additional warnings
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wconversion -Wimplicit-fallthrough")
 # Security flag that adds compile-time and run-time checks
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=3")
 
 # DEBUG flags - optimization level = 0, generation GDB information (-g)
 set (CMAKE_C_FLAGS_DEBUG " -O0 -g")

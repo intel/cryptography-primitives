@@ -73,7 +73,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-pointer-to-int-cast")
 set(CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG")
 if(NOT DEFINED NO_FORTIFY_SOURCE)
   # Security flag that adds compile-time and run-time checks
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=3")
 endif()
 
 # DEBUG flags - optimization level = 0, generation GDB information (-g)
