@@ -478,7 +478,7 @@ static struct {
 /* -9702 */ {MSG_NO_SHARED, "No shared libraries were found in the Waterfall procedure"},
 /* -9701 */ {MSG_NO_DLL, "No DLLs were found in the Waterfall procedure"},
 /* -9700 */ {MSG_LOAD_DLL_ERR, "Error at loading of %s library"},
-/* -1019 */ {ippStsHashOperationErr, "Hash DRBG: an internal error occurred when hashing"},
+/* -1019 */ {ippStsHashOperationErr, "ippStsHashOperationErr: An internal error occurred when hashing"},
 /* -1018 */ {ippStsMLDSAMaxIterations, "ippStsMLDSAMaxIterations: The ML-DSA iterations reach maximum. Data weren't generated successfully"},
 /* -1017 */ {ippStsInvalidPoint, "ippStsInvalidPoint ECC: Invalid point (out of EC)"},
 /* -1016 */ {ippStsQuadraticNonResidueErr, "ippStsQuadraticNonResidueErr: SQRT operation on quadratic non-residue value"},
@@ -516,8 +516,9 @@ static struct {
 /*     1 */ {ippStsNoOperation, "ippStsNoOperation: No operation has been executed"},
 /*     2 */ {ippStsDivByZero, "ippStsDivByZero: Zero value(s) for the divisor in the Div function"},
 /*    25 */ {ippStsInsufficientEntropy, "ippStsInsufficientEntropy: Generation of the prime/key failed due to insufficient entropy in the random seed and stimulus bit string"},
-/*    36 */ {ippStsNotSupportedCpu, "The CPU is not supported"},
-/*    51 */ {ippStsFeaturesCombination, "Wrong combination of features"},
+/*    36 */ {ippStsNotSupportedCpu, "ippStsNotSupportedCpu: The CPU is not supported"},
+/*    48 */ {ippStsSizeWrn, "ippStsSizeWrn: The size does not allow to perform full operation"},
+/*    51 */ {ippStsFeaturesCombination, "ippStsFeaturesCombination: Wrong combination of features"},
 /*    53 */ {ippStsMbWarning, "ippStsMbWarning: Error(s) in statuses array"},
 };
 /* clang-format on */
