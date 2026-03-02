@@ -122,7 +122,7 @@ IPPFUN(IppStatus, ippsGFpECSetPointHash_rmf,(Ipp32u hdr,
         /* check if enough memory is allocated for the context */
         int contextSize = 0;
         ippsHashGetSizeOptimal_rmf(&contextSize, pMethod);
-        IPP_BADARG_RET((MAX_HASH_RMF_CONTEXT_SIZE < contextSize), ippStsMemAllocErr);
+        IPP_BADARG_RET(((int)MAX_HASH_RMF_CONTEXT_SIZE < contextSize), ippStsMemAllocErr);
 
         __ALIGN64 Ipp8u hashCtxMem[MAX_HASH_RMF_CONTEXT_SIZE];
         IppsHashState_rmf* hashCtx = (IppsHashState_rmf*)hashCtxMem;

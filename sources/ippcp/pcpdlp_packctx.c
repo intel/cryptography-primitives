@@ -35,31 +35,23 @@ IPP_OWN_DEFN(void, cpPackDLPCtx, (const IppsDLPState* pDLP, Ipp8u* pBuffer))
     IppsDLPState* pB = (IppsDLPState*)(pBuffer);
 
     CopyBlock(pDLP, pB, sizeof(IppsDLPState));
-    DLP_MONTP0(pB) =
-        (gsModEngine*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_MONTP0(pDLP)) - IPP_UINT_PTR(pDLP));
+    DLP_MONTP0(pB) = (gsModEngine*)(IPP_UINT_PTR(DLP_MONTP0(pDLP)) - IPP_UINT_PTR(pDLP));
     DLP_MONTP1(pB) = NULL;
-    DLP_MONTR(pB) =
-        (gsModEngine*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_MONTR(pDLP)) - IPP_UINT_PTR(pDLP));
+    DLP_MONTR(pB)  = (gsModEngine*)(IPP_UINT_PTR(DLP_MONTR(pDLP)) - IPP_UINT_PTR(pDLP));
 
-    DLP_GENC(pB) =
-        (IppsBigNumState*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_GENC(pDLP)) - IPP_UINT_PTR(pDLP));
-    DLP_X(pB) = (IppsBigNumState*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_X(pDLP)) - IPP_UINT_PTR(pDLP));
-    DLP_YENC(pB) =
-        (IppsBigNumState*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_YENC(pDLP)) - IPP_UINT_PTR(pDLP));
+    DLP_GENC(pB) = (IppsBigNumState*)(IPP_UINT_PTR(DLP_GENC(pDLP)) - IPP_UINT_PTR(pDLP));
+    DLP_X(pB)    = (IppsBigNumState*)(IPP_UINT_PTR(DLP_X(pDLP)) - IPP_UINT_PTR(pDLP));
+    DLP_YENC(pB) = (IppsBigNumState*)(IPP_UINT_PTR(DLP_YENC(pDLP)) - IPP_UINT_PTR(pDLP));
 
-    DLP_PRIMEGEN(pB) =
-        (IppsPrimeState*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_PRIMEGEN(pDLP)) - IPP_UINT_PTR(pDLP));
+    DLP_PRIMEGEN(pB) = (IppsPrimeState*)(IPP_UINT_PTR(DLP_PRIMEGEN(pDLP)) - IPP_UINT_PTR(pDLP));
 
-    DLP_METBL(pB) =
-        (BNU_CHUNK_T*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_METBL(pDLP)) - IPP_UINT_PTR(pDLP));
+    DLP_METBL(pB) = (BNU_CHUNK_T*)(IPP_UINT_PTR(DLP_METBL(pDLP)) - IPP_UINT_PTR(pDLP));
 
-    DLP_BNCTX(pB) =
-        (BigNumNode*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_BNCTX(pDLP)) - IPP_UINT_PTR(pDLP));
+    DLP_BNCTX(pB) = (BigNumNode*)(IPP_UINT_PTR(DLP_BNCTX(pDLP)) - IPP_UINT_PTR(pDLP));
 #if defined(_USE_WINDOW_EXP_)
-    DLP_BNUCTX0(pB) =
-        (WINDOW == DLP_EXPMETHOD(pDLP))
-            ? (BNU_CHUNK_T*)((Ipp8u*)NULL + IPP_UINT_PTR(DLP_BNUCTX0(pDLP)) - IPP_UINT_PTR(pDLP))
-            : NULL;
+    DLP_BNUCTX0(pB) = (WINDOW == DLP_EXPMETHOD(pDLP))
+                          ? (BNU_CHUNK_T*)(IPP_UINT_PTR(DLP_BNUCTX0(pDLP)) - IPP_UINT_PTR(pDLP))
+                          : NULL;
     DLP_BNUCTX1(pB) = NULL;
 #endif
 

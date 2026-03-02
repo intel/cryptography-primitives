@@ -46,10 +46,8 @@ IPP_OWN_DEFN(void, cpPackBigNumCtx, (const IppsBigNumState* pBN, Ipp8u* pBuffer)
     cpSize dataAlignment = (cpSize)(IPP_INT_PTR(BN_NUMBER(pBN)) - IPP_INT_PTR(pBN) -
                                     (IPP_INT64)sizeof(IppsBigNumState));
 
-    BN_NUMBER(pB) = (BNU_CHUNK_T*)((Ipp8u*)NULL + IPP_INT_PTR(BN_NUMBER(pBN)) - IPP_INT_PTR(pBN) -
-                                   dataAlignment);
-    BN_BUFFER(pB) = (BNU_CHUNK_T*)((Ipp8u*)NULL + IPP_INT_PTR(BN_BUFFER(pBN)) - IPP_INT_PTR(pBN) -
-                                   dataAlignment);
+    BN_NUMBER(pB) = (BNU_CHUNK_T*)(IPP_INT_PTR(BN_NUMBER(pBN)) - IPP_INT_PTR(pBN) - dataAlignment);
+    BN_BUFFER(pB) = (BNU_CHUNK_T*)(IPP_INT_PTR(BN_BUFFER(pBN)) - IPP_INT_PTR(pBN) - dataAlignment);
 
     CopyBlock(BN_NUMBER(pBN),
               (Ipp8u*)pB + IPP_UINT_PTR(BN_NUMBER(pB)),

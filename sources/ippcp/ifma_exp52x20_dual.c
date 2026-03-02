@@ -119,7 +119,7 @@ IPP_OWN_DEFN(void, ifma256_exp52x20_dual, (Ipp64u out [2][LEN52],
     /* exponentiation */
     {
         int rem               = BITSIZE_MODULUS % EXP_WIN_SIZE;
-        int delta             = rem ? rem : EXP_WIN_SIZE;
+        int delta             = rem ? rem : (int)EXP_WIN_SIZE;
         Ipp64u table_idx_mask = EXP_WIN_MASK;
 
         int exp_bit_no      = BITSIZE_MODULUS - delta;

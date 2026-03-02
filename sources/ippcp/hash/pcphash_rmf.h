@@ -109,7 +109,7 @@ IPP_OWN_DECL(void, cpFinalize_rmf, (DigestSHA512 pHash,
 *  digestLenProcessed - (input/output) size of hash that was already squeezed (in bytes)
 *  digestLenProcessed < pMethod->msgBlkSize
 */
-void static cpHashSqueeze(Ipp8u* pMD,
+static void cpHashSqueeze(Ipp8u* pMD,
                           Ipp64u* hash,
                           const IppsHashMethod* pMethod,
                           const int digestLen,

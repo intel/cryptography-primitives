@@ -49,7 +49,7 @@ IPPFUN(IppStatus, ippsHashGetSize_rmf, (int* pSize))
 {
     /* test pointers */
     IPP_BAD_PTR1_RET(pSize);
-    *pSize = MAX_HASH_RMF_CONTEXT_SIZE;
+    *pSize = (int)MAX_HASH_RMF_CONTEXT_SIZE;
 
     return ippStsNoErr;
 }

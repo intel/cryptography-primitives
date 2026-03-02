@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive. Modular Arithmetic Engine. General Functionality
-// 
+//
 //  Contents:
 //        gsPackModEngineCtx()
 //
@@ -44,10 +44,7 @@ IPP_OWN_DEFN(void, gsPackModEngineCtx, (const gsModEngine* pCtx, Ipp8u* pBuffer)
     int ctxSize = (Ipp32s)sizeof(gsModEngine) + (Ipp32s)sizeof(BNU_CHUNK_T) * (modSize * 3);
 
     CopyBlock(pCtx, pB, ctxSize);
-    MOD_MODULUS(pB) =
-        (BNU_CHUNK_T*)((Ipp8u*)NULL + IPP_UINT_PTR(MOD_MODULUS(pCtx)) - IPP_UINT_PTR(pCtx));
-    MOD_MNT_R(pB) =
-        (BNU_CHUNK_T*)((Ipp8u*)NULL + IPP_UINT_PTR(MOD_MNT_R(pCtx)) - IPP_UINT_PTR(pCtx));
-    MOD_MNT_R2(pB) =
-        (BNU_CHUNK_T*)((Ipp8u*)NULL + IPP_UINT_PTR(MOD_MNT_R2(pCtx)) - IPP_UINT_PTR(pCtx));
+    MOD_MODULUS(pB) = (BNU_CHUNK_T*)(IPP_UINT_PTR(MOD_MODULUS(pCtx)) - IPP_UINT_PTR(pCtx));
+    MOD_MNT_R(pB)   = (BNU_CHUNK_T*)(IPP_UINT_PTR(MOD_MNT_R(pCtx)) - IPP_UINT_PTR(pCtx));
+    MOD_MNT_R2(pB)  = (BNU_CHUNK_T*)(IPP_UINT_PTR(MOD_MNT_R2(pCtx)) - IPP_UINT_PTR(pCtx));
 }

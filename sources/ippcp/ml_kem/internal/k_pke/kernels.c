@@ -48,6 +48,11 @@ IPPCP_INLINE Ipp16s cp_divAndRoundToNearestInt(Ipp32s x, Ipp32s divisor)
  */
 IPPCP_INLINE void cp_bitsToBytes(const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u numElmBitArr)
 {
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
     Ipp32u numElmByteArr = BITS2WORD8_SIZE(numElmBitArr);
     for (Ipp32u i = 0; i < numElmByteArr; i++) {
         Ipp8u B = 0;
@@ -56,6 +61,10 @@ IPPCP_INLINE void cp_bitsToBytes(const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u nu
         }
         pOut[i] = B;
     }
+
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 }
 
 /*
@@ -137,8 +146,8 @@ IPP_OWN_DEFN(IppStatus, cp_Decompress, (Ipp16u * out, const Ipp16s in, const Ipp
  *         d      - parameter specifying the number of bits.
  * Output: B      - byte array B^{32*d}.
  *
- * Note: To reduce memory usage, the result is processed by chunk of size lcm(d, 8) 
-         which is suitable for any d(maximum chunk of size 88 is required for d = 11) 
+ * Note: To reduce memory usage, the result is processed by chunk of size lcm(d, 8)
+         which is suitable for any d(maximum chunk of size 88 is required for d = 11)
  */
 
 // Allow bigger buffer allocation for the latest platforms to speed up processing
@@ -179,6 +188,7 @@ IPP_OWN_DEFN(IppStatus, cp_byteEncode, (Ipp8u * B, const Ipp16u d, const Ipp16sP
 #endif
     }
 
+
     /* Process the last chunk which may be 0 or not full(less than lcm(d, 8)) */
     cp_bitsToBytes(b, B, bits_accumulated);
 
@@ -193,7 +203,7 @@ IPP_OWN_DEFN(IppStatus, cp_byteEncode, (Ipp8u * B, const Ipp16u d, const Ipp16sP
  *         bByteSize - the size of the input byte array B in bytes.
  * Output: pPolyF    - integer array F in Z_{m}^{256}, where each m = 2^d if d < 12, otherwise m = q.
  *
- * Note: To reduce memory usage, the input byte array is processed by chunk of size d*8. 
+ * Note: To reduce memory usage, the input byte array is processed by chunk of size d*8.
  */
 IPP_OWN_DEFN(IppStatus,
              cp_byteDecode,
