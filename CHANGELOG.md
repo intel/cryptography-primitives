@@ -2,9 +2,10 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
-## Intel(R) Cryptography Primitives Library 1.5.0
+## Intel(R) Cryptography Primitives Library 2.0.0
 - Fixed an issue in LMS key and signature generation for certain values of `extraBufSize`.
 - Added more precise input parameters validation for multi-buffer functions (`mbx_sm3_msg_digest_mb16`, `mbx_sm3_update_mb16`, `mbx_exp_mb8` and `mbx_exp{1024,2048,3072,4096}_mb8`).
+- Removed support `fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys` and `fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size`.
 
 ## Intel(R) Cryptography Primitives Library 1.4.0
 - Added key and signature generations for the Leighton-Micali Hash-Based Signatures (LMS) algorithm.

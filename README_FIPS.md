@@ -295,13 +295,6 @@ fips_test_status fips_selftest_ippsRSAVerify_PKCS1v15_rmf (Ipp8u *pBuffer Ipp8u 
 `fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size` and `pKeysBuffer` is the
 valid buffer for selftest of size indicated by `fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size_keys`.
 
-Following APIs have been deprecated:
-```cpp
-fips_test_status fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys (int *pKeysBufferSize);
-fips_test_status fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size (int *pBufferSize Ipp8u *pKeysBuffer);
-```
-Their transition plan can be found in [DEPRECATION_NOTES](./DEPRECATION_NOTES.md).
-
 ```cpp
 fips_test_status fips_selftest_ippsRSASignVerify_PSS_rmf_get_size_keys (int *pKeysBufferSize);
 fips_test_status fips_selftest_ippsRSASignVerify_PSS_rmf_get_size (int *pBufferSize Ipp8u *pKeysBuffer);

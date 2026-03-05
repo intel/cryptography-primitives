@@ -89,11 +89,6 @@ IPPAPI(fips_test_status, fips_selftest_ippsHMACMessage_rmf, (void))
 fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size_keys, fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size, \
 fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size_keys, fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size."
 
-IPP_DEPRECATED(LEAN_GET_SIZE) \
-IPPAPI(fips_test_status, fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys, (int *pKeysBufferSize))
-IPP_DEPRECATED(LEAN_GET_SIZE) \
-IPPAPI(fips_test_status, fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size, (int *pBufferSize, Ipp8u *pKeysBuffer))
-
 IPPAPI(fips_test_status, fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size_keys, (int *pKeysBufferSize))
 IPPAPI(fips_test_status, fips_selftest_ippsRSASign_PKCS1v15_rmf_get_size, (int *pBufferSize, Ipp8u *pKeysBuffer))
 IPPAPI(fips_test_status, fips_selftest_ippsRSAVerify_PKCS1v15_rmf_get_size_keys, (int *pKeysBufferSize))
