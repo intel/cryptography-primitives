@@ -111,16 +111,10 @@ if(${ARCH} MATCHES "ia32")
 endif(${ARCH} MATCHES "ia32")
 
 set(px_opt "${px_opt} ") # note: no flags for the default version
-set(w7_opt "${w7_opt} -msse2")
-set(s8_opt "${s8_opt} -march=core2 -mssse3")
 set(p8_opt "${p8_opt} -march=nehalem -msse4.2 -maes -mpclmul -msha")
-set(g9_opt "${g9_opt} -march=sandybridge -mavx -maes -mpclmul -msha -mrdrnd -mrdseed")
 set(h9_opt "${h9_opt} -march=haswell -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed")
 set(mx_opt "${mx_opt} ") # note: no flags for the default version
-set(m7_opt "${m7_opt} -march=nocona -msse3")
-set(n8_opt "${n8_opt} -march=core2 -mssse3")
 set(y8_opt "${y8_opt} -march=nehalem -msse4.2 -maes -mpclmul -msha")
-set(e9_opt "${e9_opt} -march=sandybridge -mavx -maes -mpclmul -msha -mrdrnd -mrdseed")
 set(l9_opt "${l9_opt} -march=haswell -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed")
 set(k0_opt "${k0_opt} -march=skylake-avx512")
 set(k0_opt "${k0_opt} -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mpclmul -mrdrnd -mrdseed -madx")

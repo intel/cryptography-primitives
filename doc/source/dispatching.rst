@@ -50,10 +50,6 @@ uses:
      -  Windows\*
      -  Linux\* OS
      -  Description
-   * -  **m7**
-     -  +
-     -  +
-     -  Optimized for processors with Intel SSE3
    * -  **y8**
      -  +
      -  +

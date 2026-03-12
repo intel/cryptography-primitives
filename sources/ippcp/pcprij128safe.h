@@ -85,7 +85,7 @@ IPPCP_INLINE Ipp8u getSboxValue(Ipp8u x)
     Ipp32u i;
     for (i = 0; i < sizeof(RijEncSbox); i++) {
 // disable the compiler predictions in case of M7/N8 paths to keep the execution time constant
-#if !((_IPP > _IPP_S8) || (_IPP32E > _IPP32E_N8))
+#if !((_IPP > _IPP_P8) || (_IPP32E > _IPP32E_Y8))
         // volatile is needed to prevent the compiler from optimizing
         volatile BNU_CHUNK_T mask = cpIsEqu_ct(x, i);
 #else

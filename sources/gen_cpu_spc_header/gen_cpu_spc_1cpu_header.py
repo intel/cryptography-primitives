@@ -45,16 +45,7 @@ if not os.path.exists(OutDir):
 
 
 Filename="ippcp"
-Filenames=["h9", "p8", "s8", "w7", "e9", "k0", "k1", "l9", "m7", "n8", "y8", "g9"]
-
-DeprecatedCodePaths= {
-  "m7" : "y8", # SSSE3 -> SSE4.2 64-bit
-  "n8" : "y8", # SSSE3 -> SSE4.2 64-bit
-  "e9" : "y8", # AVX -> SSE4.2 64-bit
-  "w7" : "p8", # SSSE3 -> SSE4.2 32-bit
-  "s8" : "p8", # SSSE3 -> SSE4.2 32-bit
-  "g9" : "p8" # AVX -> SSE4.2 32-bit
-}
+Filenames=["h9", "p8", "k0", "k1", "l9", "y8"]
 
 for name in Filenames:
   OutFile  = os.sep.join([OutDir, Filename + "_"+ name + ".h"])
@@ -77,14 +68,6 @@ for name in Filenames:
   *******************************************************************************/
 
   """.format(year=datetime.datetime.today().year))
-
-  if name in DeprecatedCodePaths:
-    OUT.write(f"""
-#if !defined(_NO_IPP_DEPRECATED)
-#pragma message (\"code path {name} is deprecated, {DeprecatedCodePaths[name]} optimizations level is used\")
-#endif
-""")
-    name = DeprecatedCodePaths[name]
 
 
   curLine = 0

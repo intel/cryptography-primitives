@@ -178,10 +178,10 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
 - `-DPLATFORM_LIST="<platform list>"` - optional, works only if `-DMERGED_BLD:BOOL=off` is set. Sets target platforms for the code to be compiled. See the supported platforms list [here](./OVERVIEW.md).
 
     - Example for Linux\* OS and the IA-32 architecture:
-        `-DPLATFORM_LIST="w7;s8;p8;g9;h9"`
+        `-DPLATFORM_LIST="p8;h9"`
 
     - Example for Linux\* OS and the Intel® 64 architecture:
-        `-DPLATFORM_LIST="m7;n8;y8;e9;l9;k0;k1"`
+        `-DPLATFORM_LIST="y8;l9;k0;k1"`
 - `-DMBX_PLATFORM_LIST="<platform list>"` - optional, works only if `-DMERGED_BLD:BOOL=off` is set. Sets target platforms for the code to be compiled for [Crypto Multi Buffer library](./sources/ippcp/crypto_mb/Readme.md). Please, refer to [Crypto Multi Buffer library target platforms list](./sources/ippcp/crypto_mb/Readme.md/#target-optimization-codes-in-function-names) to check the supported platforms.
     - Example:
         `-DMBX_PLATFORM_LIST="k1;l9"`

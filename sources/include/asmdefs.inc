@@ -43,41 +43,14 @@
 %assign _IPP _IPP_PX
 %assign _IPP32E _IPP32E_PX
 
-%ifdef _W7 ; Intel(R) Streaming SIMD Extensions 2 - ia32
-  %assign _IPP _IPP_W7
-%elifdef _T7 ; Intel(R) Streaming SIMD Extensions 3 - ia32
-  %assign _IPP _IPP_T7
-%elifdef _V8 ; Supplemental Streaming SIMD Extensions 3 (SSSE3)
-  %assign _IPP _IPP_V8
-%elifdef _S8 ; SSSE3 + MOVBE instruction - ia32
-  %assign _IPP _IPP_S8
-%elifdef _P8 ; Intel(R) Streaming SIMD Extensions 4.2 - ia32
+%ifdef _P8 ; Intel(R) Streaming SIMD Extensions 4.2 - ia32
   %assign _IPP _IPP_P8
-%elifdef _G9 ; Intel(R) Advanced Vector Extensions - ia32
-  %assign IPP_ALIGN_FACTOR 32
-  %assign _IPP _IPP_G9
 %elifdef _H9 ; Intel(R) Advanced Vector Extensions 2 - ia32
   %assign IPP_ALIGN_FACTOR 32
   %assign _IPP _IPP_H9
-%elifdef _S0 ; Intel(R) Advanced Vector Extensions 512 - Intel(R) Xeon(R) processor (formerly Skylake) - ia32
-  %assign IPP_ALIGN_FACTOR 64
-  %assign _IPP _IPP_S0
-%elifdef _M7 ; Intel(R) Streaming SIMD Extensions 3 - intel64
-  %assign _IPP _IPP_PX
-  %assign _IPP32E _IPP32E_M7
-%elifdef _U8 ; Supplemental Streaming SIMD Extensions 3 (SSSE3) - intel64
-  %assign _IPP _IPP_PX
-  %assign _IPP32E _IPP32E_U8
-%elifdef _N8 ; SSSE3 + MOVBE instruction - intel64
-  %assign _IPP _IPP_PX
-  %assign _IPP32E _IPP32E_N8
 %elifdef _Y8 ; Intel(R) Streaming SIMD Extensions 4.2 - intel64
   %assign _IPP _IPP_PX
   %assign _IPP32E _IPP32E_Y8
-%elifdef _E9 ; Intel(R) Advanced Vector Extensions - intel64
-  %assign IPP_ALIGN_FACTOR 32
-  %assign _IPP _IPP_PX
-  %assign _IPP32E _IPP32E_E9
 %elifdef _L9 ; Intel(R) Advanced Vector Extensions 2 - intel64
   %assign IPP_ALIGN_FACTOR 32
   %assign _IPP _IPP_PX

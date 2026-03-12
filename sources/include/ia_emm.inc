@@ -32,24 +32,8 @@
       %xdefine %%func_name px_%1
       %assign %%decoration_length 3
     %endif
-    %if (_IPP == _IPP_W7)
-      %xdefine %%func_name w7_%1
-      %assign %%decoration_length 3
-    %endif
-    %if (_IPP == _IPP_V8)
-      %xdefine %%func_name v8_%1
-      %assign %%decoration_length 3
-    %endif
-    %if (_IPP == _IPP_S8)
-      %xdefine %%func_name s8_%1
-      %assign %%decoration_length 3
-    %endif
     %if (_IPP == _IPP_P8)
       %xdefine %%func_name p8_%1
-      %assign %%decoration_length 3
-    %endif
-    %if (_IPP == _IPP_G9)
-      %xdefine %%func_name g9_%1
       %assign %%decoration_length 3
     %endif
     %if (_IPP == _IPP_H9)

@@ -62,24 +62,8 @@
       %xdefine %%func_name mx_%1
       %assign %%decoration_length 3
     %endif
-    %if (_IPP32E == _IPP32E_M7)
-      %xdefine %%func_name m7_%1
-      %assign %%decoration_length 3
-    %endif
-    %if (_IPP32E == _IPP32E_U8)
-      %xdefine %%func_name u8_%1
-      %assign %%decoration_length 3
-    %endif
-    %if (_IPP32E == _IPP32E_N8)
-      %xdefine %%func_name n8_%1
-      %assign %%decoration_length 3
-    %endif
     %if (_IPP32E == _IPP32E_Y8)
       %xdefine %%func_name y8_%1
-      %assign %%decoration_length 3
-    %endif
-    %if (_IPP32E == _IPP32E_E9)
-      %xdefine %%func_name e9_%1
       %assign %%decoration_length 3
     %endif
     %if (_IPP32E == _IPP32E_L9)

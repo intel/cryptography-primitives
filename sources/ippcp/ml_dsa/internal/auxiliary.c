@@ -18,7 +18,6 @@
 //      Level 1 functions
 //-------------------------------//
 
-#include <stdio.h>
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"

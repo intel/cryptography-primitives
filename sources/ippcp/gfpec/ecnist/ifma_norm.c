@@ -20,7 +20,6 @@
 
 #include "gfpec/ecnist/ifma_defs.h"
 #include "gfpec/ecnist/ifma_norm.h"
-#include <stdio.h>
 
 IPP_OWN_DEFN(m512, ifma_lnorm52, (const m512 a))
 {

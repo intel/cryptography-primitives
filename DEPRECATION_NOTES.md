@@ -14,7 +14,7 @@ The deprecated API means it is obsolete and will be removed in one of future Int
 
 ### Deprecated Optimizations
 
-The code paths m7 (Intel® SSE3) and w7 (Intel® SSE2) are deprecated and will be removed from the merged build of Intel® Cryptography Primitives Library in the future releases. 1cpu headers are still available for all code paths. These branches can also be built as 1cpu libraries if specified in the platform list, e.g. `-DMERGED_BLD:BOOL=off -DPLATFORM_LIST=s8;e9`.
+The code paths m7 (Intel® SSE3) and w7 (Intel® SSE2) were deprecated and were removed from the merged build of Intel® Cryptography Primitives Library in the 2026.0.0 release.
 
 ### Installation Path Regression 
 

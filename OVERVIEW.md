@@ -94,14 +94,12 @@ flowchart LR
     subgraph ML[**Merged Library**]
         dispatcher["Dispatcher"]:::class1
 
-        m7["m7_ippsAES_GCMEncrypt()"]:::class1
         y8["y8_ippsAES_GCMEncrypt()"]:::class1
         l9["l9_ippsAES_GCMEncrypt()"]:::class1
         k0["k0_ippsAES_GCMEncrypt()"]:::class1
         k1["k1_ippsAES_GCMEncrypt()"]:::class1
 
         %% Connections
-        dispatcher == SSE3==> m7
         dispatcher == SSSE4.2 ==> y8
         dispatcher == AVX2 ==> l9
         dispatcher == AVX512 (formerly codenamed SkyLake) ==> k0
@@ -112,10 +110,10 @@ flowchart LR
 
     function ==> dispatcher
 
-    linkStyle 0,1,2,3,4,5 stroke:#FFE500
+    linkStyle 0,1,2,3,4 stroke:#FFE500
 ```
 
-The prefix before the function name ("m7_", "y8_", etc) is a naming convention for the function implementations that are included in the [library with dispatcher](#all-cpus-library). It refers to the CPU instruction set for which the function is optimized (for all available prefixes see the [table](#target-optimization-codes-in-function-names) below).
+The prefix before the function name ("y8_", "l9_", etc) is a naming convention for the function implementations that are included in the [library with dispatcher](#all-cpus-library). It refers to the CPU instruction set for which the function is optimized (for all available prefixes see the [table](#target-optimization-codes-in-function-names) below).
 
 The dispatcher is designed to add no performance overhead when the library is initialized, in other words, when CPU features are detected. You can initialize the library either explicitly in advance by calling the dedicated function [ippcpInit()](https://www.intel.com/content/www/us/en/docs/crypto-primitives-library/developer-guide-reference/current/init.html) or it will be done implicitly during the first call of any function of the library.
 
@@ -126,16 +124,12 @@ By default, the dispatcher chooses the most appropriate optimization for the cur
 | IA-32 Intel® architecture | Intel® 64 architecture | Meaning                                                                                                            |
 | ------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | px                        | mx                     | Generic code without hardware specific optimizations suitable for any CPU                                          |
-| w7                        | -                      | Optimized for processors with Intel® Streaming SIMD Extensions 2 (Intel® SSE2)                                     |
-| -                         | m7                     | Optimized for processors with Intel® SSE3                                                                          |
 | p8                        | y8                     | Optimized for processors with Intel® SSE4.2                                                                        |
 | h9                        | l9                     | Optimized for processors with Intel® Advanced Vector Extensions 2 (Intel® AVX2)                                    |
 | -                         | k0                     | Optimized for processors with Intel® Advanced Vector Extensions 512 (Intel® AVX-512) (formerly codenamed SkyLake)  |
 | -                         | k1                     | Optimized for processors with Intel® Advanced Vector Extensions 512 (Intel® AVX-512) (formerly codenamed IceLake)  |
 
 > **NOTE:** Due to the significant shift in the industry towards 64-bit architecture, the support of 32-bit libraries is deprecated in the Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.9 release. No new features (only critical security fixes) are targeted for 32-bit libraries and testing scope is limited by Linux OS & Clang compiler.
-
-> **NOTE:** w7 and m7 code paths have been deprecated in the 1.3.0 release and will be removed in future releases.
 
 ### CPU Feature Dispatching
 
@@ -267,13 +261,6 @@ flowchart TD
 
             Dispatcher["Dispatcher"]:::class1
 
-            subgraph m7_graph["SSE3 version"]
-                m7_1["m7_func1"]:::class2
-                m7_2["m7_func2"]:::class2
-                m7_3["m7_<...>"]:::class2
-                m7_4["m7_funcN"]:::class2
-            end
-
             subgraph y8_graph["SSE4.2 version"]
                y8_1["y8_func1"]:::class2
                 y8_2["y8_func2"]:::class2
@@ -302,7 +289,6 @@ flowchart TD
                 k1_4["k1_funcN"]:::class2
             end
 
-            Dispatcher ~~~ m7_graph
             Dispatcher ~~~ y8_graph
             Dispatcher ~~~ l9_graph
             Dispatcher ~~~ k0_graph
@@ -310,7 +296,6 @@ flowchart TD
         end
 
     %% Style for subgraphs
-    style m7_graph fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF
     style y8_graph fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF
     style l9_graph fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF
     style k0_graph fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF

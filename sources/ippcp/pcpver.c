@@ -30,21 +30,9 @@
     #if ( _IPP == _IPP_H9 )           /* Intel® Advanced Vector Extensions 2 - ia32 */
         #define CRYPTO_LIB_CPU_TYPE() "h9"
         #define CRYPTO_LIB_CPU_DESCR() "AVX2"
-    #elif ( _IPP == _IPP_G9 )           /* Intel® Advanced Vector Extensions - ia32 */
-        #define CRYPTO_LIB_CPU_TYPE() "g9"
-        #define CRYPTO_LIB_CPU_DESCR() "AVX"
     #elif ( _IPP == _IPP_P8 )           /* Intel® Streaming SIMD Extensions 4.2 (Intel® SSE4.2) - ia32 */
         #define CRYPTO_LIB_CPU_TYPE() "p8"
         #define CRYPTO_LIB_CPU_DESCR() "SSE4.2"
-    #elif ( _IPP == _IPP_S8 )           /* Supplemental Streaming SIMD Extensions 3 + Intel® instruction MOVBE - ia32 */
-        #define CRYPTO_LIB_CPU_TYPE() "s8"
-        #define CRYPTO_LIB_CPU_DESCR() "Atom"
-    #elif ( _IPP == _IPP_V8 )           /* Supplemental Streaming SIMD Extensions 3 - ia32 */
-        #define CRYPTO_LIB_CPU_TYPE() "v8"
-        #define CRYPTO_LIB_CPU_DESCR() "SSSE3"
-    #elif ( _IPP == _IPP_W7 )           /* Intel® Streaming SIMD Extensions 2 - ia32 */
-        #define CRYPTO_LIB_CPU_TYPE() "w7"
-        #define CRYPTO_LIB_CPU_DESCR() "SSE2"
     #else
         #define CRYPTO_LIB_CPU_TYPE() "px"
         #define CRYPTO_LIB_CPU_DESCR() "PX"
@@ -56,24 +44,12 @@
     #elif ( _IPP32E == _IPP32E_K0 )       /* Intel® Advanced Vector Extensions 512 (formerly Skylake) - intel64 */
         #define CRYPTO_LIB_CPU_TYPE() "k0"
         #define CRYPTO_LIB_CPU_DESCR() "AVX-512F/CD/BW/DQ/VL"
-    #elif ( _IPP32E == _IPP32E_E9 )     /* Intel® Advanced Vector Extensions - intel64 */
-        #define CRYPTO_LIB_CPU_TYPE() "e9"
-        #define CRYPTO_LIB_CPU_DESCR() "AVX"
-    #elif ( _IPP32E == _IPP32E_L9 )     /* Intel® Advanced Vector Extensions 2 - intel64 */
+        #elif ( _IPP32E == _IPP32E_L9 )     /* Intel® Advanced Vector Extensions 2 - intel64 */
         #define CRYPTO_LIB_CPU_TYPE() "l9"
         #define CRYPTO_LIB_CPU_DESCR() "AVX2"
     #elif ( _IPP32E == _IPP32E_Y8 )     /* Intel® Streaming SIMD Extensions 4.2 - intel64 */
         #define CRYPTO_LIB_CPU_TYPE() "y8"
         #define CRYPTO_LIB_CPU_DESCR() "SSE4.2"
-    #elif ( _IPP32E == _IPP32E_N8 )     /* Supplemental Streaming SIMD Extensions 3 + Intel® instruction MOVBE - intel64 */
-        #define CRYPTO_LIB_CPU_TYPE() "n8"
-        #define CRYPTO_LIB_CPU_DESCR() "Atom"
-    #elif ( _IPP32E == _IPP32E_U8 )     /* Supplemental Streaming SIMD Extensions 3 - intel64 */
-        #define CRYPTO_LIB_CPU_TYPE() "u8"
-        #define CRYPTO_LIB_CPU_DESCR() "SSSE3"
-    #elif ( _IPP32E == _IPP32E_M7 )     /* Intel® Streaming SIMD Extensions 3 (Intel® SSE3) */
-        #define CRYPTO_LIB_CPU_TYPE() "m7"
-        #define CRYPTO_LIB_CPU_DESCR() "SSE3"
     #else
         #define CRYPTO_LIB_CPU_TYPE() "mx"
         #define CRYPTO_LIB_CPU_DESCR() "PX"

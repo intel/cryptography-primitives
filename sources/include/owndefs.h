@@ -131,35 +131,10 @@
 #endif
 
 /* ia32 */
-#if defined(_W7) /* Intel® SSE2 */
-#define _IPP         _IPP_W7
-#define _IPP32E      _IPP32E_PX
-#define OWNAPI(name) w7_##name
-
-#elif defined(_T7) /* Intel® SSE3 */
-#define _IPP         _IPP_T7
-#define _IPP32E      _IPP32E_PX
-#define OWNAPI(name) t7_##name
-
-#elif defined(_V8) /* SSSE3 */
-#define _IPP         _IPP_V8
-#define _IPP32E      _IPP32E_PX
-#define OWNAPI(name) v8_##name
-
-#elif defined(_S8) /* SSSE3 + MOVBE instruction */
-#define _IPP         _IPP_S8
-#define _IPP32E      _IPP32E_PX
-#define OWNAPI(name) s8_##name
-
-#elif defined(_P8) /* Intel® SSE4.2 */
+#if defined(_P8) /* Intel® SSE4.2 */
 #define _IPP         _IPP_P8
 #define _IPP32E      _IPP32E_PX
 #define OWNAPI(name) p8_##name
-
-#elif defined(_G9) /* Intel® AVX */
-#define _IPP         _IPP_G9
-#define _IPP32E      _IPP32E_PX
-#define OWNAPI(name) g9_##name
 
 #elif defined(_H9) /* Intel® AVX2 */
 #define _IPP         _IPP_H9
@@ -167,30 +142,10 @@
 #define OWNAPI(name) h9_##name
 
 /* intel64 */
-#elif defined(_M7) /* Intel® SSE3 */
-#define _IPP         _IPP_PX
-#define _IPP32E      _IPP32E_M7
-#define OWNAPI(name) m7_##name
-
-#elif defined(_U8) /* SSSE3 */
-#define _IPP         _IPP_PX
-#define _IPP32E      _IPP32E_U8
-#define OWNAPI(name) u8_##name
-
-#elif defined(_N8) /* SSSE3 + MOVBE instruction */
-#define _IPP         _IPP_PX
-#define _IPP32E      _IPP32E_N8
-#define OWNAPI(name) n8_##name
-
 #elif defined(_Y8) /* Intel® SSE4.2 */
 #define _IPP         _IPP_PX
 #define _IPP32E      _IPP32E_Y8
 #define OWNAPI(name) y8_##name
-
-#elif defined(_E9) /* Intel® AVX */
-#define _IPP         _IPP_PX
-#define _IPP32E      _IPP32E_E9
-#define OWNAPI(name) e9_##name
 
 #elif defined(_L9) /* Intel® AVX2 */
 #define _IPP         _IPP_PX
@@ -506,40 +461,10 @@ static char G[] = { 73, 80, 80, 71, 101, 110, 117, 105, 110, 101, 243, 193, 210,
 /* ////////////////////////////////////////////////////////////////////////// */
 
 /* intrinsics */
-#if (_IPP >= _IPP_W7) || (_IPP32E >= _IPP32E_M7)
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
 #if defined(__INTEL_COMPILER) || (_MSC_VER >= 1300)
-#if (_IPP == _IPP_W7)
-#if defined(__INTEL_COMPILER)
-#include "emmintrin.h"
-#else
-#undef _W7
-#include "emmintrin.h"
-#define _W7
-#endif
-#define _mm_loadu _mm_loadu_si128
-#elif (_IPP32E == _IPP32E_M7)
-#if defined(__INTEL_COMPILER)
-#include "pmmintrin.h"
-#define _mm_loadu _mm_lddqu_si128
-#elif (_MSC_FULL_VER >= 140050110)
-#include "intrin.h"
-#define _mm_loadu _mm_lddqu_si128
-#elif (_MSC_FULL_VER < 140050110)
-#include "emmintrin.h"
-#define _mm_loadu _mm_loadu_si128
-#endif
-#elif ((_IPP == _IPP_V8) || (_IPP32E == _IPP32E_U8) || (_IPP == _IPP_S8) || (_IPP32E == _IPP32E_N8))
-#if defined(__INTEL_COMPILER)
-#include "tmmintrin.h"
-#define _mm_loadu _mm_lddqu_si128
-#elif (_MSC_FULL_VER >= 140050110)
-#include "intrin.h"
-#define _mm_loadu _mm_lddqu_si128
-#elif (_MSC_FULL_VER < 140050110)
-#include "emmintrin.h"
-#define _mm_loadu _mm_loadu_si128
-#endif
-#elif (_IPP == _IPP_P8) || (_IPP32E == _IPP32E_Y8)
+
+#if (_IPP == _IPP_P8) || (_IPP32E == _IPP32E_Y8)
 #if defined(__INTEL_COMPILER)
 #include "smmintrin.h"
 #define _mm_loadu _mm_lddqu_si128
@@ -550,19 +475,19 @@ static char G[] = { 73, 80, 80, 71, 101, 110, 117, 105, 110, 101, 243, 193, 210,
 #include "emmintrin.h"
 #define _mm_loadu _mm_loadu_si128
 #endif
-#elif (_IPP >= _IPP_G9) || (_IPP32E >= _IPP32E_E9)
-#if defined(__INTEL_COMPILER)
-#include "immintrin.h"
-#define _mm_loadu _mm_lddqu_si128
-#elif (_MSC_FULL_VER >= 160021003)
+#elif (_IPP >= _IPP_H9) || (_IPP32E >= _IPP32E_L9)
+#if defined(__INTEL_COMPILER) || (_MSC_FULL_VER >= 160021003)
 #include "immintrin.h"
 #define _mm_loadu _mm_lddqu_si128
 #endif
 #endif
+
 #endif
+
 #if defined(__GNUC__) && !defined(__INTEL_COMPILER)
 #include "x86intrin.h"
 #endif
+
 #endif
 
 // **** intrinsics for bit casting ****
@@ -637,7 +562,7 @@ extern double __intel_castu64_f64(unsigned __int64 val);
 #if !defined(_IPP_DYNAMIC)
 /* WIN-32, WIN-64, LIN-32, LIN-64 */
 #if defined(WIN32) || defined(WIN32E) || defined(linux)
-#if (defined(_W7) || defined(_M7))
+#if (defined(_P8) || defined(_Y8))
 #define _IPP_DATA 1
 #endif
 #endif
@@ -670,7 +595,7 @@ extern double __intel_castu64_f64(unsigned __int64 val);
 #include <intrin.h>
 #define CP_PREVENT_REORDER() _ReadWriteBarrier()
 #else
-#if ((_IPP >= _IPP_W7) || (_IPP32E == _IPP32E_M7))
+#if ((_IPP >= _IPP_P8) || (_IPP32E == _IPP32E_Y8))
 #include <emmintrin.h>
 #define CP_PREVENT_REORDER() _mm_mfence()
 #else

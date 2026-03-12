@@ -94,16 +94,10 @@ set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /DNDEBUG")
 # Warnings = errors
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /WX")
 
-set(w7_opt "${w7_opt} /arch:SSE2")
-set(s8_opt "${s8_opt} /arch:SSE2")
 set(p8_opt "${p8_opt} /arch:SSE2")
-set(g9_opt "${g9_opt} /arch:AVX")
 set(h9_opt "${h9_opt} /arch:AVX2")
 
-set(m7_opt "${m7_opt}")
-set(n8_opt "${n8_opt}")
 set(y8_opt "${y8_opt}")
-set(e9_opt "${e9_opt} /arch:AVX")
 set(l9_opt "${l9_opt} /arch:AVX2")
 set(k0_opt "${k0_opt} /arch:AVX2")
 set(k1_opt "${k1_opt} /arch:AVX2")

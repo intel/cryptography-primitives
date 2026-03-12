@@ -312,90 +312,31 @@ IppStatus owncpFeaturesToIdx(Ipp64u* cpuFeatures, int* index)
 
     if ((AVX3I_FEATURES == (*cpuFeatures & AVX3I_FEATURES)) &&
         (ippAVX512_ENABLEDBYOS &
-         cpFeatures)) { /* Intel® architecture formerly codenamed Icelake ia32=S0, x64=K0 */
+         cpFeatures)) { /* Intel® architecture formerly codenamed Icelake x64=K0 */
         mask   = AVX3I_MSK;
         *index = LIB_AVX3I;
     } else if ((AVX3X_FEATURES == (*cpuFeatures & AVX3X_FEATURES)) &&
                (ippAVX512_ENABLEDBYOS &
-                cpFeatures)) { /* Intel® architecture formerly codenamed Skylake ia32=S0, x64=K0 */
+                cpFeatures)) { /* Intel® architecture formerly codenamed Skylake x64=K0 */
         mask   = AVX3X_MSK;
         *index = LIB_AVX3X;
-    } else if (
-        (AVX3M_FEATURES == (*cpuFeatures & AVX3M_FEATURES)) &&
-        (ippAVX512_ENABLEDBYOS &
-         cpFeatures)) { /* Intel® architecture formerly codenamed Knights Landing ia32=i0, x64=L9 (N0 is no longer supported) */
-        mask   = AVX3M_MSK;
-        *index = LIB_AVX3M;
     } else if ((ippCPUID_AVX2 == (*cpuFeatures & ippCPUID_AVX2)) &&
                (ippAVX_ENABLEDBYOS &
                 cpFeatures)) { /* Intel® architecture formerly codenamed Haswell ia32=H9, x64=L9 */
         mask   = AVX2_MSK;
         *index = LIB_AVX2;
-    } else
-        /* Note: AVX code path is removed, SSE42 code path is used instead
-   // Intel® architecture formerly codenamed Sandy Bridge ia32=G9, x64=E9
-    if(( ippCPUID_AVX   == ( *cpuFeatures & ippCPUID_AVX   ))&&
-       ( ippAVX_ENABLEDBYOS & cpFeatures )){
-        mask = AVX_MSK;
-        *index = LIB_AVX;
-   } else */
-        /* Intel® microarchitecture code name Nehalem or
-   Intel® architecture formerly codenamed Westmer = Intel® architecture formerly codenamed Penryn
-   + Intel® SSE4.2 + ?Intel® instruction PCLMULQDQ
-   + ?(Intel® AES New Instructions)
-   + ?(Intel® Secure Hash Algorithm Extensions)
-   or new Intel Atom® processor formerly codenamed Silvermont */
-        if (ippCPUID_SSE42 == (*cpuFeatures & ippCPUID_SSE42) ||
-            ippCPUID_AVX == (*cpuFeatures & ippCPUID_AVX)) {
-            mask   = SSE42_MSK;
-            *index = LIB_SSE42;
-        } else
-            /* Note: SSSE3 code path is removed, SSE3 code path is used instead
-   // Intel Atom® processor formerly codenamed Silverthorne ia32=S8, x64=N8
-   if( ippCPUID_SSE41 == ( *cpuFeatures & ippCPUID_SSE41 )){
-       mask = SSE41_MSK;
-       *index = LIB_SSE41;
-   } else
-   // Intel Atom® processor formerly codenamed Silverthorne ia32=S8, x64=N8
-   if( ippCPUID_MOVBE == ( *cpuFeatures & ippCPUID_MOVBE )) {
-       mask = ATOM_MSK;
-       *index = LIB_ATOM;
-   } else
-   // Intel® architecture formerly codenamed Merom ia32=V8, x64=U8 (letters etymology is unknown)
-   if( ippCPUID_SSSE3 == ( *cpuFeatures & ippCPUID_SSSE3 )) {
-       mask = SSSE3_MSK;
-       *index = LIB_SSSE3;
-   } else
-   */
-            /* Intel® architecture formerly codenamed Prescott ia32=W7, x64=M7 */
-            if ((ippCPUID_SSE3 == (*cpuFeatures & ippCPUID_SSE3)) ||
-                (ippCPUID_MOVBE == (*cpuFeatures & ippCPUID_MOVBE)) ||
-                (ippCPUID_SSSE3 == (*cpuFeatures & ippCPUID_SSSE3)) ||
-                (ippCPUID_SSE41 == (*cpuFeatures & ippCPUID_SSE41))) {
-                mask   = SSE3_MSK;
-                *index = LIB_SSE3;
-            } else
-                /* Intel® architecture formerly codenamed Willamette ia32=W7, x64=PX */
-                if (ippCPUID_SSE2 == (*cpuFeatures & ippCPUID_SSE2)) {
-                    mask   = SSE2_MSK;
-                    *index = LIB_SSE2;
-                } else
-                    /* Intel® Pentium® processor III ia32=PX only */
-                    if (ippCPUID_SSE == (*cpuFeatures & ippCPUID_SSE)) {
-                        mask   = SSE_MSK;
-                        *index = LIB_SSE;
-#if defined(WIN32E) || defined(LINUX32E)
-                        ownStatus =
-                            ippStsNotSupportedCpu; /* the lowest CPU supported by Intel Cryptography Primitives Library must at least support Intel® SSE2 for x64 */
-#endif
-                    } else                         /* not supported, PX dispatched */
-                    {
-                        mask   = MMX_MSK;
-                        *index = LIB_MMX;
+    } else if (ippCPUID_SSE42 == (*cpuFeatures & ippCPUID_SSE42) ||
+               ippCPUID_AVX == (*cpuFeatures & ippCPUID_AVX)) {
+        mask   = SSE42_MSK;
+        *index = LIB_SSE42;
+    } else {
+        /* not supported, PX dispatched */
+        mask   = MMX_MSK;
+        *index = LIB_MMX;
 
-                        /* the lowest CPU supported by Intel Cryptography Primitives Library must at least support Intel® SSE for ia32 or Intel® SSE2 for x64 */
-                        ownStatus = ippStsNotSupportedCpu;
-                    }
+        /* the lowest CPU supported by Intel Cryptography Primitives Library must at least support Intel® SSE42 for ia32 and x64 */
+        ownStatus = ippStsNotSupportedCpu;
+    }
 
     if ((mask != (*cpuFeatures & mask)) && (ownStatus == ippStsNoErr))
         ownStatus =
