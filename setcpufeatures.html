@@ -867,13 +867,10 @@ according to the processor features specified in
 cpuFeatures. You can use the following predefined sets of features (the
 FM suffix below means <em>feature mask</em>):</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#define PX_FM ( ippCPUID_MMX | ippCPUID_SSE | ippCPUID_SSE2 )</span>
-<span class="cp">#define M7_FM ( PX_FM | ippCPUID_SSE3 )</span>
-<span class="cp">#define U8_FM ( M7_FM | ippCPUID_SSSE3 )</span>
-<span class="cp">#define N8_FM ( U8_FM | ippCPUID_MOVBE )</span>
-<span class="cp">#define Y8_FM ( U8_FM | ippCPUID_SSE41 | ippCPUID_SSE42 | ippCPUID_AES | ippCPUID_CLMUL | ippCPUID_SHA )</span>
-<span class="cp">#define E9_FM ( Y8_FM | ippCPUID_AVX | ippAVX_ENABLEDBYOS | ippCPUID_RDRAND | ippCPUID_F16C )</span>
-<span class="cp">#define L9_FM ( E9_FM | ippCPUID_MOVBE | ippCPUID_AVX2 | ippCPUID_ADCOX | ippCPUID_RDSEED | ippCPUID_PREFETCHW )</span>
-<span class="cp">#define K0_FM ( L9_FM | ippCPUID_AVX512F )</span>
+<span class="cp">#define Y8_FM (PX_FM | ippCPUID_SSE3 | ippCPUID_SSSE3 | ippCPUID_MOVBE | ippCPUID_SSE41 | ippCPUID_SSE42 | ippCPUID_AES | ippCPUID_CLMUL | ippCPUID_SHA)</span>
+<span class="cp">#define E9_FM (Y8_FM | ippCPUID_AVX | ippAVX_ENABLEDBYOS | ippCPUID_RDRAND | ippCPUID_F16C)</span>
+<span class="cp">#define L9_FM (E9_FM | ippCPUID_MOVBE | ippCPUID_AVX2 | ippCPUID_ADCOX | ippCPUID_RDSEED | ippCPUID_PREFETCHW)</span>
+<span class="cp">#define K0_FM (L9_FM | ippCPUID_AVX512F | ippCPUID_AVX512CD | ippCPUID_AVX512VL | ippCPUID_AVX512BW | ippCPUID_AVX512DQ | ippAVX512_ENABLEDBYOS)</span>
 </pre></div>
 </div>
 <div class="admonition note">
