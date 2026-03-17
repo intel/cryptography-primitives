@@ -998,6 +998,8 @@ section .text align=IPP_ALIGN_FACTOR
         neg     %%GP_tmp3                                                               ;; negative if not equal
         sbb     %%GP_tmp3, %%GP_tmp3
         not     %%GP_tmp3                                                               ;; GP_tmp3 = 0 if not equal, -1 if equal
+        andn    %%GP_tmp3, %%GP_tmp1, %%GP_tmp3                                         ;; (e_are_zero & f_are_zero) & (~p_is_inf)
+        andn    %%GP_tmp3, %%GP_tmp2, %%GP_tmp3                                         ;; (e_are_zero & f_are_zero) & (~p_is_inf) & (~q_is_inf)
         push    %%GP_tmp3                                                               ;; save to restore at the macro's end
 
         vpaddq  %%R, %%R, [rel p256_x2]                                                 ;; R += p256_x2 (ensure positive)
@@ -1050,6 +1052,11 @@ section .text align=IPP_ALIGN_FACTOR
         IFMA_LNORM52_P256_BODY %%out_P_Z, %%idx_carry_shift, %%T1, \
                                %%KREG_tmp1, %%KREG_tmp2                                         ;; lnorm(P_Z)
 
+        ;; Restore points equality move mask
+        pop    %%GP_tmp3
+        test   %%GP_tmp3, %%GP_tmp3     ; ZF = 1 if %%GP_tmp3 == 0 and points are not equal
+        jz     %%points_not_equal       ; jump to %%points_not_equal label if ZF == 1
+
         ;; Prepare the result In case points are equal - use DOUBLE_PART with separate output registers
         ;; (DOUBLE_PART doesn't support in-place operation)
         DOUBLE_PART %%U1, %%S1, %%T4, %%in_P_X, %%in_P_Y, %%in_P_Z,                     \
@@ -1058,19 +1065,18 @@ section .text align=IPP_ALIGN_FACTOR
                     %%GP_tmp1, %%GP_tmp2, %%GP_tmp3, %%GP_tmp4,                         \
                     %%KREG_tmp1, %%KREG_tmp2, %%KREG_tmp3
         
+        ;; Copy the result of doubling
+        vmovdqa64 %%out_P_X, %%U1
+        vmovdqa64 %%out_P_Y, %%S1
+        vmovdqa64 %%out_P_Z, %%T4
+
+%%points_not_equal:
         ;; Restore the move masks
-        pop    %%GP_tmp3     
         pop    %%GP_tmp2
         pop    %%GP_tmp1
-        
-        ;; Copy results of doubling if points are equal
-        kmovq   %%KREG_tmp3, %%GP_tmp3
-        vmovdqa64 %%out_P_X{%%KREG_tmp3}, %%U1
-        vmovdqa64 %%out_P_Y{%%KREG_tmp3}, %%S1
-        vmovdqa64 %%out_P_Z{%%KREG_tmp3}, %%T4
 
         ;; if P is infinity - return Q.
-        kmovq   %%KREG_tmp1, %%GP_tmp1
+        kmovq     %%KREG_tmp1, %%GP_tmp1
         vmovdqa64 %%out_P_X{%%KREG_tmp1}, %%in_Q_X    ;; out_P_X = p_is_inf ? in_Q_X : T
         vmovdqa64 %%out_P_Y{%%KREG_tmp1}, %%in_Q_Y    ;; out_P_Y = p_is_inf ? in_Q_Y : T
         vmovdqa64 %%out_P_Z{%%KREG_tmp1}, %%in_Q_Z    ;; out_P_Z = p_is_inf ? in_Q_Z : T  

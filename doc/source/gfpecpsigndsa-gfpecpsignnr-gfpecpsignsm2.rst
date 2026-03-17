@@ -71,6 +71,9 @@ Nyberg-Rueppel :term:`IEEE P1363A <[IEEE P1363A]>` and SM2
 
 The *ippsGFpECScratchBufferSize* function should be called with *nScalars* equal to at least 1 to get the valid *pScratchBuffer*.
 
+.. note::
+   Note: The point multiplication kernel implementation ensures all intermediate values remain in registers, avoiding memory spills to the stack.
+
 Return Values
 -------------
 

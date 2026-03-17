@@ -55,11 +55,15 @@ IPP_OWN_DEFN(IppsGFpECPoint*, gfec_PubKey_nist256_avx512, (IppsGFpECPoint* pR,
         __ALIGN64 P256_POINT_IFMA R;
         R.x = R.y = R.z = setzero_i64();
 
-        /* Convert base point to a new Montgomery domain */
-        __ALIGN64 P256_POINT_IFMA G52;
-        recode_point_to_mont52(&G52, ECP_G(pEC), pPointPool /* 3 elem */, pmeth, pME);
+        if (ECP_PREMULBP(pEC)) {
+            ifma_ec_nistp256_mul_pointbase(&R, (Ipp8u*)pExtendedScalar, orderBits);
+        } else {
+            /* Convert base point to a new Montgomery domain */
+            __ALIGN64 P256_POINT_IFMA G52;
+            recode_point_to_mont52(&G52, ECP_G(pEC), pPointPool /* 3 elem */, pmeth, pME);
 
-        ifma_ec_nistp256_mul_point(&R, &G52, (Ipp8u*)pExtendedScalar, orderBits);
+            ifma_ec_nistp256_mul_point(&R, &G52, (Ipp8u*)pExtendedScalar, orderBits);
+        }
 
         recode_point_to_mont64(pR, &R, pPointPool /* 3 elem */, pmeth, pME);
 

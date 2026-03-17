@@ -70,20 +70,23 @@ IPP_OWN_DEFN(IppStatus, gfec_SignDSA_nistp256_avx512, (const IppsBigNumState* pM
                         BN_SIZE(pEphPrivate));
 
     __ALIGN64 P256_POINT_IFMA P;
+    if (ECP_PREMULBP(pEC)) {
+        ifma_ec_nistp256_mul_pointbase(&P, (Ipp8u*)pExtendedScalar, orderBits);
+    } else {
+        BNU_CHUNK_T* pPool = cpGFpGetPool(3, pME);
 
-    BNU_CHUNK_T* pPool = cpGFpGetPool(3, pME);
+        /* Convert base point to a new Montgomery domain */
+        __ALIGN64 P256_POINT_IFMA G52;
+        recode_point_to_mont52(&G52, ECP_G(pEC), pPool, pmeth, pME);
 
-    /* Convert base point to a new Montgomery domain */
-    __ALIGN64 P256_POINT_IFMA G52;
-    recode_point_to_mont52(&G52, ECP_G(pEC), pPool, pmeth, pME);
+        ifma_ec_nistp256_mul_point(&P, &G52, (Ipp8u*)pExtendedScalar, orderBits);
 
-    ifma_ec_nistp256_mul_point(&P, &G52, (Ipp8u*)pExtendedScalar, orderBits);
-
-    cpGFpReleasePool(3, pME);
+        cpGFpReleasePool(3, pME);
+    }
 
     /*
-   // signR = int(ephPublic.x) (mod order)
-   */
+    // signR = int(ephPublic.x) (mod order)
+    */
     /* Extract affine P.x */
     ifma_ec_nistp256_get_affine_coords(&(P.x), NULL, &P);
 
@@ -91,8 +94,8 @@ IPP_OWN_DEFN(IppStatus, gfec_SignDSA_nistp256_avx512, (const IppsBigNumState* pM
     P.x = n_red(P.x);
 
     /*
-   // signS = (1/ephPrivate)*(pMsgDigest + private*signR) (mod order)
-   */
+    // signS = (1/ephPrivate)*(pMsgDigest + private*signR) (mod order)
+    */
     m512 ephPrivateInv = setzero_i64();
     BNU_CHUNK_T* pTmp  = cpGFpGetPool(1, pME);
     ZEXPAND_COPY_BNU(pTmp, orderLen, BN_NUMBER(pEphPrivate), BN_SIZE(pEphPrivate));

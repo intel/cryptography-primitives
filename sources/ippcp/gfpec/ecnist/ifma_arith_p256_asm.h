@@ -122,7 +122,7 @@ IPP_OWN_DECL(void, ifma_ec_nistp256_mul_point_loop_asm_zmm, (P256_POINT_IFMA* R,
                                                              const m512* py,
                                                              const m512* pz))
 
-                                                             /*
+/*
  * Transformation to affine coordinate
  * Computes affine coordinates from the given point A passed in the projective representation. */
 #define ifma_ec_nistp256_get_affine_coords_asm_zmm OWNAPI(ifma_ec_nistp256_get_affine_coords_asm_zmm)

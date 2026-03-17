@@ -35,6 +35,7 @@ underlying field GF(``p``).
    gfpecset
    gfpecsetsubgroup
    gfpecinitstd
+   gfpecbindgxytable
    gfpecget
    gfpecgetsubgroup
    gfpecscratchbuffersize
