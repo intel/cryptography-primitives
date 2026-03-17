@@ -879,6 +879,10 @@ pScratchBuffer);</p>
 equals the product of the given point and a scalar. The following
 pseudocode represents this operation: <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">=</span> <span class="pre">scalar</span> <span class="pre">⋅</span> <span class="pre">P</span></code>.</p>
 <p>The <em>ippsGFpECScratchBufferSize</em> function should be called with <em>nScalars</em> equal to at least 1 to get the valid <em>pScratchBuffer</em>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note: The point multiplication kernel implementation ensures all intermediate values remain in registers, avoiding memory spills to the stack.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>

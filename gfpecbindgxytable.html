@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>GFpECPSignDSA, GFpECPSignNR, GFpECPSignSM2 &#8212; Documentation for Intel® oneAPI Programming Guide</title>
+    <title>GFpECBindGxyTblStd &#8212; Documentation for Intel® oneAPI Programming Guide</title>
   
   
   
@@ -40,12 +40,12 @@
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'gfpecpsigndsa-gfpecpsignnr-gfpecpsignsm2';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'gfpecbindgxytable';</script>
     <link rel="icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="GFpECPVerifyDSA, GFpECPVerifyNR, GFpECPVerifySM2" href="gfpecpverifydsa-gfpecpverifynr-gfpecpverifysm2.html" />
-    <link rel="prev" title="GFpECSharedSecretDHC" href="gfpecsharedsecretdhc.html" />
+    <link rel="next" title="GFpECGet" href="gfpecget.html" />
+    <link rel="prev" title="GFpECInitStd" href="gfpecinitstd.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -811,7 +811,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>GFpECPSignDSA, GFpECPSignNR, GFpECPSignSM2</h1>
+    <h1>GFpECBindGxyTblStd</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -837,23 +837,24 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="gfpecpsigndsa-gfpecpsignnr-gfpecpsignsm2">
-<span id="id1"></span><h1>GFpECPSignDSA, GFpECPSignNR, GFpECPSignSM2<a class="headerlink" href="#gfpecpsigndsa-gfpecpsignnr-gfpecpsignsm2" title="Link to this heading">#</a></h1>
-<p>Computes a digital signature over a message digest.</p>
+  <section id="gfpecbindgxytblstd">
+<span id="gfpecbindgxytable"></span><h1>GFpECBindGxyTblStd<a class="headerlink" href="#gfpecbindgxytblstd" title="Link to this heading">#</a></h1>
+<p>Enables the use of base point-based pre-computed tables in kernels performing scalar*Point multiplication.</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading">#</a></h2>
-<p>IppStatus ippsGFpECSignDSA(const IppsBigNumState* pMsgDigest, const
-IppsBigNumState* pRegPrivate, const IppsBigNumState* pEphPrivate,
-IppsBigNumState* pSignR, IppsBigNumState* pSignS, IppsGFpECState*
-pEC, Ipp8u* pScratchBuffer);</p>
-<p>IppStatus ippsGFpECSignNR(const IppsBigNumState* pMsgDigest, const
-IppsBigNumState* pRegPrivate, const IppsBigNumState* pEphPrivate,
-IppsBigNumState* pSignR, IppsBigNumState* pSignS, IppsGFpECState*
-pEC, Ipp8u* pScratchBuffer);</p>
-<p>IppStatus ippsGFpECSignSM2(const IppsBigNumState* pMsgDigest, const
-IppsBigNumState* pRegPrivate, const IppsBigNumState* pEphPrivate,
-IppsBigNumState* pSignR, IppsBigNumState* pSignS, IppsGFpECState*
-pEC, Ipp8u* pScratchBuffer);</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsGFpECBindGxyTblStd192r1</span><span class="p">(</span><span class="n">IppsGFpECState</span><span class="o">*</span><span class="w"> </span><span class="n">pEC</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsGFpECBindGxyTblStd224r1</span><span class="p">(</span><span class="n">IppsGFpECState</span><span class="o">*</span><span class="w"> </span><span class="n">pEC</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsGFpECBindGxyTblStd256r1</span><span class="p">(</span><span class="n">IppsGFpECState</span><span class="o">*</span><span class="w"> </span><span class="n">pEC</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsGFpECBindGxyTblStd384r1</span><span class="p">(</span><span class="n">IppsGFpECState</span><span class="o">*</span><span class="w"> </span><span class="n">pEC</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsGFpECBindGxyTblStd521r1</span><span class="p">(</span><span class="n">IppsGFpECState</span><span class="o">*</span><span class="w"> </span><span class="n">pEC</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsGFpECBindGxyTblStdSM2</span><span class="p">(</span><span class="n">IppsGFpECState</span><span class="o">*</span><span class="w"> </span><span class="n">pEC</span><span class="p">);</span>
+</pre></div>
+</div>
 </section>
 <section id="include-files">
 <h2>Include Files<a class="headerlink" href="#include-files" title="Link to this heading">#</a></h2>
@@ -863,26 +864,8 @@ pEC, Ipp8u* pScratchBuffer);</p>
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
-<tr class="row-odd"><td><p>pMsgDigest</p></td>
-<td><p>Pointer to the message digest <em>msg</em> to be digitally signed, that is, to be ecrypted with a private key.</p></td>
-</tr>
-<tr class="row-even"><td><p>pRegPrivate</p></td>
-<td><p>Pointer to the regular private key of the signer.</p></td>
-</tr>
-<tr class="row-odd"><td><p>pEphPrivate</p></td>
-<td><p>Pointer to the ephemeral private key of the signer.</p></td>
-</tr>
-<tr class="row-even"><td><p>pSignR</p></td>
-<td><p>Pointer to the integer <code class="docutils literal notranslate"><span class="pre">r</span></code> of the digital signature.</p></td>
-</tr>
-<tr class="row-odd"><td><p>pSignS</p></td>
-<td><p>Pointer to the integer <code class="docutils literal notranslate"><span class="pre">s</span></code> of the digital signature.</p></td>
-</tr>
-<tr class="row-even"><td><p>pEC</p></td>
-<td><p>Pointer to the context of the elliptic curve.</p></td>
-</tr>
-<tr class="row-odd"><td><p>pScratchBuffer</p></td>
-<td><p>Pointer to the scratch buffer of size produced by <em>ippsGFpECScratchBufferSize</em>.</p></td>
+<tr class="row-odd"><td><p>pEC</p></td>
+<td><p>Pointer to the cryptosystem context based on a standard elliptic curve</p></td>
 </tr>
 </tbody>
 </table>
@@ -890,13 +873,17 @@ pEC, Ipp8u* pScratchBuffer);</p>
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>Functions generate a digital signature respectively to DSA <a class="reference internal" href="bibliography.html#term-IEEE-P1363A"><span class="xref std std-term">IEEE P1363A</span></a>,
-Nyberg-Rueppel <a class="reference internal" href="bibliography.html#term-IEEE-P1363A"><span class="xref std std-term">IEEE P1363A</span></a> and SM2
-<a class="reference internal" href="bibliography.html#term-SM2"><span class="xref std std-term">SM2</span></a> schemes.</p>
-<p>The <em>ippsGFpECScratchBufferSize</em> function should be called with <em>nScalars</em> equal to at least 1 to get the valid <em>pScratchBuffer</em>.</p>
+<p>The functions enable the use of base point-based pre-computed tables in kernels
+performing scalar*Point multiplication. This will result in the better performance for
+<a class="reference internal" href="gfpecpsigndsa-gfpecpsignnr-gfpecpsignsm2.html#gfpecpsigndsa-gfpecpsignnr-gfpecpsignsm2"><span class="std std-ref">ippsGFpECSignDSA</span></a>,
+<a class="reference internal" href="gfpecpverifydsa-gfpecpverifynr-gfpecpverifysm2.html#gfpecpverifydsa-gfpecpverifynr-gfpecpverifysm2"><span class="std std-ref">ippsGFpECVerifyDSA</span></a>
+and <a class="reference internal" href="gfpecprivatekey-gfpecpublickey-gfpectstkeypair.html#gfpecprivatekey-gfpecpublickey-gfpectstkeypair"><span class="std std-ref">ippsGFpECPublicKey</span></a> public API.
+The call to these functions should be placed after <code class="docutils literal notranslate"><span class="pre">pEC</span></code> state is allocated and initialized.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Note: The point multiplication kernel implementation ensures all intermediate values remain in registers, avoiding memory spills to the stack.</p>
+<p>Note: Pre-computed tables reside in memory and may be vulnerable to hardware-specific attacks.
+For non-performance-critical applications, use the standard point multiplication kernel by excluding
+the above functions from the execution path.</p>
 </div>
 </section>
 <section id="return-values">
@@ -907,25 +894,14 @@ Nyberg-Rueppel <a class="reference internal" href="bibliography.html#term-IEEE-P
 <td><p>Indicates no error. Any other value indicates an error or warning.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsNullPtrErr</p></td>
-<td><p>Indicates an error condition if any of the specified pointers is NULL.</p></td>
+<td><p>Indicates an error condition if any of the specified pointers is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>ippStsContextMatchErr</p></td>
-<td><p>Indicates an error condition if any of the contexts pointed to by pMsgDigest, pRegPrivate, pEphPrivate, pSignR, pSignS, or pEC does not match the operation.</p></td>
+<td><p>Indicates an error condition if the <code class="docutils literal notranslate"><span class="pre">pEC</span></code> parameter does not match the operation.</p></td>
 </tr>
-<tr class="row-even"><td><p>ippStsMessageErr</p></td>
-<td><p>Indicates an error condition if the value of <code class="docutils literal notranslate"><span class="pre">msg</span></code> pointed to by pMsgDigest falls outside the range of [1, <code class="docutils literal notranslate"><span class="pre">n</span></code>-1], where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the order of the elliptic curve base point <code class="docutils literal notranslate"><span class="pre">G</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>ippStsRangeErr</p></td>
-<td><p>Indicates an error condition if any of the parameters pointed to by pSignR or pSignS has memory size that is smaller than the order <code class="docutils literal notranslate"><span class="pre">n</span></code> of the elliptic curve base point <code class="docutils literal notranslate"><span class="pre">G</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p>ippStsIvalidPrivateKey</p></td>
-<td><p>Indicates an error condition if any of the parameters pointed to by pRegPrivate or pEphPrivate has memory size that is smaller than the order <code class="docutils literal notranslate"><span class="pre">n</span></code> of the elliptic curve base point <code class="docutils literal notranslate"><span class="pre">G</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>ippStsNotSupportedModeErr</p></td>
-<td><p>Indicates an error condition if the finite field GFp under the elliptic curve is not prime.</p></td>
-</tr>
-<tr class="row-even"><td><p>ippStsEphemeralKeyErr</p></td>
-<td><p>Indicates an error condition if values of the ephemeral keys <code class="docutils literal notranslate"><span class="pre">ephPrivKey</span></code> and <code class="docutils literal notranslate"><span class="pre">ephPubKey</span></code> are not valid: the digital signature calculation returns <code class="docutils literal notranslate"><span class="pre">r</span></code>=0 or <code class="docutils literal notranslate"><span class="pre">s</span></code>=0 as a result.</p></td>
+<tr class="row-even"><td><p>ippStsBadArgErr</p></td>
+<td><p>Indicates an error condition if the <code class="docutils literal notranslate"><span class="pre">pEC</span></code> parameter does not specify the finite field
+over which the given standard elliptic curve is defined.</p></td>
 </tr>
 </tbody>
 </table>
@@ -945,20 +921,20 @@ Nyberg-Rueppel <a class="reference internal" href="bibliography.html#term-IEEE-P
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="gfpecsharedsecretdhc.html"
+       href="gfpecinitstd.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">GFpECSharedSecretDHC</p>
+        <p class="prev-next-title">GFpECInitStd</p>
       </div>
     </a>
     <a class="right-next"
-       href="gfpecpverifydsa-gfpecpverifynr-gfpecpverifysm2.html"
+       href="gfpecget.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">GFpECPVerifyDSA, GFpECPVerifyNR, GFpECPVerifySM2</p>
+        <p class="prev-next-title">GFpECGet</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

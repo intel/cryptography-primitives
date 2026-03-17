@@ -892,6 +892,10 @@ and <a class="reference internal" href="gfpecpointinit.html#gfpecpointinit"><spa
 <a class="reference internal" href="gfpecset.html#gfpecset"><span class="std std-ref">GFpECSet</span></a>, or
 <a class="reference internal" href="gfpecsetsubgroup.html#gfpecsetsubgroup"><span class="std std-ref">GFpECSetSubgroup</span></a>.</p>
 <p>The <em>ippsGFpECScratchBufferSize</em> function should be called with <em>nScalars</em> equal to at least 1 to get the valid <em>pScratchBuffer</em>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note: The point multiplication kernel implementation ensures all intermediate values remain in registers, avoiding memory spills to the stack.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>

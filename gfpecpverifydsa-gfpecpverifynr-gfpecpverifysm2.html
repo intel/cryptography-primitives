@@ -896,6 +896,10 @@ by the ippsGFpECPSignDSA , ippsGFpECPSignNR, and
 ippsGFpECPSignSM2functions, respectively. The signature consists of two
 large integers: <code class="docutils literal notranslate"><span class="pre">r</span></code> and <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p>
 <p>The <em>ippsGFpECScratchBufferSize</em> function should be called with <em>nScalars</em> equal to at least 2 to get the valid <em>pScratchBuffer</em>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note: The point multiplication kernel implementation ensures all intermediate values remain in registers, avoiding memory spills to the stack.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>
