@@ -180,8 +180,7 @@
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Using Custom Library Tool for Intel® Cryptography Primitives Library</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="system-requirements-for-custom-library-tool.html">System Requirements for Custom Library Tool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="operation-modes.html">Operation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="building-a-custom-dll-with-custom-library-tool.html">Building a Custom DLL with Custom Library Tool</a></li>
-<li class="toctree-l2"><a class="reference internal" href="using-console-version-of-custom-library-tool.html">Using Console Version of Custom Library Tool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using-custom-library-tool.html">Using Custom Library Tool</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="programming-with-intel-cryptography-primitives.html">Programming with Intel® Cryptography Primitives Library in the Microsoft* Visual Studio* IDE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -825,53 +824,71 @@ document.write(`
                   
   <section id="using-custom-library-tool-for-intel-cryptography-primitives-library">
 <span id="using-custom-library-tool-for-crypto-primitives-library"></span><h1>Using Custom Library Tool for Intel® Cryptography Primitives Library<a class="headerlink" href="#using-custom-library-tool-for-intel-cryptography-primitives-library" title="Link to this heading">#</a></h1>
-<p>With the Intel® Integrated Performance Primitives (Intel® IPP) Custom
-Library Tool, you can build your own dynamic library containing only the
+<p>With the Custom Library Tool, you can build your own dynamic/shared library containing only the
 Intel® Cryptography Primitives Library functionality that is necessary for
 your application.</p>
 <p>The use of custom libraries built with the Custom Library Tool provides
 the following advantages:</p>
 <ul>
 <li><p><strong>Package size</strong>. Your package may be much smaller if linked
-with a custom library because standard dynamic libraries
+with a custom library because standard dynamic/shared libraries
 contain all optimized versions of Intel® Cryptography Primitives Library
 functions and a dispatcher. The following table compares the contents
 and size of packages for an end-user application linked with a custom
-dynamic library and an application linked with the standard Intel IPP
-dynamic libraries:</p>
+dynamic/shared library and an application linked
+with the standard Intel® Cryptography Primitives Library dynamic/shared libraries:</p>
 <div class="pst-scrollable-table-container"><table class="table">
-<colgroup>
-<col style="width: 50.0%" />
-<col style="width: 50.0%" />
-</colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Application linked with custom DLL</p></th>
-<th class="head"><p>Application linked with Intel IPP dynamic libraries</p></th>
+<tr class="row-odd"><th class="head"><p>OS</p></th>
+<th class="head"><p>Application linked with custom dynamic/shared library</p></th>
+<th class="head"><p>Application linked with Intel® Cryptography Primitives Library dynamic/shared libraries</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="file docutils literal notranslate"><span class="pre">ipp_test_app.exe</span></code> (for Windows*) or <code class="file docutils literal notranslate"><span class="pre">ipp_test_app</span></code> (for Linux* OS)</p>
-<p><code class="docutils literal notranslate"><span class="pre">crypto_custom\_{dll\|so}.{dll\|so\}</span></code></p>
+<tr class="row-even"><td><p>Windows*</p></td>
+<td><div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">crypto_test_app.exe</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">crypto_custom_lib.dll</span></code></div>
+<div class="line"><br /></div>
+<div class="line"><strong>Package size: 0.1 Mb</strong></div>
+</div>
 </td>
-<td><p><code class="file docutils literal notranslate"><span class="pre">ipp_test_app.exe</span></code> (for Windows*) or <code class="file docutils literal notranslate"><span class="pre">ipp_test_app</span></code> (for Linux* OS)</p>
-<p><code class="docutils literal notranslate"><span class="pre">ippcp.dll</span></code> (for Windows*) or <code class="docutils literal notranslate"><span class="pre">libippcp.so</span></code> (for Linux* OS)</p>
+<td><div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">crypto_test_app.exe</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">ippcp.dll</span></code></div>
+<div class="line"><br /></div>
+<div class="line"><strong>Package size: 7.4 Mb</strong></div>
+</div>
 </td>
 </tr>
-<tr class="row-odd"><td><p><strong>Package size: 0.1 Mb</strong></p></td>
-<td><p><strong>Package size: 6.9 Mb</strong></p></td>
+<tr class="row-odd"><td><p>Linux* OS</p></td>
+<td><div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">crypto_test_app</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">crypto_custom_lib.so</span></code></div>
+<div class="line"><br /></div>
+<div class="line"><strong>Package size: 0.1 Mb</strong></div>
+</div>
+</td>
+<td><div class="line-block">
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">crypto_test_app</span></code></div>
+<div class="line"><code class="file docutils literal notranslate"><span class="pre">libippcp.so</span></code></div>
+<div class="line"><br /></div>
+<div class="line"><strong>Package size: 9.0 Mb</strong></div>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
 </div>
 </li>
 <li><p><strong>Smooth transition to a higher version of Intel® Cryptography
-Primitives Library</strong>. You can build the same custom dynamic library
+Primitives Library</strong>. You can build the same custom dynamic/shared library
 from a higher version of Intel® Cryptography Primitives Library and
 substitute the libraries in your application without relinking.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The current Python* version of the Intel IPP Custom Library Tool
+<p>The current Python* version of the Custom Library Tool
 supports the host-host configuration only, the host-target
 configuration is currently not supported.</p>
 </div>
@@ -879,8 +896,7 @@ configuration is currently not supported.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="system-requirements-for-custom-library-tool.html">System Requirements for Custom Library Tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation-modes.html">Operation Modes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="building-a-custom-dll-with-custom-library-tool.html">Building a Custom DLL with Custom Library Tool</a></li>
-<li class="toctree-l1"><a class="reference internal" href="using-console-version-of-custom-library-tool.html">Using Console Version of Custom Library Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using-custom-library-tool.html">Using Custom Library Tool</a></li>
 </ul>
 </div>
 </section>

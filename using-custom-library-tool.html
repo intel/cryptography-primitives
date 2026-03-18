@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Building a Custom DLL with Custom Library Tool &#8212; Documentation for Intel® oneAPI Programming Guide</title>
+    <title>Using Custom Library Tool &#8212; Documentation for Intel® oneAPI Programming Guide</title>
   
   
   
@@ -40,11 +40,11 @@
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'building-a-custom-dll-with-custom-library-tool';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'using-custom-library-tool';</script>
     <link rel="icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Using Console Version of Custom Library Tool" href="using-console-version-of-custom-library-tool.html" />
+    <link rel="next" title="Programming with Intel® Cryptography Primitives Library in the Microsoft* Visual Studio* IDE" href="programming-with-intel-cryptography-primitives.html" />
     <link rel="prev" title="Operation Modes" href="operation-modes.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -180,8 +180,7 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="using-custom-library-tool-for-intel-cryptography.html">Using Custom Library Tool for Intel® Cryptography Primitives Library</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system-requirements-for-custom-library-tool.html">System Requirements for Custom Library Tool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="operation-modes.html">Operation Modes</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Building a Custom DLL with Custom Library Tool</a></li>
-<li class="toctree-l2"><a class="reference internal" href="using-console-version-of-custom-library-tool.html">Using Console Version of Custom Library Tool</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Using Custom Library Tool</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="programming-with-intel-cryptography-primitives.html">Programming with Intel® Cryptography Primitives Library in the Microsoft* Visual Studio* IDE</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -809,7 +808,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Building a Custom DLL with Custom Library Tool</h1>
+    <h1>Using Custom Library Tool</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -823,33 +822,123 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="building-a-custom-dll-with-custom-library-tool">
-<span id="id1"></span><h1>Building a Custom DLL with Custom Library Tool<a class="headerlink" href="#building-a-custom-dll-with-custom-library-tool" title="Link to this heading">#</a></h1>
-<p>Follow the steps below to build a custom dynamic library using the
-Intel® Integrated Performance Primitives (Intel® IPP) Custom Library Tool:</p>
-<ol class="arabic simple">
-<li><p>Run <code class="samp docutils literal notranslate"><span class="pre">python</span> <span class="pre">main.py</span></code> to launch the GUI version of the tool.</p></li>
-<li><p>Select the Intel® Cryptography Primitives Library package.</p></li>
-<li><p>Configure your custom library.</p></li>
-<li><p>Set the library name.</p></li>
-<li><p>Select functions from the list. You can build a dynamic library
-containing Intel® Integrated Performance Primitives (Intel® IPP)
-or Intel® Cryptography Primitives Library functionality,
-but not both. If you need to add threaded functions to the custom list,
-select the <strong>Threading layer</strong> checkbox to show the list of threaded
-functions.</p></li>
-<li><p>Build the library automatically (if available) or save a build
-script.</p></li>
-</ol>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>You can save the configuration and the list of custom functions as a
-project by selecting <strong>Save project</strong> or <strong>Save project as…</strong>. The
-project is saved as a file with the .cltproj extension. You can then
-open the project by selecting <strong>Open project</strong>.</p>
+  <section id="using-custom-library-tool">
+<span id="id1"></span><h1>Using Custom Library Tool<a class="headerlink" href="#using-custom-library-tool" title="Link to this heading">#</a></h1>
+<p>Follow the steps below to build a custom dynamic/shared library using the Custom Library Tool:</p>
+<ol class="arabic">
+<li><p>Define a list of Intel® Cryptography Primitives Library functions that the Custom
+Library Tools should export to your custom dynamic/shared library. See the
+example text file <code class="docutils literal notranslate"><span class="pre">my_functions.txt</span></code> below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ippcpGetLibVersion
+ippsDESGetSize
+ippsDESInit
+ippsDESPack
+ippsDESUnpack
+</pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/crypto_dynamic_dispatcher.png"><img alt="_images/crypto_dynamic_dispatcher.png" src="_images/crypto_dynamic_dispatcher.png" style="width: 614.4px; height: 517.1999999999999px;" />
-</a>
+</li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">clt.py</span></code> with the following parameters:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-c</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--console</span></code></div>
+</div>
+</td>
+<td><p>Does nothing. The option is left for compatibility with previous versions of Custom Library Tool.</p></td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-g</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--generate</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-g={none|dynamic|static}</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--generate={none|dynamic|static}</span></code></div>
+</div>
+</td>
+<td><p>Enables the script generation mode (the build mode is used by default). For more information, see <a class="reference internal" href="operation-modes.html#operation-modes"><span class="std std-ref">Operation Modes</span></a>. If no arguments are provided to the options <code class="docutils literal notranslate"><span class="pre">-g</span></code> / <code class="docutils literal notranslate"><span class="pre">--generate</span></code>, dynamic dispatcher generation mode is used.</p></td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">&lt;name&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--name</span> <span class="pre">&lt;name&gt;</span></code></div>
+</div>
+</td>
+<td><p>Output library name.</p></td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-p</span> <span class="pre">&lt;path&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--path</span> <span class="pre">&lt;path&gt;</span></code></div>
+</div>
+</td>
+<td><p>Path to the output directory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-root</span> <span class="pre">&lt;root_path&gt;</span></code></p></td>
+<td><p>Path to Intel® Cryptography Primitives Library package root directory</p></td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">&lt;function&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--function</span> <span class="pre">&lt;function&gt;</span></code></div>
+</div>
+</td>
+<td><p>Name of a function to be included into your custom dynamic/shared library.</p></td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-ff</span> <span class="pre">&lt;functions_file&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--functions_file</span> <span class="pre">&lt;functions_file&gt;</span></code></div>
+</div>
+</td>
+<td><p>Path to a file with a list of functions to be included into your custom dynamic/shared library (the <code class="docutils literal notranslate"><span class="pre">-f</span></code> or <code class="docutils literal notranslate"><span class="pre">--function</span></code> flag can be used to add functions on the command line).</p></td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-arch={intel64}</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--architecture={intel64}</span></code></div>
+</div>
+</td>
+<td><p>Enables all actions for the Intel® 64 architecture. This is enabled by default. It is left for compatibility with previous versions of Custom Library Tool.</p></td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-tl={tbb|openmp}</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--threading_layer_type={tbb|openmp}</span></code></div>
+</div>
+</td>
+<td><p>Does nothing. This option is not applicable in case of Intel® Cryptography Primitives Library.</p></td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">&lt;cpu_set&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--custom_dispatcher</span> <span class="pre">&lt;cpu_set&gt;</span></code></div>
+</div>
+</td>
+<td><p>Sets the exact list of CPUs that must be supported by custom dynamic/shared library and generates a C-file with the custom dispatcher.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--prefix</span> <span class="pre">&lt;prefix&gt;</span></code></p></td>
+<td><p>Renames selected functions with specified prefix in the custom dispatcher files.</p></td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">-h</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">--help</span></code></div>
+</div>
+</td>
+<td><p>Prints command help.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate build scripts</span>
+<span class="c1"># with the output shared library name &quot;my_custom_lib&quot;</span>
+<span class="c1"># with functions defined in the &quot;my_functions.txt&quot; file</span>
+<span class="c1"># optimized only for processors with</span>
+<span class="c1"># Intel® Advanced Vector Extensions 512 (Intel® AVX-512)</span>
+<span class="c1"># using Intel® Cryptography Primitives Library</span>
+
+python3<span class="w"> </span>clt.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-g<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-n<span class="w"> </span>my_custom_lib<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="s2">&quot;~/my_project&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-ff<span class="w"> </span><span class="s2">&quot;~/my_project/my_functions.txt&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span>avx512bw
+</pre></div>
+</div>
+</li>
+</ol>
 </section>
 
 
@@ -873,11 +962,11 @@ open the project by selecting <strong>Open project</strong>.</p>
       </div>
     </a>
     <a class="right-next"
-       href="using-console-version-of-custom-library-tool.html"
+       href="programming-with-intel-cryptography-primitives.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Using Console Version of Custom Library Tool</p>
+        <p class="prev-next-title">Programming with Intel® Cryptography Primitives Library in the Microsoft* Visual Studio* IDE</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
