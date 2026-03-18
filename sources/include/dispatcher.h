@@ -43,6 +43,8 @@ extern "C" {
 #define E9_FM (Y8_FM | ippCPUID_AVX | ippAVX_ENABLEDBYOS | ippCPUID_RDRAND | ippCPUID_F16C)
 #define L9_FM (E9_FM | ippCPUID_MOVBE | ippCPUID_AVX2 | ippCPUID_ADCOX | ippCPUID_RDSEED | ippCPUID_PREFETCHW)
 #define K0_FM (L9_FM | ippCPUID_AVX512F | ippCPUID_AVX512CD | ippCPUID_AVX512VL | ippCPUID_AVX512BW | ippCPUID_AVX512DQ | ippAVX512_ENABLEDBYOS)
+#define K1_FM (K0_FM | ippCPUID_SHA | ippCPUID_AVX512VBMI | ippCPUID_AVX512VBMI2 | ippCPUID_AVX512IFMA | ippCPUID_AVX512GFNI | ippCPUID_AVX512VAES | ippCPUID_AVX512VCLMUL)
+#define D1_FM (K1_FM | ippCPUID_AVX10_2)
 /* clang-format on */
 
 #else
@@ -64,12 +66,13 @@ extern "C" {
 #define AVX3X_MSK (AVX2_MSK | ippCPUID_AVX512F | ippCPUID_AVX512CD | ippCPUID_AVX512VL | ippCPUID_AVX512BW | ippCPUID_AVX512DQ)
 #define AVX3M_MSK (AVX2_MSK | ippCPUID_AVX512F | ippCPUID_AVX512CD | ippCPUID_AVX512PF | ippCPUID_AVX512ER)
 #define AVX3I_MSK (AVX3X_MSK | ippCPUID_SHA | ippCPUID_AVX512VBMI | ippCPUID_AVX512VBMI2 | ippCPUID_AVX512IFMA | ippCPUID_AVX512GFNI | ippCPUID_AVX512VAES | ippCPUID_AVX512VCLMUL)
+#define APX_MSK   (AVX3I_MSK | ippCPUID_AVX10_2)
 /* clang-format on */
 #if defined(_ARCH_IA32)
 enum lib_enum { LIB_P8 = 0, LIB_H9 = 1, LIB_NOMORE };
 #define LIB_PX LIB_P8
 #elif defined(_ARCH_EM64T)
-enum lib_enum { LIB_Y8 = 0, LIB_L9 = 1, LIB_K0 = 2, LIB_K1 = 3, LIB_NOMORE };
+enum lib_enum { LIB_Y8 = 0, LIB_L9 = 1, LIB_K0 = 2, LIB_K1 = 3, LIB_D1 = 4, LIB_NOMORE };
 #define LIB_PX LIB_Y8
 #else
 #error "lib_enum isn't defined!"
@@ -84,6 +87,7 @@ enum lib_enum { LIB_Y8 = 0, LIB_L9 = 1, LIB_K0 = 2, LIB_K1 = 3, LIB_NOMORE };
 #define LIB_AVX3M LIB_H9
 #define LIB_AVX3X LIB_H9 /* no ia32 library for Intel® Xeon® processor (formerly Skylake) */
 #define LIB_AVX3I LIB_H9 /* no ia32 library for Intel® Xeon® processor (formerly Icelake) */
+#define LIB_APX   LIB_H9 /* no ia32 library for Intel® Xeon® processor with AVX10.2 support*/
 #elif defined(_ARCH_EM64T)
 #define LIB_MMX   LIB_Y8
 #define LIB_SSE42 LIB_Y8
@@ -91,6 +95,7 @@ enum lib_enum { LIB_Y8 = 0, LIB_L9 = 1, LIB_K0 = 2, LIB_K1 = 3, LIB_NOMORE };
 #define LIB_AVX2  LIB_L9
 #define LIB_AVX3X LIB_K0
 #define LIB_AVX3I LIB_K1
+#define LIB_APX   LIB_D1
 #endif
 
 //gres: #if defined( _IPP_DYNAMIC )
@@ -112,17 +117,18 @@ static const dll_enum dllUsage[][DLL_NOMORE + 1] = {
 
 #elif defined(_ARCH_EM64T)
 /* Describe Intel CPUs and libraries */
-typedef enum { CPU_Y8 = 0, CPU_L9, CPU_K0, CPU_K1, CPU_NOMORE } cpu_enum;
-typedef enum { DLL_Y8 = 0, DLL_L9, DLL_K0, DLL_K1, DLL_NOMORE } dll_enum;
+typedef enum { CPU_Y8 = 0, CPU_L9, CPU_K0, CPU_K1, CPU_D1, CPU_NOMORE } cpu_enum;
+typedef enum { DLL_Y8 = 0, DLL_L9, DLL_K0, DLL_K1, DLL_D1, DLL_NOMORE } dll_enum;
 
 /* New cpu can use some libraries for old cpu */
 /* clang-format off */
 static const dll_enum dllUsage[][DLL_NOMORE + 1] = {
-/*           DLL_K1, DLL_K0, DLL_L9, DLL_Y8,  DLL_NOMORE */
-/*CPU_Y8*/ {                          DLL_Y8,  DLL_NOMORE },
-/*CPU_L9*/ {                  DLL_L9, DLL_Y8,  DLL_NOMORE },
-/*CPU_K0*/ {         DLL_K0,  DLL_L9, DLL_Y8,  DLL_NOMORE },
-/*CPU_K1*/ { DLL_K1, DLL_K0,  DLL_L9, DLL_Y8,  DLL_NOMORE }
+/*           DLL_D1, DLL_K1, DLL_K0, DLL_L9, DLL_Y8,  DLL_NOMORE */
+/*CPU_Y8*/ {                                 DLL_Y8,  DLL_NOMORE },
+/*CPU_L9*/ {                         DLL_L9, DLL_Y8,  DLL_NOMORE },
+/*CPU_K0*/ {                 DLL_K0, DLL_L9, DLL_Y8,  DLL_NOMORE },
+/*CPU_K1*/ {         DLL_K1, DLL_K0, DLL_L9, DLL_Y8,  DLL_NOMORE },
+/*CPU_D1*/ { DLL_D1, DLL_K1, DLL_K0, DLL_L9, DLL_Y8,  DLL_NOMORE }
 };
 /* clang-format on */
 
@@ -147,12 +153,15 @@ static const _TCHAR* dllNames[DLL_NOMORE] = { _T(IPP_LIB_PREFIX()) _T("y8")
                                               _T(IPP_LIB_PREFIX()) _T("k0")
                                                                    _T(".dll"),
                                               _T(IPP_LIB_PREFIX()) _T("k1")
+                                                                   _T(".dll"),
+                                              _T(IPP_LIB_PREFIX()) _T("d1")
                                                                    _T(".dll") };
 #elif defined(LINUX32E)
 static const _TCHAR* dllNames[DLL_NOMORE] = { _T("lib") _T(IPP_LIB_PREFIX()) _T("y8.so"),
                                               _T("lib") _T(IPP_LIB_PREFIX()) _T("l9.so"),
                                               _T("lib") _T(IPP_LIB_PREFIX()) _T("k0.so"),
-                                              _T("lib") _T(IPP_LIB_PREFIX()) _T("k1.so") };
+                                              _T("lib") _T(IPP_LIB_PREFIX()) _T("k1.so"),
+                                              _T("lib") _T(IPP_LIB_PREFIX()) _T("d1.so") };
 #endif
 
 #endif /* _PCS */

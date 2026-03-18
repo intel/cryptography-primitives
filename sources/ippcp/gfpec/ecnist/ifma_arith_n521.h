@@ -23,6 +23,13 @@
 
 #include "gfpec/ecnist/ifma_defs_p521.h"
 
+#define ifma_amm52_n521      OWNAPI(ifma_amm52_n521)
+#define ifma_add52_n521      OWNAPI(ifma_add52_n521)
+#define ifma_tomont52_n521   OWNAPI(ifma_tomont52_n521)
+#define ifma_fastred52_n521  OWNAPI(ifma_fastred52_n521)
+#define ifma_frommont52_n521 OWNAPI(ifma_frommont52_n521)
+#define ifma_aminv52_n521    OWNAPI(ifma_aminv52_n521)
+
 /**
  * \brief
  * R = (A * B) - in domain n521r1

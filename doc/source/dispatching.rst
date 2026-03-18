@@ -66,6 +66,10 @@ uses:
      -  +
      -  +
      -  Optimized for processors with Intel® Advanced Vector Extensions 512 (Intel® AVX-512)(formerly codenamed IceLake)
+  * -  **d1**
+     -  +
+     -  +
+     -  Optimized for processors with Intel® Advanced Vector Extensions 10.2 (Intel® AVX10.2)
 
 
 

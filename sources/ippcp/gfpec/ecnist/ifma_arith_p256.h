@@ -24,6 +24,16 @@
 #include "ifma_alias_avx512.h"
 #include "gfpec/ecnist/ifma_norm.h"
 
+#define ifma_amm52_p256       OWNAPI(ifma_amm52_p256)
+#define ifma_amm52_dual_p256  OWNAPI(ifma_amm52_dual_p256)
+#define ifma_half52_p256      OWNAPI(ifma_half52_p256)
+#define ifma_aminv52_p256     OWNAPI(ifma_aminv52_p256)
+#define ifma_neg52_p256       OWNAPI(ifma_neg52_p256)
+#define ifma_tomont52_p256    OWNAPI(ifma_tomont52_p256)
+#define ifma_frommont52_p256  OWNAPI(ifma_frommont52_p256)
+#define convert_radix_to_52x5 OWNAPI(convert_radix_to_52x5)
+#define convert_radix_to_64x4 OWNAPI(convert_radix_to_64x4)
+
 /**
  * \brief
  *

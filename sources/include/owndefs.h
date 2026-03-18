@@ -110,6 +110,7 @@
 /* Intel® Advanced Vector Extensions 512 (Intel® AVX512) -
     Intel® Xeon® Processor (formerly codenamed Icelake)*/
 #define _IPP32E_K1 4096
+#define _IPP32E_D1 8192 /* Intel® Advanced Vector Extensions 10.2 */
 
 
 #if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || (_MSC_VER >= 1300)
@@ -161,6 +162,11 @@
 #define _IPP         _IPP_PX
 #define _IPP32E      _IPP32E_K1
 #define OWNAPI(name) k1_##name
+
+#elif defined(_D1) /* Intel® AVX10.2 */
+#define _IPP         _IPP_PX
+#define _IPP32E      _IPP32E_D1
+#define OWNAPI(name) d1_##name
 
 #else
 

@@ -23,6 +23,13 @@
 
 #include "ifma_alias_avx512.h"
 
+#define ifma_amm52_n384      OWNAPI(ifma_amm52_n384)
+#define ifma_add52_n384      OWNAPI(ifma_add52_n384)
+#define ifma_fastred52_n384  OWNAPI(ifma_fastred52_n384)
+#define ifma_tomont52_n384   OWNAPI(ifma_tomont52_n384)
+#define ifma_frommont52_n384 OWNAPI(ifma_frommont52_n384)
+#define ifma_aminv52_n384    OWNAPI(ifma_aminv52_n384)
+
 /**
  * \brief
  *

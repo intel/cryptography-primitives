@@ -134,3 +134,5 @@ set(k0_opt "${k0_opt} -QxCORE-AVX512")
 set(k0_opt "${k0_opt} -Qopt-zmm-usage:high")
 set(k1_opt "${k1_opt} -QxCORE-AVX512")
 set(k1_opt "${k1_opt} -Qopt-zmm-usage:high")
+# The compiler doesn't support AVX10.2. k1 flags are used for d1 build.
+set(d1_opt "${k1_opt}")

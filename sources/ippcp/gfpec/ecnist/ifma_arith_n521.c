@@ -19,6 +19,7 @@
 #if (_IPP32E >= _IPP32E_K1)
 
 #include "gfpec/ecnist/ifma_arith_p521.h"
+#include "gfpec/ecnist/ifma_arith_n521.h"
 /*
 // EC NIST-P521 prime base point order
 // in 2^52 radix

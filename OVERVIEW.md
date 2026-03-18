@@ -98,19 +98,21 @@ flowchart LR
         l9["l9_ippsAES_GCMEncrypt()"]:::class1
         k0["k0_ippsAES_GCMEncrypt()"]:::class1
         k1["k1_ippsAES_GCMEncrypt()"]:::class1
+        d1["d1_ippsAES_GCMEncrypt()"]:::class1
 
         %% Connections
         dispatcher == SSSE4.2 ==> y8
         dispatcher == AVX2 ==> l9
         dispatcher == AVX512 (formerly codenamed SkyLake) ==> k0
         dispatcher == AVX512 (formerly codenamed IceLake) ==> k1
+        dispatcher == AVX10.2 ==> d1
     end
 
     style ML fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF
 
     function ==> dispatcher
 
-    linkStyle 0,1,2,3,4 stroke:#FFE500
+    linkStyle 0,1,2,3,4,5 stroke:#FFE500
 ```
 
 The prefix before the function name ("y8_", "l9_", etc) is a naming convention for the function implementations that are included in the [library with dispatcher](#all-cpus-library). It refers to the CPU instruction set for which the function is optimized (for all available prefixes see the [table](#target-optimization-codes-in-function-names) below).
@@ -128,6 +130,7 @@ By default, the dispatcher chooses the most appropriate optimization for the cur
 | h9                        | l9                     | Optimized for processors with Intel® Advanced Vector Extensions 2 (Intel® AVX2)                                    |
 | -                         | k0                     | Optimized for processors with Intel® Advanced Vector Extensions 512 (Intel® AVX-512) (formerly codenamed SkyLake)  |
 | -                         | k1                     | Optimized for processors with Intel® Advanced Vector Extensions 512 (Intel® AVX-512) (formerly codenamed IceLake)  |
+| -                         | d1                     | Optimized for processors with Intel® Advanced Vector Extensions 10.2 (Intel® AVX10.2)                              |
 
 > **NOTE:** Due to the significant shift in the industry towards 64-bit architecture, the support of 32-bit libraries is deprecated in the Intel® Integrated Performance Primitives Cryptography (Intel® IPP Cryptography) 2021.9 release. No new features (only critical security fixes) are targeted for 32-bit libraries and testing scope is limited by Linux OS & Clang compiler.
 
@@ -261,13 +264,6 @@ flowchart TD
 
             Dispatcher["Dispatcher"]:::class1
 
-            subgraph y8_graph["SSE4.2 version"]
-               y8_1["y8_func1"]:::class2
-                y8_2["y8_func2"]:::class2
-                y8_3["y8_<...>"]:::class2
-                y8_4["y8_funcN"]:::class2
-            end
-
             subgraph l9_graph["AVX2 version"]
                 l9_1["l9_func1"]:::class2
                 l9_2["l9_func2"]:::class2
@@ -289,10 +285,25 @@ flowchart TD
                 k1_4["k1_funcN"]:::class2
             end
 
+            subgraph d1_graph["AVX10.2 d1 version"]
+                d1_1["d1_func1"]:::class2
+                d1_2["d1_func2"]:::class2
+                d1_3["d1_<...>"]:::class2
+                d1_4["d1_funcN"]:::class2
+            end
+
+            subgraph y8_graph["SSE4.2 version"]
+                y8_1["y8_func1"]:::class2
+                y8_2["y8_func2"]:::class2
+                y8_3["y8_<...>"]:::class2
+                y8_4["y8_funcN"]:::class2
+            end
+
             Dispatcher ~~~ y8_graph
             Dispatcher ~~~ l9_graph
             Dispatcher ~~~ k0_graph
             Dispatcher ~~~ k1_graph
+            Dispatcher ~~~ d1_graph
         end
 
     %% Style for subgraphs
@@ -300,6 +311,7 @@ flowchart TD
     style l9_graph fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF
     style k0_graph fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF
     style k1_graph fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF
+    style d1_graph fill:#15BCEF, stroke:#15BCEF, color:#FFFFFF
 
     style base fill:none, stroke:#15BCEF, stroke-width:3px, color:#0054AE, font-size:16pt
 ```

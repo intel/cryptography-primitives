@@ -30,6 +30,15 @@
 #include "gfpec/ecnist/ifma_arith_p256.h"
 #include "pcpbnuimpl.h"
 
+#define ifma_ec_nistp256_mul_point         OWNAPI(ifma_ec_nistp256_mul_point)
+#define ifma_ec_nistp256_mul_pointbase     OWNAPI(ifma_ec_nistp256_mul_pointbase)
+#define ifma_ec_nistp256_get_affine_coords OWNAPI(ifma_ec_nistp256_get_affine_coords)
+#define ifma_ec_nistp256_is_on_curve       OWNAPI(ifma_ec_nistp256_is_on_curve)
+#define ifma_ec_nistp256_dbl_point         OWNAPI(ifma_ec_nistp256_dbl_point)
+#define ifma_ec_nistp256_add_point         OWNAPI(ifma_ec_nistp256_add_point)
+#define ifma_ec_nistp256_add_point_affine  OWNAPI(ifma_ec_nistp256_add_point_affine)
+#define p256r1_select_ap_w7_ifma           OWNAPI(p256r1_select_ap_w7_ifma)
+
 /* p256 point (x,y,z) */
 typedef struct {
     m512 x;

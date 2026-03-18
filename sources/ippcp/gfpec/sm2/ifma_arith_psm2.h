@@ -25,6 +25,16 @@
 #include "gfpec/ecnist/ifma_norm.h"
 
 
+#define fesm2_neg_norm                OWNAPI(fesm2_neg_norm)
+#define fesm2_mul                     OWNAPI(fesm2_mul)
+#define fesm2_mul_dual                OWNAPI(fesm2_mul_dual)
+#define fesm2_div2_norm               OWNAPI(fesm2_div2_norm)
+#define fesm2_inv_norm                OWNAPI(fesm2_inv_norm)
+#define fesm2_to_mont                 OWNAPI(fesm2_to_mont)
+#define fesm2_from_mont               OWNAPI(fesm2_from_mont)
+#define fesm2_convert_radix64_radix52 OWNAPI(fesm2_convert_radix64_radix52)
+#define fesm2_convert_radix52_radix64 OWNAPI(fesm2_convert_radix52_radix64)
+
 /**
  * \brief
  * compute R = (-A) enhanced Montgomery (Gueron modification group operation)

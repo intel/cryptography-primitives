@@ -22,6 +22,14 @@
 
 #include "gfpec/sm2/ifma_defs_sm2.h"
 
+#define fesm2_mul_norder            OWNAPI(fesm2_mul_norder)
+#define fesm2_add_norder_norm       OWNAPI(fesm2_add_norder_norm)
+#define fesm2_sub_norder_norm       OWNAPI(fesm2_sub_norder_norm)
+#define fesm2_to_mont_norder        OWNAPI(fesm2_to_mont_norder)
+#define fesm2_fast_reduction_norder OWNAPI(fesm2_fast_reduction_norder)
+#define fesm2_from_mont_norder      OWNAPI(fesm2_from_mont_norder)
+#define fesm2_inv_norder_norm       OWNAPI(fesm2_inv_norder_norm)
+
 /**
  * \brief
  *

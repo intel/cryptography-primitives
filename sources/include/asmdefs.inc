@@ -39,6 +39,7 @@
 %assign _IPP32E_L9 512  ; Intel(R) Advanced Vector Extensions 2 - intel64
 %assign _IPP32E_K0 2048 ; Intel(R) Advanced Vector Extensions 512 - Intel(R) Xeon(R) processor (formerly Skylake) - intel64
 %assign _IPP32E_K1 4096 ; Intel(R) Advanced Vector Extensions 512 - Intel(R) Xeon(R) processor (formerly Icelake) - intel64
+%assign _IPP32E_D1 8192 ; Intel(R) Advanced Vector Extensions 10.2 - Intel(R) Xeon(R) processor - intel64
 
 %assign _IPP _IPP_PX
 %assign _IPP32E _IPP32E_PX
@@ -63,6 +64,10 @@
   %assign IPP_ALIGN_FACTOR 64
   %assign _IPP _IPP_PX
   %assign _IPP32E _IPP32E_K1
+%elifdef _D1 ; Intel(R) Advanced Vector Extensions 512 - Intel(R) Xeon(R) processor - intel64
+  %assign IPP_ALIGN_FACTOR 64
+  %assign _IPP _IPP_PX
+  %assign _IPP32E _IPP32E_D1
 %else
   %assign _IPP _IPP_PX ; pure C-code
 %endif

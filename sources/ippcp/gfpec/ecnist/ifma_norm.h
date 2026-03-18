@@ -22,6 +22,11 @@
 
 #include "ifma_alias_avx512.h"
 
+#define ifma_lnorm52      OWNAPI(ifma_lnorm52)
+#define ifma_lnorm52_dual OWNAPI(ifma_lnorm52_dual)
+#define ifma_norm52       OWNAPI(ifma_norm52)
+#define ifma_norm52_dual  OWNAPI(ifma_norm52_dual)
+
 /**
  * \brief
  *

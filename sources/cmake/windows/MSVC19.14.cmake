@@ -101,3 +101,5 @@ set(y8_opt "${y8_opt}")
 set(l9_opt "${l9_opt} /arch:AVX2")
 set(k0_opt "${k0_opt} /arch:AVX2")
 set(k1_opt "${k1_opt} /arch:AVX2")
+# The compiler doesn't support AVX10.2. k1 flags are used for d1 build.
+set(d1_opt "${k1_opt}")

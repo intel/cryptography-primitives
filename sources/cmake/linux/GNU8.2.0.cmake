@@ -112,3 +112,5 @@ set(k0_opt "${k0_opt} -march=skylake-avx512")
 set(k0_opt "${k0_opt} -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mpclmul -mrdrnd -mrdseed -madx")
 set(k1_opt "${k1_opt} -march=icelake-server")
 set(k1_opt "${k1_opt} -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mavx512ifma -mpclmul -msha -mrdrnd -mrdseed -madx -mgfni -mvaes -mvpclmulqdq -mavx512vbmi -mavx512vbmi2")
+# The compiler doesn't support AVX10.2. k1 flags are used for d1 build.
+set(d1_opt "${k1_opt}")

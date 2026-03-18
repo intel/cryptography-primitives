@@ -6,6 +6,8 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Fixed an issue in LMS key and signature generation for certain values of `extraBufSize`.
 - Added more precise input parameters validation for multi-buffer functions (`mbx_sm3_msg_digest_mb16`, `mbx_sm3_update_mb16`, `mbx_exp_mb8` and `mbx_exp{1024,2048,3072,4096}_mb8`).
 - Removed support `fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size_keys` and `fips_selftest_ippsRSASignVerify_PKCS1v15_rmf_get_size`.
+- Fully disabled Intel® SSE2 (`w7`), Intel® SSE3 (`m7`), Intel® SSSE3 (`n8`, `s8`) and Intel® AVX (`e9`, `g9`) optimization code paths, including the respective 1cpu headers and 1cpu libraries.
+- Added new optimization code paths (`d1`) to support Intel® AVX10.2 instruction set.
 
 ## Intel(R) Cryptography Primitives Library 1.4.0
 - Added key and signature generations for the Leighton-Micali Hash-Based Signatures (LMS) algorithm.

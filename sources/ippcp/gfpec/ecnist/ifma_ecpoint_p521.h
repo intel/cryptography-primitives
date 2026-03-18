@@ -23,6 +23,13 @@
 #include "gfpec/ecnist/ifma_defs_p521.h"
 
 typedef struct P521_POINT_IFMA {
+#define ifma_ec_nistp521_mul_point         OWNAPI(ifma_ec_nistp521_mul_point)
+#define ifma_ec_nistp521_mul_pointbase     OWNAPI(ifma_ec_nistp521_mul_pointbase)
+#define ifma_ec_nistp521_get_affine_coords OWNAPI(ifma_ec_nistp521_get_affine_coords)
+#define ifma_ec_nistp521_is_on_curve       OWNAPI(ifma_ec_nistp521_is_on_curve)
+#define ifma_ec_nistp521_dbl_point         OWNAPI(ifma_ec_nistp521_dbl_point)
+#define ifma_ec_nistp521_add_point         OWNAPI(ifma_ec_nistp521_add_point)
+#define ifma_ec_nistp521_add_point_affine  OWNAPI(ifma_ec_nistp521_add_point_affine)
     fe521 x;
     fe521 y;
     fe521 z;

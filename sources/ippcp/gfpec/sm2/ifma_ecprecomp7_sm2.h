@@ -25,6 +25,8 @@
 #include "gfpec/sm2/ifma_defs_sm2.h"
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 
+#define ifma_ec_sm2_bp_precomp OWNAPI(ifma_ec_sm2_bp_precomp)
+
 typedef struct SINGLE_PSM2_AFFINE_POINT_IFMA {
     __ALIGN64 Ipp64u x[PSM2_LEN52];
     __ALIGN64 Ipp64u y[PSM2_LEN52];

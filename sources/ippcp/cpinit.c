@@ -263,6 +263,16 @@ static int cpGetFeatures(Ipp64u* pFeaturesMask)
             if (cp_is_avx512_extension())
                 mask |= ippAVX512_ENABLEDBYOS;
         }
+
+        cpGetReg((int*)buf, 0x7, 1);
+        edx_ = (Ipp32u)buf[3];
+        if (edx_ & BIT19) {             // edx[19] - AVX10 Converged Vector ISA
+            cpGetReg((int*)buf, 0x24, 0);
+            ebx_ = (Ipp32u)buf[1];
+            if ((ebx_ & 0x00ff) >= 2) { // ebx[0:7] - AVX10 version 2
+                mask |= ippCPUID_AVX10_2;
+            }
+        }
     }
     mask = (flgFMA && flgINT && flgGPR) ? (mask | ippCPUID_AVX2)
                                         : mask; // to separate Intel® AVX2 flags here
@@ -302,6 +312,8 @@ IPPFUN(int, ippcpGetEnabledNumThreads, (void)) { return cpthreads_omp_of_n_ipp; 
     (AVX3X_FEATURES | ippCPUID_SHA | ippCPUID_AVX512VBMI | ippCPUID_AVX512VBMI2 | \
      ippCPUID_AVX512IFMA | ippCPUID_AVX512GFNI | ippCPUID_AVX512VAES | ippCPUID_AVX512VCLMUL)
 
+#define APX_FEATURES (AVX3I_FEATURES | ippCPUID_AVX10_2)
+
 
 IppStatus owncpFeaturesToIdx(Ipp64u* cpuFeatures, int* index)
 {
@@ -310,9 +322,13 @@ IppStatus owncpFeaturesToIdx(Ipp64u* cpuFeatures, int* index)
 
     *index = 0;
 
-    if ((AVX3I_FEATURES == (*cpuFeatures & AVX3I_FEATURES)) &&
-        (ippAVX512_ENABLEDBYOS &
-         cpFeatures)) { /* Intel® architecture formerly codenamed Icelake x64=K0 */
+    if ((APX_FEATURES == (*cpuFeatures & APX_FEATURES)) &&
+        (ippAVX512_ENABLEDBYOS & cpFeatures)) { /* Intel® Advanced Vector Extensions 10.2 x64=D1 */
+        mask   = APX_MSK;
+        *index = LIB_APX;
+    } else if ((AVX3I_FEATURES == (*cpuFeatures & AVX3I_FEATURES)) &&
+               (ippAVX512_ENABLEDBYOS &
+                cpFeatures)) { /* Intel® architecture formerly codenamed Icelake x64=K1 */
         mask   = AVX3I_MSK;
         *index = LIB_AVX3I;
     } else if ((AVX3X_FEATURES == (*cpuFeatures & AVX3X_FEATURES)) &&

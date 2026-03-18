@@ -27,6 +27,9 @@
 #include "gfpec/ecnist/ifma_ecpoint_p256.h"
 
 
+#define ifma_ec_nistp256r1_bp_precomp OWNAPI(ifma_ec_nistp256r1_bp_precomp)
+
+
 #define BASE_POINT_WIN_SIZE (7)
 #define BASE_POINT_N_ENTRY  (1 << ((BASE_POINT_WIN_SIZE)-1))
 

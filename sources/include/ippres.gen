@@ -105,6 +105,18 @@ BEGIN
                     VALUE "InternalName", IPP_LIB_PREFIX() "k0" _IPP_VERSION  ".dll\0"
                     VALUE "OriginalFilename", IPP_LIB_PREFIX() "k0" _IPP_VERSION  ".dll\0"
                 #endif
+                #if defined(_K1)
+                    VALUE "Comments", CRYPTO_LIB_NAME() ". Optimized for processors with AVX-512F/CD/BW/DQ/VL/SHA/VBMI/VBMI2/IFMA/GFNI/VAES/VCLMUL support\0"
+                    VALUE "FileDescription", IPP_LIB_PREFIX() "k1" _IPP_VERSION  ".dll is an " CRYPTO_LIB_NAME() " dynamic library\0"
+                    VALUE "InternalName", IPP_LIB_PREFIX() "k1" _IPP_VERSION  ".dll\0"
+                    VALUE "OriginalFilename", IPP_LIB_PREFIX() "k1" _IPP_VERSION  ".dll\0"
+                #endif
+                #if defined(_D1)
+                    VALUE "Comments", CRYPTO_LIB_NAME() ". Optimized for processors with AVX10.2 support\0"
+                    VALUE "FileDescription", IPP_LIB_PREFIX() "d1" _IPP_VERSION  ".dll is an " CRYPTO_LIB_NAME() " dynamic library\0"
+                    VALUE "InternalName", IPP_LIB_PREFIX() "d1" _IPP_VERSION  ".dll\0"
+                    VALUE "OriginalFilename", IPP_LIB_PREFIX() "d1" _IPP_VERSION  ".dll\0"
+                #endif
             #endif
 
         END

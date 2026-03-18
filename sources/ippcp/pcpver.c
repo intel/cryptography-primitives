@@ -38,13 +38,16 @@
         #define CRYPTO_LIB_CPU_DESCR() "PX"
     #endif
 #elif ( _IPP_ARCH == _IPP_ARCH_EM64T ) || ( _IPP_ARCH == _IPP_ARCH_LP64 )
-    #if ( _IPP32E == _IPP32E_K1 )       /* Intel® Advanced Vector Extensions 512 (formerly Icelake) - intel64 */
+    #if ( _IPP32E == _IPP32E_D1 )       /* Intel® Advanced Vector Extensions 10.2 - intel64 */
+        #define CRYPTO_LIB_CPU_TYPE() "d1"
+        #define CRYPTO_LIB_CPU_DESCR() "AVX10.2"
+    #elif ( _IPP32E == _IPP32E_K1 )       /* Intel® Advanced Vector Extensions 512 (formerly Icelake) - intel64 */
         #define CRYPTO_LIB_CPU_TYPE() "k1"
         #define CRYPTO_LIB_CPU_DESCR() "AVX-512F/CD/BW/DQ/VL/SHA/VBMI/VBMI2/IFMA/GFNI/VAES/VCLMUL"
     #elif ( _IPP32E == _IPP32E_K0 )       /* Intel® Advanced Vector Extensions 512 (formerly Skylake) - intel64 */
         #define CRYPTO_LIB_CPU_TYPE() "k0"
         #define CRYPTO_LIB_CPU_DESCR() "AVX-512F/CD/BW/DQ/VL"
-        #elif ( _IPP32E == _IPP32E_L9 )     /* Intel® Advanced Vector Extensions 2 - intel64 */
+    #elif ( _IPP32E == _IPP32E_L9 )     /* Intel® Advanced Vector Extensions 2 - intel64 */
         #define CRYPTO_LIB_CPU_TYPE() "l9"
         #define CRYPTO_LIB_CPU_DESCR() "AVX2"
     #elif ( _IPP32E == _IPP32E_Y8 )     /* Intel® Streaming SIMD Extensions 4.2 - intel64 */

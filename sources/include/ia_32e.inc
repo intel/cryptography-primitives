@@ -78,6 +78,10 @@
       %xdefine %%func_name k1_%1
       %assign %%decoration_length 3
     %endif
+    %if (_IPP32E == _IPP32E_D1)
+      %xdefine %%func_name d1_%1
+      %assign %%decoration_length 3
+    %endif
   %else
       %xdefine %%func_name %1
       %assign %%decoration_length 0

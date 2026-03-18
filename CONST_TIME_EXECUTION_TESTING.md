@@ -6,7 +6,7 @@
 
 ## General information <div id = 'general'>
 - Testing is conducted under Linux for 64-bit Intel® Cryptography Primitives Library built with the compilers listed in [Build](./BUILD.md).
-- Tested platforms: m7, y8, l9, k0, k1 (see the supported platforms list [here](./OVERVIEW.md#target-optimization-codes-in-function-names)).
+- Tested platforms: m7, y8, l9, k0, k1, d1 (see the supported platforms list [here](./OVERVIEW.md#target-optimization-codes-in-function-names)).
 - Testing scope described below is guaranteed to pass for **`release`** branches. This is not guaranteed for the **`develop`** branch ([branches description](./OVERVIEW.md#branches-description))
 - Information about Pin-Based Constant Execution Checker can be found [here](https://github.com/intel/pin_based_cec)
 

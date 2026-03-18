@@ -15,11 +15,11 @@ from tool.generators_utils import (
     COMPILE_COMMAND_FORMAT,
     COMPILERS,
     COMPILERS_FLAGS,
+    CPUID_FEATURES,
     CUSTOM_DISPATCHER_FILE,
     DISPATCHING_SCHEME_FORMAT,
     ENV_VAR,
     EXP_LIBS,
-    FEATURES,
     FUNCTION_DISPATCHER,
     INCLUDE_STR,
     INIT_CHECK_FORMAT,
@@ -110,7 +110,7 @@ def custom_dispatcher_generator(function, dispatcher_type: utils.DispatcherType 
     return CUSTOM_DISPATCHER_FILE.format(
         include_lines=include_lines,
         architecture=ARCHITECTURE_DEFINE[arch],
-        features=FEATURES[arch],
+        features=CPUID_FEATURES[package.type],
         uninitialized_features_define=uninitialized_features_define,
         dispatcher=dispatcher,
     )

@@ -116,9 +116,6 @@ set(h9_opt "${h9_opt} -march=haswell -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -
 set(mx_opt "${mx_opt} ") # note: no flags for the default version
 set(y8_opt "${y8_opt} -march=nehalem -msse4.2 -maes -mpclmul -msha")
 set(l9_opt "${l9_opt} -march=haswell -mavx2 -maes -mvaes -mpclmul -mvpclmulqdq -msha -mrdrnd -mrdseed")
-set(k0_opt "${k0_opt} -march=skylake-avx512")
-set(k0_opt "${k0_opt} -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mpclmul -mrdrnd -mrdseed -madx")
-set(k0_opt "${k0_opt} -mprefer-vector-width=512")
-set(k1_opt "${k1_opt} -march=icelake-server")
-set(k1_opt "${k1_opt} -maes -mavx512f -mavx512cd -mavx512vl -mavx512bw -mavx512dq -mavx512ifma -mpclmul -msha -mrdrnd -mrdseed -madx -mgfni -mvaes -mvpclmulqdq -mavx512vbmi -mavx512vbmi2")
-set(k1_opt "${k1_opt} -mprefer-vector-width=512")
+set(k0_opt "${k0_opt} -march=skylake-avx512 -mprefer-vector-width=512")
+set(k1_opt "${k1_opt} -march=icelake-server -mprefer-vector-width=512")
+set(d1_opt "${d1_opt} -march=diamondrapids -mprefer-vector-width=512")

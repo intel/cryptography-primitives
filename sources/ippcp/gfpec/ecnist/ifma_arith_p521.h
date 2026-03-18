@@ -21,6 +21,22 @@
 
 #include "gfpec/ecnist/ifma_defs_p521.h"
 
+#define ifma_norm52_p521         OWNAPI(ifma_norm52_p521)
+#define ifma_norm52_dual_p521    OWNAPI(ifma_norm52_dual_p521)
+#define ifma_lnorm52_p521        OWNAPI(ifma_lnorm52_p521)
+#define ifma_lnorm52_dual_p521   OWNAPI(ifma_lnorm52_dual_p521)
+#define ifma_amm52_p521          OWNAPI(ifma_amm52_p521)
+#define ifma_amm52_dual_p521     OWNAPI(ifma_amm52_dual_p521)
+#define ifma_half52_p521         OWNAPI(ifma_half52_p521)
+#define ifma_neg52_p521          OWNAPI(ifma_neg52_p521)
+#define ifma_tomont52_p521       OWNAPI(ifma_tomont52_p521)
+#define ifma_frommont52_p521     OWNAPI(ifma_frommont52_p521)
+#define ifma_aminv52_p521        OWNAPI(ifma_aminv52_p521)
+#define convert_radix_to_52_p521 OWNAPI(convert_radix_to_52_p521)
+#define convert_radix_to_64_p521 OWNAPI(convert_radix_to_64_p521)
+#define ifma_ams52_p521          OWNAPI(ifma_ams52_p521)
+#define ifma_ams52_dual_p521     OWNAPI(ifma_ams52_dual_p521)
+
 /*
  * p521 = 2^521 - 1
  * in 2^52 radix

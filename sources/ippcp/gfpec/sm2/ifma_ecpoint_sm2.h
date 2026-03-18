@@ -30,6 +30,15 @@
 #include "gfpec/sm2/ifma_arith_psm2.h"
 #include "pcpbnuimpl.h"
 
+#define gesm2_mul               OWNAPI(gesm2_mul)
+#define gesm2_mul_base          OWNAPI(gesm2_mul_base)
+#define gesm2_to_affine         OWNAPI(gesm2_to_affine)
+#define gesm2_is_on_curve       OWNAPI(gesm2_is_on_curve)
+#define gesm2_dbl               OWNAPI(gesm2_dbl)
+#define gesm2_add               OWNAPI(gesm2_add)
+#define gesm2_add_affine        OWNAPI(gesm2_add_affine)
+#define gesm2_select_ap_w7_ifma OWNAPI(gesm2_select_ap_w7_ifma)
+
 /* SM2 point (x,y,z) */
 typedef struct PSM2_POINT_IFMA {
     fesm2 x;

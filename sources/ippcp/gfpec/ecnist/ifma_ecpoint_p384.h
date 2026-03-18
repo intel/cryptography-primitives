@@ -30,6 +30,15 @@
 #include "gfpec/ecnist/ifma_arith_p384.h"
 #include "pcpbnuimpl.h"
 
+#define ifma_ec_nistp384_mul_point         OWNAPI(ifma_ec_nistp384_mul_point)
+#define ifma_ec_nistp384_mul_pointbase     OWNAPI(ifma_ec_nistp384_mul_pointbase)
+#define ifma_ec_nistp384_get_affine_coords OWNAPI(ifma_ec_nistp384_get_affine_coords)
+#define ifma_ec_nistp384_is_on_curve       OWNAPI(ifma_ec_nistp384_is_on_curve)
+#define ifma_ec_nistp384_dbl_point         OWNAPI(ifma_ec_nistp384_dbl_point)
+#define ifma_ec_nistp384_add_point         OWNAPI(ifma_ec_nistp384_add_point)
+#define ifma_ec_nistp384_add_point_affine  OWNAPI(ifma_ec_nistp384_add_point_affine)
+#define p384r1_select_ap_w4_ifma           OWNAPI(p384r1_select_ap_w4_ifma)
+
 /* p384 point (x,y,z) */
 typedef struct {
     m512 x;
