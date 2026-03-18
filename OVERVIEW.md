@@ -364,7 +364,7 @@ Considering Intel® Cryptography Primitives Library design that implies minimal 
 
 #### Dynamic Library with Custom functionality
 
-To build your own dynamic library containing only the functionality that is necessary for your application, you can use the Intel® IPP Custom Library Tool - a Python tool that consumes pre-built merged (all CPUs) static library to produce a tiny dynamic library.
+To build your own dynamic library containing only the functionality that is necessary for your application, you can use the Custom Library Tool - a Python tool that consumes pre-built merged (all CPUs) static library to produce a tiny dynamic library.
 
 The tool is located in the `tools/ipp_custom_library_tool_python` directory.
 

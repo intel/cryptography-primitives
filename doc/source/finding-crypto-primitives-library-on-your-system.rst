@@ -100,7 +100,7 @@ on:
      -  Single-threaded DLLs for applications running on processors with the Intel® 64 architecture
    * -  ``tools\custom_library_tool_python``
      -  ``opt\ippcp\tools\custom_library_tool_python``
-     -  Command-line and GUI tool for building custom dynamic libraries
+     -  Custom Library Tool (command-line tool for building custom dynamic/shared libraries)
 
 
 .. _linux:
@@ -137,5 +137,5 @@ on:
      -  Module files for environment configuration
    * -  ``tools/custom_library_tool_python``
      -  ``opt/ipp/tools/custom_library_tool_python``
-     -  Command-line and GUI tool for building custom dynamic libraries
+     -  Custom Library Tool (command-line tool for building custom dynamic/shared libraries)
 

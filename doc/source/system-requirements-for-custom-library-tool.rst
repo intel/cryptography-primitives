@@ -18,6 +18,4 @@ Software requirements:
    .. note:: If a custom library must support Intel® Control-Flow Enforcement Technology (Intel® CET), use Visual Studio 2019 (or higher).
 
 -  Python\* 3.7.
--  PyQt5 (required only for the GUI version of the Custom
-   Library Tool for Intel® Cryptography Primitives Library).
 
