@@ -886,13 +886,19 @@ The size is equal to the value returned by <code class="docutils literal notrans
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>The reseed function:</p>
-<ul class="simple">
-<li><p>Inserts additional entropy by obtaining the entropy input by calling the <code class="docutils literal notranslate"><span class="pre">getEntropyInput</span></code> callback function,
-if it’s not NULL, or the <code class="docutils literal notranslate"><span class="pre">ippsTRNGenRDSEED</span></code>, if the CPU supports the RDSEED instruction, or the <code class="docutils literal notranslate"><span class="pre">ippsPRNGenRDRAND</span></code>,
-if the CPU doesn’t support the RDSEED, but supports the RDRAND instruction, and checks whether the entropy is
-sufficient to support the security strength of the DRBG.</p></li>
+<ul>
+<li><p>Obtains entropy input using the following priority order:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Custom callback: calls <code class="docutils literal notranslate"><span class="pre">getEntropyInput()</span></code> if not NULL.</p></li>
+<li><p>Hardware RDSEED: calls <code class="docutils literal notranslate"><span class="pre">ippsTRNGenRDSEED()</span></code> if CPU supports RDSEED instruction.</p></li>
+<li><p>Hardware RDRAND: calls <code class="docutils literal notranslate"><span class="pre">ippsPRNGenRDRAND()</span></code> if CPU supports RDRAND instruction.</p></li>
+</ol>
+</div></blockquote>
+<p>Checks whether the entropy is sufficient to support the security strength.</p>
+</li>
 <li><p>Using the reseed algorithm, combines the current seed from the state with the new entropy input and
-any additional input and update the state.</p></li>
+any additional input and updates the state.</p></li>
 </ul>
 </section>
 <section id="return-values">
@@ -920,7 +926,7 @@ or exceeds the maximum number of bits that can fit in the entropyInput buffer.</
 The <code class="docutils literal notranslate"><span class="pre">addlInput</span></code> is NULL with non-zero <code class="docutils literal notranslate"><span class="pre">addlInputBitsLen</span></code>, or the <code class="docutils literal notranslate"><span class="pre">addlInput</span></code> is not NULL, but <code class="docutils literal notranslate"><span class="pre">addlInputBitsLen</span></code> is 0.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsNotSupportedModeErr</p></td>
-<td><p>The CPU does not support the <code class="docutils literal notranslate"><span class="pre">RDSEED</span></code> and/or <code class="docutils literal notranslate"><span class="pre">RDRAND</span></code> instructions.</p></td>
+<td><p>The CPU supports neither <code class="docutils literal notranslate"><span class="pre">RDSEED</span></code> nor <code class="docutils literal notranslate"><span class="pre">RDRAND</span></code> instructions.</p></td>
 </tr>
 <tr class="row-odd"><td><p>ippStsHashOperationErr</p></td>
 <td><p>An error status code was returned during hashing operations.</p></td>
