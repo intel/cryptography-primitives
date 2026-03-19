@@ -58,9 +58,13 @@ Description
 
 The instantiate function:
 
-- Obtains the entropy input, including the nonce, by calling the ``getEntropyInput`` callback function,
-  if it's not NULL, or the ``ippsTRNGenRDSEED``, if the CPU supports the RDSEED instruction, and checks
-  whether the entropy is sufficient to support the security strength of the Hash DRBG.
+- Obtains entropy input (including nonce) using the following priority order:
+
+   1. Custom callback: calls ``getEntropyInput()`` if not NULL.
+   2. Hardware RDSEED: calls ``ippsTRNGenRDSEED()`` if CPU supports RDSEED instruction.
+   3. Hardware RDRAND: calls ``ippsPRNGenRDRAND()`` if CPU supports RDRAND instruction.
+
+  Checks whether the entropy is sufficient to support the security strength.
 
 - Combines entropy input with a personalization string, produces a seed and updates the state.
 
@@ -86,6 +90,6 @@ Return Values
      - The ``requestedInstSecurityStrength`` is more than set security strength.
        The ``persStr`` is NULL with non-zero ``persStrBitsLen``, or the ``persStr`` is not NULL, but ``persStrBitsLen`` is 0.
    * - ippStsNotSupportedModeErr
-     - The CPU does not support the ``RDSEED`` and/or ``RDRAND`` instructions.
+     - The CPU supports neither ``RDSEED`` nor ``RDRAND`` instructions.
    * - ippStsHashOperationErr
      - An error status code was returned during hashing operations.

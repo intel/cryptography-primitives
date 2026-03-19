@@ -50,13 +50,16 @@ Description
 
 The reseed function:
 
-- Inserts additional entropy by obtaining the entropy input by calling the ``getEntropyInput`` callback function,
-  if it's not NULL, or the ``ippsTRNGenRDSEED``, if the CPU supports the RDSEED instruction, or the ``ippsPRNGenRDRAND``,
-  if the CPU doesn't support the RDSEED, but supports the RDRAND instruction, and checks whether the entropy is
-  sufficient to support the security strength of the DRBG.
+- Obtains entropy input using the following priority order:
+
+   1. Custom callback: calls ``getEntropyInput()`` if not NULL.
+   2. Hardware RDSEED: calls ``ippsTRNGenRDSEED()`` if CPU supports RDSEED instruction.
+   3. Hardware RDRAND: calls ``ippsPRNGenRDRAND()`` if CPU supports RDRAND instruction.
+
+  Checks whether the entropy is sufficient to support the security strength.
 
 - Using the reseed algorithm, combines the current seed from the state with the new entropy input and
-  any additional input and update the state.
+  any additional input and updates the state.
 
 Return Values
 -------------
@@ -80,6 +83,6 @@ Return Values
      - Prediction resistance is requested but ``predictionResistanceFlag`` has been set to 0.
        The ``addlInput`` is NULL with non-zero ``addlInputBitsLen``, or the ``addlInput`` is not NULL, but ``addlInputBitsLen`` is 0.
    * - ippStsNotSupportedModeErr
-     - The CPU does not support the ``RDSEED`` and/or ``RDRAND`` instructions.
+     - The CPU supports neither ``RDSEED`` nor ``RDRAND`` instructions.
    * - ippStsHashOperationErr
      - An error status code was returned during hashing operations.
