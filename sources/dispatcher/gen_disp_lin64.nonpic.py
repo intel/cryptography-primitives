@@ -105,7 +105,7 @@ global {FunName}:function ({FunName}.LEnd{FunName} - {FunName})
 
 {FunName}:
     {endbr64}
-    movsxd  rax, dword [ippcpJumpIndexForMergedLibs]
+    movsxd  rax, dword [rel ippcpJumpIndexForMergedLibs]
     lea     r11, [rel .Larraddr_{FunName}]
     mov     r11, qword [r11 + rax*8]
     jmp     r11
