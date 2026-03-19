@@ -14,11 +14,11 @@ The deprecated API means it is obsolete and will be removed in one of future Int
 
 ### Deprecated Optimizations
 
-The code paths m7 (Intel® SSE3) and w7 (Intel® SSE2) were deprecated and were removed from the merged build of Intel® Cryptography Primitives Library in the 2026.0.0 release.
+The code paths m7 (Intel® SSE3) and w7 (Intel® SSE2) were deprecated and were removed from the merged build of Intel® Cryptography Primitives Library in the 2.0.0 release.
 
 ### Installation Path Regression 
 
-Due to a bug in the CMake configuration, libraries built with `MB_STANDALONE=true` are incorrectly installed to `lib/intel64/` instead of the correct `lib/` directory. Users should be aware that the installation path may not match the expected location for standalone builds. This issue will be fixed in the next major release.
+Due to a bug in the CMake configuration, libraries built with `MB_STANDALONE=true` are incorrectly installed to `lib/intel64/` instead of the correct `lib/` directory. Users should be aware that the installation path may not match the expected location for standalone builds. This issue was fixed in the 2.0.0 release.
 
 ## Intel® Cryptography Primitives Library v1.2.0
 

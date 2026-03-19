@@ -274,10 +274,10 @@ if(DYNAMIC_LIB OR MB_STANDALONE)
 
         # Installation of the shared library
         install(TARGETS ${MB_DYN_LIB_TARGET}
-                LIBRARY DESTINATION "lib/intel64"
-                RUNTIME DESTINATION "lib/intel64"
+                LIBRARY DESTINATION ${MBX_LIB_INSTALL_DIR}
+                RUNTIME DESTINATION ${MBX_LIB_INSTALL_DIR}
                 PUBLIC_HEADER DESTINATION "include/crypto_mb"
-                PRIVATE_HEADER DESTINATION "tools/intel64/staticlib/crypto_mb")
+                PRIVATE_HEADER DESTINATION ${MBX_PRIVATE_HEADERS_DIR})
     else()
         foreach(opt ${MBX_PLATFORM_LIST})
             set(MBX_DYN_ITER ${MB_DYN_LIB_TARGET}_${opt})
