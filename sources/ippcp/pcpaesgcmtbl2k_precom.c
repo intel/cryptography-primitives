@@ -37,6 +37,7 @@
 
 #include "pcpaesauthgcm.h"
 #include "pcptool.h"
+#include "pcpmask_ct.h"
 
 #if (_IPP32E < _IPP32E_K0)
 
@@ -63,8 +64,8 @@ IPP_OWN_DEFN(void, AesGcmPrecompute_table2K, (Ipp8u * pPrecomputeData, const Ipp
     CopyBlock16(pHKey, t);
 
     for (n = 0; n < 128 - 24; n++) {
-        /* get msb */
-        int hBit = t[15] & 1;
+        /* get lsb and create constant-time mask (0x00 or 0xff) */
+        Ipp8u hMask = (Ipp8u)cpIsLsb_ct(t[15]);
 
         int k = n % 32;
         if (k < 4) {
@@ -75,9 +76,8 @@ IPP_OWN_DEFN(void, AesGcmPrecompute_table2K, (Ipp8u * pPrecomputeData, const Ipp
 
         /* shift */
         RightShiftBlock16(t);
-        /* xor if msb=1 */
-        if (hBit)
-            t[0] ^= 0xe1;
+        /* xor if lsb=1 (constant-time) */
+        t[0] ^= (0xe1 & hMask);
     }
 
     for (n = 0; n < 4; n++) {

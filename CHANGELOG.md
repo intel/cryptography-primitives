@@ -9,6 +9,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Fully disabled Intel® SSE2 (`w7`), Intel® SSE3 (`m7`), Intel® SSSE3 (`n8`, `s8`) and Intel® AVX (`e9`, `g9`) optimization code paths, including the respective 1cpu headers and 1cpu libraries.
 - Added new optimization code paths (`d1`) to support Intel® AVX10.2 instruction set.
 - Fixed multi-buffer library installation paths to use configurable variables instead of hardcoded paths for separate library builds.
+- Eliminated branching depending on the GHASH value from the AES-GCM internal precomputation kernel.
 
 ## Intel(R) Cryptography Primitives Library 1.4.0
 - Added key and signature generations for the Leighton-Micali Hash-Based Signatures (LMS) algorithm.
