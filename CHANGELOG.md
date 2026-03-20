@@ -10,6 +10,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Added new optimization code paths (`d1`) to support Intel® AVX10.2 instruction set.
 - Fixed multi-buffer library installation paths to use configurable variables instead of hardcoded paths for separate library builds.
 - Eliminated branching depending on the GHASH value from the AES-GCM internal precomputation kernel.
+- Updated the versions of some of the build tools and increased the minimal supported OpenSSL version from 3.0.8 to 3.5.5, as 3.0.8 reaches end of support in September 2026. For more information, please refer to the [Software Requirements](./BUILD.md#software-requirements).
 
 ## Intel(R) Cryptography Primitives Library 1.4.0
 - Added key and signature generations for the Leighton-Micali Hash-Based Signatures (LMS) algorithm.
@@ -22,6 +23,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Extended ippsRSAVerify_PKCS1v15_rmf function to support pre-hashed message verification.
 - Added a new pkcs5-pbkdf2 key derivation function as part of PKCS-5, RFC-8018
 - Added support for ML-DSA scheme with Key Generation, Signing and Verification functionality implemented according to the FIPS 204.
+- Added support for Hash Deterministic Random Bit Generator (DRBG) according to the NIST SP 800-90.
 
 ## Intel(R) Cryptography Primitives Library 1.3.0
 - Added support for ML-KEM scheme with Key Generation, Encapsulation and Decapsulation functionality implemented according to the FIPS 203.

@@ -179,7 +179,7 @@ if(BORINGSSL OR BABASSL OR TONGSUO) # off by default
     # by find_package(OpenSSL)
     find_package(OpenSSL REQUIRED)
 else()
-    find_package(OpenSSL 3.0.8 REQUIRED) # set -DOPENSSL_INCLUDE_DIR= -DOPENSSL_LIBRARIES= -DOPENSSL_ROOT_DIR= to use patched
+    find_package(OpenSSL 3.5.5 REQUIRED) # set -DOPENSSL_INCLUDE_DIR= -DOPENSSL_LIBRARIES= -DOPENSSL_ROOT_DIR= to use patched
 endif()
 
 if(BABASSL) # off by default

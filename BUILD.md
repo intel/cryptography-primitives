@@ -25,18 +25,16 @@
 ### Common tools
 - [CMake\*](https://cmake.org/download) 3.18 or higher
 - Python 3.12.0
-- The Netwide Assembler (NASM) 2.16.02
-- OpenSSL\* 3.0.8 or higher **OR** BoringSSL* [0.20250114.0](https://github.com/google/boringssl/releases/tag/0.20250114.0) **OR** Tongsuo* 8.3.3
-
+- The Netwide Assembler (NASM\*) 3.01
+- OpenSSL\* 3.5.5 or higher **OR** BoringSSL* [0.20250114.0](https://github.com/google/boringssl/releases/tag/0.20250114.0) **OR** Tongsuo* 8.3.3
 
 ### Linux* OS
 - [Common tools](#common-tools)
-- Intel® oneAPI DPC++/C++ Compiler 2025.3.0 for Linux\* OS
+- Intel® oneAPI DPC++/C++ Compiler 2026.0.0 for Linux\* OS
 - GCC 8.5
 - GCC 11.5
 - GCC 14.3
-- GCC 15.1
-- Clang 12.0
+- GCC 15.2
 - Clang 16.0
 - Clang 18.1
 - Clang 21.1
@@ -45,10 +43,12 @@
 
 ### Windows* OS
 - [Common tools](#common-tools)
-- Intel® oneAPI DPC++/C++ Compiler 2025.3.0 for Windows\* OS
-- Microsoft Visual C++ Compiler\* version 19.29 provided by Microsoft Visual Studio\* 2019 version 16.11
+- Intel® oneAPI DPC++/C++ Compiler 2026.0.0 for Windows\* OS
 - Microsoft Visual C++ Compiler\* version 19.44 provided by Microsoft Visual Studio\* 2022 version 17.14
+- Microsoft Visual C++ Compiler\* version 19.50 provided by Microsoft Visual Studio\* 2026 version 18.3
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.21 or higher is required to build using Microsoft Visual Studio\* 2022.
+
+> **NOTE:** [CMake\*](https://cmake.org/download) 4.2 or higher is required to build using Microsoft Visual Studio\* 2026.
 
 > **NOTE:** [CMake\*](https://cmake.org/download) 3.22 or higher is required to build using Intel® oneAPI DPC++/C++ Compiler.
 
@@ -111,7 +111,7 @@ To build the Intel® Cryptography Primitives Library on Linux\* OS, complete the
 
 The software was validated on:
 
-- Windows Server\* 2019
+- Windows Server\* 2022
 
 To build the Intel® Cryptography Primitives Library on Windows* OS, complete the following steps:
 
@@ -130,16 +130,16 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
 
     *Examples*:
 
-    For Intel® oneAPI DPC++/C++ Compiler and Visual Studio\* 2019:
+    For Intel® oneAPI DPC++/C++ Compiler and Visual Studio\* 2022:
 
     ``` bash
-    cmake CMakeLists.txt -B_build -G"Visual Studio 16 2019" -T"Intel C++ Compiler 2024" -Ax64
+    cmake CMakeLists.txt -B_build -G"Visual Studio 17 2022" -T"Intel C++ Compiler 2024" -Ax64
     ```
 
-    For MSVC\* Compiler and Visual Studio\* 2019:
+    For MSVC\* Compiler and Visual Studio\* 2022:
 
     ``` bash
-    cmake CMakeLists.txt -B_build -G"Visual Studio 16 2019" -Ax64
+    cmake CMakeLists.txt -B_build -G"Visual Studio 17 2022" -Ax64
     ```
 
     For the complete list of supported CMake options, please refer to the [CMake Build Options](#cmake-build-options) section.
@@ -216,7 +216,7 @@ To build the Intel® Cryptography Primitives Library on Windows* OS, complete th
 - `-G"<tool-chain-generator>"` - defines the native build system CMake will generate from the input files.
   Refer to CMake [documentation](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html#visual-studio-generators) for the Visual Studio\* generators options.
 
-- `-A<x64|Win32>` - for Visual Studio\* 2019+, defines the target architecture for the build of the Intel® Cryptography Primitives Library.
+- `-A<x64|Win32>` - for Visual Studio\* 2022+, defines the target architecture for the build of the Intel® Cryptography Primitives Library.
 
 - `-T<Compiler>` - defines the compiler for building.
   For example, to use Intel® oneAPI DPC++/C++ Compiler, specify `-T"Intel C++ Compiler 2024"`.
