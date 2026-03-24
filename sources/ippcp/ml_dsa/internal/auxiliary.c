@@ -78,8 +78,8 @@ IPP_OWN_DEFN(IppStatus,
         }
         // zeroize data and release the memory if max iterations reached
         if (iter == CP_ML_DSA_MAX_SAMPLE_IN_BALL_ITERATIONS) {
-            PurgeBlock(s, sizeof(s));       // zeroize secrets
-            PurgeBlock(c->values, CP_ML_N); // zeroize secrets
+            PurgeBlock(s, sizeof(s));                 // zeroize secrets
+            PurgeBlock(c->values, sizeof(c->values)); // zeroize secrets
             sts = cp_mlStorageRelease(pStorage, hash_size + CP_ML_ALIGNMENT);
             IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
@@ -165,7 +165,7 @@ IPP_OWN_DEFN(IppStatus,
     }
 
     if (iter >= CP_ML_DSA_MAX_REJ_NTT_POLY_ITERATIONS) {
-        PurgeBlock(a->values, CP_ML_N); // zeroize secrets
+        PurgeBlock(a->values, sizeof(a->values)); // zeroize secrets
         return ippStsMLDSAMaxIterations;
     }
     return ippStsNoErr;
@@ -217,7 +217,7 @@ IPP_OWN_DEFN(IppStatus, cp_ml_rejNTTPoly, (Ipp8u * rho, IppPoly* a, IppsMLDSASta
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
     if (iter >= CP_ML_DSA_MAX_REJ_NTT_POLY_ITERATIONS) {
-        PurgeBlock(a->values, CP_ML_N); // zeroize secrets
+        PurgeBlock(a->values, sizeof(a->values)); // zeroize secrets
         return ippStsMLDSAMaxIterations;
     }
     return sts;
@@ -302,7 +302,7 @@ IPP_OWN_DEFN(IppStatus,
     }
 
     if (iter >= CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS) {
-        PurgeBlock(s->values, CP_ML_N); // zeroize secrets
+        PurgeBlock(s->values, sizeof(s->values)); // zeroize secrets
         return ippStsMLDSAMaxIterations;
     }
     return ippStsNoErr;
@@ -361,7 +361,7 @@ IPP_OWN_DEFN(IppStatus, cp_ml_rejBoundedPoly, (Ipp8u * rho, IppPoly* a, IppsMLDS
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
     if (iter >= CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS) {
-        PurgeBlock(a->values, CP_ML_N); // zeroize secrets
+        PurgeBlock(a->values, sizeof(a->values)); // zeroize secrets
         return ippStsMLDSAMaxIterations;
     }
 
