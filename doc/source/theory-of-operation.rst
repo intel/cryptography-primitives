@@ -5,8 +5,8 @@ Theory of Operation
 
 
 This section discusses the dispatching of the Intel® Cryptography Primitives Library to specific processors,
-provides functions and parameters naming conventions, and explains the
-data types on which Intel® Cryptography Primitives Library performs operations.
+API usage in application-level threading, provides functions and parameters naming conventions, explains the
+data types on which Intel® Cryptography Primitives Library performs operations, and covers memory management responsibilities.
 
 .. toctree::
    :maxdepth: 1
@@ -15,3 +15,4 @@ data types on which Intel® Cryptography Primitives Library performs operations.
    dispatching
    function-naming-conventions
    support-functions
+   memory-management
