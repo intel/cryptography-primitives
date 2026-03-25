@@ -104,15 +104,12 @@ available documentation downloads by product version, see these pages:
 
 
    introducing-intel-cryptography-primitives
-   getting-help-and-support
    notational-conventions
-   getting-started
    theory-of-operation
-   linking-your-application
+   getting-started
    using-custom-library-tool-for-intel-cryptography
-   programming-with-intel-cryptography-primitives
    performance-test-tool-perfsys-cli-options
    preview-features
    developer-reference
+   getting-help-and-support
    notices-and-disclaimers
-

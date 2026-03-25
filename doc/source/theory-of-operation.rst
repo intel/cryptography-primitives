@@ -13,6 +13,7 @@ data types on which Intel® Cryptography Primitives Library performs operations,
 
 
    dispatching
+   application-level-threading
    function-naming-conventions
    support-functions
    memory-management
