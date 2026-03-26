@@ -19,6 +19,9 @@ function(set_sanitizers_flags lang)
         message (FATAL_ERROR "Invalid function argument. Expected values: \"C\", \"CXX\" ")
     endif()
 
+    # Enable debug information for the precise analysis.
+    set(FLAGS "${FLAGS} -g")
+
     if(ASAN)
         list(APPEND TYPES_OF_SANITIZERS_LIST "address")
         set(FLAGS "${FLAGS} -fno-omit-frame-pointer")
@@ -36,6 +39,11 @@ function(set_sanitizers_flags lang)
             set(FLAGS "${FLAGS} -fsanitize-blacklist=${CMAKE_SOURCE_DIR}/sources/cmake/linux/sanitizers_ignorelist.txt")
         endif()
     endif(MSAN)
+
+    if(TSAN)
+        list(APPEND TYPES_OF_SANITIZERS_LIST "thread")
+        set(FLAGS "${FLAGS} -fno-omit-frame-pointer")
+    endif(TSAN)
 
     list(JOIN TYPES_OF_SANITIZERS_LIST "," TYPES_OF_SANITIZERS_STRING)
     set(FLAGS "${FLAGS} -fsanitize=${TYPES_OF_SANITIZERS_STRING}")

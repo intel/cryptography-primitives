@@ -204,6 +204,9 @@ if(BUILD_WITH_SANITIZERS AND UNIX AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" 
   set(ASAN OFF)
   set(UBSAN OFF)
   set(MSAN OFF)
+  set(TSAN OFF)
+  set(PRINT_TYPES_OF_SANITIZERS_LIST "")
+
   if("${BUILD_WITH_SANITIZERS}" MATCHES "address")
     set(ASAN ON)
     list(APPEND PRINT_TYPES_OF_SANITIZERS_LIST "address")
@@ -216,18 +219,34 @@ if(BUILD_WITH_SANITIZERS AND UNIX AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" 
     set(MSAN ON)
     list(APPEND PRINT_TYPES_OF_SANITIZERS_LIST "memory")
   endif()
-  if((ASAN OR UBSAN) AND MSAN)
-    message (FATAL_ERROR "Can not use address | undefined sanitizers with memory sanitizer")
+  if("${BUILD_WITH_SANITIZERS}" MATCHES "thread")
+    set(TSAN ON)
+    list(APPEND PRINT_TYPES_OF_SANITIZERS_LIST "thread")
   endif()
-  if(ASAN OR UBSAN OR MSAN)
-    set(SANITIZERS ON)
+
+  # Validate that at least one known sanitizer was requested
+  if(NOT (ASAN OR UBSAN OR MSAN OR TSAN))
+    message(FATAL_ERROR "Unknown sanitizer in BUILD_WITH_SANITIZERS='${BUILD_WITH_SANITIZERS}'. "
+                        "Valid values: address, undefined, memory, thread")
   endif()
+
+  # Check the sanitizers combination:
+  # address, memory, and thread are mutually exclusive; only undefined can be combined with any one of them.
+  if((ASAN AND MSAN) OR (ASAN AND TSAN) OR (MSAN AND TSAN))
+    message(FATAL_ERROR "Invalid sanitizer combination '${BUILD_WITH_SANITIZERS}'. "
+                        "address, memory, and thread sanitizers are mutually exclusive. "
+                        "Only undefined can be combined with one of them.")
+  endif()
+
+  # No errors in the sanitizers configuration
+  set(SANITIZERS ON)
 endif()
+
 if(SANITIZERS)
   list(JOIN PRINT_TYPES_OF_SANITIZERS_LIST "," PRINT_TYPES_OF_SANITIZERS_STRING)
   message (STATUS "BUILD_WITH_SANITIZERS ................. on (${PRINT_TYPES_OF_SANITIZERS_STRING})")
 else()
-  message (STATUS "BUILD_WITH_SANITIZERS ................. off - use -DBUILD_WITH_SANITIZERS=[memory,address,undefined] with CLANG compiler to enable this option")
+  message (STATUS "BUILD_WITH_SANITIZERS ................. off - use -DBUILD_WITH_SANITIZERS=[memory,address,undefined,thread] with CLANG compiler to enable this option")
 endif(SANITIZERS)
 
 if(UNIX)
