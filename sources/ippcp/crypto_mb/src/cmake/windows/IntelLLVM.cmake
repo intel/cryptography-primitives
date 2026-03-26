@@ -75,8 +75,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qstd=c99")
 set(CMAKE_C_FLAGS_RELEASE "/MT")
 # Optimization level = 3
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O3")
-# No-debug macro
+# Remove debug information from Release builds
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -mllvm --intel-codeview-always-emit-compiler-info=false")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 
 # Causes the application to use the multithread, static version of the run-time library (debug version).

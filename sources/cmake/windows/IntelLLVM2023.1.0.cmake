@@ -90,8 +90,9 @@ set(CMAKE_C_FLAGS_RELEASE "/MT")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zl")
 # "Maximize Speed". Selects a predefined set of options that affect the size and speed of generated code.
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O3")
-# No-debug macro
+# Remove debug information from Release builds
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -mllvm --intel-codeview-always-emit-compiler-info=false")
 
 set(p8_opt "${p8_opt} /arch:SSE4.2 -maes -mpclmul -msha")
 set(h9_opt "${h9_opt} /arch:AVX2 -maes -mpclmul -msha -mrdrnd -mrdseed -mvaes -mvpclmulqdq")
