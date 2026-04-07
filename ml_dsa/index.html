@@ -987,8 +987,8 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">                              </span><span class="n">privateKey</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
 <span class="w">                              </span><span class="n">pState</span><span class="p">,</span>
 <span class="w">                              </span><span class="n">scratchBuffer</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
-<span class="w">                              </span><span class="k">nullptr</span><span class="p">,</span>
-<span class="w">                              </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="w">                              </span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">                              </span><span class="nb">nullptr</span><span class="p">);</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLDSA_KeyGen&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1002,14 +1002,14 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 
 <span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsMLDSA_Sign</span><span class="p">(</span><span class="n">pMessage</span><span class="p">,</span>
 <span class="w">                            </span><span class="n">msgLen</span><span class="p">,</span>
-<span class="w">                            </span><span class="k">nullptr</span><span class="w"> </span><span class="cm">/* context */</span><span class="p">,</span>
+<span class="w">                            </span><span class="nb">nullptr</span><span class="w"> </span><span class="cm">/* context */</span><span class="p">,</span>
 <span class="w">                            </span><span class="mi">0</span><span class="w"> </span><span class="cm">/* context size */</span><span class="p">,</span>
 <span class="w">                            </span><span class="n">privateKey</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
 <span class="w">                            </span><span class="n">signature</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
 <span class="w">                            </span><span class="n">pState</span><span class="p">,</span>
 <span class="w">                            </span><span class="n">signScratchBuffer</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
-<span class="w">                            </span><span class="k">nullptr</span><span class="p">,</span>
-<span class="w">                            </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="w">                            </span><span class="nb">nullptr</span><span class="p">,</span>
+<span class="w">                            </span><span class="nb">nullptr</span><span class="p">);</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLDSA_Sign&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1025,7 +1025,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">isValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="n">status</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">ippsMLDSA_Verify</span><span class="p">(</span><span class="n">pMessage</span><span class="p">,</span>
 <span class="w">                              </span><span class="n">msgLen</span><span class="p">,</span>
-<span class="w">                              </span><span class="k">nullptr</span><span class="w"> </span><span class="cm">/* context */</span><span class="p">,</span>
+<span class="w">                              </span><span class="nb">nullptr</span><span class="w"> </span><span class="cm">/* context */</span><span class="p">,</span>
 <span class="w">                              </span><span class="mi">0</span><span class="w"> </span><span class="cm">/* context size */</span><span class="p">,</span>
 <span class="w">                              </span><span class="n">publicKey</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
 <span class="w">                              </span><span class="n">signature</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
