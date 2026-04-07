@@ -60,4 +60,6 @@ IPP_OWN_DEFN(void, cpUnpackBigNumCtx, (const Ipp8u* pBuffer, IppsBigNumState* pB
     CopyBlock((Ipp8u*)pB + bufferOffset,
               BN_BUFFER(pBN),
               BN_ROOM(pBN) * (Ipp32s)sizeof(BNU_CHUNK_T));
+
+    BN_SET_ID(pBN);
 }

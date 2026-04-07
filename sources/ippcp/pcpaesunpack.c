@@ -30,6 +30,7 @@
 #include "pcpaesm.h"
 #include "pcprij128safe.h"
 #include "pcptool.h"
+#include "pcpaes_internal_func.h"
 
 /*F*
 //    Name: ippsAESUnpack
@@ -56,43 +57,21 @@ IPPFUN(IppStatus, ippsAESUnpack, (const Ipp8u* pBuffer, IppsAESSpec* pCtx, int c
     /* test available size of destination buffer */
     IPP_BADARG_RET(ctxSize < cpSizeofCtx_AES(), ippStsLengthErr);
 
-    IppsAESSpec* pB = (IppsAESSpec*)pBuffer;
-
     cpSize keysOffset  = (cpSize)(IPP_INT_PTR(RIJ_KEYS_BUFFER(pCtx)) - IPP_INT_PTR(pCtx));
     cpSize keysBufSize = sizeof(RIJ_KEYS_BUFFER(pCtx));
-    int nExpKeys       = rij128nKeys[rij_index(RIJ_NK(pB))];
 
     /* restore all except expanded keys */
     CopyBlock(pBuffer, pCtx, keysOffset);
 
-    /* align addresses of keys buffer */
-    RIJ_EKEYS(pCtx) = (Ipp8u*)(IPP_ALIGNED_PTR(RIJ_KEYS_BUFFER(pCtx), AES_ALIGNMENT));
-    RIJ_DKEYS(pCtx) = (Ipp8u*)((Ipp32u*)RIJ_EKEYS(pCtx) + nExpKeys);
+    /* restore pointers inside the state */
+    cpAes_setup_ptrs_and_methods(pCtx);
+    RIJ_ENC_SBOX(pCtx) = NULL;
+    RIJ_DEC_SBOX(pCtx) = NULL;
 
     /* restore expanded keys (encryption and decryption) placed with correct alignment */
     CopyBlock(pBuffer + keysOffset, RIJ_EKEYS(pCtx), (keysBufSize - RIJ_ALIGNMENT));
 
     RIJ_SET_ID(pCtx);
-
-    RIJ_ENC_SBOX(pCtx) = NULL;
-    RIJ_DEC_SBOX(pCtx) = NULL;
-
-#if (_AES_NI_ENABLING_ == _FEATURE_ON_)
-    RIJ_AESNI(pCtx)   = AES_NI_ENABLED;
-    RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
-    RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
-
-#else
-#if (_AES_NI_ENABLING_ == _FEATURE_TICKTOCK_)
-    if (AES_NI_ENABLED == RIJ_AESNI(pCtx)) {
-        RIJ_ENCODER(pCtx) = Encrypt_RIJ128_AES_NI; /* AES_NI based encoder */
-        RIJ_DECODER(pCtx) = Decrypt_RIJ128_AES_NI; /* AES_NI based decoder */
-    } else {
-        RIJ_ENCODER(pCtx) = SafeEncrypt_RIJ128;    /* safe encoder */
-        RIJ_DECODER(pCtx) = SafeDecrypt_RIJ128;    /* safe decoder */
-    }
-#endif
-#endif
 
 #if (_AES_PROB_NOISE == _FEATURE_ON_)
     cpAESNoiseParams* pAESNoiseParams = &RIJ_NOISE_PARAMS(pCtx);

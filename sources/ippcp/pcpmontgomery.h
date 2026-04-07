@@ -58,7 +58,9 @@ struct _cpMontgomery {
 #define cpPackMontCtx OWNAPI(cpPackMontCtx)
 IPP_OWN_DECL(void, cpPackMontCtx, (const IppsMontState* pCtx, Ipp8u* pBuffer))
 #define cpUnpackMontCtx OWNAPI(cpUnpackMontCtx)
-IPP_OWN_DECL(void, cpUnpackMontCtx, (const Ipp8u* pBuffer, IppsMontState* pCtx))
+IPP_OWN_DECL(void,
+             cpUnpackMontCtx,
+             (const Ipp8u* pBuffer, IppsMontState* pCtx, const gsModMethod* pMethod))
 
 /*
 // Montgomery reduction, multiplication and squaring

@@ -54,11 +54,17 @@ IPP_OWN_DEFN(void, cpUnpackDLPCtx, (const Ipp8u* pBuffer, IppsDLPState* pDLP))
     DLP_BNUCTX1(pDLP) = NULL;
 #endif
 
-    gsUnpackModEngineCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_MONTP0(pB)), DLP_MONTP0(pDLP));
-    gsUnpackModEngineCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_MONTR(pB)), DLP_MONTR(pDLP));
+    gsUnpackModEngineCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_MONTP0(pB)),
+                         DLP_MONTP0(pDLP),
+                         gsModArithDLP());
+    gsUnpackModEngineCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_MONTR(pB)),
+                         DLP_MONTR(pDLP),
+                         gsModArithDLP());
     cpUnpackBigNumCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_GENC(pB)), DLP_GENC(pDLP));
     cpUnpackBigNumCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_X(pB)), DLP_X(pDLP));
     cpUnpackBigNumCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_YENC(pB)), DLP_YENC(pDLP));
-    cpUnpackPrimeCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_PRIMEGEN(pB)), DLP_PRIMEGEN(pDLP));
+    cpUnpackPrimeCtx((Ipp8u*)pB + IPP_UINT_PTR(DLP_PRIMEGEN(pB)),
+                     DLP_PRIMEGEN(pDLP),
+                     gsModArithMont());
     cpBigNumListInit(DLP_BITSIZEP(pDLP) + 1, BNLISTSIZE, DLP_BNCTX(pDLP));
 }

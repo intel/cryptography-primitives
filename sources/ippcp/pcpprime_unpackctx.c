@@ -36,9 +36,12 @@
 // Parameters:
 //    pCtx    context
 //    pBuffer buffer
+//    pMethod engine method
 *F*/
 
-IPP_OWN_DEFN(void, cpUnpackPrimeCtx, (const Ipp8u* pBuffer, IppsPrimeState* pCtx))
+IPP_OWN_DEFN(void,
+             cpUnpackPrimeCtx,
+             (const Ipp8u* pBuffer, IppsPrimeState* pCtx, const gsModMethod* pMethod))
 {
     IppsPrimeState* pB = (IppsPrimeState*)(pBuffer);
 
@@ -65,5 +68,6 @@ IPP_OWN_DEFN(void, cpUnpackPrimeCtx, (const Ipp8u* pBuffer, IppsPrimeState* pCtx
     CopyBlock((Ipp8u*)pB + sizeof(IppsPrimeState),
               PRIME_NUMBER(pCtx),
               nsPrime * (Ipp32s)sizeof(BNU_CHUNK_T));
-    gsUnpackModEngineCtx((Ipp8u*)pB + gsMontOffset, PRIME_MONT(pCtx));
+    gsUnpackModEngineCtx((Ipp8u*)pB + gsMontOffset, PRIME_MONT(pCtx), pMethod);
+    PRIME_SET_ID(pCtx);
 }

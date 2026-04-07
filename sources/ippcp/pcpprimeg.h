@@ -88,6 +88,8 @@ IPP_OWN_DECL (int, cpPrimeTest, (const BNU_CHUNK_T* pPrime, cpSize primeLen, cpS
 #define cpPackPrimeCtx OWNAPI(cpPackPrimeCtx)
 IPP_OWN_DECL(void, cpPackPrimeCtx, (const IppsPrimeState* pCtx, Ipp8u* pBuffer))
 #define cpUnpackPrimeCtx OWNAPI(cpUnpackPrimeCtx)
-IPP_OWN_DECL(void, cpUnpackPrimeCtx, (const Ipp8u* pBuffer, IppsPrimeState* pCtx))
+IPP_OWN_DECL(void,
+             cpUnpackPrimeCtx,
+             (const Ipp8u* pBuffer, IppsPrimeState* pCtx, const gsModMethod* pMethod))
 
 #endif /* _CP_PRIME_H */

@@ -18,9 +18,6 @@
 // 
 //  Purpose:
 //     Cryptography Primitive. Modular Arithmetic Engine. General Functionality
-// 
-//  Contents:
-//        gsUnpackModEngineCtx()
 //
 */
 
@@ -31,7 +28,20 @@
 #include "gsmodstuff.h"
 #include "pcptool.h"
 
-IPP_OWN_DEFN(void, gsUnpackModEngineCtx, (const Ipp8u* pBuffer, gsModEngine* pCtx))
+/*F*
+//    Name: gsUnpackModEngineCtx
+//
+// Purpose: Deserialize modular arithmetic engine context
+//
+// Parameters:
+//    pCtx    context
+//    pBuffer buffer
+//    pMethod engine method
+*F*/
+
+IPP_OWN_DEFN(void,
+             gsUnpackModEngineCtx,
+             (const Ipp8u* pBuffer, gsModEngine* pCtx, const gsModMethod* pMethod))
 {
     gsModEngine* pAlignedBuffer = (gsModEngine*)pBuffer;
 
@@ -41,6 +51,8 @@ IPP_OWN_DEFN(void, gsUnpackModEngineCtx, (const Ipp8u* pBuffer, gsModEngine* pCt
     int ctxSize = (Ipp32s)sizeof(gsModEngine) + (Ipp32s)sizeof(BNU_CHUNK_T) * (modSize * 3);
 
     CopyBlock(pAlignedBuffer, pCtx, ctxSize);
+    MOD_METHOD(pCtx) = pMethod;
+
     MOD_MODULUS(pCtx)  = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MODULUS(pAlignedBuffer)));
     MOD_MNT_R(pCtx)    = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MNT_R(pAlignedBuffer)));
     MOD_MNT_R2(pCtx)   = (BNU_CHUNK_T*)((Ipp8u*)pCtx + IPP_UINT_PTR(MOD_MNT_R2(pAlignedBuffer)));

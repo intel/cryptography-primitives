@@ -164,6 +164,8 @@ IPP_OWN_DECL(int, alm_mont_inv_ct, (BNU_CHUNK_T * pr, const BNU_CHUNK_T* pa, gsM
 #define gsPackModEngineCtx OWNAPI(gsPackModEngineCtx)
 IPP_OWN_DECL(void, gsPackModEngineCtx, (const gsModEngine* pCtx, Ipp8u* pBuffer))
 #define gsUnpackModEngineCtx OWNAPI(gsUnpackModEngineCtx)
-IPP_OWN_DECL(void, gsUnpackModEngineCtx, (const Ipp8u* pBuffer, gsModEngine* pCtx))
+IPP_OWN_DECL(void,
+             gsUnpackModEngineCtx,
+             (const Ipp8u* pBuffer, gsModEngine* pCtx, const gsModMethod* pMethod))
 
 #endif /* _GS_MOD_STUFF_H */

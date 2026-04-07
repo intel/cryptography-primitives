@@ -36,9 +36,12 @@
 // Parameters:
 //    pCtx    context
 //    pBuffer buffer
+//    pMethod engine method
 *F*/
 
-IPP_OWN_DEFN(void, cpUnpackMontCtx, (const Ipp8u* pBuffer, IppsMontState* pCtx))
+IPP_OWN_DEFN(void,
+             cpUnpackMontCtx,
+             (const Ipp8u* pBuffer, IppsMontState* pCtx, const gsModMethod* pMethod))
 {
     /* size of context (bytes) */
     int ctxSize = sizeof(IppsMontState);
@@ -46,5 +49,6 @@ IPP_OWN_DEFN(void, cpUnpackMontCtx, (const Ipp8u* pBuffer, IppsMontState* pCtx))
 
     pBuffer = (Ipp8u*)pBuffer + sizeof(IppsMontState);
 
-    gsUnpackModEngineCtx(pBuffer, MNT_ENGINE(pCtx));
+    gsUnpackModEngineCtx(pBuffer, MNT_ENGINE(pCtx), pMethod);
+    MNT_SET_ID(pCtx);
 }
