@@ -14,12 +14,12 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     PRNG Functions
-// 
+//
 //  Contents:
 //        ippsPRNGInit()
 //
@@ -68,12 +68,16 @@ IPPFUN(IppStatus, ippsPRNGInit, (int seedBits, IppsPRNGState* pCtx))
         RAND_SET_ID(pCtx);
         RAND_SEEDBITS(pCtx) = seedBits;
 
+        IPPCP_GCC_IGNORE_PUSH("-Wstrict-aliasing")
+
         /* default Q parameter */
         ((Ipp32u*)RAND_Q(pCtx))[0] = 0xFFFFFFFF;
         ((Ipp32u*)RAND_Q(pCtx))[1] = 0xFFFFFFFF;
         ((Ipp32u*)RAND_Q(pCtx))[2] = 0xFFFFFFFF;
         ((Ipp32u*)RAND_Q(pCtx))[3] = 0xFFFFFFFF;
         ((Ipp32u*)RAND_Q(pCtx))[4] = 0xFFFFFFFF;
+
+        IPPCP_GCC_IGNORE_POP
 
         /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
         hashIvSize = (IPP_MIN(hashIvSize, BITS2WORD8_SIZE(160)));

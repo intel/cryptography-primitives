@@ -48,11 +48,7 @@ IPPCP_INLINE Ipp16s cp_divAndRoundToNearestInt(Ipp32s x, Ipp32s divisor)
  */
 IPPCP_INLINE void cp_bitsToBytes(const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u numElmBitArr)
 {
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#endif
-
+    IPPCP_GCC_IGNORE_PUSH("-Wmaybe-uninitialized")
     Ipp32u numElmByteArr = BITS2WORD8_SIZE(numElmBitArr);
     for (Ipp32u i = 0; i < numElmByteArr; i++) {
         Ipp8u B = 0;
@@ -61,10 +57,7 @@ IPPCP_INLINE void cp_bitsToBytes(const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u nu
         }
         pOut[i] = B;
     }
-
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
+    IPPCP_GCC_IGNORE_POP
 }
 
 /*

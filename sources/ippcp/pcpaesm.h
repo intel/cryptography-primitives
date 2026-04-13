@@ -39,7 +39,7 @@
 #define VALID_AES_ID(ctx) ((((ctx)->idCtx) ^ (Ipp32u)IPP_UINT_PTR((ctx))) == (Ipp32u)idCtxRijndael)
 
 /* number of rounds (use [NK] for access) */
-static int rij128nRounds[3] = { NR128_128, NR128_192, NR128_256 };
+static const int rij128nRounds[3] = { NR128_128, NR128_192, NR128_256 };
 
 /*
 // number of keys (estimation only!)  (use [NK] for access)
@@ -59,7 +59,7 @@ static int rij128nRounds[3] = { NR128_128, NR128_192, NR128_256 };
 //             nKeys - accurate number of keys
 // is more convenient when calculates key extension
 */
-static int rij128nKeys[3] = { 44, 52, 60 };
+static const int rij128nKeys[3] = { 44, 52, 60 };
 
 /*
 // helper for nRounds[] and estnKeys[] access

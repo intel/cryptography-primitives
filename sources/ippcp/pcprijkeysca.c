@@ -156,10 +156,10 @@ static const Ipp32u RconTbl[] = { BYTE0_TO_WORD(0x01), BYTE0_TO_WORD(0x02), BYTE
 //   { LINE(inv_t3) }
 //};
 //
-//#define InvMixColumn(x, tbl) \
-//   ( (tbl)[0][ EBYTE((x),0) ] \
-//    ^(tbl)[1][ EBYTE((x),1) ] \
-//    ^(tbl)[2][ EBYTE((x),2) ] \
+//#define InvMixColumn(x, tbl)
+//   ( (tbl)[0][ EBYTE((x),0) ]
+//    ^(tbl)[1][ EBYTE((x),1) ]
+//    ^(tbl)[2][ EBYTE((x),2) ]
 //    ^(tbl)[3][ EBYTE((x),3) ] )
 
 IPPCP_INLINE Ipp32u InvMixColumn(Ipp32u x)

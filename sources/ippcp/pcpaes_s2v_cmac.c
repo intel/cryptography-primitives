@@ -66,7 +66,7 @@ IPPFUN(IppStatus, ippsAES_S2V_CMAC, (const Ipp8u* pKey,
                                      const Ipp8u* pAD[],
                                      const int pADlen[],
                                      int numAD,
-                                     Ipp8u  V[MBS_RIJ128]))
+                                     Ipp8u* V))
 /* clang-format on */
 {
     /* test output vector */

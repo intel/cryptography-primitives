@@ -207,7 +207,8 @@ static void AMM52x20(Ipp64u* out,
     /* normalize result */
     {
         Ipp64u acc = 0;
-#if !defined(_MSC_VER) || defined(__INTEL_COMPILER) // unknown for msvc
+#if (!defined(_MSC_VER) && !defined(__GNUC__)) || \
+    defined(__INTEL_COMPILER) // unknown for msvc and for GCC
 #pragma nounroll
 #endif
         for (i = 0; i < 20; i++) {
@@ -307,7 +308,8 @@ static void AMM52x40(Ipp64u* out,
     /* normalize result */
     {
         Ipp64u acc = 0;
-#if !defined(_MSC_VER) || defined(__INTEL_COMPILER) // unknown for msvc
+#if (!defined(_MSC_VER) && !defined(__GNUC__)) || \
+    defined(__INTEL_COMPILER) // unknown for msvc and for GCC
 #pragma nounroll
 #endif
         for (i = 0; i < 40; i++) {
@@ -436,7 +438,8 @@ static void AMM52x60(Ipp64u* out,
     /* normalize result */
     {
         Ipp64u acc = 0;
-#if !defined(_MSC_VER) || defined(__INTEL_COMPILER) // unknown for msvc
+#if (!defined(_MSC_VER) && !defined(__GNUC__)) || \
+    defined(__INTEL_COMPILER) // unknown for msvc and for GCC
 #pragma nounroll
 #endif
         for (i = 0; i < 60; i++) {
@@ -583,7 +586,8 @@ static void AMM52x79(Ipp64u* out,
     /* normalize result */
     {
         Ipp64u acc = 0;
-#if !defined(_MSC_VER) || defined(__INTEL_COMPILER) // unknown for msvc
+#if (!defined(_MSC_VER) && !defined(__GNUC__)) || \
+    defined(__INTEL_COMPILER) // unknown for msvc and for GCC
 #pragma nounroll
 #endif
         for (i = 0; i < 79; i++) {

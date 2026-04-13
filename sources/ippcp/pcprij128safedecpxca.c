@@ -254,7 +254,7 @@ static void InvSubByte(Ipp8u blk[16])
     ((Ipp64u*)blk_b)[1] = (((Ipp64u*)blk)[1] >> 4) & 0x0F0F0F0F0F0F0F0F;
 
     {
-        const Ipp8u affineCnt = 0x48; /* /* value of H(0x05) */
+        const Ipp8u affineCnt = 0x48; /* value of H(0x05) */
         int n;
         for (n = 0; n < 16; n++) {
             Ipp8u c = blk_c[n];

@@ -14,13 +14,13 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive.
 //     Security Hash Standard
 //     General Functionality
-// 
+//
 //  Contents:
 //        cpComputeDigest()
 //
@@ -108,6 +108,9 @@ IPP_OWN_DEFN(void, cpComputeDigest, (Ipp8u * pHashTag, int hashTagLen, const Ipp
         hash[6] = ENDIANNESS64(hash[6]);
         hash[7] = ENDIANNESS64(hash[7]);
     } else if (ippHashAlg_MD5 != HASH_ALG_ID(pCtx)) {
+
+        IPPCP_GCC_IGNORE_PUSH("-Wstrict-aliasing")
+
         ((Ipp32u*)hash)[0] = ENDIANNESS32(((Ipp32u*)hash)[0]);
         ((Ipp32u*)hash)[1] = ENDIANNESS32(((Ipp32u*)hash)[1]);
         ((Ipp32u*)hash)[2] = ENDIANNESS32(((Ipp32u*)hash)[2]);
@@ -118,6 +121,8 @@ IPP_OWN_DEFN(void, cpComputeDigest, (Ipp8u * pHashTag, int hashTagLen, const Ipp
             ((Ipp32u*)hash)[6] = ENDIANNESS32(((Ipp32u*)hash)[6]);
             ((Ipp32u*)hash)[7] = ENDIANNESS32(((Ipp32u*)hash)[7]);
         }
+
+        IPPCP_GCC_IGNORE_POP
     }
     CopyBlock(hash, pHashTag, hashTagLen);
 }

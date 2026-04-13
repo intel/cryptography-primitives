@@ -609,6 +609,26 @@ extern double __intel_castu64_f64(unsigned __int64 val);
 #endif
 #endif
 
+#if !defined(IPPCP_GCC_IGNORE_PUSH) && !defined(IPPCP_GCC_IGNORE_POP)
+#if defined(__GNUC__) && !defined(__clang__)
+
+#define IPPCP_PRAGMA(name) _Pragma(#name)
+
+#define IPPCP_GCC_IGNORE_PUSH(type)   \
+    IPPCP_PRAGMA(GCC diagnostic push) \
+    IPPCP_PRAGMA(GCC diagnostic ignored type)
+
+#define IPPCP_GCC_IGNORE_POP IPPCP_PRAGMA(GCC diagnostic pop)
+
+#else
+#define IPPCP_GCC_IGNORE_PUSH(type) \
+    do {                            \
+    } while (0);
+#define IPPCP_GCC_IGNORE_POP \
+    do {                     \
+    } while (0);
+#endif
+#endif
 
 #if defined(__cplusplus)
 }

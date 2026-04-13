@@ -130,4 +130,22 @@ typedef Ipp32u API_BNU_CHUNK_T;
         (RL) = (__x1 << BNU_CHUNK_BITS / 2) + LO_CHUNK(__x0); \
     } while (0)
 
+/* (-,RL) = A*B */
+#define MUL_AB_LOW(RL, A, B)                                  \
+    do {                                                      \
+        BNU_CHUNK_T __aL = LO_CHUNK((A));                     \
+        BNU_CHUNK_T __aH = HI_CHUNK((A));                     \
+        BNU_CHUNK_T __bL = LO_CHUNK((B));                     \
+        BNU_CHUNK_T __bH = HI_CHUNK((B));                     \
+                                                              \
+        BNU_CHUNK_T __x0 = (BNU_CHUNK_T)__aL * __bL;          \
+        BNU_CHUNK_T __x1 = (BNU_CHUNK_T)__aL * __bH;          \
+        BNU_CHUNK_T __x2 = (BNU_CHUNK_T)__aH * __bL;          \
+                                                              \
+        __x1 += HI_CHUNK(__x0);                               \
+        __x1 += __x2;                                         \
+                                                              \
+        (RL) = (__x1 << BNU_CHUNK_BITS / 2) + LO_CHUNK(__x0); \
+    } while (0)
+
 #endif /* _CP_BNU_IMPL_H */

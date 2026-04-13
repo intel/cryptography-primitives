@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive. Modular Arithmetic Engine. General Functionality
-// 
+//
 //  Contents:
 //        gsMontFactor()
 //
@@ -42,8 +42,8 @@ IPP_OWN_DEFN(BNU_CHUNK_T, gsMontFactor, (BNU_CHUNK_T m0))
 
     int i;
     for (i = 2; i <= BNU_CHUNK_BITS; i++, x <<= 1) {
-        BNU_CHUNK_T rH, rL;
-        MUL_AB(rH, rL, m0, y);
+        BNU_CHUNK_T rL;
+        MUL_AB_LOW(rL, m0, y);
         if (x < (rL & mask)) /* x < ((m0*y) mod (2*x)) */
             y += x;
         mask += mask + 1;

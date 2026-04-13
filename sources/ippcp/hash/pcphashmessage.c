@@ -128,6 +128,9 @@ IPPFUN(IppStatus, ippsHashMessage, (const Ipp8u* pMsg, int len, Ipp8u* pMD, IppH
             hash[6] = ENDIANNESS64(hash[6]);
             hash[7] = ENDIANNESS64(hash[7]);
         } else if (ippHashAlg_MD5 != hashAlg) {
+
+            IPPCP_GCC_IGNORE_PUSH("-Wstrict-aliasing")
+
             /* ippHashAlg_SHA1, ippHashAlg_SHA224, ippHashAlg_SHA256 and ippHashAlg_SM3 */
             ((Ipp32u*)hash)[0] = ENDIANNESS32(((Ipp32u*)hash)[0]);
             ((Ipp32u*)hash)[1] = ENDIANNESS32(((Ipp32u*)hash)[1]);
@@ -137,6 +140,8 @@ IPPFUN(IppStatus, ippsHashMessage, (const Ipp8u* pMsg, int len, Ipp8u* pMD, IppH
             ((Ipp32u*)hash)[5] = ENDIANNESS32(((Ipp32u*)hash)[5]);
             ((Ipp32u*)hash)[6] = ENDIANNESS32(((Ipp32u*)hash)[6]);
             ((Ipp32u*)hash)[7] = ENDIANNESS32(((Ipp32u*)hash)[7]);
+
+            IPPCP_GCC_IGNORE_POP
         }
         CopyBlock(hash, pMD, hashSize);
 

@@ -43,10 +43,15 @@ static int cpSeed_hw_sample(BNU_CHUNK_T* pSample)
 #if (_IPP_ARCH == _IPP_ARCH_IA32)
         success = _rdseed32_step(pSample);
 #elif (_IPP_ARCH == _IPP_ARCH_EM64T)
-#pragma warning(push) // temporary, compiler bug workaround
+#if !defined(__GNUC__) // unknown for GCC
+#pragma warning(push)  // temporary, compiler bug workaround
 #pragma warning(disable : 167)
+#endif
         success = _rdseed64_step(pSample);
+#if !defined(__GNUC__) // unknown for GCC
 #pragma warning(pop)
+#endif
+
 #else
 #error Unknown CPU arch
 #endif
