@@ -38,7 +38,7 @@
 // Name: ippsAESDecryptCTR
 //
 // Purpose:
-//        AES-CFB encryption.
+//        AES-CTR dencryption.
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pCtx == NULL

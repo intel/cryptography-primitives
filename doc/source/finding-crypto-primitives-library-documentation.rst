@@ -17,14 +17,6 @@ Performance Primitives and
 Intel® Cryptography Primitives Library documentation, see Downloadable `Documentation: Intel® oneAPI Toolkits and
 Components <https://www.intel.com/content/www/us/en/developer/articles/guide/download-documentation-intel-oneapi-toolkits-components.html>`__
 
-
-The Intel® Integrated Performance Primitives forum and knowledge base can be
-useful locations to
-search for questions not answered by the documents above. Please see the
-`Intel® Integrated Performance Primitives
-Forum <https://community.intel.com/t5/Intel-Integrated-Performance/bd-p/integrated-performance-primitives>`__.
-
-
 See Also
 --------
 

@@ -19,9 +19,11 @@ term.
 
 For general information about Intel technical support, product updates,
 user forums, FAQs, tips and tricks and other support questions, please
-visit https://www.intel.com/content/www/us/en/developer/get-help/overview.html and the Intel IPP
-forum
-https://community.intel.com/t5/Intel-Integrated-Performance/bd-p/integrated-performance-primitives/.
+visit https://www.intel.com/content/www/us/en/developer/get-help/overview.html.
+
+
+If you have questions related to the Intel® Cryptography Primitives Library,
+you can submit an issue on [Github](https://github.com/intel/cryptography-primitives/issues).
 
 
 .. note::
