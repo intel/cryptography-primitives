@@ -606,6 +606,15 @@ EXTERN (fips_selftest_ippsRSA_GenerateKeys)
 EXTERN (fips_selftest_ippsGFpECSharedSecretDH)
 EXTERN (fips_selftest_ippsLMSVerify)
 EXTERN (fips_selftest_ippsLMSVerify_get_size)
+EXTERN (fips_selftest_ippsMLDSA_Sign_get_size_data_buff)
+EXTERN (fips_selftest_ippsMLDSA_Verify_get_size_data_buff)
+EXTERN (fips_selftest_ippsMLDSA_KeyGen_get_size_data_buff)
+EXTERN (fips_selftest_ippsMLDSA_Sign_get_size)
+EXTERN (fips_selftest_ippsMLDSA_Verify_get_size)
+EXTERN (fips_selftest_ippsMLDSA_KeyGen_get_size)
+EXTERN (fips_selftest_ippsMLDSA_Sign)
+EXTERN (fips_selftest_ippsMLDSA_Verify)
+EXTERN (fips_selftest_ippsMLDSA_KeyGen)
 
 
 VERSION {
@@ -1219,6 +1228,15 @@ VERSION {
    fips_selftest_ippsGFpECSharedSecretDH;
    fips_selftest_ippsLMSVerify_get_size;
    fips_selftest_ippsLMSVerify;
+   fips_selftest_ippsMLDSA_Sign_get_size_data_buff;
+   fips_selftest_ippsMLDSA_Verify_get_size_data_buff;
+   fips_selftest_ippsMLDSA_KeyGen_get_size_data_buff;
+   fips_selftest_ippsMLDSA_Sign_get_size;
+   fips_selftest_ippsMLDSA_Verify_get_size;
+   fips_selftest_ippsMLDSA_KeyGen_get_size;
+   fips_selftest_ippsMLDSA_Sign;
+   fips_selftest_ippsMLDSA_Verify;
+   fips_selftest_ippsMLDSA_KeyGen;
   local: *;
  };
 }

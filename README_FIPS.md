@@ -334,6 +334,24 @@ fips_test_status fips_selftest_ippsLMSVerify (Ipp8u *pBuffer);
 
 , where `pBuffer` is the valid buffer for selftest of size indicated by `fips_selftest_ippsLMSVerify_get_size`.
 
+##### ML-DSA keygen/sign/verify
+
+```cpp
+fips_test_status fips_selftest_ippsMLDSA_Sign_get_size_data_buff (int *pDataBuffSize);
+fips_test_status fips_selftest_ippsMLDSA_Verify_get_size_data_buff (int *pDataBuffSize);
+fips_test_status fips_selftest_ippsMLDSA_KeyGen_get_size_data_buff (int *pDataBuffSize);
+fips_test_status fips_selftest_ippsMLDSA_Sign_get_size (int *pBufferSize, Ipp8u *pDataBuff);
+fips_test_status fips_selftest_ippsMLDSA_Verify_get_size (int *pBufferSize, Ipp8u *pDataBuff);
+fips_test_status fips_selftest_ippsMLDSA_KeyGen_get_size (int *pBufferSize, Ipp8u *pDataBuff);
+fips_test_status fips_selftest_ippsMLDSA_Sign (Ipp8u *pBuffer, Ipp8u *pDataBuff);
+fips_test_status fips_selftest_ippsMLDSA_Verify (Ipp8u *pBuffer, Ipp8u *pDataBuff);
+fips_test_status fips_selftest_ippsMLDSA_KeyGen (Ipp8u *pBuffer, Ipp8u *pDataBuff);
+```
+
+, where `pDataBuff` is the valid persistent data buffer of size indicated by
+`fips_selftest_ippsMLDSASignVerify_get_size_data_buff`, and `pBuffer` is the valid scratch buffer
+of size indicated by `fips_selftest_ippsMLDSASignVerify_get_size`.
+
 ##### API for an indicator if a function is FIPS-approved
 
 ```cpp

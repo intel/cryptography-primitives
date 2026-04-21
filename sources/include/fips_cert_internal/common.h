@@ -26,12 +26,13 @@
 
 #define IPPCP_IV128_BYTE_LEN (16)
 
-#define IPPCP_AES_ALIGNMENT  ((int)sizeof(void*))
-#define IPPCP_HASH_ALIGNMENT ((int)sizeof(void*))
-#define IPPCP_HMAC_ALIGNMENT ((int)sizeof(void*))
-#define IPPCP_GFP_ALIGNMENT  ((int)sizeof(void*))
-#define IPPCP_BN_ALIGNMENT   ((int)sizeof(void*))
-#define IPPCP_RSA_ALIGNMENT  ((int)sizeof(BNU_CHUNK_T))
+#define IPPCP_AES_ALIGNMENT   ((int)sizeof(void*))
+#define IPPCP_HASH_ALIGNMENT  ((int)sizeof(void*))
+#define IPPCP_HMAC_ALIGNMENT  ((int)sizeof(void*))
+#define IPPCP_GFP_ALIGNMENT   ((int)sizeof(void*))
+#define IPPCP_BN_ALIGNMENT    ((int)sizeof(void*))
+#define IPPCP_MLDSA_ALIGNMENT ((int)sizeof(void*))
+#define IPPCP_RSA_ALIGNMENT   ((int)sizeof(BNU_CHUNK_T))
 
 // convert bitsize into 32-bit wordsize
 #define IPPCP_BITSIZE_2_WORDSIZE(N_BITS)   (((N_BITS) + 31) >> 5)
