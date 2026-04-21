@@ -73,6 +73,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /GS")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zp16")
 # Allows the compiler to package individual functions in the form of packaged functions. Smaller resulting size.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Gy")
+# Enables additional security checks and protections.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /sdl")
 
 # Causes the application to use the multithread, static version of the run-time library (debug version).
 set(CMAKE_C_FLAGS_DEBUG "/MTd")

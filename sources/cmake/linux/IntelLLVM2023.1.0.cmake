@@ -70,7 +70,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99  -diag-error 266  -diag-disable 133
 
 # Stack-based Buffer Overrun Detection
 if ((${ARCH} MATCHES "ia32") OR (NOT NONPIC_LIB))
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector-strong")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-clash-protection")
 endif()
 

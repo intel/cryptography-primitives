@@ -40,7 +40,8 @@ set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /GS")
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /W3")
 # Changes all warnings to errors.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
-
+# Enables additional security checks and protections.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /sdl")
 
 # Linker flags
 
