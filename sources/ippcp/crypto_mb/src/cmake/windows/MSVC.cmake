@@ -37,9 +37,13 @@ set(CMAKE_C_FLAGS_SECURITY "")
 # Detect some buffer overruns.
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /GS")
 # Warning level = 3
-set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /W3")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} /W4")
 # Changes all warnings to errors.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
+
+# Allows the compiler to package individual functions in the form of packaged functions. Smaller resulting size.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Gy")
+
 # Enables additional security checks and protections.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /sdl")
 

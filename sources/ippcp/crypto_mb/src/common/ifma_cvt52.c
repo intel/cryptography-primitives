@@ -708,11 +708,13 @@ __MBX_INLINE void transform_4sb_to_mb4(U64 out_mb4[],
             // radix 2^52 mask of digits
             const __m256i mask52b = _mm256_set1_epi64x(DIGIT_MASK);
             // repeat one byte
+            MBX_MSVC_IGNORE_PUSH(4310) // Disable warnings about conversion
             /* clang-format off */
             const __m128i cvt104b_2x52b =
                         _mm_set_epi8((char)0xff, (char)0x0c, (char)0x0b, (char)0x0a, (char)0x09, (char)0x08, (char)0x07, (char)0x06,
                                      (char)0xff, (char)0x06, (char)0x05, (char)0x04, (char)0x03, (char)0x02, (char)0x01, (char)0x00);
             /* clang-format on */
+            MBX_MSVC_IGNORE_POP
 
             for (int k = 0; k < 4; k++) {
                 // split 32 bytes into 2 x 16 bytes
@@ -916,6 +918,7 @@ __MBX_INLINE void transform_mb4_to_4sb(int8u* out[4],
             // radix 2^52 mask of digits
             const __m256i mask52b = _mm256_set_epi64x(0, DIGIT_MASK, 0, DIGIT_MASK);
             // repeat one byte
+            MBX_MSVC_IGNORE_PUSH(4310) // Disable warnings about conversion
             /* clang-format off */
             const __m256i shift_2nd_52b =
                     _mm256_set_epi8((char)0xff, (char)0xff, (char)0xff, (char)0x0e, (char)0x0d, (char)0x0c, (char)0x0b, (char)0x0a,
@@ -923,6 +926,7 @@ __MBX_INLINE void transform_mb4_to_4sb(int8u* out[4],
                                     (char)0xff, (char)0xff, (char)0xff, (char)0x0e, (char)0x0d, (char)0x0c, (char)0x0b, (char)0x0a,
                                     (char)0x09, (char)0x08, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff, (char)0xff);
             /* clang-format on */
+            MBX_MSVC_IGNORE_POP
 
             for (int n = 0; n < 4; n++) {
                 const __m256i a0 = _mm256_sllv_epi64(X[n], shiftLeft);

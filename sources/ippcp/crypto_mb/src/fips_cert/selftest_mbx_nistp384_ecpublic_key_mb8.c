@@ -133,10 +133,10 @@ fips_test_status fips_selftest_mbx_nistp384_ecpublic_key_mb8(void)
 // memory free macro
 #define MEM_FREE(BN_PTR_ARR1, BN_PTR_ARR2, SIG_PTR_ARR3, BN_PTR4, BN_PTR5) \
     {                                                                      \
-        for (int i = 0; i < MBX_LANES; ++i) {                              \
-            BN_free(BN_PTR_ARR1[i]);                                       \
-            BN_free(BN_PTR_ARR2[i]);                                       \
-            ECDSA_SIG_free(SIG_PTR_ARR3[i]);                               \
+        for (int j = 0; j < MBX_LANES; ++j) {                              \
+            BN_free(BN_PTR_ARR1[j]);                                       \
+            BN_free(BN_PTR_ARR2[j]);                                       \
+            ECDSA_SIG_free(SIG_PTR_ARR3[j]);                               \
         }                                                                  \
         BN_free(BN_PTR4);                                                  \
         BN_free(BN_PTR5);                                                  \

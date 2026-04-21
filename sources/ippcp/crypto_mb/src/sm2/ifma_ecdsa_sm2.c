@@ -119,7 +119,7 @@ mbx_status OWNAPI(mbx_sm2_ecdsa_sign_mb8)(int8u* pa_sign_r[8],
                                                  use_jproj_coords,
                                                  user_id_len_checked);
 #else
-    MBX_UNREFERENCED_PARAMETER(user_id_len_checked);
+    MBX_UNREFERENCED_PARAMETER(pBuffer, user_id_len_checked);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -206,7 +206,7 @@ mbx_status OWNAPI(mbx_sm2_ecdsa_verify_mb8)(const int8u* const pa_sign_r[8],
                                                    use_jproj_coords,
                                                    user_id_len_checked);
 #else
-    MBX_UNREFERENCED_PARAMETER(user_id_len_checked);
+    MBX_UNREFERENCED_PARAMETER(pBuffer, user_id_len_checked);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -291,7 +291,7 @@ mbx_status OWNAPI(mbx_sm2_ecdsa_sign_ssl_mb8)(int8u* pa_sign_r[8],
                                                      use_jproj_coords,
                                                      user_id_len_checked);
 #else
-    MBX_UNREFERENCED_PARAMETER(user_id_len_checked);
+    MBX_UNREFERENCED_PARAMETER(pBuffer, user_id_len_checked);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -361,7 +361,7 @@ mbx_status OWNAPI(mbx_sm2_ecdsa_verify_ssl_mb8)(const ECDSA_SIG* const pa_sig[8]
                                                        use_jproj_coords,
                                                        user_id_len_checked);
 #else
-    MBX_UNREFERENCED_PARAMETER(user_id_len_checked);
+    MBX_UNREFERENCED_PARAMETER(pBuffer, user_id_len_checked);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;

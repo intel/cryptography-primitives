@@ -69,7 +69,6 @@ __MBX_INLINE void extract_multiplier_mb4_N(__m256i* pOut,
 __MBX_INLINE void extract_1x_mb4(__m256i* mulB,
                                  const __m256i* pMulTbl,
                                  const __m256i k,
-                                 const __m256i idx_target,
                                  const int N)
 {
     int i;
@@ -94,7 +93,7 @@ __MBX_INLINE void extract_mb4(__m256i* pMulb,
         const __m256i idx_curr = _mm256_set1_epi64x(l);
         const __m256i k        = _mm256_cmpeq_epi64(idx_curr, idx_target);
 
-        extract_1x_mb4(&pMulb[0], &pMulTbl[0], k, idx_target, N);
+        extract_1x_mb4(&pMulb[0], &pMulTbl[0], k, N);
 
         pMulTbl += N;
     }

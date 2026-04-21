@@ -82,6 +82,7 @@ mbx_status OWNAPI(mbx_sm2_ecpublic_key_ssl_mb8)(BIGNUM* pa_pubx[8],
                                                        pBuffer,
                                                        use_jproj_coords);
 #else
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -131,6 +132,7 @@ mbx_status OWNAPI(mbx_sm2_ecpublic_key_mb8)(int64u* pa_pubx[8],
                                                    pBuffer,
                                                    use_jproj_coords);
 #else
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;

@@ -89,7 +89,7 @@ __mmask16 sm4_gcm_update_iv_mb16(const int8u* const pa_iv[SM4_LINES],
                                                  &loc_iv_len,
                                                  SM4_GCM_CONTEXT_HASHKEY(p_context)[0],
                                                  mb_mask);
-        sm4_gcm_finalize_iv_mb16(loc_pa_iv, mb_mask, p_context);
+        sm4_gcm_finalize_iv_mb16(loc_pa_iv, p_context);
 
         SM4_GCM_CONTEXT_STATE(p_context) = sm4_gcm_update_aad;
     }

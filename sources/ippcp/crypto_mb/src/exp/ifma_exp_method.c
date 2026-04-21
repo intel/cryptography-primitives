@@ -72,6 +72,7 @@ int OWNAPI(mbx_exp_BufferSize)(int modulusBits)
     } else
         return 0;
 #else
+    MBX_UNREFERENCED_PARAMETER(modulusBits);
     return 0;
 #endif /* #if (_MBX>=_MBX_K1) */
 }

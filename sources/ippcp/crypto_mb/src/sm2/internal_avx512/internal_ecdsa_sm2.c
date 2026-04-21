@@ -325,6 +325,7 @@ mbx_status internal_avx512_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
                                               int use_jproj_coords,
                                               int* user_id_len_checked)
 {
+    MBX_UNREFERENCED_PARAMETER(user_id_len, pBuffer);
     mbx_status status = 0;
 
     /* load and check secret keys */
@@ -438,6 +439,7 @@ mbx_status internal_avx512_sm2_ecdsa_verify_mb8(const int8u* const pa_sign_r[8],
                                                 int use_jproj_coords,
                                                 int* user_id_len_checked)
 {
+    MBX_UNREFERENCED_PARAMETER(user_id_len, pBuffer);
     mbx_status status = 0;
 
     __ALIGN64 U64 sign_r[PSM2_LEN52];
@@ -525,6 +527,7 @@ mbx_status internal_avx512_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
                                                   int use_jproj_coords,
                                                   int* user_id_len_checked)
 {
+    MBX_UNREFERENCED_PARAMETER(user_id_len, pBuffer);
     mbx_status status = 0;
 
     /* load and check secret keys */
@@ -638,6 +641,7 @@ mbx_status internal_avx512_sm2_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const pa_si
                                                     int use_jproj_coords,
                                                     int* user_id_len_checked)
 {
+    MBX_UNREFERENCED_PARAMETER(user_id_len, pBuffer);
     mbx_status status = 0;
 
     BIGNUM* pa_sign_r[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };

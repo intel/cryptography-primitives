@@ -30,9 +30,7 @@
 // This function also encrypts J0 by calling sm4_encrypt_j0_mb16(), to use it later for tag computation
 */
 
-void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
-                              __mmask16 mb_mask,
-                              SM4_GCM_CTX_mb16* p_context)
+void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES], SM4_GCM_CTX_mb16* p_context)
 {
     __m128i* ctr     = SM4_GCM_CONTEXT_CTR(p_context);
     __m128i* j0      = SM4_GCM_CONTEXT_J0(p_context);

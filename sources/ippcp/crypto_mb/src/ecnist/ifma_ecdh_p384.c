@@ -83,6 +83,7 @@ mbx_status OWNAPI(mbx_nistp384_ecdh_ssl_mb8)(int8u* pa_shared_key[8],
                                                     pBuffer,
                                                     use_jproj_coords);
 #else
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -136,6 +137,7 @@ mbx_status OWNAPI(mbx_nistp384_ecdh_mb8)(int8u* pa_shared_key[8],
                                                 pBuffer,
                                                 use_jproj_coords);
 #else
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;

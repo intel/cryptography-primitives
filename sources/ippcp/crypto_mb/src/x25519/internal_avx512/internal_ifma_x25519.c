@@ -203,6 +203,7 @@ __MBX_INLINE void ed25519_sqr(U64 out[], const U64 a[])
 static void MB_FUNC_NAME(ed25519_sqr_latency_)(U64 out[], const U64 a[], int count)
 {
     U64 r0, r1, r2, r3, r4, r5, r6, r7, r8, r9;
+    r0 = r1 = r2 = r3 = r4 = r5 = r6 = r7 = r8 = r9 = get_zero64();
     U64 a0, a1, a2, a3, a4;
     U64 r4_1;
     int i;

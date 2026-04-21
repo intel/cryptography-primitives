@@ -96,8 +96,53 @@ typedef unsigned long long int64u;
         #define MBX_ZEROING_FUNC_ATTRIBUTES
     #endif
 #endif /* MBX_ZEROING_FUNC_ATTRIBUTES */
-/* clang-format on */
 
-#define MBX_UNREFERENCED_PARAMETER(p) (void)(p)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_1(a) (void)(a)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_2(a,b) (void)(a); (void)(b)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_3(a,b,c) (void)(a); (void)(b); (void)(c)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_4(a,b,c,d) (void)(a); (void)(b); (void)(c); (void)(d)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_5(a,b,c,d,e) (void)(a); (void)(b); (void)(c); (void)(d); (void)(e)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_6(a,b,c,d,e,f) (void)(a); (void)(b); (void)(c); (void)(d); (void)(e); (void)(f)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_7(a,b,c,d,e,f,g) (void)(a); (void)(b); (void)(c); (void)(d); (void)(e); (void)(f); (void)(g)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_8(a,b,c,d,e,f,g,h) (void)(a); (void)(b); (void)(c); (void)(d); (void)(e); (void)(f); (void)(g); (void)(h)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_9(a,b,c,d,e,f,g,h,i) (void)(a); (void)(b); (void)(c); (void)(d); (void)(e); (void)(f); (void)(g); (void)(h); (void)(i)
+#define MBX_UNREFERENCED_PARAMETER_IMPL_10(a,b,c,d,e,f,g,h,i,j) (void)(a); (void)(b); (void)(c); (void)(d); (void)(e); (void)(f); (void)(g); (void)(h); (void)(i); (void)(j)
+
+#define MBX_UNREFERENCED_PARAMETER(...) \
+    do { \
+        MBX_GET_UNREFERENCED_PARAMETER_MACRO(__VA_ARGS__, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_10, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_9, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_8, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_7, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_6, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_5, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_4, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_3, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_2, \
+            MBX_UNREFERENCED_PARAMETER_IMPL_1)(__VA_ARGS__); \
+    } while(0)
+
+#define MBX_GET_UNREFERENCED_PARAMETER_MACRO(_1,_2,_3,_4,_5,_6,_7,_8,_9,_10,NAME,...) NAME
+
+#if !defined(MBX_MSVC_IGNORE_PUSH) && !defined(MBX_MSVC_IGNORE_POP)
+
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
+
+#define MBX_PRAGMA(name) __pragma(name)
+
+#define MBX_MSVC_IGNORE_PUSH(type)   \
+    MBX_PRAGMA(warning(push)) \
+    MBX_PRAGMA(warning(disable: type))
+
+#define MBX_MSVC_IGNORE_POP MBX_PRAGMA(warning(pop))
+
+#else
+#define MBX_MSVC_IGNORE_PUSH(type)
+#define MBX_MSVC_IGNORE_POP
+#endif /* !defined(MBX_MSVC_IGNORE_PUSH) && !defined(MBX_MSVC_IGNORE_POP) */
+#endif /* #if defined(_MSC_VER) && !defined(__INTEL_LLVM_COMPILER) */
+
+/* clang-format on */
 
 #endif /* DEFS_H */

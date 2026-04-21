@@ -38,6 +38,7 @@ mbx_status OWNAPI(mbx_rsa_public_mb8)(const int8u* const from_pa[8],
                                       int8u* pBuffer)
 {
 #if ((_MBX <= _MBX_L9) && !(_MBX_AVX_IFMA_SUPPORTED))
+    MBX_UNREFERENCED_PARAMETER(from_pa, to_pa, n_pa, expected_rsa_bitsize, m, pBuffer);
     mbx_status status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
     return status;
 #else
@@ -149,6 +150,7 @@ mbx_status OWNAPI(mbx_rsa_private_mb8)(const int8u* const from_pa[8],
                                        int8u* pBuffer)
 {
 #if ((_MBX <= _MBX_L9) && !(_MBX_AVX_IFMA_SUPPORTED))
+    MBX_UNREFERENCED_PARAMETER(from_pa, to_pa, d_pa, n_pa, expected_rsa_bitsize, m, pBuffer);
     mbx_status status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
     return status;
 #else
@@ -265,6 +267,16 @@ mbx_status OWNAPI(mbx_rsa_private_crt_mb8)(const int8u* const from_pa[8],
                                            int8u* pBuffer)
 {
 #if ((_MBX <= _MBX_L9) && !(_MBX_AVX_IFMA_SUPPORTED))
+    MBX_UNREFERENCED_PARAMETER(from_pa,
+                               to_pa,
+                               p_pa,
+                               q_pa,
+                               dp_pa,
+                               dq_pa,
+                               iq_pa,
+                               expected_rsa_bitsize,
+                               m,
+                               pBuffer);
     mbx_status status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
     return status;
 #else

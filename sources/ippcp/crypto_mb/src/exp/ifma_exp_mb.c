@@ -165,6 +165,14 @@ mbx_status OWNAPI(mbx_exp1024_mb8)(int64u* const out_pa[8],
                           pBuffer,
                           bufferLen);
 #else
+    MBX_UNREFERENCED_PARAMETER(out_pa,
+                               base_pa,
+                               exp_pa,
+                               exp_bits,
+                               mod_pa,
+                               mod_bits,
+                               pBuffer,
+                               bufferLen);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -200,6 +208,14 @@ mbx_status OWNAPI(mbx_exp2048_mb8)(int64u* const out_pa[8],
                           pBuffer,
                           bufferLen);
 #else
+    MBX_UNREFERENCED_PARAMETER(out_pa,
+                               base_pa,
+                               exp_pa,
+                               exp_bits,
+                               mod_pa,
+                               mod_bits,
+                               pBuffer,
+                               bufferLen);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -235,6 +251,14 @@ mbx_status OWNAPI(mbx_exp3072_mb8)(int64u* const out_pa[8],
                           pBuffer,
                           bufferLen);
 #else
+    MBX_UNREFERENCED_PARAMETER(out_pa,
+                               base_pa,
+                               exp_pa,
+                               exp_bits,
+                               mod_pa,
+                               mod_bits,
+                               pBuffer,
+                               bufferLen);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -270,6 +294,14 @@ mbx_status OWNAPI(mbx_exp4096_mb8)(int64u* const out_pa[8],
                           pBuffer,
                           bufferLen);
 #else
+    MBX_UNREFERENCED_PARAMETER(out_pa,
+                               base_pa,
+                               exp_pa,
+                               exp_bits,
+                               mod_pa,
+                               mod_bits,
+                               pBuffer,
+                               bufferLen);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -327,6 +359,14 @@ mbx_status OWNAPI(mbx_exp_mb8)(int64u* const out_pa[8],
                           pBuffer,
                           bufferLen);
 #else
+    MBX_UNREFERENCED_PARAMETER(out_pa,
+                               base_pa,
+                               exp_pa,
+                               exp_bits,
+                               mod_pa,
+                               mod_bits,
+                               pBuffer,
+                               bufferLen);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;

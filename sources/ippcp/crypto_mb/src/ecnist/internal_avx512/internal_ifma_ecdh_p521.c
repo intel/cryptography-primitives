@@ -33,6 +33,7 @@ mbx_status internal_avx512_nistp521_ecdh_ssl_mb8(int8u* pa_shared_key[8],
                                                  int8u* pBuffer,
                                                  int use_jproj_coords)
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     mbx_status status = 0;
     /* zero padded private keys */
     U64 secretz[P521_LEN64 + 1];
@@ -108,6 +109,7 @@ mbx_status internal_avx512_nistp521_ecdh_mb8(int8u* pa_shared_key[8],
                                              int8u* pBuffer,
                                              int use_jproj_coords)
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     mbx_status status = 0;
     /* zero padded private keys */
     U64 secretz[P521_LEN64 + 1];

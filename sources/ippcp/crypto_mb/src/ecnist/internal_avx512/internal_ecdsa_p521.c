@@ -39,6 +39,7 @@
 */
 static void nistp521_ecdsa_inv_keys_mb8(U64 inv_skey[], const U64 skey[], int8u pBuffer[])
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     /* compute inversion over n521 of secret keys */
     MB_FUNC_NAME(ifma_tomont52_n521_)(inv_skey, skey);
     ifma_aminv52_n521_mb8(inv_skey, inv_skey); /* 1/skeys mod n521 */
@@ -55,6 +56,7 @@ static void nistp521_ecdsa_inv_keys_mb8(U64 inv_skey[], const U64 skey[], int8u 
 */
 static __mb_mask nistp521_ecdsa_sign_r_mb8(U64 sign_r[], const U64 skey[], int8u pBuffer[])
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     /* compute ephemeral public keys */
     P521_POINT P;
 
@@ -84,6 +86,7 @@ static __mb_mask nistp521_ecdsa_sign_s_mb8(U64 sign_s[],
                                            U64 reg_skey[],
                                            int8u pBuffer[])
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     __ALIGN64 U64 tmp[P521_LEN52];
 
     /* convert to Montgomery over n521 domain */
@@ -346,6 +349,7 @@ mbx_status internal_avx512_nistp521_ecdsa_verify_mb8(const int8u* const pa_sign_
                                                      int8u* pBuffer,
                                                      int use_jproj_coords)
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     mbx_status status = 0;
     __ALIGN64 U64 msg[P521_LEN52];
     __ALIGN64 U64 sign_r[P521_LEN52];
@@ -585,6 +589,7 @@ mbx_status internal_avx512_nistp521_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const 
                                                          int8u* pBuffer,
                                                          int use_jproj_coords)
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     mbx_status status    = 0;
     BIGNUM* pa_sign_r[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     BIGNUM* pa_sign_s[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };

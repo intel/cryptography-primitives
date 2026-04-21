@@ -59,7 +59,6 @@ EXTERN_C __mmask16 sm4_gcm_update_iv_mb16(const int8u* const pa_iv[SM4_LINES],
                                           SM4_GCM_CTX_mb16* p_context);
 
 EXTERN_C void sm4_gcm_finalize_iv_mb16(const int8u* const pa_iv[SM4_LINES],
-                                       __mmask16 mb_mask,
                                        SM4_GCM_CTX_mb16* p_context);
 
 EXTERN_C __mmask16 sm4_gcm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],

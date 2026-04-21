@@ -67,7 +67,7 @@ __MBX_INLINE void _mbcp_cpuid(int32u buf[4], int32u leaf, int32u subleaf)
     #ifdef __GNUC__
     __asm__ ("cpuid" : "=a" (buf[0]), "=b" (buf[1]), "=c" (buf[2]), "=d" (buf[3]) : "a" (leaf), "c" (subleaf));
     #else
-    __cpuidex(buf,leaf, subleaf);
+    __cpuidex((int*)buf, (int)leaf, (int)subleaf);
     #endif
     /* clang-format on */
 }

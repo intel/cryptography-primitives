@@ -30,7 +30,7 @@ __mmask16 sm4_gcm_update_aad_mb16(const int8u* const pa_aad[SM4_LINES],
 {
     if (SM4_GCM_CONTEXT_STATE(p_context) == sm4_gcm_update_iv) {
         /* Finalize IVs */
-        sm4_gcm_finalize_iv_mb16(NULL, mb_mask, p_context);
+        sm4_gcm_finalize_iv_mb16(NULL, p_context);
 
         SM4_GCM_CONTEXT_STATE(p_context) = sm4_gcm_update_aad;
     }

@@ -2497,9 +2497,10 @@ __MBX_INLINE void ifma_modsub52xN_mb4(int64u res[][4],
 
     const __m256i DIG_MASK = _mm256_set1_epi64x(DIGIT_MASK);
     const __m256i MSD_MASK = _mm256_set1_epi64x(msd_mask);
+    __m256i R              = _mm256_set1_epi64x(0);
 
     __m256i T[40];
-    __m256i R, CARRY, BORROW;
+    __m256i CARRY, BORROW;
     int n;
 
     assert(len52 <= 40);

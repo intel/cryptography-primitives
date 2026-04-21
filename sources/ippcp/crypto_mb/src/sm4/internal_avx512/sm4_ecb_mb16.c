@@ -201,6 +201,9 @@ static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES],
 
         tmp_mask =
             _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(4), _MM_CMPINT_NLT);
+
+        MBX_MSVC_IGNORE_PUSH(4310) // Disable warnings about conversion
+
         /* Will be loaded 4 blocks of data */
         __m128i block_mask_m128i = _mm_maskz_set1_epi8(tmp_mask, (char)0xFF);
         tmp_mask =
@@ -215,6 +218,8 @@ static void sm4_ecb_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES],
             _mm512_mask_cmp_epi32_mask(mb_mask, num_blocks, _mm512_set1_epi32(1), _MM_CMPINT_EQ);
         /* Will be loaded 1 block of data */
         block_mask_m128i = _mm_mask_set1_epi8(block_mask_m128i, tmp_mask, (char)0x3);
+
+        MBX_MSVC_IGNORE_POP
 
         _mm_storeu_si128((__m128i*)block_mask, block_mask_m128i);
 

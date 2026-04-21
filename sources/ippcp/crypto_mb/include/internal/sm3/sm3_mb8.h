@@ -35,6 +35,8 @@ static __ALIGN64 const int8u swapBytesCtx[] = { 3, 2,  1,  0,  7,  6, 5,  4,  11
 #define SIMD_ENDIANNESS32(x) _mm256_shuffle_epi8((x), _mm256_loadu_si256((__m256i*)swapBytesCtx));
 #define SM3_NUM_BUFFERS8     (8) /*       max number of buffers in sm3 multi-buffer 8       */
 
+MBX_MSVC_IGNORE_PUSH(4324)       // Padding is intentional for SIMD optimization
+
 /*  sm3 hash value in multi-buffer 8 format  */
 typedef int32u sm3_hash_mb8[SM3_SIZE_IN_WORDS][SM3_NUM_BUFFERS8];
 struct _sm3_context_mb8 {
@@ -43,6 +45,8 @@ struct _sm3_context_mb8 {
     int8u msg_buffer[SM3_NUM_BUFFERS8][SM3_MSG_BLOCK_SIZE]; /*      buffer       */
     __ALIGN64 sm3_hash_mb8 msg_hash;                        /* intermediate hash */
 };
+
+MBX_MSVC_IGNORE_POP
 
 typedef struct _sm3_context_mb8 SM3_CTX_mb8;
 

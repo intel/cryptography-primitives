@@ -41,6 +41,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_)(int64u* pa_pubx[MB_WIDT
                                                          int8u* pBuffer,
                                                          int use_jproj_coords)
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     mbx_status status = 0;
 
     /* Zero padded keys in radix 2^64 */
@@ -106,6 +107,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_ssl_)(BIGNUM* pa_pubx[MB_
                                                              int8u* pBuffer,
                                                              int use_jproj_coords)
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     mbx_status status = 0;
     int buf_no        = 0;
 

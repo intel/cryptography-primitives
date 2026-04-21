@@ -32,6 +32,7 @@ mbx_status internal_avx512_nistp521_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
                                                          int8u* pBuffer,
                                                          int use_jproj_coords)
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     mbx_status status = 0;
     int buf_no        = 0;
     /* zero padded keys */
@@ -100,6 +101,7 @@ mbx_status internal_avx512_nistp521_ecpublic_key_mb8(int64u* pa_pubx[8],
                                                      int8u* pBuffer,
                                                      int use_jproj_coords)
 {
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     mbx_status status = 0;
     /* zero padded keys */
     U64 scalarz[P521_LEN64 + 1];

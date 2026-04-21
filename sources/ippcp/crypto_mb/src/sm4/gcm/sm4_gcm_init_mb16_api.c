@@ -59,8 +59,7 @@ mbx_status16 OWNAPI(mbx_sm4_gcm_init_mb16)(const sm4_key* const pa_key[SM4_LINES
                                                     (__mmask16)mb_mask_rearranged,
                                                     (__mmask16)mb_mask);
 #else
-    MBX_UNREFERENCED_PARAMETER(mb_mask);
-    MBX_UNREFERENCED_PARAMETER(mb_mask_rearranged);
+    MBX_UNREFERENCED_PARAMETER(mb_mask, mb_mask_rearranged);
     status = MBX_SET_STS16_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
