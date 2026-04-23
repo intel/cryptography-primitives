@@ -32,11 +32,11 @@ offers operations using the following symmetric cryptography algorithms:
 
 
    block-cipher-modes-of-operation
-   rijndael-functions
-   aes-ccm-functions
-   aes-gcm-functions
-   aes-siv-functions
-   aes-xts-functions
+   aes/rijndael-functions
+   aes/aes-ccm-functions
+   aes/aes-gcm-functions
+   aes/aes-siv-functions
+   aes/aes-xts-functions
    tdes-functions
    sms4-functions
-   arcfour-functions
+   arcfour/arcfour-functions

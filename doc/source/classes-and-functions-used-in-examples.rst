@@ -11,4 +11,4 @@ and :ref:`Example "Use of DLPSignDSA and DLPVerifyDSA" <example-discrete-logarit
 .. toctree::
    :maxdepth: 1
 
-   bignumber-class
+   bignum/bignumber-class

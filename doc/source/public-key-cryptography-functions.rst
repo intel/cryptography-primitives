@@ -9,9 +9,9 @@ Public Key Cryptography Functions
    :maxdepth: 1
 
 
-   big-number-arithmetic
+   bignum/big-number-arithmetic
    montgomery-reduction-scheme-functions
-   pseudorandom-number-generation-functions
+   trng_prng/pseudorandom-number-generation-functions
    prime-number-generation-functions
    rsa-algorithm-functions
    discrete-logarithm-based-cryptography-functions

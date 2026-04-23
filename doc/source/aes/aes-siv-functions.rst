@@ -16,4 +16,4 @@ This section describes functions for the Synthetic Initialization Vector
    aes_s2v_cmac
    aes_sivencrypt
    aes_sivdecrypt
-   usage-example
+   aes_siv_usage_example

@@ -23,8 +23,8 @@ in the document sections.
    :maxdepth: 1
 
 
-   security-validation-of-library-functions
+   ../security-validation-of-library-functions
    version-information-function
    dispatcher-control-functions
    other-functions
-   classes-and-functions-used-in-examples
+   ../classes-and-functions-used-in-examples
