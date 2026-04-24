@@ -10,11 +10,11 @@ Public Key Cryptography Functions
 
 
    bignum/big-number-arithmetic
-   montgomery-reduction-scheme-functions
+   montgomery/montgomery-reduction-scheme-functions
    trng_prng/pseudorandom-number-generation-functions
-   prime-number-generation-functions
-   rsa-algorithm-functions
-   discrete-logarithm-based-cryptography-functions
+   primegen/prime-number-generation-functions
+   rsa/rsa-algorithm-functions
+   dlp/discrete-logarithm-based-cryptography-functions
    elliptic-curve-cryptography-functions
    pkcs/index
    drbg/hash-drbg-index

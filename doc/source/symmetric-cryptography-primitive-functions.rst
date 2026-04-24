@@ -37,6 +37,6 @@ offers operations using the following symmetric cryptography algorithms:
    aes/aes-gcm-functions
    aes/aes-siv-functions
    aes/aes-xts-functions
-   tdes-functions
-   sms4-functions
+   des_tdes/tdes-functions
+   sm4/sms4-functions
    arcfour/arcfour-functions

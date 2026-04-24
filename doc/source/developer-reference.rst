@@ -9,13 +9,13 @@ Intel® Cryptography Primitives Library API Reference
 
    overview
    symmetric-cryptography-primitive-functions
-   one-way-hash-primitives
-   data-authentication-primitive-functions
+   hash/one-way-hash-primitives
+   mac/data-authentication-primitive-functions
    public-key-cryptography-functions
    finite-field-arithmetic
-   aes/mitigation-for-frequency-throttling
-   post-quantum-functions
    multi-buffer-cryptography-functions
    service_functions/support-functions-and-classes
+   aes/mitigation-for-frequency-throttling
+   post-quantum-functions
    deprecated-functions
    bibliography

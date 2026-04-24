@@ -100,12 +100,12 @@ Examples
 
 1. Usage of the hash API to digest a message with extendable output length (XOF) SHAKE128.
 
-.. literalinclude:: ../../examples/hash/xof_shake128_hash_rmf.cpp
+.. literalinclude:: ../../../examples/hash/xof_shake128_hash_rmf.cpp
    :language: cpp
 
 2. Usage of the hash API to digest a message using SM3 standard.
 
-.. literalinclude:: ../../examples/hash/sm3_hash_rmf.cpp
+.. literalinclude:: ../../../examples/hash/sm3_hash_rmf.cpp
    :language: cpp
 
 .. rubric:: Related Information
