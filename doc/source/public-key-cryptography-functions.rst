@@ -15,6 +15,6 @@ Public Key Cryptography Functions
    primegen/prime-number-generation-functions
    rsa/rsa-algorithm-functions
    dlp/discrete-logarithm-based-cryptography-functions
-   elliptic-curve-cryptography-functions
+   gfp/elliptic-curve-cryptography-functions
    pkcs/index
    drbg/hash-drbg-index
