@@ -54,7 +54,7 @@
 //    pSrc           pointer to the source data buffer
 //    pDst           pointer to the target data buffer
 //    len            output buffer length (in bytes)
-//    pCtx           pointer to rge AES context
+//    pCtx           pointer to the AES context
 //    pCtrValue      pointer to the counter block
 //    ctrNumBitSize  counter block size (bits)
 //

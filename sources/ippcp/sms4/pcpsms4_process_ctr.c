@@ -47,7 +47,7 @@
 //    pSrc           pointer to the source data buffer
 //    pDst           pointer to the target data buffer
 //    dataLen        input/output buffer length (in bytes)
-//    pCtx           pointer to rge SMS4 context
+//    pCtx           pointer to the SMS4 context
 //    pCtrValue      pointer to the counter block
 //    ctrNumBitSize  counter block size (bits)
 //

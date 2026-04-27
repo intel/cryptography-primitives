@@ -36,7 +36,7 @@
 #endif
 
 /*
-// AES-CRT processing.
+// AES-CTR processing.
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pCtx == NULL
@@ -53,7 +53,7 @@
 //    pSrc           pointer to the source data buffer
 //    pDst           pointer to the target data buffer
 //    dataLen        input/output buffer length (in bytes)
-//    pCtx           pointer to rge AES context
+//    pCtx           pointer to the AES context
 //    pCtrValue      pointer to the counter block
 //    ctrNumBitSize  counter block size (bits)
 //
