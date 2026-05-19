@@ -62,8 +62,12 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
     IppPoly* w_ = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
     IPP_BADARG_RET((z == NULL || h == NULL || w_ == NULL), ippStsMemAllocErr);
 
-    cp_ml_sigDecode(sig, z, h, mldsaCtx);
-    Ipp32s check_norm_z = cp_ml_polyInfinityNormCheck(z, l);
+    sts = cp_ml_sigDecode(sig, z, h, mldsaCtx);
+    IPP_BADARG_RET((sts != ippStsNoErr), ippStsNoErr);
+
+    if (cp_ml_polyInfinityNormCheck(z, l) >= mldsaCtx->params.gamma_1 - mldsaCtx->params.beta) {
+        return ippStsNoErr;
+    }
 
     Ipp8u tr[64];
     sts = ippsHashMethodSet_SHAKE256(&shake256_method, (64 * 8));
@@ -141,10 +145,7 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
         IPP_BADARG_RET((sts != ippStsNoErr), sts);
     }
     // verify
-    Ipp32s check_equal = cpIsEquBlock_ct(c_, c__, lambda_4) & 1;
-    if (check_norm_z < mldsaCtx->params.gamma_1 - mldsaCtx->params.beta) {
-        *is_valid = check_equal;
-    }
+    *is_valid = cpIsEquBlock_ct(c_, c__, lambda_4) & 1;
 
     /* Release locally used storage */
     sts = cp_mlStorageRelease(pStorage, lambda_4 + CP_ML_ALIGNMENT);                    // c__
@@ -152,8 +153,8 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
     sts = cp_mlStorageRelease(pStorage, 3 * k * sizeof(IppPoly) + 3 * CP_ML_ALIGNMENT); // z,h,w_
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
-    PurgeBlock(tr, sizeof(tr)); // zeroize secrets
-    PurgeBlock(mu, sizeof(mu)); // zeroize secrets
+    PurgeBlock(tr, sizeof(tr)); // zeroize hashes
+    PurgeBlock(mu, sizeof(mu)); // zeroize hashes
 
     return sts;
 }
