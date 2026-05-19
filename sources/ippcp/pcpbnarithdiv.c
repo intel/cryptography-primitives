@@ -73,7 +73,7 @@ IPPFUN(IppStatus, ippsDiv_BN, (IppsBigNumState* pA,
     IPP_BADARG_RET(BN_SIZE(pB) == 1 && BN_NUMBER(pB)[0] == 0, ippStsDivByZeroErr);
 
     IPP_BADARG_RET(BN_ROOM(pR) < BN_SIZE(pB), ippStsOutOfRangeErr);
-    IPP_BADARG_RET((int)BN_ROOM(pQ) < (int)(BN_SIZE(pA) - BN_SIZE(pB)), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(BN_ROOM(pQ) < IPP_MAX(1, (BN_SIZE(pA) - BN_SIZE(pB) + 1)), ippStsOutOfRangeErr);
 
     {
         BNU_CHUNK_T* pDataA = BN_BUFFER(pA);

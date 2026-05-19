@@ -120,7 +120,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt, (const Ipp8u* pSrc,
         *qLen = (((Ipp8u*)CTR)[0] & 0x7) + 1; /* &0x7 just to fix KW issue */
 
         if (*flag) {
-            *tmpLen = IPP_MIN((Ipp32u)len, MBS_SMS4 - 1);
+            *tmpLen = IPP_MIN((Ipp32u)len, MBS_SMS4 - *flag);
 
             /* copy as much input as possible into the internal buffer*/
             CopyBlock(pSrc, SMS4CCM_BLK(pCtx) + *flag, (cpSize)(*tmpLen));

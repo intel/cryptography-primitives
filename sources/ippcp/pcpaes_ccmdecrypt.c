@@ -97,7 +97,7 @@ IPPFUN(IppStatus, ippsAES_CCMDecrypt, (const Ipp8u* pSrc,
         qLen = (((Ipp8u*)CTR)[0] & 0x7) + 1; /* &0x7 just to fix KW issue */
 
         if (flag) {
-            Ipp32u tmpLen = (Ipp32u)(IPP_MIN(len, MBS_RIJ128 - 1));
+            Ipp32u tmpLen = (Ipp32u)(IPP_MIN((Ipp32u)len, MBS_RIJ128 - flag));
             XorBlock(pSrc, (Ipp8u*)S + flag, pDst, (Ipp32s)tmpLen);
 
             /* copy as much input as possible into the internal buffer*/

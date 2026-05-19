@@ -58,7 +58,11 @@ IPPFUN(IppStatus, ippsGcd_BN, (IppsBigNumState * pA, IppsBigNumState* pB, IppsBi
     IPP_BADARG_RET(!BN_VALID_ID(pB), ippStsContextMatchErr);
     IPP_BADARG_RET(!BN_VALID_ID(pGCD), ippStsContextMatchErr);
 
-    IPP_BADARG_RET(BN_ROOM(pGCD) < IPP_MIN(BN_SIZE(pA), BN_SIZE(pB)), ippStsOutOfRangeErr);
+    IPP_BADARG_RET(BN_ROOM(pGCD) < ((BN_SIZE(pA) == 1 && BN_NUMBER(pA)[0] == 0) ? BN_SIZE(pB)
+                                    : (BN_SIZE(pB) == 1 && BN_NUMBER(pB)[0] == 0)
+                                        ? BN_SIZE(pA)
+                                        : IPP_MIN(BN_SIZE(pA), BN_SIZE(pB))),
+                   ippStsOutOfRangeErr);
 
     {
         IppsBigNumState* x = pA;
