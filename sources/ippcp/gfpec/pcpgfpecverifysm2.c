@@ -151,9 +151,10 @@ IPPFUN(IppStatus, ippsGFpECVerifySM2,(const IppsBigNumState* pMsgDigest,
                 /* t = (r+s) mod order */
                 cpModAdd_BNU(t, r, s, pOrder, orderLen, f);
 
-                /* check if t!=0 */
-                if (!cpIsGFpElemEquChunk_ct(t, orderLen, 0)) {
+                /* GM/T 0003.2 step B5: t must not be zero */
+                BNU_CHUNK_T t_is_valid = ~cpIsGFpElemEquChunk_ct(t, orderLen, 0);
 
+                if (t_is_valid) {
                     /* P = [s]G +[t]regPublic, t = P.x */
                     IppsGFpECPoint P, G;
                     cpEcGFpInitPoint(&P, cpEcGFpGetPool(1, pEC), 0, pEC);
@@ -181,7 +182,7 @@ IPPFUN(IppStatus, ippsGFpECVerifySM2,(const IppsBigNumState* pMsgDigest,
                 cpModSub_BNU(f, f, pOrder, pOrder, orderLen, s);
                 cpModAdd_BNU(t, t, f, pOrder, orderLen, f);
 
-                if (GFP_EQ(t, r, orderLen))
+                if (t_is_valid && GFP_EQ(t, r, orderLen))
                     vResult = ippECValid;
 
                 cpGFpReleasePool(4, pGFE);

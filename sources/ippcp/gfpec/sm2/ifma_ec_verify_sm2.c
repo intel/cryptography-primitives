@@ -139,7 +139,7 @@ IPP_OWN_DEFN(IppECResult, gfec_Verify_sm2_avx512, (const IppsBigNumState* pMsgDi
     sign_r_restore = n_from_mont(sign_r_restore);
 
     const mask8 mask_ok = cmp_i64_mask(sign_r_restore, sign_r, _MM_CMPINT_EQ);
-    if ((mask8)0xFF == mask_ok)
+    if ((mask8)0xFF == mask_ok && (mask8)0xFF != sign_err_mask)
         verifyResult = ippECValid;
 
     cpGFpReleasePool(8, pME);
