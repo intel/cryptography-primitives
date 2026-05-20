@@ -31,6 +31,8 @@
 #include "hash/pcphash_rmf.h"
 #include "pcptool.h"
 
+#include <assert.h>
+
 #if !defined(_PCP_SHA512_STUFF_H)
 #define _PCP_SHA512_STUFF_H
 
@@ -123,55 +125,108 @@ IPP_OWN_DEFN(static void, sha512_hashUpdate_ni, (void* pHash, const Ipp8u* pMsg,
 #endif
 
 /* convert hash into big endian */
-IPP_OWN_DEFN(static void, sha512_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
+IPP_OWN_DEFN(static void,
+             sha512_hashOctString,
+             (Ipp8u * pMD, void* pHashVal, const int hashByteSize))
 {
-    IPP_UNREFERENCED_PARAMETER(hashSize);
-    ((Ipp64u*)pMD)[0] = ENDIANNESS64(((Ipp64u*)pHashVal)[0]);
-    ((Ipp64u*)pMD)[1] = ENDIANNESS64(((Ipp64u*)pHashVal)[1]);
-    ((Ipp64u*)pMD)[2] = ENDIANNESS64(((Ipp64u*)pHashVal)[2]);
-    ((Ipp64u*)pMD)[3] = ENDIANNESS64(((Ipp64u*)pHashVal)[3]);
-    ((Ipp64u*)pMD)[4] = ENDIANNESS64(((Ipp64u*)pHashVal)[4]);
-    ((Ipp64u*)pMD)[5] = ENDIANNESS64(((Ipp64u*)pHashVal)[5]);
-    ((Ipp64u*)pMD)[6] = ENDIANNESS64(((Ipp64u*)pHashVal)[6]);
-    ((Ipp64u*)pMD)[7] = ENDIANNESS64(((Ipp64u*)pHashVal)[7]);
+    /* Handle the case when the requested hashByteSize is bigger than supported */
+    const int hashMaxByteSize = IPP_SHA512_DIGEST_BITSIZE / 8; /* 64 */
+    const int outByteSize     = IPP_MIN(hashByteSize, hashMaxByteSize);
+
+    /* The assertion is needed to indicate the case of incorrect usage of
+       the function during the development stage. */
+    assert(hashByteSize <= hashMaxByteSize);
+
+    const int numDwords   = outByteSize / (int)sizeof(Ipp64u);
+    const int numByteTail = outByteSize % (int)sizeof(Ipp64u);
+
+    /* convert hash into big endian */
+    for (int i = 0; i < numDwords; i++) {
+        ((Ipp64u*)pMD)[i] = ENDIANNESS64(((Ipp64u*)pHashVal)[i]);
+    }
+    if (numByteTail) {
+        Ipp64u lastDword = ENDIANNESS64(((Ipp64u*)pHashVal)[numDwords]);
+        CopyBlock(&lastDword, &pMD[outByteSize - numByteTail], numByteTail);
+    }
 }
+
 /* clang-format off */
 IPP_OWN_DEFN(static void, sha512_384_hashOctString, (Ipp8u* pMD,
                                                      void* pHashVal,
-                                                     const int hashSize))
+                                                     const int hashByteSize))
 /* clang-format on */
 {
-    IPP_UNREFERENCED_PARAMETER(hashSize);
-    ((Ipp64u*)pMD)[0] = ENDIANNESS64(((Ipp64u*)pHashVal)[0]);
-    ((Ipp64u*)pMD)[1] = ENDIANNESS64(((Ipp64u*)pHashVal)[1]);
-    ((Ipp64u*)pMD)[2] = ENDIANNESS64(((Ipp64u*)pHashVal)[2]);
-    ((Ipp64u*)pMD)[3] = ENDIANNESS64(((Ipp64u*)pHashVal)[3]);
-    ((Ipp64u*)pMD)[4] = ENDIANNESS64(((Ipp64u*)pHashVal)[4]);
-    ((Ipp64u*)pMD)[5] = ENDIANNESS64(((Ipp64u*)pHashVal)[5]);
+    /* Handle the case when the requested hashByteSize is bigger than supported */
+    const int hashMaxByteSize = IPP_SHA384_DIGEST_BITSIZE / 8; /* 48 */
+    const int outByteSize     = IPP_MIN(hashByteSize, hashMaxByteSize);
+
+    /* The assertion is needed to indicate the case of incorrect usage of
+       the function during the development stage. */
+    assert(hashByteSize <= hashMaxByteSize);
+
+    const int numDwords   = outByteSize / (int)sizeof(Ipp64u);
+    const int numByteTail = outByteSize % (int)sizeof(Ipp64u);
+
+    /* convert hash into big endian */
+    for (int i = 0; i < numDwords; i++) {
+        ((Ipp64u*)pMD)[i] = ENDIANNESS64(((Ipp64u*)pHashVal)[i]);
+    }
+    if (numByteTail) {
+        Ipp64u lastDword = ENDIANNESS64(((Ipp64u*)pHashVal)[numDwords]);
+        CopyBlock(&lastDword, &pMD[outByteSize - numByteTail], numByteTail);
+    }
 }
 /* clang-format off */
 IPP_OWN_DEFN(static void, sha512_256_hashOctString, (Ipp8u* pMD,
                                                      void* pHashVal,
-                                                     const int hashSize))
+                                                     const int hashByteSize))
 /* clang-format on */
 {
-    IPP_UNREFERENCED_PARAMETER(hashSize);
-    ((Ipp64u*)pMD)[0] = ENDIANNESS64(((Ipp64u*)pHashVal)[0]);
-    ((Ipp64u*)pMD)[1] = ENDIANNESS64(((Ipp64u*)pHashVal)[1]);
-    ((Ipp64u*)pMD)[2] = ENDIANNESS64(((Ipp64u*)pHashVal)[2]);
-    ((Ipp64u*)pMD)[3] = ENDIANNESS64(((Ipp64u*)pHashVal)[3]);
+    /* Handle the case when the requested hashByteSize is bigger than supported */
+    const int hashMaxByteSize = IPP_SHA512_256_DIGEST_BITSIZE / 8; /* 32 */
+    const int outByteSize     = IPP_MIN(hashByteSize, hashMaxByteSize);
+
+    /* The assertion is needed to indicate the case of incorrect usage of
+       the function during the development stage. */
+    assert(hashByteSize <= hashMaxByteSize);
+
+    const int numDwords   = outByteSize / (int)sizeof(Ipp64u);
+    const int numByteTail = outByteSize % (int)sizeof(Ipp64u);
+
+    /* convert hash into big endian */
+    for (int i = 0; i < numDwords; i++) {
+        ((Ipp64u*)pMD)[i] = ENDIANNESS64(((Ipp64u*)pHashVal)[i]);
+    }
+    if (numByteTail) {
+        Ipp64u lastDword = ENDIANNESS64(((Ipp64u*)pHashVal)[numDwords]);
+        CopyBlock(&lastDword, &pMD[outByteSize - numByteTail], numByteTail);
+    }
 }
 /* clang-format off */
 IPP_OWN_DEFN(static void, sha512_224_hashOctString, (Ipp8u* pMD,
                                                      void* pHashVal,
-                                                     const int hashSize))
+                                                     const int hashByteSize))
 /* clang-format on */
 {
-    IPP_UNREFERENCED_PARAMETER(hashSize);
-    ((Ipp64u*)pMD)[0] = ENDIANNESS64(((Ipp64u*)pHashVal)[0]);
-    ((Ipp64u*)pMD)[1] = ENDIANNESS64(((Ipp64u*)pHashVal)[1]);
-    ((Ipp64u*)pMD)[2] = ENDIANNESS64(((Ipp64u*)pHashVal)[2]);
-    ((Ipp32u*)pMD)[6] = ENDIANNESS32(((Ipp32u*)pHashVal)[7]);
+    /* Handle the case when the requested hashByteSize is bigger than supported */
+    const int hashMaxByteSize = IPP_SHA512_224_DIGEST_BITSIZE / 8; /* 28 */
+    const int outByteSize     = IPP_MIN(hashByteSize, hashMaxByteSize);
+
+    /* The assertion is needed to indicate the case of incorrect usage of
+       the function during the development stage. */
+    assert(hashByteSize <= hashMaxByteSize);
+
+    const int numDwords   = outByteSize / (int)sizeof(Ipp64u);
+    const int numByteTail = outByteSize % (int)sizeof(Ipp64u);
+
+    /* convert hash into big endian */
+    for (int i = 0; i < numDwords; i++) {
+        ((Ipp64u*)pMD)[i] = ENDIANNESS64(((Ipp64u*)pHashVal)[i]);
+    }
+    if (numByteTail) {
+        Ipp64u lastDword = ENDIANNESS64(((Ipp64u*)pHashVal)[numDwords]);
+        CopyBlock(&lastDword, &pMD[outByteSize - numByteTail], numByteTail);
+    }
 }
 
 IPP_OWN_DEFN(static void, sha512_msgRep, (Ipp8u * pDst, Ipp64u lenLo, Ipp64u lenHi))

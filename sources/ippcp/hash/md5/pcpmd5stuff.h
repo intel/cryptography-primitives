@@ -34,6 +34,8 @@
 #include "hash/pcphash_rmf.h"
 #include "pcptool.h"
 
+#include <assert.h>
+
 #if !defined(_PCP_MD5_STUFF_H)
 #define _PCP_MD5_STUFF_H
 
@@ -68,14 +70,18 @@ IPP_OWN_DEFN(static void, md5_hashUpdate, (void* pHash, const Ipp8u* pMsg, int m
     UpdateMD5(pHash, pMsg, msgLen, md5_cnt);
 }
 
-IPP_OWN_DEFN(static void, md5_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
+IPP_OWN_DEFN(static void, md5_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashByteSize))
 {
-    IPP_UNREFERENCED_PARAMETER(hashSize);
+    /* Handle the case when the requested hashByteSize is bigger than supported */
+    const int hashMaxByteSize = IPP_MD5_DIGEST_BITSIZE / 8; /* 16 */
+    const int outByteSize     = IPP_MIN(hashByteSize, hashMaxByteSize);
+
+    /* The assertion is needed to indicate the case of incorrect usage of
+       the function during the development stage. */
+    assert(hashByteSize <= hashMaxByteSize);
+
     /* md5 does not need conversion into big endian */
-    ((Ipp32u*)pMD)[0] = ((Ipp32u*)pHashVal)[0];
-    ((Ipp32u*)pMD)[1] = ((Ipp32u*)pHashVal)[1];
-    ((Ipp32u*)pMD)[2] = ((Ipp32u*)pHashVal)[2];
-    ((Ipp32u*)pMD)[3] = ((Ipp32u*)pHashVal)[3];
+    CopyBlock(pHashVal, pMD, outByteSize);
 }
 
 IPP_OWN_DEFN(static void, md5_msgRep, (Ipp8u * pDst, Ipp64u lenLo, Ipp64u lenHi))

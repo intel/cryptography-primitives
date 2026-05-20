@@ -583,13 +583,13 @@ typedef struct _cpHashCtx  IppsHashState;
 typedef struct _cpHashMethod_rmf IppsHashMethod;
 typedef struct _cpHashCtx_rmf    IppsHashState_rmf;
 
-#define   IPP_SHA1_DIGEST_BITSIZE  160   /* digest size (bits) */
+#define IPP_SHA1_DIGEST_BITSIZE  160   /* digest size (bits) */
 #define IPP_SHA256_DIGEST_BITSIZE  256
 #define IPP_SHA224_DIGEST_BITSIZE  224
 #define IPP_SHA384_DIGEST_BITSIZE  384
 #define IPP_SHA512_DIGEST_BITSIZE  512
-#define    IPP_MD5_DIGEST_BITSIZE  128
-#define    IPP_SM3_DIGEST_BITSIZE  256
+#define IPP_MD5_DIGEST_BITSIZE  128
+#define IPP_SM3_DIGEST_BITSIZE  256
 #define IPP_SHA512_224_DIGEST_BITSIZE  224
 #define IPP_SHA512_256_DIGEST_BITSIZE  256
 #define IPP_SHA3_224_DIGEST_BITSIZE  224

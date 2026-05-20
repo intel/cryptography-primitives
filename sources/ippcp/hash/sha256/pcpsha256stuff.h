@@ -30,6 +30,8 @@
 #include "hash/pcphash.h"
 #include "hash/pcphash_rmf.h"
 
+#include <assert.h>
+
 #if !defined(_PCP_SHA256_STUFF_H)
 #define _PCP_SHA256_STUFF_H
 
@@ -78,30 +80,54 @@ IPP_OWN_DEFN(static void, sha256_ni_hashUpdate, (void* pHash, const Ipp8u* pMsg,
 #endif
 
 /* convert hash into big endian */
-IPP_OWN_DEFN(static void, sha256_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
+IPP_OWN_DEFN(static void,
+             sha256_hashOctString,
+             (Ipp8u * pMD, void* pHashVal, const int hashByteSize))
 {
-    IPP_UNREFERENCED_PARAMETER(hashSize);
+    /* Handle the case when the requested hashByteSize is bigger than supported */
+    const int hashMaxByteSize = IPP_SHA256_DIGEST_BITSIZE / 8; /* 32 */
+    const int outByteSize     = IPP_MIN(hashByteSize, hashMaxByteSize);
+
+    /* The assertion is needed to indicate the case of incorrect usage of
+       the function during the development stage. */
+    assert(hashByteSize <= hashMaxByteSize);
+
+    const int numWords    = outByteSize / (int)sizeof(Ipp32u);
+    const int numByteTail = outByteSize % (int)sizeof(Ipp32u);
+
     /* convert hash into big endian */
-    ((Ipp32u*)pMD)[0] = ENDIANNESS32(((Ipp32u*)pHashVal)[0]);
-    ((Ipp32u*)pMD)[1] = ENDIANNESS32(((Ipp32u*)pHashVal)[1]);
-    ((Ipp32u*)pMD)[2] = ENDIANNESS32(((Ipp32u*)pHashVal)[2]);
-    ((Ipp32u*)pMD)[3] = ENDIANNESS32(((Ipp32u*)pHashVal)[3]);
-    ((Ipp32u*)pMD)[4] = ENDIANNESS32(((Ipp32u*)pHashVal)[4]);
-    ((Ipp32u*)pMD)[5] = ENDIANNESS32(((Ipp32u*)pHashVal)[5]);
-    ((Ipp32u*)pMD)[6] = ENDIANNESS32(((Ipp32u*)pHashVal)[6]);
-    ((Ipp32u*)pMD)[7] = ENDIANNESS32(((Ipp32u*)pHashVal)[7]);
+    for (int i = 0; i < numWords; i++) {
+        ((Ipp32u*)pMD)[i] = ENDIANNESS32(((Ipp32u*)pHashVal)[i]);
+    }
+    if (numByteTail) {
+        Ipp32u lastWord = ENDIANNESS32(((Ipp32u*)pHashVal)[numWords]);
+        CopyBlock(&lastWord, &pMD[outByteSize - numByteTail], numByteTail);
+    }
 }
-IPP_OWN_DEFN(static void, sha224_hashOctString, (Ipp8u * pMD, void* pHashVal, const int hashSize))
+
+IPP_OWN_DEFN(static void,
+             sha224_hashOctString,
+             (Ipp8u * pMD, void* pHashVal, const int hashByteSize))
 {
-    IPP_UNREFERENCED_PARAMETER(hashSize);
+    /* Handle the case when the requested hashByteSize is bigger than supported */
+    const int hashMaxByteSize = IPP_SHA224_DIGEST_BITSIZE / 8; /* 28 */
+    const int outByteSize     = IPP_MIN(hashByteSize, hashMaxByteSize);
+
+    /* The assertion is needed to indicate the case of incorrect usage of
+       the function during the development stage. */
+    assert(hashByteSize <= hashMaxByteSize);
+
+    const int numWords    = outByteSize / (int)sizeof(Ipp32u);
+    const int numByteTail = outByteSize % (int)sizeof(Ipp32u);
+
     /* convert hash into big endian */
-    ((Ipp32u*)pMD)[0] = ENDIANNESS32(((Ipp32u*)pHashVal)[0]);
-    ((Ipp32u*)pMD)[1] = ENDIANNESS32(((Ipp32u*)pHashVal)[1]);
-    ((Ipp32u*)pMD)[2] = ENDIANNESS32(((Ipp32u*)pHashVal)[2]);
-    ((Ipp32u*)pMD)[3] = ENDIANNESS32(((Ipp32u*)pHashVal)[3]);
-    ((Ipp32u*)pMD)[4] = ENDIANNESS32(((Ipp32u*)pHashVal)[4]);
-    ((Ipp32u*)pMD)[5] = ENDIANNESS32(((Ipp32u*)pHashVal)[5]);
-    ((Ipp32u*)pMD)[6] = ENDIANNESS32(((Ipp32u*)pHashVal)[6]);
+    for (int i = 0; i < numWords; i++) {
+        ((Ipp32u*)pMD)[i] = ENDIANNESS32(((Ipp32u*)pHashVal)[i]);
+    }
+    if (numByteTail) {
+        Ipp32u lastWord = ENDIANNESS32(((Ipp32u*)pHashVal)[numWords]);
+        CopyBlock(&lastWord, &pMD[outByteSize - numByteTail], numByteTail);
+    }
 }
 
 IPP_OWN_DEFN(static void, sha256_msgRep, (Ipp8u * pDst, Ipp64u lenLo, Ipp64u lenHi))
