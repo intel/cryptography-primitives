@@ -2,6 +2,14 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 2.2.0
+- Fixed ML-DSA signature verification to strictly enforce hint vector weight bounds.
+- Added strict output buffer size validation when input parameter is zero for GCD BN function.
+- Strengthened quotient validation checks for BN division operation.
+- Fixed stack out-of-bounds read in AES/SM4 CCM streaming modes when processing non-block-aligned data chunks.
+- Eliminated potential out-of-bounds writes of the output tag in the ippsHashGetTag_rmf API.
+- Fixed SM2 signature forgery vulnerability by adding missing input validation in ippsGFpECVerifySM2.
+
 ## Intel(R) Cryptography Primitives Library 2.1.0
 - Added FIPS self-tests for ML-DSA (Module-Lattice-Based Digital Signature Algorithm) operations including key generation, signing, and verification functionality.
 
