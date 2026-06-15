@@ -181,11 +181,11 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
     // I || u32str(node_num) || u16str(D_LEAF) || Kc
     CopyBlock(Kc,
               tmpBuffKc + CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_LEAF byteLen*/ 2,
-              (cpSize)mParam);
+              (cpSize)nParam);
 
     ippcpSts = ippsHashMessage_rmf(
         tmpBuffKc,
-        (int)(CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_LEAF byteLen*/ 2 + mParam),
+        (int)(CP_PK_I_BYTESIZE + /*node_num byteLen*/ 4 + /*D_LEAF byteLen*/ 2 + nParam),
         tmp,
         lmsParams.hash_method);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)

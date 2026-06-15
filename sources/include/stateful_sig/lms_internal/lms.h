@@ -31,7 +31,7 @@ typedef struct {
 /*
  * Non-specified format of LMS private key:
  *  | u32str(type) || u32str(otstype) ||     q    ||   extraBufSize   ||   Secret seed   ||          pI        ||   extra buffer   |
- *  |   4 bytes    ||     4 bytes     ||  4 bytes ||     4 bytes      ||     n bytes     ||  CP_PK_I_BYTESIZE  ||   extraBufSize   |
+ *  |   4 bytes    ||     4 bytes     ||  4 bytes ||     4 bytes      ||     m bytes     ||  CP_PK_I_BYTESIZE  ||   extraBufSize   |
  */
 
 struct _cpLMSPrivateKeyState {
@@ -48,7 +48,7 @@ struct _cpLMSPrivateKeyState {
 /*
  * Standard format of LMS public key:
  *  | u32str(type) || u32str(otstype) ||    I     ||   T[1]    |
- *  |    4 bytes   ||     4 bytes     || 16 bytes ||  n bytes  |
+ *  |    4 bytes   ||     4 bytes     || 16 bytes ||  m bytes  |
 */
 struct _cpLMSPublicKeyState {
     Ipp32u _idCtx; // Pub key ctx identifier
@@ -60,8 +60,8 @@ struct _cpLMSPublicKeyState {
 
 /*
  * Standard data format for LMS signature
- *  |  4 bytes  ||    ...    ||   4 bytes   ||  n bytes ||  n bytes ||...||  n bytes  |
  *  |     q     || lmots_sig || lms_sigtype ||  path[0] ||  path[1] ||...|| path[h-1] |
+ *  |  4 bytes  ||    ...    ||   4 bytes   ||  m bytes ||  m bytes ||...||  m bytes  |
  */
 struct _cpLMSSignatureState {
     Ipp32u _idCtx; // Signature ctx identifier
@@ -153,7 +153,7 @@ IPP_OWN_DECL(IppStatus, cp_lms_H_tree, (Ipp8u* I,
                                         Ipp32u val2, const Ipp32s val2Len,
                                         Ipp8u* val3, const Ipp32s val3Len,
                                         Ipp8u* pMsg, const Ipp32s msgLen,
-                                        Ipp8u* out,
+                                        Ipp8u* out, const Ipp32s outLen,
                                         const IppsHashMethod* hash_method))
 /* clang-format on */
 

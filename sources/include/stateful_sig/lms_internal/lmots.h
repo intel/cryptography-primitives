@@ -45,8 +45,8 @@ typedef struct {
 
 /*
  * Standard data format for LMOTS signature
- *  |  4 bytes   || n bytes || n bytes || n bytes ||...|| n bytes |
  *  | otssigtype ||    C    ||   Y[0]  ||   Y[1]  ||...||  Y[p-1] |
+ *  |  4 bytes   || n bytes || n bytes || n bytes ||...|| n bytes |
  */
 typedef struct {
     IppsLMOTSAlgo _lmotsOIDAlgo;
@@ -172,13 +172,13 @@ IPP_OWN_DECL(IppStatus, cp_lms_H, (Ipp8u* I_q, const Ipp32s I_q_len,
                                    Ipp32u val1, const Ipp32s val1Len,
                                    Ipp8u* val2, const Ipp32s val2Len,
                                    const Ipp8u* pMsg, const Ipp32s msgLen,
-                                   Ipp8u* out,
+                                   Ipp8u* out, const Ipp32s outLen,
                                    const IppsHashMethod* hash_method))
 /* clang-format on */
 
 #define cp_lms_OTS_genPK OWNAPI(cp_lms_OTS_genPK)
 /* clang-format off */
-IPP_OWN_DECL(IppStatus, cp_lms_OTS_genPK, (Ipp8u* secret_seed,
+IPP_OWN_DECL(IppStatus, cp_lms_OTS_genPK, (Ipp8u* secret_seed, Ipp32s seedLen,
                                            Ipp8u* pI, Ipp32u q,
                                            Ipp8u* out, Ipp8u* temp_buf,
                                            const cpLMOTSParams* params))
@@ -187,7 +187,7 @@ IPP_OWN_DECL(IppStatus, cp_lms_OTS_genPK, (Ipp8u* secret_seed,
 #define cp_lms_OTS_sign OWNAPI(cp_lms_OTS_sign)
 /* clang-format off */
 IPP_OWN_DECL(IppStatus, cp_lms_OTS_sign, (const Ipp8u* pMsg, const Ipp32s msgLen,
-                                          Ipp8u* secret_seed,
+                                          Ipp8u* secret_seed, Ipp32s seedLen,
                                           Ipp8u* pI, Ipp32u q, Ipp8u* pC, Ipp8u* pY,
                                           Ipp8u* temp_buf, const cpLMOTSParams* params))
 /* clang-format on */

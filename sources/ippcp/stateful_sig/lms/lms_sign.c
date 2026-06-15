@@ -105,12 +105,13 @@ IPPFUN(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
         pMsg,
         msgLen,
         pPrvKey->pSecretSeed,
+        (Ipp32s)lmsParams.m,
         pPrvKey->pI,
         pSign->_q,
         pSign->_lmotsSig.pC,
         pSign->_lmotsSig.pY,
         pBuffer,
-        &lmotsParams); // temp size: CP_PK_I_BYTESIZE + 4 + 2 + n + max(msgLen, 1 + n)
+        &lmotsParams); // temp size: CP_PK_I_BYTESIZE + 4 + 2 + n + IPP_MAX(msgLen, 1 + CP_LMS_MAX_HASH_BYTESIZE)
     if (ippStsNoErr != ippcpSts) {
         PurgeBlock(pSign->_lmotsSig.pC, (Ipp32s)n); // zeroize C if error occurs
         PurgeBlock(pBuffer, pBufferSize);

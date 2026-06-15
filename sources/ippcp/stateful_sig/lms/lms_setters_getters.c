@@ -79,7 +79,7 @@ IPPFUN(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize,
                       //    pubKey->I   || node_num || D_LEAF ||      Kc
     Ipp32u lenBufTc   = CP_PK_I_BYTESIZE +     4     +    2    + lmotsParams.n;
                       //    pubKey->I   || node_num/2 || D_INTR ||    path[i]   ||     tmp
-    Ipp32u lenBufIntr = CP_PK_I_BYTESIZE +      4      +    2    + lmotsParams.n + lmotsParams.n;
+    Ipp32u lenBufIntr = CP_PK_I_BYTESIZE +      4      +    2    + lmsParams.m + lmsParams.m;
     Ipp32u lenBufZ    = (lmotsParams.p + 1) * lmotsParams.n;
     // lenBufQZ = lenBufQ + (lenBufZ  - /* shift to reuse Q */ (Ipp32u)maxMessageLength + 1);
     Ipp32u lenBufQZ = CP_PK_I_BYTESIZE + 4 + 2 + lmotsParams.n + lenBufZ + 1;
@@ -329,7 +329,7 @@ IPPFUN(IppStatus, ippsLMSSetSignatureState, (const IppsLMSAlgoType lmsType,
     locLMOTSSig->_lmotsOIDAlgo          = lmsType.lmotsOIDAlgo;
 
     // Copy auth path data
-    Ipp32s authPathSize = (Ipp32s)(lmsParams.h * lmotsParams.n);
+    Ipp32s authPathSize = (Ipp32s)(lmsParams.h * lmsParams.m);
     pState->_pAuthPath  = (Ipp8u*)pState + sizeof(IppsLMSSignatureState);
     CopyBlock(pAuthPath, pState->_pAuthPath, authPathSize);
 
@@ -385,11 +385,20 @@ IPPFUN(IppStatus, ippsLMSKeyGenBufferGetSize, (Ipp32s * pSize, const IppsLMSAlgo
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
     Ipp32u n = lmotsParams.n;
+    Ipp32u m = lmsParams.m;
     Ipp32u p = lmotsParams.p;
     Ipp32u h = lmsParams.h;
 
-    *pSize = (Ipp32s)(2 * CP_PK_I_BYTESIZE + 4 + 2 + n + n + h + 1 + h * n + n * p + n +
-                      (4 + 2 + 1 + n + n * p));
+    /* H_tree input: I || u32str(r) || u16str(D_INTR) || left(m) || right(m) */
+    Ipp32u lenHTreeBuf = CP_PK_I_BYTESIZE + 4 + 2 + m + m;
+    /* Tree stack (h nodes of m bytes) + heights array */
+    Ipp32u lenStack = (h + 1) + h * m;
+    /* Node scratch: holds n-byte OTS pubkey then m-byte tree hash */
+    Ipp32u lenNode = CP_LMS_MAX_HASH_BYTESIZE;
+    /* cp_lms_OTS_genPK workspace: I_q header         +       max(m,n)           + sk entries */
+    Ipp32u lenOtsGenPK = CP_PK_I_BYTESIZE + 4 + 2 + 1 + CP_LMS_MAX_HASH_BYTESIZE + n * p;
+
+    *pSize = (Ipp32s)(lenHTreeBuf + lenStack + lenNode + lenOtsGenPK);
 
     return ippcpSts;
 }
@@ -437,15 +446,15 @@ IPPFUN(IppStatus,
     /* Check message length */
     IPP_BADARG_RET(maxMessageLength < 1, ippStsLengthErr);
     // this restriction is needed to avoid overflow of Ipp32s
-    // maxMessageLength must be less than    IPP_MAX_32S       - (CP_PK_I_BYTESIZE + q + D_MESG +      C       )
+    // maxMessageLength must be less than       IPP_MAX_32S  - (CP_PK_I_BYTESIZE + q + D_MESG + C)
     IPP_BADARG_RET(maxMessageLength > (Ipp32s)((IPP_MAX_32S) - (CP_PK_I_BYTESIZE + 4 + 2 + n)),
                    ippStsLengthErr);
 
     ippcpSts = ippsLMSKeyGenBufferGetSize(&key_gen_temp_size, lmsType);
 
-    *pSize =
-        (Ipp32s)(IPP_MAX(CP_PK_I_BYTESIZE + 4 + 2 + n + IPP_MAX((Ipp32u)maxMessageLength, 1 + n),
-                         (Ipp32u)key_gen_temp_size));
+    Ipp32u lenOtsSign = CP_PK_I_BYTESIZE + 4 + 2 + n +
+                        IPP_MAX((Ipp32u)maxMessageLength, 1 + CP_LMS_MAX_HASH_BYTESIZE);
+    *pSize = (Ipp32s)(IPP_MAX(lenOtsSign, (Ipp32u)key_gen_temp_size));
     return ippcpSts;
 }
 
@@ -481,18 +490,21 @@ IPPFUN(IppStatus,
     IPP_BADARG_RET(lmsType.lmsOIDAlgo <= LMS_MIN, ippStsBadArgErr);
     IPP_BADARG_RET(extraBufSize < 0, ippStsLengthErr);
 
-    /* Set LMS parameters */
+    /* Set LMOTS and LMS parameters */
     cpLMOTSParams lmotsParams;
     ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+    cpLMSParams lmsParams;
+    ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
-    // Data are kept in the extra buffer by chunks equal lmotsParams.n.
-    // There is no sense to keep space for less than lmotsParams.n bytes
-    IPP_BADARG_RET((extraBufSize % (Ipp32s)lmotsParams.n) != 0, ippStsSizeWrn);
-    // rounding to lmotsParams.n
-    extraBufSize = (extraBufSize / (Ipp32s)lmotsParams.n) * (Ipp32s)lmotsParams.n;
+    // Data are kept in the extra buffer by chunks equal lmsParams.m.
+    // There is no sense to keep space for less than lmsParams.m bytes
+    IPP_BADARG_RET((extraBufSize % (Ipp32s)lmsParams.m) != 0, ippStsSizeWrn);
+    // rounding to lmsParams.m
+    extraBufSize = (extraBufSize / (Ipp32s)lmsParams.m) * (Ipp32s)lmsParams.m;
 
-    *pSize = (Ipp32s)(sizeof(IppsLMSPrivateKeyState) + lmotsParams.n + CP_PK_I_BYTESIZE) +
+    *pSize = (Ipp32s)(sizeof(IppsLMSPrivateKeyState) + lmsParams.m + CP_PK_I_BYTESIZE) +
              extraBufSize + 2 * CP_LMS_ALIGNMENT;
 
     return ippcpSts;
@@ -556,7 +568,7 @@ IPPFUN(IppStatus,
     ptr += sizeof(IppsLMSPrivateKeyState);
 
     pPrvKey->pSecretSeed = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), CP_LMS_ALIGNMENT));
-    ptr += lmotsParams.n;
+    ptr += lmsParams.m;
 
     pPrvKey->pI = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), CP_LMS_ALIGNMENT));
     ptr += CP_PK_I_BYTESIZE;

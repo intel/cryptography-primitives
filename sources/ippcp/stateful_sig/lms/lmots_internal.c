@@ -32,14 +32,15 @@
  *    hash_method Crypto library hash method
  *
  * Output parameters:
- *    out         resulted n-byte array that contains hash
+ *    out         resulted outLen-byte array that contains hash (n-byte)
  */
 /* clang-format off */
 IPP_OWN_DEFN(IppStatus, cp_lms_H, (Ipp8u* I_q, const Ipp32s I_q_len,
                    Ipp32u val1, const Ipp32s val1Len,
                    Ipp8u* val2, const Ipp32s val2Len,
                    const Ipp8u* pMsg, const Ipp32s msgLen,
-                   Ipp8u* out, const IppsHashMethod* hash_method))
+                   Ipp8u* out, const Ipp32s outLen,
+                   const IppsHashMethod* hash_method))
 /* clang-format on */
 {
     int total_size = I_q_len;
@@ -55,7 +56,16 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H, (Ipp8u* I_q, const Ipp32s I_q_len,
         total_size += msgLen;
     }
 
-    return ippsHashMessage_rmf(I_q, total_size, out, hash_method);
+    IppStatus sts = ippStsErr;
+    if (outLen < CP_LMS_MAX_HASH_BYTESIZE) {
+        Ipp8u tmp[CP_LMS_MAX_HASH_BYTESIZE];
+        sts = ippsHashMessage_rmf(I_q, total_size, tmp, hash_method);
+        CopyBlock(tmp, out, outLen);
+        PurgeBlock(tmp, CP_LMS_MAX_HASH_BYTESIZE);
+    } else {
+        sts = ippsHashMessage_rmf(I_q, total_size, out, hash_method);
+    }
+    return sts;
 }
 
 /*
@@ -65,7 +75,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H, (Ipp8u* I_q, const Ipp32s I_q_len,
  *    secret_seed random seed to generate secret key
  *    I          pointer to I buffer (I from the spec)
  *    q          q value from the spec
- *    temp_buf   temporary memory (size is CP_PK_I_BYTESIZE + 4 + 2 + 1 + n + n * p bytes at least)
+ *    temp_buf   temporary memory (size is CP_PK_I_BYTESIZE + 4 + 2 + 1 + CP_LMS_MAX_HASH_BYTESIZE + n * p bytes at least)
  *    params     OTS parameters
  *
  * Output parameters:
@@ -73,7 +83,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H, (Ipp8u* I_q, const Ipp32s I_q_len,
  */
 /* clang-format off */
 IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
-            Ipp8u* secret_seed, Ipp8u* pI, Ipp32u q,
+            Ipp8u* secret_seed, Ipp32s seedLen, Ipp8u* pI, Ipp32u q,
             Ipp8u* out, Ipp8u* temp_buf, const cpLMOTSParams* params))
 /* clang-format on */
 {
@@ -88,7 +98,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
     CopyBlock(pI, I_q, CP_PK_I_BYTESIZE);
     cp_to_byte(I_q + CP_PK_I_BYTESIZE, /*q byteLen*/ 4, q);
 
-    Ipp8u* sk_begin = (I_q + CP_PK_I_BYTESIZE + 4 + 2 + 1 + nParam);
+    Ipp8u* sk_begin = (I_q + CP_PK_I_BYTESIZE + 4 + 2 + 1 + CP_LMS_MAX_HASH_BYTESIZE);
     Ipp8u* sk       = sk_begin; // size = n * p
     for (Ipp32u i = 0; i < pParam; i++) {
         // generate secret key from secret seed
@@ -100,8 +110,9 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
                            &D_PRIV_,
                            /*D_PRIV byteLen*/ 1,
                            secret_seed,
-                           nParam,
+                           seedLen,
                            sk,
+                           nParam,
                            params->hash_method);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
@@ -117,6 +128,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
                                sk,
                                nParam,
                                sk,
+                               nParam,
                                params->hash_method);
             IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
         }
@@ -132,6 +144,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
                        NULL,
                        0,
                        out,
+                       nParam,
                        params->hash_method);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
@@ -148,7 +161,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
  *    pI          pointer to I buffer (I from the spec)
  *    q           q value from the spec
  *    pC          pointer to C buffer (C from the spec)
- *    temp_buf    temporary memory (size is CP_PK_I_BYTESIZE + 4 + 2 + n + max(msgLen, 1 + n) bytes at least)
+ *    temp_buf    temporary memory (size is CP_PK_I_BYTESIZE + 4 + 2 + n + IPP_MAX(msgLen, 1 + CP_LMS_MAX_HASH_BYTESIZE) bytes at least)
  *    params      OTS parameters
  *
  * Output parameters:
@@ -157,7 +170,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
 /* clang-format off */
 IPP_OWN_DEFN(IppStatus, cp_lms_OTS_sign, (
                     const Ipp8u* pMsg, const Ipp32s msgLen,
-                    Ipp8u* secret_seed, Ipp8u* pI, Ipp32u q, Ipp8u* pC,
+                    Ipp8u* secret_seed, Ipp32s seedLen, Ipp8u* pI, Ipp32u q, Ipp8u* pC,
                     Ipp8u* pY,
                     Ipp8u* temp_buf, const cpLMOTSParams* params))
 /* clang-format on */
@@ -183,6 +196,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_sign, (
                        pMsg,
                        msgLen,
                        Q,
+                       nParam,
                        params->hash_method);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
@@ -191,7 +205,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_sign, (
     // Q || Cksm(Q)
     cp_to_byte(Q + nParam, /*cksmQ byteLen*/ 2, cksmQ);
 
-    Ipp8u* sk = (temp_buf + CP_PK_I_BYTESIZE + 4 + 2 + 1 + nParam);
+    Ipp8u* sk = temp_buf + CP_PK_I_BYTESIZE + 4 + 2 + 1 + CP_LMS_MAX_HASH_BYTESIZE; // size = n
     for (Ipp32u i = 0; i < pParam; i++) {
         // generate secret key from secret seed
         // x_q[i] = cp_lms_H(I || u32str(q) || u16str(i) || u8str(0xff) || SEED)
@@ -202,8 +216,9 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_sign, (
                            &D_PRIV_,
                            /*D_PRIV byteLen*/ 1,
                            secret_seed,
-                           nParam,
+                           seedLen,
                            sk,
+                           nParam,
                            params->hash_method);
         IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
 
@@ -222,6 +237,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_sign, (
                                sk,
                                nParam,
                                sk,
+                               nParam,
                                params->hash_method);
             IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
         }

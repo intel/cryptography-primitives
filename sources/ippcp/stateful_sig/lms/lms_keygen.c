@@ -34,7 +34,7 @@
 //    pPrvKey      pointer to the private key state
 //    pPubKey      pointer to the public key state
 //    rndFunc      function pointer to generate random numbers. It can be NULL
-//                 Security strength must be 8*n bits
+//                 Security strength must be 8*m bits
 //    pRndParam    parameters for rndFunc. It can be NULL
 //    pBuffer      pointer to the temporary memory
 //
@@ -66,7 +66,7 @@ IPPFUN(IppStatus, ippsLMSKeyGen, (IppsLMSPrivateKeyState* pPrvKey,
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
     ippcpSts = setLMOTSParams(pPrvKey->lmotsOIDAlgo, &lmotsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
-    Ipp32u n = lmotsParams.n;
+    Ipp32u m = lmsParams.m;
 
     Ipp32s pBufferSize;
     IppsLMSAlgoType algoTypes = { pPrvKey->lmotsOIDAlgo, pPrvKey->lmsOIDAlgo };
@@ -77,15 +77,15 @@ IPPFUN(IppStatus, ippsLMSKeyGen, (IppsLMSPrivateKeyState* pPrvKey,
     // fill private key fields
     pPrvKey->q = 0;
 
-    ippcpSts = cp_rand_num((Ipp32u*)pPrvKey->pSecretSeed, (Ipp32s)n, rndFunc, pRndParam);
+    ippcpSts = cp_rand_num((Ipp32u*)pPrvKey->pSecretSeed, (Ipp32s)m, rndFunc, pRndParam);
     if (ippStsNoErr != ippcpSts) {
-        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)m); // zeroize the secret seed if error occurs
         return ippcpSts;
     }
 
     ippcpSts = cp_rand_num((Ipp32u*)pPrvKey->pI, CP_PK_I_BYTESIZE, rndFunc, pRndParam);
     if (ippStsNoErr != ippcpSts) {
-        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)m); // zeroize the secret seed if error occurs
         PurgeBlock(pPrvKey->pI, CP_PK_I_BYTESIZE);   // zeroize the I if error occurs
         return ippcpSts;
     }
@@ -102,7 +102,7 @@ IPPFUN(IppStatus, ippsLMSKeyGen, (IppsLMSPrivateKeyState* pPrvKey,
                                 &lmotsParams);
     PurgeBlock(pBuffer, pBufferSize);                // zeroize the temporary memory
     if (ippStsNoErr != ippcpSts) {
-        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)n); // zeroize the secret seed if error occurs
+        PurgeBlock(pPrvKey->pSecretSeed, (Ipp32s)m); // zeroize the secret seed if error occurs
         PurgeBlock(pPrvKey->pI, CP_PK_I_BYTESIZE);   // zeroize the I if error occurs
         return ippcpSts;
     }

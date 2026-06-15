@@ -23,7 +23,6 @@
  * Input parameters:
  *    I           pointer to I buffer (I from the spec)
  *    val1        1st value passing to the function
- *    val1Len     size of val1
  *    val2        2nd value passing to the function
  *    val2Len     size of val2
  *    val3        3rd value passing to the function
@@ -33,7 +32,7 @@
  *    hash_method Crypto library hash method
  *
  * Output parameters:
- *    out         resulted n-byte array that contains hash
+ *    out         resulted outLen-byte array that contains hash (m-byte)
  */
 /* clang-format off */
 IPP_OWN_DEFN(IppStatus, cp_lms_H_tree, (
@@ -42,7 +41,8 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H_tree, (
                    Ipp32u val2, const Ipp32s val2Len,
                    Ipp8u* val3, const Ipp32s val3Len,
                    Ipp8u* pMsg, const Ipp32s msgLen,
-                   Ipp8u* out, const IppsHashMethod* hash_method))
+                   Ipp8u* out, const Ipp32s outLen,
+                   const IppsHashMethod* hash_method))
 /* clang-format on */
 {
     int total_size = CP_PK_I_BYTESIZE;
@@ -61,7 +61,16 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H_tree, (
         total_size += msgLen;
     }
 
-    return ippsHashMessage_rmf(I, total_size, out, hash_method);
+    IppStatus sts = ippStsErr;
+    if (outLen < CP_LMS_MAX_HASH_BYTESIZE) {
+        Ipp8u tmp[CP_LMS_MAX_HASH_BYTESIZE];
+        sts = ippsHashMessage_rmf(I, total_size, tmp, hash_method);
+        CopyBlock(tmp, out, outLen);
+        PurgeBlock(tmp, CP_LMS_MAX_HASH_BYTESIZE);
+    } else {
+        sts = ippsHashMessage_rmf(I, total_size, out, hash_method);
+    }
+    return sts;
 }
 
 /*
@@ -73,11 +82,11 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H_tree, (
  * Input parameters:
  *    isKeyGen      parameter == 1 if the function is called from keygen function.
  *                  Otherwise it equals to 0
- *    secret_seed   random seed to generate secret key
+ *    secret_seed   random seed to generate secret key (m bytes)
  *    pI            pointer to I buffer (I from the spec)
  *    idx_leaf      index of leaf for which the authentication path is built.
  *                  In case of calling from keygen function parameter is ignored
- *    temp_buf      temporary memory (size is (((((CP_PK_I_BYTESIZE + 4 + 2 + n + n) + h + 1) + h * n) + n * p) + n) + (CP_PK_I_BYTESIZE + 4 + 2 + 1 + n + n * p) bytes at least)
+ *    temp_buf      temporary memory (size from ippsLMSKeyGenBufferGetSize)
  *    pAuxiliaryMem auxiliary memory to store nodes of the tree.
  *                  If isKeyGen == 1, nodes are written to pAuxiliaryMem
  *                  If isKeyGen == 0, nodes are read from pAuxiliaryMem
@@ -86,7 +95,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_H_tree, (
  *    lmotsParams   OTS parameters
  *
  * Output parameters:
- *    out         resulted n-byte array that contains the public key
+ *    out         resulted m-byte array that contains the public key (tree root or auth path)
  */
 /* clang-format off */
 IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
@@ -102,16 +111,17 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
 /* clang-format on */
 {
     IppStatus retCode = ippStsErr;
-    const Ipp32u n    = lmotsParams->n;
-    const Ipp32s n_s  = (Ipp32s)n;
+    const Ipp32s n_s  = (Ipp32s)lmotsParams->n;
+    const Ipp32u m    = lmsParams->m;
+    const Ipp32s m_s  = (Ipp32s)m;
     const Ipp32u h    = lmsParams->h;
     const Ipp32s h_s  = (Ipp32s)h;
 
     Ipp8u* I_r = temp_buf;
     CopyBlock(pI, I_r, CP_PK_I_BYTESIZE);
 
-    Ipp8u* heights = I_r + (CP_PK_I_BYTESIZE + 4 + 2 + n_s + n_s); // size: h
-    Ipp8u* stack   = heights + (h + 1);
+    Ipp8u* heights = I_r + (CP_PK_I_BYTESIZE + 4 + 2 + m_s + m_s); // size: h + 1
+    Ipp8u* stack   = heights + (h + 1);                            // size: h * m
 
     Ipp32s stack_size = 0;
     Ipp8u *node, *temp_node;
@@ -125,7 +135,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
             while (h_local < h - 1) {
                 if ((idx_local ^ 1) == j_local) {
                     Ipp32s aux_idx = (Ipp32s)(((1 << (h - h_local)) - 2) + j_local);
-                    if (aux_idx * n_s < aux_size - n_s) {
+                    if (aux_idx * m_s < aux_size - m_s) {
                         /* The node was pre-calculated on KeyGen step */
                         b = 1;
                     }
@@ -141,22 +151,23 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
         }
 
         Ipp32u r = (1 << h) + i;  // r = 2^h + i
-        node     = stack + h * n; // size: n
+        node     = stack + h * m; // size: CP_LMS_MAX_HASH_BYTESIZE
         // 2*2^0 + 2*2^1 + 2*2^2 +... + 2*2^(h-1) = 2 * ((1 << h) - 1)
         Ipp32s aux_idx = (Ipp32s)(((1 << h) - 2) + i);
 
-        if ((isKeyGen == 0) && (aux_idx * n_s < aux_size - n_s)) {
-            CopyBlock(pAuxiliaryMem + aux_idx * n_s, node, n_s);
+        if ((isKeyGen == 0) && (aux_idx * m_s < aux_size - m_s)) {
+            CopyBlock(pAuxiliaryMem + aux_idx * m_s, node, m_s);
         } else {
-            temp_node = node + n_s;
+            // size: CP_PK_I_BYTESIZE + 4 + 2 + 1 + n * p + CP_LMS_MAX_HASH_BYTESIZE
+            temp_node = node + CP_LMS_MAX_HASH_BYTESIZE;
             // public key generation
-            retCode = cp_lms_OTS_genPK(
-                pSecretSeed,
-                pI,
-                i,
-                node,
-                temp_node,
-                lmotsParams); // temp_node size: CP_PK_I_BYTESIZE + 4 + 2 + 1 + n + n * p
+            retCode = cp_lms_OTS_genPK(pSecretSeed,
+                                       m_s,
+                                       pI,
+                                       i,
+                                       node, // size = n
+                                       temp_node,
+                                       lmotsParams);
             IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
             // hash public key in leaf node
             retCode = cp_lms_H_tree(I_r,
@@ -168,15 +179,16 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
                                     NULL,
                                     0,
                                     node,
-                                    lmsParams->hash_method); // size: n
+                                    m_s,
+                                    lmsParams->hash_method);
             IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
         }
 
         if (isKeyGen == 0 && (idx_leaf ^ 1) == i) {
-            CopyBlock(node, out, n_s);
+            CopyBlock(node, out, m_s);
         }
-        if ((isKeyGen == 1) && (aux_idx * n_s < aux_size - n_s)) {
-            CopyBlock(node, pAuxiliaryMem + aux_idx * n_s, n_s);
+        if ((isKeyGen == 1) && (aux_idx * m_s < aux_size - m_s)) {
+            CopyBlock(node, pAuxiliaryMem + aux_idx * m_s, m_s);
         }
 
         // calculate a root of sub-tree
@@ -189,44 +201,45 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
             r >>= 1;      // r = r / 2
 
             aux_idx = (Ipp32s)(((1 << (h - heights[stack_size] - 1)) - 2) + j);
-            if ((isKeyGen == 0) && (aux_idx >= 0) && (aux_idx * n_s <= aux_size - n_s)) {
-                CopyBlock(pAuxiliaryMem + aux_idx * n_s, node, n_s);
+            if ((isKeyGen == 0) && (aux_idx >= 0) && (aux_idx * m_s <= aux_size - m_s)) {
+                CopyBlock(pAuxiliaryMem + aux_idx * m_s, node, m_s);
             } else {
                 retCode = cp_lms_H_tree(I_r,
                                         r,
                                         D_INTR,
                                         2,
-                                        stack + (stack_size * n_s),
-                                        n_s,  // left
+                                        stack + (stack_size * m_s),
+                                        m_s, // left
                                         node,
-                                        n_s,  // right
-                                        node, // out
+                                        m_s, // right
+                                        node,
+                                        m_s, // out
                                         lmsParams->hash_method);
                 IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
             }
-            if (isKeyGen == 1 && (aux_idx >= 0) && (aux_idx * n_s <= aux_size - n_s)) {
-                CopyBlock(node, pAuxiliaryMem + aux_idx * n_s, n_s);
+            if (isKeyGen == 1 && (aux_idx >= 0) && (aux_idx * m_s <= aux_size - m_s)) {
+                CopyBlock(node, pAuxiliaryMem + aux_idx * m_s, m_s);
             }
 
             heights[stack_size]++;
 
             if ((isKeyGen == 0) && (((idx_leaf >> heights[stack_size]) ^ 1) == j)) {
-                CopyBlock(node, out + (heights[stack_size]) * n_s, n_s);
+                CopyBlock(node, out + (heights[stack_size]) * m_s, m_s);
             }
         }
-        CopyBlock(node, stack + (stack_size * n_s), n_s);
+        CopyBlock(node, stack + (stack_size * m_s), m_s);
         stack_size++; // stack.push
     }
 
     // fill the output
     if (isKeyGen == 1) {
-        CopyBlock(stack, out, n_s);
+        CopyBlock(stack, out, m_s);
     } else if (aux_size > 0) {
         for (Ipp32s h_local = 0; h_local < h_s; h_local++) {
             Ipp32u j_local = (idx_leaf >> h_local) ^ 1;
             Ipp32s aux_idx = (Ipp32s)(((1 << (h_s - h_local)) - 2) + j_local);
-            if ((aux_idx >= 0) && (aux_idx * n_s < aux_size - n_s)) {
-                CopyBlock(pAuxiliaryMem + (aux_idx * n_s), out + (h_local * n_s), n_s);
+            if ((aux_idx >= 0) && (aux_idx * m_s < aux_size - m_s)) {
+                CopyBlock(pAuxiliaryMem + (aux_idx * m_s), out + (h_local * m_s), m_s);
             }
         }
     }
