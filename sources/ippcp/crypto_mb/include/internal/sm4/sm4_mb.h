@@ -413,7 +413,7 @@ __MBX_INLINE __m512i IncBlock512(__m512i x, const int8u* increment)
 }
 
 #define SM4_KERNEL(TMP, p_rk, iterator)                                                        \
-    for (int itr = 0, j = 0; itr < 8; itr++, j++) {                                            \
+    for (int itr = 0; itr < 8; itr++) {                                                        \
         /* initial xors */                                                                     \
         EXPAND_ONE_RKEY(TMP, p_rk);                                                            \
         (p_rk) += (iterator);                                                                  \
