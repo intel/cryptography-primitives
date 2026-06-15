@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>ippsMLDSA_Verify &#8212; Documentation for Intel® oneAPI Programming Guide</title>
+    <title>ippsMLDSA_Verify, ippsMLDSA_Verify_Mu &#8212; Documentation for Intel® oneAPI Programming Guide</title>
   
   
   
@@ -554,7 +554,7 @@
 <li class="toctree-l4"><a class="reference internal" href="buffers-get-size.html">API to query working buffers size</a></li>
 <li class="toctree-l4"><a class="reference internal" href="key-gen.html">ippsMLDSA_KeyGen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="sign.html">ippsMLDSA_Sign</a></li>
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">ippsMLDSA_Verify</a></li>
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">ippsMLDSA_Verify, ippsMLDSA_Verify_Mu</a></li>
 </ul>
 </details></li>
 </ul>
@@ -812,7 +812,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>ippsMLDSA_Verify</h1>
+    <h1>ippsMLDSA_Verify, ippsMLDSA_Verify_Mu</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -838,9 +838,9 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="ippsmldsa-verify">
-<span id="ml-dsa-verify"></span><h1>ippsMLDSA_Verify<a class="headerlink" href="#ippsmldsa-verify" title="Link to this heading">#</a></h1>
-<p>Uses the public key to verify a digital signature for a given message.</p>
+  <section id="ippsmldsa-verify-ippsmldsa-verify-mu">
+<span id="ml-dsa-verify"></span><h1>ippsMLDSA_Verify, ippsMLDSA_Verify_Mu<a class="headerlink" href="#ippsmldsa-verify-ippsmldsa-verify-mu" title="Link to this heading">#</a></h1>
+<p>Uses the public key to verify a digital signature for a given message or a pre-computed message hash (Mu).</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading">#</a></h2>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsMLDSA_Verify</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="o">*</span><span class="w"> </span><span class="n">pMsg</span><span class="p">,</span>
@@ -852,6 +852,13 @@ document.write(`
 <span class="w">                           </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">pIsSignValid</span><span class="p">,</span>
 <span class="w">                           </span><span class="n">IppsMLDSAState</span><span class="o">*</span><span class="w"> </span><span class="n">pMLDSAState</span><span class="p">,</span>
 <span class="w">                           </span><span class="n">Ipp8u</span><span class="o">*</span><span class="w"> </span><span class="n">pScratchBuffer</span><span class="p">);</span>
+
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsMLDSA_Verify_Mu</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="o">*</span><span class="w"> </span><span class="n">pMu</span><span class="p">,</span>
+<span class="w">                              </span><span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="o">*</span><span class="w"> </span><span class="n">pPubKey</span><span class="p">,</span>
+<span class="w">                              </span><span class="k">const</span><span class="w"> </span><span class="n">Ipp8u</span><span class="o">*</span><span class="w"> </span><span class="n">pSign</span><span class="p">,</span>
+<span class="w">                              </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">pIsSignValid</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">IppsMLDSAState</span><span class="o">*</span><span class="w"> </span><span class="n">pMLDSAState</span><span class="p">,</span>
+<span class="w">                              </span><span class="n">Ipp8u</span><span class="o">*</span><span class="w"> </span><span class="n">pScratchBuffer</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -864,33 +871,36 @@ document.write(`
 <div class="pst-scrollable-table-container"><table class="table">
 <tbody>
 <tr class="row-odd"><td><p>pMsg</p></td>
-<td><p>Pointer to the message that needs to be verified.</p></td>
+<td><p>Pointer to the message that needs to be verified (for <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code>).</p></td>
 </tr>
 <tr class="row-even"><td><p>msgLen</p></td>
-<td><p>Length of the message in bytes.</p></td>
+<td><p>Length of the message in bytes (for <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code>).</p></td>
 </tr>
 <tr class="row-odd"><td><p>pCtx</p></td>
-<td><p>Pointer to the context, can be <code class="docutils literal notranslate"><span class="pre">NULL</span></code>. See the Specification of the algorithm for more details.</p></td>
+<td><p>Pointer to the context, can be <code class="docutils literal notranslate"><span class="pre">NULL</span></code> (for <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code>). See the Specification of the algorithm for more details.</p></td>
 </tr>
 <tr class="row-even"><td><p>ctxLen</p></td>
-<td><p>Length of the context in bytes.</p></td>
+<td><p>Length of the context in bytes (for <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td><p>pPubKey</p></td>
+<tr class="row-odd"><td><p>pMu</p></td>
+<td><p>Pointer to the 64-byte pre-computed Mu hash value (for <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify_Mu</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p>pPubKey</p></td>
 <td><p>Pointer to the public key.</p></td>
 </tr>
-<tr class="row-even"><td><p>pSign</p></td>
+<tr class="row-odd"><td><p>pSign</p></td>
 <td><p>Pointer to the signature.</p></td>
 </tr>
-<tr class="row-odd"><td><p>pIsSignValid</p></td>
+<tr class="row-even"><td><p>pIsSignValid</p></td>
 <td><p>Pointer to the output variable that indicates whether the signature is valid.
 The value is set to 1 if the signature is valid, and 0 if the signature is invalid.</p></td>
 </tr>
-<tr class="row-even"><td><p>pMLDSAState</p></td>
+<tr class="row-odd"><td><p>pMLDSAState</p></td>
 <td><p>Pointer to the ML-DSA context.</p></td>
 </tr>
-<tr class="row-odd"><td><p>pScratchBuffer</p></td>
-<td><p>Pointer to the working buffer of size queried
-<a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">ippsMLDSA_VerifyBufferGetSize</span></a>.</p></td>
+<tr class="row-even"><td><p>pScratchBuffer</p></td>
+<td><p>Pointer to the working buffer of size queried by the corresponding size query function
+(<a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">ippsMLDSA_VerifyBufferGetSize</span></a> or <a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">ippsMLDSA_Verify_Mu_BufferGetSize</span></a>).</p></td>
 </tr>
 </tbody>
 </table>
@@ -898,9 +908,11 @@ The value is set to 1 if the signature is valid, and 0 if the signature is inval
 </section>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>The function verifies the digital signature using the provided
-public key. The working buffer should be allocated with the size not less than
-provided by <a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">ippsMLDSA_VerifyBufferGetSize</span></a> function.</p>
+<p>The functions verify the digital signature using the provided public key.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code> computes the message hash (Mu) internally using the provided message and context. The working buffer should be allocated with a size not less than the one provided by the <a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">ippsMLDSA_VerifyBufferGetSize</span></a> function.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify_Mu</span></code> uses a pre-computed message hash (Mu), which allows bypassing the internal buffering of large messages. The working buffer should be allocated with a size not less than the one provided by the <a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">ippsMLDSA_Verify_Mu_BufferGetSize</span></a> function.</p></li>
+</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>
@@ -917,7 +929,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <td><p>Indicates no error. Any other value indicates an error or warning.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsNullPtrErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">pMsg</span></code>, <code class="docutils literal notranslate"><span class="pre">pPubKey</span></code>, <code class="docutils literal notranslate"><span class="pre">pSign</span></code>, <code class="docutils literal notranslate"><span class="pre">pIsSignValid</span></code>, <code class="docutils literal notranslate"><span class="pre">pMLDSAState</span></code> or <code class="docutils literal notranslate"><span class="pre">pScratchBuffer</span></code> is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pMsg</span></code>, <code class="docutils literal notranslate"><span class="pre">pMu</span></code>, <code class="docutils literal notranslate"><span class="pre">pPubKey</span></code>, <code class="docutils literal notranslate"><span class="pre">pSign</span></code>, <code class="docutils literal notranslate"><span class="pre">pIsSignValid</span></code>, <code class="docutils literal notranslate"><span class="pre">pMLDSAState</span></code> or <code class="docutils literal notranslate"><span class="pre">pScratchBuffer</span></code> is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>ippStsContextMatchErr</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">pMLDSAState</span></code> was not initialized.</p></td>
@@ -927,13 +939,13 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 of the library or contact <a class="reference external" href="https://github.com/intel/cryptography-primitives/issues">Intel</a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>ippStsLengthErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">&gt;</span> <span class="pre">255</span></code> or <code class="docutils literal notranslate"><span class="pre">msgLen</span></code> is less than 1,
+<td><p><code class="docutils literal notranslate"><span class="pre">pMLDSAState</span></code> was initialized with <code class="docutils literal notranslate"><span class="pre">IPPCP_MLDSA_NO_MESSAGE</span></code>, or <code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">&gt;</span> <span class="pre">255</span></code> or <code class="docutils literal notranslate"><span class="pre">msgLen</span></code> is less than 1,
 or the message length is greater than 2^32 bytes minus the number
 of bytes required for temporary buffers. Size of such buffers can be
-obtained using <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_VerifyBufferGetSize</span></code> functions.</p></td>
+obtained using <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_VerifyBufferGetSize</span></code> functions (for <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code> only).</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsBadArgErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">==</span> <span class="pre">0</span></code> if <code class="docutils literal notranslate"><span class="pre">pCtx</span> <span class="pre">!=</span> <span class="pre">NULL</span></code>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">==</span> <span class="pre">0</span></code> if <code class="docutils literal notranslate"><span class="pre">pCtx</span> <span class="pre">!=</span> <span class="pre">NULL</span></code> (for <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code> only).</p></td>
 </tr>
 </tbody>
 </table>

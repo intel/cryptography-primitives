@@ -44,7 +44,7 @@
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="ippsMLDSA_Verify" href="verify.html" />
+    <link rel="next" title="ippsMLDSA_Verify, ippsMLDSA_Verify_Mu" href="verify.html" />
     <link rel="prev" title="ippsMLDSA_KeyGen" href="key-gen.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -554,7 +554,7 @@
 <li class="toctree-l4"><a class="reference internal" href="buffers-get-size.html">API to query working buffers size</a></li>
 <li class="toctree-l4"><a class="reference internal" href="key-gen.html">ippsMLDSA_KeyGen</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">ippsMLDSA_Sign</a></li>
-<li class="toctree-l4"><a class="reference internal" href="verify.html">ippsMLDSA_Verify</a></li>
+<li class="toctree-l4"><a class="reference internal" href="verify.html">ippsMLDSA_Verify, ippsMLDSA_Verify_Mu</a></li>
 </ul>
 </details></li>
 </ul>
@@ -936,7 +936,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 of the library or contact <a class="reference external" href="https://github.com/intel/cryptography-primitives/issues">Intel</a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>ippStsLengthErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">&gt;</span> <span class="pre">255</span></code> or <code class="docutils literal notranslate"><span class="pre">msgLen</span></code> is less than 1,
+<td><p><code class="docutils literal notranslate"><span class="pre">pMLDSAState</span></code> was initialized with <code class="docutils literal notranslate"><span class="pre">IPPCP_MLDSA_NO_MESSAGE</span></code>, or <code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">ctxLen</span> <span class="pre">&gt;</span> <span class="pre">255</span></code> or <code class="docutils literal notranslate"><span class="pre">msgLen</span></code> is less than 1,
 or the message length is greater than 2^32 bytes minus the number
 of bytes required for temporary buffers. Size of such buffers can be
 obtained using the <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_SignBufferGetSize</span></code> function.</p></td>
@@ -984,7 +984,7 @@ obtained using the <code class="docutils literal notranslate"><span class="pre">
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">ippsMLDSA_Verify</p>
+        <p class="prev-next-title">ippsMLDSA_Verify, ippsMLDSA_Verify_Mu</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -554,7 +554,7 @@
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">API to query working buffers size</a></li>
 <li class="toctree-l4"><a class="reference internal" href="key-gen.html">ippsMLDSA_KeyGen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="sign.html">ippsMLDSA_Sign</a></li>
-<li class="toctree-l4"><a class="reference internal" href="verify.html">ippsMLDSA_Verify</a></li>
+<li class="toctree-l4"><a class="reference internal" href="verify.html">ippsMLDSA_Verify, ippsMLDSA_Verify_Mu</a></li>
 </ul>
 </details></li>
 </ul>
@@ -846,6 +846,7 @@ document.write(`
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsMLDSA_KeyGenBufferGetSize</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsMLDSAState</span><span class="o">*</span><span class="w"> </span><span class="n">pMLDSAState</span><span class="p">);</span>
 <span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsMLDSA_SignBufferGetSize</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsMLDSAState</span><span class="o">*</span><span class="w"> </span><span class="n">pMLDSAState</span><span class="p">);</span>
 <span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsMLDSA_VerifyBufferGetSize</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsMLDSAState</span><span class="o">*</span><span class="w"> </span><span class="n">pMLDSAState</span><span class="p">);</span>
+<span class="n">IppStatus</span><span class="w"> </span><span class="nf">ippsMLDSA_Verify_Mu_BufferGetSize</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">pSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IppsMLDSAState</span><span class="o">*</span><span class="w"> </span><span class="n">pMLDSAState</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>
@@ -875,6 +876,8 @@ document.write(`
 <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Sign</span></code> function.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ippsMLDSA_VerifyBufferGetSize</span></code> queries the size for working buffer required for the
 <code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code> function.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify_Mu_BufferGetSize</span></code> queries the size for working buffer required for the
+<code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify_Mu</span></code> function.</p>
 <p>Allocated memory should be passed directly to the processing API.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

@@ -554,7 +554,7 @@
 <li class="toctree-l4"><a class="reference internal" href="buffers-get-size.html">API to query working buffers size</a></li>
 <li class="toctree-l4"><a class="reference internal" href="key-gen.html">ippsMLDSA_KeyGen</a></li>
 <li class="toctree-l4"><a class="reference internal" href="sign.html">ippsMLDSA_Sign</a></li>
-<li class="toctree-l4"><a class="reference internal" href="verify.html">ippsMLDSA_Verify</a></li>
+<li class="toctree-l4"><a class="reference internal" href="verify.html">ippsMLDSA_Verify, ippsMLDSA_Verify_Mu</a></li>
 </ul>
 </details></li>
 </ul>
@@ -864,7 +864,7 @@ document.write(`
 <td><p>Maximum message length in bytes. The parameter is used to calculate the size of the internal
 buffers. The maximum message length should be less than 2^32 bytes - number
 of bytes required for temporary buffers. Size of such buffers can be obtained using
-<a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">API to query working buffers size</span></a>.</p></td>
+<a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">API to query working buffers size</span></a>. If the context is used exclusively for <a class="reference internal" href="verify.html#ml-dsa-verify"><span class="std std-ref">ippsMLDSA_Verify_Mu</span></a>, which does not depend on the message length, the <code class="docutils literal notranslate"><span class="pre">IPPCP_MLDSA_NO_MESSAGE</span></code> macro can be passed as a dummy value.</p></td>
 </tr>
 <tr class="row-odd"><td><p>schemeType</p></td>
 <td><p>Parameter specifying the scheme type. See
@@ -899,7 +899,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <td><p><code class="docutils literal notranslate"><span class="pre">schemeType</span></code> is not supported.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsLengthErr</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">maxMessageLength</span></code> is less than 1 or greater than the allowed maximum.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">maxMessageLength</span></code> is less than 1 (and not equal to <code class="docutils literal notranslate"><span class="pre">IPPCP_MLDSA_NO_MESSAGE</span></code>) or greater than the allowed maximum.</p></td>
 </tr>
 </tbody>
 </table>
