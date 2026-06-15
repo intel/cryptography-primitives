@@ -547,9 +547,11 @@ EXTERN (ippsMLDSA_Init)
 EXTERN (ippsMLDSA_KeyGenBufferGetSize)
 EXTERN (ippsMLDSA_SignBufferGetSize)
 EXTERN (ippsMLDSA_VerifyBufferGetSize)
+EXTERN (ippsMLDSA_Verify_Mu_BufferGetSize)
 EXTERN (ippsMLDSA_KeyGen)
 EXTERN (ippsMLDSA_Sign)
 EXTERN (ippsMLDSA_Verify)
+EXTERN (ippsMLDSA_Verify_Mu)
 
 VERSION {
  {
@@ -1103,9 +1105,11 @@ VERSION {
    ippsMLDSA_KeyGenBufferGetSize;
    ippsMLDSA_SignBufferGetSize;
    ippsMLDSA_VerifyBufferGetSize;
+   ippsMLDSA_Verify_Mu_BufferGetSize;
    ippsMLDSA_KeyGen;
    ippsMLDSA_Sign;
    ippsMLDSA_Verify;
+   ippsMLDSA_Verify_Mu;
   local: *;
  };
 }

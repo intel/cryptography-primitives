@@ -547,9 +547,11 @@ EXTERN (ippsMLDSA_Init)
 EXTERN (ippsMLDSA_KeyGenBufferGetSize)
 EXTERN (ippsMLDSA_SignBufferGetSize)
 EXTERN (ippsMLDSA_VerifyBufferGetSize)
+EXTERN (ippsMLDSA_Verify_Mu_BufferGetSize)
 EXTERN (ippsMLDSA_KeyGen)
 EXTERN (ippsMLDSA_Sign)
 EXTERN (ippsMLDSA_Verify)
+EXTERN (ippsMLDSA_Verify_Mu)
 
 EXTERN (ippcp_is_fips_approved_func)
 EXTERN (fips_selftest_ippsAESEncryptDecrypt_get_size)
@@ -615,6 +617,9 @@ EXTERN (fips_selftest_ippsMLDSA_KeyGen_get_size)
 EXTERN (fips_selftest_ippsMLDSA_Sign)
 EXTERN (fips_selftest_ippsMLDSA_Verify)
 EXTERN (fips_selftest_ippsMLDSA_KeyGen)
+EXTERN (fips_selftest_ippsMLDSA_Verify_Mu_get_size_data_buff)
+EXTERN (fips_selftest_ippsMLDSA_Verify_Mu_get_size)
+EXTERN (fips_selftest_ippsMLDSA_Verify_Mu)
 
 
 VERSION {
@@ -1172,6 +1177,8 @@ VERSION {
    ippsMLDSA_KeyGen;
    ippsMLDSA_Sign;
    ippsMLDSA_Verify;
+   ippsMLDSA_Verify_Mu_BufferGetSize;
+   ippsMLDSA_Verify_Mu;
 
    ippcp_is_fips_approved_func;
    fips_selftest_ippsAESEncryptDecrypt_get_size;
@@ -1237,6 +1244,9 @@ VERSION {
    fips_selftest_ippsMLDSA_Sign;
    fips_selftest_ippsMLDSA_Verify;
    fips_selftest_ippsMLDSA_KeyGen;
+   fips_selftest_ippsMLDSA_Verify_Mu_get_size_data_buff;
+   fips_selftest_ippsMLDSA_Verify_Mu_get_size;
+   fips_selftest_ippsMLDSA_Verify_Mu;
   local: *;
  };
 }

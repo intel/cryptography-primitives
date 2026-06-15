@@ -1017,6 +1017,8 @@ typedef struct _cpMLKEMState IppsMLKEMState;
 */
 #ifdef IPPCP_PREVIEW_ML_DSA
 
+#define IPPCP_MLDSA_NO_MESSAGE (-1)
+
 typedef enum {
     ML_DSA_44  = 1,
     ML_DSA_65  = 2,

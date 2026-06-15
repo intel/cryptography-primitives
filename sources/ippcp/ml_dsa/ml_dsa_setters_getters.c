@@ -105,6 +105,42 @@ IPPFUN(IppStatus, ippsMLDSA_VerifyBufferGetSize, (int* pSize, const IppsMLDSASta
 }
 
 /*F*
+//    Name: ippsMLDSA_Verify_Mu_BufferGetSize
+//
+// Purpose: Queries the constant size of the ippsMLDSA_Verify_Mu working buffer.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSize == NULL
+//                            pMLDSAState == NULL
+//    ippStsContextMatchErr   pMLDSAState is not initialized
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pSize       - output pointer with the working buffer size
+//    pMLDSAState - input pointer to ML DSA state
+//
+*F*/
+IPPFUN(IppStatus,
+       ippsMLDSA_Verify_Mu_BufferGetSize,
+       (int* pSize, const IppsMLDSAState* pMLDSAState))
+{
+    /* Test input parameters */
+    IPP_BAD_PTR2_RET(pSize, pMLDSAState);
+    /* Test the provided state */
+    IPP_BADARG_RET(!CP_ML_DSA_VALID_ID(pMLDSAState), ippStsContextMatchErr);
+
+    int verifyBytes = 0;
+    IppStatus sts   = mldsaMemoryConsumption(pMLDSAState, 0, NULL, NULL, &verifyBytes);
+    if (sts != ippStsNoErr) {
+        return sts;
+    }
+
+    *pSize = verifyBytes;
+
+    return ippStsNoErr;
+}
+
+/*F*
 //    Name: ippsMLDSA_GetSize
 //
 // Purpose: Queries the size of the IppsMLDSAState.
@@ -194,7 +230,7 @@ IPPFUN(IppStatus, ippsMLDSA_GetInfo, (IppsMLDSAInfo * pInfo, IppsMLDSAParamSet s
 // Returns:                Reason:
 //    ippStsNullPtrErr        pMLDSAState == NULL
 //    ippStsBadArgErr         schemeType is not supported
-//    ippStsLengthErr         maxMessageLength < 1
+//    ippStsLengthErr         maxMessageLength < 1 and maxMessageLength != IPPCP_MLDSA_NO_MESSAGE
 //    ippStsLengthErr         maxMessageLength > IPP_MAX_32S - locSignBytes
 //    ippStsNoErr             no errors
 //
@@ -253,14 +289,17 @@ IPPFUN(IppStatus,
         return ippStsBadArgErr;
     }
     /* Check msg length */
-    IPP_BADARG_RET(maxMessageLength < 1, ippStsLengthErr)
-    Ipp32s sizeof_polynom = sizeof(IppPoly);
-    Ipp32s locSignBytes   = (2 * params->k + params->l) * sizeof_polynom + 3 * CP_ML_ALIGNMENT;
+    IPP_BADARG_RET((maxMessageLength < 1) && (maxMessageLength != IPPCP_MLDSA_NO_MESSAGE),
+                   ippStsLengthErr)
+    if (maxMessageLength != IPPCP_MLDSA_NO_MESSAGE) {
+        Ipp32s sizeof_polynom = sizeof(IppPoly);
+        Ipp32s locSignBytes   = (2 * params->k + params->l) * sizeof_polynom + 3 * CP_ML_ALIGNMENT;
 #if !CP_ML_MEMORY_OPTIMIZATION
-    locSignBytes += params->k * params->l * sizeof_polynom + CP_ML_ALIGNMENT;
+        locSignBytes += params->k * params->l * sizeof_polynom + CP_ML_ALIGNMENT;
 #endif // !CP_ML_MEMORY_OPTIMIZATION
-    locSignBytes += 64 + 2 + 256;
-    IPP_BADARG_RET(maxMessageLength > (Ipp32s)(IPP_MAX_32S)-locSignBytes, ippStsLengthErr);
+        locSignBytes += 64 + 2 + 256;
+        IPP_BADARG_RET(maxMessageLength > (Ipp32s)(IPP_MAX_32S)-locSignBytes, ippStsLengthErr);
+    }
 
     /* Initialize the storage */
     int keygenBytes = 0, signBytes = 0, verifyBytes = 0;

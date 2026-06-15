@@ -808,4 +808,24 @@ IPP_OWN_DECL(IppStatus,
               Ipp32s* is_valid,
               IppsMLDSAState* mldsaCtx))
 
+#define cp_MLDSA_ComputeMu OWNAPI(cp_MLDSA_ComputeMu)
+IPP_OWN_DECL(IppStatus,
+             cp_MLDSA_ComputeMu,
+             (const Ipp8u* M,
+              Ipp32s msg_size,
+              const Ipp8u* ctx,
+              Ipp32s ctx_size,
+              const Ipp8u* pk,
+              Ipp8u* mu,
+              IppsMLDSAState* mldsaCtx))
+
+#define cp_MLDSA_VerifyCore OWNAPI(cp_MLDSA_VerifyCore)
+IPP_OWN_DECL(IppStatus,
+             cp_MLDSA_VerifyCore,
+             (const Ipp8u* mu,
+              const Ipp8u* pk,
+              const Ipp8u* sig,
+              Ipp32s* is_valid,
+              IppsMLDSAState* mldsaCtx))
+
 #endif // #ifndef _IPPCP_ML_DSA_H_

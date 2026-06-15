@@ -35,7 +35,8 @@
 //                                   pCtx == NULL if ctxLen > 0
 //    ippStsContextMatchErr          pMLDSAState is not initialized
 //    ippStsMemAllocErr              an internal functional error, see documentation for more details
-//    ippStsLengthErr                msgLen < 1 or msgLen > IPP_MAX_32S - locSignBytes
+//    ippStsLengthErr                pMLDSAState was initialized with IPPCP_MLDSA_NO_MESSAGE
+//                                   msgLen < 1 or msgLen > IPP_MAX_32S - locSignBytes
 //                                   ctxLen < 0 or ctxLen > 255
 //    ippStsBadArgErr                ctxLen == 0 if pCtx != NULL
 //    ippStsNotSupportedModeErr      unsupported RDRAND instruction
@@ -98,8 +99,10 @@ IPPFUN(IppStatus, ippsMLDSA_Sign, (const Ipp8u* pMsg,
 
     /* Initialize the temporary storage */
     _cpMLDSAStorage* pStorage = &pMLDSAState->storage;
-    pStorage->pStorageData    = pScratchBuffer;
-    pStorage->bytesCapacity   = pStorage->signCapacity;
+    IPP_BADARG_RET(pStorage->signCapacity == 0, ippStsLengthErr);
+
+    pStorage->pStorageData  = pScratchBuffer;
+    pStorage->bytesCapacity = pStorage->signCapacity;
 
     __ALIGN32 Ipp8u rnd[CP_RAND_DATA_BYTES] = { 0 };
 

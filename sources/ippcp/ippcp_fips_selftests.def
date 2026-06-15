@@ -552,6 +552,8 @@ ippsMLDSA_VerifyBufferGetSize
 ippsMLDSA_KeyGen
 ippsMLDSA_Sign
 ippsMLDSA_Verify
+ippsMLDSA_Verify_Mu_BufferGetSize
+ippsMLDSA_Verify_Mu
 
 ippcp_is_fips_approved_func
 
@@ -634,3 +636,7 @@ fips_selftest_ippsMLDSA_KeyGen_get_size
 fips_selftest_ippsMLDSA_Sign
 fips_selftest_ippsMLDSA_Verify
 fips_selftest_ippsMLDSA_KeyGen
+fips_selftest_ippsMLDSA_Verify_Mu_get_size_data_buff
+fips_selftest_ippsMLDSA_Verify_Mu_get_size
+fips_selftest_ippsMLDSA_Verify_Mu
+

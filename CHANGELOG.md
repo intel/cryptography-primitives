@@ -2,6 +2,9 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 2.3.0
+- Introduced external Mu verification for the ML-DSA scheme to allow signature verification with pre-computed hashes, reducing memory overhead for large messages. Includes full FIPS self-testing and validation.
+
 ## Intel(R) Cryptography Primitives Library 2.2.0
 - Fixed ML-DSA signature verification to strictly enforce hint vector weight bounds.
 - Added strict output buffer size validation when input parameter is zero for GCD BN function.

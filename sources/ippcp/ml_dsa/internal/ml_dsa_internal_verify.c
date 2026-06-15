@@ -27,26 +27,77 @@
 #include "stateless_pqc/ml_dsa/ml_dsa.h"
 
 /*
- * Algorithm 8. ML-DSA.Verify_internal(pk, M, sig)
- * Verify the message M with the ctx context using the pk public key and sig signature.
+ * cp_MLDSA_ComputeMu - Mu computation part
+ * Compute the message hash Mu from the message M, ctx context, and pk public key.
  *      M         - input parameter with the message to be verified
  *      msg_size  - input parameter with the message size
  *      ctx       - input parameter with the context
  *      ctx_size  - input parameter with the context size
+ *      pk        - input parameter with the public key
+ *      mu        - output pointer to the computed Mu hash (64 bytes)
+ *      mldsaCtx  - input pointer to ML DSA state
+ */
+/* clang-format off */
+IPP_OWN_DEFN(IppStatus,  cp_MLDSA_ComputeMu, (const Ipp8u* M,
+                                              Ipp32s msg_size,
+                                              const Ipp8u* ctx,
+                                              Ipp32s ctx_size,
+                                              const Ipp8u* pk,
+                                              Ipp8u* mu,
+                                              IppsMLDSAState* mldsaCtx))
+/* clang-format on */
+{
+    IppStatus sts             = ippStsErr;
+    Ipp8u k                   = mldsaCtx->params.k;
+    _cpMLDSAStorage* pStorage = &mldsaCtx->storage;
+    IppsHashMethod shake256_method;
+
+    Ipp8u tr[64];
+    sts = ippsHashMethodSet_SHAKE256(&shake256_method, (64 * 8));
+    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    sts = ippsHashMessage_rmf(pk, 32 + 32 * k * CP_ML_DSA_BITLEN_Q_D, tr, &shake256_method);
+    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+
+    Ipp32s input_size = 64 + 2 + ctx_size + msg_size;
+    Ipp8u* hash_input = cp_mlStorageAllocate(pStorage, input_size + CP_ML_ALIGNMENT);
+    if (hash_input == NULL) {
+        PurgeBlock(tr, sizeof(tr));
+        return ippStsMemAllocErr;
+    }
+
+    CopyBlock(tr, hash_input, 64);
+    PurgeBlock(tr, sizeof(tr)); /* zeroize hashes */
+    /* M_ = BytesToBits(IntegerToBytes(0,1) || IntegerToBytes(|ctx|, 1) || ctx) || 𝑀 */
+    hash_input[64] = 0;
+    hash_input[65] = (Ipp8u)ctx_size & 0xFF;
+    if (ctx_size > 0) {
+        CopyBlock(ctx, hash_input + 66, ctx_size);
+    }
+    CopyBlock(M, hash_input + 66 + ctx_size, msg_size);
+
+    sts = ippsHashMessage_rmf(hash_input, input_size, mu, &shake256_method);
+    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    sts = cp_mlStorageRelease(pStorage, input_size + CP_ML_ALIGNMENT); /* hash_input */
+    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+
+    return sts;
+}
+
+/*
+ * Algorithm 8. ML-DSA.Verify_internal(pk, M, sig) - Core verification part
+ * Verify the sig signature using the pk public key and the pre-computed mu hash.
+ *      mu        - input parameter with the pre-computed Mu hash (64 bytes)
  *      pk        - input parameter with the public key
  *      sig       - input parameter with the signature
  *      is_valid  - output pointer to the verification result. 1 - valid, 0 - invalid
  *      mldsaCtx  - input pointer to ML DSA state
  */
 /* clang-format off */
-IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
-                                                    Ipp32s msg_size,
-                                                    const Ipp8u* ctx,
-                                                    Ipp32s ctx_size,
-                                                    const Ipp8u* pk,
-                                                    const Ipp8u* sig,
-                                                    Ipp32s* is_valid,
-                                                    IppsMLDSAState* mldsaCtx))
+IPP_OWN_DEFN(IppStatus,  cp_MLDSA_VerifyCore, (const Ipp8u* mu,
+                                               const Ipp8u* pk,
+                                               const Ipp8u* sig,
+                                               Ipp32s* is_valid,
+                                               IppsMLDSAState* mldsaCtx))
 /* clang-format on */
 {
     IppStatus sts             = ippStsErr;
@@ -55,7 +106,6 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
     Ipp8u l                   = mldsaCtx->params.l;
     Ipp8u lambda_4            = mldsaCtx->params.lambda_div_4;
     _cpMLDSAStorage* pStorage = &mldsaCtx->storage;
-    IppsHashMethod shake256_method;
 
     IppPoly* z  = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
     IppPoly* h  = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
@@ -67,33 +117,6 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
 
     if (cp_ml_polyInfinityNormCheck(z, l) >= mldsaCtx->params.gamma_1 - mldsaCtx->params.beta) {
         return ippStsNoErr;
-    }
-
-    Ipp8u tr[64];
-    sts = ippsHashMethodSet_SHAKE256(&shake256_method, (64 * 8));
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
-    sts = ippsHashMessage_rmf(pk, 32 + 32 * k * CP_ML_DSA_BITLEN_Q_D, tr, &shake256_method);
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
-
-    Ipp8u mu[64];
-    {
-        Ipp32s input_size = 64 + 2 + ctx_size + msg_size;
-        Ipp8u* hash_input = cp_mlStorageAllocate(pStorage, input_size + CP_ML_ALIGNMENT);
-        IPP_BADARG_RET((hash_input == NULL), ippStsMemAllocErr);
-
-        CopyBlock(tr, hash_input, 64);
-        // M_ = BytesToBits(IntegerToBytes(0,1) || IntegerToBytes(|ctx|, 1) || ctx) || 𝑀
-        hash_input[64] = 0;
-        hash_input[65] = (Ipp8u)ctx_size & 0xFF;
-        CopyBlock(ctx, hash_input + 66, ctx_size);
-        CopyBlock(M, hash_input + 66 + ctx_size, msg_size);
-
-        sts = ippsHashMethodSet_SHAKE256(&shake256_method, (64 * 8));
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
-        sts = ippsHashMessage_rmf(hash_input, input_size, mu, &shake256_method);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
-        sts = cp_mlStorageRelease(pStorage, input_size + CP_ML_ALIGNMENT); // hash_input
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
     }
 
     const Ipp8u* c_ = sig; // first lambda/4 bytes
@@ -129,6 +152,7 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
     Ipp8u* c__ = cp_mlStorageAllocate(pStorage, lambda_4 + CP_ML_ALIGNMENT);
     IPP_BADARG_RET((c__ == NULL), ippStsMemAllocErr);
     {
+        IppsHashMethod shake256_method;
         Ipp32s encodeSize =
             32 * k * cp_ml_bitlen((Ipp32u)((CP_ML_DSA_Q - 1) / (2 * mldsaCtx->params.gamma_2) - 1));
         Ipp8u* hash_input = cp_mlStorageAllocate(pStorage, (64 + encodeSize) + CP_ML_ALIGNMENT);
@@ -153,8 +177,42 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
     sts = cp_mlStorageRelease(pStorage, 3 * k * sizeof(IppPoly) + 3 * CP_ML_ALIGNMENT); // z,h,w_
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
-    PurgeBlock(tr, sizeof(tr)); // zeroize hashes
-    PurgeBlock(mu, sizeof(mu)); // zeroize hashes
+    return sts;
+}
+
+/*
+ * cp_MLDSA_Verify_internal
+ * Verify the message M with the ctx context using the pk public key and sig signature.
+ *      M         - input parameter with the message to be verified
+ *      msg_size  - input parameter with the message size
+ *      ctx       - input parameter with the context
+ *      ctx_size  - input parameter with the context size
+ *      pk        - input parameter with the public key
+ *      sig       - input parameter with the signature
+ *      is_valid  - output pointer to the verification result. 1 - valid, 0 - invalid
+ *      mldsaCtx  - input pointer to ML DSA state
+ */
+/* clang-format off */
+IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Verify_internal, (const Ipp8u* M,
+                                                    Ipp32s msg_size,
+                                                    const Ipp8u* ctx,
+                                                    Ipp32s ctx_size,
+                                                    const Ipp8u* pk,
+                                                    const Ipp8u* sig,
+                                                    Ipp32s* is_valid,
+                                                    IppsMLDSAState* mldsaCtx))
+/* clang-format on */
+{
+    IppStatus sts = ippStsErr;
+    *is_valid     = 0;
+
+    Ipp8u mu[64];
+    sts = cp_MLDSA_ComputeMu(M, msg_size, ctx, ctx_size, pk, mu, mldsaCtx);
+    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+
+    sts = cp_MLDSA_VerifyCore(mu, pk, sig, is_valid, mldsaCtx);
+
+    PurgeBlock(mu, sizeof(mu)); /* zeroize hashes */
 
     return sts;
 }

@@ -30,7 +30,7 @@ Parameters
      - Maximum message length in bytes. The parameter is used to calculate the size of the internal
        buffers. The maximum message length should be less than 2^32 bytes - number
        of bytes required for temporary buffers. Size of such buffers can be obtained using
-       :ref:`API to query working buffers size <ml-dsa-buffers-get-size>`.
+       :ref:`API to query working buffers size <ml-dsa-buffers-get-size>`. If the context is used exclusively for :ref:`ippsMLDSA_Verify_Mu <ml-dsa-verify>`, which does not depend on the message length, the ``IPPCP_MLDSA_NO_MESSAGE`` macro can be passed as a dummy value.
    * - schemeType
      - Parameter specifying the scheme type. See
        :ref:`Supported ML-DSA parameters <ml-dsa-params>` for more information.
@@ -62,4 +62,4 @@ Return Values
    * - ippStsBadArgErr
      - ``schemeType`` is not supported.
    * - ippStsLengthErr
-     - ``maxMessageLength`` is less than 1 or greater than the allowed maximum.
+     - ``maxMessageLength`` is less than 1 (and not equal to ``IPPCP_MLDSA_NO_MESSAGE``) or greater than the allowed maximum.

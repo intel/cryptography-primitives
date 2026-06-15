@@ -1499,6 +1499,15 @@ IPPAPI(IppStatus, ippsMLDSA_Verify, (const Ipp8u* pMsg,
                                      int* pIsSignValid,
                                      IppsMLDSAState* pMLDSAState,
                                      Ipp8u* pScratchBuffer))
+
+IPPAPI(IppStatus, ippsMLDSA_Verify_Mu_BufferGetSize, (int* pSize, const IppsMLDSAState* pMLDSAState))
+
+IPPAPI(IppStatus, ippsMLDSA_Verify_Mu, (const Ipp8u* pMu,
+                                        const Ipp8u* pPubKey,
+                                        const Ipp8u* pSign,
+                                        int* pIsSignValid,
+                                        IppsMLDSAState* pMLDSAState,
+                                        Ipp8u* pScratchBuffer))
 #endif // IPPCP_PREVIEW_ML_DSA
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)

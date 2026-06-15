@@ -514,6 +514,9 @@ _ippsMLDSA_Init
 _ippsMLDSA_KeyGenBufferGetSize
 _ippsMLDSA_SignBufferGetSize
 _ippsMLDSA_VerifyBufferGetSize
+_ippsMLDSA_Verify_Mu_BufferGetSize
 _ippsMLDSA_KeyGen
 _ippsMLDSA_Sign
 _ippsMLDSA_Verify
+_ippsMLDSA_Verify_Mu
+

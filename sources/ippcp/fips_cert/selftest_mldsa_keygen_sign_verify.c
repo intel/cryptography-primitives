@@ -76,6 +76,11 @@ IPPFUN(fips_test_status, fips_selftest_ippsMLDSA_Verify_get_size_data_buff, (int
     return IPPCP_ALGO_SELFTEST_OK;
 }
 
+IPPFUN(fips_test_status, fips_selftest_ippsMLDSA_Verify_Mu_get_size_data_buff, (int* pDataBuffSize))
+{
+    return fips_selftest_ippsMLDSA_Verify_get_size_data_buff(pDataBuffSize);
+}
+
 IPPFUN(fips_test_status, fips_selftest_ippsMLDSA_KeyGen_get_size_data_buff, (int* pDataBuffSize))
 {
     IPP_BADARG_RET((NULL == pDataBuffSize), IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR);
@@ -181,6 +186,45 @@ IPPFUN(fips_test_status,
     }
 
     *pBufferSize = tmp_size + IPPCP_MLDSA_ALIGNMENT;
+    return IPPCP_ALGO_SELFTEST_OK;
+}
+
+IPPFUN(fips_test_status,
+       fips_selftest_ippsMLDSA_Verify_Mu_get_size,
+       (int* pBufferSize, Ipp8u* pDataBuff))
+{
+    IPP_BADARG_RET((NULL == pDataBuff) || (NULL == pBufferSize), IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR);
+
+    IppStatus sts = ippStsNoErr;
+    int tmp_size  = 0;
+
+    Ipp8u* pLocDataBuff    = (IPP_ALIGNED_PTR(pDataBuff, IPPCP_MLDSA_ALIGNMENT));
+    IppsMLDSAState* pState = (IppsMLDSAState*)pLocDataBuff;
+
+    sts = ippsMLDSA_Init(pState, 1, ML_DSA_44);
+    if (sts != ippStsNoErr) {
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    sts = ippsMLDSA_Verify_Mu_BufferGetSize(&tmp_size, pState);
+    if (sts != ippStsNoErr) {
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    int hashMethodSize = 0;
+    ippsHashMethodGetSize(&hashMethodSize);
+
+    int max_msg_len = 0;
+    int num_vectors = sizeof(verify_kat_vectors) / sizeof(verify_kat_vectors[0]);
+    for (int i = 0; i < num_vectors; i++) {
+        if (verify_kat_vectors[i].msg_len > max_msg_len) {
+            max_msg_len = verify_kat_vectors[i].msg_len;
+        }
+    }
+    int max_M_len = 64 + 2 + max_msg_len;
+
+    *pBufferSize = tmp_size + IPPCP_MLDSA_ALIGNMENT + hashMethodSize + IPPCP_MLDSA_ALIGNMENT +
+                   max_M_len + IPPCP_MLDSA_ALIGNMENT;
     return IPPCP_ALGO_SELFTEST_OK;
 }
 
@@ -393,6 +437,128 @@ IPPFUN(fips_test_status, fips_selftest_ippsMLDSA_Verify, (Ipp8u * pBuffer, Ipp8u
                                &isValid,
                                pState,
                                pScratchBuffer);
+        if (sts != ippStsNoErr || isValid != 1) {
+            MEMORY_FREE_2(pDataBuff, pBuffer, internalMemMgm)
+            return IPPCP_ALGO_SELFTEST_KAT_ERR;
+        }
+    }
+
+    MEMORY_FREE_2(pDataBuff, pBuffer, internalMemMgm)
+    return test_result;
+}
+
+IPPFUN(fips_test_status, fips_selftest_ippsMLDSA_Verify_Mu, (Ipp8u * pBuffer, Ipp8u* pDataBuff))
+{
+    IppStatus sts                = ippStsNoErr;
+    fips_test_status test_result = IPPCP_ALGO_SELFTEST_OK;
+
+    int internalMemMgm = 0;
+#if IPPCP_SELFTEST_USE_MALLOC
+    if (pBuffer == NULL || pDataBuff == NULL) {
+        internalMemMgm      = 1;
+        int dataBuffSize    = 0;
+        int scratchBuffSize = 0;
+
+        test_result = fips_selftest_ippsMLDSA_Verify_Mu_get_size_data_buff(&dataBuffSize);
+        if (test_result != IPPCP_ALGO_SELFTEST_OK) {
+            return test_result;
+        }
+        pDataBuff = malloc((size_t)dataBuffSize);
+        if (pDataBuff == NULL) {
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
+
+        test_result = fips_selftest_ippsMLDSA_Verify_Mu_get_size(&scratchBuffSize, pDataBuff);
+        if (test_result != IPPCP_ALGO_SELFTEST_OK) {
+            MEMORY_FREE(pDataBuff, internalMemMgm)
+            return test_result;
+        }
+        pBuffer = malloc((size_t)scratchBuffSize);
+        if (pBuffer == NULL) {
+            MEMORY_FREE(pDataBuff, internalMemMgm)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
+    }
+#else
+    IPP_BADARG_RET((NULL == pBuffer) || (NULL == pDataBuff), IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR);
+#endif
+
+    Ipp8u* pLocDataBuff    = (IPP_ALIGNED_PTR(pDataBuff, IPPCP_MLDSA_ALIGNMENT));
+    IppsMLDSAState* pState = (IppsMLDSAState*)pLocDataBuff;
+
+    Ipp8u* pScratchBuffer = (IPP_ALIGNED_PTR(pBuffer, IPPCP_MLDSA_ALIGNMENT));
+
+    int hashMethodSize = 0;
+    ippsHashMethodGetSize(&hashMethodSize);
+    IppsHashMethod* pShake256Method = (IppsHashMethod*)pScratchBuffer;
+    pScratchBuffer += hashMethodSize;
+    pScratchBuffer = (IPP_ALIGNED_PTR(pScratchBuffer, IPPCP_MLDSA_ALIGNMENT));
+
+    sts = ippsHashMethodSet_SHAKE256(pShake256Method, 512);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pDataBuff, pBuffer, internalMemMgm)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    IppsMLDSAInfo info;
+    sts = ippsMLDSA_GetInfo(&info, ML_DSA_44);
+    if (sts != ippStsNoErr) {
+        MEMORY_FREE_2(pDataBuff, pBuffer, internalMemMgm)
+        return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+    }
+
+    int max_msg_len = 0;
+    int num_vectors = sizeof(verify_kat_vectors) / sizeof(verify_kat_vectors[0]);
+    for (int i = 0; i < num_vectors; i++) {
+        if (verify_kat_vectors[i].msg_len > max_msg_len) {
+            max_msg_len = verify_kat_vectors[i].msg_len;
+        }
+    }
+
+    Ipp8u* pM_buffer = pScratchBuffer;
+    pScratchBuffer += 64 + 2 + max_msg_len;
+    pScratchBuffer = (IPP_ALIGNED_PTR(pScratchBuffer, IPPCP_MLDSA_ALIGNMENT));
+
+    for (int vector_idx = 0; vector_idx < num_vectors; vector_idx++) {
+        const MLDSAVerifyKAT* kat = &verify_kat_vectors[vector_idx];
+
+        sts = ippsMLDSA_Init(pState, kat->msg_len, ML_DSA_44);
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE_2(pDataBuff, pBuffer, internalMemMgm)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
+
+        Ipp8u tr[64];
+        sts = ippsHashMessage_rmf(kat->public_key, info.publicKeySize, tr, pShake256Method);
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE_2(pDataBuff, pBuffer, internalMemMgm)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
+
+        int M_len = 64 + 2 + kat->msg_len;
+        Ipp8u* M_ = pM_buffer;
+        for (int i = 0; i < 64; ++i)
+            M_[i] = tr[i];
+        M_[64] = 0;
+        M_[65] = 0; /* Context length */
+        for (int i = 0; i < kat->msg_len; ++i)
+            M_[66 + i] = kat->message[i];
+
+        Ipp8u mu[64];
+        sts = ippsHashMessage_rmf(M_, M_len, mu, pShake256Method);
+        if (sts != ippStsNoErr) {
+            MEMORY_FREE_2(pDataBuff, pBuffer, internalMemMgm)
+            return IPPCP_ALGO_SELFTEST_BAD_ARGS_ERR;
+        }
+
+        int isValid = 0;
+
+        sts = ippsMLDSA_Verify_Mu(mu,
+                                  kat->public_key,
+                                  kat->signature,
+                                  &isValid,
+                                  pState,
+                                  pScratchBuffer);
         if (sts != ippStsNoErr || isValid != 1) {
             MEMORY_FREE_2(pDataBuff, pBuffer, internalMemMgm)
             return IPPCP_ALGO_SELFTEST_KAT_ERR;

@@ -119,12 +119,15 @@ IPPAPI(fips_test_status, fips_selftest_ippsLMSVerify, (Ipp8u *pDataBuff))
 /* ML-DSA keygen/sign/verify */
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Sign_get_size_data_buff, (int* pDataBuffSize))
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Verify_get_size_data_buff, (int* pDataBuffSize))
+IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Verify_Mu_get_size_data_buff, (int* pDataBuffSize))
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_KeyGen_get_size_data_buff, (int* pDataBuffSize))
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Sign_get_size, (int* pBufferSize, Ipp8u* pDataBuff))
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Verify_get_size, (int* pBufferSize, Ipp8u* pDataBuff))
+IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Verify_Mu_get_size, (int* pBufferSize, Ipp8u* pDataBuff))
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_KeyGen_get_size, (int* pBufferSize, Ipp8u* pDataBuff))
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Sign, (Ipp8u* pBuffer, Ipp8u* pDataBuff))
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Verify, (Ipp8u* pBuffer, Ipp8u* pDataBuff))
+IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_Verify_Mu, (Ipp8u* pBuffer, Ipp8u* pDataBuff))
 IPPAPI(fips_test_status, fips_selftest_ippsMLDSA_KeyGen, (Ipp8u* pBuffer, Ipp8u* pDataBuff))
 
 /*
@@ -184,6 +187,7 @@ enum FIPS_IPPCP_FUNC {
     MLDSA_KeyGen,
     MLDSA_Sign,
     MLDSA_Verify,
+    MLDSA_Verify_Mu,
 
   /* Not approved functions or
    * FIPS-mode is not yet implemented, < 0

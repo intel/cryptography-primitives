@@ -92,7 +92,7 @@ Return Values
      - An internal functional error. If this output status appears, update to the latest version
        of the library or contact `Intel <https://github.com/intel/cryptography-primitives/issues>`_.
    * - ippStsLengthErr
-     - ``ctxLen < 0`` or ``ctxLen > 255`` or ``msgLen`` is less than 1,
+     - ``pMLDSAState`` was initialized with ``IPPCP_MLDSA_NO_MESSAGE``, or ``ctxLen < 0`` or ``ctxLen > 255`` or ``msgLen`` is less than 1,
        or the message length is greater than 2^32 bytes minus the number
        of bytes required for temporary buffers. Size of such buffers can be
        obtained using the ``ippsMLDSA_SignBufferGetSize`` function.

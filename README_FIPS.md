@@ -339,12 +339,15 @@ fips_test_status fips_selftest_ippsLMSVerify (Ipp8u *pBuffer);
 ```cpp
 fips_test_status fips_selftest_ippsMLDSA_Sign_get_size_data_buff (int *pDataBuffSize);
 fips_test_status fips_selftest_ippsMLDSA_Verify_get_size_data_buff (int *pDataBuffSize);
+fips_test_status fips_selftest_ippsMLDSA_Verify_Mu_get_size_data_buff (int *pDataBuffSize);
 fips_test_status fips_selftest_ippsMLDSA_KeyGen_get_size_data_buff (int *pDataBuffSize);
 fips_test_status fips_selftest_ippsMLDSA_Sign_get_size (int *pBufferSize, Ipp8u *pDataBuff);
 fips_test_status fips_selftest_ippsMLDSA_Verify_get_size (int *pBufferSize, Ipp8u *pDataBuff);
+fips_test_status fips_selftest_ippsMLDSA_Verify_Mu_get_size (int *pBufferSize, Ipp8u *pDataBuff);
 fips_test_status fips_selftest_ippsMLDSA_KeyGen_get_size (int *pBufferSize, Ipp8u *pDataBuff);
 fips_test_status fips_selftest_ippsMLDSA_Sign (Ipp8u *pBuffer, Ipp8u *pDataBuff);
 fips_test_status fips_selftest_ippsMLDSA_Verify (Ipp8u *pBuffer, Ipp8u *pDataBuff);
+fips_test_status fips_selftest_ippsMLDSA_Verify_Mu (Ipp8u *pBuffer, Ipp8u *pDataBuff);
 fips_test_status fips_selftest_ippsMLDSA_KeyGen (Ipp8u *pBuffer, Ipp8u *pDataBuff);
 ```
 

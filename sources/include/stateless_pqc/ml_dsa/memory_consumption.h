@@ -68,26 +68,29 @@ IPPCP_INLINE IppStatus mldsaMemoryConsumption(const IppsMLDSAState* pMLDSACtx,
     locKeygenBytes = (3 * k + l) * sizeof_polynom + 4 * CP_ML_ALIGNMENT;
     locKeygenBytes += IPP_MAX(hashCtxSizeShake_expandA, hashCtxSizeShake_expandS) + CP_ML_ALIGNMENT;
 
-    /* Sign memory consumption */
-    Ipp32s encodeSize =
-        32 * k * cp_ml_bitlen((Ipp32u)((CP_ML_DSA_Q - 1) / (2 * pMLDSACtx->params.gamma_2) - 1));
-    locSignBytes = (2 * k + l) * sizeof_polynom + 3 * CP_ML_ALIGNMENT;
+    if (msg_size != IPPCP_MLDSA_NO_MESSAGE) {
+        /* Sign memory consumption */
+        Ipp32s encodeSize =
+            32 * k *
+            cp_ml_bitlen((Ipp32u)((CP_ML_DSA_Q - 1) / (2 * pMLDSACtx->params.gamma_2) - 1));
+        locSignBytes = (2 * k + l) * sizeof_polynom + 3 * CP_ML_ALIGNMENT;
 #if !CP_ML_MEMORY_OPTIMIZATION
-    locSignBytes += k * l * sizeof_polynom + CP_ML_ALIGNMENT;
+        locSignBytes += k * l * sizeof_polynom + CP_ML_ALIGNMENT;
 #endif // !CP_ML_MEMORY_OPTIMIZATION
-    int max_1 = (2 * k + l) * sizeof_polynom + 3 * CP_ML_ALIGNMENT +
-                IPP_MAX(l * sizeof_polynom + hashCtxSizeShake_expandA + 2 * CP_ML_ALIGNMENT,
-                        IPP_MAX(k * sizeof_polynom + 64 + encodeSize + 2 * CP_ML_ALIGNMENT,
-                                hashCtxSizeShake_sampleInBall + CP_ML_ALIGNMENT)) +
-                k * sizeof_polynom + CP_ML_ALIGNMENT;
-    locSignBytes += IPP_MAX(64 + (2 + ctx_size + msg_size) + CP_ML_ALIGNMENT, max_1);
+        int max_1 = (2 * k + l) * sizeof_polynom + 3 * CP_ML_ALIGNMENT +
+                    IPP_MAX(l * sizeof_polynom + hashCtxSizeShake_expandA + 2 * CP_ML_ALIGNMENT,
+                            IPP_MAX(k * sizeof_polynom + 64 + encodeSize + 2 * CP_ML_ALIGNMENT,
+                                    hashCtxSizeShake_sampleInBall + CP_ML_ALIGNMENT)) +
+                    k * sizeof_polynom + CP_ML_ALIGNMENT;
+        locSignBytes += IPP_MAX(64 + (2 + ctx_size + msg_size) + CP_ML_ALIGNMENT, max_1);
 
-    /* Verify memory consumption */
-    int max_2 = 64 + IPP_MAX(2 + ctx_size + msg_size, encodeSize);
-    max_2     = IPP_MAX(max_2, IPP_MAX(hashCtxSizeShake_expandA, hashCtxSizeShake_sampleInBall));
+        /* Verify memory consumption */
+        int max_2 = 64 + IPP_MAX(2 + ctx_size + msg_size, encodeSize);
+        max_2 = IPP_MAX(max_2, IPP_MAX(hashCtxSizeShake_expandA, hashCtxSizeShake_sampleInBall));
 
-    locVerifyBytes = 3 * k * sizeof_polynom + lambda_4 + 4 * CP_ML_ALIGNMENT;
-    locVerifyBytes += max_2 + CP_ML_ALIGNMENT;
+        locVerifyBytes = 3 * k * sizeof_polynom + lambda_4 + 4 * CP_ML_ALIGNMENT;
+        locVerifyBytes += max_2 + CP_ML_ALIGNMENT;
+    }
 
     if (keygenBytes)
         *keygenBytes = locKeygenBytes;

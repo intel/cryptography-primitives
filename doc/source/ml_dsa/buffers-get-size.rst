@@ -12,6 +12,7 @@ Syntax
     IppStatus ippsMLDSA_KeyGenBufferGetSize(int* pSize, const IppsMLDSAState* pMLDSAState);
     IppStatus ippsMLDSA_SignBufferGetSize(int* pSize, const IppsMLDSAState* pMLDSAState);
     IppStatus ippsMLDSA_VerifyBufferGetSize(int* pSize, const IppsMLDSAState* pMLDSAState);
+    IppStatus ippsMLDSA_Verify_Mu_BufferGetSize(int* pSize, const IppsMLDSAState* pMLDSAState);
 
 Include Files
 -------------
@@ -40,6 +41,9 @@ Description
 
 ``ippsMLDSA_VerifyBufferGetSize`` queries the size for working buffer required for the
 ``ippsMLDSA_Verify`` function.
+
+``ippsMLDSA_Verify_Mu_BufferGetSize`` queries the size for working buffer required for the
+``ippsMLDSA_Verify_Mu`` function.
 
 Allocated memory should be passed directly to the processing API.
 

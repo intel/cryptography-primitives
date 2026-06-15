@@ -549,6 +549,9 @@ ippsMLDSA_Init
 ippsMLDSA_KeyGenBufferGetSize
 ippsMLDSA_SignBufferGetSize
 ippsMLDSA_VerifyBufferGetSize
+ippsMLDSA_Verify_Mu_BufferGetSize
 ippsMLDSA_KeyGen
 ippsMLDSA_Sign
 ippsMLDSA_Verify
+ippsMLDSA_Verify_Mu
+
