@@ -18,7 +18,7 @@
 # Intel® Cryptography Primitives Library
 #
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.18)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/sources/cmake/ippcp-utils.cmake")
 ippcp_getlibversion("${CMAKE_CURRENT_SOURCE_DIR}/include/ippcpversion.h")
@@ -40,6 +40,7 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 cmake_policy(SET CMP0042 NEW)
 cmake_policy(SET CMP0054 NEW)
 cmake_policy(SET CMP0068 NEW)
+cmake_policy(SET CMP0091 NEW)
 
 if("${CMAKE_GENERATOR}" STREQUAL "NMake Makefiles")
   if(NOT(C_COMPILER  STREQUAL ""))
@@ -54,6 +55,11 @@ endif()
 if("${CMAKE_BUILD_TYPE}" STREQUAL "")
   message(STATUS "CMAKE_BUILD_TYPE is unset, defaulting to Release")
   set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+# Set MSVC runtime library for 32-bit
+if(WIN32)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 project(${PROJECT_FULL_NAME}

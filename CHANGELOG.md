@@ -4,6 +4,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 
 ## Intel(R) Cryptography Primitives Library 2.3.0
 - Introduced external Mu verification for the ML-DSA scheme to allow signature verification with pre-computed hashes, reducing memory overhead for large messages. Includes full FIPS self-testing and validation.
+- Increased minimum required CMake version to 3.18 for library and examples build.
 
 ## Intel(R) Cryptography Primitives Library 2.2.0
 - Fixed ML-DSA signature verification to strictly enforce hint vector weight bounds.

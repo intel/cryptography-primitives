@@ -94,7 +94,7 @@ endfunction()
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_LIST_DIR)
 # Build with standalone library
-  cmake_minimum_required(VERSION 3.1)
+  cmake_minimum_required(VERSION 3.18)
 
   project("Intel Cryptography Primitives Library Examples" CXX)
   set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
