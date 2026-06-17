@@ -1599,10 +1599,10 @@ mbx_status MB_FUNC_NAME(internal_avx512_x25519_public_key_)(int8u* const pa_publ
         scalar_mb8[3] = and64_const(scalar_mb8[3], 0x7fffffffffffffff);
         scalar_mb8[3] = or64(scalar_mb8[3], set64(0x4000000000000000));
 
-        /* set up: "special" point S = {1:?:1} => {u1:z1} */
-        __ALIGN64 U64 U1[5];
+        /* set up: "special" point S = {1:?:1} => {ux1:z1} */
+        __ALIGN64 U64 Ux1[5];
         __ALIGN64 U64 Z1[5];
-        fe52mb8_set(U1, 1);
+        fe52mb8_set(Ux1, 1);
         fe52mb8_set(Z1, 1);
 
         /* set up: pre-computed G-S (base and "special") */
@@ -1633,7 +1633,7 @@ mbx_status MB_FUNC_NAME(internal_avx512_x25519_public_key_)(int8u* const pa_publ
             __mb_mask b = cmp64_mask(and64_const(e, 1), get_zero64(), _MM_CMPINT_NE);
 
             swap = mask_xor(swap, b);
-            fe52mb8_cswap(U1, U2, swap);
+            fe52mb8_cswap(Ux1, U2, swap);
             fe52mb8_cswap(Z1, Z2, swap);
             swap = b;
 
@@ -1646,36 +1646,36 @@ mbx_status MB_FUNC_NAME(internal_avx512_x25519_public_key_)(int8u* const pa_publ
             mu[4] = set64((long long)muTBL52[bitpos - 3][4]);
 
             /* diff addition */
-            fe52_sub(B, U1, Z1); /* B = U1-Z1                 */
-            fe52_add(A, U1, Z1); /* A = U1+Z1                 */
-            fe52_mul(C, mu, B);  /* C = mu*B                  */
-            fe52_sub(B, A, C);   /* B = (U1+Z1) - mu*(U1-Z1)  */
-            fe52_add(A, A, C);   /* A = (Ur+Z1) + mu*(U1-Z1)  */
+            fe52_sub(B, Ux1, Z1); /* B = Ux1-Z1                  */
+            fe52_add(A, Ux1, Z1); /* A = Ux1+Z1                  */
+            fe52_mul(C, mu, B);   /* C = mu*B                    */
+            fe52_sub(B, A, C);    /* B = (Ux1+Z1) - mu*(Ux1-Z1)  */
+            fe52_add(A, A, C);    /* A = (Ur+Z1)  + mu*(Ux1-Z1)  */
             ed25519_sqr_dual(A, B, A, B);
-            ed25519_mul_dual(U1, Z1, Z2, A, U2, B);
+            ed25519_mul_dual(Ux1, Z1, Z2, A, U2, B);
 
             e = srli64(e, 1);
         }
 
         /* 3 doublings */
         for (bitpos = 0; bitpos < 3; bitpos++) {
-            fe52_add(A, U1, Z1);  /*  A = U1+Z1   */
-            fe52_sub(B, U1, Z1);  /*  B = U1-Z1   */
+            fe52_add(A, Ux1, Z1); /*  A = Ux1+Z1  */
+            fe52_sub(B, Ux1, Z1); /*  B = Ux1-Z1  */
             fe52_sqr(A, A);       /*  A = A^2     */
             fe52_sqr(B, B);       /*  B = B^*2    */
             fe52_sub(C, A, B);    /*  C = A-B     */
             fe52_mul121666(D, C); /*  D = (A+2)/4 * C*/
             fe52_add(D, D, B);    /*  D = D+B     */
-            fe52_mul(U1, A, B);   /*  U1 = A*B    */
+            fe52_mul(Ux1, A, B);  /*  Ux1 = A*B   */
             fe52_mul(Z1, C, D);   /*  Z1 = C*D    */
         }
 
         fe52mb8_inv_mod25519(A, Z1);
-        fe52_mul(U1, U1, A);
-        fe52mb8_red_p25519(U1, U1);
+        fe52_mul(Ux1, Ux1, A);
+        fe52mb8_red_p25519(Ux1, Ux1);
 
         /* convert result back */
-        ifma_mb8_to_BNU((int64u* const*)pa_public_key, (const int64u(*)[8])U1, 256);
+        ifma_mb8_to_BNU((int64u* const*)pa_public_key, (const int64u(*)[8])Ux1, 256);
 
         /* clear secret */
         MB_FUNC_NAME(zero_)((int64u(*)[8])scalar_mb8, sizeof(scalar_mb8) / sizeof(U64));

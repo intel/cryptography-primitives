@@ -125,27 +125,27 @@ void MB_FUNC_NAME(ifma_ec_sm2_add_point_)(SM2_POINT* r, const SM2_POINT* p, cons
     __ALIGN64 U64 Z3[PSM2_LEN52];
 
     /* temporary */
-    __ALIGN64 U64 U1[PSM2_LEN52];
-    __ALIGN64 U64 U2[PSM2_LEN52];
+    __ALIGN64 U64 Ux1[PSM2_LEN52];
+    __ALIGN64 U64 Ux2[PSM2_LEN52];
     __ALIGN64 U64 S1[PSM2_LEN52];
     __ALIGN64 U64 S2[PSM2_LEN52];
     __ALIGN64 U64 H[PSM2_LEN52];
     __ALIGN64 U64 R[PSM2_LEN52];
 
-    mul(S1, Y1, Z2); /* S1 = Y1*Z2 */
-    sqr(U1, Z2);     /* U1 = Z2^2  */
+    mul(S1, Y1, Z2);   /* S1 = Y1*Z2 */
+    sqr(Ux1, Z2);      /* Ux1 = Z2^2  */
 
-    mul(S2, Y2, Z1); /* S2 = Y2*Z1 */
-    sqr(U2, Z1);     /* U2 = Z1^2 */
+    mul(S2, Y2, Z1);   /* S2 = Y2*Z1 */
+    sqr(Ux2, Z1);      /* Ux2 = Z1^2 */
 
-    mul(S1, S1, U1); /* S1 = Y1*Z2^3 */
-    mul(S2, S2, U2); /* S2 = Y2*Z1^3 */
+    mul(S1, S1, Ux1);  /* S1 = Y1*Z2^3 */
+    mul(S2, S2, Ux2);  /* S2 = Y2*Z1^3 */
 
-    mul(U1, X1, U1); /* U1 = X1*Z2^2 */
-    mul(U2, X2, U2); /* U2 = X2*Z1^2 */
+    mul(Ux1, X1, Ux1); /* Ux1 = X1*Z2^2 */
+    mul(Ux2, X2, Ux2); /* Ux2 = X2*Z1^2 */
 
-    sub(R, S2, S1);  /* R = S2-S1 */
-    sub(H, U2, U1);  /* H = U2-U1 */
+    sub(R, S2, S1);    /* R = S2-S1 */
+    sub(H, Ux2, Ux1);  /* H = Ux2-Ux1 */
 
 
     /* check if affine (p.x:p.y) == (q.x:q.y) and and do doubling if this happens */
@@ -160,19 +160,19 @@ void MB_FUNC_NAME(ifma_ec_sm2_add_point_)(SM2_POINT* r, const SM2_POINT* p, cons
         MB_FUNC_NAME(ifma_ec_sm2_dbl_point_)(&P2, p);
     }
 
-    mul(Z3, Z1, Z2); /* Z3 = Z1*Z2 */
-    sqr(U2, H);      /* U2 = H^2 */
-    mul(Z3, Z3, H);  /* Z3 = (Z1*Z2)*H */
-    sqr(S2, R);      /* S2 = R^2 */
-    mul(H, H, U2);   /* H = H^3 */
+    mul(Z3, Z1, Z2);    /* Z3 = Z1*Z2 */
+    sqr(Ux2, H);        /* Ux2 = H^2 */
+    mul(Z3, Z3, H);     /* Z3 = (Z1*Z2)*H */
+    sqr(S2, R);         /* S2 = R^2 */
+    mul(H, H, Ux2);     /* H = H^3 */
 
-    mul(U1, U1, U2); /* U1 = U1*H^2 */
-    sub(X3, S2, H);  /* X3 = R^2 - H^3 */
-    mul2(U2, U1);    /* U2 = 2*U1*H^2 */
-    mul(S1, S1, H);  /* S1 = S1*H^3 */
-    sub(X3, X3, U2); /* X3 = (R^2 - H^3) -2*U1*H^2 */
+    mul(Ux1, Ux1, Ux2); /* Ux1 = Ux1*H^2 */
+    sub(X3, S2, H);     /* X3 = R^2 - H^3 */
+    mul2(Ux2, Ux1);     /* Ux2 = 2*Ux1*H^2 */
+    mul(S1, S1, H);     /* S1 = S1*H^3 */
+    sub(X3, X3, Ux2);   /* X3 = (R^2 - H^3) -2*Ux1*H^2 */
 
-    sub(Y3, U1, X3); /* Y3 = R*(U1*H^2 - X3) -S1*H^3 */
+    sub(Y3, Ux1, X3);   /* Y3 = R*(Ux1*H^2 - X3) -S1*H^3 */
     mul(Y3, Y3, R);
     sub(Y3, Y3, S1);
 

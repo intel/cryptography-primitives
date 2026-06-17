@@ -48,7 +48,7 @@ IPP_OWN_DEFN(void, setupTable, (BNU_CHUNK_T * pTbl, const BNU_CHUNK_T* pPdata, I
 
     // Table[1] ( =[1]p )
     //cpScatter32((Ipp32u*)pTbl, 16, 0, (Ipp32u*)pPdata, pointLen32);
-    gsScramblePut(pTbl, (1 - 1), pPdata, pointLen, (5 - 1));
+    gsScramblePut(pTbl, 0 /* (1 - 1) */, pPdata, pointLen, (5 - 1));
 
     // Table[2] ( =[2]p )
     gfec_point_double(A, pPdata, pEC);
