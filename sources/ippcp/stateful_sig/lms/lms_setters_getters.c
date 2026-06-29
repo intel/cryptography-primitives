@@ -511,6 +511,101 @@ IPPFUN(IppStatus,
 }
 
 /*F*
+//    Name: ippsLMSSetPrivateKeyState
+//
+// Purpose: Set LMS private key's type, otstype, q, extrabufSize, secret seed, pI and extra buf to data read from file.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pSecretSeed == NULL
+//                            pI == NULL
+//                            pState == NULL
+//                            pExtraBuf == NULL (when extraBufSize > 0)
+//    ippStsBadArgErr         lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8
+//                            lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1
+//                            lmsType.lmsOIDAlgo   > LMS_SHA256_M24_H25
+//                            lmsType.lmsOIDAlgo   < LMS_SHA256_M32_H5
+//                            q is out of valid range
+//    ippStsLengthErr         extraBufSize < 0
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    lmsType         structure with LMS parameters lmotsOIDAlgo and lmsOIDAlgo
+//    q               leaf number (signature counter)
+//    pSecretSeed     pointer to the LMS private key secret seed
+//    pI              pointer to the LMS private key identifier
+//    pExtraBuf       pointer to extra buffer data (can be NULL if extraBufSize is 0)
+//    extraBufSize    size of extra buffer data
+//    pState          pointer to the LMS private key state
+//
+*F*/
+/* clang-format off */
+IPPFUN(IppStatus, ippsLMSSetPrivateKeyState, (const IppsLMSAlgoType lmsType,
+                                              const Ipp32u q,
+                                              const Ipp8u* pSecretSeed,
+                                              const Ipp8u* pI,
+                                              const Ipp8u* pExtraBuf,
+                                              const Ipp32s extraBufSize,
+                                              IppsLMSPrivateKeyState* pState))
+/* clang-format on */
+{
+    IPP_BAD_PTR3_RET(pSecretSeed, pI, pState);
+
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo >= LMS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmsOIDAlgo <= LMS_MIN, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo >= LMOTS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(lmsType.lmotsOIDAlgo <= LMOTS_MIN, ippStsBadArgErr);
+    IPP_BADARG_RET(extraBufSize < 0, ippStsLengthErr);
+    IPP_BADARG_RET((extraBufSize > 0) && (NULL == pExtraBuf), ippStsNullPtrErr);
+
+    IppStatus ippcpSts = ippStsErr;
+
+    /* Set LMS and LMOTS parameters */
+    cpLMSParams lmsParams;
+    cpLMOTSParams lmotsParams;
+    ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+    ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
+    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+    /* Validate q parameter - should be less than 2^h */
+    IPP_BADARG_RET(q >= (1u << lmsParams.h), ippStsBadArgErr);
+
+    /* Set context id to prevent its copying */
+    CP_LMS_SET_PRIV_KEY_CTX_ID(pState);
+    /* Set algorithm types */
+    pState->lmsOIDAlgo   = lmsType.lmsOIDAlgo;
+    pState->lmotsOIDAlgo = lmsType.lmotsOIDAlgo;
+
+    /* Set q (signature counter) */
+    pState->q = q;
+
+    Ipp8u* ptr = (Ipp8u*)pState;
+
+    /* allocate internal contexts */
+    ptr += sizeof(IppsLMSPrivateKeyState);
+
+    pState->pSecretSeed = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), CP_LMS_ALIGNMENT));
+    /* Copy secret seed */
+    CopyBlock(pSecretSeed, pState->pSecretSeed, (cpSize)lmsParams.m);
+    ptr += lmsParams.m;
+
+    pState->pI = (Ipp8u*)(IPP_ALIGNED_PTR((ptr), CP_LMS_ALIGNMENT));
+    /* Copy identifier */
+    CopyBlock(pI, pState->pI, CP_PK_I_BYTESIZE);
+    ptr += CP_PK_I_BYTESIZE;
+
+    pState->pExtraBuf = ptr;
+    /* Rounding to lmsParams.m and set */
+    pState->extraBufSize = (extraBufSize / (Ipp32s)lmsParams.m) * (Ipp32s)lmsParams.m;
+    /* Copy extra buffer data if present */
+    if (pState->extraBufSize > 0 && pExtraBuf != NULL) {
+        CopyBlock(pExtraBuf, pState->pExtraBuf, pState->extraBufSize);
+    }
+
+    return ippStsNoErr;
+}
+
+/*F*
 //    Name: ippsLMSInitKeyPair
 //
 // Purpose: Init LMS public and private keys states.
