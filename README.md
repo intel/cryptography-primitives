@@ -83,7 +83,5 @@ Intel® Cryptography Primitives Library is licensed under Apache License, Versio
 
 Intel® Cryptography Primitives Library 1.0.0 release is validated for FIPS-140-3 (Security Requirements for Cryptographic Modules) compliance and has the following CAVP (Cryptographic Algorithm Validation Program) certificates:
 
-- [Intel® Cryptography Primitives Library optimized for Intel® AVX512 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38661)
-- [Intel® Cryptography Primitives Library optimized for Intel® AVX2 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38659)
-- [Intel® Crypto Multi-buffer Library optimized for Intel® AVX512 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38660)
-- [Intel® Crypto Multi-buffer Library optimized for Intel® AVX2 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=38658)
+- [Intel® Cryptography Primitives Library optimized for Intel® AVX512 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=41279)
+- [Intel® Crypto Multi-buffer Library optimized for Intel® AVX512 ISA](https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?validation=41280)
