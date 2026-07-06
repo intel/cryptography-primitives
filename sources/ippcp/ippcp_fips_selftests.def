@@ -514,6 +514,7 @@ ippsLMSVerifyBufferGetSize
 ippsLMSSignatureStateGetSize
 ippsLMSPublicKeyStateGetSize
 ippsLMSSetPublicKeyState
+ippsLMSSetPrivateKeyState
 ippsLMSSetSignatureState
 ippsLMSVerify
 ippsLMSKeyGenBufferGetSize

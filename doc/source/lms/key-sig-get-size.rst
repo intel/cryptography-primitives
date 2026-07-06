@@ -39,10 +39,10 @@ Parameters
 
 .. note::
 
-   ``extraBufSize`` must be a multiple of the OTS parameter ``n``.
-   If it is not, the value will be reduced to the nearest lower multiple of ``n``.
-   Example: if ``extraBufSize == 3 * n + 2`` then
-   ``extraBufSize == 3 * n`` will be used inside the implementation
+   ``extraBufSize`` must be a multiple of the LMS parameter ``m``.
+   If it is not, the value will be reduced to the nearest lower multiple of ``m``.
+   Example: if ``extraBufSize == 3 * m + 2`` then
+   ``extraBufSize == 3 * m`` will be used inside the implementation
    and the function will output the ``ippStsSizeWrn`` warning status.
 
 Description
@@ -81,4 +81,4 @@ Return Values
    * - ippStsLengthErr
      - ``extraBufSize < 0``.
    * - ippStsSizeWrn
-     - ``extraBufSize`` is not a multiple of the OTS parameter ``n``.
+     - ``extraBufSize`` is not a multiple of the LMS parameter ``m``.

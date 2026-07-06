@@ -32,6 +32,7 @@
 //                            OR q is incorrect
 //    ippStsContextMatchErr   pSign or pKey contexts are invalid
 //    ippStsLengthErr         msgLen < 1
+//                            msgLen > IPP_MAX_32S - (CP_PK_I_BYTESIZE + 4 + 2 + n)
 //    ippStsNoErr             no errors
 //
 // Parameters:
@@ -77,6 +78,8 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
     ippcpSts = setLMSParams(lmsTypePk, &lmsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+    IPP_BADARG_RET(msgLen > (Ipp32s)((IPP_MAX_32S) - (CP_PK_I_BYTESIZE + 4 + 2 + lmotsParams.n)),
+                   ippStsLengthErr);
     Ipp32u nParam = lmotsParams.n;
     Ipp32u wParam = lmotsParams.w;
     Ipp32u pParam = lmotsParams.p;

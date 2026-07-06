@@ -49,10 +49,10 @@ The scheme of the public key is shown below:
     +---------------------------------+
     |               I                 | 16 bytes
     +---------------------------------+
-    |               K                 | n bytes
+    |               K                 | m bytes
     +---------------------------------+
 
-``n`` is a LM-OTS parameter.
+``m`` is an LMS parameter.
 
 .. note::
 

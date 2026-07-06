@@ -40,7 +40,7 @@ Parameters
         The function should be defined as:
         ``IppStatus rndFunc(Ipp8u* pRnd, int size, void* pRndParam)``.
         This function must be cryptographically secure.
-        Security strength must be ``8*n`` bits, where ``n`` is the length of the hash function output.
+        Security strength must be ``8*m`` bits, where ``m`` is the length of the hash function output.
         The ``size`` parameter is the size of the buffer in bytes.
         The ``pRndParam`` parameter is a pointer to the user-defined parameter.
         If ``rndFunc`` is NULL then ``TRNGenRDSEED`` is used as a random number generator.

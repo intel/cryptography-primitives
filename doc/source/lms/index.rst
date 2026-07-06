@@ -90,6 +90,7 @@ Example 2. Verification
    key-sig-get-size
    buffer-get-size
    set-pub-key-state
+   set-priv-key-state
    set-sig-state
    init-key-state
    init-sig-state
