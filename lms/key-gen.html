@@ -532,6 +532,7 @@
 <li class="toctree-l4"><a class="reference internal" href="key-sig-get-size.html">Get Size Of LMS Keys and Signature States</a></li>
 <li class="toctree-l4"><a class="reference internal" href="buffer-get-size.html">Get Size Of Temporary Buffer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="set-pub-key-state.html">Set LMS Public Key State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="set-priv-key-state.html">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="set-sig-state.html">Set LMS Signature State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="init-sig-state.html">Initialize LMS Signature State</a></li>
@@ -874,7 +875,7 @@ the <a class="reference internal" href="key-sig-get-size.html#lms-states-get-siz
 The function should be defined as:
 <code class="docutils literal notranslate"><span class="pre">IppStatus</span> <span class="pre">rndFunc(Ipp8u*</span> <span class="pre">pRnd,</span> <span class="pre">int</span> <span class="pre">size,</span> <span class="pre">void*</span> <span class="pre">pRndParam)</span></code>.
 This function must be cryptographically secure.
-Security strength must be <code class="docutils literal notranslate"><span class="pre">8*n</span></code> bits, where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the length of the hash function output.
+Security strength must be <code class="docutils literal notranslate"><span class="pre">8*m</span></code> bits, where <code class="docutils literal notranslate"><span class="pre">m</span></code> is the length of the hash function output.
 The <code class="docutils literal notranslate"><span class="pre">size</span></code> parameter is the size of the buffer in bytes.
 The <code class="docutils literal notranslate"><span class="pre">pRndParam</span></code> parameter is a pointer to the user-defined parameter.
 If <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code> is NULL then <code class="docutils literal notranslate"><span class="pre">TRNGenRDSEED</span></code> is used as a random number generator.</p></td>

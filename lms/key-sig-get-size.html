@@ -532,6 +532,7 @@
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">Get Size Of LMS Keys and Signature States</a></li>
 <li class="toctree-l4"><a class="reference internal" href="buffer-get-size.html">Get Size Of Temporary Buffer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="set-pub-key-state.html">Set LMS Public Key State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="set-priv-key-state.html">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="set-sig-state.html">Set LMS Signature State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="init-sig-state.html">Initialize LMS Signature State</a></li>
@@ -876,10 +877,10 @@ See <a class="reference internal" href="enum.html#lms-enum"><span class="std std
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span></code> must be a multiple of the OTS parameter <code class="docutils literal notranslate"><span class="pre">n</span></code>.
-If it is not, the value will be reduced to the nearest lower multiple of <code class="docutils literal notranslate"><span class="pre">n</span></code>.
-Example: if <code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">==</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">+</span> <span class="pre">2</span></code> then
-<code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">==</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">n</span></code> will be used inside the implementation
+<p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span></code> must be a multiple of the LMS parameter <code class="docutils literal notranslate"><span class="pre">m</span></code>.
+If it is not, the value will be reduced to the nearest lower multiple of <code class="docutils literal notranslate"><span class="pre">m</span></code>.
+Example: if <code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">==</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">m</span> <span class="pre">+</span> <span class="pre">2</span></code> then
+<code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">==</span> <span class="pre">3</span> <span class="pre">*</span> <span class="pre">m</span></code> will be used inside the implementation
 and the function will output the <code class="docutils literal notranslate"><span class="pre">ippStsSizeWrn</span></code> warning status.</p>
 </div>
 </section>
@@ -916,7 +917,7 @@ Any other value indicates an error or warning.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>ippStsSizeWrn</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span></code> is not a multiple of the OTS parameter <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">extraBufSize</span></code> is not a multiple of the LMS parameter <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></td>
 </tr>
 </tbody>
 </table>

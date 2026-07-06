@@ -44,6 +44,8 @@
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Set LMS Signature State" href="set-sig-state.html" />
+    <link rel="prev" title="Set LMS Public Key State" href="set-pub-key-state.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -106,8 +108,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -155,7 +155,7 @@
  </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <ul class="nav bd-sidenav">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../introducing-intel-cryptography-primitives.html">Introducing Intel® Cryptography Primitives Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notational-conventions.html">Notational Conventions</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../theory-of-operation.html">Theory of Operation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -191,7 +191,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance-test-tool-perfsys-cli-options.html">Performance Test Tool (perfsys) Command Line Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../preview-features.html">Preview Features</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 has-children"><a class="reference internal" href="../overview.html">Overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../basic-features.html">Basic Features</a></li>
 
@@ -510,7 +510,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../aes/ippsaes_cmacsetupnoise.html">ippsAES_CMACSetupNoise</a></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../post-quantum-functions.html">Post-quantum Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../post-quantum-functions.html">Post-quantum Functions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="../xmss/xmss-index.html">XMSS</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../xmss/xmss-key-gen.html">XMSS Key Generation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../xmss/xmss-sign.html">XMSS Signature Generation</a></li>
@@ -524,7 +524,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../xmss/xmss-init-sig-state.html">Initialize XMSS Signature State</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="index.html">LMS</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="index.html">LMS</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="key-gen.html">LMS Key Generation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="sign.html">LMS Signature Generation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="verify.html">LMS Verification</a></li>
@@ -532,6 +532,7 @@
 <li class="toctree-l4"><a class="reference internal" href="key-sig-get-size.html">Get Size Of LMS Keys and Signature States</a></li>
 <li class="toctree-l4"><a class="reference internal" href="buffer-get-size.html">Get Size Of Temporary Buffer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="set-pub-key-state.html">Set LMS Public Key State</a></li>
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="set-sig-state.html">Set LMS Signature State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="init-sig-state.html">Initialize LMS Signature State</a></li>
@@ -963,6 +964,24 @@ or <code class="docutils literal notranslate"><span class="pre">pExtraBuf</span>
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="set-pub-key-state.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Set LMS Public Key State</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="set-sig-state.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Set LMS Signature State</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
