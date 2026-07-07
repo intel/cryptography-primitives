@@ -900,6 +900,15 @@ functions:
 <a class="reference internal" href="gfpecinit.html#gfpecinit"><span class="std std-ref">GFpECInit</span></a>,
 <a class="reference internal" href="gfpecset.html#gfpecset"><span class="std std-ref">GFpECSet</span></a>, or
 <a class="reference internal" href="gfpecsetsubgroup.html#gfpecsetsubgroup"><span class="std std-ref">GFpECSetSubgroup</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The SM2-specific optimized code paths of this function are selected only
+for an elliptic curve context initialized with the
+<a class="reference internal" href="gfpecinitstd.html#gfpecinitstd"><span class="std std-ref">GFpECInitStd</span></a> function for the SM2 curve. An SM2 curve
+defined manually with <a class="reference internal" href="gfpecinit.html#gfpecinit"><span class="std std-ref">GFpECInit</span></a> and
+<a class="reference internal" href="gfpecset.html#gfpecset"><span class="std std-ref">GFpECSet</span></a>/<a class="reference internal" href="gfpecsetsubgroup.html#gfpecsetsubgroup"><span class="std std-ref">GFpECSetSubgroup</span></a>
+produces correct results but uses the generic code path.</p>
+</div>
 <p>The <em>ippsGFpECScratchBufferSize</em> function should be called with <em>nScalars</em> equal to at least 1 to get the valid <em>pScratchBuffer</em>.</p>
 </section>
 <section id="return-values">
