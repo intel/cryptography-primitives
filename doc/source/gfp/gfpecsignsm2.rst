@@ -76,6 +76,15 @@ functions:
 :ref:`GFpECSet <gfpecset>`, or
 :ref:`GFpECSetSubgroup <gfpecsetsubgroup>`.
 
+.. note::
+
+   The SM2-specific optimized code paths of this function are selected only
+   for an elliptic curve context initialized with the
+   :ref:`GFpECInitStd <gfpecinitstd>` function for the SM2 curve. An SM2 curve
+   defined manually with :ref:`GFpECInit <gfpecinit>` and
+   :ref:`GFpECSet <gfpecset>`/:ref:`GFpECSetSubgroup <gfpecsetsubgroup>`
+   produces correct results but uses the generic code path.
+
 The *ippsGFpECScratchBufferSize* function should be called with *nScalars* equal to at least 1 to get the valid *pScratchBuffer*.
 
 Return Values

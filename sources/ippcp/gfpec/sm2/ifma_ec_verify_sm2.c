@@ -79,6 +79,11 @@ IPP_OWN_DEFN(IppECResult, gfec_Verify_sm2_avx512, (const IppsBigNumState* pMsgDi
     sign_r = to_radix52((Ipp64u*)pBufSignR);
     sign_s = to_radix52((Ipp64u*)pBufSignS);
 
+    /* recode_point_to_mont52 (below) reuses pPool as scratch and overwrites all
+     * three slots, including pBufSignS. Copy out scalar s now, before it is lost. */
+    BNU_CHUNK_T* pExtendedS = cpGFpGetPool(2, pME);
+    cpGFpElementCopyPad(pExtendedS, orderLen + 1, pBufSignS, orderLen);
+
     /* Convert public point to proper Montgomery domain and 2^52 radix */
     __ALIGN64 PSM2_POINT_IFMA P;
     recode_point_to_mont52(&P, ECP_POINT_DATA(pRegPublic), pPool /* 3 elem */, pmeth, pME);
@@ -95,16 +100,13 @@ IPP_OWN_DEFN(IppECResult, gfec_Verify_sm2_avx512, (const IppsBigNumState* pMsgDi
     if ((mask8)0xFF == sign_err_mask)
         verifyResult = ippECInvalidSignature;
 
-    BNU_CHUNK_T* pExtendedS = cpGFpGetPool(2, pME);
     BNU_CHUNK_T* pExtendedT = cpGFpGetPool(2, pME);
     BNU_CHUNK_T* pTmp       = cpGFpGetPool(1, pME);
 
     /* compute [s]G + t[P] */
 
-    /* copmute [s]G */
+    /* compute [s]G */
     __ALIGN64 PSM2_POINT_IFMA sG;
-    /* create s */
-    cpGFpElementCopyPad(pExtendedS, orderLen + 1, pBufSignS, orderLen);
     if (ECP_PREMULBP(pEC)) {
         gesm2_mul_base(&sG, (Ipp8u*)pExtendedS);
     } else {

@@ -3,6 +3,7 @@
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
 ## Intel(R) Cryptography Primitives Library 2.3.0
+- Fixed ippsGFpECVerifySM2 rejecting valid signatures on the AVX-512 IFMA (k1/d1) code path due to a scratch-buffer aliasing defect in the optimized SM2 verify kernel.
 - Introduced external Mu verification for the ML-DSA scheme to allow signature verification with pre-computed hashes, reducing memory overhead for large messages. Includes full FIPS self-testing and validation.
 - Increased minimum required CMake version to 3.18 for library and examples build.
 - Added LMS private key state setting function to set LMS private key components without re-generating the entire key.
