@@ -112,7 +112,10 @@ IPPFUN(IppStatus, ippsMLDSA_Sign, (const Ipp8u* pMsg,
     } else {
         sts = rndFunc((Ipp32u*)rnd, CP_RAND_DATA_BYTES * 8, pRndParam);
     }
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    if (sts != ippStsNoErr) {
+        PurgeBlock(rnd, sizeof(rnd));
+        return sts;
+    }
 
     sts = cp_MLDSA_Sign_internal(pMsg, msgLen, pCtx, ctxLen, pPrvKey, rnd, pSign, pMLDSAState);
 

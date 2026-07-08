@@ -133,9 +133,13 @@ int main(void)
         if (!checkStatus("ippsAES_GCMGetTag", ippStsNoErr, status))
             break;
 
-        /* Compare output to known answer */
+        /* Compare output to known answer.
+         * SECURITY NOTE: In a real application, you must use a constant-time comparison
+         * and MUST clear the plaintext buffer if the tags do not match. */
         if (0 != memcmp(pOutTag, tag, TAG_LEN)) {
             printf("ERROR: Output tag and reference tag do not match\n");
+            /* Destroy unauthenticated plaintext immediately */
+            memset(pOutPlainText, 0, MSG_LEN);
             break;
         }
         if (0 != memcmp(pOutPlainText, plainText, MSG_LEN)) {

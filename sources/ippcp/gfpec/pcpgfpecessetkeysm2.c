@@ -36,9 +36,10 @@
 // Returns:                   Reason:
 //    ippStsNullPtrErr           pPrivate == NULL / pPublic == NULL / pState == NULL / pEC == NULL
 //    ippStsContextMatchErr      the algorithm is in an invalid state or any of the specified contexts does not match the operation
-//    ippStsOutOfRangeErr        private key does not belong to the EC's finite field or public key/result does not belong to EC
+//    ippStsOutOfRangeErr        private key does not belong to the EC's finite field or result does not belong to EC
 //    ippStsNotSupportedModeErr  pGFE->extdegree > 1
 //    ippStsBadArgErr            curve element size is not the same as in init / pPrivate is negative / pPrivate > pEC GFp mod
+//    ippStsInvalidPoint         public key does not belong to the EC
 //    ippStsPointAtInfinity      shared secret is a point at infinity
 //    ippStsNoErr                no errors
 //
@@ -75,6 +76,11 @@ IPPFUN(IppStatus, ippsGFpECESSetKey_SM2, (const IppsBigNumState* pPrivate,
             IppsGFpECPoint PT;
             IppsGFpElement ptX, ptY;
             int finitePoint = 0;
+
+            /* validate the peer public point lies on the EC */
+            IPP_BADARG_RET(!ECP_POINT_VALID_ID(pPublic), ippStsContextMatchErr);
+            if (!gfec_IsPointAtInfinity(pPublic))
+                IPP_BADARG_RET(!gfec_IsPointOnCurve(pPublic, pEC), ippStsInvalidPoint);
 
             cpEcGFpInitPoint(&PT, cpEcGFpGetPool(1, pEC), 0, pEC);
             multResult = ippsGFpECMulPoint(pPublic, pPrivate, &PT, pEC, pEcScratchBuffer);

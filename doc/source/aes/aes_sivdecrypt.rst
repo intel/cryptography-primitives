@@ -85,6 +85,10 @@ If the input and re-computed values ofSIV are the same, the plaintext
 authentication is considered passed (\*pAuthPassed = 1), otherwise, the
 plaintextauthentication is considered failed (\*pAuthPassed = 0).
 
+.. warning::
+   Consume ``pDst`` only if ``*pAuthPassed == 1``. If authentication fails, the application MUST scrub ``pDst`` immediately to prevent the processing of forged data.
+
+
 
 Return Values
 -------------

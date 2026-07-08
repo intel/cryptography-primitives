@@ -72,5 +72,6 @@ status value of 0 indicates that all operations completed successfully.
 The error condition can be analyzed by the MBX_GET_STS() call. The
 result of verification is returned as status too. The MBX_STATUS_OK
 value means that signature is verified, else status contains
-MBX_STATUS_SIGNATURE_ERR value.
+MBX_STATUS_SIGNATURE_ERR value. A buffer whose message length is greater
+than 0x7FFFFFFF is rejected with MBX_STATUS_MISMATCH_PARAM_ERR.
 

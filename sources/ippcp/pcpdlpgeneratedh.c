@@ -180,7 +180,9 @@ IPPFUN(IppStatus, ippsDLPGenerateDH, (const IppsBigNumState* pSeedIn,
                 int i;
 
                 if (seed_is_random) {
-                    rndFunc(pSeed1BNU32, seedBitSize, pRndParam);
+                    IppStatus rndSts = rndFunc(pSeed1BNU32, seedBitSize, pRndParam);
+                    if (ippStsNoErr != rndSts)
+                        return rndSts;
                     ippsSet_BN(ippBigNumPOS, seedSize32, pSeed1BNU32, pSeed1);
                 }
 
@@ -353,8 +355,10 @@ IPPFUN(IppStatus, ippsDLPGenerateDH, (const IppsBigNumState* pSeedIn,
             BN_SIGN(pG) = ippBigNumPOS;
             for (genCounter = 0; genCounter < MAXLOOP; genCounter++) {
                 /* random < 2^L */
-                cpSize sizeG = BITS_BNU_CHUNK(feBitsize);
-                rndFunc((Ipp32u*)BN_NUMBER(pG), feBitsize, pRndParam);
+                cpSize sizeG     = BITS_BNU_CHUNK(feBitsize);
+                IppStatus rndSts = rndFunc((Ipp32u*)BN_NUMBER(pG), feBitsize, pRndParam);
+                if (ippStsNoErr != rndSts)
+                    return rndSts;
                 FIX_BNU(BN_NUMBER(pG), sizeG);
                 BN_SIZE(pG) = sizeG;
                 /* G < (P-1) */

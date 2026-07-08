@@ -138,6 +138,8 @@ IPP_OWN_DEFN(void, aes_cfb16_enc_vaes_mb16, (const Ipp8u* const source_pa[16],
             mbMask128[i] = 0;
             mbMask[i]    = 0;
             loc_len64[i] = 0;
+            loc_src[i]   = NULL;
+            loc_dst[i]   = NULL;
             continue;
         }
 

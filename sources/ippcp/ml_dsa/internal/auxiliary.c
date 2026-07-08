@@ -298,7 +298,7 @@ IPP_OWN_DEFN(IppStatus,
     PurgeBlock(j, sizeof(j));
     PurgeBlock(state_buffer_mb4, sizeof(state_buffer_mb4));
     for (Ipp32s i = 0; i < 4; i++) {
-        PurgeBlock(z[i], CP_ML_DSA_SAMPLENTT_BUFF_SIZE);
+        PurgeBlock(z[i], CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE);
     }
 
     if (iter >= CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS) {
@@ -338,7 +338,10 @@ IPP_OWN_DEFN(IppStatus, cp_ml_rejBoundedPoly, (Ipp8u * rho, IppPoly* a, IppsMLDS
     Ipp16u iter = 0;
     while (j < CP_ML_N && iter < CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS) {
         sts = ippsHashSqueeze_rmf(z, CP_ML_DSA_N_BLOCKS, hash_state);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr) {
+            PurgeBlock(z, sizeof(z)); // zeroize secrets
+            return sts;
+        }
 
         for (int i = 0; i < CP_ML_DSA_N_BLOCKS && j < (Ipp16u)CP_ML_N; i++) {
             z0 = cp_ml_coeffFromHalfByte(z[i] & 15, mldsaCtx->params.eta);
@@ -452,6 +455,8 @@ IPP_OWN_DEFN(IppStatus,
 }
 
 // Algorithm 33 ExpandS(rho)
+/* seed buffer size: 64-byte rho' seed followed by a 2-byte index */
+#define CP_ML_DSA_EXPANDS_SEED_SIZE (66)
 IPP_OWN_DEFN(IppStatus,
              cp_ml_expandS,
              (Ipp8u * rho, IppPoly* s1, IppPoly* s2, IppsMLDSAState* mldsaCtx))
@@ -464,7 +469,7 @@ IPP_OWN_DEFN(IppStatus,
     /* Multi-buffer approach */
 #if (_IPP32E >= _IPP32E_K0)
     /* Prepare rho for the multi-buffer processing */
-    Ipp8u rho_j_i[4][66];
+    Ipp8u rho_j_i[4][CP_ML_DSA_EXPANDS_SEED_SIZE];
     CopyBlock(rho, rho_j_i[0], 64);
     CopyBlock(rho, rho_j_i[1], 64);
     CopyBlock(rho, rho_j_i[2], 64);
@@ -487,7 +492,8 @@ IPP_OWN_DEFN(IppStatus,
                                        nBuffs,
                                        s1 + iter * 4,
                                        mldsaCtx);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
 
         nBuffs = l - nBuffs;
     }
@@ -508,33 +514,41 @@ IPP_OWN_DEFN(IppStatus,
                                        nBuffs,
                                        s2 + iter * 4,
                                        mldsaCtx);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         nBuffs = k - nBuffs;
-    }
-    /* Release locally used storage */
-    for (Ipp32s i = 0; i < 4; i++) {
-        PurgeBlock(rho_j_i[i], 66);
     }
 
 #else
 
-    Ipp8u rho_[66];
+    Ipp8u rho_[CP_ML_DSA_EXPANDS_SEED_SIZE];
     CopyBlock(rho, rho_, 64);
     for (Ipp8u r = 0; r < l; r++) {
         rho_[64] = r;
         rho_[65] = 0;
         sts      = cp_ml_rejBoundedPoly(rho_, s1 + r, mldsaCtx);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
     }
 
     for (Ipp8u r = 0; r < k; r++) {
         rho_[64] = r + l;
         rho_[65] = 0;
         sts      = cp_ml_rejBoundedPoly(rho_, s2 + r, mldsaCtx);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
     }
-    PurgeBlock(rho_, sizeof(rho_)); // zeroize secrets
 #endif /* #if (_IPP32E >= _IPP32E_K0) */
+
+exit:
+    /* Release locally used storage */
+#if (_IPP32E >= _IPP32E_K0)
+    for (Ipp32s i = 0; i < 4; i++) {
+        PurgeBlock(rho_j_i[i], CP_ML_DSA_EXPANDS_SEED_SIZE); // zeroize secret seed
+    }
+#else
+    PurgeBlock(rho_, sizeof(rho_)); // zeroize secret seed
+#endif
     return sts;
 }
 
@@ -559,15 +573,18 @@ IPP_OWN_DEFN(IppStatus,
         rho_[64] = (mu + r) & 0xFF;
         rho_[65] = ((mu + r) >> 8) & 0xFF;
         sts      = ippsHashMethodSet_SHAKE256(&shake256_method, (8 * 32 * c));
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         sts = ippsHashMessage_rmf(rho_, 66, v, &shake256_method);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         cp_ml_bitUnpack(v, (Ipp32s)gamma_1, cp_ml_bitlen((Ipp32u)(2 * gamma_1 - 1)), out + r);
     }
-    PurgeBlock(rho_, sizeof(rho_)); // zeroize secrets
     /* Release locally used storage */
     sts = cp_mlStorageRelease(pStorage, 32 * c + CP_ML_ALIGNMENT);
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+
+exit:
+    PurgeBlock(rho_, sizeof(rho_)); // zeroize secret seed
     return sts;
 }
 
@@ -615,7 +632,8 @@ IPP_OWN_DEFN(IppStatus,
         }
 
         sts = cp_ml_rejNTTPoly_MB4(rho_j_i[0], rho_j_i[1], rho_j_i[2], rho_j_i[3], nBuffs, temp);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         /* Postprocessing */
         for (Ipp8u j = 0; j < nBuffs; j++) {
             cp_ml_multiplyNTT(temp + j, v + s[j], temp + j);
@@ -636,7 +654,8 @@ IPP_OWN_DEFN(IppStatus,
         }
 
         sts = cp_ml_rejNTTPoly_MB4(rho_j_i[0], rho_j_i[1], rho_j_i[2], rho_j_i[3], nBuffs, temp);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         /* Postprocessing */
         for (Ipp8u j = 0; j < nBuffs; j++) {
             cp_ml_multiplyNTT(temp + j, v + rho_j_i[j][32], temp + j);
@@ -655,13 +674,22 @@ IPP_OWN_DEFN(IppStatus,
             rho_[33] = r;
 
             sts = cp_ml_rejNTTPoly(rho_, &temp, mldsaCtx);
-            IPP_BADARG_RET((sts != ippStsNoErr), sts);
+            if (sts != ippStsNoErr)
+                goto exit;
 
             cp_ml_multiplyNTT(&temp, v + s, &temp);
             cp_ml_addNTT(out + r, &temp, out + r);
         }
     }
-    PurgeBlock(rho_, sizeof(rho_)); // zeroize secrets
 #endif /* #if (_IPP32E >= _IPP32E_K0) */
+
+exit:
+    /* zeroize secret NTT products */
+#if (_IPP32E >= _IPP32E_K0)
+    PurgeBlock(temp, sizeof(temp));
+#else
+    PurgeBlock(&temp, sizeof(temp));
+    PurgeBlock(rho_, sizeof(rho_));
+#endif
     return sts;
 }

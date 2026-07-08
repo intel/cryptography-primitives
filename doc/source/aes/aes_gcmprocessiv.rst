@@ -64,7 +64,9 @@ Return Values
    * - ippStsContextMatchErr
      - Indicates an error condition if the context parameter does not match the operation.
    * - ippStsLengthErr
-     - Indicates an error condition if the length of the initialization vector is zero.
+     - Indicates an error condition if the length of the initialization vector is less than or equal to zero.
+   * - ippStsScaleRangeErr
+     - Indicates an error condition if the accumulated initialization vector length overflows.
    * - ippStsBadArgErr
      - Indicates an error condition if the pState parameter value is not GcmInit or GcmIVProcessing. This means that the function call sequence is illegal.
 

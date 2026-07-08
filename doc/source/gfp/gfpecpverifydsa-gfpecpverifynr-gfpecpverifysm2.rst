@@ -92,8 +92,10 @@ Return Values
      - Indicates an error condition if any of the contexts pointed to by pMsgDigest, pRegPublic, pSignR, pSignS, or pEC does not match the operation.
    * - ippStsMessageErr   
      - Indicates an error condition if the value of ``msg`` pointed to by pMsgDigest falls outside the range of [1, ``n``-1], where ``n`` is the order of the elliptic curve base point ``G``.
-   * - ippStsRangeErr   
+   * - ippStsRangeErr
      - Indicates an error condition if any of the parameters pointed to by pSignR or pSignS is negative.
+   * - ippStsInvalidPoint
+     - Indicates an error condition if the public key point pRegPublic does not belong to the elliptic curve.
 
 
 

@@ -81,6 +81,8 @@ Return Values
      - Indicates an error condition if the IppsGFpECState context parameter
        has an element size that differs from the one used in the
        :ref:`ippsGFpECESInit_SM2 <gfpecesinit_sm2>` function call.
+   * - ippStsInvalidPoint
+     - Indicates an error condition if the public key point pPublic does not belong to the elliptic curve.
    * - ippStsPointAtInfinity
      - Indicates an error condition if the IppsGFpECPoint context parameter defines a point at infinity.
 

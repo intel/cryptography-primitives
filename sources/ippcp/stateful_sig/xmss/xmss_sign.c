@@ -110,11 +110,13 @@ IPPFUN(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
 
     // idx
     pSign->idx = pPrvKey->idx;
+    // during the next call another private key should be used to sign
+    pPrvKey->idx++;
 
     // fill r
     Ipp8u* idx_buf = pBuffer;
-    cp_to_byte(idx_buf, n, pPrvKey->idx);
-    retCode = cp_xmss_prf(pPrvKey->pSK_PRF, idx_buf, pSign->r, idx_buf + n, &params);
+    cp_to_byte(idx_buf, 32, pSign->idx);
+    retCode = cp_xmss_prf(pPrvKey->pSK_PRF, idx_buf, pSign->r, idx_buf + 32, &params);
     if (ippStsNoErr != retCode) {
         PurgeBlock(pBuffer, pBufferSize);
         return retCode;
@@ -127,7 +129,7 @@ IPPFUN(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
     cp_to_byte(temp_buf, n, /*h_msg padding id*/ 2);
     CopyBlock(pSign->r, temp_buf + n, n);
     CopyBlock(pPrvKey->pRoot, temp_buf + 2 * n, n);
-    cp_to_byte(temp_buf + 3 * n, n, pPrvKey->idx);
+    cp_to_byte(temp_buf + 3 * n, n, pSign->idx);
     CopyBlock(pMsg, temp_buf + 4 * n, msgLen);
 
     retCode = ippsHashMessage_rmf(temp_buf, 4 * n + msgLen, pMsg_, params.hash_method);
@@ -141,7 +143,7 @@ IPPFUN(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
                                 pPrvKey,
                                 adrs,
                                 pSign->pAuthPath,
-                                pPrvKey->idx,
+                                pSign->idx,
                                 temp_buf,
                                 h,
                                 &params);
@@ -153,7 +155,7 @@ IPPFUN(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
     // pOTSSign
     cp_to_byte(adrs, ADRS_SIZE, 0);
     cp_xmss_set_tree_type(adrs, /*OTS hash*/ 0);
-    cp_xmss_set_ots_address(adrs, /*setOTSAddress*/ pPrvKey->idx);
+    cp_xmss_set_ots_address(adrs, /*setOTSAddress*/ pSign->idx);
     retCode = cp_xmss_WOTS_sign(pMsg_,
                                 pPrvKey->pSecretSeed,
                                 pSign->pOTSSign,
@@ -165,9 +167,6 @@ IPPFUN(IppStatus, ippsXMSSSign, (const Ipp8u* pMsg,
     // zeroize the temporary memory if everything else was successful
     PurgeBlock(pBuffer, pBufferSize);
     IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
-
-    // during the next call another private key should be used to sign
-    pPrvKey->idx++;
 
     // pass the error if we are out of secret keys
     // Note: there is no overflow since the maximum value for h is 20 according to the Spec

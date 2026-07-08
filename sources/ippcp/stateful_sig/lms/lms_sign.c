@@ -93,6 +93,8 @@ IPPFUN(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
         return ippStsOutOfRangeErr;
     }
     pSign->_q = pPrvKey->q;
+    // during the next call another private key should be used to sign
+    pPrvKey->q++;
 
     // fill _lmotsSig
     ippcpSts = cp_rand_num((Ipp32u*)pSign->_lmotsSig.pC, (Ipp32s)n, rndFunc, pRndParam);
@@ -123,7 +125,7 @@ IPPFUN(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
                                 pPrvKey->pSecretSeed,
                                 pPrvKey->pI,
                                 pSign->_pAuthPath,
-                                pPrvKey->q,
+                                pSign->_q,
                                 pBuffer,
                                 pPrvKey->pExtraBuf,
                                 pPrvKey->extraBufSize,
@@ -137,9 +139,6 @@ IPPFUN(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
 
     // zeroize the temporary memory if everything else was successful
     PurgeBlock(pBuffer, pBufferSize);
-
-    // during the next call another private key should be used to sign
-    pPrvKey->q++;
 
     // pass the error if we are out of secret keys
     // Note: there is no overflow since the maximum value for h is 25 according to the Spec

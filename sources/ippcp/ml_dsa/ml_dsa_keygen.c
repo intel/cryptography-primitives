@@ -75,7 +75,10 @@ IPPFUN(IppStatus, ippsMLDSA_KeyGen, (Ipp8u* pPubKey,
     } else {
         sts = rndFunc((Ipp32u*)ksi, CP_RAND_DATA_BYTES * 8, pRndParam);
     }
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    if (sts != ippStsNoErr) {
+        PurgeBlock(ksi, sizeof(ksi));
+        return sts;
+    }
 
     sts = cp_MLDSA_keyGen_internal(ksi, pPubKey, pPrvKey, pMLDSAState);
 

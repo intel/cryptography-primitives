@@ -26,14 +26,6 @@
 #define CP_D_MAX (12)
 #define CP_D_MIN (1)
 
-/*
- * Perform division of x by divisor with the rounding of x to the nearest integer
- */
-IPPCP_INLINE Ipp16s cp_divAndRoundToNearestInt(Ipp32s x, Ipp32s divisor)
-{
-    return (Ipp16s)((x + (divisor >> 1)) / divisor);
-}
-
 //-------------------------------//
 //      Internal functions
 //-------------------------------//
@@ -102,8 +94,42 @@ IPP_OWN_DEFN(IppStatus, cp_Compress, (Ipp16u * out, const Ipp16s in, const Ipp16
     Ipp16s u = in;
     u += (u >> 15) & CP_ML_KEM_Q;
 
-    const Ipp32s power = (Ipp32s)1 << d; // 2^{d}
-    *out               = (Ipp16u)cp_divAndRoundToNearestInt(power * u, CP_ML_KEM_Q) % power;
+    /* Constant-time compression: round(u * 2^d / 3329) mod 2^d
+     * To avoid variable-time integer division, the operation is computed as
+     * floor((u * 2^d + offset) * M / 2^S). The constants (offset, M, S) are
+     * derived for each 'd' to ensure the approximation error over u \in [0, 3328]
+     * is strictly bounded, guaranteeing exact equivalence to FIPS 203.
+     */
+    Ipp64u d0 = (Ipp64u)u << d;
+    switch (d) {
+    case 1:
+    case 4:
+        d0 += 1665;
+        d0 *= 80635;
+        d0 >>= 28;
+        break;
+    case 5:
+        d0 += 1664;
+        d0 *= 40318;
+        d0 >>= 27;
+        break;
+    case 10:
+        d0 += 1665;
+        d0 *= 1290167;
+        d0 >>= 32;
+        break;
+    case 11:
+        d0 += 1664;
+        d0 *= 645084;
+        d0 >>= 31;
+        break;
+    default:
+        /* Fallback for non-standard d */
+        d0 = (d0 + 1664) / CP_ML_KEM_Q;
+        break;
+    }
+
+    *out = (Ipp16u)(d0 & ((1U << d) - 1));
 
     return ippStsNoErr;
 }
@@ -126,8 +152,14 @@ IPP_OWN_DEFN(IppStatus, cp_Decompress, (Ipp16u * out, const Ipp16s in, const Ipp
     Ipp16s u = in;
     u += (u >> 15) & CP_ML_KEM_Q;
 
-    const Ipp32s power = (Ipp32s)(1 << d);
-    *out               = (Ipp16u)cp_divAndRoundToNearestInt(CP_ML_KEM_Q * (Ipp16s)in, power);
+    /* Constant-time decompression: round(u * 3329 / 2^d) 
+     * Since 2^d is a power of 2, division is an exact right-shift.
+     * Max value of u * 3329 is 2047 * 3329 = ~6.8M, which safely fits in Ipp32u.
+     */
+    Ipp32u t = (Ipp32u)u * CP_ML_KEM_Q;
+    t += (1U << (d - 1));
+    t >>= d;
+    *out = (Ipp16u)t;
 
     return ippStsNoErr;
 }

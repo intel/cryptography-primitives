@@ -39,6 +39,7 @@
 //                               NULL == rndFunc
 //                               NULL == pResult
 //    ippStsContextMatchErr      !PRIME_VALID_ID()
+//    ippStsOutOfRangeErr        bitsize(pPrime) > PRIME_MAXBITSIZE(pCtx)
 //    ippStsBadArgErr            1 > nTrials
 //    ippStsNoErr                no error
 //
@@ -66,6 +67,9 @@ IPPFUN(IppStatus, ippsPrimeTest_BN, (const IppsBigNumState* pPrime,
     IPP_BADARG_RET(!PRIME_VALID_ID(pCtx), ippStsContextMatchErr);
 
     IPP_BADARG_RET(!BN_VALID_ID(pPrime), ippStsContextMatchErr);
+
+    IPP_BADARG_RET(BITSIZE_BNU(BN_NUMBER(pPrime), BN_SIZE(pPrime)) > PRIME_MAXBITSIZE(pCtx),
+                   ippStsOutOfRangeErr);
 
     {
         BNU_CHUNK_T* pPrimeBN = BN_NUMBER(pPrime);

@@ -28,6 +28,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "pcpdlp.h"
+#include "pcptool.h"
 
 /*F*
 // Name: ippsDLPGenKeyPair
@@ -100,19 +101,29 @@ IPPFUN(IppStatus, ippsDLPGenKeyPair, (IppsBigNumState* pPrvKey,
 
         //gsModEngine* pME = DLP_MONTP0(pDL);
 
+        IppStatus sts;
         do {
-            rndFunc((Ipp32u*)pX, ordBitSize, pRndParam);
+            sts = rndFunc((Ipp32u*)pX, ordBitSize, pRndParam);
+            if (ippStsNoErr != sts)
+                break;
             pX[ordLen - 1] &= xMask;
         } while (cpEqu_BNU_CHUNK(pX, ordLen, 0) || cpCmp_BNU(pX, ordLen, pOrder, ordLen) >= 0);
-        BN_SIZE(pPrvKey) = ordLen;
-        BN_SIGN(pPrvKey) = ippBigNumPOS;
 
-        /*
-      // compute public key: G^prvKey (mod P)
-      */
-        cpMontExpBin_BN_sscm(pPubKey, DLP_GENC(pDL), pPrvKey, DLP_MONTP0(pDL));
-        cpMontDec_BN(pPubKey, pPubKey, DLP_MONTP0(pDL));
+        /* set up keys only on successful private key generation */
+        if (ippStsNoErr == sts) {
+            BN_SIZE(pPrvKey) = ordLen;
+            BN_SIGN(pPrvKey) = ippBigNumPOS;
 
-        return ippStsNoErr;
+            /*
+          // compute public key: G^prvKey (mod P)
+          */
+            cpMontExpBin_BN_sscm(pPubKey, DLP_GENC(pDL), pPrvKey, DLP_MONTP0(pDL));
+            cpMontDec_BN(pPubKey, pPubKey, DLP_MONTP0(pDL));
+        } else {
+            /* zeroize partially written private key on RNG failure */
+            PurgeBlock(pX, ordLen * (cpSize)sizeof(BNU_CHUNK_T));
+        }
+
+        return sts;
     }
 }

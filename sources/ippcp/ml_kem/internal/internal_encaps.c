@@ -51,13 +51,15 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMencaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
 
     /* H(ek) */
     sts = ippsHashMessage_rmf(inpEncKey, ek_pkeByteSize, r_N, ippsHashMethod_SHA3_256());
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    if (sts != ippStsNoErr)
+        goto exit;
     /* m||H(ek) */
     CopyBlock(m, concatData, CP_RAND_DATA_BYTES);
     CopyBlock(r_N, concatData + 32, 32);
     /* G(m||H(ek)) */
     sts = ippsHashMessage_rmf(concatData, 64, concatData, ippsHashMethod_SHA3_512());
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    if (sts != ippStsNoErr)
+        goto exit;
 
     CopyBlock(concatData, K, CP_SHARED_SECRET_BYTES);
     CopyBlock(concatData + CP_SHARED_SECRET_BYTES, r_N, 32);
@@ -65,8 +67,10 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMencaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
     /* c <- K-PKE.Encrypt(ek, m, r) */
     sts = cp_KPKE_Encrypt(ciphertext, inpEncKey, m, r_N, mlkemCtx);
 
+exit:
     /* Clear the copy of the secret */
     PurgeBlock(concatData, sizeof(concatData));
+    PurgeBlock(r_N, sizeof(r_N));
 
     return sts;
 }

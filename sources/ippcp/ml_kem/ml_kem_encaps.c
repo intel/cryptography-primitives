@@ -80,7 +80,10 @@ IPPFUN(IppStatus, ippsMLKEM_Encaps, (const Ipp8u* pEncKey,
     } else {
         sts = rndFunc((Ipp32u*)m, CP_RAND_DATA_BYTES * 8, pRndParam);
     }
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    if (sts != ippStsNoErr) {
+        PurgeBlock(m, sizeof(m));
+        return sts;
+    }
 
     sts = cp_MLKEMencaps_internal(pSharedSecret, pCipherText, pEncKey, m, pMLKEMCtx);
 

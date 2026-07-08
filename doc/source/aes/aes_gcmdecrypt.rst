@@ -49,6 +49,15 @@ Description
 The function decrypts the input cipher data stream of a variable length
 according to GCM as specified in :term:`NIST SP 800-38D <[NIST SP 800-38D]>`.
 
+.. warning::
+   The AES-GCM API is designed to support incremental streaming. Consequently, 
+   ``ippsAES_GCMDecrypt`` outputs plaintext immediately for each processed chunk. 
+   Authentication is deferred until the final tag is computed via 
+   :ref:`ippsAES_GCMGetTag <aes_gcmgettag>`. It is the application's responsibility 
+   to manage the lifecycle of the decrypted buffer: the plaintext must not be consumed 
+   as authentic until the final tag comparison is successful, and the buffer must be 
+   cleared by the application if authentication fails.
+
 
 Return Values
 -------------

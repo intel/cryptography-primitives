@@ -29,20 +29,21 @@
 #include "owncp.h"
 #include "pcpngrsa.h"
 #include "pcptool.h"
-
-
-static Ipp32u NonZeroBlockLen(const Ipp8u* pData, int dataLen)
-{
-    int i;
-    for (i = 0; i < dataLen && pData[i]; i++)
-        ;
-    return (Ipp32u)i;
-}
+#include "pcpmask_ct.h"
 
 
 static int DecodeEME_PKCSv15(const Ipp8u* pEM, int emLen, Ipp8u* pMsg, int* pMsgLen)
 {
-    int psLen         = (int)NonZeroBlockLen(pEM + 2, emLen - 2);
+    int i;
+    BNU_CHUNK_T byte_00_found = 0;
+    int psLen                 = 0;
+
+    for (i = 2; i < emLen; i++) {
+        BNU_CHUNK_T is_zero = cpIsZero_ct(pEM[i]);
+        psLen               = cpSelect_ct_int(~byte_00_found & is_zero, i - 2, psLen);
+        byte_00_found |= is_zero;
+    }
+
     int msgLen        = IPP_MAX(0, (emLen - 3 - psLen));
     int errDecodeFlag = (psLen < 8) || ((psLen + 3) > emLen);
 
@@ -53,8 +54,17 @@ static int DecodeEME_PKCSv15(const Ipp8u* pEM, int emLen, Ipp8u* pMsg, int* pMsg
    */
     errDecodeFlag |= (0x00 != pEM[0]);
     errDecodeFlag |= (0x02 != pEM[1]);
-    errDecodeFlag |= (0x00 != pEM[3 + psLen - 1]);
-    CopyBlock(pEM + 3 + psLen, pMsg, msgLen);
+    errDecodeFlag |= (0 == byte_00_found);
+
+    int separatorIdx = cpSelect_ct_int(byte_00_found, psLen + 2, 0);
+    errDecodeFlag |= (0x00 != pEM[separatorIdx]);
+
+    for (i = 0; i < emLen; i++) {
+        BNU_CHUNK_T mask = cpIsLt_ct((BNU_CHUNK_T)i, (BNU_CHUNK_T)msgLen);
+        int safeIdx      = cpSelect_ct_int(mask, i + 3 + psLen, 0);
+        pMsg[i]          = cpSelect_ct_8u(mask, pEM[safeIdx], pMsg[i]);
+    }
+
     *pMsgLen = msgLen;
     return !errDecodeFlag;
 }
@@ -123,7 +133,9 @@ static int Decryption(const Ipp8u* pCipherTxt,
 //
 // Parameters:
 //    pSrc        pointer to the ciphertext
-//    pDst        pointer to the plaintext
+//    pDst        pointer to the plaintext (buffer must be >= RSA modulus size in
+//                bytes: decoding writes the full modulus size to avoid leaking
+//                the message length through memory-access patterns)
 //    pDstLen     pointer to the length (bytes) of decrypted plaintext
 //    pKey        pointer to the RSA private key context
 //    pBuffer     pointer to scratch buffer

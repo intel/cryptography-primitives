@@ -21,6 +21,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"
+#include "hash/pcphashmethod_rmf.h"
 #include "stateless_pqc/ml_kem_internal/ml_kem.h"
 
 /*
@@ -58,6 +59,11 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
 
     IppStatus sts = ippStsNoErr;
 
+    /* Sensitive stack buffers */
+    Ipp8u message[32];
+    Ipp8u K1_r_N[CP_SHARED_SECRET_BYTES + 32 + 1];
+    Ipp8u K2[CP_SHARED_SECRET_BYTES];
+
     /* 1: dkPKE <- dk[0 : 384*k] */
     const Ipp8u* pPKE_DecKey = inpDecKey;
     /* 2: ekPKE <- dk[384*k : 768*k+32] */
@@ -68,13 +74,9 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
     const Ipp8u* z = inpDecKey + 768 * k + 64;
 
     /* 5: m` <- K-PKE.Decrypt(dkPKE, c) */
-    Ipp8u message[32];
     IppStatus decryptSts = cp_KPKE_Decrypt(message, pPKE_DecKey, ciphertext, mlkemCtx);
 
     /* 6: (K`, r`) <- G(m`||h) */
-
-    // stores 32 bytes of K1, 32 bytes of r and 1 byte of N
-    Ipp8u K1_r_N[CP_SHARED_SECRET_BYTES + 32 + 1];
     Ipp8u* K1  = K1_r_N;
     Ipp8u* r_N = K1_r_N + 32;
 
@@ -83,44 +85,63 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
     CopyBlock(h, K1_r_N + 32, 32);
     /* G(m`||h) */
     sts = ippsHashMessage_rmf(K1_r_N, 64, K1_r_N, ippsHashMethod_SHA3_512());
-    CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
+    if (sts != ippStsNoErr)
+        goto exit;
 
     /* 7: K`` <- J(z||c) */
-    Ipp8u K2[CP_SHARED_SECRET_BYTES];
-    const IppsHashMethod* hash_method = ippsHashMethod_SHAKE256(CP_SHARED_SECRET_BYTES * 8);
-    int hash_size                     = 0;
-    sts                               = ippsHashGetSizeOptimal_rmf(&hash_size, hash_method);
-    CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
+    IppsHashMethod hash_method_struct;
+    sts = ippsHashMethodSet_SHAKE256(&hash_method_struct, CP_SHARED_SECRET_BYTES * 8);
+    if (sts != ippStsNoErr)
+        goto exit;
+    const IppsHashMethod* hash_method = &hash_method_struct;
+
+    int hash_size = 0;
+    sts           = ippsHashGetSizeOptimal_rmf(&hash_size, hash_method);
+    if (sts != ippStsNoErr)
+        goto exit;
 
     IppsHashState_rmf* hash_state =
         (IppsHashState_rmf*)cp_mlStorageAllocate(pStorage, hash_size + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(hash_state == NULL, ippStsMemAllocErr, pStorage);
+    if (hash_state == NULL) {
+        sts = ippStsMemAllocErr;
+        goto exit;
+    }
     hash_state = IPP_ALIGNED_PTR(hash_state, CP_ML_KEM_ALIGNMENT);
 
     sts = ippsHashInit_rmf(hash_state, hash_method);
-    CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
+    if (sts != ippStsNoErr)
+        goto exit;
     sts = ippsHashUpdate_rmf(z, 32, hash_state);
-    CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
+    if (sts != ippStsNoErr)
+        goto exit;
     sts = ippsHashUpdate_rmf(ciphertext, ciphertext_size, hash_state);
-    CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
+    if (sts != ippStsNoErr)
+        goto exit;
     sts = ippsHashFinal_rmf(K2, hash_state);
-    CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
+    if (sts != ippStsNoErr)
+        goto exit;
 
     /* 8: c` <- K-PKE.Encrypt(ekPKE, m`, r`) */
     Ipp8u* ciphertext1 = cp_mlStorageAllocate(pStorage, ciphertext_size + CP_ML_KEM_ALIGNMENT);
-    CP_CHECK_FREE_RET(ciphertext1 == NULL, ippStsMemAllocErr, pStorage);
+    if (ciphertext1 == NULL) {
+        sts = ippStsMemAllocErr;
+        goto exit;
+    }
     ciphertext1 = IPP_ALIGNED_PTR(ciphertext1, CP_ML_KEM_ALIGNMENT);
     sts         = cp_KPKE_Encrypt(ciphertext1, pPKE_EncKey, message, r_N, mlkemCtx);
-    CP_CHECK_FREE_RET(sts != ippStsNoErr, sts, pStorage);
+    if (sts != ippStsNoErr)
+        goto exit;
 
     /* 9-10: if c != c` then K` <- K`` */
     BNU_CHUNK_T is_equal = cpIsEquBlock_ct(ciphertext, ciphertext1, ciphertext_size);
     MASKED_COPY_BNU(K, is_equal, K1, K2, CP_SHARED_SECRET_BYTES);
 
-    /* Release locally used storage */
-    sts = cp_mlStorageRelease(pStorage, hash_size + CP_ML_KEM_ALIGNMENT); // hash_state
-    sts |= cp_mlStorageRelease(pStorage,
-                               ciphertext_size + CP_ML_KEM_ALIGNMENT);    // ciphertext1
+exit:
+    /* Release all locally used storage and purge stack */
+    sts |= cp_mlStorageReleaseAll(pStorage);
+    PurgeBlock(message, sizeof(message));
+    PurgeBlock(K1_r_N, sizeof(K1_r_N));
+    PurgeBlock(K2, sizeof(K2));
 
     return sts | decryptSts;
 }

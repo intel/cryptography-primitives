@@ -54,7 +54,8 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
     Ipp8u* pSigma_N = rho_sigma_N + 32;
 
     sts = ippsHashMessage_rmf(d_k, 33, rho_sigma_N, ippsHashMethod_SHA3_512());
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    if (sts != ippStsNoErr)
+        goto exit;
 
     // N is iterated in the range [0, 7)
     Ipp8u N = 0;
@@ -69,7 +70,8 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
     cp_polyVecGen(vectorS, pSigma_N, &N, eta1, mlkemCtx, nttTransform);
     for (Ipp8u i = 0; i < k; i++) {
         sts = cp_byteEncode(outDecKey + i * 384, 12, &vectorS[i]);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
     }
 
     /* Generate vector e */
@@ -90,14 +92,15 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
 
     for (Ipp8u i = 0; i < k; i++) {
         sts = cp_byteEncode(outEncKey + i * 384, 12, &t[i]);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
     }
     CopyBlock(pRho, outEncKey + 384 * k, 32);
 
-    /* Release locally used storage */
-    CP_ML_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly vectorS[k]
-    CP_ML_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly vectorE[k]
-    CP_ML_RELEASE_ALIGNED_POLYVEC(k, pStorage, sts) // Ipp16sPoly t[k]
+exit:
+    /* Release all locally used storage and purge stack */
+    sts |= cp_mlStorageReleaseAll(pStorage);
+    PurgeBlock(rho_sigma_N, sizeof(rho_sigma_N));
 
     return sts;
 }

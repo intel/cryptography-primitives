@@ -72,6 +72,8 @@ Return Values
      -  Indicates an error condition if any of the specified pointers is NULL.
    * -     ippStsContextMatchErr   
      -  Indicates an error condition if the context parameter does not match the operation.
+   * -     ippStsOutOfRangeErr   
+     -  Indicates an error condition if pPrime is larger than the maximum bit size the context pCtx can handle.
    * -     ippStsBadArgErr   
      -  Indicates an error condition if nTrials is less than 1.
 

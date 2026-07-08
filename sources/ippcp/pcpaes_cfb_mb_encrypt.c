@@ -160,6 +160,8 @@ IPPFUN(IppStatus, ippsAES_EncryptCFB16_MB, (const Ipp8u* pSrc[],
             /* fill buffers */
             for (i = 0; i < workLoadSize; i++) {
                 if (i >= numBuffers) {
+                    loc_src[i] = NULL;
+                    loc_dst[i] = NULL;
                     loc_len[i] = 0;
                     continue;
                 }
@@ -203,6 +205,8 @@ IPPFUN(IppStatus, ippsAES_EncryptCFB16_MB, (const Ipp8u* pSrc[],
         while (numBuffers > 0) {
             for (i = 0; i < WORKLOAD_LINES_4; i++) {
                 if (i >= numBuffers) {
+                    loc_src[i] = NULL;
+                    loc_dst[i] = NULL;
                     loc_len[i] = 0;
                     continue;
                 }

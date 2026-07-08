@@ -6,7 +6,13 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Fixed ippsGFpECVerifySM2 rejecting valid signatures on the AVX-512 IFMA (k1/d1) code path due to a scratch-buffer aliasing defect in the optimized SM2 verify kernel.
 - Introduced external Mu verification for the ML-DSA scheme to allow signature verification with pre-computed hashes, reducing memory overhead for large messages. Includes full FIPS self-testing and validation.
 - Increased minimum required CMake version to 3.18 for library and examples build.
-- Added LMS private key state setting function to set LMS private key components without re-generating the entire key.
+- Zeroized stack secrets on all error paths in ML-KEM/ML-DSA key generation, signing, encapsulation and expansion helpers, and fixed a stack out-of-bounds write in ML-DSA rejection sampling.
+- Made ML-KEM ciphertext compression and RSA-PKCS#1 v1.5 decryption decoding constant-time to remove timing side channels.
+- Added on-curve validation of the public point in EC signature verification (DSA/NR/SM2) and SM2-ECIES key setup, and private-key size validation in SM2 key exchange.
+- Added bounds checks rejecting oversized message lengths in `ippsLMSVerify` and multi-buffer Ed25519 sign/verify, and fixed an out-of-bounds read in `cpAddWithCarry_BNU`.
+- Added candidate size validation in `ippsPrimeTest_BN` and RNG-status propagation in DLP key and domain-parameter generation.
+- Advanced the LMS one-time-key index before signing so it is consumed even on error, preventing one-time-key reuse.
+- Zeroized outputs on authentication failure in AES-GCM and AES-SIV decryption, and rejected zero-length IVs in AES-GCM IV processing.
 
 ## Intel(R) Cryptography Primitives Library 2.2.0
 - Fixed ML-DSA signature verification to strictly enforce hint vector weight bounds.

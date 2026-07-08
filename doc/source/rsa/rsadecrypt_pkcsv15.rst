@@ -34,8 +34,8 @@ Parameters
 
    * -     pSrc   
      -  Pointer to the input octet message to be decrypted.
-   * -     pDst    
-     -  Pointer to the output message.
+   * -     pDst
+     -  Pointer to the output message. The buffer must be at least the size of the RSA modulus in bytes (see the note below).
    * -     pDstLen   
      -  Pointer to the length (in bytes) of the decrypted message.
    * -     pKey   
@@ -69,6 +69,16 @@ the v1.5 version of the PKCS#1 standard, defined in :term:`PKCS 1.2.1 <[PKCS 1.2
 
    If an empty message is encrypted by the RSAEncrypt_PKCSv15 function,
    RSADecrypt_PKCSv15 returns and empty string, that is, \*pDstLen==0.
+
+
+.. note::
+
+
+   To avoid leaking the message length through memory-access patterns, the
+   function writes the full RSA modulus size to ``pDst`` regardless of the
+   decrypted message length. The application must therefore provide a ``pDst``
+   buffer of at least the RSA modulus size in bytes, and use \*pDstLen to
+   determine the number of valid message bytes.
 
 
 Return Values

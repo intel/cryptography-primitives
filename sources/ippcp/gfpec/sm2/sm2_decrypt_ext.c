@@ -17,6 +17,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "gfpec/sm2/sm2_stuff.h"
+#include "pcpmask_ct.h"
 
 #define CHECK_PRIVATE_KEY(KEY)                                  \
     IPP_BAD_PTR1_RET((KEY))                                     \
@@ -169,10 +170,12 @@ IPPFUN(IppStatus, ippsGFpECDecryptSM2_Ext, (Ipp8u* pOut, int maxOutLen,
             /* C3 */
             ippsHashFinal_rmf(u, ctx);
 
-            if (0 == EquBlock(u, pC3, IPP_SM3_DIGEST_BYTESIZE)) {
-                PurgeBlock(pOut, ciph_msg_size);
-            } else {
-                *pOutSize = ciph_msg_size;
+            {
+                BNU_CHUNK_T authMask = cpIsEquBlock_ct(u, pC3, IPP_SM3_DIGEST_BYTESIZE);
+
+                cpMaskedClear_ct_8u(pOut, ciph_msg_size, authMask);
+
+                *pOutSize = (int)(authMask & (BNU_CHUNK_T)ciph_msg_size);
             }
 
             PurgeBlock(u, IPP_SM3_DIGEST_BYTESIZE);

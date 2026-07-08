@@ -49,6 +49,8 @@ tagLen according to GCM as specified in :term:`NIST SP 800-38D <[NIST SP 800-38D
 call to ippsAES_GCMGetTag does not stop the process of authenticated
 encryption/decryption.
 
+.. warning::
+   If the application continues to encrypt or decrypt data after calling ``ippsAES_GCMGetTag``, a final ``ippsAES_GCMGetTag`` MUST be called to authenticate the appended data. Intermediate tags do not cover data appended subsequently.
 
 Return Values
 -------------
@@ -65,6 +67,8 @@ Return Values
      - Indicates an error condition if the context parameter does not match the operation.
    * - ippStsLengthErr
      - Indicates an error condition if tagLen <1 or taglen >16.
+   * - ippStsBadArgErr
+     - Indicates an error condition if the pState parameter value is GcmInit or a non-empty IV has not been processed. This means that the function call sequence is illegal.
 
 
 

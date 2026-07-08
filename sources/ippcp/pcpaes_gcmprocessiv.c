@@ -45,7 +45,8 @@
 //    ippStsNullPtrErr        pState == NULL
 //                            pIV ==NULL && ivLen>0
 //    ippStsContextMatchErr   !AESGCM_VALID_ID()
-//    ippStsLengthErr         ivLen <0
+//    ippStsLengthErr         ivLen <=0
+//    ippStsScaleRangeErr     accumulated IV length overflow
 //    ippStsBadArgErr         illegal sequence call
 //    ippStsNoErr             no errors
 //
@@ -62,7 +63,7 @@ IPPFUN(IppStatus, ippsAES_GCMProcessIV, (const Ipp8u* pIV, int ivLen, IppsAES_GC
 
     /* test IV pointer and length */
     IPP_BADARG_RET(ivLen && !pIV, ippStsNullPtrErr);
-    IPP_BADARG_RET(ivLen < 0, ippStsLengthErr);
+    IPP_BADARG_RET(ivLen <= 0, ippStsLengthErr);
 
     /* use aligned context */
     pState = (IppsAES_GCMState*)(IPP_ALIGNED_PTR(pState, AESGCM_ALIGNMENT));

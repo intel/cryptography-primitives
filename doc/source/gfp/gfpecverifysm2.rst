@@ -123,6 +123,8 @@ Return Values
      -  Indicates an error condition if the public key point does not belong to the finite field over which the elliptic curve is initialized.
    * -     ippStsNotSupportedModeErr
      -  Indicates an error condition if the finite field GFp under the elliptic curve is not prime.
+   * -     ippStsInvalidPoint
+     -  Indicates an error condition if the public key point pRegPublic does not belong to the elliptic curve.
 
 
 

@@ -31,24 +31,24 @@ IPPCP_INLINE BNU_CHUNK_T maskFromCond(cpSize nsA, cpSize nsB)
     return (BNU_CHUNK_T)(-(BNS_CHUNK_T)(nsA < nsB));
 }
 
-/* to not lose carry use this function if nsA > nsB */
+/* to not lose carry use this function if nsA >= nsB (nsB >= 1) */
 IPPCP_INLINE void cpAddWithCarry_BNU(BNU_CHUNK_T* pR,
                                      const BNU_CHUNK_T* pA,
                                      cpSize nsA,
                                      const BNU_CHUNK_T* pB,
                                      cpSize nsB)
 {
-    cpSize maxLen     = nsA;
     BNU_CHUNK_T carry = 0;
 
-    for (int i = 0; i < maxLen; i++) {
-        BNU_CHUNK_T m1 = maskFromCond(i, nsA);
-        BNU_CHUNK_T m2 = maskFromCond(i, nsB);
+    for (int i = 0; i < nsA; i++) {
+        /* m is all-ones while i < nsB, else 0 */
+        BNU_CHUNK_T m = maskFromCond(i, nsB);
+        /* clamp the pB index to 0 once i >= nsB so the load stays in bounds;
+           the value is masked to 0 anyway, so the result is unchanged */
+        cpSize idxB   = i & (cpSize)m;
+        BNU_CHUNK_T b = pB[idxB] & m;
 
-        BNU_CHUNK_T a = pA[i] & m1;
-        BNU_CHUNK_T b = pB[i] & m2;
-
-        ADD_ABC(carry, pR[i], a, b, carry);
+        ADD_ABC(carry, pR[i], pA[i], b, carry);
     }
 }
 

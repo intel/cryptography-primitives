@@ -31,6 +31,7 @@
 #include "pcpaesm.h"
 #include "pcptool.h"
 #include "pcpaes_sivstuff.h"
+#include "pcpmask_ct.h"
 
 /*F*
 //    Name: ippsAES_SIVDecrypt
@@ -143,7 +144,13 @@ IPPFUN(IppStatus, ippsAES_SIVDecrypt, (const Ipp8u* pSrc,
         }
 
         /* test */
-        *pAuthPassed = EquBlock(pSIV, iv, MBS_RIJ128);
+        {
+            BNU_CHUNK_T authMask = cpIsEquBlock_ct(pSIV, iv, MBS_RIJ128);
+
+            cpMaskedClear_ct_8u(pDst, len, authMask);
+
+            *pAuthPassed = (int)(authMask & 1);
+        }
         return ippStsNoErr;
     }
 }

@@ -46,6 +46,7 @@
 //                            pState == NULL
 //    ippStsLengthErr         tagLen<=0 || tagLen>16
 //    ippStsContextMatchErr  !AESGCM_VALID_ID()
+//    ippStsBadArgErr         illegal sequence call or zero-length IV
 //    ippStsNoErr             no errors
 //
 // Parameters:
@@ -67,6 +68,10 @@ IPPFUN(IppStatus, ippsAES_GCMGetTag, (Ipp8u * pDstTag, int tagLen, const IppsAES
     /* test tag pointer and length */
     IPP_BAD_PTR1_RET(pDstTag);
     IPP_BADARG_RET(tagLen <= 0 || tagLen > BLOCK_SIZE, ippStsLengthErr);
+
+    /* Check that at least some IV was provided */
+    IPP_BADARG_RET(GcmInit == AESGCM_STATE(pState), ippStsBadArgErr);
+    IPP_BADARG_RET(AESGCM_IV_LEN(pState) == 0, ippStsBadArgErr);
 
 #if (_IPP32E >= _IPP32E_K0)
     GetTag_ getTag = AES_GCM_GET_TAG(pState);

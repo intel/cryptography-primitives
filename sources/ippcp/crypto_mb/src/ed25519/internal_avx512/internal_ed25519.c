@@ -115,7 +115,9 @@ static void ed25519_nonce(int8u* pa_nonce[8],
 
         SHA512Init(&pState);
         SHA512Update(az, 32, &pState);
-        if (msg)
+        /* mlen is guaranteed <= 0x7FFFFFFF by the public API (mbx_ed25519_sign_mb8);
+           the bound is re-checked here only to keep the (int) cast well-defined */
+        if (msg && mlen <= 0x7FFFFFFF)
             SHA512Update(msg, (int)mlen, &pState);
 
         SHA512Final(pa_nonce[n], &pState);
@@ -141,7 +143,9 @@ static void ed25519_hash_r_pub_msg(int8u* pa_hram[8],
             SHA512Update((const int8u*)sign_r, NUMBER_OF_DIGITS(GE25519_COMP_BITSIZE, 8), &pState);
         if (public)
             SHA512Update((const int8u*)public, sizeof(ed25519_public_key), &pState);
-        if (msg)
+        /* mlen is guaranteed <= 0x7FFFFFFF by the public API (mbx_ed25519_verify_mb8);
+           the bound is re-checked here only to keep the (int) cast well-defined */
+        if (msg && mlen <= 0x7FFFFFFF)
             SHA512Update(msg, (int)mlen, &pState);
         SHA512Final(pa_hram[n], &pState);
     }

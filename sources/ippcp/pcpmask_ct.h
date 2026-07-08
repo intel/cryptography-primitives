@@ -141,4 +141,17 @@ IPPCP_INLINE Ipp8u cpSelect_ct_8u(BNU_CHUNK_T mask, Ipp8u a, Ipp8u b)
     return (Ipp8u)cpSelect_ct(mask, a, b);
 }
 
+/* 
+// clears an 8-bit array in constant time if mask is zero.
+// note: use only on output parameters to avoid compiler optimizing away the clear 
+*/
+IPPCP_INLINE void cpMaskedClear_ct_8u(Ipp8u* pBuffer, int len, BNU_CHUNK_T mask)
+{
+    Ipp8u keepMask = (Ipp8u)mask;
+    int i;
+    for (i = 0; i < len; i++) {
+        pBuffer[i] &= keepMask;
+    }
+}
+
 #endif /* _PCP_MASK_CT_H */

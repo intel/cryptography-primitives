@@ -21,6 +21,7 @@
 #include "owncp.h"
 #include "owndefs.h"
 #include "ippcpdefs.h"
+#include "hash/pcphashmethod_rmf.h"
 #include "stateless_pqc/ml_kem_internal/ml_kem.h"
 #include "hash/sha3/sha3_stuff.h"
 
@@ -90,7 +91,8 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
     switch (numBuffers) {
     case 4: {
         sts = cp_samplePolyCBD(&pOutPoly[3], prfOutput_3, eta);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         (*N)++;
         if (transformFlag == nttTransform) {
             /* 18: y` <- cp_NTT(𝐲) */
@@ -100,7 +102,8 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
     }
     case 3: {
         sts = cp_samplePolyCBD(&pOutPoly[2], prfOutput_2, eta);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         (*N)++;
         if (transformFlag == nttTransform) {
             /* 18: y` <- cp_NTT(𝐲) */
@@ -110,7 +113,8 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
     }
     case 2: {
         sts = cp_samplePolyCBD(&pOutPoly[1], prfOutput_1, eta);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         (*N)++;
         if (transformFlag == nttTransform) {
             /* 18: y` <- cp_NTT(𝐲) */
@@ -120,7 +124,8 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
     }
     case 1: {
         sts = cp_samplePolyCBD(&pOutPoly[0], prfOutput_0, eta);
-        IPP_BADARG_RET((sts != ippStsNoErr), sts);
+        if (sts != ippStsNoErr)
+            goto exit;
         (*N)++;
         if (transformFlag == nttTransform) {
             /* 18: y` <- cp_NTT(𝐲) */
@@ -129,9 +134,21 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
         break;
     }
     default: {
-        return ippStsBadArgErr;
+        sts = ippStsBadArgErr;
+        goto exit;
     }
     }
+
+exit:
+    PurgeBlock(inRand_N_0, sizeof(inRand_N_0));
+    PurgeBlock(inRand_N_1, sizeof(inRand_N_1));
+    PurgeBlock(inRand_N_2, sizeof(inRand_N_2));
+    PurgeBlock(inRand_N_3, sizeof(inRand_N_3));
+    PurgeBlock(prfOutput_0, sizeof(prfOutput_0));
+    PurgeBlock(prfOutput_1, sizeof(prfOutput_1));
+    PurgeBlock(prfOutput_2, sizeof(prfOutput_2));
+    PurgeBlock(prfOutput_3, sizeof(prfOutput_3));
+    PurgeBlock(state_buffer_mb4, sizeof(state_buffer_mb4));
 
     return sts;
 }
@@ -168,7 +185,10 @@ IPPCP_INLINE IppStatus cp_polyGenInternal(Ipp16sPoly* pOutPoly,
 #if (_IPP32E >= _IPP32E_K0)
     cp_SHA3_SHAKE256_HashMessage(prfOutput, 64 * eta, inRand_N, 33);
 #else
-    sts = ippsHashMessage_rmf(inRand_N, 33, prfOutput, ippsHashMethod_SHAKE256(8 * 64 * eta));
+    IppsHashMethod hash_method_struct;
+    sts = ippsHashMethodSet_SHAKE256(&hash_method_struct, 8 * 64 * eta);
+    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    sts = ippsHashMessage_rmf(inRand_N, 33, prfOutput, &hash_method_struct);
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 #endif /* #if (_IPP32E >= _IPP32E_K0) */
 

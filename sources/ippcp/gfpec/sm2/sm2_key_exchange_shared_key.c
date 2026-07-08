@@ -57,6 +57,7 @@
  * ippStsRangeErr            - if BitSize(pEC) < IPP_SM3_DIGEST_BITSIZE
  * ippStsBadArgErr           - if role(pKE) no equal ippKESM2Requester|ippKESM2Responder or sharedKeySize <= 0
  * ippStsInvalidPrivateKey   - if test is failed 0 < pPrvKey|pEphPrvKey < Order
+ * ippStsSizeErr             - if pPrvKey|pEphPrvKey has no room for a full field element
  * ippStsEphemeralKeyErr     - if test is failed pEphPrvKey == pEphPublicKeySelf*G or if calculated U(V) is an
  *                             infinity point, U/V = [h*t(a/b)]( P(b/a) + [x(b/a)`]R(b/a) ) = ( x(u/v), y(u/v) )
  */
@@ -116,6 +117,10 @@ IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_SharedKey, (Ipp8u* pSharedKey, int sha
 
     /* check Ephemeral  Private Key */
     CHECK_PRIVATE_KEY(pEphPrvKey)
+
+    /* keys must have room for a full field element */
+    IPP_BADARG_RET(BN_ROOM(pPrvKey) < GFP_FELEN(pME), ippStsSizeErr);
+    IPP_BADARG_RET(BN_ROOM(pEphPrvKey) < GFP_FELEN(pME), ippStsSizeErr);
 
 #if (_IPP32E >= _IPP32E_K1)
     if (IsFeatureEnabled(ippCPUID_AVX512IFMA) && (cpID_PrimeTPM_SM2 == ECP_MODULUS_ID(pEC))) {

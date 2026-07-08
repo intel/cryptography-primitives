@@ -121,7 +121,7 @@ static void cpHashSqueeze(Ipp8u* pMD,
     int msgBlkSize   = pMethod->msgBlkSize - *digestLenProcessed;
 
     *digestLenProcessed += _digestLen;
-    if (*digestLenProcessed > pMethod->msgBlkSize) {
+    while (*digestLenProcessed > pMethod->msgBlkSize) {
         *digestLenProcessed -= pMethod->msgBlkSize;
     }
 

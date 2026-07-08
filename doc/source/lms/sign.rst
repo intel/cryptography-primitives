@@ -77,6 +77,17 @@ based on ``RDRAND`` hardware instruction is used.
    .. rubric:: Important
       :class: NoteTipHead
 
+   The one-time-key index in ``pPrvKey`` is advanced before the signing work,
+   so it is consumed even if the function later returns an error (for example,
+   on RNG failure). This prevents reuse of a one-time key, but the application
+   MUST persist the updated ``pPrvKey`` state after every call, including error
+   returns. Reusing a one-time key breaks the security of the scheme.
+
+.. note::
+
+   .. rubric:: Important
+      :class: NoteTipHead
+
    You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.
    For more information, see :ref:`Preview Features <experimental>`.
 

@@ -79,7 +79,11 @@ IPPFUN(IppStatus, ippsMLKEM_KeyGen, (Ipp8u * pEncKey,
         sts = rndFunc((Ipp32u*)d_k, CP_RAND_DATA_BYTES * 8, pRndParam);
         sts |= rndFunc((Ipp32u*)z, CP_RAND_DATA_BYTES * 8, pRndParam);
     }
-    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    if (sts != ippStsNoErr) {
+        PurgeBlock(d_k, sizeof(d_k));
+        PurgeBlock(z, sizeof(z));
+        return sts;
+    }
     /* 32nd byte equals to k */
     d_k[CP_RAND_DATA_BYTES] = pMLKEMCtx->params.k;
 

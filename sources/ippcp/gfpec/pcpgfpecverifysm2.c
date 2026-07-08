@@ -53,6 +53,8 @@
 //
 //    ippStsOutOfRangeErr        bitsize(pRegPublic) != bitsize(prime)
 //
+//    ippStsInvalidPoint         pRegPublic does not belong to the EC
+//
 //    ippStsNotSupportedModeErr  1<GFP_EXTDEGREE(pGFE)
 //
 //    ippStsNoErr                no errors
@@ -100,6 +102,8 @@ IPPFUN(IppStatus, ippsGFpECVerifySM2,(const IppsBigNumState* pMsgDigest,
     IPP_BAD_PTR1_RET(pRegPublic);
     IPP_BADARG_RET(!ECP_POINT_VALID_ID(pRegPublic), ippStsContextMatchErr);
     IPP_BADARG_RET(ECP_POINT_FELEN(pRegPublic) != GFP_FELEN(pGFE), ippStsOutOfRangeErr);
+    /* test if pRegPublic belongs EC */
+    IPP_BADARG_RET(0 == gfec_IsPointOnCurve(pRegPublic, pEC), ippStsInvalidPoint);
 
     /* test signature */
     IPP_BAD_PTR2_RET(pSignR, pSignS);

@@ -94,6 +94,12 @@ mbx_status OWNAPI(mbx_ed25519_sign_mb8)(ed25519_sign_component* pa_sign_r[8],
         if (NULL == sign_r || NULL == sign_s || NULL == msg || NULL == secret || NULL == public) {
             status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
         }
+
+        /* SHA512 length is processed as a signed int; reject lengths that would
+           become negative when cast, leading to out-of-bounds access */
+        if (msgLen[buf_no] > 0x7FFFFFFF) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
+        }
     }
 
 #if (_MBX >= _MBX_K1)
@@ -136,6 +142,12 @@ mbx_status OWNAPI(mbx_ed25519_verify_mb8)(const ed25519_sign_component* const pa
         /* if any of pointer NULL set error status */
         if (NULL == sign_r || NULL == sign_s || NULL == msg || NULL == public) {
             status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
+
+        /* SHA512 length is processed as a signed int; reject lengths that would
+           become negative when cast, leading to out-of-bounds access */
+        if (msgLen[buf_no] > 0x7FFFFFFF) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
         }
     }
 

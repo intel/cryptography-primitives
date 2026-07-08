@@ -99,6 +99,8 @@ Return Values
      - Indicates an error condition if the role is not equal to ``ippKESM2Requester`` or ``ippKESM2Responder``.
    * - ippStsInvalidPrivateKey
      - Indicates an error condition if the secret key is not within (0, order).
+   * - ippStsSizeErr
+     - Indicates an error condition if the private or ephemeral private key has no room for a full field element.
    * - ippStsOutOfRangeErr
      - Indicates an error condition if ``sharedKeySize`` <= 0.
 

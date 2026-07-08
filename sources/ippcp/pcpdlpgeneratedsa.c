@@ -193,8 +193,11 @@ IPPFUN(IppStatus, ippsDLPGenerateDSA, (const IppsBigNumState* pSeedIn,
             for (genCounter = 0; genCounter < R_MAXLOOP; genCounter++) {
                 int i;
 
-                if (seed_is_random)
-                    rndFunc(pSeedBNU32, seedBitSize, pRndParam);
+                if (seed_is_random) {
+                    IppStatus rndSts = rndFunc(pSeedBNU32, seedBitSize, pRndParam);
+                    if (ippStsNoErr != rndSts)
+                        return rndSts;
+                }
 
                 /* save value of SEED if requested */
                 if (pSeedOut)
