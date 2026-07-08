@@ -860,7 +860,7 @@ int* pDstLen, const IppsRSAPrivateKeyState* pKey, Ipp8u* pBuffer);</p>
 <td><p>Pointer to the input octet message to be decrypted.</p></td>
 </tr>
 <tr class="row-even"><td><p>pDst</p></td>
-<td><p>Pointer to the output message.</p></td>
+<td><p>Pointer to the output message. The buffer must be at least the size of the RSA modulus in bytes (see the note below).</p></td>
 </tr>
 <tr class="row-odd"><td><p>pDstLen</p></td>
 <td><p>Pointer to the length (in bytes) of the decrypted message.</p></td>
@@ -891,6 +891,14 @@ the v1.5 version of the PKCS#1 standard, defined in <a class="reference internal
 <p class="admonition-title">Note</p>
 <p>If an empty message is encrypted by the RSAEncrypt_PKCSv15 function,
 RSADecrypt_PKCSv15 returns and empty string, that is, *pDstLen==0.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To avoid leaking the message length through memory-access patterns, the
+function writes the full RSA modulus size to <code class="docutils literal notranslate"><span class="pre">pDst</span></code> regardless of the
+decrypted message length. The application must therefore provide a <code class="docutils literal notranslate"><span class="pre">pDst</span></code>
+buffer of at least the RSA modulus size in bytes, and use *pDstLen to
+determine the number of valid message bytes.</p>
 </div>
 </section>
 <section id="return-values">

@@ -900,7 +900,10 @@ whether the input probable prime passes the Miller-Rabin test.</p>
 <tr class="row-odd"><td><p>ippStsContextMatchErr</p></td>
 <td><p>Indicates an error condition if the context parameter does not match the operation.</p></td>
 </tr>
-<tr class="row-even"><td><p>ippStsBadArgErr</p></td>
+<tr class="row-even"><td><p>ippStsOutOfRangeErr</p></td>
+<td><p>Indicates an error condition if pPrime is larger than the maximum bit size the context pCtx can handle.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippStsBadArgErr</p></td>
 <td><p>Indicates an error condition if nTrials is less than 1.</p></td>
 </tr>
 </tbody>

@@ -874,6 +874,10 @@ IppsAES_GCMState* pState);</p>
 tagLen according to GCM as specified in <a class="reference internal" href="../bibliography.html#term-NIST-SP-800-38D"><span class="xref std std-term">NIST SP 800-38D</span></a>. A
 call to ippsAES_GCMGetTag does not stop the process of authenticated
 encryption/decryption.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If the application continues to encrypt or decrypt data after calling <code class="docutils literal notranslate"><span class="pre">ippsAES_GCMGetTag</span></code>, a final <code class="docutils literal notranslate"><span class="pre">ippsAES_GCMGetTag</span></code> MUST be called to authenticate the appended data. Intermediate tags do not cover data appended subsequently.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>
@@ -890,6 +894,9 @@ encryption/decryption.</p>
 </tr>
 <tr class="row-even"><td><p>ippStsLengthErr</p></td>
 <td><p>Indicates an error condition if tagLen &lt;1 or taglen &gt;16.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippStsBadArgErr</p></td>
+<td><p>Indicates an error condition if the pState parameter value is GcmInit or a non-empty IV has not been processed. This means that the function call sequence is illegal.</p></td>
 </tr>
 </tbody>
 </table>

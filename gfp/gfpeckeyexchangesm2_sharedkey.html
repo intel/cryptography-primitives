@@ -960,7 +960,10 @@ tmp_p = SM3( x(u/v) || Za || Zb || xa || ya || xb || yb )</p></td>
 <tr class="row-odd"><td><p>ippStsInvalidPrivateKey</p></td>
 <td><p>Indicates an error condition if the secret key is not within (0, order).</p></td>
 </tr>
-<tr class="row-even"><td><p>ippStsOutOfRangeErr</p></td>
+<tr class="row-even"><td><p>ippStsSizeErr</p></td>
+<td><p>Indicates an error condition if the private or ephemeral private key has no room for a full field element.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippStsOutOfRangeErr</p></td>
 <td><p>Indicates an error condition if <code class="docutils literal notranslate"><span class="pre">sharedKeySize</span></code> &lt;= 0.</p></td>
 </tr>
 </tbody>

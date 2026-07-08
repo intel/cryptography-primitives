@@ -913,6 +913,10 @@ AD[] and the computed plaintext.</p></li>
 <p>If the input and re-computed values ofSIV are the same, the plaintext
 authentication is considered passed (*pAuthPassed = 1), otherwise, the
 plaintextauthentication is considered failed (*pAuthPassed = 0).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Consume <code class="docutils literal notranslate"><span class="pre">pDst</span></code> only if <code class="docutils literal notranslate"><span class="pre">*pAuthPassed</span> <span class="pre">==</span> <span class="pre">1</span></code>. If authentication fails, the application MUST scrub <code class="docutils literal notranslate"><span class="pre">pDst</span></code> immediately to prevent the processing of forged data.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>

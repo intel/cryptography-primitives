@@ -875,6 +875,16 @@ IppsAES_GCMState* pState);</p>
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
 <p>The function decrypts the input cipher data stream of a variable length
 according to GCM as specified in <a class="reference internal" href="../bibliography.html#term-NIST-SP-800-38D"><span class="xref std std-term">NIST SP 800-38D</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The AES-GCM API is designed to support incremental streaming. Consequently,
+<code class="docutils literal notranslate"><span class="pre">ippsAES_GCMDecrypt</span></code> outputs plaintext immediately for each processed chunk.
+Authentication is deferred until the final tag is computed via
+<a class="reference internal" href="aes_gcmgettag.html#aes-gcmgettag"><span class="std std-ref">ippsAES_GCMGetTag</span></a>. It is the application’s responsibility
+to manage the lifecycle of the decrypted buffer: the plaintext must not be consumed
+as authentic until the final tag comparison is successful, and the buffer must be
+cleared by the application if authentication fails.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>

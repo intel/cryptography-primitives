@@ -914,6 +914,15 @@ based on <code class="docutils literal notranslate"><span class="pre">RDRAND</sp
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>
+<p>The one-time-key index in <code class="docutils literal notranslate"><span class="pre">pPrvKey</span></code> is advanced before the signing work,
+so it is consumed even if the function later returns an error (for example,
+on RNG failure). This prevents reuse of a one-time key, but the application
+MUST persist the updated <code class="docutils literal notranslate"><span class="pre">pPrvKey</span></code> state after every call, including error
+returns. Reusing a one-time key breaks the security of the scheme.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p class="notetiphead rubric">Important</p>
 <p>You need to enable the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_LMS</span></code> macro to use the feature.
 For more information, see <a class="reference internal" href="../preview-features.html#experimental"><span class="std std-ref">Preview Features</span></a>.</p>
 </div>

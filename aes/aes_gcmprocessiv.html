@@ -888,9 +888,12 @@ specified in <a class="reference internal" href="../bibliography.html#term-NIST-
 <td><p>Indicates an error condition if the context parameter does not match the operation.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsLengthErr</p></td>
-<td><p>Indicates an error condition if the length of the initialization vector is zero.</p></td>
+<td><p>Indicates an error condition if the length of the initialization vector is less than or equal to zero.</p></td>
 </tr>
-<tr class="row-odd"><td><p>ippStsBadArgErr</p></td>
+<tr class="row-odd"><td><p>ippStsScaleRangeErr</p></td>
+<td><p>Indicates an error condition if the accumulated initialization vector length overflows.</p></td>
+</tr>
+<tr class="row-even"><td><p>ippStsBadArgErr</p></td>
 <td><p>Indicates an error condition if the pState parameter value is not GcmInit or GcmIVProcessing. This means that the function call sequence is illegal.</p></td>
 </tr>
 </tbody>
