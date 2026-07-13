@@ -33,7 +33,7 @@
 /*F*
 //    Name: ippsHMAC_Message
 //
-// Purpose: MAC (MD5) of the whole message.
+// Purpose: MAC (Hash based) of the whole message.
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr           pMsg == NULL
