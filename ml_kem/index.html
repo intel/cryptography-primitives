@@ -903,7 +903,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="cm">  *     Party 2 runs encapsulation step.</span>
 <span class="cm">  *</span>
 <span class="cm">  *  Note: This example uses hardware-based random number generation. For full functionality, it</span>
-<span class="cm">  *  should be launched on a CPU that supports the RDRAND instruction. Alternatively, a custom</span>
+<span class="cm">  *  should be launched on a CPU that supports the RDSEED instruction. Alternatively, a custom</span>
 <span class="cm">  *  RNG can be provided by the user. More details can be found in the rndFunc parameter </span>
 <span class="cm">  *  description of the ML-KEM documentation.</span>
 <span class="cm">  *</span>
@@ -930,11 +930,11 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">    </span><span class="n">IppStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">;</span>
 
 <span class="w">    </span><span class="cm">/* Skip the example in case HW RNG is not supported */</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isAvailablePRNG_HW</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isAvailableTRNG_HW</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">printSkippedExampleDetails</span><span class="p">(</span>
 <span class="w">            </span><span class="s">&quot;ippsMLKEM_KeyGen/ippsMLKEM_Encaps/ippsMLKEM_Decaps&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s">&quot;ML-KEM scheme with IPPCP_ML_KEM_512 parameter&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s">&quot;RDRAND instruction is not supported by the CPU but is required</span><span class="se">\n</span><span class="s"> for this example.&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="s">&quot;RDSEED instruction is not supported by the CPU but is required</span><span class="se">\n</span><span class="s"> for this example.&quot;</span><span class="p">);</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 

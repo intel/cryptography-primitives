@@ -890,7 +890,7 @@ The working buffer should be allocated with the size not less than provided by
 <p>This function uses internally the random number generator (RNG) provided by the user through the <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code>
 parameter, please see <a class="reference internal" href="../trng_prng/user-s-implementation-of-a-pseudorandom-number.html#users-implementation-of-a-pseudorandom-num-gen"><span class="std std-ref">User’s Implementation of a RNG</span></a>
 for more information regarding creation the customer’s defined RNG object. If <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code> is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, the internal
-default random number generator based on <code class="docutils literal notranslate"><span class="pre">RDRAND</span></code> hardware instruction is used.</p>
+default random number generator based on <code class="docutils literal notranslate"><span class="pre">RDSEED</span></code> hardware instruction is used.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p class="notetiphead rubric">Important</p>
@@ -917,7 +917,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 of the library or contact <a class="reference external" href="https://github.com/intel/cryptography-primitives/issues">Intel</a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>ippStsNotSupportedModeErr</p></td>
-<td><p>Unsupported <code class="docutils literal notranslate"><span class="pre">RDRAND</span></code> instruction.</p></td>
+<td><p>Unsupported <code class="docutils literal notranslate"><span class="pre">RDSEED</span></code> instruction.</p></td>
 </tr>
 <tr class="row-even"><td><p>ippStsErr</p></td>
 <td><p>Random bit sequence can’t be generated.</p></td>
