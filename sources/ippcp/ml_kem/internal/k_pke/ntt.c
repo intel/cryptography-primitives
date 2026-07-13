@@ -23,7 +23,7 @@
  * Algorithm 9: NTT(f) - Computes the NTT representation f` of the given polynomial f in R_{q}.
  *
  * Input/Output: f - polynomial Z_{q}^{256}, which is transformed to
- *                   its NTT representation f` in T_{q}.
+ *                   its NTT representation f` in T_{q} in Montgomery domain.
  */
 IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
 {
@@ -34,9 +34,9 @@ IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
             i++;
             for (Ipp16u j = start; j < start + len; j++) {
                 // delay reduction, as the minimum possible value here will be in the function's range
-                Ipp32s t           = (Ipp32s)zeta * f->values[j + len];
-                f->values[j + len] = cp_mlkemBarrettReduce(((Ipp32s)f->values[j] - t));
-                f->values[j]       = cp_mlkemBarrettReduce(((Ipp32s)f->values[j] + t));
+                Ipp16s t           = cp_MontReduce((Ipp32s)zeta * f->values[j + len]);
+                f->values[j + len] = f->values[j] - t;
+                f->values[j]       = f->values[j] + t;
             }
         }
     }
@@ -47,7 +47,7 @@ IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
  *                             given NTT representation f` in T_{q}.
  *
  * Input/Output: f - polynomial in T_{q}, which is transformed to
- *                   the normal representation Z_{q}^{256}.
+ *                   the normal representation Z_{q}^{256} in Montgomery domain.
  */
 IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
 {
@@ -61,12 +61,16 @@ IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
                 f->values[j] = cp_mlkemBarrettReduce((Ipp32s)(t + f->values[j + len]));
                 // delay reduction, as the minimum possible value here will be in the function's range
                 f->values[j + len] = f->values[j + len] - t;
-                f->values[j + len] = cp_mlkemBarrettReduce((Ipp32s)zeta * f->values[j + len]);
+                f->values[j + len] = cp_MontReduce((Ipp32s)zeta * f->values[j + len]);
             }
         }
     }
+
+    // Multiply to a constant preserving Montgomery domain
+    // 1441 = MONT_R^{2}*3303 mod q = MONT_R^{2}*128^{−1} mod q
+    const Ipp16s montNTTConst = 1441;
     for (Ipp16u n = 0; n < 256; n++) {
-        f->values[n] = cp_mlkemBarrettReduce((Ipp32s)f->values[n] * 3303);
+        f->values[n] = cp_MontReduce((Ipp32s)f->values[n] * montNTTConst);
     }
 }
 
@@ -81,17 +85,17 @@ IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
  */
 /* clang-format off */
 IPPCP_INLINE void cp_baseCaseMultiply(Ipp16s a0, Ipp16s a1,
-                                        Ipp16s b0, Ipp16s b1,
-                                        Ipp16s gamma,
-                                        Ipp16s* c0_ptr, Ipp16s* c1_ptr)
+                                      Ipp16s b0, Ipp16s b1,
+                                      Ipp16s gamma,
+                                      Ipp16s* c0_ptr, Ipp16s* c1_ptr)
 /* clang-format on */
 {
-    Ipp32s tmpC0 = cp_mlkemBarrettReduce((Ipp32s)a1 * b1);
-    tmpC0        = cp_mlkemBarrettReduce((Ipp32s)gamma * tmpC0);
-    *c0_ptr      = cp_mlkemBarrettReduce(tmpC0 + (Ipp32s)a0 * b0);
+    Ipp16s tmpC0 = cp_MontReduce((Ipp32s)a1 * b1);
+    tmpC0        = cp_MontReduce((Ipp32s)gamma * tmpC0);
+    *c0_ptr      = tmpC0 + cp_MontReduce((Ipp32s)a0 * b0);
 
-    Ipp32s tmpC1 = cp_mlkemBarrettReduce((Ipp32s)a0 * b1);
-    *c1_ptr      = cp_mlkemBarrettReduce((Ipp32s)a1 * b0 + tmpC1);
+    Ipp16s tmpC1 = cp_MontReduce((Ipp32s)a0 * b1);
+    *c1_ptr      = tmpC1 + cp_MontReduce((Ipp32s)a1 * b0);
 }
 
 /*

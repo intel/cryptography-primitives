@@ -33,7 +33,7 @@
 //                               pScratchBuffer == NULL
 //    ippStsContextMatchErr      pMLKEMCtx is not initialized
 //    ippStsMemAllocErr          an internal functional error, see documentation for more details
-//    ippStsNotSupportedModeErr  unsupported RDRAND instruction
+//    ippStsNotSupportedModeErr  unsupported RDSEED instruction
 //    ippStsErr                  random bit sequence can't be generated
 //    An error that may be returned by rndFunc
 //    ippStsNoErr             no errors
@@ -76,7 +76,7 @@ IPPFUN(IppStatus, ippsMLKEM_Encaps, (const Ipp8u* pEncKey,
 
     /* Random nonce data */
     if (rndFunc == NULL) {
-        sts = ippsPRNGenRDRAND((Ipp32u*)m, CP_RAND_DATA_BYTES * 8, NULL);
+        sts = ippsTRNGenRDSEED((Ipp32u*)m, CP_RAND_DATA_BYTES * 8, NULL);
     } else {
         sts = rndFunc((Ipp32u*)m, CP_RAND_DATA_BYTES * 8, pRndParam);
     }

@@ -97,6 +97,7 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
         if (transformFlag == nttTransform) {
             /* 18: y` <- cp_NTT(𝐲) */
             cp_NTT(&pOutPoly[3]);
+            cp_mlkemPolyBarrettReduce(&pOutPoly[3]);
         }
         IPPCP_FALLTHROUGH;
     }
@@ -108,6 +109,7 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
         if (transformFlag == nttTransform) {
             /* 18: y` <- cp_NTT(𝐲) */
             cp_NTT(&pOutPoly[2]);
+            cp_mlkemPolyBarrettReduce(&pOutPoly[2]);
         }
         IPPCP_FALLTHROUGH;
     }
@@ -119,6 +121,7 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
         if (transformFlag == nttTransform) {
             /* 18: y` <- cp_NTT(𝐲) */
             cp_NTT(&pOutPoly[1]);
+            cp_mlkemPolyBarrettReduce(&pOutPoly[1]);
         }
         IPPCP_FALLTHROUGH;
     }
@@ -130,6 +133,7 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
         if (transformFlag == nttTransform) {
             /* 18: y` <- cp_NTT(𝐲) */
             cp_NTT(&pOutPoly[0]);
+            cp_mlkemPolyBarrettReduce(&pOutPoly[0]);
         }
         break;
     }
@@ -199,6 +203,7 @@ IPPCP_INLINE IppStatus cp_polyGenInternal(Ipp16sPoly* pOutPoly,
     if (transformFlag == nttTransform) {
         /* 18: y` <- cp_NTT(𝐲) */
         cp_NTT(pOutPoly);
+        cp_mlkemPolyBarrettReduce(pOutPoly);
     }
     sts = cp_mlStorageRelease(pStorage, // Ipp8u prfOutput[eta * 64]
                               eta * 64 + CP_ML_KEM_ALIGNMENT);

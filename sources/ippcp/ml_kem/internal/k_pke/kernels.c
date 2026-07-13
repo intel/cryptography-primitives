@@ -58,23 +58,26 @@ IPPCP_INLINE void cp_bitsToBytes(const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u nu
  * Input: byte array B^l
  * Output: bit array {0, 1}^{8*l}
  *
- * Note: works inplace (pInp == pOut), buffer's length has to be 8*numElmByteArr bytes
+ * Note: doesn't work inplace (pInp == pOut).
  */
 /* clang-format on */
-IPPCP_INLINE void cp_bytesToBits(const Ipp8u* pInp,
-                                 Ipp8u* pOut,
-                                 const Ipp32u numElmByteArr,
-                                 const Ipp32u outByteSize)
+IPPCP_INLINE IppStatus cp_bytesToBits(const Ipp8u* pInp,
+                                      Ipp8u* pOut,
+                                      const Ipp32u numElmByteArr,
+                                      const Ipp32u outByteSize)
 /* clang-format on */
 {
+    /* Check that the output buffer has enough space for write */
+    IPP_BADARG_RET((8 * numElmByteArr > outByteSize), ippStsMemAllocErr);
+
     for (Ipp32u i = 0; i < numElmByteArr; i++) {
         Ipp8u C = pInp[i];
         for (Ipp32u j = 0; j < 8; j++) {
-            Ipp32u position = (Ipp32u)(IPP_MIN((8 * i + j), outByteSize));
-            pOut[position]  = C & 1;
-            C >>= 1;
+            pOut[8 * i + j] = (C >> j) & 1;
         }
     }
+
+    return ippStsNoErr;
 }
 
 /*
@@ -179,7 +182,7 @@ IPP_OWN_DEFN(IppStatus, cp_Decompress, (Ipp16u * out, const Ipp16s in, const Ipp
 #if CP_ML_KEM_MEMORY_OPTIMIZED
 #define CP_B_BUFFERSIZE_MAX (88)
 #else
-#define CP_B_BUFFERSIZE_MAX (256 * CP_D_MAX)
+#define CP_B_BUFFERSIZE_MAX (32 * 8 * CP_D_MAX)
 #endif /* #if CP_ML_KEM_MEMORY_OPTIMIZED */
 
 IPP_OWN_DEFN(IppStatus, cp_byteEncode, (Ipp8u * B, const Ipp16u d, const Ipp16sPoly* pPolyF))
@@ -230,6 +233,11 @@ IPP_OWN_DEFN(IppStatus, cp_byteEncode, (Ipp8u * B, const Ipp16u d, const Ipp16sP
  *
  * Note: To reduce memory usage, the input byte array is processed by chunk of size d*8.
  */
+#if CP_ML_KEM_MEMORY_OPTIMIZED
+#define BITS_BUFFER_BYTESIZE (8 * CP_D_MAX)
+#else
+#define BITS_BUFFER_BYTESIZE (32 * 8 * CP_D_MAX)
+#endif
 IPP_OWN_DEFN(IppStatus,
              cp_byteDecode,
              (Ipp16sPoly * pPolyF, const Ipp16u d, const Ipp8u* B, const int bByteSize))
@@ -237,22 +245,38 @@ IPP_OWN_DEFN(IppStatus,
     IPP_BADARG_RET(((d < CP_D_MIN) || (d > CP_D_MAX)), ippStsOutOfRangeErr);
     IPP_BADARG_RET((bByteSize < 32 * d), ippStsOutOfRangeErr);
 
-    Ipp8u b[CP_D_MAX * 8] = { 0 };
+    IppStatus sts = ippStsNoErr;
+    Ipp8u bitsArr[BITS_BUFFER_BYTESIZE];
+
+/* Batched processing of all bytes from B to bitsArr -
+   read all 32*d bytes from B and put 8*32*d elements in bitsArr */
+#if !CP_ML_KEM_MEMORY_OPTIMIZED
+    sts = cp_bytesToBits(B, bitsArr, 32 * d, BITS_BUFFER_BYTESIZE);
+    if (sts != ippStsNoErr) {
+        return sts;
+    }
+#endif
+
     /* Decode byte array to polynomial */
     for (Ipp32u i = 0; i < 256; i++) {
+        Ipp32u bitsArrIdx = i;
+
+#if CP_ML_KEM_MEMORY_OPTIMIZED
         if ((i & 7) == 0) {
-            // Read the next d bytes from B and put 8*d elements in b
-            cp_bytesToBits(B, b, d, CP_D_MAX * 8);
+            // Read the next d bytes from B and put 8*d elements in bitsArr
+            sts |= cp_bytesToBits(B, bitsArr, d, BITS_BUFFER_BYTESIZE);
             B += d;
         }
+        bitsArrIdx = (i & 7);
+#endif
 
         pPolyF->values[i] = 0;
         for (Ipp32u j = 0; j < d; j++) {
-            pPolyF->values[i] += b[(i & 7) * d + j] << j;
+            pPolyF->values[i] += bitsArr[bitsArrIdx * d + j] << j;
         }
     }
 
-    return ippStsNoErr;
+    return sts;
 }
 
 /*
@@ -263,28 +287,50 @@ IPP_OWN_DEFN(IppStatus,
  * Output: pPoly  - array Z_{q}^{256} with values sampled from the distribution D_{eta}(R_{q}).
  *
  */
+#if CP_ML_KEM_MEMORY_OPTIMIZED
+#define SEED_BITS_BUFFER_BYTESIZE (4 * 8 * CP_ML_KEM_ETA_MAX)
+#else
+#define SEED_BITS_BUFFER_BYTESIZE (64 * 8 * CP_ML_KEM_ETA_MAX)
+#endif
 IPP_OWN_DEFN(IppStatus, cp_samplePolyCBD, (Ipp16sPoly * pPoly, const Ipp8u* pSeed, const Ipp8u eta))
 {
-    /* Byte array of size 32*eta bytes */
-    Ipp8u seedBits[4 * 8 * CP_ML_KEM_ETA_MAX];
+    IppStatus sts = ippStsNoErr;
+    /* Byte array (the size is different for the different platform) */
+    Ipp8u seedBits[SEED_BITS_BUFFER_BYTESIZE];
+
+/* Batched processing of all bytes from pSeed to seedBits -
+   read all 64*eta bytes from pSeed and put 8*64*eta elements in seedBits */
+#if !CP_ML_KEM_MEMORY_OPTIMIZED
+    sts = cp_bytesToBits(pSeed, seedBits, 64 * eta, SEED_BITS_BUFFER_BYTESIZE);
+    if (sts != ippStsNoErr) {
+        return sts;
+    }
+#endif
+
     for (Ipp16u i = 0; i < 256; i++) {
+        Ipp32u seedBitsIdx = i;
+
+/* Convert part of bytes to bits for the memory optimization -
+   read 2*eta bytes from pSeed and put 8*2*eta elements in seedBits */
+#if CP_ML_KEM_MEMORY_OPTIMIZED
         if ((i & 7) == 0) {
-            // Read the next 2*eta bytes from pSeed and put 8*2*eta elements in seedBits
-            cp_bytesToBits(pSeed, seedBits, 2 * eta, (4 * 8 * CP_ML_KEM_ETA_MAX));
+            sts |= cp_bytesToBits(pSeed, seedBits, 2 * eta, SEED_BITS_BUFFER_BYTESIZE);
             pSeed += 2 * eta;
         }
+        seedBitsIdx = (i & 7);
+#endif
+
         Ipp16s x = 0;
-        for (Ipp8u j = 0; j < eta; j++) {
-            x += seedBits[2 * (i & 7) * eta + j];
-        }
         Ipp16s y = 0;
         for (Ipp8u j = 0; j < eta; j++) {
-            y += seedBits[2 * (i & 7) * eta + eta + j];
+            x += seedBits[2 * seedBitsIdx * eta + j];
+            y += seedBits[2 * seedBitsIdx * eta + eta + j];
         }
+
         // The result will be mapped to the canonical positive representation in the reduction step
         Ipp16s result    = x - y;
         pPoly->values[i] = cp_mlkemBarrettReduce((Ipp32s)result);
     }
 
-    return ippStsNoErr;
+    return sts;
 }

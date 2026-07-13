@@ -120,4 +120,24 @@ inline int isAvailablePRNG_HW(void)
     return 0;
 }
 
+/*!
+ * Helper function to check if the current CPU supports hardware
+ * RNG (RDSEED instruction).
+ *
+ * \return zero if hardware RNG is not supported, otherwise - non-zero value
+ */
+inline int isAvailableTRNG_HW(void)
+{
+    ippcpInit();
+    if (ippCPUID_RDSEED == (ippCPUID_RDSEED & ippcpGetEnabledCpuFeatures())) {
+        Ipp32u outBuffer[1];
+        return (ippStsNotSupportedModeErr ==
+                ippsTRNGenRDSEED(outBuffer, sizeof(outBuffer) * 8, NULL))
+                   ? 0
+                   : 1;
+    }
+
+    return 0;
+}
+
 #endif /* #ifndef EXAMPLES_COMMON_H_ */

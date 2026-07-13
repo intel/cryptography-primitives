@@ -32,7 +32,7 @@
 //                               pScratchBuffer == NULL
 //    ippStsContextMatchErr      pMLKEMCtx is not initialized
 //    ippStsMemAllocErr          an internal functional error, see documentation for more details
-//    ippStsNotSupportedModeErr  unsupported RDRAND instruction
+//    ippStsNotSupportedModeErr  unsupported RDSEED instruction
 //    ippStsErr                  random bit sequence can't be generated
 //    A error that may be returned by rndFunc
 //    ippStsNoErr                no errors
@@ -73,11 +73,23 @@ IPPFUN(IppStatus, ippsMLKEM_KeyGen, (Ipp8u * pEncKey,
 
     /* Random nonce data */
     if (rndFunc == NULL) {
-        sts = ippsPRNGenRDRAND((Ipp32u*)d_k, CP_RAND_DATA_BYTES * 8, NULL);
-        sts |= ippsPRNGenRDRAND((Ipp32u*)z, CP_RAND_DATA_BYTES * 8, NULL);
+        sts = ippsTRNGenRDSEED((Ipp32u*)d_k, CP_RAND_DATA_BYTES * 8, NULL);
+        if (sts != ippStsNoErr) {
+            goto exit_cleanup;
+        }
+        sts = ippsTRNGenRDSEED((Ipp32u*)z, CP_RAND_DATA_BYTES * 8, NULL);
+        if (sts != ippStsNoErr) {
+            goto exit_cleanup;
+        }
     } else {
         sts = rndFunc((Ipp32u*)d_k, CP_RAND_DATA_BYTES * 8, pRndParam);
-        sts |= rndFunc((Ipp32u*)z, CP_RAND_DATA_BYTES * 8, pRndParam);
+        if (sts != ippStsNoErr) {
+            goto exit_cleanup;
+        }
+        sts = rndFunc((Ipp32u*)z, CP_RAND_DATA_BYTES * 8, pRndParam);
+        if (sts != ippStsNoErr) {
+            goto exit_cleanup;
+        }
     }
     if (sts != ippStsNoErr) {
         PurgeBlock(d_k, sizeof(d_k));
@@ -90,6 +102,7 @@ IPPFUN(IppStatus, ippsMLKEM_KeyGen, (Ipp8u * pEncKey,
     /* (ek,dk) <- ML-KEM.KeyGen_internal(d,z) */
     sts = cp_MLKEMkeyGen_internal(pEncKey, pDecKey, d_k, z, pMLKEMCtx);
 
+exit_cleanup:
     /* Zeroization of sensitive data */
     PurgeBlock(d_k, sizeof(d_k));
     PurgeBlock(z, sizeof(z));

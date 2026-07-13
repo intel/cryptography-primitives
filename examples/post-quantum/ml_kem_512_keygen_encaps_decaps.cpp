@@ -29,7 +29,7 @@
   *     Party 2 runs encapsulation step.
   *
   *  Note: This example uses hardware-based random number generation. For full functionality, it
-  *  should be launched on a CPU that supports the RDRAND instruction. Alternatively, a custom
+  *  should be launched on a CPU that supports the RDSEED instruction. Alternatively, a custom
   *  RNG can be provided by the user. More details can be found in the rndFunc parameter 
   *  description of the ML-KEM documentation.
   *
@@ -56,11 +56,11 @@ int main(void)
     IppStatus status = ippStsNoErr;
 
     /* Skip the example in case HW RNG is not supported */
-    if (!isAvailablePRNG_HW()) {
+    if (!isAvailableTRNG_HW()) {
         printSkippedExampleDetails(
             "ippsMLKEM_KeyGen/ippsMLKEM_Encaps/ippsMLKEM_Decaps",
             "ML-KEM scheme with IPPCP_ML_KEM_512 parameter",
-            "RDRAND instruction is not supported by the CPU but is required\n for this example.");
+            "RDSEED instruction is not supported by the CPU but is required\n for this example.");
         return status;
     }
 

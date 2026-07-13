@@ -86,6 +86,7 @@ IPP_OWN_DEFN(IppStatus, cp_KPKE_KeyGen, (Ipp8u* outEncKey,
             cp_multiplyNTT(CP_MATRIX_A_GET_I_J(matrixA, i, j), &vectorS[j], tmpPoly);
             cp_polyAdd(tmpPoly, &t[i], &t[i]);
         }
+        cp_vecToMont(&t[i]);
         cp_polyAdd(&vectorE[i], &t[i], &t[i]);
     }
     CP_ML_RELEASE_ALIGNED_POLY(pStorage, sts) // Ipp16sPoly tmpPoly

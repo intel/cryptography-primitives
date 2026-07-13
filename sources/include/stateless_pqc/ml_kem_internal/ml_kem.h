@@ -105,6 +105,25 @@ typedef IppPoly Ipp16sPoly;
 //        Stuff functions
 //-------------------------------//
 
+#define CP_ML_KEM_MONT_R          (65536)
+#define CP_ML_KEM_MONT_QINV_MOD_R (62209) // q^(-1) mod R
+#define CP_ML_KEM_MONT_R2_MOD_Q   (1353)
+
+IPPCP_INLINE Ipp16s cp_MontReduce(Ipp32s x)
+{
+    Ipp16s m = (Ipp16s)((Ipp32u)x * (Ipp32u)CP_ML_KEM_MONT_QINV_MOD_R);
+    Ipp16s t = (x - (Ipp32s)m * CP_ML_KEM_Q) >> 16;
+    return t;
+}
+
+// Convert to Montgomery domain: a -> a*R mod q
+IPPCP_INLINE void cp_vecToMont(Ipp16sPoly* vec)
+{
+    for (int i = 0; i < 256; i++) {
+        vec->values[i] = cp_MontReduce((Ipp32s)vec->values[i] * CP_ML_KEM_MONT_R2_MOD_Q);
+    }
+}
+
 /*
 // Barrett reduction for fixed n = CP_ML_KEM_Q
 //   res = x mod n, where bitsize(x) <= 2*k and bitsize(n) <= k.
@@ -148,6 +167,14 @@ IPPCP_INLINE Ipp16s cp_mlkemBarrettReduce(Ipp32s x)
     res += (res >> 15) & CP_ML_KEM_Q;
 
     return res;
+}
+
+// Barrett reduction with fixed n = CP_ML_KEM_Q for the whole polynomial
+IPPCP_INLINE void cp_mlkemPolyBarrettReduce(Ipp16sPoly* vec)
+{
+    for (int i = 0; i < 256; i++) {
+        vec->values[i] = cp_mlkemBarrettReduce((Ipp32s)vec->values[i]);
+    }
 }
 
 /*

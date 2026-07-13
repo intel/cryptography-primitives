@@ -49,7 +49,7 @@ The working buffer should be allocated with the size not less than provided by
 This function uses internally the random number generator (RNG) provided by the user through the ``rndFunc``
 parameter, please see :ref:`User's Implementation of a RNG <users-implementation-of-a-pseudorandom-num-gen>`
 for more information regarding creation the customer's defined RNG object. If ``rndFunc`` is ``NULL``, the internal
-default random number generator based on ``RDRAND`` hardware instruction is used.
+default random number generator based on ``RDSEED`` hardware instruction is used.
 
 .. note::
 
@@ -76,7 +76,7 @@ Return Values
      - An internal functional error. If this output status appears, update to the latest version
        of the library or contact `Intel <https://github.com/intel/cryptography-primitives/issues>`_.
    * - ippStsNotSupportedModeErr
-     - Unsupported ``RDRAND`` instruction.
+     - Unsupported ``RDSEED`` instruction.
    * - ippStsErr
      - Random bit sequence can't be generated.
    * - An error that may be returned by ``rndFunc``.
