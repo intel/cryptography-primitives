@@ -205,6 +205,31 @@ IPPCP_INLINE void cpEcGFpReleasePool(int n, IppsGFpECState* pEC)
     ZEXPAND_BNU(ECP_POOL(pEC), 0, chunk_size);
 }
 
+/* On AVX-512 IFMA, ippsGFpECBindGxyTblStd* installs a radix-52 base-point table
+ * into ECP_PREMULBP that is meant only as a flag for the IFMA point kernels; its
+ * affine points are stored in a form the generic gfec_base_point_mul cannot
+ * consume. This predicate detects that case so the generic path can fall back to
+ * variable-base multiplication. It mirrors the bind-time condition exactly. */
+IPPCP_INLINE int gfec_isBoundTableRadix52(const IppsGFpECState* pEC)
+{
+#if (_IPP32E >= _IPP32E_K1)
+    if (IsFeatureEnabled(ippCPUID_AVX512IFMA)) {
+        switch (ECP_MODULUS_ID(pEC)) {
+        case cpID_PrimeP256r1:
+        case cpID_PrimeP384r1:
+        case cpID_PrimeP521r1:
+        case cpID_PrimeTPM_SM2:
+            return 1;
+        default:
+            break;
+        }
+    }
+#else
+    IPP_UNREFERENCED_PARAMETER(pEC);
+#endif
+    return 0;
+}
+
 IPPCP_INLINE IppsGFpECPoint* cpEcGFpInitPoint(IppsGFpECPoint* pPoint,
                                               BNU_CHUNK_T* pData,
                                               int flags,

@@ -48,7 +48,7 @@ IPP_OWN_DEFN(IppsGFpECPoint*, gfec_MulBasePoint, (IppsGFpECPoint* pR,
         int orderLen            = MOD_LEN(pGForder);
         cpGFpElementCopyPad(pTmpScalar, orderLen + 1, pScalar, scalarLen);
 
-        if (ECP_PREMULBP(pEC))
+        if (ECP_PREMULBP(pEC) && !gfec_isBoundTableRadix52(pEC))
             gfec_base_point_mul(ECP_POINT_X(pR), (Ipp8u*)pTmpScalar, orderBits, pEC);
         else
             gfec_point_mul(ECP_POINT_X(pR),

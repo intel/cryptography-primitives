@@ -55,7 +55,7 @@ IPP_OWN_DEFN(IppsGFpECPoint*, gfec_BasePointProduct, (IppsGFpECPoint * pR,
         cpGFpElementCopyPad(tmpScalarG, orderLen + 1, pScalarG, scalarGlen);
         cpGFpElementCopyPad(tmpScalarP, orderLen + 1, pScalarP, scalarPlen);
 
-        if (ECP_PREMULBP(pEC)) {
+        if (ECP_PREMULBP(pEC) && !gfec_isBoundTableRadix52(pEC)) {
             BNU_CHUNK_T* productG = cpEcGFpGetPool(2, pEC);
             BNU_CHUNK_T* productP = productG + ECP_POINTLEN(pEC);
 
