@@ -70,12 +70,14 @@ IPPCP_INLINE IppStatus cp_bytesToBits(const Ipp8u* pInp,
     /* Check that the output buffer has enough space for write */
     IPP_BADARG_RET((8 * numElmByteArr > outByteSize), ippStsMemAllocErr);
 
+    IPPCP_GCC_IGNORE_PUSH("-Wstringop-overflow")
     for (Ipp32u i = 0; i < numElmByteArr; i++) {
         Ipp8u C = pInp[i];
         for (Ipp32u j = 0; j < 8; j++) {
             pOut[8 * i + j] = (C >> j) & 1;
         }
     }
+    IPPCP_GCC_IGNORE_POP
 
     return ippStsNoErr;
 }
