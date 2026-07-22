@@ -13,8 +13,8 @@ Syntax
 ------
 
 
-IppStatus ippsTDESDecryptCTR(const Ipp8u \*pSrc, Ipp8u \*pDst, int
-дen,const IppsDESSpec \*pCtx1, const IppsDESSpec \*pCtx2, const
+IppStatus ippsTDESDecryptCTR(const Ipp8u \*pSrc, Ipp8u \*pDst, int len,
+const IppsDESSpec \*pCtx1, const IppsDESSpec \*pCtx2, const
 IppsDESSpec \*pCtx3, Ipp8u \*pCtrValue, int ctrNumBitSize);
 
 
@@ -36,7 +36,7 @@ Parameters
      -  Input ciphertext data stream of a variable length.
    * -     pDst   
      -  Resulting plaintext data stream.
-   * -     дen   
+   * -     len
      -  Length of the plaintext data stream in bytes.
    * -     pCtx1   
      -  First set of round keys scheduled for TDES internal operations.

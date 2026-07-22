@@ -13,7 +13,7 @@ Syntax
 ------
 
 
-IppStatus ippсpGetCpuFeatures(Ipp64u\* pFeaturesMask);
+IppStatus ippcpGetCpuFeatures(Ipp64u\* pFeaturesMask);
 
 
 Include Files

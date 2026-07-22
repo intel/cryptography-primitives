@@ -117,7 +117,7 @@ IPP_OWN_DEFN(void, aes_cfb16_enc_vaes_mb16, (const Ipp8u* const source_pa[16],
                                              const int num_rounds,
                                              const Ipp32u* enc_keys[16],
                                              const Ipp8u* iv_pa[16]))
-/* clang-format oт */
+/* clang-format on */
 {
     int i, j, k;
     int maxLen = 0;
