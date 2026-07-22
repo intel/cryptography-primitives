@@ -844,8 +844,8 @@ document.write(`
 <p>Decrypts a variable length data stream in the CTR mode (deprecated).</p>
 <section id="syntax">
 <h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading">#</a></h2>
-<p>IppStatus ippsTDESDecryptCTR(const Ipp8u *pSrc, Ipp8u *pDst, int
-дen,const IppsDESSpec *pCtx1, const IppsDESSpec *pCtx2, const
+<p>IppStatus ippsTDESDecryptCTR(const Ipp8u *pSrc, Ipp8u *pDst, int len,
+const IppsDESSpec *pCtx1, const IppsDESSpec *pCtx2, const
 IppsDESSpec *pCtx3, Ipp8u *pCtrValue, int ctrNumBitSize);</p>
 </section>
 <section id="include-files">
@@ -862,7 +862,7 @@ IppsDESSpec *pCtx3, Ipp8u *pCtrValue, int ctrNumBitSize);</p>
 <tr class="row-even"><td><p>pDst</p></td>
 <td><p>Resulting plaintext data stream.</p></td>
 </tr>
-<tr class="row-odd"><td><p>дen</p></td>
+<tr class="row-odd"><td><p>len</p></td>
 <td><p>Length of the plaintext data stream in bytes.</p></td>
 </tr>
 <tr class="row-even"><td><p>pCtx1</p></td>
