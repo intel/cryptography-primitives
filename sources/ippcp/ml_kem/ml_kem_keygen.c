@@ -91,11 +91,6 @@ IPPFUN(IppStatus, ippsMLKEM_KeyGen, (Ipp8u * pEncKey,
             goto exit_cleanup;
         }
     }
-    if (sts != ippStsNoErr) {
-        PurgeBlock(d_k, sizeof(d_k));
-        PurgeBlock(z, sizeof(z));
-        return sts;
-    }
     /* 32nd byte equals to k */
     d_k[CP_RAND_DATA_BYTES] = pMLKEMCtx->params.k;
 
