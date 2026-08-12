@@ -1,8 +1,8 @@
-.. _mbx_exp-1024-2048-3072-4096_mb8:
+.. _mbx_exp-128-256-512-1024-2048-3072-4096_mb8:
 
 
-mbx_exp/1024/2048/3072/4096_mb8
-===============================
+mbx_exp/128/256/512/1024/2048/3072/4096_mb8
+===========================================
 
 
 Performs modular exponentiation.
@@ -10,6 +10,20 @@ Performs modular exponentiation.
 
 Syntax
 ------
+
+mbx_status mbx_exp128_mb8(int64u\* const out_pa[8], const int64u\*
+const base_pa[8], const int64u\* const exp_pa[8], int exp_bits, const
+int64u\* const mod_pa[8], int mod_bits, int8u\* pBuffer, int bufferLen);
+
+
+mbx_status mbx_exp256_mb8(int64u\* const out_pa[8], const int64u\*
+const base_pa[8], const int64u\* const exp_pa[8], int exp_bits, const
+int64u\* const mod_pa[8], int mod_bits, int8u\* pBuffer, int bufferLen);
+
+
+mbx_status mbx_exp512_mb8(int64u\* const out_pa[8], const int64u\*
+const base_pa[8], const int64u\* const exp_pa[8], int exp_bits, const
+int64u\* const mod_pa[8], int mod_bits, int8u\* pBuffer, int bufferLen);
 
 
 mbx_status mbx_exp1024_mb8(int64u\* const out_pa[8], const int64u\*
@@ -84,7 +98,7 @@ formula:
 
 Functions mbx_exp1024_mb8, mbx_exp2048_mb8, mbx_exp3072_mb8, and
 mbx_exp4096_mb8 are focused on exponentiation over the limited range of
-modulus n[i] - 1Kb, 2Kb, 3Kb, and 4Kb correspondingly.
+modulus n[i] - 128, 256, 512, 1Kb, 2Kb, 3Kb, and 4Kb correspondingly.
 
 
 Exact ranges of supported modulus are represented in the table below.
@@ -96,6 +110,15 @@ Exact ranges of supported modulus are represented in the table below.
    * -  function name
      -  modulus range
      -  exact boundaries (min, max) of the modulus size in bits
+   * -  mbx_exp128_mb8
+     -  128
+     -  105, 154
+   * -  mbx_exp256_mb8
+     -  256
+     -  209, 258
+   * -  mbx_exp512_mb8
+     -  512
+     -  469, 518
    * -  mbx_exp1024_mb8
      -  1Kb
      -  989, 1038
@@ -119,8 +142,9 @@ for the exp_bits parameter and actual exponents.
 
 
 The mbx_exp_mb8 function provides processing of modules belonging to
-either 1Kb, 2Kb, 3Kb or 4Kb range only, calling appropriate
-mbx_exp1024_mb8, mbx_exp2048_mb8, mbx_exp3072_mb8 or mbx_exp4096_mb8
+either 128, 256, 512, 1Kb, 2Kb, 3Kb or 4Kb range only, calling appropriate
+mbx_exp128_mb8, mbx_exp256_mb8, mbx_exp512_mb8, mbx_exp1024_mb8, 
+mbx_exp2048_mb8, mbx_exp3072_mb8 or mbx_exp4096_mb8
 function based on mod_bits parameter.
 
 
@@ -134,9 +158,10 @@ Return Values
 -------------
 
 
-The mbx_exp1024_mb8, mbx_exp2048_mb8, mbx_exp3072_mb8, mbx_exp4096_mb8,
-and mbx_exp_mb8 functions return the status that indicates whether the
-operation completed successfully or not. The status value of 0 indicates
-that all operations completed successfully. The error condition can be
-analyzed by the MBX_GET_STS() call.
+The mbx_exp128_mb8, mbx_exp256_mb8, mbx_exp512_mb8, mbx_exp1024_mb8, 
+mbx_exp2048_mb8, mbx_exp3072_mb8, mbx_exp4096_mb8, and mbx_exp_mb8 
+functions return the status that indicates whether the operation completed 
+successfully or not. The status value of 0 indicates that all operations 
+completed successfully. The error condition can be analyzed by 
+the MBX_GET_STS() call.
 

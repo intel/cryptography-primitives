@@ -136,6 +136,135 @@ mbx_status ifma_exp_mb(int64u* const out_pa[8],
 #endif /* #if (_MBX>=_MBX_K1) */
 
 DLL_PUBLIC
+mbx_status OWNAPI(mbx_exp128_mb8)(int64u* const out_pa[8],
+                                  const int64u* const base_pa[8],
+                                  const int64u* const exp_pa[8],
+                                  int exp_bits,
+                                  const int64u* const mod_pa[8],
+                                  int mod_bits,
+                                  int8u* pBuffer,
+                                  int bufferLen)
+{
+    mbx_status status = MBX_STATUS_OK;
+
+    /* test exp modulus range */
+    if (EXP_MODULUS_128 != bits_range(mod_bits)) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
+        return status;
+    }
+
+#if (_MBX >= _MBX_K1)
+    /* 128 exponentiation */
+    status |= ifma_exp_mb(out_pa,
+                          base_pa,
+                          exp_pa,
+                          exp_bits,
+                          mod_pa,
+                          mod_bits,
+                          ifma_modexp128_mb,
+                          pBuffer,
+                          bufferLen);
+#else
+    MBX_UNREFERENCED_PARAMETER(out_pa,
+                               base_pa,
+                               exp_pa,
+                               exp_bits,
+                               mod_pa,
+                               mod_bits,
+                               pBuffer,
+                               bufferLen);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
+    return status;
+}
+
+DLL_PUBLIC
+mbx_status OWNAPI(mbx_exp256_mb8)(int64u* const out_pa[8],
+                                  const int64u* const base_pa[8],
+                                  const int64u* const exp_pa[8],
+                                  int exp_bits,
+                                  const int64u* const mod_pa[8],
+                                  int mod_bits,
+                                  int8u* pBuffer,
+                                  int bufferLen)
+{
+    mbx_status status = MBX_STATUS_OK;
+
+    /* test exp modulus range */
+    if (EXP_MODULUS_256 != bits_range(mod_bits)) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
+        return status;
+    }
+
+#if (_MBX >= _MBX_K1)
+    /* 256 exponentiation */
+    status |= ifma_exp_mb(out_pa,
+                          base_pa,
+                          exp_pa,
+                          exp_bits,
+                          mod_pa,
+                          mod_bits,
+                          ifma_modexp256_mb,
+                          pBuffer,
+                          bufferLen);
+#else
+    MBX_UNREFERENCED_PARAMETER(out_pa,
+                               base_pa,
+                               exp_pa,
+                               exp_bits,
+                               mod_pa,
+                               mod_bits,
+                               pBuffer,
+                               bufferLen);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
+    return status;
+}
+
+DLL_PUBLIC
+mbx_status OWNAPI(mbx_exp512_mb8)(int64u* const out_pa[8],
+                                  const int64u* const base_pa[8],
+                                  const int64u* const exp_pa[8],
+                                  int exp_bits,
+                                  const int64u* const mod_pa[8],
+                                  int mod_bits,
+                                  int8u* pBuffer,
+                                  int bufferLen)
+{
+    mbx_status status = MBX_STATUS_OK;
+
+    /* test exp modulus range */
+    if (EXP_MODULUS_512 != bits_range(mod_bits)) {
+        status = MBX_SET_STS_ALL(MBX_STATUS_MISMATCH_PARAM_ERR);
+        return status;
+    }
+
+#if (_MBX >= _MBX_K1)
+    /* 512 exponentiation */
+    status |= ifma_exp_mb(out_pa,
+                          base_pa,
+                          exp_pa,
+                          exp_bits,
+                          mod_pa,
+                          mod_bits,
+                          ifma_modexp512_mb,
+                          pBuffer,
+                          bufferLen);
+#else
+    MBX_UNREFERENCED_PARAMETER(out_pa,
+                               base_pa,
+                               exp_pa,
+                               exp_bits,
+                               mod_pa,
+                               mod_bits,
+                               pBuffer,
+                               bufferLen);
+    status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
+#endif /* #if (_MBX>=_MBX_K1) */
+    return status;
+}
+
+DLL_PUBLIC
 mbx_status OWNAPI(mbx_exp1024_mb8)(int64u* const out_pa[8],
                                    const int64u* const base_pa[8],
                                    const int64u* const exp_pa[8],
@@ -333,6 +462,15 @@ mbx_status OWNAPI(mbx_exp_mb8)(int64u* const out_pa[8],
 #if (_MBX >= _MBX_K1)
     exp_mb8 expfunc = NULL;
     switch (modulus_range) {
+    case EXP_MODULUS_128:
+        expfunc = ifma_modexp128_mb;
+        break;
+    case EXP_MODULUS_256:
+        expfunc = ifma_modexp256_mb;
+        break;
+    case EXP_MODULUS_512:
+        expfunc = ifma_modexp512_mb;
+        break;
     case EXP_MODULUS_1024:
         expfunc = ifma_modexp1024_mb;
         break;

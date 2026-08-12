@@ -24,6 +24,9 @@
 #define EXP_WIN_MASK ((1 << EXP_WIN_SIZE) - 1)
 
 /* exponentiation modulus range */
+#define EXP_MODULUS_128       (128)
+#define EXP_MODULUS_256       (256)
+#define EXP_MODULUS_512       (512)
 #define EXP_MODULUS_1024      (1024)
 #define EXP_MODULUS_2048      (2048)
 #define EXP_MODULUS_3072      (3072)
@@ -55,8 +58,37 @@ int32u ifma_exp_mb(int64u* const out_pa[8],
                    int8u* pBuffer,
                    int bufferLen);
 
-
 /* exponentiations */
+#define ifma_modexp128_mb OWNAPI(ifma_modexp128_mb)
+void ifma_modexp128_mb(int64u out[][8],
+                       const int64u base[][8],
+                       const int64u exp[][8],
+                       int exp_bits,
+                       const int64u modulus[][8],
+                       const int64u toMont[][8],
+                       const int64u k0[8],
+                       int64u buffer[][8]);
+
+#define ifma_modexp256_mb OWNAPI(ifma_modexp256_mb)
+void ifma_modexp256_mb(int64u out[][8],
+                       const int64u base[][8],
+                       const int64u exp[][8],
+                       int exp_bits,
+                       const int64u modulus[][8],
+                       const int64u toMont[][8],
+                       const int64u k0[8],
+                       int64u buffer[][8]);
+
+#define ifma_modexp512_mb OWNAPI(ifma_modexp512_mb)
+void ifma_modexp512_mb(int64u out[][8],
+                       const int64u base[][8],
+                       const int64u exp[][8],
+                       int exp_bits,
+                       const int64u modulus[][8],
+                       const int64u toMont[][8],
+                       const int64u k0[8],
+                       int64u buffer[][8]);
+
 #define ifma_modexp1024_mb OWNAPI(ifma_modexp1024_mb)
 void ifma_modexp1024_mb(int64u out[][8],
                         const int64u base[][8],

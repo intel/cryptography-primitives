@@ -177,7 +177,10 @@ enum FIPS_CRYPTO_MB_FUNC {
     rsa_private_crt_ssl_mb8,
 
     /* Not approved functions, < 0 */
-    exp1024_mb8 = -0xFFF,
+    exp128_mb8 = -0xFFF,
+    exp256_mb8,
+    exp512_mb8,
+    exp1024_mb8,
     exp2048_mb8,
     exp3072_mb8,
     exp4096_mb8,

@@ -29,6 +29,12 @@ int bits_range(int modulusBits)
         return EXP_MODULUS_UNSUPPORT;
 
     switch (modulusLen) {
+    case NUMBER_OF_DIGITS(EXP_MODULUS_128, DIGIT_SIZE):
+        return EXP_MODULUS_128;
+    case NUMBER_OF_DIGITS(EXP_MODULUS_256, DIGIT_SIZE):
+        return EXP_MODULUS_256;
+    case NUMBER_OF_DIGITS(EXP_MODULUS_512, DIGIT_SIZE):
+        return EXP_MODULUS_512;
     case NUMBER_OF_DIGITS(EXP_MODULUS_1024, DIGIT_SIZE):
         return EXP_MODULUS_1024;
     case NUMBER_OF_DIGITS(EXP_MODULUS_2048, DIGIT_SIZE):

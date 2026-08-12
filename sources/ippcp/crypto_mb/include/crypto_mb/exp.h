@@ -25,6 +25,42 @@ MBXAPI(int, mbx_exp_BufferSize, (int modulusBits))
 
 /* exp operation */
 /* clang-format off */
+MBXAPI(mbx_status, mbx_exp128_mb8,(
+  int64u* const out_pa[8],
+  const int64u* const base_pa[8],
+  const int64u* const exp_pa[8],
+  int exp_bits,
+  const int64u* const mod_pa[8],
+  int mod_bits,
+  int8u* pBuffer,
+  int bufferLen))
+/* clang-format on */
+
+/* clang-format off */
+MBXAPI(mbx_status, mbx_exp256_mb8,(
+  int64u* const out_pa[8],
+  const int64u* const base_pa[8],
+  const int64u* const exp_pa[8],
+  int exp_bits,
+  const int64u* const mod_pa[8],
+  int mod_bits,
+  int8u* pBuffer,
+  int bufferLen))
+/* clang-format on */
+
+/* clang-format off */
+MBXAPI(mbx_status, mbx_exp512_mb8,(
+  int64u* const out_pa[8],
+  const int64u* const base_pa[8],
+  const int64u* const exp_pa[8],
+  int exp_bits,
+  const int64u* const mod_pa[8],
+  int mod_bits,
+  int8u* pBuffer,
+  int bufferLen))
+/* clang-format on */
+
+/* clang-format off */
 MBXAPI(mbx_status, mbx_exp1024_mb8,(
         int64u* const out_pa[8],
         const int64u* const base_pa[8],

@@ -41,8 +41,8 @@ Description
 -----------
 
 
-The function returns minimal size of work buffer requested for 1Kb, 2Kb,
-3Kb or 4Kb modular exponentiation depending on mod_bits parameter. If
+The function returns minimal size of work buffer requested for 128, 256, 512, 1Kb,
+2Kb, 3Kb or 4Kb modular exponentiation depending on mod_bits parameter. If
 the mod_bits parameter does not match the supported range of modulo
 size, it returns 0.
 

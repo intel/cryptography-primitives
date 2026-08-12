@@ -31,23 +31,47 @@ typedef int64u int64u_x4[4];     // alias   of 4-term vector of int64u each
 typedef int64u (*pint64u_x4)[4]; // pointer to 4-term vector of int64u each
 
 /* fixed size of RSA */
-#define RSA_1K (1024)
-#define RSA_2K (2 * RSA_1K)
-#define RSA_3K (3 * RSA_1K)
-#define RSA_4K (4 * RSA_1K)
+#define RSA_128 (128)
+#define RSA_256 (256)
+#define RSA_512 (512)
+#define RSA_1K  (1024)
+#define RSA_2K  (2 * RSA_1K)
+#define RSA_3K  (3 * RSA_1K)
+#define RSA_4K  (4 * RSA_1K)
 
 #ifndef NUMBER_OF_DIGITS
 #define NUMBER_OF_DIGITS(bitsize, digsize) (((bitsize) + (digsize)-1) / (digsize))
 #endif
 #define MULTIPLE_OF(x, factor) ((x) + (((factor) - ((x) % (factor))) % (factor)))
 
-#define redLen2K ((RSA_1K + (DIGIT_SIZE - 1)) / DIGIT_SIZE)       // 20
-#define redLen3K (((RSA_3K / 2) + (DIGIT_SIZE - 1)) / DIGIT_SIZE) // 30
-#define redLen4K ((RSA_2K + (DIGIT_SIZE - 1)) / DIGIT_SIZE)       // 40
+#define redLen256 ((RSA_128 + (DIGIT_SIZE - 1)) / DIGIT_SIZE)      // 3
+#define redLen512 ((RSA_256 + (DIGIT_SIZE - 1)) / DIGIT_SIZE)      // 5
+#define redLen1K  ((RSA_512 + (DIGIT_SIZE - 1)) / DIGIT_SIZE)      // 10
+#define redLen2K  ((RSA_1K + (DIGIT_SIZE - 1)) / DIGIT_SIZE)       // 20
+#define redLen3K  (((RSA_3K / 2) + (DIGIT_SIZE - 1)) / DIGIT_SIZE) // 30
+#define redLen4K  ((RSA_2K + (DIGIT_SIZE - 1)) / DIGIT_SIZE)       // 40
 
 #if (_MBX >= _MBX_K1)
 
 // ============ Multi-Buffer required functions ============
+EXTERN_C void ifma_extract_amm52x3_mb8(int64u* out_mb8,
+                                       const int64u* inpA_mb8,
+                                       int64u MulTbl[][redLen256][8],
+                                       const int64u Idx[8],
+                                       const int64u* inpM_mb8,
+                                       const int64u* k0_mb8);
+EXTERN_C void ifma_extract_amm52x5_mb8(int64u* out_mb8,
+                                       const int64u* inpA_mb8,
+                                       int64u MulTbl[][redLen512][8],
+                                       const int64u Idx[8],
+                                       const int64u* inpM_mb8,
+                                       const int64u* k0_mb8);
+EXTERN_C void ifma_extract_amm52x10_mb8(int64u* out_mb8,
+                                        const int64u* inpA_mb8,
+                                        int64u MulTbl[][redLen1K][8],
+                                        const int64u Idx[8],
+                                        const int64u* inpM_mb8,
+                                        const int64u* k0_mb8);
 EXTERN_C void ifma_extract_amm52x20_mb8(int64u* out_mb8,
                                         const int64u* inpA_mb8,
                                         int64u MulTbl[][redLen2K][8],
@@ -56,6 +80,11 @@ EXTERN_C void ifma_extract_amm52x20_mb8(int64u* out_mb8,
                                         const int64u* k0_mb8);
 
 // Multiplication
+EXTERN_C void ifma_amm52x3_mb8(int64u* out_mb8,
+                               const int64u* inpA_mb8,
+                               const int64u* inpB_mb8,
+                               const int64u* inpM_mb8,
+                               const int64u* k0_mb8);
 EXTERN_C void ifma_amm52x10_mb8(int64u* out_mb8,
                                 const int64u* inpA_mb8,
                                 const int64u* inpB_mb8,
@@ -100,6 +129,22 @@ EXTERN_C void ifma_ahmr52x20_mb8(int64u* out_mb,
                                  const int64u* k0_mb);
 
 // Diagonal sqr
+EXTERN_C void AMS52x3_diagonal_mb8(int64u* out_mb8,
+                                   const int64u* inpA_mb8,
+                                   const int64u* inpM_mb8,
+                                   const int64u* k0_mb8);
+EXTERN_C void AMS5x52x3_diagonal_mb8(int64u* out_mb8,
+                                     const int64u* inpA_mb8,
+                                     const int64u* inpM_mb8,
+                                     const int64u* k0_mb8);
+EXTERN_C void AMS52x5_diagonal_mb8(int64u* out_mb8,
+                                   const int64u* inpA_mb8,
+                                   const int64u* inpM_mb8,
+                                   const int64u* k0_mb8);
+EXTERN_C void AMS5x52x5_diagonal_mb8(int64u* out_mb8,
+                                     const int64u* inpA_mb8,
+                                     const int64u* inpM_mb8,
+                                     const int64u* k0_mb8);
 EXTERN_C void AMS52x10_diagonal_mb8(int64u* out_mb8,
                                     const int64u* inpA_mb8,
                                     const int64u* inpM_mb8,
@@ -108,7 +153,6 @@ EXTERN_C void AMS5x52x10_diagonal_mb8(int64u* out_mb8,
                                       const int64u* inpA_mb8,
                                       const int64u* inpM_mb8,
                                       const int64u* k0_mb8);
-
 EXTERN_C void AMS52x20_diagonal_mb8(int64u* out_mb8,
                                     const int64u* inpA_mb8,
                                     const int64u* inpM_mb8,

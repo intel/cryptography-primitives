@@ -26,7 +26,7 @@
 - [CMake\*](https://cmake.org/download) 3.18 or higher
 - Python 3.12.0
 - The Netwide Assembler (NASM\*) 3.01
-- OpenSSL\* 3.5.5 or higher **OR** BoringSSL* [0.20250114.0](https://github.com/google/boringssl/releases/tag/0.20250114.0) **OR** Tongsuo* 8.3.3
+- OpenSSL\* 3.5.7 or higher **OR** BoringSSL* [0.20250114.0](https://github.com/google/boringssl/releases/tag/0.20250114.0) **OR** Tongsuo* 8.3.3
 
 ### Linux* OS
 - [Common tools](#common-tools)
