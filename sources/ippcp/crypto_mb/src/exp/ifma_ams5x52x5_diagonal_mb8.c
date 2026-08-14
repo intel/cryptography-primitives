@@ -79,7 +79,7 @@ void AMS5x52x5_diagonal_mb8(int64u* out_mb,
 
         // Generate u_i
         U64 u0 = mul52lo(res0, k);
-        ASM("jmp l0\nl0:\n");
+        ASM("jmp 0f\n0:\n");
 
         // Create u0
         fma52lo_mem(res0, res0, u0, m, SIMD_BYTES * 0);
@@ -108,7 +108,7 @@ void AMS5x52x5_diagonal_mb8(int64u* out_mb,
         res5 = fma52hi(res5, u1, m[3]);
         fma52lo_mem(res5, res5, u1, m, SIMD_BYTES * 4);
         fma52hi_mem(res6, res6, u1, m, SIMD_BYTES * 4);
-        ASM("jmp l2\nl2:\n");
+        ASM("jmp 2f\n2:\n");
 
         // Create u2
         fma52lo_mem(res2, res2, u2, m, SIMD_BYTES * 0);
@@ -137,7 +137,7 @@ void AMS5x52x5_diagonal_mb8(int64u* out_mb,
         res7 = fma52hi(res7, u3, m[3]);
         fma52lo_mem(res7, res7, u3, m, SIMD_BYTES * 4);
         fma52hi_mem(res8, res8, u3, m, SIMD_BYTES * 4);
-        ASM("jmp l4\nl4:\n");
+        ASM("jmp 4f\n4:\n");
 
         // Create u4
         fma52lo_mem(res4, res4, u4, m, SIMD_BYTES * 0);
