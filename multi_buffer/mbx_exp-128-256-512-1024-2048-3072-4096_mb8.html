@@ -40,10 +40,12 @@
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'multi_buffer/mbx_exp-128-256-512-1024-3072-4096';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'multi_buffer/mbx_exp-128-256-512-1024-2048-3072-4096_mb8';</script>
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mbx_exp_BufferSize" href="mbx_exp_buffersize.html" />
+    <link rel="prev" title="Modular Exponentiation" href="modular-exponentiation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -106,8 +108,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -155,7 +155,7 @@
  </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <ul class="nav bd-sidenav">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../introducing-intel-cryptography-primitives.html">Introducing Intel® Cryptography Primitives Library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notational-conventions.html">Notational Conventions</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../theory-of-operation.html">Theory of Operation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -191,7 +191,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance-test-tool-perfsys-cli-options.html">Performance Test Tool (perfsys) Command Line Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../preview-features.html">Preview Features</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../developer-reference.html">Intel® Cryptography Primitives Library API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 has-children"><a class="reference internal" href="../overview.html">Overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../basic-features.html">Basic Features</a></li>
 
@@ -560,7 +560,7 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="multi-buffer-cryptography-functions.html">Multi-buffer Cryptography Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="multi-buffer-cryptography-functions.html">Multi-buffer Cryptography Functions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="mbx-support-functions.html">Multi-buffer library support functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="mbx-get-algo-info.html">mbx_get_algo_info</a></li>
 </ul>
@@ -635,7 +635,8 @@
 <li class="toctree-l4"><a class="reference internal" href="mbx_sm4_gcm_get_tag_mb16.html">mbx_sm4_gcm_get_tag_mb16</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="modular-exponentiation.html">Modular Exponentiation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="modular-exponentiation.html">Modular Exponentiation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">mbx_exp/128/256/512/1024/2048/3072/4096_mb8</a></li>
 <li class="toctree-l4"><a class="reference internal" href="mbx_exp_buffersize.html">mbx_exp_BufferSize</a></li>
 </ul>
 </details></li>
@@ -988,6 +989,24 @@ the MBX_GET_STS() call.</p>
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="modular-exponentiation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Modular Exponentiation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="mbx_exp_buffersize.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">mbx_exp_BufferSize</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
