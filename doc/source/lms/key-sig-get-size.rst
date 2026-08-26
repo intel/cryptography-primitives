@@ -76,8 +76,8 @@ Return Values
    * - ippStsBadArgErr
      - ``OIDAlgo.lmotsOIDAlgo < the minimum value for IppsLMOTSAlgo``,
        ``OIDAlgo.lmotsOIDAlgo > the maximum value for IppsLMOTSAlgo``,
-       ``OIDAlgo.prmLmsAlg < the minimum value for IppsLMSAlgo`` or
-       ``OIDAlgo.prmLmsAlg > the maximum value for IppsLMSAlgo``.
+       ``OIDAlgo.lmsOIDAlgo < the minimum value for IppsLMSAlgo`` or
+       ``OIDAlgo.lmsOIDAlgo > the maximum value for IppsLMSAlgo``.
    * - ippStsLengthErr
      - ``extraBufSize < 0``.
    * - ippStsSizeWrn

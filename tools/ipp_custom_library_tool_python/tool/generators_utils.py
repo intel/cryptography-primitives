@@ -23,16 +23,17 @@ ADDITIONAL_ENV = {
     LINUX: "export LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBRARY_PATH",
 }
 
-COMPILERS = {WINDOWS: "cl.exe", LINUX: "g++"}
+COMPILERS = {WINDOWS: "cl.exe", LINUX: "gcc"}
 
-LINKERS = {WINDOWS: "link.exe", LINUX: "g++"}
+LINKERS = {WINDOWS: "link.exe", LINUX: "gcc"}
 
 COMPILERS_FLAGS = {
     WINDOWS: {INTEL64: "/c /MP /MT /GS /sdl /O2"},
     LINUX: {
         INTEL64: (
             "-c -m64 -fPIC -fPIE -fstack-protector-strong -fstack-protector -O2 -D_FORTIFY_SOURCE=2 "
-            "-fcf-protection -Wformat -Wformat-security"
+            "-fcf-protection -Wformat -Wformat-security "
+            "-std=c11 -Wall -Wextra -Werror -pedantic-errors"
         ),
     },
 }
@@ -197,14 +198,14 @@ INIT_CHECK_FORMAT = r"""
         _features = {package_type}GetEnabledCpuFeatures();
         if (_features != UNINITIALIZED_FEATURES)
         {{
-            {return_keyword}{function}({args});
+            {return_keyword}{function}({args});{return_void_statement}
         }}
     }}"""
 
 DISPATCHING_SCHEME_FORMAT = r"""
     if ({cpuid} == (_features & {cpuid}))
     {{
-        {return_keyword}{function}({args});
+        {return_keyword}{function}({args});{return_void_statement}
     }}"""
 
 RETURN_VALUES = {

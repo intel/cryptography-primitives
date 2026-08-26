@@ -214,7 +214,7 @@ IPPFUN(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s * pSize, const IppsLMSAl
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pI == NULL
-//                            pK == NULL
+//                            pT1 == NULL
 //                            pState == NULL
 //    ippStsBadArgErr         lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8
 //                            lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1
@@ -225,20 +225,20 @@ IPPFUN(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s * pSize, const IppsLMSAl
 // Parameters:
 //    lmsType         structure with LMS parameters lmotsOIDAlgo and lmsOIDAlgo
 //    pI              pointer to the LMS private key identifier
-//    pK              pointer to the LMS public key
+//    pT1             pointer to the LMS public key
 //    pState          pointer to the LMS public key state
 //
 *F*/
 /* clang-format off */
 IPPFUN(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType,
                                              const Ipp8u* pI,
-                                             const Ipp8u* pK,
+                                             const Ipp8u* pT1,
                                              IppsLMSPublicKeyState* pState))
 /* clang-format on */
 {
     IppStatus ippcpSts = ippStsErr;
 
-    IPP_BAD_PTR3_RET(pI, pK, pState);
+    IPP_BAD_PTR3_RET(pI, pT1, pState);
     IPP_BADARG_RET(lmsType.lmsOIDAlgo >= LMS_MAX, ippStsBadArgErr);
     IPP_BADARG_RET(lmsType.lmsOIDAlgo <= LMS_MIN, ippStsBadArgErr);
     IPP_BADARG_RET(lmsType.lmotsOIDAlgo >= LMOTS_MAX, ippStsBadArgErr);
@@ -258,7 +258,7 @@ IPPFUN(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType,
     CopyBlock(pI, pState->I, CP_PK_I_BYTESIZE);
     // Set pointer to T1 right to the end of the context
     pState->T1 = (Ipp8u*)pState + sizeof(IppsLMSPublicKeyState);
-    CopyBlock(pK, pState->T1, (cpSize)lmsParams.m);
+    CopyBlock(pT1, pState->T1, (cpSize)lmsParams.m);
 
     return ippcpSts;
 }
@@ -465,8 +465,8 @@ IPPFUN(IppStatus,
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pSize == NULL
-//    ippStsBadArgErr         lmsType.lmotsOIDAlgo > LMOTS_SHA256_N24_W8
-//                            lmsType.lmotsOIDAlgo < LMOTS_SHA256_N32_W1
+//    ippStsBadArgErr         lmsType.lmsOIDAlgo > LMS_SHA256_M24_H25
+//                            lmsType.lmsOIDAlgo < LMS_SHA256_M32_H5
 //    ippStsLengthErr         extraBufSize < 0
 //    ippStsSizeWrn           extraBufSize % lmsParams.m != 0
 //    ippStsNoErr             no errors
@@ -490,10 +490,7 @@ IPPFUN(IppStatus,
     IPP_BADARG_RET(lmsType.lmsOIDAlgo <= LMS_MIN, ippStsBadArgErr);
     IPP_BADARG_RET(extraBufSize < 0, ippStsLengthErr);
 
-    /* Set LMOTS and LMS parameters */
-    cpLMOTSParams lmotsParams;
-    ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
-    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+    /* Set LMS parameter */
     cpLMSParams lmsParams;
     ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
@@ -559,12 +556,9 @@ IPPFUN(IppStatus, ippsLMSSetPrivateKeyState, (const IppsLMSAlgoType lmsType,
 
     IppStatus ippcpSts = ippStsErr;
 
-    /* Set LMS and LMOTS parameters */
+    /* Set LMS parameter */
     cpLMSParams lmsParams;
-    cpLMOTSParams lmotsParams;
     ippcpSts = setLMSParams(lmsType.lmsOIDAlgo, &lmsParams);
-    IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
-    ippcpSts = setLMOTSParams(lmsType.lmotsOIDAlgo, &lmotsParams);
     IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
 
     /* Validate q parameter - should be less than 2^h */
@@ -609,6 +603,13 @@ IPPFUN(IppStatus, ippsLMSSetPrivateKeyState, (const IppsLMSAlgoType lmsType,
 //    Name: ippsLMSInitKeyPair
 //
 // Purpose: Init LMS public and private keys states.
+//
+//          Init sets context ids, algorithm ids, and internal buffer pointers
+//          only. The value buffers (priv: secret seed / I; pub: I / T1) are NOT
+//          initialized here - they are populated by ippsLMSKeyGen() or by the
+//          corresponding ippsLMSSetPrivateKeyState()/ippsLMSSetPublicKeyState()
+//          setters. Getters must therefore not be called on an Init-only state
+//          (see ippsLMSGetPublicKeyElems).
 //
 // Returns:                Reason:
 //    ippStsNullPtrErr        pPrvKey == NULL or pPubKey == NULL
@@ -690,6 +691,12 @@ IPPFUN(IppStatus,
 //
 // Purpose: Init the LMS signature state.
 //
+//          Init sets the context id, algorithm ids, and internal buffer pointers
+//          only. The value buffers (C, Y, authPath) are NOT initialized here and
+//          _q is set to 0 - they are populated by ippsLMSSign() or by
+//          ippsLMSSetSignatureState(). Getters must therefore not be called on
+//          an Init-only state (see ippsLMSGetSignatureElems).
+//
 // Returns:                Reason:
 //    ippStsNullPtrErr        pSign == NULL
 //    ippStsBadArgErr         lmsType.lmotsOIDAlgo > Max value for IppsLMOTSAlgo
@@ -740,4 +747,160 @@ IPPFUN(IppStatus,
     pSign->_pAuthPath = ptr;
 
     return ippcpSts;
+}
+
+/*F*
+//    Name: ippsLMSGetPublicKeyElems
+//
+// Purpose: Extract components of the LMS public key state.
+//
+//          Every output pointer except pState is optional: pass NULL for any
+//          component that is not needed and it will be skipped, leaving the
+//          caller's buffer untouched. A single call can therefore return one,
+//          several, or all components at once.
+//
+//          USAGE RESTRICTION: call this getter only on a state fully populated by
+//          ippsLMSKeyGen() or by ippsLMSSetPublicKeyState(). ippsLMSInitKeyPair()
+//          does NOT initialize the value buffers (I, T1). Calling this getter on an
+//          Init-only state therefore copies out the uninitialized contents of the
+//          caller-owned state buffer.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pState == NULL
+//    ippStsContextMatchErr   pState context is invalid
+//    ippStsBadArgErr         the state holds an unsupported lmsOIDAlgo
+//                            (rejected by setLMSParams; only checked when pT1 is requested)
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pLmsType        pointer to the output LMS parameters (lmotsOIDAlgo and lmsOIDAlgo), or NULL
+//    pI              pointer to the output buf for the LMS priv key identifier (CP_PK_I_BYTESIZE), or NULL
+//    pT1             pointer to the output buffer for the LMS public key (m bytes), or NULL
+//    pState          pointer to the LMS public key state
+//
+*F*/
+/* clang-format off */
+IPPFUN(IppStatus, ippsLMSGetPublicKeyElems, (IppsLMSAlgoType* pLmsType,
+                                             Ipp8u* pI,
+                                             Ipp8u* pT1,
+                                             const IppsLMSPublicKeyState* pState))
+/* clang-format on */
+{
+    IPP_BAD_PTR1_RET(pState);
+    IPP_BADARG_RET(!CP_LMS_VALID_PUB_KEY_CTX_ID(pState), ippStsContextMatchErr);
+    IPP_BADARG_RET(pState->lmsOIDAlgo >= LMS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(pState->lmsOIDAlgo <= LMS_MIN, ippStsBadArgErr);
+    IPP_BADARG_RET(pState->lmotsOIDAlgo >= LMOTS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(pState->lmotsOIDAlgo <= LMOTS_MIN, ippStsBadArgErr);
+
+    if (pLmsType != NULL) {
+        pLmsType->lmotsOIDAlgo = pState->lmotsOIDAlgo;
+        pLmsType->lmsOIDAlgo   = pState->lmsOIDAlgo;
+    }
+
+    if (pI != NULL) {
+        CopyBlock(pState->I, pI, CP_PK_I_BYTESIZE);
+    }
+
+    if (pT1 != NULL) {
+        IppStatus ippcpSts = ippStsErr;
+
+        /* Set LMS parameters to obtain m */
+        cpLMSParams lmsParams;
+        ippcpSts = setLMSParams(pState->lmsOIDAlgo, &lmsParams);
+        IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+        CopyBlock(pState->T1, pT1, (cpSize)lmsParams.m);
+    }
+
+    return ippStsNoErr;
+}
+
+/*F*
+//    Name: ippsLMSGetSignatureElems
+//
+// Purpose: Extract components of the LMS signature state.
+//
+//          Every output pointer except pState is optional: pass NULL for any
+//          component that is not needed and it will be skipped, leaving the
+//          caller's buffer untouched. A single call can therefore return one,
+//          several, or all components at once.
+//
+//          USAGE RESTRICTION: call this getter only on a state fully populated by
+//          ippsLMSSign() or by ippsLMSSetSignatureState(). ippsLMSInitSignature()
+//          does NOT initialize the value buffers (C, Y, authPath) and sets _q = 0.
+//          Calling this getter on an Init-only state therefore copies out the
+//          uninitialized contents of the caller-owned state buffer.
+//
+// Returns:                Reason:
+//    ippStsNullPtrErr        pState == NULL
+//    ippStsContextMatchErr   pState context is invalid
+//    ippStsBadArgErr         the state holds an unsupported lmotsOIDAlgo
+//                            (rejected by setLMOTSParams; only checked when pC or pY is requested)
+//    ippStsBadArgErr         the state holds an unsupported lmsOIDAlgo
+//                            (rejected by setLMSParams; only checked when pAuthPath is requested)
+//    ippStsNoErr             no errors
+//
+// Parameters:
+//    pLmsType        pointer to the output LMS parameters (lmotsOIDAlgo and lmsOIDAlgo), or NULL
+//    pQ              pointer to the output leaf index q, or NULL
+//    pC              pointer to the output buffer for the C LM-OTS (n bytes), or NULL
+//    pY              pointer to the output buffer for the y LM-OTS (n * p bytes), or NULL
+//    pAuthPath       pointer to the output buffer for the LMS auth path (h * m bytes), or NULL
+//    pState          pointer to the LMS signature state
+//
+*F*/
+/* clang-format off */
+IPPFUN(IppStatus, ippsLMSGetSignatureElems, (IppsLMSAlgoType* pLmsType,
+                                             Ipp32u* pQ,
+                                             Ipp8u* pC,
+                                             Ipp8u* pY,
+                                             Ipp8u* pAuthPath,
+                                             const IppsLMSSignatureState* pState))
+/* clang-format on */
+{
+    IPP_BAD_PTR1_RET(pState);
+    IPP_BADARG_RET(!CP_LMS_VALID_SIGN_CTX_ID(pState), ippStsContextMatchErr);
+    IPP_BADARG_RET(pState->_lmsOIDAlgo >= LMS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(pState->_lmsOIDAlgo <= LMS_MIN, ippStsBadArgErr);
+    IPP_BADARG_RET(pState->_lmotsSig._lmotsOIDAlgo >= LMOTS_MAX, ippStsBadArgErr);
+    IPP_BADARG_RET(pState->_lmotsSig._lmotsOIDAlgo <= LMOTS_MIN, ippStsBadArgErr);
+
+    if (pLmsType != NULL) {
+        pLmsType->lmotsOIDAlgo = pState->_lmotsSig._lmotsOIDAlgo;
+        pLmsType->lmsOIDAlgo   = pState->_lmsOIDAlgo;
+    }
+
+    if (pQ != NULL) {
+        *pQ = pState->_q;
+    }
+
+    /* C and Y are sized from the LM-OTS parameter set (n, p) */
+    if (pC != NULL || pY != NULL) {
+        IppStatus ippcpSts = ippStsErr;
+
+        cpLMOTSParams lmotsParams;
+        ippcpSts = setLMOTSParams(pState->_lmotsSig._lmotsOIDAlgo, &lmotsParams);
+        IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+        if (pC != NULL) {
+            CopyBlock(pState->_lmotsSig.pC, pC, (cpSize)lmotsParams.n);
+        }
+        if (pY != NULL) {
+            CopyBlock(pState->_lmotsSig.pY, pY, (cpSize)(lmotsParams.n * lmotsParams.p));
+        }
+    }
+
+    /* The authentication path is sized from the LMS parameter set (m, h) */
+    if (pAuthPath != NULL) {
+        IppStatus ippcpSts = ippStsErr;
+
+        cpLMSParams lmsParams;
+        ippcpSts = setLMSParams(pState->_lmsOIDAlgo, &lmsParams);
+        IPP_BADARG_RET((ippStsNoErr != ippcpSts), ippcpSts)
+
+        CopyBlock(pState->_pAuthPath, pAuthPath, (cpSize)(lmsParams.m * lmsParams.h));
+    }
+
+    return ippStsNoErr;
 }

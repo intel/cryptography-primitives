@@ -2,6 +2,9 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 2.4.0
+- Added `ippsLMSGetPublicKeyElems` and `ippsLMSGetSignatureElems` getters to extract the individual components of an LMS public key and signature state.
+
 ## Intel(R) Cryptography Primitives Library 2.3.0
 - Updated ML-KEM to use RDSEED as the internal randomness source; optimized byte/bit conversion hot paths and introduced Montgomery-domain arithmetic for NTT operations to improve performance.
 - Fixed ippsGFpECTstKeyPair, ippsGFpECVerify, ippsGFpECSignNR and ippsGFpECVerifyNR returning wrong results on AVX-512 IFMA when a precomputed base-point table is bound via ippsGFpECBindGxyTblStd* (the generic base-point multiplication consumed the IFMA radix-52 table).

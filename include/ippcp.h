@@ -1399,7 +1399,7 @@ IPPAPI(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength,
 IPPAPI(IppStatus, ippsLMSVerifyBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
 IPPAPI(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
 IPPAPI(IppStatus, ippsLMSPublicKeyStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
-IPPAPI(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType, const Ipp8u* pI, const Ipp8u* pK,
+IPPAPI(IppStatus, ippsLMSSetPublicKeyState, (const IppsLMSAlgoType lmsType, const Ipp8u* pI, const Ipp8u* pT1,
                                              IppsLMSPublicKeyState* pState))
 IPPAPI(IppStatus, ippsLMSSetPrivateKeyState, (const IppsLMSAlgoType lmsType, const Ipp32u q, const Ipp8u* pSecretSeed,
                                               const Ipp8u* pI, const Ipp8u* pExtraBuf, const Ipp32s extraBufSize,
@@ -1407,6 +1407,12 @@ IPPAPI(IppStatus, ippsLMSSetPrivateKeyState, (const IppsLMSAlgoType lmsType, con
 IPPAPI(IppStatus, ippsLMSSetSignatureState, (const IppsLMSAlgoType lmsType, Ipp32u q, const Ipp8u* pC,
                                              const Ipp8u* pY, const Ipp8u* pAuthPath,
                                              IppsLMSSignatureState* pState))
+
+IPPAPI(IppStatus, ippsLMSGetPublicKeyElems, (IppsLMSAlgoType* pLmsType, Ipp8u* pI, Ipp8u* pT1,
+                                             const IppsLMSPublicKeyState* pState))
+IPPAPI(IppStatus, ippsLMSGetSignatureElems, (IppsLMSAlgoType* pLmsType, Ipp32u* pQ, Ipp8u* pC, Ipp8u* pY,
+                                             Ipp8u* pAuthPath, const IppsLMSSignatureState* pState))
+
 IPPAPI(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg, const Ipp32s msgLen,
                                   const IppsLMSSignatureState* pSign,
                                   int*  pIsSignValid,

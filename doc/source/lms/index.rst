@@ -92,5 +92,7 @@ Example 2. Verification
    set-pub-key-state
    set-priv-key-state
    set-sig-state
+   get-pub-key-elems
+   get-sig-elems
    init-key-state
    init-sig-state

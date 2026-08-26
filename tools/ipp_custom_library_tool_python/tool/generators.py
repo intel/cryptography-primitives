@@ -152,8 +152,10 @@ def func_dispatcher_generator(arch, function, dispatcher_type: utils.DispatcherT
     ret_value = utils.get_dict_value(RETURN_VALUES, ret_type)
     if ret_value:
         return_keyword = "return "
+        return_void_statement = ""
     else:
         return_keyword = ""
+        return_void_statement = " return;"
 
     ippapi = ""
     dispatching_scheme = ""
@@ -168,12 +170,20 @@ def func_dispatcher_generator(arch, function, dispatcher_type: utils.DispatcherT
         ippapi += declarations.replace(function, function_with_cpu_code) + "\n"
 
         dispatching_scheme += DISPATCHING_SCHEME_FORMAT.format(
-            cpuid=cpuid, return_keyword=return_keyword, function=function_with_cpu_code, args=args
+            cpuid=cpuid,
+            return_keyword=return_keyword,
+            function=function_with_cpu_code,
+            args=args,
+            return_void_statement=return_void_statement,
         )
 
     if dispatcher_type == utils.DispatcherType.STATIC:
         init_check = INIT_CHECK_FORMAT.format(
-            package_type=package_type.lower(), return_keyword=return_keyword, function=function_with_prefix, args=args
+            package_type=package_type.lower(),
+            return_keyword=return_keyword,
+            function=function_with_prefix,
+            args=args,
+            return_void_statement=return_void_statement,
         )
     else:
         init_check = ""
