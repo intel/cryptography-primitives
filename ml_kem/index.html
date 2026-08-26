@@ -534,6 +534,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-pub-key-state.html">Set LMS Public Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-priv-key-state.html">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-sig-state.html">Set LMS Signature State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-pub-key-elems.html">Get LMS Public Key Elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-sig-elems.html">Get LMS Signature Elements</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-sig-state.html">Initialize LMS Signature State</a></li>
 </ul>
@@ -875,14 +877,14 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cm">/*************************************************************************</span>
 <span class="cm">* Copyright (C) 2025 Intel Corporation</span>
 <span class="cm">*</span>
-<span class="cm">* Licensed under the Apache License,  Version 2.0 (the &quot;License&quot;);</span>
+<span class="cm">* Licensed under the Apache License,  Version 2.0 (the "License");</span>
 <span class="cm">* you may not use this file except in compliance with the License.</span>
 <span class="cm">* You may obtain a copy of the License at</span>
 <span class="cm">*</span>
 <span class="cm">* 	http://www.apache.org/licenses/LICENSE-2.0</span>
 <span class="cm">*</span>
 <span class="cm">* Unless required by applicable law  or agreed  to  in  writing,  software</span>
-<span class="cm">* distributed under  the License  is  distributed  on  an  &quot;AS IS&quot;  BASIS,</span>
+<span class="cm">* distributed under  the License  is  distributed  on  an  "AS IS"  BASIS,</span>
 <span class="cm">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
 <span class="cm">* See the License for the  specific  language  governing  permissions  and</span>
 <span class="cm">* limitations under the License.</span>
@@ -908,7 +910,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="cm">  *  description of the ML-KEM documentation.</span>
 <span class="cm">  *</span>
 <span class="cm">  *  The ML-KEM scheme is implemented according to the</span>
-<span class="cm">  *  &quot;Federal Information Processing Standards Publication 203&quot; document:</span>
+<span class="cm">  *  "Federal Information Processing Standards Publication 203" document:</span>
 <span class="cm">  *</span>
 <span class="cm">  *  https://csrc.nist.gov/pubs/fips/203/final</span>
 <span class="cm">  *</span>
@@ -921,8 +923,8 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;algorithm&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ippcp.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;examples_common.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"ippcp.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"examples_common.h"</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 <span class="p">{</span>
@@ -932,9 +934,9 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">    </span><span class="cm">/* Skip the example in case HW RNG is not supported */</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isAvailableTRNG_HW</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">printSkippedExampleDetails</span><span class="p">(</span>
-<span class="w">            </span><span class="s">&quot;ippsMLKEM_KeyGen/ippsMLKEM_Encaps/ippsMLKEM_Decaps&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s">&quot;ML-KEM scheme with IPPCP_ML_KEM_512 parameter&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="s">&quot;RDSEED instruction is not supported by the CPU but is required</span><span class="se">\n</span><span class="s"> for this example.&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="s">"ippsMLKEM_KeyGen/ippsMLKEM_Encaps/ippsMLKEM_Decaps"</span><span class="p">,</span>
+<span class="w">            </span><span class="s">"ML-KEM scheme with IPPCP_ML_KEM_512 parameter"</span><span class="p">,</span>
+<span class="w">            </span><span class="s">"RDSEED instruction is not supported by the CPU but is required</span><span class="se">\n</span><span class="s"> for this example."</span><span class="p">);</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -945,21 +947,21 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">    </span><span class="cm">/* 2. Allocate and initialize ML-KEM state*/</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">stateSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="n">status</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">ippsMLKEM_GetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stateSize</span><span class="p">,</span><span class="w"> </span><span class="n">schemeType</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_GetSize&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_GetSize"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Ipp8u</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stateBuffer</span><span class="p">(</span><span class="n">stateSize</span><span class="p">);</span>
 <span class="w">    </span><span class="n">IppsMLKEMState</span><span class="o">*</span><span class="w"> </span><span class="n">pState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">IppsMLKEMState</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">stateBuffer</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
 <span class="w">    </span><span class="n">status</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="n">ippsMLKEM_Init</span><span class="p">(</span><span class="n">pState</span><span class="p">,</span><span class="w"> </span><span class="n">schemeType</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_Init&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_Init"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="cm">/* 3. Query scheme&#39;s parameters - sizes of keys, shared secret and ciphertext */</span>
+<span class="w">    </span><span class="cm">/* 3. Query scheme's parameters - sizes of keys, shared secret and ciphertext */</span>
 <span class="w">    </span><span class="n">IppsMLKEMInfo</span><span class="w"> </span><span class="n">info</span><span class="p">;</span>
 <span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsMLKEM_GetInfo</span><span class="p">(</span><span class="o">&amp;</span><span class="n">info</span><span class="p">,</span><span class="w"> </span><span class="n">schemeType</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_GetInfo&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_GetInfo"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -979,7 +981,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">    </span><span class="cm">/* 5. [Party1] Generate encapsulation and decapsulation keys */</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">scratchBufferSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="n">status</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="n">ippsMLKEM_KeyGenBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">scratchBufferSize</span><span class="p">,</span><span class="w"> </span><span class="n">pState</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_KeyGenBufferGetSize&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_KeyGenBufferGetSize"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -990,7 +992,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">                              </span><span class="n">pScratchBuffer</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
 <span class="w">                              </span><span class="nb">nullptr</span><span class="p">,</span>
 <span class="w">                              </span><span class="nb">nullptr</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_KeyGen&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_KeyGen"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -998,7 +1000,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 
 <span class="w">    </span><span class="cm">/* 6. [Party2] Generate the shared secret and encapsulate it with received pEncKey */</span>
 <span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsMLKEM_EncapsBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">scratchBufferSize</span><span class="p">,</span><span class="w"> </span><span class="n">pState</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_EncapsBufferGetSize&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_EncapsBufferGetSize"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -1010,7 +1012,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">                              </span><span class="n">pEncapsScratchBuffer</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
 <span class="w">                              </span><span class="nb">nullptr</span><span class="p">,</span>
 <span class="w">                              </span><span class="nb">nullptr</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_Encaps&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_Encaps"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -1018,7 +1020,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 
 <span class="w">    </span><span class="cm">/* 7. [Party1] Decapsulate the received pCipherText to pSharedSecret1 */</span>
 <span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippsMLKEM_DecapsBufferGetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">scratchBufferSize</span><span class="p">,</span><span class="w"> </span><span class="n">pState</span><span class="p">);</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_DecapsBufferGetSize&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_DecapsBufferGetSize"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Ipp8u</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pDecapsScratchBuffer</span><span class="p">(</span><span class="n">scratchBufferSize</span><span class="p">);</span>
@@ -1027,7 +1029,7 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">                              </span><span class="n">pSharedSecret1</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span>
 <span class="w">                              </span><span class="n">pState</span><span class="p">,</span>
 <span class="w">                              </span><span class="n">pDecapsScratchBuffer</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_Decaps&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">checkStatus</span><span class="p">(</span><span class="s">"ippsMLKEM_Decaps"</span><span class="p">,</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -1036,12 +1038,12 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">isSecretsEqual</span><span class="w"> </span><span class="o">=</span>
 <span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">equal</span><span class="p">(</span><span class="n">pSharedSecret1</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">pSharedSecret1</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="n">pSharedSecret2</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isSecretsEqual</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;ERROR: Shared secrets of two parties do not match</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"ERROR: Shared secrets of two parties do not match</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
 <span class="w">        </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="n">PRINT_EXAMPLE_STATUS</span><span class="p">(</span><span class="s">&quot;ippsMLKEM_KeyGen/ippsMLKEM_Encaps/ippsMLKEM_Decaps&quot;</span><span class="p">,</span>
-<span class="w">                         </span><span class="s">&quot;ML-KEM scheme with IPPCP_ML_KEM_512 parameter&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">PRINT_EXAMPLE_STATUS</span><span class="p">(</span><span class="s">"ippsMLKEM_KeyGen/ippsMLKEM_Encaps/ippsMLKEM_Decaps"</span><span class="p">,</span>
+<span class="w">                         </span><span class="s">"ML-KEM scheme with IPPCP_ML_KEM_512 parameter"</span><span class="p">,</span>
 <span class="w">                         </span><span class="o">!</span><span class="n">status</span><span class="p">);</span>
 
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>

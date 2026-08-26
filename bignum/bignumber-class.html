@@ -534,6 +534,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-pub-key-state.html">Set LMS Public Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-priv-key-state.html">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-sig-state.html">Set LMS Signature State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-pub-key-elems.html">Get LMS Public Key Elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-sig-elems.html">Get LMS Signature Elements</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-sig-state.html">Initialize LMS Signature State</a></li>
 </ul>
@@ -846,14 +848,14 @@ class are presented below:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cm">/*************************************************************************</span>
 <span class="cm">* Copyright (C) 2019 Intel Corporation</span>
 <span class="cm">*</span>
-<span class="cm">* Licensed under the Apache License,  Version 2.0 (the &quot;License&quot;);</span>
+<span class="cm">* Licensed under the Apache License,  Version 2.0 (the "License");</span>
 <span class="cm">* you may not use this file except in compliance with the License.</span>
 <span class="cm">* You may obtain a copy of the License at</span>
 <span class="cm">*</span>
 <span class="cm">* 	http://www.apache.org/licenses/LICENSE-2.0</span>
 <span class="cm">*</span>
 <span class="cm">* Unless required by applicable law  or agreed  to  in  writing,  software</span>
-<span class="cm">* distributed under  the License  is  distributed  on  an  &quot;AS IS&quot;  BASIS,</span>
+<span class="cm">* distributed under  the License  is  distributed  on  an  "AS IS"  BASIS,</span>
 <span class="cm">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
 <span class="cm">* See the License for the  specific  language  governing  permissions  and</span>
 <span class="cm">* limitations under the License.</span>
@@ -862,7 +864,7 @@ class are presented below:</p>
 <span class="cp">#if !defined _BIGNUMBER_H_</span>
 <span class="cp">#define _BIGNUMBER_H_</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ippcp.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"ippcp.h"</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
@@ -959,23 +961,23 @@ declarations to be included, see the preceding
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cm">/*************************************************************************</span>
 <span class="cm">* Copyright (C) 2019 Intel Corporation</span>
 <span class="cm">*</span>
-<span class="cm">* Licensed under the Apache License,  Version 2.0 (the &quot;License&quot;);</span>
+<span class="cm">* Licensed under the Apache License,  Version 2.0 (the "License");</span>
 <span class="cm">* you may not use this file except in compliance with the License.</span>
 <span class="cm">* You may obtain a copy of the License at</span>
 <span class="cm">*</span>
 <span class="cm">* 	http://www.apache.org/licenses/LICENSE-2.0</span>
 <span class="cm">*</span>
 <span class="cm">* Unless required by applicable law  or agreed  to  in  writing,  software</span>
-<span class="cm">* distributed under  the License  is  distributed  on  an  &quot;AS IS&quot;  BASIS,</span>
+<span class="cm">* distributed under  the License  is  distributed  on  an  "AS IS"  BASIS,</span>
 <span class="cm">* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
 <span class="cm">* See the License for the  specific  language  governing  permissions  and</span>
 <span class="cm">* limitations under the License.</span>
 <span class="cm">*************************************************************************/</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;bignum.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"bignum.h"</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cstring&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cstdlib&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;utils.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"utils.h"</span>
 
 <span class="c1">//////////////////////////////////////////////////////////////////////</span>
 <span class="c1">//</span>
@@ -1023,14 +1025,14 @@ declarations to be included, see the preceding
 <span class="w">    </span><span class="n">create</span><span class="p">(</span><span class="n">pData</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">sgn</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">HexDigitList</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0123456789ABCDEF&quot;</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">HexDigitList</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"0123456789ABCDEF"</span><span class="p">;</span>
 
 <span class="n">BigNumber</span><span class="o">::</span><span class="n">BigNumber</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="p">)</span>
 <span class="p">{</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">neg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;-&#39;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">neg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'-'</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">neg</span><span class="p">)</span>
 <span class="w">        </span><span class="n">s</span><span class="o">++</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">hex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="sc">&#39;0&#39;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">((</span><span class="sc">&#39;x&#39;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="sc">&#39;X&#39;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]));</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">hex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="sc">'0'</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">((</span><span class="sc">'x'</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="sc">'X'</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]));</span>
 
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">dataLen</span><span class="p">;</span>
 <span class="w">    </span><span class="n">Ipp32u</span><span class="w"> </span><span class="n">base</span><span class="p">;</span>
@@ -1364,9 +1366,9 @@ declarations to be included, see the preceding
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BITSIZE_WORD</span><span class="p">(</span><span class="n">bnBitLen</span><span class="p">);</span>
 
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bnSgn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ippBigNumNEG</span><span class="p">)</span>
-<span class="w">        </span><span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;-&#39;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;0&#39;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;x&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="sc">'-'</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="sc">'0'</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="sc">'x'</span><span class="p">);</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">len</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">n</span><span class="o">--</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">Ipp32u</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bnData</span><span class="p">[</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
 <span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">nd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span><span class="w"> </span><span class="n">nd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">nd</span><span class="o">--</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>

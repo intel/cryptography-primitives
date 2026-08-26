@@ -534,6 +534,8 @@
 <li class="toctree-l4"><a class="reference internal" href="lms/set-pub-key-state.html">Set LMS Public Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lms/set-priv-key-state.html">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lms/set-sig-state.html">Set LMS Signature State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lms/get-pub-key-elems.html">Get LMS Public Key Elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lms/get-sig-elems.html">Get LMS Signature Elements</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lms/init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lms/init-sig-state.html">Initialize LMS Signature State</a></li>
 </ul>
@@ -926,8 +928,8 @@ ippsDESUnpack
 </div>
 <p>For example:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate build scripts</span>
-<span class="c1"># with the output shared library name &quot;my_custom_lib&quot;</span>
-<span class="c1"># with functions defined in the &quot;my_functions.txt&quot; file</span>
+<span class="c1"># with the output shared library name "my_custom_lib"</span>
+<span class="c1"># with functions defined in the "my_functions.txt" file</span>
 <span class="c1"># optimized only for processors with</span>
 <span class="c1"># Intel® Advanced Vector Extensions 512 (Intel® AVX-512)</span>
 <span class="c1"># using Intel® Cryptography Primitives Library</span>
@@ -935,8 +937,8 @@ ippsDESUnpack
 python3<span class="w"> </span>clt.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-g<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-n<span class="w"> </span>my_custom_lib<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-p<span class="w"> </span><span class="s2">&quot;~/my_project&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>-ff<span class="w"> </span><span class="s2">&quot;~/my_project/my_functions.txt&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="s2">"~/my_project"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-ff<span class="w"> </span><span class="s2">"~/my_project/my_functions.txt"</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>-d<span class="w"> </span>avx512bw
 </pre></div>
 </div>

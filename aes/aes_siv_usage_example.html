@@ -534,6 +534,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-pub-key-state.html">Set LMS Public Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-priv-key-state.html">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-sig-state.html">Set LMS Signature State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-pub-key-elems.html">Get LMS Public Key Elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-sig-elems.html">Get LMS Signature Elements</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-sig-state.html">Initialize LMS Signature State</a></li>
 </ul>
@@ -830,24 +832,24 @@ document.write(`
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">////////////////////////// Usage example for AES-SIV primitives //////////////////////</span>
 <span class="w">   </span><span class="c1">// key:</span>
 <span class="w">   </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">key</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x7f\x7e\x7d\x7c\x7b\x7a\x79\x78\x77\x76\x75\x74\x73\x72\x71\x70</span><span class="s">&quot;</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x7f\x7e\x7d\x7c\x7b\x7a\x79\x78\x77\x76\x75\x74\x73\x72\x71\x70</span><span class="s">"</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f</span><span class="s">"</span><span class="p">;</span>
 <span class="w">   </span><span class="c1">// ADs:</span>
 <span class="w">   </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">ad1</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x00\x11\x22\x33\x44\x55\x66\x77\x88\x99\xaa\xbb\xcc\xdd\xee\xff</span><span class="s">&quot;</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\xde\xad\xda\xda\xde\xad\xda\xda\xff\xee\xdd\xcc\xbb\xaa\x99\x88</span><span class="s">&quot;</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x77\x66\x55\x44\x33\x22\x11\x00</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x00\x11\x22\x33\x44\x55\x66\x77\x88\x99\xaa\xbb\xcc\xdd\xee\xff</span><span class="s">"</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\xde\xad\xda\xda\xde\xad\xda\xda\xff\xee\xdd\xcc\xbb\xaa\x99\x88</span><span class="s">"</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x77\x66\x55\x44\x33\x22\x11\x00</span><span class="s">"</span><span class="p">;</span>
 <span class="w">   </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">ad2</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x10\x20\x30\x40\x50\x60\x70\x80\x90\xa0</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x10\x20\x30\x40\x50\x60\x70\x80\x90\xa0</span><span class="s">"</span><span class="p">;</span>
 <span class="w">   </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">nonce</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x09\xf9\x11\x02\x9d\x74\xe3\x5b\xd8\x41\x56\xc5\x63\x56\x88\xc0</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x09\xf9\x11\x02\x9d\x74\xe3\x5b\xd8\x41\x56\xc5\x63\x56\x88\xc0</span><span class="s">"</span><span class="p">;</span>
 
 
 <span class="w">   </span><span class="c1">// PT</span>
 <span class="w">   </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">pt</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x74\x68\x69\x73\x20\x69\x73\x20\x73\x6f\x6d\x65\x20\x70\x6c\x61</span><span class="s">&quot;</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x69\x6e\x74\x65\x78\x74\x20\x74\x6f\x20\x65\x6e\x63\x72\x79\x70</span><span class="s">&quot;</span>
-<span class="w">      </span><span class="s">&quot;</span><span class="se">\x74\x20\x75\x73\x69\x6e\x67\x20\x53\x49\x56\x2d\x41\x45\x53</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x74\x68\x69\x73\x20\x69\x73\x20\x73\x6f\x6d\x65\x20\x70\x6c\x61</span><span class="s">"</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x69\x6e\x74\x65\x78\x74\x20\x74\x6f\x20\x65\x6e\x63\x72\x79\x70</span><span class="s">"</span>
+<span class="w">      </span><span class="s">"</span><span class="se">\x74\x20\x75\x73\x69\x6e\x67\x20\x53\x49\x56\x2d\x41\x45\x53</span><span class="s">"</span><span class="p">;</span>
 <span class="w">   </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">rt</span><span class="p">[</span><span class="k">sizeof</span><span class="p">(</span><span class="n">pt</span><span class="p">)];</span>
 <span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">authRes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0xaa</span><span class="p">;</span>
 
@@ -886,9 +888,9 @@ document.write(`
 
 
 <span class="w">   </span><span class="k">if</span><span class="p">((</span><span class="mi">1</span><span class="o">==</span><span class="n">authRes</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="o">==</span><span class="n">memcmp</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="n">rt</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span><span class="mi">-1</span><span class="p">)))</span>
-<span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;authenticated decryption passed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="s">"authenticated decryption passed</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
 <span class="w">   </span><span class="k">else</span>
-<span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;authenticated decryption failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="s">"authenticated decryption failed</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
 <span class="c1">//////////////////////////////////////////////////////////////////////</span>
 </pre></div>
 </div>

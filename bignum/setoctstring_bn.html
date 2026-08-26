@@ -534,6 +534,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-pub-key-state.html">Set LMS Public Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-priv-key-state.html">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-sig-state.html">Set LMS Signature State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-pub-key-elems.html">Get LMS Public Key Elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-sig-elems.html">Get LMS Signature Elements</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-sig-state.html">Initialize LMS Signature State</a></li>
 </ul>
@@ -901,8 +903,8 @@ IppsBigNumState* pBN);</p>
 <p>The code example below shows how to create a big number from a string.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Set_BN_sample</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
 <span class="w">   </span><span class="c1">// desired value of Big Number is 0x123456789abcdef0fedcba9876543210</span>
-<span class="w">   </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">desiredBNvalue</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\x12\x34\x56\x78\x9a\xbc\xde\xf0</span><span class="s">&quot;</span>
-<span class="w">                            </span><span class="s">&quot;</span><span class="se">\xfe\xdc\xba\x98\x76\x54\x32\x10</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">   </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">desiredBNvalue</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"</span><span class="se">\x12\x34\x56\x78\x9a\xbc\xde\xf0</span><span class="s">"</span>
+<span class="w">                            </span><span class="s">"</span><span class="se">\xfe\xdc\xba\x98\x76\x54\x32\x10</span><span class="s">"</span><span class="p">;</span>
 <span class="w">   </span><span class="c1">// estimate required size of Big Number</span>
 <span class="w">   </span><span class="c1">//int size = (sizeof(desiredBNvalue)+3)/4;</span>
 <span class="w">   </span><span class="c1">//int size = (sizeof(desiredBNvalue)+3)/4;</span>
@@ -911,7 +913,7 @@ IppsBigNumState* pBN);</p>
 <span class="w">   </span><span class="n">IppsBigNumState</span><span class="o">*</span><span class="w"> </span><span class="n">pBN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">New_BN</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
 <span class="w">   </span><span class="c1">// set up the value from the string</span>
 <span class="w">   </span><span class="n">ippsSetOctString_BN</span><span class="p">(</span><span class="n">desiredBNvalue</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">desiredBNvalue</span><span class="p">)</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">pBN</span><span class="p">);</span>
-<span class="w">   </span><span class="n">Type_BN</span><span class="p">(</span><span class="s">&quot;Big Number value is:</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pBN</span><span class="p">);</span>
+<span class="w">   </span><span class="n">Type_BN</span><span class="p">(</span><span class="s">"Big Number value is:</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">pBN</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </div>

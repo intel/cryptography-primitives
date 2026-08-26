@@ -534,6 +534,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-pub-key-state.html">Set LMS Public Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-priv-key-state.html">Set LMS Private Key State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/set-sig-state.html">Set LMS Signature State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-pub-key-elems.html">Get LMS Public Key Elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../lms/get-sig-elems.html">Get LMS Signature Elements</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-key-state.html">Initialize LMS Key Pair State</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../lms/init-sig-state.html">Initialize LMS Signature State</a></li>
 </ul>
@@ -837,34 +839,34 @@ document.write(`
 
 
 <span class="w">      </span><span class="k">static</span>
-<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">P</span><span class="p">(</span><span class="s">&quot;0x8DF2A494492276AA3D25759BB06869CBEAC0D83AFB8D0CF7&quot;</span><span class="w"> </span>\
-<span class="w">                  </span><span class="s">&quot;CBB8324F0D7882E5D0762FC5B7210EAFC2E9ADAC32AB7AAC&quot;</span><span class="w"> </span>\
-<span class="w">                  </span><span class="s">&quot;49693DFBF83724C2EC0736EE31C80291&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">P</span><span class="p">(</span><span class="s">"0x8DF2A494492276AA3D25759BB06869CBEAC0D83AFB8D0CF7"</span><span class="w"> </span>\
+<span class="w">                  </span><span class="s">"CBB8324F0D7882E5D0762FC5B7210EAFC2E9ADAC32AB7AAC"</span><span class="w"> </span>\
+<span class="w">                  </span><span class="s">"49693DFBF83724C2EC0736EE31C80291"</span><span class="p">);</span>
 
 
 <span class="w">      </span><span class="k">static</span>
-<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">Q</span><span class="p">(</span><span class="s">&quot;0xC773218C737EC8EE993B4F2DED30F48EDACE915F&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">Q</span><span class="p">(</span><span class="s">"0xC773218C737EC8EE993B4F2DED30F48EDACE915F"</span><span class="p">);</span>
 
 
 <span class="w">      </span><span class="k">static</span>
-<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">G</span><span class="p">(</span><span class="s">&quot;0x626D027839EA0A13413163A55B4CB500299D5522956CEFCB&quot;</span><span class="w"> </span>\
-<span class="w">                  </span><span class="s">&quot;3BFF10F399CE2C2E71CB9DE5FA24BABF58E5B79521925C9C&quot;</span><span class="w"> </span>\
-<span class="w">                  </span><span class="s">&quot;C42E9F6F464B088CC572AF53E6D78802&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">G</span><span class="p">(</span><span class="s">"0x626D027839EA0A13413163A55B4CB500299D5522956CEFCB"</span><span class="w"> </span>\
+<span class="w">                  </span><span class="s">"3BFF10F399CE2C2E71CB9DE5FA24BABF58E5B79521925C9C"</span><span class="w"> </span>\
+<span class="w">                  </span><span class="s">"C42E9F6F464B088CC572AF53E6D78802"</span><span class="p">);</span>
 
 
 <span class="w">      </span><span class="c1">//</span>
 <span class="w">      </span><span class="c1">// known DSA regular key pair</span>
 <span class="w">      </span><span class="c1">//</span>
 <span class="w">      </span><span class="k">static</span>
-<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">X</span><span class="p">(</span><span class="s">&quot;0x2070B3223DBA372FDE1C0FFC7B2E3B498B260614&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">X</span><span class="p">(</span><span class="s">"0x2070B3223DBA372FDE1C0FFC7B2E3B498B260614"</span><span class="p">);</span>
 
 
 
 
 <span class="w">      </span><span class="k">static</span>
-<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">Y</span><span class="p">(</span><span class="s">&quot;0x19131871D75B1612A819F29D78D1B0D7346F7AA77BB62A85&quot;</span><span class="w"> </span>\
-<span class="w">                  </span><span class="s">&quot;9BFD6C5675DA9D212D3A36EF1672EF660B8C7C255CC0EC74&quot;</span><span class="w"> </span>\
-<span class="w">                  </span><span class="s">&quot;858FBA33F44C06699630A76B030EE333&quot;</span><span class="p">);</span>
+<span class="w">      </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">Y</span><span class="p">(</span><span class="s">"0x19131871D75B1612A819F29D78D1B0D7346F7AA77BB62A85"</span><span class="w"> </span>\
+<span class="w">                  </span><span class="s">"9BFD6C5675DA9D212D3A36EF1672EF660B8C7C255CC0EC74"</span><span class="w"> </span>\
+<span class="w">                  </span><span class="s">"858FBA33F44C06699630A76B030EE333"</span><span class="p">);</span>
 
 
 
@@ -880,7 +882,7 @@ document.write(`
 
 
 <span class="w">        </span><span class="c1">// message</span>
-<span class="w">         </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">message</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;abc&quot;</span><span class="p">;</span>
+<span class="w">         </span><span class="n">Ipp8u</span><span class="w"> </span><span class="n">message</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"abc"</span><span class="p">;</span>
 
 
 <span class="w">         </span><span class="c1">// compute message digest to be signed</span>
@@ -906,7 +908,7 @@ document.write(`
 <span class="w">         </span><span class="c1">//</span>
 <span class="w">         </span><span class="c1">// generate signature</span>
 <span class="w">         </span><span class="c1">//</span>
-<span class="w">         </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">signR</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">BITS_2_WORDS</span><span class="p">(</span><span class="n">L</span><span class="p">));</span><span class="w">      </span><span class="c1">// R and S signature&#39;s component</span>
+<span class="w">         </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">signR</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">BITS_2_WORDS</span><span class="p">(</span><span class="n">L</span><span class="p">));</span><span class="w">      </span><span class="c1">// R and S signature's component</span>
 <span class="w">         </span><span class="n">BigNumber</span><span class="w"> </span><span class="n">signS</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">BITS_2_WORDS</span><span class="p">(</span><span class="n">L</span><span class="p">));</span>
 <span class="w">         </span><span class="n">ippsDLPSetKeyPair</span><span class="p">(</span><span class="n">ephX</span><span class="p">,</span><span class="w"> </span><span class="n">ephY</span><span class="p">,</span><span class="w"> </span><span class="n">DLPState</span><span class="p">);</span><span class="w">  </span><span class="c1">// set up ephemeral keys</span>
 <span class="w">         </span><span class="n">ippsDLPSignDSA</span><span class="p">(</span><span class="n">digest</span><span class="p">,</span><span class="w"> </span><span class="n">X</span><span class="p">,</span><span class="w">                 </span><span class="c1">// sign digest</span>
