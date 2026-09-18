@@ -18,6 +18,22 @@ cmake_minimum_required(VERSION 3.18)
 
 project("crypto_mb" C)
 
+# Unwrap /Qoption,link, from the linker flags: xilib and xilink get them from MSBuild directly
+# and report them as unknown options (warning #10006)
+if(WIN32 AND ("${CMAKE_C_COMPILER_ID}" STREQUAL "IntelLLVM")
+   AND (${CMAKE_GENERATOR} MATCHES "Visual Studio")
+   AND (CMAKE_VERSION VERSION_GREATER_EQUAL 3.25) AND (CMAKE_VERSION VERSION_LESS 3.29.1))
+  foreach(MBX_LINKER_FLAGS_TYPE EXE SHARED MODULE STATIC)
+    if(CMAKE_${MBX_LINKER_FLAGS_TYPE}_LINKER_FLAGS MATCHES "/Qoption,link,")
+      string(REPLACE "/Qoption,link," "" MBX_LINKER_FLAGS "${CMAKE_${MBX_LINKER_FLAGS_TYPE}_LINKER_FLAGS}")
+      get_property(MBX_LINKER_FLAGS_DOC CACHE CMAKE_${MBX_LINKER_FLAGS_TYPE}_LINKER_FLAGS PROPERTY HELPSTRING)
+      set(CMAKE_${MBX_LINKER_FLAGS_TYPE}_LINKER_FLAGS "${MBX_LINKER_FLAGS}" CACHE STRING "${MBX_LINKER_FLAGS_DOC}" FORCE)
+    endif()
+  endforeach()
+  unset(MBX_LINKER_FLAGS)
+  unset(MBX_LINKER_FLAGS_DOC)
+endif()
+
 include("${CMAKE_CURRENT_SOURCE_DIR}/src/cmake/crypto_mb-utils.cmake")
 mbx_getlibversion("${CMAKE_CURRENT_SOURCE_DIR}/include/crypto_mb/version.h")
 
