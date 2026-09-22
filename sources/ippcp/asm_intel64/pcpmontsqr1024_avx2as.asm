@@ -46,7 +46,7 @@ align IPP_ALIGN_FACTOR
 IPPASM cpMontSqr1024_avx2,PUBLIC
 %assign LOCAL_FRAME sizeof(qword)*7
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14
-        USES_XMM_AVX ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13,ymm14
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13,xmm14
         COMP_ABI 6
 
       movsxd   rcx, ecx             ; redLen value counter
@@ -596,7 +596,7 @@ align IPP_ALIGN_FACTOR
 IPPASM cpSqr1024_avx2,PUBLIC
 %assign LOCAL_FRAME sizeof(qword)*5
         USES_GPR rsi,rdi,rbx
-        USES_XMM_AVX ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13,ymm14
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13,xmm14
         COMP_ABI 4
 
       movsxd   rdx, edx             ; redLen value counter

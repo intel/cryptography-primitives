@@ -44,7 +44,7 @@ align IPP_ALIGN_FACTOR
 IPPASM cpSqr_avx2,PUBLIC
 %assign LOCAL_FRAME sizeof(qword)*6
         USES_GPR rsi,rdi,rbx,rbp,r12,r13
-        USES_XMM_AVX ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13,ymm14
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13,xmm14
         COMP_ABI 4
 
       movsxd   rdx, edx             ; redLen value counter
@@ -441,8 +441,8 @@ ENDFUNC cpSqr_avx2
 align IPP_ALIGN_FACTOR
 IPPASM cpMontRed_avx2,PUBLIC
 %assign LOCAL_FRAME sizeof(qword)*7
-        USES_GPR rsi,rdi,rbx,rbp,r12,r13
-        USES_XMM_AVX ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13
+        USES_GPR rsi,rdi,rbx,r12,r13
+        USES_XMM_AVX xmm6,xmm7,xmm8
         COMP_ABI 5
 
 %assign pRes  0
@@ -469,9 +469,9 @@ IPPASM cpMontRed_avx2,PUBLIC
 
       mov      rbx, rdx                ; copy pointer to Modulus
 
-      vpxor    ymm11, ymm11, ymm11     ; expands modulus product
-      vmovdqu  ymmword [rbx+r9*sizeof(qword)], ymm11
-      vmovdqu  ymmword [rsi+rcx*sizeof(qword)], ymm11
+      vpxor    ymm7, ymm7, ymm7     ; expands modulus product
+      vmovdqu  ymmword [rbx+r9*sizeof(qword)], ymm7
+      vmovdqu  ymmword [rsi+rcx*sizeof(qword)], ymm7
 
 align IPP_ALIGN_FACTOR
 ;;
@@ -486,8 +486,8 @@ align IPP_ALIGN_FACTOR
       mov      rdx, r10                            ; y0 = (ac0*m0) & DIGIT_MASK
       imul     edx, r8d
       and      edx, DIGIT_MASK
-      vmovd    xmm8, edx
-      vpbroadcastq ymm8, xmm8
+      vmovd    xmm4, edx
+      vpbroadcastq ymm4, xmm4
 
       mov      rax, rdx                            ; ac0 += pn[0]*y0
       imul     rax, qword [rbx]
@@ -508,8 +508,8 @@ align IPP_ALIGN_FACTOR
       mov      rdx, r11                            ; y1 = (ac1*m0) & DIGIT_MASK
       imul     edx, r8d
       and      edx, DIGIT_MASK
-      vmovd    xmm9, edx
-      vpbroadcastq ymm9, xmm9
+      vmovd    xmm5, edx
+      vpbroadcastq ymm5, xmm5
 
       mov      rax, rdx                            ; ac1 += pn[0]*y1
       imul     rax, qword [rbx]
@@ -527,8 +527,8 @@ align IPP_ALIGN_FACTOR
       mov      rdx, r12                            ; y2 = (ac2*m0) & DIGIT_MASK
       imul     edx, r8d
       and      edx, DIGIT_MASK
-      vmovd    xmm10, edx
-      vpbroadcastq ymm10, xmm10
+      vmovd    xmm6, edx
+      vpbroadcastq ymm6, xmm6
 
       mov      rax, rdx                            ; ac2 += pn[0]*y2
       imul     rax, qword [rbx]
@@ -543,8 +543,8 @@ align IPP_ALIGN_FACTOR
       mov      rdx, r13                            ; y3 = (ac3*m0) & DIGIT_MASK
       imul     edx, r8d
       and      edx, DIGIT_MASK
-      vmovd    xmm11, edx
-      vpbroadcastq ymm11, xmm11
+      vmovd    xmm7, edx
+      vpbroadcastq ymm7, xmm7
 
       imul     rdx, qword [rbx]                 ; ac3 += pn[0]*y3
       add      r13, rdx
@@ -570,41 +570,41 @@ align IPP_ALIGN_FACTOR
       vmovdqu  ymm2, ymmword [rsi+sizeof(ymmword)*2]     ; r2
       vmovdqu  ymm3, ymmword [rsi+sizeof(ymmword)*3]     ; r3
 
-      vpmuludq ymm13, ymm8, ymmword [rbx]                                  ; r0 += y0 * pn[j]
-      vpaddq   ymm0,  ymm0, ymm13
-      vpmuludq ymm13, ymm8, ymmword [rbx+sizeof(ymmword)]                  ; r1 += y0 * pn[j+1]
-      vpaddq   ymm1,  ymm1, ymm13
-      vpmuludq ymm13, ymm8, ymmword [rbx+sizeof(ymmword)*2]                ; r2 += y0 * pn[j+2]
-      vpaddq   ymm2,  ymm2, ymm13
-      vpmuludq ymm13, ymm8, ymmword [rbx+sizeof(ymmword)*3]                ; r3 += y0 * pn[j+3]
-      vpaddq   ymm3,  ymm3, ymm13
+      vpmuludq ymm8, ymm4, ymmword [rbx]                                  ; r0 += y0 * pn[j]
+      vpaddq   ymm0,  ymm0, ymm8
+      vpmuludq ymm8, ymm4, ymmword [rbx+sizeof(ymmword)]                  ; r1 += y0 * pn[j+1]
+      vpaddq   ymm1,  ymm1, ymm8
+      vpmuludq ymm8, ymm4, ymmword [rbx+sizeof(ymmword)*2]                ; r2 += y0 * pn[j+2]
+      vpaddq   ymm2,  ymm2, ymm8
+      vpmuludq ymm8, ymm4, ymmword [rbx+sizeof(ymmword)*3]                ; r3 += y0 * pn[j+3]
+      vpaddq   ymm3,  ymm3, ymm8
 
-      vpmuludq ymm13, ymm9, ymmword [rbx-sizeof(qword)]                    ; r0 += y1 * pn[-1+j]
-      vpaddq   ymm0,  ymm0, ymm13
-      vpmuludq ymm13, ymm9, ymmword [rbx-sizeof(qword)+sizeof(ymmword)]    ; r1 += y1 * pn[-1+j+1]
-      vpaddq   ymm1,  ymm1, ymm13
-      vpmuludq ymm13, ymm9, ymmword [rbx-sizeof(qword)+sizeof(ymmword)*2]  ; r2 += y1 * pn[-1+j+2]
-      vpaddq   ymm2,  ymm2, ymm13
-      vpmuludq ymm13, ymm9, ymmword [rbx-sizeof(qword)+sizeof(ymmword)*3]  ; r3 += y1 * pn[-1+j+3]
-      vpaddq   ymm3,  ymm3, ymm13
+      vpmuludq ymm8, ymm5, ymmword [rbx-sizeof(qword)]                    ; r0 += y1 * pn[-1+j]
+      vpaddq   ymm0,  ymm0, ymm8
+      vpmuludq ymm8, ymm5, ymmword [rbx-sizeof(qword)+sizeof(ymmword)]    ; r1 += y1 * pn[-1+j+1]
+      vpaddq   ymm1,  ymm1, ymm8
+      vpmuludq ymm8, ymm5, ymmword [rbx-sizeof(qword)+sizeof(ymmword)*2]  ; r2 += y1 * pn[-1+j+2]
+      vpaddq   ymm2,  ymm2, ymm8
+      vpmuludq ymm8, ymm5, ymmword [rbx-sizeof(qword)+sizeof(ymmword)*3]  ; r3 += y1 * pn[-1+j+3]
+      vpaddq   ymm3,  ymm3, ymm8
 
-      vpmuludq ymm13, ymm10,ymmword [rbx-sizeof(qword)*2]                  ; r0 += y2 * pn[-2+j]
-      vpaddq   ymm0,  ymm0, ymm13
-      vpmuludq ymm13, ymm10,ymmword [rbx-sizeof(qword)*2+sizeof(ymmword)]  ; r1 += y2 * pn[-2+j+1]
-      vpaddq   ymm1,  ymm1, ymm13
-      vpmuludq ymm13, ymm10,ymmword [rbx-sizeof(qword)*2+sizeof(ymmword)*2]; r2 += y2 * pn[-2+j+2]
-      vpaddq   ymm2,  ymm2, ymm13
-      vpmuludq ymm13, ymm10,ymmword [rbx-sizeof(qword)*2+sizeof(ymmword)*3]; r3 += y2 * pn[-2+j+3]
-      vpaddq   ymm3,  ymm3, ymm13
+      vpmuludq ymm8, ymm6,ymmword [rbx-sizeof(qword)*2]                  ; r0 += y2 * pn[-2+j]
+      vpaddq   ymm0,  ymm0, ymm8
+      vpmuludq ymm8, ymm6,ymmword [rbx-sizeof(qword)*2+sizeof(ymmword)]  ; r1 += y2 * pn[-2+j+1]
+      vpaddq   ymm1,  ymm1, ymm8
+      vpmuludq ymm8, ymm6,ymmword [rbx-sizeof(qword)*2+sizeof(ymmword)*2]; r2 += y2 * pn[-2+j+2]
+      vpaddq   ymm2,  ymm2, ymm8
+      vpmuludq ymm8, ymm6,ymmword [rbx-sizeof(qword)*2+sizeof(ymmword)*3]; r3 += y2 * pn[-2+j+3]
+      vpaddq   ymm3,  ymm3, ymm8
 
-      vpmuludq ymm13, ymm11,ymmword [rbx-sizeof(qword)*3]                  ; r0 += y3 * pn[-3+j]
-      vpaddq   ymm0,  ymm0, ymm13
-      vpmuludq ymm13, ymm11,ymmword [rbx-sizeof(qword)*3+sizeof(ymmword)]  ; r1 += y3 * pn[-3+j+1]
-      vpaddq   ymm1,  ymm1, ymm13
-      vpmuludq ymm13, ymm11,ymmword [rbx-sizeof(qword)*3+sizeof(ymmword)*2]; r2 += y3 * pn[-3+j+2]
-      vpaddq   ymm2,  ymm2, ymm13
-      vpmuludq ymm13, ymm11,ymmword [rbx-sizeof(qword)*3+sizeof(ymmword)*3]; r3 += y3 * pn[-3+j+3]
-      vpaddq   ymm3,  ymm3, ymm13
+      vpmuludq ymm8, ymm7,ymmword [rbx-sizeof(qword)*3]                  ; r0 += y3 * pn[-3+j]
+      vpaddq   ymm0,  ymm0, ymm8
+      vpmuludq ymm8, ymm7,ymmword [rbx-sizeof(qword)*3+sizeof(ymmword)]  ; r1 += y3 * pn[-3+j+1]
+      vpaddq   ymm1,  ymm1, ymm8
+      vpmuludq ymm8, ymm7,ymmword [rbx-sizeof(qword)*3+sizeof(ymmword)*2]; r2 += y3 * pn[-3+j+2]
+      vpaddq   ymm2,  ymm2, ymm8
+      vpmuludq ymm8, ymm7,ymmword [rbx-sizeof(qword)*3+sizeof(ymmword)*3]; r3 += y3 * pn[-3+j+3]
+      vpaddq   ymm3,  ymm3, ymm8
 
       vmovdqu  ymmword [rsi], ymm0
       vmovdqu  ymmword [rsi+sizeof(ymmword)], ymm1
@@ -625,14 +625,14 @@ align IPP_ALIGN_FACTOR
 
       vmovdqu  ymm0, ymmword [rsi]                          ; r0
 
-      vpmuludq ymm13, ymm8, ymmword [rbx]                   ; r0 += y0 * pn[j]
-      vpaddq   ymm0,  ymm0, ymm13
-      vpmuludq ymm13, ymm9, ymmword [rbx-sizeof(qword)]     ; r0 += y1 * pn[-1+j]
-      vpaddq   ymm0,  ymm0, ymm13
-      vpmuludq ymm13, ymm10,ymmword [rbx-sizeof(qword)*2]   ; r0 += y2 * pn[-2+j]
-      vpaddq   ymm0,  ymm0, ymm13
-      vpmuludq ymm13, ymm11,ymmword [rbx-sizeof(qword)*3]   ; r0 += y3 * pn[-3+j]
-      vpaddq   ymm0,  ymm0, ymm13
+      vpmuludq ymm8, ymm4, ymmword [rbx]                   ; r0 += y0 * pn[j]
+      vpaddq   ymm0,  ymm0, ymm8
+      vpmuludq ymm8, ymm5, ymmword [rbx-sizeof(qword)]     ; r0 += y1 * pn[-1+j]
+      vpaddq   ymm0,  ymm0, ymm8
+      vpmuludq ymm8, ymm6,ymmword [rbx-sizeof(qword)*2]   ; r0 += y2 * pn[-2+j]
+      vpaddq   ymm0,  ymm0, ymm8
+      vpmuludq ymm8, ymm7,ymmword [rbx-sizeof(qword)*3]   ; r0 += y3 * pn[-3+j]
+      vpaddq   ymm0,  ymm0, ymm8
 
       vmovdqu  ymmword [rsi], ymm0
 
@@ -650,9 +650,9 @@ align IPP_ALIGN_FACTOR
 
 ;; mLen = 4*n
 ._4n_0:
-      vpmuludq ymm0, ymm9, ymmword [rbx-sizeof(qword)]   ; r0 += pa[j] + y1*pn[-1+j] + y2*pn[-2+j] + y3*pn[-3+j]
-      vpmuludq ymm1, ymm10,ymmword [rbx-sizeof(qword)*2]
-      vpmuludq ymm2, ymm11,ymmword [rbx-sizeof(qword)*3]
+      vpmuludq ymm0, ymm5, ymmword [rbx-sizeof(qword)]   ; r0 += pa[j] + y1*pn[-1+j] + y2*pn[-2+j] + y3*pn[-3+j]
+      vpmuludq ymm1, ymm6,ymmword [rbx-sizeof(qword)*2]
+      vpmuludq ymm2, ymm7,ymmword [rbx-sizeof(qword)*3]
       vpaddq   ymm0,  ymm0, ymm1
       vpaddq   ymm0,  ymm0, ymm2
       vpaddq   ymm0, ymm0, ymmword [rsi]
@@ -661,15 +661,15 @@ align IPP_ALIGN_FACTOR
 
 ;; mLen = 4*n+2
 ._4n_2:
-      vpmuludq ymm0,  ymm11,ymmword [rbx-sizeof(qword)*3]   ; r0 += pa[j] + y3 * pn[-3+j]
+      vpmuludq ymm0,  ymm7,ymmword [rbx-sizeof(qword)*3]   ; r0 += pa[j] + y3 * pn[-3+j]
       vpaddq   ymm0,  ymm0, ymmword [rsi]
       vmovdqu  ymmword [rsi], ymm0
       jmp      .next_reduction_loop4
 
 ;; mLen = 48n+3
 ._4n_3:
-      vpmuludq ymm0, ymm10,ymmword [rbx-sizeof(qword)*2]    ; r0 += pa[j] + y2 * pn[-2+j] + y3 * pn[-3+j]
-      vpmuludq ymm1, ymm11,ymmword [rbx-sizeof(qword)*3]
+      vpmuludq ymm0, ymm6,ymmword [rbx-sizeof(qword)*2]    ; r0 += pa[j] + y2 * pn[-2+j] + y3 * pn[-3+j]
+      vpmuludq ymm1, ymm7,ymmword [rbx-sizeof(qword)*3]
       vpaddq   ymm0,  ymm0, ymm1
       vpaddq   ymm0, ymm0, ymmword [rsi]
       vmovdqu  ymmword [rsi], ymm0
@@ -703,9 +703,9 @@ align IPP_ALIGN_FACTOR
       sub      r11, sizeof(ymmword)/sizeof(qword)
 align IPP_ALIGN_FACTOR
 .rem_loop4_4n_3:
-      vpmuludq ymm0, ymm8, ymmword [rbx]                 ; r0 += pa[j] + y0*pn[j]
-      vpmuludq ymm1, ymm9, ymmword [rbx-sizeof(qword)]   ;             + y1*pn[-1+j]
-      vpmuludq ymm2, ymm10,ymmword [rbx-sizeof(qword)*2] ;             + y2*pn[-2+j]
+      vpmuludq ymm0, ymm4, ymmword [rbx]                 ; r0 += pa[j] + y0*pn[j]
+      vpmuludq ymm1, ymm5, ymmword [rbx-sizeof(qword)]   ;             + y1*pn[-1+j]
+      vpmuludq ymm2, ymm6,ymmword [rbx-sizeof(qword)*2] ;             + y2*pn[-2+j]
       vpaddq   ymm0, ymm0, ymm1
       vpaddq   ymm0, ymm0, ymm2
       vpaddq   ymm0, ymm0, ymmword [rsi]
@@ -716,7 +716,7 @@ align IPP_ALIGN_FACTOR
       sub      r11, sizeof(ymmword)/sizeof(qword)
       jg       .rem_loop4_4n_3
 
-      vpmuludq ymm2, ymm10,ymmword [rbx-sizeof(qword)*2] ; r0 += pa[j+1] + y2*pn[-2+j]
+      vpmuludq ymm2, ymm6,ymmword [rbx-sizeof(qword)*2] ; r0 += pa[j+1] + y2*pn[-2+j]
       vpaddq   ymm2, ymm2, ymmword [rsi]
       vmovdqu  ymmword [rsi], ymm2
       jmp      .normalization
@@ -734,8 +734,8 @@ align IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 .rem_loop4_4n_2:
-      vpmuludq ymm0, ymm8, ymmword [rbx]                 ; r0 += pa[j] + y0 * pn[j]
-      vpmuludq ymm1, ymm9, ymmword [rbx-sizeof(qword)]   ;             + y1 * pn[-1+j]
+      vpmuludq ymm0, ymm4, ymmword [rbx]                 ; r0 += pa[j] + y0 * pn[j]
+      vpmuludq ymm1, ymm5, ymmword [rbx-sizeof(qword)]   ;             + y1 * pn[-1+j]
       vpaddq   ymm0, ymm0, ymm1
       vpaddq   ymm0, ymm0, ymmword [rsi]
       vmovdqu  ymmword [rsi], ymm0
@@ -760,7 +760,7 @@ align IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 .rem_loop4_4n_1:
-      vpmuludq ymm0, ymm8, ymmword [rbx]        ; r0 += pa[j] + y0 * pn[j]
+      vpmuludq ymm0, ymm4, ymmword [rbx]        ; r0 += pa[j] + y0 * pn[j]
       vpaddq   ymm0, ymm0, ymmword [rsi]
       vmovdqu  ymmword [rsi], ymm0
 
@@ -798,4 +798,3 @@ align IPP_ALIGN_FACTOR
 ENDFUNC cpMontRed_avx2
 
 %endif       ;  _IPP32E_L9
-

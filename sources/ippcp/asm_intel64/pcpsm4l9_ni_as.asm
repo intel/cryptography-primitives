@@ -68,7 +68,6 @@ align IPP_ALIGN_FACTOR
 IPPASM cpSMS4_SetRoundKeys_ni,PUBLIC
     ; "COMP_ABI 2" definitely overwrites rdi, rsi
     USES_GPR rsi,rdi
-    USES_XMM_AVX xmm0
     ;; 2 arguments
     COMP_ABI 2
 
@@ -93,7 +92,7 @@ IPPASM cpSMS4_SetRoundKeys_ni,PUBLIC
     ; zeroize
     vpxor xmm0, xmm0
 
-    REST_XMM_AVX
+    vzeroupper
     REST_GPR
     ret
 ENDFUNC cpSMS4_SetRoundKeys_ni
@@ -105,7 +104,6 @@ align IPP_ALIGN_FACTOR
 IPPASM cpSMS4_ECB_ni,PUBLIC
     ; "COMP_ABI 3" definitely overwrites rdi, rsi, rdx
     USES_GPR rsi,rdi,rdx
-    USES_XMM_AVX xmm0
     ;; 3 arguments
     COMP_ABI 3
 
@@ -133,7 +131,7 @@ IPPASM cpSMS4_ECB_ni,PUBLIC
     ; zeroize
     vpxor xmm0, xmm0
 
-    REST_XMM_AVX
+    vzeroupper
     REST_GPR
     ret
 ENDFUNC cpSMS4_ECB_ni
@@ -145,7 +143,6 @@ align IPP_ALIGN_FACTOR
 IPPASM cpSMS4_ECB_ni_256,PUBLIC
     ; "COMP_ABI 3" definitely overwrites rdi, rsi, rdx
     USES_GPR rsi,rdi,rdx
-    USES_XMM_AVX ymm0, ymm1
     ;; 3 arguments
     COMP_ABI 3
 
@@ -175,7 +172,7 @@ IPPASM cpSMS4_ECB_ni_256,PUBLIC
     vpxor ymm0, ymm0
     vpxor ymm1, ymm1
 
-    REST_XMM_AVX
+    vzeroupper
     REST_GPR
     ret
 ENDFUNC cpSMS4_ECB_ni_256

@@ -865,7 +865,7 @@ align IPP_ALIGN_FACTOR
 IPPASM p521r1_select_ap_w5,PUBLIC
 %assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,r12,r13
-        USES_XMM xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm14
+        USES_XMM xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12
         COMP_ABI 3
 
 %xdefine val      rdi

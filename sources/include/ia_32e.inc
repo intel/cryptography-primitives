@@ -98,12 +98,27 @@
 %define NONVOLATILE_REGS_LIN64_GPR rbx,rbp,r12,r13,r14,r15
 %define NONVOLATILE_REGS_WIN64_GPR rbx,rbp,r12,r13,r14,r15,rsi,rdi
 %define NONVOLATILE_REGS_WIN64_XMM xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13,xmm14,xmm15
-%define NONVOLATILE_REGS_WIN64_YMM ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13,ymm14,ymm15
+
+; Validates a vector-register preservation list before ABI-specific filtering.
+%macro VALIDATE_XMM_REGS 2.nolist
+  BEGIN_INTERSECT
+  INTERSECT {%1},{%1}
+  %assign %%param_count %$cardinality
+  END_INTERSECT
+  BEGIN_INTERSECT
+  INTERSECT {%1},{%[NONVOLATILE_REGS_WIN64_XMM]}
+  %if (%$cardinality != %%param_count)
+    %fatal %2: unsupported register name - only XMM6 through XMM15 are accepted, \
+           use the XMM alias for a YMM/ZMM clobber
+  %endif
+  END_INTERSECT
+%endmacro
 
 ; Saves non-volatile GPR registers on stack.
 ; Input - list of used registers.
 %macro USES_GPR 1+.nolist
   %assign GPR_FRAME 0
+  %assign S_FRAME 0
   %define GPR_CUR
 
   %if (IPP_ABI < 2) ; Win64
@@ -142,7 +157,7 @@
 
 ; Saves non-volatile XMM registers on stack and allocates stack size for
 ; local variables if needed.
-; Input - list of used registers (can be empty).
+; Input - list of used Win64 non-volatile XMM registers (can be empty).
 %macro USES_XMM 0-*.nolist
   ; LOCAL_FRAME - stack size required for all local variables of the procedure. Shall be defined before USES_XMM macro call if
   ; local variables are used in the procedure.
@@ -153,6 +168,7 @@
   %assign LOCAL_FRAME (LOCAL_FRAME + 15) & (-16)
   %assign S_FRAME 0
   %define XMM_CUR
+  %xdefine %%param_list
 
   ; Convert parameters to the list variable if there are arguments
   %if (%0 > 0)
@@ -162,6 +178,9 @@
       %xdefine %%param_list %[%%param_list],%1
     %rotate 1
     %endrep
+    ; Validate register names before ABI-specific filtering so an unsupported
+    ; name fails on every platform instead of being silently ignored.
+    VALIDATE_XMM_REGS {%%param_list},USES_XMM
   %endif
 
   %if (IPP_ABI < 2) ; Win64
@@ -237,26 +256,18 @@
   %endif
 %endmacro
 
-; Saves XMM or YMM register on stack (AVX version).
+; Saves XMM register on stack (AVX version).
 ; An offset from RSP, where the registers will be saved, shall be provided in the calling context.
 %macro PUSH_XMM_AVX_REG 1.nolist
-  ; Process registers depending on type
-  %defstr %%reg_str %1 ; convert register token to the string
-  %substr %%reg_type %%reg_str 1, 3 ; take first 3 elems of the string
-  %ifidni %%reg_type, 'xmm'
-    vmovdqa oword [rsp + %$rsp_offset], %1
-    %assign %$rsp_offset %$rsp_offset + 16
-  %elifidni %%reg_type, 'ymm'
-    vmovdqu ymmword [rsp + %$rsp_offset], %1
-    %assign %$rsp_offset %$rsp_offset + 32
-  %else
-    %fatal PUSH_XMM_AVX_REG: inconsistent usage - only XMM/YMM registers supported, found: %%reg_type
-  %endif
+  vmovdqa oword [rsp + %$rsp_offset], %1
+  %assign %$rsp_offset %$rsp_offset + 16
 %endmacro
 
-; Saves non-volatile XMM/YMM registers on stack and allocates stack size for
+; Saves non-volatile XMM registers on stack and allocates stack size for
 ; local variables if needed (AVX version).
-; Input - list of used registers (can be empty).
+; Input - list of used Win64 non-volatile XMM registers (can be empty).
+; YMM/ZMM clobbers shall be listed with their XMM aliases because Win64
+; preserves only the low 128 bits of vector registers 6 through 15.
 %macro USES_XMM_AVX 0-*.nolist
   ; LOCAL_FRAME - stack size required for all local variables of the procedure. Shall be defined before USES_XMM macro call if
   ; local variables are used in the procedure.
@@ -267,7 +278,7 @@
   %assign LOCAL_FRAME (LOCAL_FRAME + 15) & (-16)
   %assign S_FRAME 0
   %define XMM_CUR
-  %define YMM_CUR
+  %xdefine %%param_list
 
   ; Convert parameters to the list variable if there are arguments
   %if (%0 > 0)
@@ -277,6 +288,9 @@
       %xdefine %%param_list %[%%param_list],%1
     %rotate 1
     %endrep
+    ; Validate register names before ABI-specific filtering so an unsupported
+    ; name fails on every platform instead of being silently ignored.
+    VALIDATE_XMM_REGS {%%param_list},USES_XMM_AVX
   %endif
 
   %if (IPP_ABI < 2) ; Win64
@@ -286,13 +300,6 @@
     INTERSECT {%%param_list},{%[NONVOLATILE_REGS_WIN64_XMM]}
     %define XMM_CUR %[%$intersection]
     %assign %%T_FRAME %$cardinality * 16
-    END_INTERSECT
-
-    ; Process YMM registers
-    BEGIN_INTERSECT
-    INTERSECT {%%param_list},{%[NONVOLATILE_REGS_WIN64_YMM]}
-    %define YMM_CUR %[%$intersection]
-    %assign %%T_FRAME %%T_FRAME + %$cardinality * 32
     END_INTERSECT
 
     ; Adjust offset depending on function frame
@@ -306,10 +313,9 @@
     ; Allocate space on stack and push registers
     %if (S_FRAME > 0)
       sub rsp, S_FRAME
-      CONCATENATE {%[XMM_CUR]},{%[YMM_CUR]},%%XMM_YMM_CUR
       %push %??
       %assign %$rsp_offset LOCAL_FRAME
-      FOREACH %[%%XMM_YMM_CUR],{PUSH_XMM_AVX_REG}
+      FOREACH %[XMM_CUR],{PUSH_XMM_AVX_REG}
       %pop %??
     %endif
   %else
@@ -335,32 +341,21 @@
   %endif
 %endmacro
 
-; Pop XMM or YMM register from the stack.
+; Pop XMM register from the stack (AVX version).
 ; The offset from RSP, where the registers will be taken from, shall be provided in the calling context.
 %macro POP_XMM_AVX_REG 1.nolist
-  ; Process registers depending on type
-  %defstr %%reg_str %1 ; convert register token to the string
-  %substr %%reg_type %%reg_str 1, 3 ; take first 3 elems of the string
-  %ifidni %%reg_type, 'xmm'
-    vmovdqa %1, oword [rsp + %$rsp_offset]
-    %assign %$rsp_offset %$rsp_offset + 16
-  %elifidni %%reg_type, 'ymm'
-    vmovdqu %1, ymmword [rsp + %$rsp_offset]
-    %assign %$rsp_offset %$rsp_offset + 32
-  %else
-    %fatal POP_XMM_AVX_REG: inconsistent usage - only XMM/YMM registers supported, found: %%reg_type
-  %endif
+  vmovdqa %1, oword [rsp + %$rsp_offset]
+  %assign %$rsp_offset %$rsp_offset + 16
 %endmacro
 
-; Restore preliminary saved by USES_XMM_AVX non-volatile XMM/YMM registers from the stack.
+; Restore preliminary saved by USES_XMM_AVX non-volatile XMM registers from the stack.
 ; The macro shall be called after function processing.
 %macro REST_XMM_AVX 0.nolist
   %if (IPP_ABI < 2)
     %if (S_FRAME > 0)
-      CONCATENATE {%[XMM_CUR]},{%[YMM_CUR]},%%XMM_YMM_CUR
       %push %??
       %assign %$rsp_offset LOCAL_FRAME
-      FOREACH %[%%XMM_YMM_CUR],{POP_XMM_AVX_REG}
+      FOREACH %[XMM_CUR],{POP_XMM_AVX_REG}
       %pop %??
     %endif
   %endif

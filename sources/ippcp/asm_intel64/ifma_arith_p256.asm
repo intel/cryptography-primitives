@@ -1187,9 +1187,7 @@ section .text align=IPP_ALIGN_FACTOR
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_amm52_dual_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14,r15
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11,zmm12,zmm13,zmm14,zmm15
         COMP_ABI 6
 
 ;; Register usage:
@@ -1199,13 +1197,13 @@ IPPASM ifma_amm52_dual_p256_asm_zmm,PUBLIC
 ;;   zmm1, rdx       - [in] second operand 1 (b1)
 ;;   zmm4, r8        - [in] first operand 2
 ;;   zmm5, r9        - [in] second operand 2
-;;   zmm13           - [out] result for multiplication 1 (t1)
-;;   zmm14           - [out] result for multiplication 2 (t2)
-;;   zmm6            - [clobbered] idx_b0
-;;   zmm7            - [clobbered] idx_sr64
-;;   zmm8            - [clobbered] scratch for MUL_RED_ROUND (tmp)
-;;   zmm9            - [clobbered] scratch (scratch1)
-;;   zmm10           - [clobbered] round-specific broadcast index (idx_b_round)
+;;   zmm21           - [out] result for multiplication 1 (t1)
+;;   zmm22           - [out] result for multiplication 2 (t2)
+;;   zmm16           - [clobbered] idx_b0
+;;   zmm17           - [clobbered] idx_sr64
+;;   zmm18           - [clobbered] scratch for MUL_RED_ROUND (tmp)
+;;   zmm19           - [clobbered] scratch (scratch1)
+;;   zmm20           - [clobbered] round-specific broadcast index (idx_b_round)
 
         ; Load A1, B1 and A2, B2
         vmovdqu64 zmm0, [rsi]
@@ -1217,8 +1215,8 @@ IPPASM ifma_amm52_dual_p256_asm_zmm,PUBLIC
         mov     rbx, rcx
 
         ; Load constant index patterns
-        vpbroadcastq zmm6, qword [rel idx_b0]
-        vmovdqu64 zmm7, [rel idx_sr64]
+        vpbroadcastq zmm16, qword [rel idx_b0]
+        vmovdqu64 zmm17, [rel idx_sr64]
 
         ; Set up mask registers
         mov     rax, 1
@@ -1227,14 +1225,14 @@ IPPASM ifma_amm52_dual_p256_asm_zmm,PUBLIC
         kmovq   K_SHIFT_MASK, rax       ; k2 = shift mask for AMM52
 
         ; Perform dual Montgomery multiplication
-        IFMA_AMM52_DUAL_P256_BODY zmm13, zmm14, zmm0, zmm1, zmm4, zmm5, \
-                                  zmm6, zmm7, zmm8, zmm9, zmm10
+        IFMA_AMM52_DUAL_P256_BODY zmm21, zmm22, zmm0, zmm1, zmm4, zmm5, \
+                                  zmm16, zmm17, zmm18, zmm19, zmm20
 
         ; Store results
-        vmovdqu64 [rdi], zmm13
-        vmovdqu64 [rbx], zmm14
+        vmovdqu64 [rdi], zmm21
+        vmovdqu64 [rbx], zmm22
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_amm52_dual_p256_asm_zmm
@@ -1309,9 +1307,7 @@ ENDFUNC ifma_amm52_dual_p256_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_amm52_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11,zmm12
         COMP_ABI 3
 
         ; Load A and B
@@ -1328,15 +1324,15 @@ IPPASM ifma_amm52_p256_asm_zmm,PUBLIC
         kmovq   K_SHIFT_MASK, rax       ; k2 = shift mask for AMM52
 
         ; Load constant index patterns
-        vpbroadcastq zmm6, qword [rel idx_b0]      ; idx_b0 (for R[0] broadcast)
-        vmovdqu64   zmm7, [rel idx_sr64]           ; idx_sr64 (for shift)
+        vpbroadcastq zmm16, qword [rel idx_b0]      ; idx_b0 (for R[0] broadcast)
+        vmovdqu64   zmm17, [rel idx_sr64]           ; idx_sr64 (for shift)
 
-        IFMA_AMM52_P256_BODY zmm2, zmm0, zmm1, zmm6, zmm7, zmm8, zmm9, zmm10
+        IFMA_AMM52_P256_BODY zmm2, zmm0, zmm1, zmm16, zmm17, zmm18, zmm19, zmm20
 
         ; Store result
         vmovdqu64   [rdi], zmm2                   ; store r
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_amm52_p256_asm_zmm
@@ -1358,9 +1354,7 @@ ENDFUNC ifma_amm52_p256_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_lnorm52_dual_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11
         COMP_ABI 4
 
         ; Load A1 and A2
@@ -1385,7 +1379,7 @@ IPPASM ifma_lnorm52_dual_p256_asm_zmm,PUBLIC
         vmovdqu64 [rdi], zmm0
         vmovdqu64 [rbx], zmm1
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_lnorm52_dual_p256_asm_zmm
@@ -1405,9 +1399,7 @@ ENDFUNC ifma_lnorm52_dual_p256_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_lnorm52_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10
         COMP_ABI 2
 
         ; Load A
@@ -1425,7 +1417,7 @@ IPPASM ifma_lnorm52_p256_asm_zmm,PUBLIC
 
         vmovdqu64 [rdi], zmm0
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_lnorm52_p256_asm_zmm
@@ -1445,9 +1437,7 @@ ENDFUNC ifma_lnorm52_p256_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_norm52_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14,r15
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11
         COMP_ABI 2
 
         ; Load A
@@ -1466,7 +1456,7 @@ IPPASM ifma_norm52_p256_asm_zmm,PUBLIC
 
         vmovdqu64 [rdi], zmm0
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_norm52_p256_asm_zmm
@@ -1488,9 +1478,7 @@ ENDFUNC ifma_norm52_p256_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_norm52_dual_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14,r15
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11
         COMP_ABI 4
 
         ; Load A1 and A2
@@ -1511,7 +1499,7 @@ IPPASM ifma_norm52_dual_p256_asm_zmm,PUBLIC
         vmovdqu64 [rdi], zmm0
         vmovdqu64 [rdx], zmm1
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_norm52_dual_p256_asm_zmm
@@ -1531,9 +1519,7 @@ ENDFUNC ifma_norm52_dual_p256_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_half52_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp
-        USES_XMM_AVX zmm6,zmm7,zmm8
         COMP_ABI 2
 
         ; Load A
@@ -1541,7 +1527,7 @@ IPPASM ifma_half52_p256_asm_zmm,PUBLIC
 
         ; Load constants only needed for vpermb (idx_sr64, idx_carry_shift)
         vmovdqu64 zmm5, [rel idx_sr64]
-        vmovdqu64 zmm6, [rel idx_carry_shift]
+        vmovdqu64 zmm16, [rel idx_carry_shift]
 
         ; Set up K mask registers required by HALF52
         mov     rax, 0x00ffffffffffffff
@@ -1551,11 +1537,11 @@ IPPASM ifma_half52_p256_asm_zmm,PUBLIC
 
         ; Perform half (divide by 2) using macro
         ; Parameters: r, idx_sr64, idx_carry_shift, scratch, GP_tmp1, tmp_k4, tmp_k5
-        IFMA_HALF52_P256_BODY zmm0, zmm5, zmm6, zmm8, rax, k4, k5
+        IFMA_HALF52_P256_BODY zmm0, zmm5, zmm16, zmm17, rax, k4, k5
 
         vmovdqu64 [rdi], zmm0
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_half52_p256_asm_zmm
@@ -1574,9 +1560,7 @@ ENDFUNC ifma_half52_p256_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_aminv52_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11,zmm12,zmm13,zmm14,zmm15
         COMP_ABI 2
 
         ; Load A
@@ -1594,13 +1578,13 @@ IPPASM ifma_aminv52_p256_asm_zmm,PUBLIC
         mov     rax, 0xffffffffffffff00
         kmovq   K_CARRY_MASK, rax       ; k3 = carry shift mask for LNORM/NORM
 
-        IFMA_AMINV52_P256_BODY zmm1, zmm0, zmm2, zmm3, zmm4, zmm5, zmm6, zmm7, zmm8, \
-                               zmm9, zmm10, zmm11, zmm12, zmm13, zmm14, zmm15, r10, rax, k4, k5
+        IFMA_AMINV52_P256_BODY zmm1, zmm0, zmm2, zmm3, zmm4, zmm5, zmm16, zmm17, zmm18, \
+                               zmm19, zmm20, zmm21, zmm22, zmm23, zmm24, zmm25, r10, rax, k4, k5
 
         ; Return the result
         vmovdqu64 [rdi], zmm1
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_aminv52_p256_asm_zmm
@@ -1626,9 +1610,7 @@ ENDFUNC ifma_aminv52_p256_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_ec_nistp256_dbl_point_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14,r15
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11,zmm12,zmm13,zmm14,zmm15
         COMP_ABI 6
 
         ; Load input point P from pointers (cross-platform compatible)
@@ -1636,14 +1618,14 @@ IPPASM ifma_ec_nistp256_dbl_point_asm_zmm,PUBLIC
         vmovdqu64 zmm1, [r8]            ; P.Y
         vmovdqu64 zmm2, [r9]            ; P.Z
 
-        ; Temp registers: zmm3-zmm9 (y2, T, U, V, A, B, H)
-        ; Output registers: zmm10, zmm11, zmm12
-        ; Constant registers: zmm13=idx_b0, zmm14=idx_carry_shift, zmm15=idx_sr64
+        ; Temp registers: zmm3-zmm5, zmm16-zmm19 (y2, T, U, V, A, B, H)
+        ; Output registers: zmm20, zmm21, zmm22
+        ; Constant registers: zmm23=idx_b0, zmm24=idx_carry_shift, zmm25=idx_sr64
 
         ; Load constants required by DOUBLE_PART
-        vpbroadcastq zmm13, qword [rel idx_b0]
-        vmovdqu64 zmm14, [rel idx_carry_shift]
-        vmovdqu64 zmm15, [rel idx_sr64]
+        vpbroadcastq zmm23, qword [rel idx_b0]
+        vmovdqu64 zmm24, [rel idx_carry_shift]
+        vmovdqu64 zmm25, [rel idx_sr64]
 
         ; Set up all mask registers once
         mov     rax, 1
@@ -1655,15 +1637,15 @@ IPPASM ifma_ec_nistp256_dbl_point_asm_zmm,PUBLIC
 
         ; Call the DOUBLE_PART macro - computes entire point doubling
         ; Params: out_R(3), in_P(3), temps(7), consts(3), gprs(4), kmasks(3) = 23 total
-        DOUBLE_PART zmm10, zmm11, zmm12, zmm0, zmm1, zmm2, zmm3, zmm4, zmm5, zmm6, zmm7, zmm8, zmm9, zmm13, zmm14, zmm15, \
+        DOUBLE_PART zmm20, zmm21, zmm22, zmm0, zmm1, zmm2, zmm3, zmm4, zmm5, zmm16, zmm17, zmm18, zmm19, zmm23, zmm24, zmm25, \
                     rax, rcx, r8, r9, k4, k5, k6
 
         ; Store final results to output pointers
-        vmovdqu64 [rdi], zmm10          ; store out_R_X
-        vmovdqu64 [rsi], zmm11          ; store out_R_Y
-        vmovdqu64 [rdx], zmm12          ; store out_R_Z
+        vmovdqu64 [rdi], zmm20          ; store out_R_X
+        vmovdqu64 [rsi], zmm21          ; store out_R_Y
+        vmovdqu64 [rdx], zmm22          ; store out_R_Z
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_ec_nistp256_dbl_point_asm_zmm
@@ -1689,9 +1671,7 @@ ENDFUNC ifma_ec_nistp256_dbl_point_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_ec_nistp256_add_point_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14,r15
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11,zmm12,zmm13,zmm14,zmm15,zmm16,zmm17,zmm18,zmm19,zmm20, zmm21,zmm22
         COMP_ABI 6
 
         ; Load input point Q from pointers (cross-platform compatible)
@@ -1723,7 +1703,8 @@ IPPASM ifma_ec_nistp256_add_point_asm_zmm,PUBLIC
         ;            idx_carry_shift, idx_sr64, idx_b0 (constants),
         ;            k4, k5, k6, k7 (temp k registers), rax, rbx, rcx, r8 (temp GPRs)
         ; P is in zmm3-5 (loaded from memory), Q is in zmm0-2 (passed by value)
-        ADD_PART zmm20, zmm21, zmm22, zmm3, zmm4, zmm5, zmm0, zmm1, zmm2, zmm6, zmm7, zmm8, zmm9, zmm10, zmm11, zmm12, zmm13, zmm14, zmm15, zmm16, zmm17, zmm18, zmm19, \
+        ; out_P_Y reuses T5 after T5's final read.
+        ADD_PART zmm20, zmm21, zmm22, zmm3, zmm4, zmm5, zmm0, zmm1, zmm2, zmm23, zmm24, zmm25, zmm26, zmm27, zmm28, zmm29, zmm30, zmm31, zmm16, zmm21, zmm17, zmm18, zmm19, \
                  k4, k5, k6, k7, rax, rbx, rcx, r8
 
         ; Store final results back to P pointers (result is in zmm20, zmm21, zmm22)
@@ -1731,7 +1712,7 @@ IPPASM ifma_ec_nistp256_add_point_asm_zmm,PUBLIC
         vmovdqu64 [rsi], zmm21           ; store P.Y
         vmovdqu64 [rdx], zmm22           ; store P.Z
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_ec_nistp256_add_point_asm_zmm
@@ -1998,7 +1979,7 @@ align IPP_ALIGN_FACTOR
 IPPASM ifma_ec_nistp256_mul_point_loop_asm_zmm,PUBLIC
 %assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14,r15
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11,zmm12,zmm13,zmm14,zmm15,zmm16,zmm17,zmm18,zmm19,zmm20,zmm21,zmm22,zmm23,zmm24,zmm25,zmm26,zmm27,zmm28,zmm29,zmm30,zmm31
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13,xmm14,xmm15
         COMP_ABI 6
         
         ; Arguments: rdi = pR, rsi = pScalar, edx = scalarBitSize, zmm0-2 = P
@@ -2163,9 +2144,7 @@ ENDFUNC ifma_ec_nistp256_mul_point_loop_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_ec_nistp256_get_affine_coords_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9,zmm10,zmm11,zmm12,zmm13,zmm14,zmm15
         COMP_ABI 3
 
         ; Load the input
@@ -2184,12 +2163,12 @@ IPPASM ifma_ec_nistp256_get_affine_coords_asm_zmm,PUBLIC
         kmovq   K_CARRY_MASK, rax       ; k3 = carry shift mask for LNORM/NORM
 
         ; inv(z1, A->z); /* 1/z */
-        IFMA_AMINV52_P256_BODY zmm0, zmm1, zmm2, zmm3, zmm4, zmm5, zmm6, zmm7, zmm8, zmm9, zmm10, zmm11, zmm12, zmm13, zmm14, zmm15, r10, rax, k4, k5
+        IFMA_AMINV52_P256_BODY zmm0, zmm1, zmm2, zmm3, zmm4, zmm5, zmm17, zmm18, zmm19, zmm20, zmm21, zmm22, zmm23, zmm24, zmm25, zmm26, r10, rax, k4, k5
         vmovdqa64 zmm16, zmm0
         
         ; sqr(z2, z1);   /* (1/z)^2 */
         ; lnorm(z2, z2);
-        IFMA_AMS52_LNORM_NTIMES_P256_BODY zmm0, zmm2, zmm3, 1, zmm5, zmm6, zmm7, zmm8, zmm9, r10, rax, k4, k5
+        IFMA_AMS52_LNORM_NTIMES_P256_BODY zmm0, zmm2, zmm3, 1, zmm5, zmm17, zmm18, zmm19, zmm20, r10, rax, k4, k5
 
         ; if (NULL != rx)
         test rdi, rdi
@@ -2198,7 +2177,7 @@ IPPASM ifma_ec_nistp256_get_affine_coords_asm_zmm,PUBLIC
         ; mul(*rx, a->x, z2); /* x = x/z^2 */
         ; lnorm(*rx, *rx);
         vmovdqu64 zmm4, [rdx]      ; load a->x (at offset 0)
-        IFMA_AMM52_LNORM_P256_BODY zmm1, zmm0, zmm4, zmm2, zmm3, zmm5, zmm6, zmm7, zmm8, r8, k4, k5
+        IFMA_AMM52_LNORM_P256_BODY zmm1, zmm0, zmm4, zmm2, zmm3, zmm5, zmm17, zmm18, zmm19, r8, k4, k5
         vmovdqu64 [rdi], zmm1
 
 .skip_x_coord:
@@ -2208,18 +2187,18 @@ IPPASM ifma_ec_nistp256_get_affine_coords_asm_zmm,PUBLIC
     
         ; mul(z3, z1, z2) - compute (1/z)^3
         ; lnorm(z3, z3);
-        IFMA_AMM52_LNORM_P256_BODY zmm1, zmm16, zmm0, zmm2, zmm3, zmm5, zmm6, zmm7, zmm8, r8, k4, k5
+        IFMA_AMM52_LNORM_P256_BODY zmm1, zmm16, zmm0, zmm2, zmm3, zmm5, zmm17, zmm18, zmm19, r8, k4, k5
         
         ; mul(*ry, a->y, z3); /* y = y/z^3 */
         ; lnorm(*ry, *ry);
         vmovdqu64 zmm4, [rdx+64]      ; load a->x (at offset 0)
-        IFMA_AMM52_LNORM_P256_BODY zmm0, zmm1, zmm4, zmm2, zmm3, zmm5, zmm6, zmm7, zmm8, r8, k4, k5
+        IFMA_AMM52_LNORM_P256_BODY zmm0, zmm1, zmm4, zmm2, zmm3, zmm5, zmm17, zmm18, zmm19, r8, k4, k5
 
         ; Store result to *ry
         vmovdqu64 [rsi], zmm0
 
 .function_end:
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_ec_nistp256_get_affine_coords_asm_zmm
@@ -2234,9 +2213,7 @@ ENDFUNC ifma_ec_nistp256_get_affine_coords_asm_zmm
 
 align IPP_ALIGN_FACTOR
 IPPASM ifma_frommont52_p256_asm_zmm,PUBLIC
-%assign LOCAL_FRAME 0
         USES_GPR rsi,rdi,rbx,rbp
-        USES_XMM_AVX zmm6,zmm7,zmm8,zmm9
         COMP_ABI 2
 
         vmovdqu64 zmm0, [rsi]
@@ -2259,7 +2236,7 @@ IPPASM ifma_frommont52_p256_asm_zmm,PUBLIC
 
         vmovdqu64 zmm2, [rel one]
 
-        IFMA_AMM52_LNORM_P256_BODY zmm1, zmm0, zmm2, zmm3, zmm4, zmm5, zmm6, zmm7, zmm8, r8, k4, k5
+        IFMA_AMM52_LNORM_P256_BODY zmm1, zmm0, zmm2, zmm3, zmm4, zmm5, zmm16, zmm17, zmm18, r8, k4, k5
 
         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         ; r = mod_reduction_p256(r);
@@ -2268,7 +2245,7 @@ IPPASM ifma_frommont52_p256_asm_zmm,PUBLIC
         ; idx_sr64 (for shift)
         vmovdqu64   zmm2, [rel p256_modulus]
         ; tmp_r = a - M
-        vpsubq zmm9, zmm1, zmm2
+        vpsubq zmm19, zmm1, zmm2
 
         ; Load only idx_carry_shift (must be register for vpermb)
         vmovdqu64 zmm2, [rel idx_carry_shift]
@@ -2278,10 +2255,10 @@ IPPASM ifma_frommont52_p256_asm_zmm,PUBLIC
         kmovq   K_CARRY_MASK, rax
 
         ; tmp_r = ifma_norm52(tmp_r)
-        IFMA_NORM52_P256_BODY zmm9, zmm2, zmm3, zmm4, k4, k5, k6
+        IFMA_NORM52_P256_BODY zmm19, zmm2, zmm3, zmm4, k4, k5, k6
 
         ; srli_i64(tmp_r, DIGIT_SIZE-1) >> 51
-        vpsrlq zmm4, zmm9, 51
+        vpsrlq zmm4, zmm19, 51
 
 
         ; lt = zero < shifted
@@ -2297,11 +2274,11 @@ IPPASM ifma_frommont52_p256_asm_zmm,PUBLIC
         kmovq k4, rax
 
         ; result = mask ? a : tmp_r
-        vmovdqa64 zmm9{k4}, zmm1
+        vmovdqa64 zmm19{k4}, zmm1
 
-        vmovdqu64 [rdi], zmm9
+        vmovdqu64 [rdi], zmm19
 
-        REST_XMM_AVX
+        vzeroupper
         REST_GPR
         ret
 ENDFUNC ifma_frommont52_p256_asm_zmm

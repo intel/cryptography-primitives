@@ -90,7 +90,7 @@ segment .text align=IPP_ALIGN_FACTOR
 align IPP_ALIGN_FACTOR
 IPPASM UpdateSM3ni,PUBLIC
         USES_GPR rsi,rdi,rdx,rcx
-        USES_XMM
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12
         COMP_ABI 4
 
 ;; rdi = hash
@@ -221,7 +221,7 @@ align IPP_ALIGN_FACTOR
     vmovdqu         [hPtr], xmm6
     vmovdqu         [hPtr + 16], xmm7
 
-   REST_XMM
+   REST_XMM_AVX
    REST_GPR
    ret
 ENDFUNC UpdateSM3ni

@@ -49,7 +49,7 @@ align IPP_ALIGN_FACTOR
 IPPASM cpMontMul4n_avx2,PUBLIC
 %assign LOCAL_FRAME sizeof(qword)*5
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14
-        USES_XMM_AVX ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13
         COMP_ABI 7
 
       mov      rbp,rdx           ; pointer to B operand
@@ -418,7 +418,7 @@ align IPP_ALIGN_FACTOR
 IPPASM cpMontMul4n1_avx2,PUBLIC
 %assign LOCAL_FRAME sizeof(qword)*5
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14
-        USES_XMM_AVX ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13
         COMP_ABI 7
 
       mov      rbp,rdx     ; pointer to B operand
@@ -852,7 +852,7 @@ align IPP_ALIGN_FACTOR
 IPPASM cpMontMul4n2_avx2,PUBLIC
 %assign LOCAL_FRAME sizeof(qword)*5
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14
-        USES_XMM_AVX ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13
         COMP_ABI 7
 
       mov      rbp,rdx     ; pointer to B operand
@@ -1325,7 +1325,7 @@ align IPP_ALIGN_FACTOR
 IPPASM cpMontMul4n3_avx2,PUBLIC
 %assign LOCAL_FRAME sizeof(qword)*5
         USES_GPR rsi,rdi,rbx,rbp,r12,r13,r14
-        USES_XMM_AVX ymm6,ymm7,ymm8,ymm9,ymm10,ymm11,ymm12,ymm13
+        USES_XMM_AVX xmm6,xmm7,xmm8,xmm9,xmm10,xmm11,xmm12,xmm13
         COMP_ABI 7
 
       mov      rbp,rdx     ; pointer to B operand
