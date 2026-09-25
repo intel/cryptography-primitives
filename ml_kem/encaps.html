@@ -918,17 +918,20 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <tr class="row-odd"><td><p>ippStsContextMatchErr</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">pMLKEMCtx</span></code> was not initialized.</p></td>
 </tr>
-<tr class="row-even"><td><p>ippStsMemAllocErr</p></td>
+<tr class="row-even"><td><p>ippStsBadArgErr</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pEncKey</span></code> contains an encoded polynomial coefficient greater than or equal to <code class="docutils literal notranslate"><span class="pre">q</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ippStsMemAllocErr</p></td>
 <td><p>An internal functional error. If this output status appears, update to the latest version
 of the library or contact <a class="reference external" href="https://github.com/intel/cryptography-primitives/issues">Intel</a>.</p></td>
 </tr>
-<tr class="row-odd"><td><p>ippStsNotSupportedModeErr</p></td>
+<tr class="row-even"><td><p>ippStsNotSupportedModeErr</p></td>
 <td><p>Unsupported <code class="docutils literal notranslate"><span class="pre">RDSEED</span></code> instruction.</p></td>
 </tr>
-<tr class="row-even"><td><p>ippStsErr</p></td>
+<tr class="row-odd"><td><p>ippStsErr</p></td>
 <td><p>Random bit sequence can’t be generated.</p></td>
 </tr>
-<tr class="row-odd"><td><p>An error that may be returned by <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code>.</p></td>
+<tr class="row-even"><td><p>An error that may be returned by <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code>.</p></td>
 <td><p>Problems with the user-defined random number generator.</p></td>
 </tr>
 </tbody>
