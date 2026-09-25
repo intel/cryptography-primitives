@@ -32,6 +32,8 @@
 //                               pMLKEMCtx == NULL
 //                               pScratchBuffer == NULL
 //    ippStsContextMatchErr      pMLKEMCtx is not initialized
+//    ippStsBadArgErr            pEncKey contains an encoded polynomial
+//                               coefficient greater than or equal to q
 //    ippStsMemAllocErr          an internal functional error, see documentation for more details
 //    ippStsNotSupportedModeErr  unsupported RDSEED instruction
 //    ippStsErr                  random bit sequence can't be generated
@@ -70,6 +72,12 @@ IPPFUN(IppStatus, ippsMLKEM_Encaps, (const Ipp8u* pEncKey,
     _cpMLKEMStorage* pStorage = &pMLKEMCtx->storage;
     pStorage->pStorageData    = IPP_ALIGNED_PTR(pScratchBuffer, CP_ML_KEM_ALIGNMENT);
     pStorage->bytesCapacity   = pStorage->encapsCapacity;
+
+    /* Validate the encapsulation key before generating randomness */
+    sts = cp_MLKEMEncapsKeyCheck(pEncKey, pMLKEMCtx);
+    if (sts != ippStsNoErr) {
+        return sts;
+    }
 
     /* m <-- 32 random bytes */
     __ALIGN32 Ipp8u m[CP_RAND_DATA_BYTES];

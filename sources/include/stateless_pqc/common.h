@@ -95,6 +95,10 @@ IPPCP_INLINE IppStatus cp_mlStorageRelease(STORAGE_T* storage, Ipp32s bytesRelea
  */
 IPPCP_INLINE IppStatus cp_mlStorageReleaseAll(STORAGE_T* storage)
 {
+    if (storage->bytesUsed == 0) {
+        return ippStsNoErr;
+    }
+
     // Zeroize the buffer (minimum amount between bytesUsed and bytesCapacity)
     PurgeBlock(storage->pStorageData,
                IPP_MIN((int)storage->bytesUsed, (int)storage->bytesCapacity));

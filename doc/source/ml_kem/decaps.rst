@@ -66,6 +66,8 @@ Return Values
      - Any of the input pointers is ``NULL``.
    * - ippStsContextMatchErr
      - ``pMLKEMCtx`` was not initialized.
+   * - ippStsBadArgErr
+     - The stored encapsulation key hash does not match the embedded encapsulation key.
    * - ippStsMemAllocErr 
      - An internal functional error. If this output status appears, update to the latest version
        of the library or contact `Intel <https://github.com/intel/cryptography-primitives/issues>`_.

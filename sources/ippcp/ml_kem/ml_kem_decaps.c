@@ -32,6 +32,7 @@
 //                            pMLKEMCtx == NULL
 //                            pScratchBuffer == NULL
 //    ippStsContextMatchErr   pMLKEMCtx is not initialized
+//    ippStsBadArgErr         the stored hash does not match the embedded encapsulation key
 //    ippStsMemAllocErr       an internal functional error, see documentation for more details
 //    ippStsOutOfRangeErr     an internal functional error, see documentation for more details
 //    ippStsNoErr             no errors

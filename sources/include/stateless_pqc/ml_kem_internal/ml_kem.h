@@ -258,6 +258,9 @@ IPP_OWN_DECL(IppStatus, cp_polyVecGen, (Ipp16sPoly* pOutPolyVec,
 /* clang-format off */
 IPP_OWN_DECL(IppStatus, cp_MLKEMdecaps_internal,
             (Ipp8u K[32], const Ipp8u* ciphertext, const Ipp8u* inpDecKey, IppsMLKEMState* mlkemCtx))
+#define cp_MLKEMEncapsKeyCheck OWNAPI(cp_MLKEMEncapsKeyCheck)
+IPP_OWN_DECL(IppStatus, cp_MLKEMEncapsKeyCheck,
+            (const Ipp8u* inpEncKey, IppsMLKEMState* mlkemCtx))
 #define cp_MLKEMencaps_internal OWNAPI(cp_MLKEMencaps_internal)
 IPP_OWN_DECL(IppStatus, cp_MLKEMencaps_internal, (Ipp8u K[32],
                                                   Ipp8u* ciphertext,

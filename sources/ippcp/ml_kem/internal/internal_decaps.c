@@ -57,7 +57,8 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
         return ippStsBadArgErr;
     }
 
-    IppStatus sts = ippStsNoErr;
+    IppStatus sts        = ippStsNoErr;
+    IppStatus decryptSts = ippStsNoErr;
 
     /* Sensitive stack buffers */
     Ipp8u message[32];
@@ -73,8 +74,18 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
     /* 4: z <- dk[768*k+64 : 768*k+96] */
     const Ipp8u* z = inpDecKey + 768 * k + 64;
 
+    /* Perform decapsulation pre-checks
+    Section 7.3, decapsulation input check, step 3 (hash check) */
+    sts = ippsHashMessage_rmf(pPKE_EncKey, 384 * k + 32, message, ippsHashMethod_SHA3_256());
+    if (sts != ippStsNoErr)
+        goto exit;
+    if (!cpIsEquBlock_ct(message, h, 32)) {
+        sts = ippStsBadArgErr;
+        goto exit;
+    }
+
     /* 5: m` <- K-PKE.Decrypt(dkPKE, c) */
-    IppStatus decryptSts = cp_KPKE_Decrypt(message, pPKE_DecKey, ciphertext, mlkemCtx);
+    decryptSts = cp_KPKE_Decrypt(message, pPKE_DecKey, ciphertext, mlkemCtx);
 
     /* 6: (K`, r`) <- G(m`||h) */
     Ipp8u* K1  = K1_r_N;

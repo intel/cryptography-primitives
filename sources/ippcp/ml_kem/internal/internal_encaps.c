@@ -24,6 +24,50 @@
 #include "stateless_pqc/ml_kem_internal/ml_kem.h"
 
 /*
+ * Checks that all encoded polynomial coefficients in the encapsulation key are less than q.
+ *
+ *      inpEncKey - input pointer to the encapsulation key (public key) of size 384*k + 32 bytes
+ *      mlkemCtx  - input pointer to ML KEM context
+ */
+IPP_OWN_DEFN(IppStatus, cp_MLKEMEncapsKeyCheck, (const Ipp8u* inpEncKey, IppsMLKEMState* mlkemCtx))
+{
+    const Ipp8u k = mlkemCtx->params.k;
+
+    /* Section 7.2, encapsulation key check, step 2 (modulus check) */
+    /*
+     * The FIPS 203 ByteDecode12/ByteEncode12 round trip preserves the
+     * encoding exactly when every decoded 12-bit coefficient is less than q.
+     * Process two coefficients from each three-byte group.
+     */
+    const Ipp32u coefficientMask = 0x0FFFu;
+    const Ipp32u invalidBit      = 1u << 15;
+    const Ipp32u validityBias    = invalidBit - CP_ML_KEM_Q;
+    const Ipp32u pairedBias      = validityBias | (validityBias << 16);
+    const Ipp32u invalidBits     = invalidBit | (invalidBit << 16);
+    Ipp32u invalid               = 0;
+
+    for (int i = 0; i < 384 * k; i += 3) {
+        /*
+         * Arrange the coefficients in independent 16-bit lanes:
+         * [ unused (4 bits) | c1 (12 bits) | unused (4 bits) | c0 (12 bits) ]
+         */
+        const Ipp32u packed =
+            inpEncKey[i] | ((Ipp32u)inpEncKey[i + 1] << 8) | ((Ipp32u)inpEncKey[i + 2] << 16);
+        const Ipp32u coefficients =
+            (packed & coefficientMask) | ((packed << 4) & (coefficientMask << 16));
+
+        /*
+         * Adding 2^15-q sets the top bit of a lane exactly when c >= q.
+         * The maximum lane result is 4095 + (2^15-q) = 0x82FE, so the low
+         * lane cannot carry into the high lane.
+         */
+        invalid |= coefficients + pairedBias;
+    }
+
+    return (0 != (invalid & invalidBits)) ? ippStsBadArgErr : ippStsNoErr;
+}
+
+/*
  * Uses the encapsulation key and randomness to generate a key and an associated ciphertext.
  *
  *      K          - output pointer to the generated shared secret key K of size 32 bytes
@@ -41,12 +85,13 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMencaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
 /* clang-format on */
 {
     IppStatus sts = ippStsNoErr;
+    const Ipp8u k = mlkemCtx->params.k;
 
     /* (K,𝑟) <- G(m||H(ek)) */
     Ipp8u r_N[33];
     Ipp8u concatData[64];
 
-    const Ipp32s ekByteSize     = 384 * mlkemCtx->params.k + 32;
+    const Ipp32s ekByteSize     = 384 * k + 32;
     const Ipp32s ek_pkeByteSize = ekByteSize;
 
     /* H(ek) */
