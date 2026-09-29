@@ -270,27 +270,19 @@ fips_test_status fips_selftest_mbx_rsa4k_private_crt_ssl_mb8(void)
     int8u out_plaintext[MBX_LANES][MBX_RSA4K_DATA_BYTE_LEN];
     /* ssl parameters */
     // p, q primes
-    BIGNUM* BN_p = BN_new();
-    BIGNUM* BN_q = BN_new();
+    BIGNUM* BN_p = BN_lebin2bn(p, MBX_RSA4K_DATA_BYTE_LEN / 2, NULL);
+    BIGNUM* BN_q = BN_lebin2bn(q, MBX_RSA4K_DATA_BYTE_LEN / 2, NULL);
     // p's, q's CRT private exponent
-    BIGNUM* BN_dp = BN_new();
-    BIGNUM* BN_dq = BN_new();
+    BIGNUM* BN_dp = BN_lebin2bn(dp, MBX_RSA4K_DATA_BYTE_LEN / 2, NULL);
+    BIGNUM* BN_dq = BN_lebin2bn(dq, MBX_RSA4K_DATA_BYTE_LEN / 2, NULL);
     // CRT coefficient
-    BIGNUM* BN_inv_q = BN_new();
-    /* check if allocated memory is valid */
+    BIGNUM* BN_inv_q = BN_lebin2bn(inv_q, MBX_RSA4K_DATA_BYTE_LEN / 2, NULL);
+    /* check if OpenSSL objects were created */
     if (NULL == BN_p || NULL == BN_q || NULL == BN_dp || NULL == BN_dq || NULL == BN_inv_q) {
         test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
         MEM_FREE(BN_p, BN_q, BN_dp, BN_dq, BN_inv_q)
         return test_result;
     }
-
-    /* set ssl parameters */
-    BN_lebin2bn(p, MBX_RSA4K_DATA_BYTE_LEN / 2, BN_p);
-    BN_lebin2bn(q, MBX_RSA4K_DATA_BYTE_LEN / 2, BN_q);
-    BN_lebin2bn(dp, MBX_RSA4K_DATA_BYTE_LEN / 2, BN_dp);
-    BN_lebin2bn(dq, MBX_RSA4K_DATA_BYTE_LEN / 2, BN_dq);
-    BN_lebin2bn(inv_q, MBX_RSA4K_DATA_BYTE_LEN / 2, BN_inv_q);
-
     /* function input parameters */
     // ciphertext
     const int8u* pa_ciphertext[MBX_LANES] = { ciphertext, ciphertext, ciphertext, ciphertext,

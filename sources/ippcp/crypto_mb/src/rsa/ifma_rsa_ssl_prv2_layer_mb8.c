@@ -20,6 +20,8 @@ typedef int to_avoid_translation_unit_is_empty_warning;
 
 #include <openssl/bn.h>
 
+#include <crypto_mb/status.h>
+
 #include <internal/common/ifma_defs.h>
 #include <internal/common/ifma_cvt52.h>
 #include <internal/rsa/ifma_rsa_arith.h>
@@ -33,10 +35,10 @@ typedef int to_avoid_translation_unit_is_empty_warning;
 // y = x^d mod n
 */
 
-void ifma_ssl_rsa1K_prv2_layer_mb8(const int8u* const from_pa[8],
-                                   int8u* const to_pa[8],
-                                   const BIGNUM* const d_pa[8],
-                                   const BIGNUM* const n_pa[8])
+mbx_status ifma_ssl_rsa1K_prv2_layer_mb8(const int8u* const from_pa[8],
+                                         int8u* const to_pa[8],
+                                         const BIGNUM* const d_pa[8],
+                                         const BIGNUM* const n_pa[8])
 {
 #define RSA_BITLEN (RSA_1K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
@@ -54,7 +56,7 @@ void ifma_ssl_rsa1K_prv2_layer_mb8(const int8u* const from_pa[8],
 
     /* convert modulus to ifma fmt */
     zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
-    ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
+    int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
     ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
@@ -66,7 +68,7 @@ void ifma_ssl_rsa1K_prv2_layer_mb8(const int8u* const from_pa[8],
     ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
 
     /* re-arrange exps to ifma */
-    ifma_BN_transpose_copy(d_mb8, d_pa, RSA_BITLEN);
+    bn_err_mask |= ifma_BN_transpose_copy(d_mb8, d_pa, RSA_BITLEN);
 
     /* exponentiation */
     EXP52x20_mb8(inout_mb8,
@@ -83,16 +85,18 @@ void ifma_ssl_rsa1K_prv2_layer_mb8(const int8u* const from_pa[8],
     /* clear exponents */
     zero_mb8(d_mb8, LEN64);
 
+    return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
+
 #undef RSA_BITLEN
 #undef LEN52
 #undef LEN64
 }
 
 
-void ifma_ssl_rsa2K_prv2_layer_mb8(const int8u* const from_pa[8],
-                                   int8u* const to_pa[8],
-                                   const BIGNUM* const d_pa[8],
-                                   const BIGNUM* const n_pa[8])
+mbx_status ifma_ssl_rsa2K_prv2_layer_mb8(const int8u* const from_pa[8],
+                                         int8u* const to_pa[8],
+                                         const BIGNUM* const d_pa[8],
+                                         const BIGNUM* const n_pa[8])
 {
 #define RSA_BITLEN (RSA_2K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
@@ -110,7 +114,7 @@ void ifma_ssl_rsa2K_prv2_layer_mb8(const int8u* const from_pa[8],
 
     /* convert modulus to ifma fmt */
     zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
-    ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
+    int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
     ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
@@ -122,7 +126,7 @@ void ifma_ssl_rsa2K_prv2_layer_mb8(const int8u* const from_pa[8],
     ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
 
     /* re-arrange exps to ifma */
-    ifma_BN_transpose_copy(d_mb8, d_pa, RSA_BITLEN);
+    bn_err_mask |= ifma_BN_transpose_copy(d_mb8, d_pa, RSA_BITLEN);
 
     /* exponentiation */
     EXP52x40_mb8(inout_mb8,
@@ -139,16 +143,18 @@ void ifma_ssl_rsa2K_prv2_layer_mb8(const int8u* const from_pa[8],
     /* clear exponents */
     zero_mb8(d_mb8, LEN64);
 
+    return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
+
 #undef RSA_BITLEN
 #undef LEN52
 #undef LEN64
 }
 
 
-void ifma_ssl_rsa3K_prv2_layer_mb8(const int8u* const from_pa[8],
-                                   int8u* const to_pa[8],
-                                   const BIGNUM* const d_pa[8],
-                                   const BIGNUM* const n_pa[8])
+mbx_status ifma_ssl_rsa3K_prv2_layer_mb8(const int8u* const from_pa[8],
+                                         int8u* const to_pa[8],
+                                         const BIGNUM* const d_pa[8],
+                                         const BIGNUM* const n_pa[8])
 {
 #define RSA_BITLEN (RSA_3K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
@@ -166,7 +172,7 @@ void ifma_ssl_rsa3K_prv2_layer_mb8(const int8u* const from_pa[8],
 
     /* convert modulus to ifma fmt */
     zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
-    ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
+    int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
     ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
@@ -178,7 +184,7 @@ void ifma_ssl_rsa3K_prv2_layer_mb8(const int8u* const from_pa[8],
     ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
 
     /* re-arrange exps to ifma */
-    ifma_BN_transpose_copy(d_mb8, d_pa, RSA_BITLEN);
+    bn_err_mask |= ifma_BN_transpose_copy(d_mb8, d_pa, RSA_BITLEN);
 
     /* exponentiation */
     EXP52x60_mb8(inout_mb8,
@@ -195,16 +201,18 @@ void ifma_ssl_rsa3K_prv2_layer_mb8(const int8u* const from_pa[8],
     /* clear exponents */
     zero_mb8(d_mb8, LEN64);
 
+    return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
+
 #undef RSA_BITLEN
 #undef LEN52
 #undef LEN64
 }
 
 
-void ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
-                                   int8u* const to_pa[8],
-                                   const BIGNUM* const d_pa[8],
-                                   const BIGNUM* const n_pa[8])
+mbx_status ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
+                                         int8u* const to_pa[8],
+                                         const BIGNUM* const d_pa[8],
+                                         const BIGNUM* const n_pa[8])
 {
 #define RSA_BITLEN (RSA_4K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
@@ -222,7 +230,7 @@ void ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
 
     /* convert modulus to ifma fmt */
     zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
-    ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
+    int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
     ifma_montFactor52_mb8(k0_mb8, n_mb8[0]);
@@ -234,7 +242,7 @@ void ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
     ifma_HexStr8_to_mb8(inout_mb8, from_pa, RSA_BITLEN);
 
     /* re-arrange exps to ifma */
-    ifma_BN_transpose_copy(d_mb8, d_pa, RSA_BITLEN);
+    bn_err_mask |= ifma_BN_transpose_copy(d_mb8, d_pa, RSA_BITLEN);
 
     /* exponentiation */
     EXP52x79_mb8(inout_mb8,
@@ -251,6 +259,8 @@ void ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
     /* clear exponents */
     zero_mb8(d_mb8, LEN64);
 
+    return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
+
 #undef RSA_BITLEN
 #undef LEN52
 #undef LEN64
@@ -265,10 +275,10 @@ void ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
 // y = x^d mod n
 */
 
-void ifma_ssl_rsa1K_prv2_layer_mb4(const int8u* const from_pa[4],
-                                   int8u* const to_pa[4],
-                                   const BIGNUM* const d_pa[4],
-                                   const BIGNUM* const n_pa[4])
+mbx_status ifma_ssl_rsa1K_prv2_layer_mb4(const int8u* const from_pa[4],
+                                         int8u* const to_pa[4],
+                                         const BIGNUM* const d_pa[4],
+                                         const BIGNUM* const n_pa[4])
 {
 #define RSA_BITLEN   (RSA_1K)
 #define LEN52        (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
@@ -286,7 +296,7 @@ void ifma_ssl_rsa1K_prv2_layer_mb4(const int8u* const from_pa[4],
 
     /* convert modulus to ifma fmt */
     zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
-    ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
+    int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
     ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
@@ -298,7 +308,7 @@ void ifma_ssl_rsa1K_prv2_layer_mb4(const int8u* const from_pa[4],
     ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
 
     /* re-arrange exps to ifma */
-    ifma_BN_transpose_copy_mb4(d_mb4, d_pa, RSA_BITLEN);
+    bn_err_mask |= ifma_BN_transpose_copy_mb4(d_mb4, d_pa, RSA_BITLEN);
 
     /* exponentiation */
     EXP52x20_mb4(inout_mb4,
@@ -315,16 +325,18 @@ void ifma_ssl_rsa1K_prv2_layer_mb4(const int8u* const from_pa[4],
     /* clear exponents */
     zero_mb4(d_mb4, LEN64);
 
+    return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
+
 #undef RSA_BITLEN
 #undef LEN52
 #undef LEN64
 }
 
 
-void ifma_ssl_rsa2K_prv2_layer_mb4(const int8u* const from_pa[4],
-                                   int8u* const to_pa[4],
-                                   const BIGNUM* const d_pa[4],
-                                   const BIGNUM* const n_pa[4])
+mbx_status ifma_ssl_rsa2K_prv2_layer_mb4(const int8u* const from_pa[4],
+                                         int8u* const to_pa[4],
+                                         const BIGNUM* const d_pa[4],
+                                         const BIGNUM* const n_pa[4])
 {
 #define RSA_BITLEN (RSA_2K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
@@ -342,7 +354,7 @@ void ifma_ssl_rsa2K_prv2_layer_mb4(const int8u* const from_pa[4],
 
     /* convert modulus to ifma fmt */
     zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
-    ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
+    int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
     ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
@@ -354,7 +366,7 @@ void ifma_ssl_rsa2K_prv2_layer_mb4(const int8u* const from_pa[4],
     ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
 
     /* re-arrange exps to ifma */
-    ifma_BN_transpose_copy_mb4(d_mb4, d_pa, RSA_BITLEN);
+    bn_err_mask |= ifma_BN_transpose_copy_mb4(d_mb4, d_pa, RSA_BITLEN);
 
     /* exponentiation */
     EXP52x40_mb4(inout_mb4,
@@ -371,16 +383,18 @@ void ifma_ssl_rsa2K_prv2_layer_mb4(const int8u* const from_pa[4],
     /* clear exponents */
     zero_mb4(d_mb4, LEN64);
 
+    return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
+
 #undef RSA_BITLEN
 #undef LEN52
 #undef LEN64
 }
 
 
-void ifma_ssl_rsa3K_prv2_layer_mb4(const int8u* const from_pa[4],
-                                   int8u* const to_pa[4],
-                                   const BIGNUM* const d_pa[4],
-                                   const BIGNUM* const n_pa[4])
+mbx_status ifma_ssl_rsa3K_prv2_layer_mb4(const int8u* const from_pa[4],
+                                         int8u* const to_pa[4],
+                                         const BIGNUM* const d_pa[4],
+                                         const BIGNUM* const n_pa[4])
 {
 #define RSA_BITLEN (RSA_3K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
@@ -398,7 +412,7 @@ void ifma_ssl_rsa3K_prv2_layer_mb4(const int8u* const from_pa[4],
 
     /* convert modulus to ifma fmt */
     zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
-    ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
+    int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
     ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
@@ -410,7 +424,7 @@ void ifma_ssl_rsa3K_prv2_layer_mb4(const int8u* const from_pa[4],
     ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
 
     /* re-arrange exps to ifma */
-    ifma_BN_transpose_copy_mb4(d_mb4, d_pa, RSA_BITLEN);
+    bn_err_mask |= ifma_BN_transpose_copy_mb4(d_mb4, d_pa, RSA_BITLEN);
 
     /* exponentiation */
     EXP52x60_mb4(inout_mb4,
@@ -427,16 +441,18 @@ void ifma_ssl_rsa3K_prv2_layer_mb4(const int8u* const from_pa[4],
     /* clear exponents */
     zero_mb4(d_mb4, LEN64);
 
+    return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
+
 #undef RSA_BITLEN
 #undef LEN52
 #undef LEN64
 }
 
 
-void ifma_ssl_rsa4K_prv2_layer_mb4(const int8u* const from_pa[4],
-                                   int8u* const to_pa[4],
-                                   const BIGNUM* const d_pa[4],
-                                   const BIGNUM* const n_pa[4])
+mbx_status ifma_ssl_rsa4K_prv2_layer_mb4(const int8u* const from_pa[4],
+                                         int8u* const to_pa[4],
+                                         const BIGNUM* const d_pa[4],
+                                         const BIGNUM* const n_pa[4])
 {
 #define RSA_BITLEN (RSA_4K)
 #define LEN52      (NUMBER_OF_DIGITS(RSA_BITLEN, DIGIT_SIZE))
@@ -454,7 +470,7 @@ void ifma_ssl_rsa4K_prv2_layer_mb4(const int8u* const from_pa[4],
 
     /* convert modulus to ifma fmt */
     zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
-    ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
+    int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
     ifma_montFactor52_mb4(k0_mb4, n_mb4[0]);
@@ -466,7 +482,7 @@ void ifma_ssl_rsa4K_prv2_layer_mb4(const int8u* const from_pa[4],
     ifma_HexStr4_to_mb4(inout_mb4, from_pa, RSA_BITLEN);
 
     /* re-arrange exps to ifma */
-    ifma_BN_transpose_copy_mb4(d_mb4, d_pa, RSA_BITLEN);
+    bn_err_mask |= ifma_BN_transpose_copy_mb4(d_mb4, d_pa, RSA_BITLEN);
 
     /* exponentiation */
     EXP52x79_mb4(inout_mb4,
@@ -482,6 +498,8 @@ void ifma_ssl_rsa4K_prv2_layer_mb4(const int8u* const from_pa[4],
 
     /* clear exponents */
     zero_mb4(d_mb4, LEN64);
+
+    return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
 #undef RSA_BITLEN
 #undef LEN52

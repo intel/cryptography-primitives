@@ -116,21 +116,16 @@ fips_test_status fips_selftest_mbx_nistp521_ecdh_ssl_mb8(void)
     /* output shared key */
     int8u out_shared_key[MBX_LANES][MBX_NISTP521_DATA_BYTE_LEN];
     /* ssl public key */
-    BIGNUM* BN_pub_x = BN_new();
-    BIGNUM* BN_pub_y = BN_new();
+    BIGNUM* BN_pub_x = BN_lebin2bn(pub_x, MBX_NISTP521_DATA_BYTE_LEN, NULL);
+    BIGNUM* BN_pub_y = BN_lebin2bn(pub_y, MBX_NISTP521_DATA_BYTE_LEN, NULL);
     /* ssl private key */
-    BIGNUM* BN_prv_key = BN_new();
-    /* check if allocated memory is valid */
+    BIGNUM* BN_prv_key = BN_lebin2bn(prv_key, MBX_NISTP521_DATA_BYTE_LEN, NULL);
+    /* check if OpenSSL objects were created */
     if (NULL == BN_pub_x || NULL == BN_pub_y || NULL == BN_prv_key) {
         test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
         MEM_FREE(BN_pub_x, BN_pub_y, BN_prv_key)
         return test_result;
     }
-
-    /* set ssl keys */
-    BN_lebin2bn(pub_x, MBX_NISTP521_DATA_BYTE_LEN, BN_pub_x);
-    BN_lebin2bn(pub_y, MBX_NISTP521_DATA_BYTE_LEN, BN_pub_y);
-    BN_lebin2bn(prv_key, MBX_NISTP521_DATA_BYTE_LEN, BN_prv_key);
 
     /* function input parameters */
     // shared

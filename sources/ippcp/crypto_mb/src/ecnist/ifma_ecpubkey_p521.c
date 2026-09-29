@@ -75,12 +75,13 @@ mbx_status OWNAPI(mbx_nistp521_ecpublic_key_ssl_mb8)(BIGNUM* pa_pubx[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_avx512_nistp521_ecpublic_key_ssl_mb8(pa_pubx,
-                                                            pa_puby,
-                                                            pa_pubz,
-                                                            pa_skey,
-                                                            pBuffer,
-                                                            use_jproj_coords);
+    status = MBX_MERGE_STS(status,
+                           internal_avx512_nistp521_ecpublic_key_ssl_mb8(pa_pubx,
+                                                                         pa_puby,
+                                                                         pa_pubz,
+                                                                         pa_skey,
+                                                                         pBuffer,
+                                                                         use_jproj_coords));
 #else
     MBX_UNREFERENCED_PARAMETER(pBuffer);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

@@ -123,10 +123,10 @@ fips_test_status fips_selftest_mbx_rsa1k_public_ssl_mb8(void) {
   /* output ciphertext */
   int8u out_ciphertext[MBX_LANES][MBX_RSA1K_DATA_BYTE_LEN];
   /* ssl exponent */
-  BIGNUM* BN_e = BN_new();
+  BIGNUM* BN_e = BN_lebin2bn(exponent, MBX_RSA_PUB_EXP_BYTE_LEN, NULL);
   /* ssl moduli */
-  BIGNUM* BN_moduli = BN_new();
-  /* check if allocated memory is valid */
+  BIGNUM* BN_moduli = BN_lebin2bn(moduli, MBX_RSA1K_DATA_BYTE_LEN, NULL);
+  /* check if OpenSSL objects were created */
   if(NULL == BN_e || NULL == BN_moduli) {
     test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
     MEM_FREE(BN_e, BN_moduli)
@@ -137,11 +137,6 @@ fips_test_status fips_selftest_mbx_rsa1k_public_ssl_mb8(void) {
   mbx_status expected_status_mb8 = MBX_SET_STS_ALL(MBX_STATUS_OK);
   /* output validity status */
   int output_status;
-
-  /* set ssl parameters */
-  BN_lebin2bn(exponent, MBX_RSA_PUB_EXP_BYTE_LEN, BN_e);
-  BN_lebin2bn(moduli, MBX_RSA1K_DATA_BYTE_LEN, BN_moduli);
-
   /* function input parameters */
   // plaintext
   const int8u *pa_plaintext[MBX_LANES] = {

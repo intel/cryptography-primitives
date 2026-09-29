@@ -149,15 +149,15 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_setup_complete_ssl_mb8(vo
     fips_test_status test_result = MBX_ALGO_SELFTEST_OK;
 
     /* ssl key pair */
-    BIGNUM* BN_d = BN_new();
-    BIGNUM* BN_k = BN_new();
+    BIGNUM* BN_d = BN_lebin2bn(d, MBX_NISTP256_DATA_BYTE_LEN, NULL);
+    BIGNUM* BN_k = BN_lebin2bn(k, MBX_NISTP256_DATA_BYTE_LEN, NULL);
     /* k key inversion */
     BIGNUM* pa_inv_k[MBX_LANES] = { BN_new(), BN_new(), BN_new(), BN_new(),
                                     BN_new(), BN_new(), BN_new(), BN_new() };
     /* precomputed r signature component */
     BIGNUM* pa_precomp_r[MBX_LANES] = { BN_new(), BN_new(), BN_new(), BN_new(),
                                         BN_new(), BN_new(), BN_new(), BN_new() };
-    /* check if allocated memory is valid */
+    /* check if OpenSSL objects were created */
     if (NULL == BN_d || NULL == BN_k) {
         test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
@@ -174,11 +174,6 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_sign_setup_complete_ssl_mb8(vo
     /* output signature */
     int8u out_r[MBX_LANES][MBX_NISTP256_DATA_BYTE_LEN];
     int8u out_s[MBX_LANES][MBX_NISTP256_DATA_BYTE_LEN];
-
-    // set ssl key pair
-    BN_lebin2bn(d, MBX_NISTP256_DATA_BYTE_LEN, BN_d);
-    BN_lebin2bn(k, MBX_NISTP256_DATA_BYTE_LEN, BN_k);
-
     /* function input parameters */
     // msg digest
     const int8u* const pa_pub_msg_digest[MBX_LANES] = { msg_digest, msg_digest, msg_digest,

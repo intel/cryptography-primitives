@@ -75,12 +75,13 @@ mbx_status OWNAPI(mbx_nistp256_ecpublic_key_ssl_mb8)(BIGNUM* pa_pubx[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_nistp256_ecpublic_key_ssl_mb8(pa_pubx,
-                                                     pa_puby,
-                                                     pa_pubz,
-                                                     pa_skey,
-                                                     pBuffer,
-                                                     use_jproj_coords);
+    status = MBX_MERGE_STS(status,
+                           internal_nistp256_ecpublic_key_ssl_mb8(pa_pubx,
+                                                                  pa_puby,
+                                                                  pa_pubz,
+                                                                  pa_skey,
+                                                                  pBuffer,
+                                                                  use_jproj_coords));
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 
@@ -98,7 +99,7 @@ mbx_status OWNAPI(mbx_nistp256_ecpublic_key_ssl_mb8)(BIGNUM* pa_pubx[8],
                                                            &pa_skey[4],
                                                            pBuffer,
                                                            use_jproj_coords);
-    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
+    status = MBX_MERGE_STS(status, MBX_COMBINE_STS_MB4(status_lo, status_hi));
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */

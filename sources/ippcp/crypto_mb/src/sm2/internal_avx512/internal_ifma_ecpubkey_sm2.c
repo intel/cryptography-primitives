@@ -42,7 +42,10 @@ mbx_status internal_avx512_sm2_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
 
     /* zero padded keys */
     U64 scalarz[PSM2_LEN64 + 1];
-    ifma_BN_transpose_copy((int64u(*)[8])scalarz, pa_skey, PSM2_BITSIZE);
+    status |=
+        MBX_SET_STS_BY_MASK(status,
+                            ifma_BN_transpose_copy((int64u(*)[8])scalarz, pa_skey, PSM2_BITSIZE),
+                            MBX_STATUS_MISMATCH_PARAM_ERR);
     scalarz[PSM2_LEN64] = get_zero64();
 
     status |= MBX_SET_STS_BY_MASK(status,
@@ -77,21 +80,33 @@ mbx_status internal_avx512_sm2_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
 
     /* X */
     ifma_mb8_to_HexStr8(pa_tmp, (const int64u(*)[8])P.X, PSM2_BITSIZE);
-    for (buf_no = 0; (buf_no < 8) && (0 == MBX_GET_STS(status, buf_no)); buf_no++) {
-        BN_bin2bn(pa_tmp[buf_no], len_coord, pa_pubx[buf_no]);
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        if (MBX_STATUS_OK == MBX_GET_STS(status, buf_no) &&
+            (NULL == pa_pubx[buf_no] ||
+             NULL == BN_bin2bn(pa_tmp[buf_no], len_coord, pa_pubx[buf_no]))) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
     }
 
     /* Y */
     ifma_mb8_to_HexStr8(pa_tmp, (const int64u(*)[8])P.Y, PSM2_BITSIZE);
-    for (buf_no = 0; (buf_no < 8) && (0 == MBX_GET_STS(status, buf_no)); buf_no++) {
-        BN_bin2bn(pa_tmp[buf_no], len_coord, pa_puby[buf_no]);
+    for (buf_no = 0; buf_no < 8; buf_no++) {
+        if (MBX_STATUS_OK == MBX_GET_STS(status, buf_no) &&
+            (NULL == pa_puby[buf_no] ||
+             NULL == BN_bin2bn(pa_tmp[buf_no], len_coord, pa_puby[buf_no]))) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
     }
 
     /* Z */
     if (use_jproj_coords) {
         ifma_mb8_to_HexStr8(pa_tmp, (const int64u(*)[8])P.Z, PSM2_BITSIZE);
-        for (buf_no = 0; (buf_no < 8) && (0 == MBX_GET_STS(status, buf_no)); buf_no++) {
-            BN_bin2bn(pa_tmp[buf_no], len_coord, pa_pubz[buf_no]);
+        for (buf_no = 0; buf_no < 8; buf_no++) {
+            if (MBX_STATUS_OK == MBX_GET_STS(status, buf_no) &&
+                (NULL == pa_pubz[buf_no] ||
+                 NULL == BN_bin2bn(pa_tmp[buf_no], len_coord, pa_pubz[buf_no]))) {
+                status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+            }
         }
     }
 

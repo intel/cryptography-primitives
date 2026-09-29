@@ -276,20 +276,21 @@ mbx_status OWNAPI(mbx_sm2_ecdsa_sign_ssl_mb8)(int8u* pa_sign_r[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_avx512_sm2_ecdsa_sign_ssl_mb8(pa_sign_r,
-                                                     pa_sign_s,
-                                                     pa_user_id,
-                                                     user_id_len,
-                                                     pa_msg,
-                                                     msg_len,
-                                                     pa_eph_skey,
-                                                     pa_reg_skey,
-                                                     pa_pubx,
-                                                     pa_puby,
-                                                     pa_pubz,
-                                                     pBuffer,
-                                                     use_jproj_coords,
-                                                     user_id_len_checked);
+    status = MBX_MERGE_STS(status,
+                           internal_avx512_sm2_ecdsa_sign_ssl_mb8(pa_sign_r,
+                                                                  pa_sign_s,
+                                                                  pa_user_id,
+                                                                  user_id_len,
+                                                                  pa_msg,
+                                                                  msg_len,
+                                                                  pa_eph_skey,
+                                                                  pa_reg_skey,
+                                                                  pa_pubx,
+                                                                  pa_puby,
+                                                                  pa_pubz,
+                                                                  pBuffer,
+                                                                  use_jproj_coords,
+                                                                  user_id_len_checked));
 #else
     MBX_UNREFERENCED_PARAMETER(pBuffer, user_id_len_checked);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
@@ -349,17 +350,18 @@ mbx_status OWNAPI(mbx_sm2_ecdsa_verify_ssl_mb8)(const ECDSA_SIG* const pa_sig[8]
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_avx512_sm2_ecdsa_verify_ssl_mb8(pa_sig,
-                                                       pa_user_id,
-                                                       user_id_len,
-                                                       pa_msg,
-                                                       msg_len,
-                                                       pa_pubx,
-                                                       pa_puby,
-                                                       pa_pubz,
-                                                       pBuffer,
-                                                       use_jproj_coords,
-                                                       user_id_len_checked);
+    status = MBX_MERGE_STS(status,
+                           internal_avx512_sm2_ecdsa_verify_ssl_mb8(pa_sig,
+                                                                    pa_user_id,
+                                                                    user_id_len,
+                                                                    pa_msg,
+                                                                    msg_len,
+                                                                    pa_pubx,
+                                                                    pa_puby,
+                                                                    pa_pubz,
+                                                                    pBuffer,
+                                                                    use_jproj_coords,
+                                                                    user_id_len_checked));
 #else
     MBX_UNREFERENCED_PARAMETER(pBuffer, user_id_len_checked);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

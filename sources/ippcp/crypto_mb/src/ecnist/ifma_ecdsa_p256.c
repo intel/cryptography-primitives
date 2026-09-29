@@ -378,8 +378,9 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_setup_ssl_mb8)(BIGNUM* pa_inv_skey[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |=
-        internal_nistp256_ecdsa_sign_setup_ssl_mb8(pa_inv_skey, pa_sign_rp, pa_eph_skey, pBuffer);
+    status = MBX_MERGE_STS(
+        status,
+        internal_nistp256_ecdsa_sign_setup_ssl_mb8(pa_inv_skey, pa_sign_rp, pa_eph_skey, pBuffer));
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 
@@ -393,7 +394,7 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_setup_ssl_mb8)(BIGNUM* pa_inv_skey[8],
                                                                &pa_sign_rp[4],
                                                                &pa_eph_skey[4],
                                                                pBuffer);
-    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
+    status = MBX_MERGE_STS(status, MBX_COMBINE_STS_MB4(status_lo, status_hi));
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
@@ -436,13 +437,14 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_complete_ssl_mb8)(int8u* pa_sign_r[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_nistp256_ecdsa_sign_complete_ssl_mb8(pa_sign_r,
-                                                            pa_sign_s,
-                                                            pa_msg,
-                                                            pa_sign_rp,
-                                                            pa_inv_eph_skey,
-                                                            pa_reg_skey,
-                                                            pBuffer);
+    status = MBX_MERGE_STS(status,
+                           internal_nistp256_ecdsa_sign_complete_ssl_mb8(pa_sign_r,
+                                                                         pa_sign_s,
+                                                                         pa_msg,
+                                                                         pa_sign_rp,
+                                                                         pa_inv_eph_skey,
+                                                                         pa_reg_skey,
+                                                                         pBuffer));
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 
@@ -462,7 +464,7 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_complete_ssl_mb8)(int8u* pa_sign_r[8],
                                                                   &pa_inv_eph_skey[4],
                                                                   &pa_reg_skey[4],
                                                                   pBuffer);
-    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
+    status = MBX_MERGE_STS(status, MBX_COMBINE_STS_MB4(status_lo, status_hi));
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
@@ -503,12 +505,13 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_ssl_mb8)(int8u* pa_sign_r[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_nistp256_ecdsa_sign_ssl_mb8(pa_sign_r,
-                                                   pa_sign_s,
-                                                   pa_msg,
-                                                   pa_eph_skey,
-                                                   pa_reg_skey,
-                                                   pBuffer);
+    status = MBX_MERGE_STS(status,
+                           internal_nistp256_ecdsa_sign_ssl_mb8(pa_sign_r,
+                                                                pa_sign_s,
+                                                                pa_msg,
+                                                                pa_eph_skey,
+                                                                pa_reg_skey,
+                                                                pBuffer));
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 
@@ -526,7 +529,7 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_sign_ssl_mb8)(int8u* pa_sign_r[8],
                                                          &pa_eph_skey[4],
                                                          &pa_reg_skey[4],
                                                          pBuffer);
-    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
+    status = MBX_MERGE_STS(status, MBX_COMBINE_STS_MB4(status_lo, status_hi));
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
@@ -571,13 +574,14 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_verify_ssl_mb8)(const ECDSA_SIG* const pa_s
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_nistp256_ecdsa_verify_ssl_mb8(pa_sig,
-                                                     pa_msg,
-                                                     pa_pubx,
-                                                     pa_puby,
-                                                     pa_pubz,
-                                                     pBuffer,
-                                                     use_jproj_coords);
+    status = MBX_MERGE_STS(status,
+                           internal_nistp256_ecdsa_verify_ssl_mb8(pa_sig,
+                                                                  pa_msg,
+                                                                  pa_pubx,
+                                                                  pa_puby,
+                                                                  pa_pubz,
+                                                                  pBuffer,
+                                                                  use_jproj_coords));
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
     mbx_status status_lo = 0, status_hi = 0;
 
@@ -597,7 +601,7 @@ mbx_status OWNAPI(mbx_nistp256_ecdsa_verify_ssl_mb8)(const ECDSA_SIG* const pa_s
                                                            &pa_pubz[4],
                                                            pBuffer,
                                                            use_jproj_coords);
-    status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
+    status = MBX_MERGE_STS(status, MBX_COMBINE_STS_MB4(status_lo, status_hi));
 #else
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */

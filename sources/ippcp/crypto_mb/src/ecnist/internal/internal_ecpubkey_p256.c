@@ -113,7 +113,10 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_ssl_)(BIGNUM* pa_pubx[MB_
 
     /* Zero padded keys in radix 2^64 */
     U64 scalarz[P256_LEN64 + 1];
-    ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])scalarz, pa_skey, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])scalarz, pa_skey, P256_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
     scalarz[P256_LEN64] = get_zero64();
 
     status |= MBX_STS_BY_MASK_GENERIC(status,
@@ -149,21 +152,36 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_ssl_)(BIGNUM* pa_pubx[MB_
 
     /* X */
     ifma_mb_to_HexStr(pa_tmp, (const int64u(*)[MB_WIDTH])P.X, P256_BITSIZE);
-    for (buf_no = 0; (buf_no < MB_WIDTH) && (0 == MBX_GET_STS(status, buf_no)); buf_no++) {
-        BN_bin2bn(pa_tmp[buf_no], NUMBER_OF_DIGITS(P256_BITSIZE, 8), pa_pubx[buf_no]);
+    for (buf_no = 0; buf_no < MB_WIDTH; buf_no++) {
+        if (MBX_STATUS_OK == MBX_GET_STS(status, buf_no) &&
+            (NULL == pa_pubx[buf_no] ||
+             NULL ==
+                 BN_bin2bn(pa_tmp[buf_no], NUMBER_OF_DIGITS(P256_BITSIZE, 8), pa_pubx[buf_no]))) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
     }
 
     /* Y */
     ifma_mb_to_HexStr(pa_tmp, (const int64u(*)[MB_WIDTH])P.Y, P256_BITSIZE);
-    for (buf_no = 0; (buf_no < MB_WIDTH) && (0 == MBX_GET_STS(status, buf_no)); buf_no++) {
-        BN_bin2bn(pa_tmp[buf_no], NUMBER_OF_DIGITS(P256_BITSIZE, 8), pa_puby[buf_no]);
+    for (buf_no = 0; buf_no < MB_WIDTH; buf_no++) {
+        if (MBX_STATUS_OK == MBX_GET_STS(status, buf_no) &&
+            (NULL == pa_puby[buf_no] ||
+             NULL ==
+                 BN_bin2bn(pa_tmp[buf_no], NUMBER_OF_DIGITS(P256_BITSIZE, 8), pa_puby[buf_no]))) {
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+        }
     }
 
     /* Z */
     if (use_jproj_coords) {
         ifma_mb_to_HexStr(pa_tmp, (const int64u(*)[MB_WIDTH])P.Z, P256_BITSIZE);
-        for (buf_no = 0; (buf_no < MB_WIDTH) && (0 == MBX_GET_STS(status, buf_no)); buf_no++) {
-            BN_bin2bn(pa_tmp[buf_no], NUMBER_OF_DIGITS(P256_BITSIZE, 8), pa_pubz[buf_no]);
+        for (buf_no = 0; buf_no < MB_WIDTH; buf_no++) {
+            if (MBX_STATUS_OK == MBX_GET_STS(status, buf_no) &&
+                (NULL == pa_pubz[buf_no] || NULL == BN_bin2bn(pa_tmp[buf_no],
+                                                              NUMBER_OF_DIGITS(P256_BITSIZE, 8),
+                                                              pa_pubz[buf_no]))) {
+                status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+            }
         }
     }
 

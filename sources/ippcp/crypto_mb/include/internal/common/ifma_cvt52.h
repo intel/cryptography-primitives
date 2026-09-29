@@ -25,6 +25,12 @@
 
 #include <crypto_mb/defs.h>
 
+#if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_LLVM_COMPILER)
+#define IFMA_CVT52_MUST_CHECK __attribute__((warn_unused_result))
+#else
+#define IFMA_CVT52_MUST_CHECK
+#endif
+
 #if (_MBX >= _MBX_K1)
 /* clang-format off */
     #define ifma_BNU_to_mb    ifma_BNU_to_mb8
@@ -37,21 +43,27 @@
     #endif /* BN_OPENSSL_DISABLE */
 
     // from 8 buffers regular (radix2^64) to mb8 redundant (radix 2^52) representation
-    EXTERN_C int8u ifma_BNU_to_mb8(int64u out_mb8[][8], const int64u* const bn[8], int bitLen);
-    EXTERN_C int8u ifma_HexStr8_to_mb8(int64u out_mb8[][8], const int8u* const pStr[8], int bitLen);
+    EXTERN_C void ifma_BNU_to_mb8(int64u out_mb8[][8], const int64u* const bn[8], int bitLen);
+    EXTERN_C void ifma_HexStr8_to_mb8(int64u out_mb8[][8], const int8u* const pStr[8], int bitLen);
     #ifndef BN_OPENSSL_DISABLE
-    EXTERN_C int8u ifma_BN_to_mb8(int64u res[][8], const BIGNUM* const bn[8], int bitLen);
+    // Returns a failure mask for supplied inputs.
+    // For a non-NULL BIGNUM, a clear lane bit means conversion succeeded.
+    EXTERN_C int8u ifma_BN_to_mb8(int64u res[][8],
+                                  const BIGNUM* const bn[8],
+                                  int bitLen) IFMA_CVT52_MUST_CHECK;
     #endif /* BN_OPENSSL_DISABLE */
 
     // from 8 buffers mb8 redundant (radix 2^52) to regular (radix2^64) representation
-    EXTERN_C int8u ifma_mb8_to_BNU(int64u* const out_bn[8],
-                                   const int64u inp_mb8[][8],
-                                   const int bitLen);
-    EXTERN_C int8u ifma_mb8_to_HexStr8(int8u* const pStr[8], const int64u inp_mb8[][8], int bitLen);
+    EXTERN_C void ifma_mb8_to_BNU(int64u* const out_bn[8],
+                                  const int64u inp_mb8[][8],
+                                  const int bitLen);
+    EXTERN_C void ifma_mb8_to_HexStr8(int8u* const pStr[8], const int64u inp_mb8[][8], int bitLen);
 
-    EXTERN_C int8u ifma_BNU_transpose_copy(int64u out_mb8[][8], const int64u* const inp[8], int bitLen);
+    EXTERN_C void ifma_BNU_transpose_copy(int64u out_mb8[][8], const int64u* const inp[8], int bitLen);
     #ifndef BN_OPENSSL_DISABLE
-    EXTERN_C int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const inp[8], int bitLen);
+    EXTERN_C int8u ifma_BN_transpose_copy(int64u out_mb8[][8],
+                                          const BIGNUM* const inp[8],
+                                          int bitLen) IFMA_CVT52_MUST_CHECK;
     #endif /* BN_OPENSSL_DISABLE */
 
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
@@ -67,27 +79,33 @@
     #endif /* BN_OPENSSL_DISABLE */
 
     // from 4 buffers regular (radix2^64) to mb4 redundant (radix 2^52) representation
-    EXTERN_C int8u ifma_BNU_to_mb4(int64u out_mb4[][4], const int64u* const bn[4], int bitLen);
-    EXTERN_C int8u ifma_HexStr4_to_mb4(int64u out_mb4[][4], const int8u* const pStr[4], int bitLen);
+    EXTERN_C void ifma_BNU_to_mb4(int64u out_mb4[][4], const int64u* const bn[4], int bitLen);
+    EXTERN_C void ifma_HexStr4_to_mb4(int64u out_mb4[][4], const int8u* const pStr[4], int bitLen);
     #ifndef BN_OPENSSL_DISABLE
-    EXTERN_C int8u ifma_BN_to_mb4(int64u res[][4], const BIGNUM* const bn[4], int bitLen);
+    // Returns a failure mask for supplied inputs.
+    // For a non-NULL BIGNUM, a clear lane bit means conversion succeeded.
+    EXTERN_C int8u ifma_BN_to_mb4(int64u res[][4],
+                                  const BIGNUM* const bn[4],
+                                  int bitLen) IFMA_CVT52_MUST_CHECK;
     #endif /* BN_OPENSSL_DISABLE */
 
     // from 4 buffers mb8 redundant (radix 2^52) to regular (radix2^64) representation
-    EXTERN_C int8u ifma_mb4_to_BNU(int64u* const out_bn[4],
-                                   const int64u inp_mb4[][4],
-                                   const int bitLen);
-    EXTERN_C int8u ifma_mb4_to_HexStr4(int8u* const pStr[4], const int64u inp_mb4[][4], int bitLen);
+    EXTERN_C void ifma_mb4_to_BNU(int64u* const out_bn[4],
+                                  const int64u inp_mb4[][4],
+                                  const int bitLen);
+    EXTERN_C void ifma_mb4_to_HexStr4(int8u* const pStr[4], const int64u inp_mb4[][4], int bitLen);
 
-    EXTERN_C int8u ifma_BNU_transpose_copy_mb4(int64u out_mb4[][4],
-                                               const int64u* const inp[4],
-                                               int bitLen);
+    EXTERN_C void ifma_BNU_transpose_copy_mb4(int64u out_mb4[][4],
+                                              const int64u* const inp[4],
+                                              int bitLen);
     #ifndef BN_OPENSSL_DISABLE
     EXTERN_C int8u ifma_BN_transpose_copy_mb4(int64u out_mb4[][4],
                                               const BIGNUM* const inp[4],
-                                              int bitLen);
+                                              int bitLen) IFMA_CVT52_MUST_CHECK;
     #endif /* BN_OPENSSL_DISABLE */
 /* clang-format on */
 #endif /* #if (_MBX >= _MBX_K1) */
+
+#undef IFMA_CVT52_MUST_CHECK
 
 #endif /* IFMA_CVT52_H */

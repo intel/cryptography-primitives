@@ -65,6 +65,18 @@ __MBX_INLINE mbx_status MBX_SET_STS_BY_MASK(mbx_status status, int8u mask, mbx_s
     return status;
 }
 
+__MBX_INLINE mbx_status MBX_MERGE_STS(mbx_status status, mbx_status new_status)
+{
+    int numb;
+
+    for (numb = 0; numb < 8; numb++) {
+        if (MBX_STATUS_OK == MBX_GET_STS(status, numb)) {
+            status = MBX_SET_STS(status, numb, MBX_GET_STS(new_status, numb));
+        }
+    }
+    return status;
+}
+
 __MBX_INLINE int MBX_IS_ANY_0_TO_3_OK_STS(const mbx_status status)
 {
     const int ret =

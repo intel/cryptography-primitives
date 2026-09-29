@@ -200,7 +200,7 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_setup_mb8(int64u* pa_inv_eph_skey
     /* return results in suitable format */
     ifma_mb8_to_BNU(pa_sign_rp, (const int64u(*)[8])T, P384_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask, MBX_STATUS_SIGNATURE_ERR);
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask, MBX_STATUS_SIGNATURE_ERR));
     return status;
 }
 
@@ -262,8 +262,8 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_complete_mb8(int8u* pa_sign_r[8],
     ifma_mb8_to_HexStr8(pa_sign_r, (const int64u(*)[8])sign_r, P384_BITSIZE);
     ifma_mb8_to_HexStr8(pa_sign_s, (const int64u(*)[8])sign_s, P384_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask_r, MBX_STATUS_SIGNATURE_ERR);
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask_s, MBX_STATUS_SIGNATURE_ERR);
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask_r, MBX_STATUS_SIGNATURE_ERR));
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask_s, MBX_STATUS_SIGNATURE_ERR));
     return status;
 }
 
@@ -333,8 +333,8 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_mb8(int8u* pa_sign_r[8],
     ifma_mb8_to_HexStr8(pa_sign_r, (const int64u(*)[8])sign_r, P384_BITSIZE);
     ifma_mb8_to_HexStr8(pa_sign_s, (const int64u(*)[8])sign_s, P384_BITSIZE);
 
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask_r, MBX_STATUS_SIGNATURE_ERR);
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask_s, MBX_STATUS_SIGNATURE_ERR);
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask_r, MBX_STATUS_SIGNATURE_ERR));
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask_s, MBX_STATUS_SIGNATURE_ERR));
     return status;
 }
 
@@ -398,7 +398,8 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_mb8(const int8u* const pa_sign_
         return status;
 
     __mb_mask signature_err_mask = nistp384_ecdsa_verify_mb8(sign_r, sign_s, msg, &W);
-    status |= MBX_SET_STS_BY_MASK(status, signature_err_mask, MBX_STATUS_SIGNATURE_ERR);
+    status =
+        MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, signature_err_mask, MBX_STATUS_SIGNATURE_ERR));
     return status;
 }
 
@@ -415,7 +416,9 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey
     mbx_status status = 0;
     /* convert keys into FE and compute inversion */
     U64 T[P384_LEN52];
-    ifma_BN_to_mb8((int64u(*)[8])T, pa_eph_skey, P384_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb8((int64u(*)[8])T, pa_eph_skey, P384_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     status |=
         MBX_SET_STS_BY_MASK(status, MB_FUNC_NAME(is_zero_FE384_)(T), MBX_STATUS_MISMATCH_PARAM_ERR);
@@ -428,14 +431,17 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey
 
     nistp384_ecdsa_inv_keys_mb8(T, T, 0);
     /* store results in suitable format */
-    ifma_to_BN_mb8(pa_inv_skey, (const int64u(*)[8])T, P384_BITSIZE);
+    int8u bn_err_mask = ifma_to_BN_mb8(pa_inv_skey, (const int64u(*)[8])T, P384_BITSIZE, status);
 
     /* clear key's inversion */
     MB_FUNC_NAME(zero_)((int64u(*)[8])T, sizeof(T) / sizeof(U64));
 
     /* convert keys into scalars */
     U64 scalarz[P384_LEN64 + 1];
-    ifma_BN_transpose_copy((int64u(*)[8])scalarz, pa_eph_skey, P384_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_transpose_copy((int64u(*)[8])scalarz, pa_eph_skey, P384_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
     scalarz[P384_LEN64] = get_zero64();
     /* compute r-component of the DSA signature */
     int8u stt_mask = nistp384_ecdsa_sign_r_mb8(T, scalarz, pBuffer);
@@ -444,9 +450,13 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey
     MB_FUNC_NAME(zero_)((int64u(*)[8])scalarz, sizeof(scalarz) / sizeof(U64));
 
     /* store results in suitable format */
-    ifma_to_BN_mb8(pa_sign_rp, (const int64u(*)[8])T, P384_BITSIZE);
+    bn_err_mask |= ifma_to_BN_mb8(pa_sign_rp, (const int64u(*)[8])T, P384_BITSIZE, status);
 
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask, MBX_STATUS_SIGNATURE_ERR);
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask, MBX_STATUS_SIGNATURE_ERR));
+    for (int buf_no = 0; buf_no < 8; buf_no++) {
+        if (bn_err_mask & (1 << buf_no))
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+    }
     return status;
 }
 
@@ -467,9 +477,16 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_complete_ssl_mb8(
     __ALIGN64 U64 msg[P384_LEN52];
 
     /* convert inv_eph, reg_skey, sign_r and message to mb format */
-    ifma_BN_to_mb8((int64u(*)[8])inv_eph, pa_inv_eph_skey, P384_BITSIZE);
-    ifma_BN_to_mb8((int64u(*)[8])reg_skey, pa_reg_skey, P384_BITSIZE);
-    ifma_BN_to_mb8((int64u(*)[8])sign_r, pa_sign_rp, P384_BITSIZE);
+    status |=
+        MBX_SET_STS_BY_MASK(status,
+                            ifma_BN_to_mb8((int64u(*)[8])inv_eph, pa_inv_eph_skey, P384_BITSIZE),
+                            MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb8((int64u(*)[8])reg_skey, pa_reg_skey, P384_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb8((int64u(*)[8])sign_r, pa_sign_rp, P384_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, pa_msg, P384_BITSIZE);
 
     status |= MBX_SET_STS_BY_MASK(status,
@@ -508,8 +525,8 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_complete_ssl_mb8(
     /* check if sign_r!=0 and sign_s!=0 */
     int8u stt_mask_r = MB_FUNC_NAME(is_zero_FE384_)(sign_r);
     int8u stt_mask_s = MB_FUNC_NAME(is_zero_FE384_)(sign_s);
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask_r, MBX_STATUS_SIGNATURE_ERR);
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask_s, MBX_STATUS_SIGNATURE_ERR);
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask_r, MBX_STATUS_SIGNATURE_ERR));
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask_s, MBX_STATUS_SIGNATURE_ERR));
     return status;
 }
 
@@ -529,12 +546,20 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
     __ALIGN64 U64 msg[P384_LEN52];
 
     /* convert ephemeral keys into FE */
-    ifma_BN_to_mb8((int64u(*)[8])inv_eph_key, pa_eph_skey, P384_BITSIZE);
+    status |=
+        MBX_SET_STS_BY_MASK(status,
+                            ifma_BN_to_mb8((int64u(*)[8])inv_eph_key, pa_eph_skey, P384_BITSIZE),
+                            MBX_STATUS_MISMATCH_PARAM_ERR);
     /* convert epphemeral keys into scalar */
-    ifma_BN_transpose_copy((int64u(*)[8])scalar, pa_eph_skey, P384_BITSIZE);
+    status |=
+        MBX_SET_STS_BY_MASK(status,
+                            ifma_BN_transpose_copy((int64u(*)[8])scalar, pa_eph_skey, P384_BITSIZE),
+                            MBX_STATUS_MISMATCH_PARAM_ERR);
     scalar[P384_LEN64] = get_zero64();
     /* convert reg_skey*/
-    ifma_BN_to_mb8((int64u(*)[8])reg_key, pa_reg_skey, P384_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb8((int64u(*)[8])reg_key, pa_reg_skey, P384_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
     /* convert message */
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, pa_msg, P384_BITSIZE);
 
@@ -578,8 +603,8 @@ mbx_status internal_avx512_nistp384_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
     /* check if sign_r!=0 and sign_s!=0 */
     int8u stt_mask_r = MB_FUNC_NAME(is_zero_FE384_)(sign_r);
     int8u stt_mask_s = MB_FUNC_NAME(is_zero_FE384_)(sign_s);
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask_r, MBX_STATUS_SIGNATURE_ERR);
-    status |= MBX_SET_STS_BY_MASK(status, stt_mask_s, MBX_STATUS_SIGNATURE_ERR);
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask_r, MBX_STATUS_SIGNATURE_ERR));
+    status = MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, stt_mask_s, MBX_STATUS_SIGNATURE_ERR));
     return status;
 }
 
@@ -610,8 +635,14 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const 
 
     /* convert input params */
     ifma_HexStr8_to_mb8((int64u(*)[8])msg, pa_msg, P384_BITSIZE);
-    ifma_BN_to_mb8((int64u(*)[8])sign_r, (const BIGNUM(**))pa_sign_r, P384_BITSIZE);
-    ifma_BN_to_mb8((int64u(*)[8])sign_s, (const BIGNUM(**))pa_sign_s, P384_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_to_mb8((int64u(*)[8])sign_r, (const BIGNUM(**))pa_sign_r, P384_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_to_mb8((int64u(*)[8])sign_s, (const BIGNUM(**))pa_sign_s, P384_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
 
     status |= MBX_SET_STS_BY_MASK(status,
                                   MB_FUNC_NAME(ifma_check_range_n384_)(msg),
@@ -628,10 +659,16 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const 
 
     P384_POINT W;
 
-    ifma_BN_to_mb8((int64u(*)[8])W.X, pa_pubx, P384_BITSIZE);
-    ifma_BN_to_mb8((int64u(*)[8])W.Y, pa_puby, P384_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb8((int64u(*)[8])W.X, pa_pubx, P384_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb8((int64u(*)[8])W.Y, pa_puby, P384_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
     if (use_jproj_coords)
-        ifma_BN_to_mb8((int64u(*)[8])W.Z, pa_pubz, P384_BITSIZE);
+        status |= MBX_SET_STS_BY_MASK(status,
+                                      ifma_BN_to_mb8((int64u(*)[8])W.Z, pa_pubz, P384_BITSIZE),
+                                      MBX_STATUS_MISMATCH_PARAM_ERR);
     else
         MB_FUNC_NAME(mov_FE384_)(W.Z, (U64*)ones);
 
@@ -649,7 +686,8 @@ mbx_status internal_avx512_nistp384_ecdsa_verify_ssl_mb8(const ECDSA_SIG* const 
         return status;
 
     __mb_mask signature_err_mask = nistp384_ecdsa_verify_mb8(sign_r, sign_s, msg, &W);
-    status |= MBX_SET_STS_BY_MASK(status, signature_err_mask, MBX_STATUS_SIGNATURE_ERR);
+    status =
+        MBX_MERGE_STS(status, MBX_SET_STS_BY_MASK(0, signature_err_mask, MBX_STATUS_SIGNATURE_ERR));
     return status;
 }
 

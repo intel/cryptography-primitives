@@ -84,16 +84,16 @@ mbx_status mbx_rsa_public_ssl_mb8(const int8u* const from_pa[8],
         /* use suitable implementation */
         switch (expected_rsa_bitsize) {
         case RSA_1K:
-            ifma_ssl_rsa1K_pub_layer_mb8(from_pa, to_pa, n_pa);
+            status = MBX_MERGE_STS(status, ifma_ssl_rsa1K_pub_layer_mb8(from_pa, to_pa, n_pa));
             break;
         case RSA_2K:
-            ifma_ssl_rsa2K_pub_layer_mb8(from_pa, to_pa, n_pa);
+            status = MBX_MERGE_STS(status, ifma_ssl_rsa2K_pub_layer_mb8(from_pa, to_pa, n_pa));
             break;
         case RSA_3K:
-            ifma_ssl_rsa3K_pub_layer_mb8(from_pa, to_pa, n_pa);
+            status = MBX_MERGE_STS(status, ifma_ssl_rsa3K_pub_layer_mb8(from_pa, to_pa, n_pa));
             break;
         case RSA_4K:
-            ifma_ssl_rsa4K_pub_layer_mb8(from_pa, to_pa, n_pa);
+            status = MBX_MERGE_STS(status, ifma_ssl_rsa4K_pub_layer_mb8(from_pa, to_pa, n_pa));
             break;
         }
     }
@@ -103,27 +103,51 @@ mbx_status mbx_rsa_public_ssl_mb8(const int8u* const from_pa[8],
         switch (expected_rsa_bitsize) {
         case RSA_1K:
             if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-                ifma_ssl_rsa1K_pub_layer_mb4(&from_pa[0], &to_pa[0], &n_pa[0]);
+                status =
+                    MBX_MERGE_STS(status,
+                                  ifma_ssl_rsa1K_pub_layer_mb4(&from_pa[0], &to_pa[0], &n_pa[0]));
             if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-                ifma_ssl_rsa1K_pub_layer_mb4(&from_pa[4], &to_pa[4], &n_pa[4]);
+                status = MBX_MERGE_STS(
+                    status,
+                    MBX_COMBINE_STS_MB4(
+                        0,
+                        ifma_ssl_rsa1K_pub_layer_mb4(&from_pa[4], &to_pa[4], &n_pa[4])));
             break;
         case RSA_2K:
             if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-                ifma_ssl_rsa2K_pub_layer_mb4(&from_pa[0], &to_pa[0], &n_pa[0]);
+                status =
+                    MBX_MERGE_STS(status,
+                                  ifma_ssl_rsa2K_pub_layer_mb4(&from_pa[0], &to_pa[0], &n_pa[0]));
             if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-                ifma_ssl_rsa2K_pub_layer_mb4(&from_pa[4], &to_pa[4], &n_pa[4]);
+                status = MBX_MERGE_STS(
+                    status,
+                    MBX_COMBINE_STS_MB4(
+                        0,
+                        ifma_ssl_rsa2K_pub_layer_mb4(&from_pa[4], &to_pa[4], &n_pa[4])));
             break;
         case RSA_3K:
             if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-                ifma_ssl_rsa3K_pub_layer_mb4(&from_pa[0], &to_pa[0], &n_pa[0]);
+                status =
+                    MBX_MERGE_STS(status,
+                                  ifma_ssl_rsa3K_pub_layer_mb4(&from_pa[0], &to_pa[0], &n_pa[0]));
             if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-                ifma_ssl_rsa3K_pub_layer_mb4(&from_pa[4], &to_pa[4], &n_pa[4]);
+                status = MBX_MERGE_STS(
+                    status,
+                    MBX_COMBINE_STS_MB4(
+                        0,
+                        ifma_ssl_rsa3K_pub_layer_mb4(&from_pa[4], &to_pa[4], &n_pa[4])));
             break;
         case RSA_4K:
             if (MBX_IS_ANY_0_TO_3_OK_STS(status))
-                ifma_ssl_rsa4K_pub_layer_mb4(&from_pa[0], &to_pa[0], &n_pa[0]);
+                status =
+                    MBX_MERGE_STS(status,
+                                  ifma_ssl_rsa4K_pub_layer_mb4(&from_pa[0], &to_pa[0], &n_pa[0]));
             if (MBX_IS_ANY_4_TO_7_OK_STS(status))
-                ifma_ssl_rsa4K_pub_layer_mb4(&from_pa[4], &to_pa[4], &n_pa[4]);
+                status = MBX_MERGE_STS(
+                    status,
+                    MBX_COMBINE_STS_MB4(
+                        0,
+                        ifma_ssl_rsa4K_pub_layer_mb4(&from_pa[4], &to_pa[4], &n_pa[4])));
             break;
         }
     }

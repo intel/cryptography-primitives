@@ -75,13 +75,14 @@ mbx_status OWNAPI(mbx_nistp521_ecdh_ssl_mb8)(int8u* pa_shared_key[8],
         return status;
 
 #if (_MBX >= _MBX_K1)
-    status |= internal_avx512_nistp521_ecdh_ssl_mb8(pa_shared_key,
-                                                    pa_skey,
-                                                    pa_pubx,
-                                                    pa_puby,
-                                                    pa_pubz,
-                                                    pBuffer,
-                                                    use_jproj_coords);
+    status = MBX_MERGE_STS(status,
+                           internal_avx512_nistp521_ecdh_ssl_mb8(pa_shared_key,
+                                                                 pa_skey,
+                                                                 pa_pubx,
+                                                                 pa_puby,
+                                                                 pa_pubz,
+                                                                 pBuffer,
+                                                                 use_jproj_coords));
 #else
     MBX_UNREFERENCED_PARAMETER(pBuffer);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);

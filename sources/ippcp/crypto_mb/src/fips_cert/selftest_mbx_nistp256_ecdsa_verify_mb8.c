@@ -110,29 +110,21 @@ fips_test_status fips_selftest_mbx_nistp256_ecdsa_verify_ssl_mb8(void)
     fips_test_status test_result = MBX_ALGO_SELFTEST_OK;
 
     /* ssl public key */
-    BIGNUM* BN_Qx = BN_new();
-    BIGNUM* BN_Qy = BN_new();
+    BIGNUM* BN_Qx = BN_lebin2bn(Qx, MBX_NISTP256_DATA_BYTE_LEN, NULL);
+    BIGNUM* BN_Qy = BN_lebin2bn(Qy, MBX_NISTP256_DATA_BYTE_LEN, NULL);
     // ssl signature
-    BIGNUM* BN_r   = BN_new();
-    BIGNUM* BN_s   = BN_new();
+    BIGNUM* BN_r   = BN_bin2bn(r, MBX_NISTP256_DATA_BYTE_LEN, NULL);
+    BIGNUM* BN_s   = BN_bin2bn(s, MBX_NISTP256_DATA_BYTE_LEN, NULL);
     ECDSA_SIG* sig = ECDSA_SIG_new();
-    /* check if allocated memory is valid */
-    if (NULL == BN_Qx || NULL == BN_Qy || NULL == BN_r || NULL == BN_s || NULL == sig) {
+
+    if (NULL == BN_Qx || NULL == BN_Qy || NULL == BN_r || NULL == BN_s || NULL == sig ||
+        1 != ECDSA_SIG_set0(sig, BN_r, BN_s)) {
         test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
         MEM_FREE(BN_Qx, BN_Qy, sig)
-        // Handled separately, since memory management of
-        // these variables is transferred to sig below
         BN_free(BN_r);
         BN_free(BN_s);
         return test_result;
     }
-
-    // set ssl public key and signature
-    BN_lebin2bn(Qx, MBX_NISTP256_DATA_BYTE_LEN, BN_Qx);
-    BN_lebin2bn(Qy, MBX_NISTP256_DATA_BYTE_LEN, BN_Qy);
-    BN_bin2bn(r, MBX_NISTP256_DATA_BYTE_LEN, BN_r);
-    BN_bin2bn(s, MBX_NISTP256_DATA_BYTE_LEN, BN_s);
-    ECDSA_SIG_set0(sig, BN_r, BN_s);
 
     /* function input parameters */
     // msg digest

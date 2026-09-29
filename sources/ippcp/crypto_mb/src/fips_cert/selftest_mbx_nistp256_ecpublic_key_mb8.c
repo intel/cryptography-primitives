@@ -146,8 +146,8 @@ fips_test_status fips_selftest_mbx_nistp256_ecpublic_key_ssl_mb8(void)
 
     /* functions input parameters */
     // ssl private key
-    BIGNUM* BN_d = BN_new();
-    BIGNUM* BN_k = BN_new();
+    BIGNUM* BN_d = BN_lebin2bn(d, MBX_NISTP256_DATA_BYTE_LEN, NULL);
+    BIGNUM* BN_k = BN_lebin2bn(k, MBX_NISTP256_DATA_BYTE_LEN, NULL);
     // public key
     BIGNUM* pa_pub_Qx[MBX_LANES] = { BN_new(), BN_new(), BN_new(), BN_new(),
                                      BN_new(), BN_new(), BN_new(), BN_new() };
@@ -157,7 +157,7 @@ fips_test_status fips_selftest_mbx_nistp256_ecpublic_key_ssl_mb8(void)
     ECDSA_SIG* const pa_sig[MBX_LANES] = { ECDSA_SIG_new(), ECDSA_SIG_new(), ECDSA_SIG_new(),
                                            ECDSA_SIG_new(), ECDSA_SIG_new(), ECDSA_SIG_new(),
                                            ECDSA_SIG_new(), ECDSA_SIG_new() };
-    /* check if allocated memory is valid */
+    /* check if OpenSSL objects were created */
     if (NULL == BN_d || NULL == BN_k) {
         test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
     }
@@ -170,10 +170,6 @@ fips_test_status fips_selftest_mbx_nistp256_ecpublic_key_ssl_mb8(void)
         MEM_FREE(pa_pub_Qx, pa_pub_Qy, pa_sig, BN_d, BN_k)
         return test_result;
     }
-
-    // set ssl private key
-    BN_lebin2bn(d, MBX_NISTP256_DATA_BYTE_LEN, BN_d);
-    BN_lebin2bn(k, MBX_NISTP256_DATA_BYTE_LEN, BN_k);
     // private key
     const BIGNUM* const pa_prv_d[MBX_LANES] = {
         (const BIGNUM* const)BN_d, (const BIGNUM* const)BN_d, (const BIGNUM* const)BN_d,
@@ -226,22 +222,16 @@ fips_test_status fips_selftest_mbx_nistp256_ecpublic_key_ssl_mb8(void)
 
     // fill ECDSA_SIG structure with the generated signature for verification
     for (int i = 0; i < MBX_LANES; ++i) {
-        BIGNUM* BN_r = BN_new();
-        BIGNUM* BN_s = BN_new();
-        /* check if allocated memory is valid */
-        if (NULL == BN_r || NULL == BN_s) {
+        BIGNUM* BN_r = BN_bin2bn(out_r[i], MBX_NISTP256_DATA_BYTE_LEN, NULL);
+        BIGNUM* BN_s = BN_bin2bn(out_s[i], MBX_NISTP256_DATA_BYTE_LEN, NULL);
+        /* check if OpenSSL objects were created */
+        if (NULL == BN_r || NULL == BN_s || 1 != ECDSA_SIG_set0(pa_sig[i], BN_r, BN_s)) {
             test_result = MBX_ALGO_SELFTEST_BAD_ARGS_ERR;
             MEM_FREE(pa_pub_Qx, pa_pub_Qy, pa_sig, BN_d, BN_k)
-            // Handled separately, since memory management of
-            // these variables is transferred to sig below
             BN_free(BN_r);
             BN_free(BN_s);
             return test_result;
         }
-
-        BN_bin2bn(out_r[i], MBX_NISTP256_DATA_BYTE_LEN, BN_r);
-        BN_bin2bn(out_s[i], MBX_NISTP256_DATA_BYTE_LEN, BN_s);
-        ECDSA_SIG_set0(pa_sig[i], BN_r, BN_s);
     }
     sts = mbx_nistp256_ecdsa_verify_ssl_mb8((const ECDSA_SIG* const*)pa_sig,
                                             pa_pub_msg_digest,

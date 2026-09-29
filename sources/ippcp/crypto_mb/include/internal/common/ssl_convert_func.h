@@ -17,9 +17,11 @@
 #ifndef IFMA_SSL_CONVERT_FUNCTIONS_H
 #define IFMA_SSL_CONVERT_FUNCTIONS_H
 
-/* Internal support functions for data conversion mb -> BUGNUM */
+/* Internal support functions for data conversion mb -> BIGNUM */
 
 #ifndef BN_OPENSSL_DISABLE
+
+#include <crypto_mb/status.h>
 
 #include <internal/common/ifma_defs.h>
 
@@ -50,15 +52,18 @@ __MBX_INLINE BIGNUM* BN_bnu2bn(int64u* val, int len, BIGNUM* ret)
 
 /*
  * Convert mb data to array of BIGNUMs
+ * Existing error lanes are skipped. Returns a mask of lanes where OpenSSL conversion failed.
  *
  * Note: max bitLen = 521
  */
 #define MAX_CONVERT_TO_BN_LEN64 (NUMBER_OF_DIGITS(521, 64))
-__MBX_INLINE void MB_FUNC_NAME(ifma_to_BN_)(BIGNUM* out_bn[MB_WIDTH],
-                                            const int64u inp_mb8[][MB_WIDTH],
-                                            int bitLen)
+__MBX_INLINE int8u MB_FUNC_NAME(ifma_to_BN_)(BIGNUM* out_bn[MB_WIDTH],
+                                             const int64u inp_mb8[][MB_WIDTH],
+                                             int bitLen,
+                                             mbx_status status)
 {
     const int len64 = NUMBER_OF_DIGITS(bitLen, 64);
+    int8u err_mask  = 0;
 
     int64u tmp[MB_WIDTH][MAX_CONVERT_TO_BN_LEN64];
     int64u* pa_tmp[MB_WIDTH];
@@ -70,8 +75,14 @@ __MBX_INLINE void MB_FUNC_NAME(ifma_to_BN_)(BIGNUM* out_bn[MB_WIDTH],
     ifma_mb_to_BNU(pa_tmp, (const int64u(*)[MB_WIDTH])inp_mb8, bitLen);
 
     for (int nb = 0; nb < MB_WIDTH; nb++) {
-        out_bn[nb] = BN_bnu2bn(tmp[nb], len64, out_bn[nb]);
+        // Output BIGNUMs are caller-owned and must already be allocated.
+        if (MBX_STATUS_OK == MBX_GET_STS(status, nb) &&
+            (NULL == out_bn[nb] || NULL == BN_bnu2bn(tmp[nb], len64, out_bn[nb]))) {
+            err_mask |= (int8u)(1 << nb);
+        }
     }
+
+    return err_mask;
 }
 
 #endif /* BN_OPENSSL_DISABLE */

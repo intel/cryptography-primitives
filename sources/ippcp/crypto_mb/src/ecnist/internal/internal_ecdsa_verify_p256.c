@@ -166,7 +166,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_)(const int8u* const pa_s
 
     /* Get the result "valid"/"invalid" */
     __mb_mask signature_err_mask = MB_FUNC_NAME(nistp256_ecdsa_verify_)(sign_r, sign_s, msg, &W);
-    status |= MBX_STS_BY_MASK_GENERIC(status, signature_err_mask, MBX_STATUS_SIGNATURE_ERR);
+    status =
+        MBX_MERGE_STS(status,
+                      MBX_STS_BY_MASK_GENERIC(0, signature_err_mask, MBX_STATUS_SIGNATURE_ERR));
 
     return status;
 }
@@ -221,8 +223,14 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_ssl_)(
 
     /* convert input params */
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])msg, pa_msg, P256_BITSIZE);
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_r, (const BIGNUM(**))pa_sign_r, P256_BITSIZE);
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_s, (const BIGNUM(**))pa_sign_s, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_r, (const BIGNUM* const*)pa_sign_r, P256_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_s, (const BIGNUM* const*)pa_sign_s, P256_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
 
     status |= MBX_STS_BY_MASK_GENERIC(status,
                                       MB_FUNC_NAME(ifma_check_range_n256_)(msg),
@@ -239,10 +247,17 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_ssl_)(
 
     P256_POINT W;
 
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.X, pa_pubx, P256_BITSIZE);
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.Y, pa_puby, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.X, pa_pubx, P256_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.Y, pa_puby, P256_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
     if (use_jproj_coords)
-        ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.Z, pa_pubz, P256_BITSIZE);
+        status |=
+            MBX_SET_STS_BY_MASK(status,
+                                ifma_BN_to_mb((int64u(*)[MB_WIDTH])W.Z, pa_pubz, P256_BITSIZE),
+                                MBX_STATUS_MISMATCH_PARAM_ERR);
     else
         MB_FUNC_NAME(mov_FE256_)(W.Z, (U64*)ones);
 
@@ -260,7 +275,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_verify_ssl_)(
         return status;
 
     __mb_mask signature_err_mask = MB_FUNC_NAME(nistp256_ecdsa_verify_)(sign_r, sign_s, msg, &W);
-    status |= MBX_STS_BY_MASK_GENERIC(status, signature_err_mask, MBX_STATUS_SIGNATURE_ERR);
+    status =
+        MBX_MERGE_STS(status,
+                      MBX_STS_BY_MASK_GENERIC(0, signature_err_mask, MBX_STATUS_SIGNATURE_ERR));
 
     return status;
 }

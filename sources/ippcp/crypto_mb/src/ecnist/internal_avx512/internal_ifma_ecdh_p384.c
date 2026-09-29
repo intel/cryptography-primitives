@@ -37,7 +37,10 @@ mbx_status internal_avx512_nistp384_ecdh_ssl_mb8(int8u* pa_shared_key[8],
     mbx_status status = 0;
     /* zero padded private keys */
     U64 secretz[P384_LEN64 + 1];
-    ifma_BN_transpose_copy((int64u(*)[8])secretz, (const BIGNUM**)pa_skey, P384_BITSIZE);
+    status |=
+        MBX_SET_STS_BY_MASK(status,
+                            ifma_BN_transpose_copy((int64u(*)[8])secretz, pa_skey, P384_BITSIZE),
+                            MBX_STATUS_MISMATCH_PARAM_ERR);
     secretz[P384_LEN64] = get_zero64();
 
     status |= MBX_SET_STS_BY_MASK(status,
@@ -52,10 +55,19 @@ mbx_status internal_avx512_nistp384_ecdh_ssl_mb8(int8u* pa_shared_key[8],
 
     P384_POINT P;
     /* set party's public */
-    ifma_BN_to_mb8((int64u(*)[8])P.X, (const BIGNUM*(*))pa_pubx, P384_BITSIZE); /* P-> radix 2^52 */
-    ifma_BN_to_mb8((int64u(*)[8])P.Y, (const BIGNUM*(*))pa_puby, P384_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_to_mb8((int64u(*)[8])P.X, (const BIGNUM*(*))pa_pubx, P384_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR); /* P-> radix 2^52 */
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_to_mb8((int64u(*)[8])P.Y, (const BIGNUM*(*))pa_puby, P384_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
     if (use_jproj_coords)
-        ifma_BN_to_mb8((int64u(*)[8])P.Z, (const BIGNUM*(*))pa_pubz, P384_BITSIZE);
+        status |= MBX_SET_STS_BY_MASK(
+            status,
+            ifma_BN_to_mb8((int64u(*)[8])P.Z, (const BIGNUM*(*))pa_pubz, P384_BITSIZE),
+            MBX_STATUS_MISMATCH_PARAM_ERR);
     else
         MB_FUNC_NAME(mov_FE384_)(P.Z, (U64*)ones);
     /* convert to Montgomery */

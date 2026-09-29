@@ -153,7 +153,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_)(
     ifma_mb_to_BNU(pa_sign_rp, (const int64u(*)[MB_WIDTH])T, P256_BITSIZE);
 
     /* Check if sign_r != 0 */
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask, MBX_STATUS_SIGNATURE_ERR);
+    status = MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask, MBX_STATUS_SIGNATURE_ERR));
 
     return status;
 }
@@ -230,8 +230,10 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_)(
 
     /* Check if sign_r != 0 */
     __mb_mask stt_mask_r = MB_FUNC_NAME(is_zero_FE256_)(sign_r);
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask_r, MBX_STATUS_SIGNATURE_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask_s, MBX_STATUS_SIGNATURE_ERR);
+    status =
+        MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask_r, MBX_STATUS_SIGNATURE_ERR));
+    status =
+        MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask_s, MBX_STATUS_SIGNATURE_ERR));
 
     return status;
 }
@@ -314,8 +316,10 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_)(int8u* pa_sign_r[MB_WIDTH
     ifma_mb_to_HexStr(pa_sign_s, (const int64u(*)[MB_WIDTH])sign_s, P256_BITSIZE);
 
     /* Check if sign_r != 0 and sign_s != 0 */
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask_r, MBX_STATUS_SIGNATURE_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask_s, MBX_STATUS_SIGNATURE_ERR);
+    status =
+        MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask_r, MBX_STATUS_SIGNATURE_ERR));
+    status =
+        MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask_s, MBX_STATUS_SIGNATURE_ERR));
 
     return status;
 }
@@ -347,7 +351,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_ssl_)(
 
     /* Convert keys into FE */
     U64 T[P256_LEN52];
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])T, pa_eph_skey, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb((int64u(*)[MB_WIDTH])T, pa_eph_skey, P256_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
 
     status |= MBX_STS_BY_MASK_GENERIC(status,
                                       MB_FUNC_NAME(is_zero_FE256_)(T),
@@ -361,14 +367,18 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_ssl_)(
     /* Compute inversion of ephemeral key */
     MB_FUNC_NAME(nistp256_ecdsa_inv_keys_)(T, T);
     /* Return results in suitable format */
-    MB_FUNC_NAME(ifma_to_BN_)(pa_inv_skey, (const int64u(*)[MB_WIDTH])T, P256_BITSIZE);
+    int8u bn_err_mask =
+        MB_FUNC_NAME(ifma_to_BN_)(pa_inv_skey, (const int64u(*)[MB_WIDTH])T, P256_BITSIZE, status);
 
     /* Clear key's inversion */
     MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])T, sizeof(T) / sizeof(U64));
 
     /* Convert keys into scalars */
     U64 scalarz[P256_LEN64 + 1];
-    ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])scalarz, pa_eph_skey, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])scalarz, pa_eph_skey, P256_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
     scalarz[P256_LEN64] = get_zero64();
 
     /* Compute r-component of the DSA signature */
@@ -378,10 +388,15 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_ssl_)(
     MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalarz, sizeof(scalarz) / sizeof(U64));
 
     /* Return results in suitable format */
-    MB_FUNC_NAME(ifma_to_BN_)(pa_sign_rp, (const int64u(*)[MB_WIDTH])T, P256_BITSIZE);
+    bn_err_mask |=
+        MB_FUNC_NAME(ifma_to_BN_)(pa_sign_rp, (const int64u(*)[MB_WIDTH])T, P256_BITSIZE, status);
 
     /* Check if sign_r != 0 */
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask, MBX_STATUS_SIGNATURE_ERR);
+    status = MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask, MBX_STATUS_SIGNATURE_ERR));
+    for (int buf_no = 0; buf_no < MB_WIDTH; buf_no++) {
+        if (bn_err_mask & (1 << buf_no))
+            status = MBX_SET_STS(status, buf_no, MBX_STATUS_NULL_PARAM_ERR);
+    }
 
     return status;
 }
@@ -418,9 +433,18 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_ssl_)(
     __ALIGN64 U64 msg[P256_LEN52];
 
     /* Convert inv_eph, reg_skey, sign_r and message to mb format */
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])inv_eph, pa_inv_eph_skey, P256_BITSIZE);
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])reg_skey, pa_reg_skey, P256_BITSIZE);
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_r, pa_sign_rp, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_to_mb((int64u(*)[MB_WIDTH])inv_eph, pa_inv_eph_skey, P256_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |=
+        MBX_SET_STS_BY_MASK(status,
+                            ifma_BN_to_mb((int64u(*)[MB_WIDTH])reg_skey, pa_reg_skey, P256_BITSIZE),
+                            MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |=
+        MBX_SET_STS_BY_MASK(status,
+                            ifma_BN_to_mb((int64u(*)[MB_WIDTH])sign_r, pa_sign_rp, P256_BITSIZE),
+                            MBX_STATUS_MISMATCH_PARAM_ERR);
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])msg, pa_msg, P256_BITSIZE);
 
     status |= MBX_STS_BY_MASK_GENERIC(status,
@@ -458,8 +482,10 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_ssl_)(
 
     /* Check if sign_r != 0 */
     __mb_mask stt_mask_r = MB_FUNC_NAME(is_zero_FE256_)(sign_r);
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask_r, MBX_STATUS_SIGNATURE_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask_s, MBX_STATUS_SIGNATURE_ERR);
+    status =
+        MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask_r, MBX_STATUS_SIGNATURE_ERR));
+    status =
+        MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask_s, MBX_STATUS_SIGNATURE_ERR));
 
     return status;
 }
@@ -498,10 +524,19 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_ssl_)(
     __ALIGN64 U64 sign_s[P256_LEN52];
 
     /* Convert ephemeral and reg_skey keys into radix 2^52 mb field elements(FE) */
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])inv_eph_key, pa_eph_skey, P256_BITSIZE);
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])reg_key, pa_reg_skey, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_to_mb((int64u(*)[MB_WIDTH])inv_eph_key, pa_eph_skey, P256_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |=
+        MBX_SET_STS_BY_MASK(status,
+                            ifma_BN_to_mb((int64u(*)[MB_WIDTH])reg_key, pa_reg_skey, P256_BITSIZE),
+                            MBX_STATUS_MISMATCH_PARAM_ERR);
     /* Convert ephemeral keys into scalar mb, without radix conversion */
-    ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])scalar, pa_eph_skey, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])scalar, pa_eph_skey, P256_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
     scalar[P256_LEN64] = get_zero64();
     /* Convert message into radix 2^52 */
     ifma_HexStr_to_mb((int64u(*)[MB_WIDTH])msg, pa_msg, P256_BITSIZE);
@@ -543,8 +578,10 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_ssl_)(
     ifma_mb_to_HexStr(pa_sign_s, (const int64u(*)[MB_WIDTH])sign_s, P256_BITSIZE);
 
     /* Check if sign_r != 0 and sign_s != 0 */
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask_r, MBX_STATUS_SIGNATURE_ERR);
-    status |= MBX_STS_BY_MASK_GENERIC(status, stt_mask_s, MBX_STATUS_SIGNATURE_ERR);
+    status =
+        MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask_r, MBX_STATUS_SIGNATURE_ERR));
+    status =
+        MBX_MERGE_STS(status, MBX_STS_BY_MASK_GENERIC(0, stt_mask_s, MBX_STATUS_SIGNATURE_ERR));
 
     return status;
 }

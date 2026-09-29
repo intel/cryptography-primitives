@@ -104,22 +104,32 @@ __MBX_INLINE void transform_8sb_to_mb8(U64 out_mb8[],
     for (i = 0; inpBytes > 0; i += PROC_LEN, inpBytes -= PROC_LEN, out_mb8 += 8) {
         int sbidx = bytesRev ? inpBytes - (int)sizeof(__m512i) : i;
 
-        __m512i X0 =
-            _mm512_maskz_loadu_epi8(SB_MASK1(inpLen[0] - i, bytesRev), (__m512i*)&inp[0][sbidx]);
-        __m512i X1 =
-            _mm512_maskz_loadu_epi8(SB_MASK1(inpLen[1] - i, bytesRev), (__m512i*)&inp[1][sbidx]);
-        __m512i X2 =
-            _mm512_maskz_loadu_epi8(SB_MASK1(inpLen[2] - i, bytesRev), (__m512i*)&inp[2][sbidx]);
-        __m512i X3 =
-            _mm512_maskz_loadu_epi8(SB_MASK1(inpLen[3] - i, bytesRev), (__m512i*)&inp[3][sbidx]);
-        __m512i X4 =
-            _mm512_maskz_loadu_epi8(SB_MASK1(inpLen[4] - i, bytesRev), (__m512i*)&inp[4][sbidx]);
-        __m512i X5 =
-            _mm512_maskz_loadu_epi8(SB_MASK1(inpLen[5] - i, bytesRev), (__m512i*)&inp[5][sbidx]);
-        __m512i X6 =
-            _mm512_maskz_loadu_epi8(SB_MASK1(inpLen[6] - i, bytesRev), (__m512i*)&inp[6][sbidx]);
-        __m512i X7 =
-            _mm512_maskz_loadu_epi8(SB_MASK1(inpLen[7] - i, bytesRev), (__m512i*)&inp[7][sbidx]);
+        const __mmask64 load_mask0 = SB_MASK1(inpLen[0] - i, bytesRev);
+        const __mmask64 load_mask1 = SB_MASK1(inpLen[1] - i, bytesRev);
+        const __mmask64 load_mask2 = SB_MASK1(inpLen[2] - i, bytesRev);
+        const __mmask64 load_mask3 = SB_MASK1(inpLen[3] - i, bytesRev);
+        const __mmask64 load_mask4 = SB_MASK1(inpLen[4] - i, bytesRev);
+        const __mmask64 load_mask5 = SB_MASK1(inpLen[5] - i, bytesRev);
+        const __mmask64 load_mask6 = SB_MASK1(inpLen[6] - i, bytesRev);
+        const __mmask64 load_mask7 = SB_MASK1(inpLen[7] - i, bytesRev);
+
+        // A zero mask suppresses the load, but forming an address from a NULL input is undefined.
+        __m512i X0 = load_mask0 ? _mm512_maskz_loadu_epi8(load_mask0, (__m512i*)&inp[0][sbidx])
+                                : _mm512_setzero_si512();
+        __m512i X1 = load_mask1 ? _mm512_maskz_loadu_epi8(load_mask1, (__m512i*)&inp[1][sbidx])
+                                : _mm512_setzero_si512();
+        __m512i X2 = load_mask2 ? _mm512_maskz_loadu_epi8(load_mask2, (__m512i*)&inp[2][sbidx])
+                                : _mm512_setzero_si512();
+        __m512i X3 = load_mask3 ? _mm512_maskz_loadu_epi8(load_mask3, (__m512i*)&inp[3][sbidx])
+                                : _mm512_setzero_si512();
+        __m512i X4 = load_mask4 ? _mm512_maskz_loadu_epi8(load_mask4, (__m512i*)&inp[4][sbidx])
+                                : _mm512_setzero_si512();
+        __m512i X5 = load_mask5 ? _mm512_maskz_loadu_epi8(load_mask5, (__m512i*)&inp[5][sbidx])
+                                : _mm512_setzero_si512();
+        __m512i X6 = load_mask6 ? _mm512_maskz_loadu_epi8(load_mask6, (__m512i*)&inp[6][sbidx])
+                                : _mm512_setzero_si512();
+        __m512i X7 = load_mask7 ? _mm512_maskz_loadu_epi8(load_mask7, (__m512i*)&inp[7][sbidx])
+                                : _mm512_setzero_si512();
 
         if (bytesRev) {
             X0 = _mm512_permutexvar_epi8(bswap_mask, X0);
@@ -182,10 +192,10 @@ __MBX_INLINE void transform_8sb_to_mb8(U64 out_mb8[],
 }
 
 #ifndef BN_OPENSSL_DISABLE
-// Convert BIGNUM into MB8(Radix=2^52) format
-// Returns bitmask of successfully converted values
-// Accepts NULLs as BIGNUM inputs
-//    Null or wrong length
+// Convert BIGNUM into MB8 (radix 2^52) format.
+// Returns a failure mask for supplied inputs.
+// For non-NULL bn[i], a clear bit i means conversion succeeded.
+// NULL and failed input lanes are converted to zero.
 int8u ifma_BN_to_mb8(int64u out_mb8[][8], const BIGNUM* const bn[8], int bitLen)
 {
     // check input input length
@@ -199,15 +209,26 @@ int8u ifma_BN_to_mb8(int64u out_mb8[][8], const BIGNUM* const bn[8], int bitLen)
     __ALIGN64 int8u buffer[8][NUMBER_OF_DIGITS(IFMA_MAX_BITSIZE, 8)];
 #endif
 
+    int8u conversion_err_mask = 0;
     int i;
     for (i = 0; i < 8; ++i) {
         if (NULL != bn[i]) {
             byteLens[i] = (int)(BN_num_bytes(bn[i]));
-            assert(byteLens[i] <= byteLen);
+            if (BN_is_negative(bn[i]) || BN_num_bits(bn[i]) > bitLen) {
+                d[i]        = NULL;
+                byteLens[i] = 0;
+                conversion_err_mask |= (1 << i);
+                continue;
+            }
 
 #ifndef BN_OPENSSL_PATCH
             d[i] = buffer[i];
-            BN_bn2lebinpad(bn[i], d[i], byteLen);
+            if (BN_bn2lebinpad(bn[i], d[i], byteLen) != byteLen) {
+                d[i]        = NULL;
+                byteLens[i] = 0;
+                conversion_err_mask |= (1 << i);
+                continue;
+            }
 #else
             d[i] = (int8u*)bn_get_words(bn[i]);
 #endif
@@ -220,13 +241,12 @@ int8u ifma_BN_to_mb8(int64u out_mb8[][8], const BIGNUM* const bn[8], int bitLen)
 
     transform_8sb_to_mb8((U64*)out_mb8, bitLen, (int8u**)d, byteLens, RADIX_CVT);
 
-    return _mm512_cmpneq_epi64_mask(_mm512_loadu_si512((__m512i*)bn), _mm512_setzero_si512());
+    return conversion_err_mask;
 }
 #endif /* BN_OPENSSL_DISABLE */
 
-// Similar to ifma_BN_to_mb8(), but converts array of int64u instead of BIGNUM
-// Assumed that each converted values has bitLen length
-int8u ifma_BNU_to_mb8(int64u out_mb8[][8], const int64u* const bn[8], int bitLen)
+// Convert fixed-width BNU buffers into MB8. NULL input lanes are converted to zero.
+void ifma_BNU_to_mb8(int64u out_mb8[][8], const int64u* const bn[8], int bitLen)
 {
     // Check input parameters
     assert(bitLen > 0);
@@ -238,11 +258,10 @@ int8u ifma_BNU_to_mb8(int64u out_mb8[][8], const int64u* const bn[8], int bitLen
         byteLens[i] = (NULL != bn[i]) ? byteLen : 0;
 
     transform_8sb_to_mb8((U64*)out_mb8, bitLen, (int8u**)bn, byteLens, RADIX_CVT);
-
-    return _mm512_cmpneq_epi64_mask(_mm512_loadu_si512((__m512i*)bn), _mm512_setzero_si512());
 }
 
-int8u ifma_HexStr8_to_mb8(int64u out_mb8[][8], const int8u* const pStr[8], int bitLen)
+// Convert fixed-width byte strings into MB8. NULL input lanes are converted to zero.
+void ifma_HexStr8_to_mb8(int64u out_mb8[][8], const int8u* const pStr[8], int bitLen)
 {
     // check input parameters
     assert(bitLen > 0);
@@ -254,8 +273,6 @@ int8u ifma_HexStr8_to_mb8(int64u out_mb8[][8], const int8u* const pStr[8], int b
         byteLens[i] = (NULL != pStr[i]) ? byteLen : 0;
 
     transform_8sb_to_mb8((U64*)out_mb8, bitLen, (int8u**)pStr, byteLens, RADIX_CVT | BYTES_REV);
-
-    return _mm512_cmpneq_epi64_mask(_mm512_loadu_si512((__m512i*)pStr), _mm512_setzero_si512());
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -389,7 +406,8 @@ __MBX_INLINE void transform_mb8_to_8sb(int8u* out[8],
     }
 }
 
-int8u ifma_mb8_to_BNU(int64u* const out_bn[8], const int64u inp_mb8[][8], const int bitLen)
+// Convert MB8 into fixed-width BNU buffers. NULL output lanes are skipped.
+void ifma_mb8_to_BNU(int64u* const out_bn[8], const int64u inp_mb8[][8], const int bitLen)
 {
     // Check input parameters
     assert(bitLen > 0);
@@ -402,11 +420,10 @@ int8u ifma_mb8_to_BNU(int64u* const out_bn[8], const int64u inp_mb8[][8], const 
         byteLens[i] = (NULL != out_bn[i]) ? NUMBER_OF_DIGITS(bnu_bitlen, 8) : 0;
 
     transform_mb8_to_8sb((int8u**)out_bn, byteLens, (U64*)inp_mb8, bitLen, RADIX_CVT);
-
-    return _mm512_cmpneq_epi64_mask(_mm512_loadu_si512((__m512i*)out_bn), _mm512_setzero_si512());
 }
 
-int8u ifma_mb8_to_HexStr8(int8u* const pStr[8], const int64u inp_mb8[][8], int bitLen)
+// Convert MB8 into fixed-width byte strings. NULL output lanes are skipped.
+void ifma_mb8_to_HexStr8(int8u* const pStr[8], const int64u inp_mb8[][8], int bitLen)
 {
     // check input parameters
     assert(bitLen > 0);
@@ -418,8 +435,6 @@ int8u ifma_mb8_to_HexStr8(int8u* const pStr[8], const int64u inp_mb8[][8], int b
         byteLens[i] = (NULL != pStr[i]) ? byteLen : 0;
 
     transform_mb8_to_8sb((int8u**)pStr, byteLens, (U64*)inp_mb8, bitLen, RADIX_CVT | BYTES_REV);
-
-    return _mm512_cmpneq_epi64_mask(_mm512_loadu_si512((__m512i*)pStr), _mm512_setzero_si512());
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -431,29 +446,29 @@ int8u ifma_mb8_to_HexStr8(int8u* const pStr[8], const int64u inp_mb8[][8], int b
 //    - mb8 -> 8 hex strings
 */
 DISABLE_OPTIMIZATION
-int8u ifma_BNU_transpose_copy(int64u out_mb8[][8], const int64u* const bn[8], int bitLen)
+void ifma_BNU_transpose_copy(int64u out_mb8[][8], const int64u* const bn[8], int bitLen)
 {
     // Check input parameters
     assert(bitLen > 0);
 
-    __mmask8 kbn[8];
+    __mmask8 input_load_mask[8];
     int i;
     for (i = 0; i < 8; ++i)
-        kbn[i] = (NULL == bn[i]) ? (__mmask8)0 : (__mmask8)0xFF;
+        input_load_mask[i] = (NULL == bn[i]) ? (__mmask8)0 : (__mmask8)0xFF;
 
     int len = NUMBER_OF_DIGITS(bitLen, 64);
     int n;
     for (n = 0; len > 0; n += 8, out_mb8 += 8) {
-        __mmask8 kread = (len >= 8) ? 0xFF : (__mmask8)((1U << len) - 1U);
+        __mmask8 word_load_mask = (len >= 8) ? 0xFF : (__mmask8)((1U << len) - 1U);
 
-        __m512i X0 = _mm512_maskz_loadu_epi64(kread & kbn[0], bn[0] + n);
-        __m512i X1 = _mm512_maskz_loadu_epi64(kread & kbn[1], bn[1] + n);
-        __m512i X2 = _mm512_maskz_loadu_epi64(kread & kbn[2], bn[2] + n);
-        __m512i X3 = _mm512_maskz_loadu_epi64(kread & kbn[3], bn[3] + n);
-        __m512i X4 = _mm512_maskz_loadu_epi64(kread & kbn[4], bn[4] + n);
-        __m512i X5 = _mm512_maskz_loadu_epi64(kread & kbn[5], bn[5] + n);
-        __m512i X6 = _mm512_maskz_loadu_epi64(kread & kbn[6], bn[6] + n);
-        __m512i X7 = _mm512_maskz_loadu_epi64(kread & kbn[7], bn[7] + n);
+        __m512i X0 = _mm512_maskz_loadu_epi64(word_load_mask & input_load_mask[0], bn[0] + n);
+        __m512i X1 = _mm512_maskz_loadu_epi64(word_load_mask & input_load_mask[1], bn[1] + n);
+        __m512i X2 = _mm512_maskz_loadu_epi64(word_load_mask & input_load_mask[2], bn[2] + n);
+        __m512i X3 = _mm512_maskz_loadu_epi64(word_load_mask & input_load_mask[3], bn[3] + n);
+        __m512i X4 = _mm512_maskz_loadu_epi64(word_load_mask & input_load_mask[4], bn[4] + n);
+        __m512i X5 = _mm512_maskz_loadu_epi64(word_load_mask & input_load_mask[5], bn[5] + n);
+        __m512i X6 = _mm512_maskz_loadu_epi64(word_load_mask & input_load_mask[6], bn[6] + n);
+        __m512i X7 = _mm512_maskz_loadu_epi64(word_load_mask & input_load_mask[7], bn[7] + n);
 
         TRANSPOSE_8xI64x8(X0, X1, X2, X3, X4, X5, X6, X7);
 
@@ -466,12 +481,12 @@ int8u ifma_BNU_transpose_copy(int64u out_mb8[][8], const int64u* const bn[8], in
         _mm512_mask_storeu_epi64(&out_mb8[6], MB_MASK(len--), X6);
         _mm512_mask_storeu_epi64(&out_mb8[7], MB_MASK(len--), X7);
     }
-
-    return _mm512_cmpneq_epi64_mask(_mm512_loadu_si512((__m512i*)bn), _mm512_setzero_si512());
 }
 
 #ifndef BN_OPENSSL_DISABLE
 DISABLE_OPTIMIZATION
+// Transpose BIGNUMs into MB8 (radix 2^64) format.
+// The return mask and failed-lane behavior match ifma_BN_to_mb8().
 int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const bn[8], int bitLen)
 {
     // check input length
@@ -484,19 +499,24 @@ int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const bn[8], int
     __ALIGN64 int64u buffer[8][NUMBER_OF_DIGITS(IFMA_MAX_BITSIZE, 64)];
 #endif
 
-    __mmask8 kbn[8];
-
+    int8u conversion_err_mask = 0;
     int i;
+    // The buffer is rounded to 64-bit words, so serialization alone does not enforce bitLen
+    // for sizes such as P-521. Reject negative values because serialization uses the magnitude.
     for (i = 0; i < 8; ++i) {
         if (NULL == bn[i]) {
-            kbn[i] = 0;
             inp[i] = NULL;
+        } else if (BN_is_negative(bn[i]) || BN_num_bits(bn[i]) > bitLen) {
+            inp[i] = NULL;
+            conversion_err_mask |= (1 << i);
         } else {
-            kbn[i] = 0xFF;
-
 #ifndef BN_OPENSSL_PATCH
             inp[i] = buffer[i];
-            BN_bn2lebinpad(bn[i], (unsigned char*)inp[i], byteLen);
+            if (BN_bn2lebinpad(bn[i], (unsigned char*)inp[i], byteLen) != byteLen) {
+                inp[i] = NULL;
+                conversion_err_mask |= (1 << i);
+                continue;
+            }
 #else
             inp[i] = (int64u*)bn_get_words(bn[i]);
 #endif
@@ -506,16 +526,25 @@ int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const bn[8], int
     int len = NUMBER_OF_DIGITS(bitLen, 64);
     int n;
     for (n = 0; len > 0; n += 8, out_mb8 += 8) {
-        __mmask8 k = (len >= 8) ? 0xFF : (__mmask8)((1U << len) - 1U);
+        __mmask8 word_load_mask = (len >= 8) ? 0xFF : (__mmask8)((1U << len) - 1U);
 
-        __m512i X0 = _mm512_maskz_loadu_epi64(k & kbn[0], inp[0] + n);
-        __m512i X1 = _mm512_maskz_loadu_epi64(k & kbn[1], inp[1] + n);
-        __m512i X2 = _mm512_maskz_loadu_epi64(k & kbn[2], inp[2] + n);
-        __m512i X3 = _mm512_maskz_loadu_epi64(k & kbn[3], inp[3] + n);
-        __m512i X4 = _mm512_maskz_loadu_epi64(k & kbn[4], inp[4] + n);
-        __m512i X5 = _mm512_maskz_loadu_epi64(k & kbn[5], inp[5] + n);
-        __m512i X6 = _mm512_maskz_loadu_epi64(k & kbn[6], inp[6] + n);
-        __m512i X7 = _mm512_maskz_loadu_epi64(k & kbn[7], inp[7] + n);
+        // Guard the resolved data pointer: patched OpenSSL may expose NULL words for zero.
+        __m512i X0 =
+            inp[0] ? _mm512_maskz_loadu_epi64(word_load_mask, inp[0] + n) : _mm512_setzero_si512();
+        __m512i X1 =
+            inp[1] ? _mm512_maskz_loadu_epi64(word_load_mask, inp[1] + n) : _mm512_setzero_si512();
+        __m512i X2 =
+            inp[2] ? _mm512_maskz_loadu_epi64(word_load_mask, inp[2] + n) : _mm512_setzero_si512();
+        __m512i X3 =
+            inp[3] ? _mm512_maskz_loadu_epi64(word_load_mask, inp[3] + n) : _mm512_setzero_si512();
+        __m512i X4 =
+            inp[4] ? _mm512_maskz_loadu_epi64(word_load_mask, inp[4] + n) : _mm512_setzero_si512();
+        __m512i X5 =
+            inp[5] ? _mm512_maskz_loadu_epi64(word_load_mask, inp[5] + n) : _mm512_setzero_si512();
+        __m512i X6 =
+            inp[6] ? _mm512_maskz_loadu_epi64(word_load_mask, inp[6] + n) : _mm512_setzero_si512();
+        __m512i X7 =
+            inp[7] ? _mm512_maskz_loadu_epi64(word_load_mask, inp[7] + n) : _mm512_setzero_si512();
 
         TRANSPOSE_8xI64x8(X0, X1, X2, X3, X4, X5, X6, X7);
 
@@ -529,7 +558,7 @@ int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const bn[8], int
         _mm512_mask_storeu_epi64(&out_mb8[7], MB_MASK(len--), X7);
     }
 
-    return _mm512_cmpneq_epi64_mask(_mm512_loadu_si512((__m512i*)bn), _mm512_setzero_si512());
+    return conversion_err_mask;
 }
 #endif /* BN_OPENSSL_DISABLE */
 
@@ -758,10 +787,10 @@ __MBX_INLINE void transform_4sb_to_mb4(U64 out_mb4[],
 }
 
 #ifndef BN_OPENSSL_DISABLE
-// Convert BIGNUM into MB4(Radix=2^52) format
-// Returns bitmask of successfully converted values
-// Accepts NULLs as BIGNUM inputs
-//    Null or wrong length
+// Convert BIGNUM into MB4 (radix 2^52) format.
+// Returns a failure mask for supplied inputs.
+// For non-NULL bn[i], a clear bit i means conversion succeeded.
+// NULL and failed input lanes are converted to zero.
 int8u ifma_BN_to_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], int bitLen)
 {
     // check input input length
@@ -775,21 +804,30 @@ int8u ifma_BN_to_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], int bitLen)
     __ALIGN64 int8u buffer[4][NUMBER_OF_DIGITS(IFMA_MAX_BITSIZE, 8)];
 #endif
 
-    int8u retVal = 0;
+    int8u conversion_err_mask = 0;
     int i;
 
     for (i = 0; i < 4; ++i) {
         if (NULL != bn[i]) {
             byteLens[i] = (int)(BN_num_bytes(bn[i]));
-            assert(byteLens[i] <= byteLen);
+            if (BN_is_negative(bn[i]) || BN_num_bits(bn[i]) > bitLen) {
+                d[i]        = NULL;
+                byteLens[i] = 0;
+                conversion_err_mask |= (1 << i);
+                continue;
+            }
 
 #ifndef BN_OPENSSL_PATCH
             d[i] = buffer[i];
-            BN_bn2lebinpad(bn[i], d[i], byteLen);
+            if (BN_bn2lebinpad(bn[i], d[i], byteLen) != byteLen) {
+                d[i]        = NULL;
+                byteLens[i] = 0;
+                conversion_err_mask |= (1 << i);
+                continue;
+            }
 #else
             d[i] = (int8u*)bn_get_words(bn[i]);
 #endif
-            retVal |= (1 << i);
         } else {
             // no input in that bucket
             d[i]        = NULL;
@@ -799,37 +837,28 @@ int8u ifma_BN_to_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], int bitLen)
 
     transform_4sb_to_mb4((U64*)out_mb4, bitLen, (const int8u**)d, byteLens, RADIX_CVT);
 
-    return retVal;
+    return conversion_err_mask;
 }
 #endif /* BN_OPENSSL_DISABLE */
 
-// Simlilar to ifma_BN_to_mb4(), but converts array of int64u instead of BIGNUM
-// Assumed that each converted values has bitLen length
-int8u ifma_BNU_to_mb4(int64u out_mb4[][4], const int64u* const bn[4], int bitLen)
+// Convert fixed-width BNU buffers into MB4. NULL input lanes are converted to zero.
+void ifma_BNU_to_mb4(int64u out_mb4[][4], const int64u* const bn[4], int bitLen)
 {
     // Check input parameters
     assert(bitLen > 0);
 
     int byteLens[4];
-    int byteLen  = NUMBER_OF_DIGITS(bitLen, 8);
-    int8u retVal = 0;
+    int byteLen = NUMBER_OF_DIGITS(bitLen, 8);
     int i;
 
-    for (i = 0; i < 4; ++i) {
-        if (NULL != bn[i]) {
-            byteLens[i] = byteLen;
-            retVal |= (1 << i);
-        } else {
-            byteLens[i] = 0;
-        }
-    }
+    for (i = 0; i < 4; ++i)
+        byteLens[i] = (NULL != bn[i]) ? byteLen : 0;
 
     transform_4sb_to_mb4((U64*)out_mb4, bitLen, (const int8u**)bn, byteLens, RADIX_CVT);
-
-    return retVal;
 }
 
-int8u ifma_HexStr4_to_mb4(int64u out_mb4[][4], const int8u* const pStr[4], int bitLen)
+// Convert fixed-width byte strings into MB4. NULL input lanes are converted to zero.
+void ifma_HexStr4_to_mb4(int64u out_mb4[][4], const int8u* const pStr[4], int bitLen)
 {
     // check input parameters
     assert(bitLen > 0);
@@ -837,24 +866,15 @@ int8u ifma_HexStr4_to_mb4(int64u out_mb4[][4], const int8u* const pStr[4], int b
     int byteLens[4];
     int byteLen = NUMBER_OF_DIGITS(bitLen, 8);
     int i;
-    int8u retVal = 0;
 
-    for (i = 0; i < 4; i++) {
-        if (NULL != pStr[i]) {
-            byteLens[i] = byteLen;
-            retVal |= (1 << i);
-        } else {
-            byteLens[i] = 0;
-        }
-    }
+    for (i = 0; i < 4; i++)
+        byteLens[i] = (NULL != pStr[i]) ? byteLen : 0;
 
     transform_4sb_to_mb4((U64*)out_mb4,
                          bitLen,
                          (const int8u**)pStr,
                          byteLens,
                          RADIX_CVT | BYTES_REV);
-
-    return retVal;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1013,51 +1033,36 @@ __MBX_INLINE void transform_mb4_to_4sb(int8u* out[4],
     }
 }
 
-int8u ifma_mb4_to_BNU(int64u* const out_bn[4], const int64u inp_mb4[][4], const int bitLen)
+// Convert MB4 into fixed-width BNU buffers. NULL output lanes are skipped.
+void ifma_mb4_to_BNU(int64u* const out_bn[4], const int64u inp_mb4[][4], const int bitLen)
 {
     // Check input parameters
     assert(bitLen > 0);
 
     const int bnu_bitlen = NUMBER_OF_DIGITS(bitLen, 64) * 64; // gres: output length is multiple 64
     int byteLens[4];
-    int8u retVal = 0;
     int i;
 
-    for (i = 0; i < 4; ++i) {
-        if (NULL != out_bn[i]) {
-            byteLens[i] = NUMBER_OF_DIGITS(bnu_bitlen, 8);
-            retVal |= (1 << i);
-        } else {
-            byteLens[i] = 0;
-        }
-    }
+    for (i = 0; i < 4; ++i)
+        byteLens[i] = (NULL != out_bn[i]) ? NUMBER_OF_DIGITS(bnu_bitlen, 8) : 0;
 
     transform_mb4_to_4sb((int8u**)out_bn, byteLens, (U64*)inp_mb4, bitLen, RADIX_CVT);
-    return retVal;
 }
 
-int8u ifma_mb4_to_HexStr4(int8u* const pStr[4], const int64u inp_mb4[][4], int bitLen)
+// Convert MB4 into fixed-width byte strings. NULL output lanes are skipped.
+void ifma_mb4_to_HexStr4(int8u* const pStr[4], const int64u inp_mb4[][4], int bitLen)
 {
     // check input parameters
     assert(bitLen > 0);
 
     int byteLens[4];
     const int byteLen = NUMBER_OF_DIGITS(bitLen, 8);
-    int8u retVal      = 0;
     int i;
 
-    for (i = 0; i < 4; i++) {
-        if (NULL != pStr[i]) {
-            byteLens[i] = byteLen;
-            retVal |= (1 << i);
-        } else {
-            byteLens[i] = 0;
-        }
-    }
+    for (i = 0; i < 4; i++)
+        byteLens[i] = (NULL != pStr[i]) ? byteLen : 0;
 
     transform_mb4_to_4sb((int8u**)pStr, byteLens, (U64*)inp_mb4, bitLen, RADIX_CVT | BYTES_REV);
-
-    return retVal;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1068,16 +1073,10 @@ int8u ifma_mb4_to_HexStr4(int8u* const pStr[4], const int64u inp_mb4[][4], int b
 //    - mb4 -> 8 BNU
 //    - mb4 -> 8 hex strings
 */
-int8u ifma_BNU_transpose_copy_mb4(int64u out_mb4[][4], const int64u* const bn[4], const int bitLen)
+void ifma_BNU_transpose_copy_mb4(int64u out_mb4[][4], const int64u* const bn[4], const int bitLen)
 {
     // Check input parameters
     assert(bitLen > 0);
-
-    int8u ret = 0;
-
-    for (int i = 0; i < 4; ++i)
-        if (NULL != bn[i])
-            ret |= (1 << i);
 
     int len = NUMBER_OF_DIGITS(bitLen, 64);
 
@@ -1125,33 +1124,39 @@ int8u ifma_BNU_transpose_copy_mb4(int64u out_mb4[][4], const int64u* const bn[4]
         for (int k = 0; (k < 4) && (len > 0); k++, len--)
             _mm256_storeu_si256((__m256i*)&out_mb4[k], X[k]);
     }
-
-    return ret;
 }
 
 #ifndef BN_OPENSSL_DISABLE
+// Transpose BIGNUMs into MB4 (radix 2^64) format.
+// The return mask and failed-lane behavior match ifma_BN_to_mb4().
 int8u ifma_BN_transpose_copy_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], const int bitLen)
 {
     // check input length
     assert((0 < bitLen) && (bitLen <= IFMA_MAX_BITSIZE));
 
-    int8u ret = 0;
+    int8u conversion_err_mask = 0;
     int64u* inp[4];
 #ifndef BN_OPENSSL_PATCH
     __ALIGN64 int64u buffer[4][NUMBER_OF_DIGITS(IFMA_MAX_BITSIZE, 64)];
 #endif
+    const int byteLen = NUMBER_OF_DIGITS(bitLen, 64) * 8;
 
+    // The buffer is rounded to 64-bit words, so serialization alone does not enforce bitLen
+    // for sizes such as P-521. Reject negative values because serialization uses the magnitude.
     for (int i = 0; i < 4; ++i) {
         if (NULL == bn[i]) {
             inp[i] = NULL;
+        } else if (BN_is_negative(bn[i]) || BN_num_bits(bn[i]) > bitLen) {
+            inp[i] = NULL;
+            conversion_err_mask |= (1 << i);
         } else {
-            ret |= (1 << i);
-
 #ifndef BN_OPENSSL_PATCH
-            const int byteLen = NUMBER_OF_DIGITS(bitLen, 64) * 8;
-
             inp[i] = buffer[i];
-            BN_bn2lebinpad(bn[i], (unsigned char*)inp[i], byteLen);
+            if (BN_bn2lebinpad(bn[i], (unsigned char*)inp[i], byteLen) != byteLen) {
+                inp[i] = NULL;
+                conversion_err_mask |= (1 << i);
+                continue;
+            }
 #else
             inp[i] = (int64u*)bn_get_words(bn[i]);
 #endif
@@ -1205,7 +1210,7 @@ int8u ifma_BN_transpose_copy_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4],
             _mm256_storeu_si256((__m256i*)&out_mb4[k], X[k]);
     }
 
-    return ret;
+    return conversion_err_mask;
 }
 #endif /* BN_OPENSSL_DISABLE */
 

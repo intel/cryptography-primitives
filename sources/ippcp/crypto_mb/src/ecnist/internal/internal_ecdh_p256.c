@@ -150,7 +150,10 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
 
     /* Zero padded private keys in radix 2^64 */
     U64 secretz[P256_LEN64 + 1];
-    ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])secretz, (const BIGNUM**)pa_skey, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(
+        status,
+        ifma_BN_transpose_copy((int64u(*)[MB_WIDTH])secretz, pa_skey, P256_BITSIZE),
+        MBX_STATUS_MISMATCH_PARAM_ERR);
     secretz[P256_LEN64] = get_zero64();
 
     status |= MBX_STS_BY_MASK_GENERIC(status,
@@ -167,10 +170,17 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
     P256_POINT P;
 
     /* P-> radix 2^52 */
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.X, (const BIGNUM*(*))pa_pubx, P256_BITSIZE);
-    ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.Y, (const BIGNUM*(*))pa_puby, P256_BITSIZE);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.X, pa_pubx, P256_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
+    status |= MBX_SET_STS_BY_MASK(status,
+                                  ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.Y, pa_puby, P256_BITSIZE),
+                                  MBX_STATUS_MISMATCH_PARAM_ERR);
     if (use_jproj_coords)
-        ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.Z, (const BIGNUM*(*))pa_pubz, P256_BITSIZE);
+        status |=
+            MBX_SET_STS_BY_MASK(status,
+                                ifma_BN_to_mb((int64u(*)[MB_WIDTH])P.Z, pa_pubz, P256_BITSIZE),
+                                MBX_STATUS_MISMATCH_PARAM_ERR);
     else
         MB_FUNC_NAME(mov_FE256_)(P.Z, (U64*)ones);
 
