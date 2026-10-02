@@ -102,9 +102,12 @@ IPP_OWN_DEFN(IppStatus,
 }
 
 // Algorithm 30 RejNTTPoly(rho)
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
 
 #define CP_ML_DSA_SAMPLENTT_BUFF_SIZE (258)
+
+/* 258 bytes = 86 three-byte triples per squeezed block. */
+#define CP_ML_DSA_SAMPLENTT_TRIPLES (CP_ML_DSA_SAMPLENTT_BUFF_SIZE / 3)
 
 IPP_OWN_DEFN(IppStatus,
              cp_ml_rejNTTPoly_MB4,
@@ -120,42 +123,54 @@ IPP_OWN_DEFN(IppStatus,
     cp_SHA3_SHAKE128_AbsorbMB4(&state_mb4, rho1, rho2, rho3, rho4, 34);
     cp_SHA3_SHAKE128_FinalizeMB4(&state_mb4);
 
-    /* The hash squeeze loop for up to 4 buffers */
-    Ipp32u buffer_bytes_used = 0;
     Ipp8u s[4][CP_ML_DSA_SAMPLENTT_BUFF_SIZE];
     /* Squeeze the first big block unconditionally */
     cp_SHA3_SHAKE128_SqueezeMB4(s[0], s[1], s[2], s[3], CP_ML_DSA_SAMPLENTT_BUFF_SIZE, &state_mb4);
     /* Looping index is separate for each buffer */
-    Ipp16u j[4] = { 0, 0, 0, 0 };
-    Ipp32s result;
-    Ipp16u iter = 0;
-    while (
-        ((((numBuffers - 1) >= 0) && (j[0] < 256)) || (((numBuffers - 2) >= 0) && (j[1] < 256)) ||
-         (((numBuffers - 3) >= 0) && (j[2] < 256)) || (((numBuffers - 4) >= 0) && (j[3] < 256))) &&
-        iter < CP_ML_DSA_MAX_REJ_NTT_POLY_ITERATIONS) {
-        if (buffer_bytes_used >= CP_ML_DSA_SAMPLENTT_BUFF_SIZE) {
+    Ipp16u j[4]    = { 0, 0, 0, 0 };
+    Ipp16u iter    = 0;
+    Ipp32s allDone = 0;
+
+    /* Phase-split rejection sampling: within each squeezed block, phase 1 decodes all 86
+       triples per buffer into candidate + accept arrays (branch-light, auto-vectorizes),
+       phase 2 compacts accepted candidates into the output. Byte consumption per buffer is
+       identical to the per-triple loop (each buffer decodes its own stream in order), so the
+       coefficient sequence — and the KAT — is unchanged. */
+    while (!allDone && iter < CP_ML_DSA_MAX_REJ_NTT_POLY_ITERATIONS) {
+        for (Ipp32s buf = 0; buf < numBuffers; buf++) {
+            if (j[buf] >= 256) {
+                continue;
+            }
+            Ipp32s cand[CP_ML_DSA_SAMPLENTT_TRIPLES];
+            Ipp8u accept[CP_ML_DSA_SAMPLENTT_TRIPLES];
+            const Ipp8u* p = s[buf];
+            for (Ipp32u t = 0; t < CP_ML_DSA_SAMPLENTT_TRIPLES; t++) {
+                cand[t]   = cp_ml_coeffFromThreeBytes(p[3 * t], p[3 * t + 1], p[3 * t + 2]);
+                accept[t] = (Ipp8u)(cand[t] != -1);
+            }
+            for (Ipp32u t = 0; t < CP_ML_DSA_SAMPLENTT_TRIPLES && j[buf] < 256; t++) {
+                if (accept[t]) {
+                    a[buf].values[j[buf]] = cand[t];
+                    j[buf]++;
+                }
+            }
+        }
+        /* refill: one shared 4-way squeeze feeds all buffers */
+        allDone = 1;
+        for (Ipp32s buf = 0; buf < numBuffers; buf++) {
+            if (j[buf] < 256) {
+                allDone = 0;
+            }
+        }
+        if (!allDone) {
             cp_SHA3_SHAKE128_SqueezeMB4(s[0],
                                         s[1],
                                         s[2],
                                         s[3],
                                         CP_ML_DSA_SAMPLENTT_BUFF_SIZE,
                                         &state_mb4);
-            buffer_bytes_used = 0;
         }
-
-        // Fill elements of up to 4 polynomials
-        for (Ipp32s buf = 0; buf < numBuffers; buf++) {
-            // a->values[j] = cp_ml_coeffFromThreeBytes(s[3 * idx], s[3 * idx + 1], s[3 * idx + 2]);
-            result = cp_ml_coeffFromThreeBytes(s[buf][buffer_bytes_used + 0],
-                                               s[buf][buffer_bytes_used + 1],
-                                               s[buf][buffer_bytes_used + 2]);
-            if ((result != -1) && (j[buf] < 256)) {
-                a[buf].values[j[buf]] = result;
-                j[buf]++;
-            }
-        }
-        buffer_bytes_used += 3;
-        iter++;
+        iter += CP_ML_DSA_SAMPLENTT_TRIPLES;
     }
     /* Release locally used storage */
     PurgeBlock(j, sizeof(j));
@@ -164,8 +179,18 @@ IPP_OWN_DEFN(IppStatus,
         PurgeBlock(s[i], CP_ML_DSA_SAMPLENTT_BUFF_SIZE);
     }
 
-    if (iter >= CP_ML_DSA_MAX_REJ_NTT_POLY_ITERATIONS) {
-        PurgeBlock(a->values, sizeof(a->values)); // zeroize secrets
+    // Failure = budget exhausted before all buffers filled. Gate on allDone, not iter: the
+    // phase-split advances iter by a whole block per round, so on success iter can exceed the
+    // per-triple cap while every buffer is complete (allDone == 1). The cap
+    // (CP_ML_DSA_MAX_REJ_NTT_POLY_ITERATIONS = 299, ml_dsa.h) is checked before each block,
+    // so the effective budget is 4 * 86 = 344 triples. A larger budget only lowers the
+    // already negligible failure rate.
+    if (!allDone) {
+        // Matrix A is public, so this is hygiene rather than secret erasure, but the loop
+        // above fills a[0..numBuffers-1] and the wipe should cover the same range.
+        for (Ipp32s buf = 0; buf < numBuffers; buf++) {
+            PurgeBlock(a[buf].values, sizeof(a[buf].values));
+        }
         return ippStsMLDSAMaxIterations;
     }
     return ippStsNoErr;
@@ -202,9 +227,16 @@ IPP_OWN_DEFN(IppStatus, cp_ml_rejNTTPoly, (Ipp8u * rho, IppPoly* a, IppsMLDSASta
         sts = ippsHashSqueeze_rmf(s, CP_ML_DSA_N_BLOCKS * 3, hash_state);
         IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
+        /* phase-split: vectorizable decode of the 32 triples, then scalar compaction */
+        Ipp32s cand[CP_ML_DSA_N_BLOCKS];
+        Ipp8u accept[CP_ML_DSA_N_BLOCKS];
+        for (int idx = 0; idx < CP_ML_DSA_N_BLOCKS; ++idx) {
+            cand[idx]   = cp_ml_coeffFromThreeBytes(s[3 * idx], s[3 * idx + 1], s[3 * idx + 2]);
+            accept[idx] = (Ipp8u)(cand[idx] != -1);
+        }
         for (int idx = 0; idx < CP_ML_DSA_N_BLOCKS && j < (Ipp16u)CP_ML_N; ++idx) {
-            a->values[j] = cp_ml_coeffFromThreeBytes(s[3 * idx], s[3 * idx + 1], s[3 * idx + 2]);
-            if (a->values[j] != -1) {
+            if (accept[idx]) {
+                a->values[j] = cand[idx];
                 j++;
             }
         }
@@ -222,11 +254,11 @@ IPP_OWN_DEFN(IppStatus, cp_ml_rejNTTPoly, (Ipp8u * rho, IppPoly* a, IppsMLDSASta
     }
     return sts;
 }
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 
 // Algorithm 31 RejBoundedPoly(rho)
 
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
 
 #define CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE (256)
 
@@ -250,8 +282,8 @@ IPP_OWN_DEFN(IppStatus,
     cp_SHA3_SHAKE256_AbsorbMB4(&state_mb4, rho1, rho2, rho3, rho4, 66);
     cp_SHA3_SHAKE256_FinalizeMB4(&state_mb4);
 
-    /* The hash squeeze loop for up to 4 buffers */
-    Ipp32u buffer_bytes_used = 0;
+    /* 256 bytes = 512 half-byte candidates (low nibble then high nibble per byte). */
+#define CP_ML_DSA_BOUNDED_CANDS (2 * CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE)
     Ipp8u z[4][CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE];
     /* Squeeze the first big block unconditionally */
     cp_SHA3_SHAKE256_SqueezeMB4(z[0],
@@ -261,48 +293,73 @@ IPP_OWN_DEFN(IppStatus,
                                 CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE,
                                 &state_mb4);
     /* Looping index is separate for each buffer */
-    Ipp16u j[4] = { 0, 0, 0, 0 };
-    Ipp8s z0, z1;
-    Ipp16u iter = 0;
-    while (
-        ((((numBuffers - 1) >= 0) && (j[0] < 256)) || (((numBuffers - 2) >= 0) && (j[1] < 256)) ||
-         (((numBuffers - 3) >= 0) && (j[2] < 256)) || (((numBuffers - 4) >= 0) && (j[3] < 256))) &&
-        iter < CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS) {
-        if (buffer_bytes_used >= CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE) {
+    Ipp16u j[4]    = { 0, 0, 0, 0 };
+    Ipp16u iter    = 0;
+    Ipp32s allDone = 0;
+    Ipp8u eta      = mldsaCtx->params.eta;
+
+    /* Phase-split (same idea as cp_ml_rejNTTPoly_MB4): phase 1 decodes all 512 nibble
+       candidates per buffer into cand + accept (order preserved: low nibble of byte b at
+       index 2b, high nibble at 2b+1), phase 2 compacts. Identical coefficient sequence and
+       byte consumption -> KAT-exact. coeffFromHalfByte returns -100 on reject.
+       cand holds decoded s1/s2 coefficients, so it is declared here and zeroized below. */
+    Ipp8s cand[CP_ML_DSA_BOUNDED_CANDS];
+    Ipp8u accept[CP_ML_DSA_BOUNDED_CANDS];
+    while (!allDone && iter < CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS) {
+        for (Ipp32s buf = 0; buf < numBuffers; buf++) {
+            if (j[buf] >= (Ipp16u)CP_ML_N) {
+                continue;
+            }
+            const Ipp8u* zb = z[buf];
+            for (Ipp32u b = 0; b < CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE; b++) {
+                Ipp8s c0          = cp_ml_coeffFromHalfByte(zb[b] & 15, eta);
+                Ipp8s c1          = cp_ml_coeffFromHalfByte(zb[b] >> 4, eta);
+                cand[2 * b]       = c0;
+                accept[2 * b]     = (Ipp8u)(c0 != -100);
+                cand[2 * b + 1]   = c1;
+                accept[2 * b + 1] = (Ipp8u)(c1 != -100);
+            }
+            for (Ipp32u t = 0; t < CP_ML_DSA_BOUNDED_CANDS && j[buf] < (Ipp16u)CP_ML_N; t++) {
+                if (accept[t]) {
+                    s[buf].values[j[buf]] = cand[t];
+                    j[buf]++;
+                }
+            }
+        }
+        allDone = 1;
+        for (Ipp32s buf = 0; buf < numBuffers; buf++) {
+            if (j[buf] < (Ipp16u)CP_ML_N) {
+                allDone = 0;
+            }
+        }
+        if (!allDone) {
             cp_SHA3_SHAKE256_SqueezeMB4(z[0],
                                         z[1],
                                         z[2],
                                         z[3],
                                         CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE,
                                         &state_mb4);
-            buffer_bytes_used = 0;
         }
-
-        // Fill elements of up to 4 polynomials
-        for (Ipp32s buf = 0; buf < numBuffers; buf++) {
-            z0 = cp_ml_coeffFromHalfByte(z[buf][buffer_bytes_used] & 15, mldsaCtx->params.eta);
-            z1 = cp_ml_coeffFromHalfByte(z[buf][buffer_bytes_used] >> 4, mldsaCtx->params.eta);
-            if (z0 != -100 && j[buf] < (Ipp16u)CP_ML_N) {
-                s[buf].values[j[buf]] = z0;
-                j[buf]++;
-            }
-            if (z1 != -100 && j[buf] < (Ipp16u)CP_ML_N) {
-                s[buf].values[j[buf]] = z1;
-                j[buf]++;
-            }
-        }
-        buffer_bytes_used++;
-        iter++;
+        iter += CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE;
     }
     /* Release locally used storage */
     PurgeBlock(j, sizeof(j));
+    PurgeBlock(cand, sizeof(cand));
+    PurgeBlock(accept, sizeof(accept));
     PurgeBlock(state_buffer_mb4, sizeof(state_buffer_mb4));
     for (Ipp32s i = 0; i < 4; i++) {
         PurgeBlock(z[i], CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE);
     }
 
-    if (iter >= CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS) {
-        PurgeBlock(s->values, sizeof(s->values)); // zeroize secrets
+    // Failure = budget exhausted before all buffers filled. Gate on allDone, not iter (see
+    // cp_ml_rejNTTPoly_MB4): the phase-split advances iter by a whole block per round. The
+    // cap (CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS = 482 bytes, ml_dsa.h) is checked before
+    // each block, so the effective budget is 2 * 256 = 512 bytes.
+    if (!allDone) {
+        // The loop above fills s[0..numBuffers-1], so purge every buffer, not just s[0].
+        for (Ipp32s buf = 0; buf < numBuffers; buf++) {
+            PurgeBlock(s[buf].values, sizeof(s[buf].values)); // zeroize secrets
+        }
         return ippStsMLDSAMaxIterations;
     }
     return ippStsNoErr;
@@ -334,30 +391,40 @@ IPP_OWN_DEFN(IppStatus, cp_ml_rejBoundedPoly, (Ipp8u * rho, IppPoly* a, IppsMLDS
 
     Ipp32u j = 0;
     Ipp8u z[CP_ML_DSA_N_BLOCKS];
-    Ipp8s z0, z1;
+    Ipp8u eta   = mldsaCtx->params.eta;
     Ipp16u iter = 0;
+    /* cand holds decoded s1/s2 coefficients, so it is declared here and zeroized below. */
+    Ipp8s cand[2 * CP_ML_DSA_N_BLOCKS];
+    Ipp8u accept[2 * CP_ML_DSA_N_BLOCKS];
     while (j < CP_ML_N && iter < CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS) {
         sts = ippsHashSqueeze_rmf(z, CP_ML_DSA_N_BLOCKS, hash_state);
         if (sts != ippStsNoErr) {
             PurgeBlock(z, sizeof(z)); // zeroize secrets
+            PurgeBlock(cand, sizeof(cand));
+            PurgeBlock(accept, sizeof(accept));
             return sts;
         }
 
-        for (int i = 0; i < CP_ML_DSA_N_BLOCKS && j < (Ipp16u)CP_ML_N; i++) {
-            z0 = cp_ml_coeffFromHalfByte(z[i] & 15, mldsaCtx->params.eta);
-            z1 = cp_ml_coeffFromHalfByte(z[i] >> 4, mldsaCtx->params.eta);
-            if (z0 != -100) {
-                a->values[j] = z0;
-                j++;
-            }
-            if (z1 != -100 && j < (Ipp16u)CP_ML_N) {
-                a->values[j] = z1;
+        /* phase-split: decode 2*32 nibble candidates (low at 2i, high at 2i+1), then compact */
+        for (int i = 0; i < CP_ML_DSA_N_BLOCKS; i++) {
+            Ipp8s c0          = cp_ml_coeffFromHalfByte(z[i] & 15, eta);
+            Ipp8s c1          = cp_ml_coeffFromHalfByte(z[i] >> 4, eta);
+            cand[2 * i]       = c0;
+            accept[2 * i]     = (Ipp8u)(c0 != -100);
+            cand[2 * i + 1]   = c1;
+            accept[2 * i + 1] = (Ipp8u)(c1 != -100);
+        }
+        for (int t = 0; t < 2 * CP_ML_DSA_N_BLOCKS && j < (Ipp16u)CP_ML_N; t++) {
+            if (accept[t]) {
+                a->values[j] = cand[t];
                 j++;
             }
         }
         iter++;
     }
     PurgeBlock(z, sizeof(z)); // zeroize secrets
+    PurgeBlock(cand, sizeof(cand));
+    PurgeBlock(accept, sizeof(accept));
 
     /* Release locally used storage */
     sts = cp_mlStorageRelease(pStorage, hash_size + CP_ML_ALIGNMENT);
@@ -370,7 +437,7 @@ IPP_OWN_DEFN(IppStatus, cp_ml_rejBoundedPoly, (Ipp8u * rho, IppPoly* a, IppsMLDS
 
     return sts;
 }
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 
 // Algorithm 32 ExpandA(rho)
 IPP_OWN_DEFN(IppStatus,
@@ -382,7 +449,7 @@ IPP_OWN_DEFN(IppStatus,
     const Ipp8u l = mldsaCtx->params.l;
 
     /* Multi-buffer approach */
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
     /* Prepare rho for the multi-buffer processing */
     Ipp8u rho_j_i[4][34];
     CopyBlock(rho, rho_j_i[0], 32);
@@ -450,7 +517,7 @@ IPP_OWN_DEFN(IppStatus,
         }
     }
     PurgeBlock(rho_, sizeof(rho_)); // zeroize secrets
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
     return sts;
 }
 
@@ -467,7 +534,7 @@ IPP_OWN_DEFN(IppStatus,
     const Ipp8u l = mldsaCtx->params.l;
 
     /* Multi-buffer approach */
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
     /* Prepare rho for the multi-buffer processing */
     Ipp8u rho_j_i[4][CP_ML_DSA_EXPANDS_SEED_SIZE];
     CopyBlock(rho, rho_j_i[0], 64);
@@ -538,11 +605,11 @@ IPP_OWN_DEFN(IppStatus,
         if (sts != ippStsNoErr)
             goto exit;
     }
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 
 exit:
     /* Release locally used storage */
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
     for (Ipp32s i = 0; i < 4; i++) {
         PurgeBlock(rho_j_i[i], CP_ML_DSA_EXPANDS_SEED_SIZE); // zeroize secret seed
     }
@@ -560,8 +627,56 @@ IPP_OWN_DEFN(IppStatus,
     IppStatus sts             = ippStsErr;
     Ipp32s gamma_1            = mldsaCtx->params.gamma_1;
     Ipp8u c                   = 1 + cp_ml_bitlen((Ipp32u)(gamma_1 - 1));
+    Ipp32u bitlen_ab          = cp_ml_bitlen((Ipp32u)(2 * gamma_1 - 1));
+    const Ipp8u l             = mldsaCtx->params.l;
     _cpMLDSAStorage* pStorage = &mldsaCtx->storage;
 
+#if (_IPP32E >= _IPP32E_L9)
+    /* Multi-buffer approach */
+    Ipp32u vlen = (Ipp32u)(32 * c);
+    Ipp8u* v    = cp_mlStorageAllocate(pStorage, (Ipp32s)(4 * vlen) + CP_ML_ALIGNMENT);
+    IPP_BADARG_RET((v == NULL), ippStsMemAllocErr);
+
+    Ipp8u rho_j_i[4][66];
+    CopyBlock(rho, rho_j_i[0], 64);
+    CopyBlock(rho, rho_j_i[1], 64);
+    CopyBlock(rho, rho_j_i[2], 64);
+    CopyBlock(rho, rho_j_i[3], 64);
+
+    Ipp8u state_buffer_mb4[STATE_x4_SIZE];
+    cpSHA3_SHAKE256Ctx_mb4 state_mb4;
+    state_mb4.ctx = state_buffer_mb4;
+
+    Ipp8u nIters = (l + 3) / 4;
+    Ipp8u nBuffs = 4;
+    for (Ipp8u iter = 0; iter < nIters; iter++) {
+        for (Ipp8u i = 0; i < nBuffs; i++) {
+            Ipp32u idx     = mu + i + iter * 4;
+            rho_j_i[i][64] = idx & 0xFF;
+            rho_j_i[i][65] = (idx >> 8) & 0xFF;
+        }
+
+        cp_SHA3_SHAKE256_InitMB4(&state_mb4);
+        cp_SHA3_SHAKE256_AbsorbMB4(&state_mb4, rho_j_i[0], rho_j_i[1], rho_j_i[2], rho_j_i[3], 66);
+        cp_SHA3_SHAKE256_FinalizeMB4(&state_mb4);
+        cp_SHA3_SHAKE256_SqueezeMB4(v, v + vlen, v + 2 * vlen, v + 3 * vlen, vlen, &state_mb4);
+
+        for (Ipp8u i = 0; i < nBuffs; i++) {
+            cp_ml_bitUnpack(v + i * vlen, (Ipp32s)gamma_1, bitlen_ab, out + iter * 4 + i);
+        }
+
+        nBuffs = l - nBuffs;
+    }
+
+    /* Release locally used storage */
+    for (Ipp32s i = 0; i < 4; i++) {
+        PurgeBlock(rho_j_i[i], 66);
+    }
+    PurgeBlock(state_buffer_mb4, sizeof(state_buffer_mb4));
+    sts = cp_mlStorageRelease(pStorage, (Ipp32s)(4 * vlen) + CP_ML_ALIGNMENT);
+    IPP_BADARG_RET((sts != ippStsNoErr), sts);
+    return ippStsNoErr;
+#else
     IppsHashMethod shake256_method;
     Ipp8u* v = cp_mlStorageAllocate(pStorage, 32 * c + CP_ML_ALIGNMENT);
     IPP_BADARG_RET((v == NULL), ippStsMemAllocErr);
@@ -569,7 +684,7 @@ IPP_OWN_DEFN(IppStatus,
     Ipp8u rho_[66];
     CopyBlock(rho, rho_, 64);
 
-    for (Ipp8u r = 0; r < mldsaCtx->params.l; r++) {
+    for (Ipp8u r = 0; r < l; r++) {
         rho_[64] = (mu + r) & 0xFF;
         rho_[65] = ((mu + r) >> 8) & 0xFF;
         sts      = ippsHashMethodSet_SHAKE256(&shake256_method, (8 * 32 * c));
@@ -578,7 +693,7 @@ IPP_OWN_DEFN(IppStatus,
         sts = ippsHashMessage_rmf(rho_, 66, v, &shake256_method);
         if (sts != ippStsNoErr)
             goto exit;
-        cp_ml_bitUnpack(v, (Ipp32s)gamma_1, cp_ml_bitlen((Ipp32u)(2 * gamma_1 - 1)), out + r);
+        cp_ml_bitUnpack(v, (Ipp32s)gamma_1, bitlen_ab, out + r);
     }
     /* Release locally used storage */
     sts = cp_mlStorageRelease(pStorage, 32 * c + CP_ML_ALIGNMENT);
@@ -586,6 +701,7 @@ IPP_OWN_DEFN(IppStatus,
 exit:
     PurgeBlock(rho_, sizeof(rho_)); // zeroize secret seed
     return sts;
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 }
 
 // =============================================
@@ -607,7 +723,7 @@ IPP_OWN_DEFN(IppStatus,
         }
     }
     /* Multi-buffer approach */
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
     /* Prepare rho for the multi-buffer processing */
     Ipp8u rho_j_i[4][34];
     CopyBlock(rho, rho_j_i[0], 32);
@@ -681,11 +797,11 @@ IPP_OWN_DEFN(IppStatus,
             cp_ml_addNTT(out + r, &temp, out + r);
         }
     }
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 
 exit:
     /* zeroize secret NTT products */
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
     PurgeBlock(temp, sizeof(temp));
 #else
     PurgeBlock(&temp, sizeof(temp));

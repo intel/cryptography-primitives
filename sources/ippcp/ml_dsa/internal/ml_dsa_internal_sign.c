@@ -250,6 +250,19 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Sign_internal, (const Ipp8u* M,
         }
         check_1 = cp_ml_polyInfinityNormCheck(z, l);
 
+        // Short-circuit on ||z||: when this bound fails there is no point computing c*s2 / r0 /
+        // check_2, since check_2 only matters when check_1 passes. Same accept/reject decision
+        // as the combined test, but the reject path skips the k inverse-NTTs of the c*s2 block.
+        // Placed before NTT_c_s2 is allocated so the arena stays balanced.
+        //
+        // Signing is a rejection loop, so its duration already depends on the secret through
+        // the attempt count; which bound rejected an attempt is not additional information of a
+        // different kind. The FIPS 204 reference implementation rejects in this same order.
+        if (check_1 >= mldsaCtx->params.gamma_1 - mldsaCtx->params.beta) {
+            kappa += l;
+            continue;
+        }
+
         IppPoly* NTT_c_s2 =
             (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
         if (NTT_c_s2 == NULL) {
@@ -278,8 +291,8 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_Sign_internal, (const Ipp8u* M,
             if (sts != ippStsNoErr)
                 goto exit;
         }
-        if (!(check_1 >= mldsaCtx->params.gamma_1 - mldsaCtx->params.beta ||
-              check_2 >= mldsaCtx->params.gamma_2 - mldsaCtx->params.beta)) {
+        // check_1 already rejected above (short-circuit), so only check_2 matters here
+        if (!(check_2 >= mldsaCtx->params.gamma_2 - mldsaCtx->params.beta)) {
             Ipp32s check_3 = 0, check_4 = 0;
             {
                 IppPoly* NTT_c_t0 =

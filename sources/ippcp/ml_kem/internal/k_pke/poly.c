@@ -25,7 +25,7 @@
 #include "stateless_pqc/ml_kem_internal/ml_kem.h"
 #include "hash/sha3/sha3_stuff.h"
 
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
 /*
  * Multi-buffer kernel generating up to 4 Ipp16sPoly polynomials at once.
  *
@@ -156,7 +156,7 @@ exit:
 
     return sts;
 }
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 
 /*
  * Common kernel generating a Ipp16sPoly polynomial.
@@ -233,13 +233,13 @@ IPP_OWN_DEFN(IppStatus, cp_polyVecGen, (Ipp16sPoly* pOutPolyVec,
 {
     IppStatus sts = ippStsNoErr;
 
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
     sts = cp_polyGenInternal_MB4(pOutPolyVec, inRand_N, N, eta, transformFlag, mlkemCtx->params.k);
 #else
     for (Ipp8u i = 0; i < mlkemCtx->params.k && sts == ippStsNoErr; i++) {
         sts = cp_polyGenInternal(&pOutPolyVec[i], inRand_N, N, eta, mlkemCtx, transformFlag);
     }
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 
 
     return sts;

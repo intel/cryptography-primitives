@@ -24,7 +24,7 @@
 /*
  * Algorithm 7: Takes a 32-byte seed and two indices as input and outputs a pseudorandom element of T_{q}
  */
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
 /*
  * cp_SampleNTT_MB4()
  * 
@@ -158,7 +158,7 @@ IPPCP_INLINE IppStatus cp_SampleNTT(Ipp16sPoly* polyA, const Ipp8u B[34], IppsML
 
     return sts;
 }
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 
 /*
  * Generates the matrix A for the ML KEM scheme.
@@ -180,7 +180,7 @@ IPP_OWN_DEFN(IppStatus, cp_matrixAGen,
     const Ipp8u k = mlkemCtx->params.k;
 
 /* Multi-buffer approach */
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
     /* Prepare rho for the multi-buffer processing */
     Ipp8u rho_j_i_1[34];
     Ipp8u rho_j_i_2[34];
@@ -227,7 +227,7 @@ IPP_OWN_DEFN(IppStatus, cp_matrixAGen,
         }
     }
 
-#endif /* #if (_IPP32E >= _IPP32E_K0) */
+#endif /* #if (_IPP32E >= _IPP32E_L9) */
 
     return sts;
 }

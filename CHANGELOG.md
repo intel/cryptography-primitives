@@ -4,6 +4,8 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 
 ## Intel(R) Cryptography Primitives Library 2.4.0
 - Added `ippsLMSGetPublicKeyElems` and `ippsLMSGetSignatureElems` getters to extract the individual components of an LMS public key and signature state.
+- Added a 4-way multi-buffer SHAKE128/SHAKE256 implementation on Intel® AVX2 (l9), used to batch ML-DSA sampling and ExpandMask and shared with ML-KEM matrix and rejection sampling.
+- Optimized ML-DSA scalar hot paths: division-free Decompose, phase-split rejection sampling, and a short-circuit on the ||z|| bound in the signing loop.
 
 ## Intel(R) Cryptography Primitives Library 2.3.0
 - Updated ML-KEM to use RDSEED as the internal randomness source; optimized byte/bit conversion hot paths and introduced Montgomery-domain arithmetic for NTT operations to improve performance.

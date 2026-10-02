@@ -447,10 +447,12 @@ IPPCP_INLINE Ipp32s cp_ml_barrettReduce(Ipp64s x)
     // 3. res = x - floor((mu*x)/2^24)*n
     Ipp32s res = (Ipp32s)(x - t);
 
-    // 4. if res >= n then res -= n
+    // 4. if res >= n then res -= n. The mask is built from a comparison rather than a sign
+    // shift: right-shifting a negative signed value is implementation-defined, while
+    // (-(Ipp32s)(res < 0)) is fully defined and compiles to the same setcc + neg + and.
     res -= CP_ML_DSA_Q;
-    res += (res >> (sizeof(Ipp32s) * 8 - 1)) & CP_ML_DSA_Q;
-    res += (res >> (sizeof(Ipp32s) * 8 - 1)) & CP_ML_DSA_Q;
+    res += (-(Ipp32s)(res < 0)) & CP_ML_DSA_Q;
+    res += (-(Ipp32s)(res < 0)) & CP_ML_DSA_Q;
 
     return res;
 }
@@ -483,22 +485,42 @@ IPPCP_INLINE void cp_ml_power2RoundVector(const IppPoly* r, IppPoly* r0, IppPoly
 // Algorithm 36 Decompose(𝑟)
 IPPCP_INLINE void cp_ml_decompose(Ipp32s r, Ipp32s gamma_2, Ipp32s* r0, Ipp32s* r1)
 {
-    // Ipp32s r_ = r % CP_ML_DSA_Q;
-    Ipp32s r_ = cp_ml_barrettReduce((Ipp64s)r);
-    // *r0 = mod_pm_q(r_, 2 * gamma_2);
-    Ipp32s gamma_2_2 = (gamma_2 << 1); // gamma_2 == 190464 (ML-DSA-44) or 523776
-    // *r0 = r_ % gamma_2_2; for constant execution time
-    *r0 = r_ - (r_ / gamma_2_2) * (gamma_2_2);
-    if (*r0 > gamma_2) {
-        *r0 -= gamma_2_2;
+    Ipp32s reduced = cp_ml_barrettReduce((Ipp64s)r);
+
+    // Division-free high-bits (r1): replaces two integer divides by 2*gamma_2 with a
+    // multiply-shift, per bound. Bit-identical to (reduced / (2*gamma_2)) with the (Q-1) wrap
+    // special case folded in, verified exhaustively over [0,Q) for both gamma_2 values.
+    // Also removes a constant-time hazard (data-dependent divide -> straight-line).
+    //
+    // The constants are fixed-point reciprocals of 2*gamma_2/128, matching the FIPS 204
+    // reference implementation's decompose(). gamma_2 == 261888 (ML-DSA-65/87) or 95232
+    // (ML-DSA-44), so 2*gamma_2 == 523776 or 190464:
+    //   gamma_2 = (Q-1)/32 = 261888 (ML-DSA-65/87): 1025/2^22  ~ 128/523776, r1 in [0,15]
+    //   gamma_2 = (Q-1)/88 =  95232 (ML-DSA-44):   11275/2^24  ~ 128/190464, r1 in [0,43]
+    // The added (1 << 21) / (1 << 23) round to nearest. Only reduced == Q-1 lands one step
+    // past the top interval (16 resp. 44); the mask below folds that case back to 0.
+    Ipp32s highBits = (reduced + 127) >> 7;
+    if (gamma_2 == (CP_ML_DSA_Q - 1) / 32) {
+        highBits = (highBits * 1025 + (1 << 21)) >> 22;
+        highBits &= 15;                          // 16 -> 0
+    } else if (gamma_2 == (CP_ML_DSA_Q - 1) / 88) {
+        highBits = (highBits * 11275 + (1 << 23)) >> 24;
+        highBits &= ~(-(Ipp32s)(highBits > 43)); // 44 -> 0
+    } else {
+        *r0 = 0;
+        *r1 = 0;
+        return;
     }
 
-    if (r_ - *r0 == CP_ML_DSA_Q - 1) {
-        *r1 = 0;
-        *r0 -= 1;
-    } else {
-        *r1 = (r_ - *r0) / gamma_2_2;
-    }
+    // Low-bits (r0) = centered remainder; branch-free (Q-1) wrap correction. The masks use a
+    // comparison rather than a sign shift: right-shifting a negative signed value is
+    // implementation-defined, while (-(Ipp32s)(a > b)) is fully defined and compiles to the
+    // same setcc + neg + and, so both stay branch-free and vectorizable.
+    Ipp32s lowBits = reduced - highBits * 2 * gamma_2;
+    lowBits -= (-(Ipp32s)(lowBits > (CP_ML_DSA_Q - 1) / 2)) & CP_ML_DSA_Q;
+
+    *r0 = lowBits;
+    *r1 = highBits;
 }
 
 // Algorithm 37 HighBits(𝑟)
@@ -605,11 +627,11 @@ IPPCP_INLINE void cp_ml_inverseNTT(IppPoly* w, int addq)
         w->values[i] = cp_ml_montgomeryReduce((Ipp64s)f * w->values[i]);
     }
 
-    // extra reduce step for montgomery to add q
+    // extra reduce step for montgomery to add q (comparison mask, see cp_ml_barrettReduce)
     if (addq == 1) {
         for (Ipp32u j = 0; j < CP_ML_N; ++j) {
-            w->values[j] =
-                cp_ml_simplifiedBarrettReduce(w->values[j] + ((w->values[j] >> 31) & CP_ML_DSA_Q));
+            w->values[j] = cp_ml_simplifiedBarrettReduce(
+                w->values[j] + ((-(Ipp32s)(w->values[j] < 0)) & CP_ML_DSA_Q));
         }
     }
 }
@@ -682,7 +704,10 @@ IPPCP_INLINE Ipp32s cp_ml_montgomeryReduce(Ipp64s a)
 {
     Ipp64s q_inv = 58728449; // -q^(-1) mod 2^32
 
-    Ipp32s t = (Ipp32s)(a * q_inv);
+    // Only the low 32 bits of a*q_inv are used. The signed 64-bit product overflows
+    // (|a| reaches ~2^45, q_inv ~2^26 -> ~2^71 > INT64_MAX = UB), so compute it as
+    // unsigned wraparound: well-defined and yields the same low 32 bits.
+    Ipp32s t = (Ipp32s)(Ipp32u)((Ipp64u)a * (Ipp64u)q_inv);
     t        = (a - (Ipp64s)t * CP_ML_DSA_Q) >> 32;
     return t;
 }
@@ -727,7 +752,7 @@ IPP_OWN_DECL(IppStatus,
              cp_ml_sampleInBall,
              (const Ipp8u* rho, IppPoly* c, IppsMLDSAState* mldsaCtx))
 
-#if (_IPP32E >= _IPP32E_K0)
+#if (_IPP32E >= _IPP32E_L9)
 
 #define cp_ml_rejNTTPoly_MB4 OWNAPI(cp_ml_rejNTTPoly_MB4)
 IPP_OWN_DECL(IppStatus,
@@ -753,7 +778,7 @@ IPP_OWN_DECL(IppStatus, cp_ml_rejNTTPoly, (Ipp8u * rho, IppPoly* a, IppsMLDSASta
 #define cp_ml_rejBoundedPoly OWNAPI(cp_ml_rejBoundedPoly)
 IPP_OWN_DECL(IppStatus, cp_ml_rejBoundedPoly, (Ipp8u * rho, IppPoly* a, IppsMLDSAState* mldsaCtx))
 
-#endif // (_IPP32E >= _IPP32E_K0)
+#endif // (_IPP32E >= _IPP32E_L9)
 
 #define cp_ml_expandA OWNAPI(cp_ml_expandA)
 IPP_OWN_DECL(IppStatus,
