@@ -209,6 +209,22 @@ mask.
      - ippCPUID_AVX2VCLMUL
      - Intel® instruction VPCLMULQDQ
      - 39
+   * - 0x10000000000
+     - ippCPUID_AVX2SM3
+     - Intel® AVX 256 Bit SM3 instructions
+     - 40
+   * - 0x20000000000
+     - ippCPUID_AVX2SM4
+     - Intel® AVX 256 Bit SM4 instructions
+     - 41
+   * - 0x40000000000
+     - ippCPUID_AVX2SHA512
+     - Intel® AVX 256 Bit SHA512 instructions
+     - 42
+   * - 0x80000000000
+     - ippCPUID_AVX10_2
+     - Intel® Advanced Vector Extensions 10.2 (Intel® AVX10.2) instruction set is supported
+     - 43
    * - 0x8000000000000000
      - ippCPUID_NOCHECK
      - Force ippSetCpuFeatures to set CPU features without check

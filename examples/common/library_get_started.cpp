@@ -121,6 +121,74 @@ int main(int argc, char* argv[])
                (mask & ippCPUID_AVX512ER) ? 'Y' : 'N',
                (emask & ippCPUID_AVX512ER) ? 'Y' : 'N');
         printf("Intel(R) Advanced Vector Extensions ER instruction set\n");
+        printf("  ippCPUID_AVX512PF   = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512PF) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512PF) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions PF instruction set\n");
+        printf("  ippCPUID_AVX512BW   = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512BW) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512BW) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions BW instruction set\n");
+        printf("  ippCPUID_AVX512DQ   = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512DQ) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512DQ) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions DQ instruction set\n");
+        printf("  ippCPUID_AVX512VL   = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512VL) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512VL) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions VL instruction set\n");
+        printf("  ippCPUID_AVX512VBMI = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512VBMI) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512VBMI) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 512 Bit Manipulation instructions\n");
+        printf("  ippCPUID_AVX512VBMI2 = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512VBMI2) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512VBMI2) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 512 Bit Manipulation instructions 2\n");
+        printf("  ippCPUID_AVX512IFMA = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512IFMA) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512IFMA) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 512 IFMA (PMADD52) instruction set\n");
+        printf("  ippCPUID_AVX512GFNI = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512GFNI) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512GFNI) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 512 Galois Field New Instructions\n");
+        printf("  ippCPUID_AVX512VAES = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512VAES) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512VAES) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 512 Vector AES instructions\n");
+        printf("  ippCPUID_AVX512VCLMUL = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512VCLMUL) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512VCLMUL) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 512 Vector PCLMULQDQ instruction\n");
+        printf("  ippCPUID_AVX512_4FMADDPS = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512_4FMADDPS) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512_4FMADDPS) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 512 DL floating-point single precision\n");
+        printf("  ippCPUID_AVX512_4VNNIW = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX512_4VNNIW) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX512_4VNNIW) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 512 DL enhanced word variable precision\n");
+        printf("  ippAVX512_ENABLEDBYOS = ");
+        printf("%c\t%c\t",
+               (mask & ippAVX512_ENABLEDBYOS) ? 'Y' : 'N',
+               (emask & ippAVX512_ENABLEDBYOS) ? 'Y' : 'N');
+        printf("The operating system supports Intel(R) AVX-512\n");
+        printf("  ippCPUID_MPX        = ");
+        printf("%c\t%c\t", (mask & ippCPUID_MPX) ? 'Y' : 'N', (emask & ippCPUID_MPX) ? 'Y' : 'N');
+        printf("Intel(R) Memory Protection Extensions (Intel(R) MPX)\n");
         printf("  ippCPUID_ADCOX      = ");
         printf("%c\t%c\t",
                (mask & ippCPUID_ADCOX) ? 'Y' : 'N',
@@ -139,6 +207,36 @@ int main(int argc, char* argv[])
         printf("  ippCPUID_KNC        = ");
         printf("%c\t%c\t", (mask & ippCPUID_KNC) ? 'Y' : 'N', (emask & ippCPUID_KNC) ? 'Y' : 'N');
         printf("Intel(R) Xeon Phi™ coprocessor instruction set\n");
+        printf("  ippCPUID_AVX2VAES   = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX2VAES) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX2VAES) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 256 Vector AES instructions\n");
+        printf("  ippCPUID_AVX2VCLMUL = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX2VCLMUL) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX2VCLMUL) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 256 Vector PCLMULQDQ instruction\n");
+        printf("  ippCPUID_AVX2SM3    = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX2SM3) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX2SM3) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 256 Vector SM3 instructions\n");
+        printf("  ippCPUID_AVX2SM4    = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX2SM4) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX2SM4) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 256 Vector SM4 instructions\n");
+        printf("  ippCPUID_AVX2SHA512 = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX2SHA512) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX2SHA512) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 256 Vector SHA512 instructions\n");
+        printf("  ippCPUID_AVX10_2    = ");
+        printf("%c\t%c\t",
+               (mask & ippCPUID_AVX10_2) ? 'Y' : 'N',
+               (emask & ippCPUID_AVX10_2) ? 'Y' : 'N');
+        printf("Intel(R) Advanced Vector Extensions 10.2 (Intel(R) AVX10.2) instruction set\n");
     }
 
     PRINT_EXAMPLE_STATUS(
