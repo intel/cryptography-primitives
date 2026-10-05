@@ -37,7 +37,8 @@
          : 0)
 
 #define TST_BIT(bnu, nbit) (((Ipp8u*)(bnu))[(nbit) / 8] & ((1 << ((nbit) % 8)) & 0xFF))
-#define SET_BIT(bnu, nbit) (((Ipp8u*)(bnu))[(nbit) / 8] |= ((1 << ((nbit) % 8)) & 0xFF))
+#define SET_BIT(bnu, nbit) \
+    (((Ipp8u*)(bnu))[(nbit) / 8] = (Ipp8u)(((Ipp8u*)(bnu))[(nbit) / 8] | (1 << ((nbit) % 8))))
 #define CLR_BIT(bnu, nbit) (((Ipp8u*)(bnu))[(nbit) / 8] &= ~((1 << ((nbit) % 8)) & 0xFF))
 
 /* convert bitsize nbits into  the number of BNU_CHUNK_T */
@@ -107,7 +108,7 @@ IPPCP_INLINE int cpFix_BNU(const BNU_CHUNK_T* pA, int nsA)
     int outLen        = nsA;
     for (; nsA > 0; nsA--) {
         zscan &= cpIsZero_ct(pA[nsA - 1]);
-        outLen -= 1 & zscan;
+        outLen -= (int)(1 & zscan);
     }
     return (int)((1 & zscan) | ((BNU_CHUNK_T)outLen & ~zscan)); // change to scanz
 }
@@ -148,7 +149,7 @@ IPPCP_INLINE int cpCmp_BNU0(const BNU_CHUNK_T* a, const BNU_CHUNK_T* b, int len)
 {
     const Ipp32u* a32 = (const Ipp32u*)a;
     const Ipp32u* b32 = (const Ipp32u*)b;
-    len *= (sizeof(BNU_CHUNK_T)) / sizeof(Ipp32u);
+    len *= (int)((sizeof(BNU_CHUNK_T)) / sizeof(Ipp32u));
 
     // borrow, difference |=  (a[]-b[])
     BNU_CHUNK_T borrow     = 0;

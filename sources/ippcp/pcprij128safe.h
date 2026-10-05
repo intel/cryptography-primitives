@@ -67,10 +67,10 @@ IPPCP_INLINE Ipp8u AddLogGF16(Ipp8u loga, Ipp8u logb)
 {
     //Ipp8u s = loga+logb;
     //return (s>2*14)? 15 : (s>14)? s-15 : s;
-    Ipp8u s     = loga + logb;
-    Ipp8u delta = ((0xF - 1) - s) >> 7;
-    s -= delta;
-    s |= 0 - (s >> 7);
+    Ipp8u s     = (Ipp8u)(loga + logb);
+    Ipp8u delta = (Ipp8u)(((0xF - 1) - s) >> 7);
+    s           = (Ipp8u)(s - delta);
+    s           = (Ipp8u)(s | (0 - (s >> 7)));
     return s & (0xF);
 }
 #endif

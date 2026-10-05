@@ -114,6 +114,8 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdh_)(int8u* pa_shared_key[MB_WIDTH],
 
     /* Clear computed shared keys */
     MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])(&R), sizeof(R) / sizeof(U64));
+    /* Clear projective-to-affine inversion buffer (1/Z, 1/Z^2 of shared point) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])Z2, sizeof(Z2) / sizeof(U64));
 
     return status;
 }
@@ -223,6 +225,8 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
 
     /* Clear computed shared keys */
     MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])(&R), sizeof(R) / sizeof(U64));
+    /* Clear projective-to-affine inversion buffer (1/Z, 1/Z^2 of shared point) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])Z2, sizeof(Z2) / sizeof(U64));
 
     return status;
 }

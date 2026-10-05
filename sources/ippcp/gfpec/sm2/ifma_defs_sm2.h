@@ -66,7 +66,7 @@ IPPCP_INLINE mask8 sm2_is_msb(const mask8 a) { return (mask8)((mask8)0 - (a >> 7
 IPPCP_INLINE mask8 sm2_is_zero_i64(const m512 a)
 {
     const mask8 mask = cmp_i64_mask(a, setzero_i64(), _MM_CMPINT_NE);
-    return sm2_is_msb((~mask & (mask - 1)));
+    return sm2_is_msb((mask8)(~mask & (mask - 1)));
 }
 
 #define FESM2_LOADU(A)                  maskz_loadu_i64(0x1F, (A))

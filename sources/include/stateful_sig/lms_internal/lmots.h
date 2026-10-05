@@ -147,7 +147,7 @@ IPPCP_INLINE IppStatus setLMOTSParams(IppsLMOTSAlgo lmotsOIDAlgo, cpLMOTSParams*
  */
 IPPCP_INLINE Ipp32u cpCoef(Ipp8u* S, Ipp32u i, Ipp32u w)
 {
-    return ((1 << w) - 1) & (S[(i * w) / 8] >> (8 - (w * (i % (8 / w)) + w)));
+    return (Ipp32u)(((1 << w) - 1) & (S[(i * w) / 8] >> (8 - (w * (i % (8 / w)) + w))));
 }
 
 IPPCP_INLINE Ipp32u cpCksm(Ipp8u* S, cpLMOTSParams lmotsParams)
@@ -159,7 +159,7 @@ IPPCP_INLINE Ipp32u cpCksm(Ipp8u* S, cpLMOTSParams lmotsParams)
     Ipp32u cksmQ        = 0; //sum is a 16-bit unsigned integer
     Ipp32u cksmItrLimit = (8 * n) / w;
     for (Ipp32u i = 0; i < cksmItrLimit; i++) {
-        cksmQ = cksmQ + ((1 << w) - 1) - cpCoef(S, i, w);
+        cksmQ = cksmQ + ((1u << w) - 1) - cpCoef(S, i, w);
     }
     cksmQ = cksmQ << ls;
 

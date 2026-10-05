@@ -109,6 +109,9 @@ IPPFUN(IppStatus, ippsAES_GCMGetTag, (Ipp8u * pDstTag, int tagLen, const IppsAES
 
     /* return tag of required length */
     CopyBlock(tmpHash, pDstTag, tagLen);
+
+    /* clear secret data */
+    PurgeBlock(tmpHash, sizeof(tmpHash));
 #endif /* #if(_IPP32E>=_IPP32E_K0) */
 
     return ippStsNoErr;

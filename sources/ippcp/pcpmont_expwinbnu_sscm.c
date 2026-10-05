@@ -121,7 +121,7 @@ IPP_OWN_DEFN (void, cpMontExpWin_BN_sscm, (IppsBigNumState* pY,
         /* fixed window param */
         cpSize bitsizeE   = BITSIZE_BNU(dataE, nsE);
         cpSize window     = cpMontExp_WinSize(bitsizeE);
-        BNU_CHUNK_T mask  = (1 << window) - 1;
+        BNU_CHUNK_T mask  = ((BNU_CHUNK_T)1 << window) - 1;
         cpSize nPrecomute = 1 << window;
         //cpSize chunkSize = CACHE_LINE_SIZE/nPrecomute;
         int n;

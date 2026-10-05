@@ -91,7 +91,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
     const Ipp32s nParam = (Ipp32s)params->n;
     const Ipp32u wParam = params->w;
     const Ipp32u pParam = params->p;
-    const Ipp32u two_w  = (1 << wParam);
+    const Ipp32u two_w  = (1u << wParam);
     Ipp8u D_PRIV_       = D_PRIV;
 
     Ipp8u* I_q = temp_buf;

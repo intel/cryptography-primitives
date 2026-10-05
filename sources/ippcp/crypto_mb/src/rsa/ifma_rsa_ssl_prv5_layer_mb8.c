@@ -163,6 +163,14 @@ mbx_status ifma_ssl_rsa1K_prv5_layer_mb8(const int8u* const from_pa[8],
     zero_mb8(d_mb8, LEN64);
     zero_mb8(q_mb8, LEN52);
     zero_mb8(p_mb8, LEN52);
+    /* clear CRT intermediate buffers holding key-derived values */
+    zero_mb8(rr_mb8, LEN52);
+    zero_mb8(xp_mb8, LEN52);
+    zero_mb8(xq_mb8, LEN52);
+    zero_mb8(inp_mb8, LEN52 * 2);
+    zero_mb8(work_buffer, LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52);
+    /* clear Montgomery factor k0 (derived from the secret prime) */
+    zero_mb8(&k0_mb8, 1);
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -301,6 +309,14 @@ mbx_status ifma_ssl_rsa2K_prv5_layer_mb8(const int8u* const from_pa[8],
     zero_mb8(d_mb8, LEN64);
     zero_mb8(q_mb8, LEN52);
     zero_mb8(p_mb8, LEN52);
+    /* clear CRT intermediate buffers holding key-derived values */
+    zero_mb8(rr_mb8, LEN52);
+    zero_mb8(xp_mb8, LEN52);
+    zero_mb8(xq_mb8, LEN52);
+    zero_mb8(inp_mb8, LEN52 * 2);
+    zero_mb8(work_buffer, LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52);
+    /* clear Montgomery factor k0 (derived from the secret prime) */
+    zero_mb8(&k0_mb8, 1);
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -439,6 +455,14 @@ mbx_status ifma_ssl_rsa3K_prv5_layer_mb8(const int8u* const from_pa[8],
     zero_mb8(d_mb8, LEN64);
     zero_mb8(q_mb8, LEN52);
     zero_mb8(p_mb8, LEN52);
+    /* clear CRT intermediate buffers holding key-derived values */
+    zero_mb8(rr_mb8, LEN52);
+    zero_mb8(xp_mb8, LEN52);
+    zero_mb8(xq_mb8, LEN52);
+    zero_mb8(inp_mb8, LEN52 * 2);
+    zero_mb8(work_buffer, LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52);
+    /* clear Montgomery factor k0 (derived from the secret prime) */
+    zero_mb8(&k0_mb8, 1);
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -577,6 +601,14 @@ mbx_status ifma_ssl_rsa4K_prv5_layer_mb8(const int8u* const from_pa[8],
     zero_mb8(d_mb8, LEN64);
     zero_mb8(q_mb8, LEN52);
     zero_mb8(p_mb8, LEN52);
+    /* clear CRT intermediate buffers holding key-derived values */
+    zero_mb8(rr_mb8, LEN52);
+    zero_mb8(xp_mb8, LEN52);
+    zero_mb8(xq_mb8, LEN52);
+    zero_mb8(inp_mb8, LEN52 * 2);
+    zero_mb8(work_buffer, LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52);
+    /* clear Montgomery factor k0 (derived from the secret prime) */
+    zero_mb8(&k0_mb8, 1);
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -723,6 +755,14 @@ mbx_status ifma_ssl_rsa1K_prv5_layer_mb4(const int8u* const from_pa[4],
     zero_mb4(d_mb4, LEN64);
     zero_mb4(q_mb4, LEN52);
     zero_mb4(p_mb4, LEN52);
+    /* clear CRT intermediate buffers holding key-derived values */
+    zero_mb4(rr_mb4, LEN52);
+    zero_mb4(xp_mb4, LEN52);
+    zero_mb4(xq_mb4, LEN52);
+    zero_mb4(inp_mb4, LEN52 * 2);
+    zero_mb4(work_buffer, LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52);
+    /* clear Montgomery factor k0 (derived from the secret prime) */
+    zero_mb4(k0_mb4, 1);
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -861,6 +901,14 @@ mbx_status ifma_ssl_rsa2K_prv5_layer_mb4(const int8u* const from_pa[4],
     zero_mb4(d_mb4, LEN64);
     zero_mb4(q_mb4, LEN52);
     zero_mb4(p_mb4, LEN52);
+    /* clear CRT intermediate buffers holding key-derived values */
+    zero_mb4(rr_mb4, LEN52);
+    zero_mb4(xp_mb4, LEN52);
+    zero_mb4(xq_mb4, LEN52);
+    zero_mb4(inp_mb4, LEN52 * 2);
+    zero_mb4(work_buffer, LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52);
+    /* clear Montgomery factor k0 (derived from the secret prime) */
+    zero_mb4(k0_mb4, 1);
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -999,6 +1047,14 @@ mbx_status ifma_ssl_rsa3K_prv5_layer_mb4(const int8u* const from_pa[4],
     zero_mb4(d_mb4, LEN64);
     zero_mb4(q_mb4, LEN52);
     zero_mb4(p_mb4, LEN52);
+    /* clear CRT intermediate buffers holding key-derived values */
+    zero_mb4(rr_mb4, LEN52);
+    zero_mb4(xp_mb4, LEN52);
+    zero_mb4(xq_mb4, LEN52);
+    zero_mb4(inp_mb4, LEN52 * 2);
+    zero_mb4(work_buffer, LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52);
+    /* clear Montgomery factor k0 (derived from the secret prime) */
+    zero_mb4(k0_mb4, 1);
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -1137,6 +1193,14 @@ mbx_status ifma_ssl_rsa4K_prv5_layer_mb4(const int8u* const from_pa[4],
     zero_mb4(d_mb4, LEN64);
     zero_mb4(q_mb4, LEN52);
     zero_mb4(p_mb4, LEN52);
+    /* clear CRT intermediate buffers holding key-derived values */
+    zero_mb4(rr_mb4, LEN52);
+    zero_mb4(xp_mb4, LEN52);
+    zero_mb4(xq_mb4, LEN52);
+    zero_mb4(inp_mb4, LEN52 * 2);
+    zero_mb4(work_buffer, LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52);
+    /* clear Montgomery factor k0 (derived from the secret prime) */
+    zero_mb4(k0_mb4, 1);
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 

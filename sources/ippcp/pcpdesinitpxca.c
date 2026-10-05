@@ -123,8 +123,8 @@ IPP_OWN_DEFN(void, SetKey_DES, (const Ipp8u* pKey, IppsDESSpec* pCtx))
       // applying PC-2 permutation to rndkey[]
       */
         for (i = 0; i < 48; i++) {
-            int offset = i % 6;
-            rkeyNibble[i / 6] |= (rndkey[pc2[i] - 1] << offset);
+            int offset        = i % 6;
+            rkeyNibble[i / 6] = (Ipp8u)(rkeyNibble[i / 6] | (rndkey[pc2[i] - 1] << offset));
         }
 
         /* re-order rkey for Cipher_DES() implementation matching */

@@ -74,6 +74,9 @@ IPPFUN(IppStatus, ippsAES_CMACFinal, (Ipp8u * pMD, int mdLen, IppsAES_CMACState*
             init(pState);
         }
 
+        /* clear secret data */
+        PurgeBlock(localMD, sizeof(localMD));
+
         return sts;
     }
 }

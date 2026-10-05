@@ -35,7 +35,7 @@ IPPCP_INLINE int cpGetBitSize(Ipp32u offset, Ipp32u val)
     int bitSize = 31;
     if (val == 0)
         return 0;
-    while ((val & (1 << bitSize)) == 0)
+    while ((val & (1u << bitSize)) == 0)
         bitSize--;
     return (int)offset + bitSize;
 }

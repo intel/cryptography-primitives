@@ -111,7 +111,7 @@ IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxExp, (BNU_CHUNK_T* pR,
                 /* extract leftmost window value */
                 Ipp32u eChunk    = *((Ipp32u*)((Ipp16u*)pExpandedE + wPosition / BITSIZE(Ipp16u)));
                 int shift        = wPosition & 0xF;
-                Ipp32u windowVal = (eChunk >> shift) & dmask;
+                Ipp32u windowVal = (Ipp32u)((eChunk >> shift) & dmask);
 
                 /* initialize result */
                 //cpScrambleGet((Ipp8u*)pR, elmDataSize, pScratchAligned+windowVal, nPrecomputed);
@@ -127,7 +127,7 @@ IPP_OWN_DEFN(BNU_CHUNK_T*, cpGFpxExp, (BNU_CHUNK_T* pR,
                     /* extract next window value */
                     eChunk    = *((Ipp32u*)((Ipp16u*)pExpandedE + wPosition / BITSIZE(Ipp16u)));
                     shift     = wPosition & 0xF;
-                    windowVal = (eChunk >> shift) & dmask;
+                    windowVal = (Ipp32u)((eChunk >> shift) & dmask);
 
                     /* extract value from the pre-computed table */
                     //cpScrambleGet((Ipp8u*)pTmp, elmDataSize, pScratchAligned+windowVal, nPrecomputed);

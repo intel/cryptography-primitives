@@ -134,7 +134,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
             Ipp32u idx_local = idx_leaf;
             while (h_local < h - 1) {
                 if ((idx_local ^ 1) == j_local) {
-                    Ipp32s aux_idx = (Ipp32s)(((1 << (h - h_local)) - 2) + j_local);
+                    Ipp32s aux_idx = (Ipp32s)(((1u << (h - h_local)) - 2) + j_local);
                     if (aux_idx * m_s < aux_size - m_s) {
                         /* The node was pre-calculated on KeyGen step */
                         b = 1;
@@ -150,10 +150,10 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
             }
         }
 
-        Ipp32u r = (1 << h) + i;  // r = 2^h + i
+        Ipp32u r = (1u << h) + i; // r = 2^h + i
         node     = stack + h * m; // size: CP_LMS_MAX_HASH_BYTESIZE
         // 2*2^0 + 2*2^1 + 2*2^2 +... + 2*2^(h-1) = 2 * ((1 << h) - 1)
-        Ipp32s aux_idx = (Ipp32s)(((1 << h) - 2) + i);
+        Ipp32s aux_idx = (Ipp32s)(((1u << h) - 2) + i);
 
         if ((isKeyGen == 0) && (aux_idx * m_s < aux_size - m_s)) {
             CopyBlock(pAuxiliaryMem + aux_idx * m_s, node, m_s);
@@ -200,7 +200,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
             j >>= 1;      // j = j / 2
             r >>= 1;      // r = r / 2
 
-            aux_idx = (Ipp32s)(((1 << (h - heights[stack_size] - 1)) - 2) + j);
+            aux_idx = (Ipp32s)(((1u << (h - heights[stack_size] - 1)) - 2) + j);
             if ((isKeyGen == 0) && (aux_idx >= 0) && (aux_idx * m_s <= aux_size - m_s)) {
                 CopyBlock(pAuxiliaryMem + aux_idx * m_s, node, m_s);
             } else {
@@ -237,7 +237,7 @@ IPP_OWN_DEFN(IppStatus, cp_lms_tree_hash, (Ipp8u isKeyGen,
     } else if (aux_size > 0) {
         for (Ipp32s h_local = 0; h_local < h_s; h_local++) {
             Ipp32u j_local = (idx_leaf >> h_local) ^ 1;
-            Ipp32s aux_idx = (Ipp32s)(((1 << (h_s - h_local)) - 2) + j_local);
+            Ipp32s aux_idx = (Ipp32s)(((1u << (h_s - h_local)) - 2) + j_local);
             if ((aux_idx >= 0) && (aux_idx * m_s < aux_size - m_s)) {
                 CopyBlock(pAuxiliaryMem + (aux_idx * m_s), out + (h_local * m_s), m_s);
             }

@@ -25,6 +25,8 @@
 #include "gfpec/ecnist/ifma_ecpoint_p256.h"
 #include "gfpec/ecnist/ifma_arith_method.h"
 
+#include "pcptool.h"
+
 /* clang-format off */
 IPP_OWN_DEFN(IppStatus, gfec_SignDSA_nistp256_avx512, (const IppsBigNumState* pMsgDigest,
                                                        const IppsBigNumState* pRegPrivate,
@@ -139,8 +141,12 @@ IPP_OWN_DEFN(IppStatus, gfec_SignDSA_nistp256_avx512, (const IppsBigNumState* pM
     BN_SIZE(pSignR) = orderLen;
     ZEXPAND_COPY_BNU(BN_NUMBER(pSignR), BN_ROOM(pSignR), pTmp, orderLen);
 
-    /* Clear secret data */
-    clear_secrets(&regPrivate, &(P.x), &signS);
+    /* Clear secret data (incl. the full ephemeral point: Y/Z projective coords are nonce-dependent) */
+    clear_secrets(&regPrivate, &signS, &ephPrivateInv);
+    clear_secrets(&(P.x), &(P.y), &(P.z));
+
+    /* clear the ephemeral scalar copy left in the mod-engine pool */
+    PurgeBlock(pExtendedScalar, 2 * GFP_PELEN(pME) * (int)sizeof(BNU_CHUNK_T));
 
     cpGFpReleasePool(3, pME);
 

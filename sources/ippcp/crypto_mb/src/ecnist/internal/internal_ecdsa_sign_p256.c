@@ -63,7 +63,12 @@ static __mb_mask MB_FUNC_NAME(nistp256_ecdsa_sign_r_)(U64 sign_r[], const U64 sk
     MB_FUNC_NAME(ifma_frommont52_p256_)(P.X, P.X);
     MB_FUNC_NAME(ifma_fastred52_pn256_)(sign_r, P.X); /* fast reduction p => n */
 
-    return MB_FUNC_NAME(is_zero_FE256_)(sign_r);
+    __mb_mask sign_r_is_zero = MB_FUNC_NAME(is_zero_FE256_)(sign_r);
+
+    /* Clear ephemeral point (projective coords derived from the secret nonce) */
+    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])(&P), sizeof(P) / sizeof(U64));
+
+    return sign_r_is_zero;
 }
 
 /*

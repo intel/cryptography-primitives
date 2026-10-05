@@ -39,7 +39,7 @@ set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wall")
 # Warnings=errors
 set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Werror")
 # Enabling additional warnings
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wimplicit-fallthrough -Wconversion -Wextra")
+set(CMAKE_C_FLAGS_SECURITY "${CMAKE_C_FLAGS_SECURITY} -Wimplicit-fallthrough -Wconversion -Wextra")
 
 # Linker flags
 

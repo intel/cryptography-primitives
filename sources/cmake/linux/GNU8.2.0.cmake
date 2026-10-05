@@ -32,7 +32,7 @@ set(LINK_FLAG_DYNAMIC_LINUX "${LINK_FLAG_SECURITY} -nostdlib")
 # Dynamically link lib c (libdl is for old apps)
 set(LINK_FLAG_DYNAMIC_LINUX "${LINK_FLAG_DYNAMIC_LINUX} -Wl,-call_shared,-lc")
 # Create a shared library
-set(LINK_FLAG_DYNAMIC_LINUX "-Wl,-shared")
+set(LINK_FLAG_DYNAMIC_LINUX "${LINK_FLAG_DYNAMIC_LINUX} -Wl,-shared")
 if(${ARCH} MATCHES "ia32")
   # Tells the compiler to generate code for a specific architecture (32)
   set(LINK_FLAG_DYNAMIC_LINUX "${LINK_FLAG_DYNAMIC_LINUX} -m32")
@@ -63,7 +63,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -falign-functions=32 -falign-loops=32")
 # Format string vulnerabilities, enable specific format-security warning and precisely convert it to error
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Wformat-security")
 # Enabling additional warnings
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unused-function -Wimplicit-fallthrough -Wextra")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unused-function -Wimplicit-fallthrough -Wextra -Wconversion")
 
 # Enable Intel® Control-Flow Enforcement Technology (Intel® CET) protection
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcf-protection=full")

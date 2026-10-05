@@ -119,7 +119,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMDecrypt, (const Ipp8u* pSrc,
         *counterVal = SMS4CCM_COUNTER(pCtx);
 
         /* extract qLen */
-        *qLen = (((Ipp8u*)CTR)[0] & 0x7) + 1; /* &0x7 just to fix KW issue */
+        *qLen = (Ipp32u)((((Ipp8u*)CTR)[0] & 0x7) + 1); /* &0x7 just to fix KW issue */
 
         if (*flag) {
             *tmpLen = (Ipp32u)(IPP_MIN((Ipp32u)len, MBS_SMS4 - *flag));
@@ -137,7 +137,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMDecrypt, (const Ipp8u* pSrc,
             SMS4CCM_LENPRO(pCtx) += *tmpLen;
             pSrc += *tmpLen;
             pDst += *tmpLen;
-            len -= *tmpLen;
+            len -= (int)*tmpLen;
         }
 
         while (len >= MBS_SMS4) {

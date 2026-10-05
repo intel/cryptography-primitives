@@ -230,9 +230,9 @@ IPPCP_INLINE void StdIncrement(Ipp8u* pCounter, int blkBitSize, int numSize)
 
         Ipp32u x    = pCounter[i] + carry;
         Ipp8u y     = pCounter[i];
-        pCounter[i] = (Ipp8u)((y & ~mask) | (x & mask));
+        pCounter[i] = (Ipp8u)(((Ipp32u)y & ~(Ipp32u)mask) | (x & mask));
 
-        maskVal &= cpIsMsb_ct((BNU_CHUNK_T)d);
+        maskVal &= (Ipp8u)cpIsMsb_ct((BNU_CHUNK_T)d);
 
         carry = (x >> 8) & 0x1;
     }

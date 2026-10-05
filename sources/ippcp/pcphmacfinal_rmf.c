@@ -88,6 +88,9 @@ IPPFUN(IppStatus, ippsHMACFinal_rmf, (Ipp8u * pMD, int mdLen, IppsHMACState_rmf*
                 ippsHashUpdate_rmf(pCtx->ipadKey, mbs, pHashCtx);
             }
 
+            /* clear secret data */
+            PurgeBlock(md, sizeof(md));
+
             return sts;
         }
     }

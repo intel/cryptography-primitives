@@ -70,7 +70,7 @@ IPP_OWN_DEFN(IppStatus, computeZa_user_id_hash_sm2, (Ipp8u* pZa_digest,
 
     /* compute Za = SM3( ENTL || ID || a || b || xG || yG || xA || yA ) */
     /* ENLT */
-    const Ipp16u entl = ((user_id_len * 8) & 0xFFFF);
+    const Ipp16u entl = (Ipp16u)((user_id_len * 8) & 0xFFFF);
     Ipp8u ENTL[sizeof(Ipp16u)];
     ENTL[0] = (Ipp8u)(entl >> 8);
     ENTL[1] = (Ipp8u)(entl & 0xFF);

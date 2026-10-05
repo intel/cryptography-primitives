@@ -62,12 +62,12 @@ IPPCP_INLINE Ipp8u* double16(Ipp8u out[MBS_RIJ128], const Ipp8u inp[MBS_RIJ128])
     Ipp32u carry = 0;
     int n;
     for (n = 0; n < MBS_RIJ128; n++) {
-        Ipp32u x                = inp[MBS_RIJ128 - 1 - n] + inp[MBS_RIJ128 - 1 - n] + carry;
+        Ipp32u x                = (Ipp32u)inp[MBS_RIJ128 - 1 - n] + inp[MBS_RIJ128 - 1 - n] + carry;
         out[MBS_RIJ128 - 1 - n] = (Ipp8u)x;
         carry                   = (x >> 8) & 0xFF;
     }
 
-    out[MBS_RIJ128 - 1] ^= ((Ipp8u)(0 - carry) & 0x87);
+    out[MBS_RIJ128 - 1] = (Ipp8u)(out[MBS_RIJ128 - 1] ^ ((0 - carry) & 0x87));
     return out;
 }
 IPPCP_INLINE void cpAES_S2V_update(Ipp8u v[MBS_RIJ128],

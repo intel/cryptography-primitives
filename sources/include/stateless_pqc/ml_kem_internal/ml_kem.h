@@ -112,7 +112,7 @@ typedef IppPoly Ipp16sPoly;
 IPPCP_INLINE Ipp16s cp_MontReduce(Ipp32s x)
 {
     Ipp16s m = (Ipp16s)((Ipp32u)x * (Ipp32u)CP_ML_KEM_MONT_QINV_MOD_R);
-    Ipp16s t = (x - (Ipp32s)m * CP_ML_KEM_Q) >> 16;
+    Ipp16s t = (Ipp16s)((x - (Ipp32s)m * CP_ML_KEM_Q) >> 16);
     return t;
 }
 
@@ -163,8 +163,8 @@ IPPCP_INLINE Ipp16s cp_mlkemBarrettReduce(Ipp32s x)
     // 3. res = x - floor((mu*x)/2^26)*n
     Ipp16s res = (Ipp16s)(x - t);
     // 4. if res >= n then res -= n
-    res -= CP_ML_KEM_Q;
-    res += (res >> 15) & CP_ML_KEM_Q;
+    res = (Ipp16s)(res - CP_ML_KEM_Q);
+    res = (Ipp16s)(res + ((res >> 15) & CP_ML_KEM_Q));
 
     return res;
 }

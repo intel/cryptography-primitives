@@ -25,6 +25,8 @@
 #include "gfpec/sm2/ifma_ecpoint_sm2.h"
 #include "gfpec/sm2/ifma_arith_method_sm2.h"
 
+#include "pcptool.h"
+
 /* clang-format off */
 IPP_OWN_DEFN(IppStatus, gfec_Sign_sm2_avx512, (const IppsBigNumState* pMsgDigest,
                                                const IppsBigNumState* pRegPrivate,
@@ -171,6 +173,9 @@ IPP_OWN_DEFN(IppStatus, gfec_Sign_sm2_avx512, (const IppsBigNumState* pMsgDigest
     /* clear secret data */
     clear_secrets(&eph_key, &(P.x), &t);
     clear_secrets(&sign_r, &sign_s, &reg_key);
+
+    /* clear the ephemeral scalar copy left in the mod-engine pool */
+    PurgeBlock(pExtendedScalar, 2 * GFP_PELEN(pME) * (int)sizeof(BNU_CHUNK_T));
 
     /* clear buffer */
     cpGFpReleasePool(3, pME); /* pExtendedScalar(2) + tmp(1) */

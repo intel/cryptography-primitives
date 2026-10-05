@@ -121,7 +121,7 @@ IPP_OWN_DEFN(IppStatus, cp_xmss_ltree, (Ipp8u* pk,
             len_ = len_ >> 1;
         }
         // increase the tree height
-        cp_xmss_set_tree_height(adrs, cp_xmss_get_tree_height(adrs) + 1);
+        cp_xmss_set_tree_height(adrs, (Ipp8u)(cp_xmss_get_tree_height(adrs) + 1));
     }
 
     // null tree height and tree index

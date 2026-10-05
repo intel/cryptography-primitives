@@ -261,7 +261,7 @@ IPPCP_INLINE Ipp16u getAesGcmConst_table_ct(int idx)
     __m128i acc = _mm_setzero_si128();
 
     int i;
-    for (i = 0; i < (int)sizeof(AesGcmConst_table); i += sizeof(__m128i)) {
+    for (i = 0; i < (int)sizeof(AesGcmConst_table); i += (int)sizeof(__m128i)) {
         /* read 16 entries of AesGcmConst_table[] */
         __m128i tbl = _mm_load_si128((__m128i*)((Ipp8u*)AesGcmConst_table + i));
         /* set mask if idx==idx_curr[] */

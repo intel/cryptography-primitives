@@ -27,6 +27,7 @@
 #include "gfpec/pcpeccp.h"
 #include "gfpec/pcpgfpmethod.h"
 #include "gfpec/pcpgfpstuff.h"
+#include "pcptool.h"
 
 /*F*
 //    Name: ippsGFpECSignDSA
@@ -271,6 +272,10 @@ IPPFUN(IppStatus, ippsGFpECSignDSA,(const IppsBigNumState* pMsgDigest,
 #endif
         /* clear ephemeral private key */
         cpBN_zero(pEphPrivate);
+
+        /* clear signing scratch: buffT held 1/ephPrivate, buffF held the message representative */
+        PurgeBlock(buffT, ordLen * (int)sizeof(BNU_CHUNK_T));
+        PurgeBlock(buffF, ordLen * (int)sizeof(BNU_CHUNK_T));
 
         return sts;
     }

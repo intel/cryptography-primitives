@@ -102,7 +102,7 @@ IPP_OWN_DEFN(cpSize, gsMontExpWin_BNU_sscm, (BNU_CHUNK_T* dataY,
             /* extract 1-st window value */
             Ipp32u eChunk = *((Ipp32u*)((Ipp16u*)dataEE + eBit / BITSIZE(Ipp16u)));
             int shift     = eBit & 0xF;
-            Ipp32u winVal = (eChunk >> shift) & mask;
+            Ipp32u winVal = (Ipp32u)((eChunk >> shift) & mask);
 
             /* initialize result */
             gsScrambleGet_sscm(dataY, nsM, pTable, (int)winVal, winSize);
@@ -116,7 +116,7 @@ IPP_OWN_DEFN(cpSize, gsMontExpWin_BNU_sscm, (BNU_CHUNK_T* dataY,
                 /* extract next window value */
                 eChunk = *((Ipp32u*)((Ipp16u*)dataEE + eBit / BITSIZE(Ipp16u)));
                 shift  = eBit & 0xF;
-                winVal = (eChunk >> shift) & mask;
+                winVal = (Ipp32u)((eChunk >> shift) & mask);
 
                 /* exptact precomputed value and multiply */
                 gsScrambleGet_sscm(dataTT, nsM, pTable, (int)winVal, winSize);

@@ -120,7 +120,7 @@ IPPCP_INLINE IppStatus cp_mlStorageReleaseAll(STORAGE_T* storage)
 /* clang-format off */
 #define CP_ML_ALLOCATE_ALIGNED_POLYVEC(NAME, SIZE, STORAGE)                               \
     IppPoly*(NAME) = (IppPoly*)cp_mlStorageAllocate((STORAGE),                            \
-                                             (SIZE) * sizeof(IppPoly) + CP_ML_ALIGNMENT); \
+                                   (Ipp32s)((SIZE) * sizeof(IppPoly) + CP_ML_ALIGNMENT)); \
     CP_CHECK_FREE_RET((NAME) == NULL, ippStsMemAllocErr, (STORAGE));                      \
     (NAME) = IPP_ALIGNED_PTR((NAME), CP_ML_ALIGNMENT);
 
@@ -130,7 +130,8 @@ IPPCP_INLINE IppStatus cp_mlStorageReleaseAll(STORAGE_T* storage)
 
 /* Memory release helpers for poly and polyvec */
 #define CP_ML_RELEASE_ALIGNED_POLYVEC(SIZE, STORAGE, STATUS) \
-    (STATUS) |= cp_mlStorageRelease((STORAGE), (SIZE) * sizeof(IppPoly) + CP_ML_ALIGNMENT);
+    (STATUS) |=                                              \
+        cp_mlStorageRelease((STORAGE), (Ipp32s)((SIZE) * sizeof(IppPoly) + CP_ML_ALIGNMENT));
 
 #define CP_ML_RELEASE_ALIGNED_POLY(STORAGE, STATUS) \
     CP_ML_RELEASE_ALIGNED_POLYVEC(1, (STORAGE), (STATUS))

@@ -25,6 +25,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "gfpec/pcpgfpecstuff.h"
+#include "pcptool.h"
 
 
 /*F*
@@ -136,6 +137,9 @@ IPPFUN(IppStatus, ippsGFpECSharedSecretDHC, (const IppsBigNumState* pPrivateA,
             FIX_BNU(pShareData, nsShare);
             BN_SIZE(pShare) = nsShare;
         }
+
+        /* clear secret pool buffer F (held coFactor*privateA and the shared-secret T.x) before release */
+        PurgeBlock(F, 2 * GFP_PELEN(pGFE) * (int)sizeof(BNU_CHUNK_T));
 
         cpGFpReleasePool(2, pGFE);
         cpEcGFpReleasePool(1, pEC);

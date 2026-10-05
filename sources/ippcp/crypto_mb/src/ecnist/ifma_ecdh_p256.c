@@ -105,6 +105,7 @@ mbx_status OWNAPI(mbx_nistp256_ecdh_ssl_mb8)(int8u* pa_shared_key[8],
                                                        use_jproj_coords);
     status = MBX_MERGE_STS(status, MBX_COMBINE_STS_MB4(status_lo, status_hi));
 #else
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
     return status;
@@ -179,6 +180,7 @@ mbx_status OWNAPI(mbx_nistp256_ecdh_mb8)(int8u* pa_shared_key[8],
                                                use_jproj_coords);
     status |= MBX_COMBINE_STS_MB4(status_lo, status_hi);
 #else
+    MBX_UNREFERENCED_PARAMETER(pBuffer);
     status = MBX_SET_STS_ALL(MBX_STATUS_UNSUPPORTED_ISA_ERR);
 #endif /* #if (_MBX>=_MBX_K1) */
 

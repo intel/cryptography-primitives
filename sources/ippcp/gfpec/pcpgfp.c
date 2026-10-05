@@ -49,7 +49,7 @@ IPP_OWN_DEFN(int, cpGFpGetSize, (int feBitSize, int peBitSize, int numpe))
               + elemLen * (Ipp32s)sizeof(BNU_CHUNK_T)          /* quadratic non-residue */
               + pelmLen * (Ipp32s)sizeof(BNU_CHUNK_T) * numpe; /* pool */
 
-    ctxSize += sizeof(IppsGFpState);                           /* size of IppsGFPState */
+    ctxSize += (Ipp32s)sizeof(IppsGFpState);                   /* size of IppsGFPState */
     return ctxSize;
 }
 

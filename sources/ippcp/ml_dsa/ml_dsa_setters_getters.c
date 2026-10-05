@@ -215,9 +215,10 @@ IPPFUN(IppStatus, ippsMLDSA_GetInfo, (IppsMLDSAInfo * pInfo, IppsMLDSAParamSet s
     default:
         return ippStsBadArgErr;
     }
-    pInfo->publicKeySize  = 32 + 32 * k * CP_ML_DSA_BITLEN_Q_D;
-    pInfo->privateKeySize = 32 + 32 + 64 + 32 * ((l + k) * cp_ml_bitlen(2 * eta) + CP_ML_DSA_D * k);
-    pInfo->signatureSize  = lambda_4 + l * 32 * (1 + cp_ml_bitlen(gamma_1 - 1)) + omega + k;
+    pInfo->publicKeySize = 32 + 32 * k * CP_ML_DSA_BITLEN_Q_D;
+    pInfo->privateKeySize =
+        32 + 32 + 64 + 32 * ((l + k) * cp_ml_bitlen((Ipp32u)(2 * eta)) + CP_ML_DSA_D * k);
+    pInfo->signatureSize = lambda_4 + l * 32 * (1 + cp_ml_bitlen(gamma_1 - 1)) + omega + k;
 
     return ippStsNoErr;
 }

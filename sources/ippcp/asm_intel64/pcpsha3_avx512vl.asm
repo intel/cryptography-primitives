@@ -61,11 +61,9 @@ IPPASM cp_SHA3_224_Absorb, PUBLIC
         cmp     arg3, r12               ; if mlen < capacity then cannot permute yet
         jb      .absorb_skip_permute
 
-        mov     r10, arg3
+        sub     arg3, r12               ; mlen -= capacity (bytes consumed by partial_add)
         lea     r13, [arg1 + r14]       ; r13 = state + s[25]
-        mov     arg3, arg2
         CALL_IPPASM    keccak_1600_partial_add
-        mov     arg3, r10
 
         CALL_IPPASM    keccak_1600_load_state
         CALL_IPPASM    keccak1600_block_64bit
@@ -144,11 +142,9 @@ IPPASM cp_SHA3_256_Absorb, PUBLIC
         cmp     arg3, r12               ; if mlen < capacity then cannot permute yet
         jb      .absorb_skip_permute
 
-        mov     r10, arg3
+        sub     arg3, r12               ; mlen -= capacity (bytes consumed by partial_add)
         lea     r13, [arg1 + r14]       ; r13 = state + s[25]
-        mov     arg3, arg2
         CALL_IPPASM    keccak_1600_partial_add
-        mov     arg3, r10
 
         CALL_IPPASM    keccak_1600_load_state
         CALL_IPPASM    keccak1600_block_64bit
@@ -227,11 +223,9 @@ IPPASM cp_SHA3_384_Absorb, PUBLIC
         cmp     arg3, r12               ; if mlen < capacity then cannot permute yet
         jb      .absorb_skip_permute
 
-        mov     r10, arg3
+        sub     arg3, r12               ; mlen -= capacity (bytes consumed by partial_add)
         lea     r13, [arg1 + r14]       ; r13 = state + s[25]
-        mov     arg3, arg2
         CALL_IPPASM    keccak_1600_partial_add
-        mov     arg3, r10
 
         CALL_IPPASM    keccak_1600_load_state
         CALL_IPPASM    keccak1600_block_64bit
@@ -310,11 +304,9 @@ IPPASM cp_SHA3_512_Absorb, PUBLIC
         cmp     arg3, r12               ; if mlen < capacity then cannot permute yet
         jb      .absorb_skip_permute
 
-        mov     r10, arg3
+        sub     arg3, r12               ; mlen -= capacity (bytes consumed by partial_add)
         lea     r13, [arg1 + r14]       ; r13 = state + s[25]
-        mov     arg3, arg2
         CALL_IPPASM    keccak_1600_partial_add
-        mov     arg3, r10
 
         CALL_IPPASM    keccak_1600_load_state
         CALL_IPPASM    keccak1600_block_64bit

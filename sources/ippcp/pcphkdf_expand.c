@@ -101,7 +101,7 @@ IPPFUN(IppStatus,
         tmsg_len = hash_len + info_len + 1;
 
         for (int i = 2; okm_left > 0; i++) {
-            tmsg[hash_len + info_len] = 0xff & i;
+            tmsg[hash_len + info_len] = (Ipp8u)(0xff & i);
             sts = ippsHMACMessage_rmf(tmsg, tmsg_len, prk, hash_len, tmsg, hash_len, pMethod);
             if (ippStsNoErr != sts)
                 goto exit;

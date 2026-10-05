@@ -93,7 +93,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
         counterVal = AESCCM_COUNTER(pState);
 
         /* extract qLen */
-        qLen = (((Ipp8u*)CTR)[0] & 0x7) + 1; /* &0x7 just to fix KW issue */
+        qLen = (Ipp32u)((((Ipp8u*)CTR)[0] & 0x7) + 1); /* &0x7 just to fix KW issue */
 
         if (flag) {
             Ipp32u tmpLen = (Ipp32u)IPP_MIN((Ipp32u)len, MBS_RIJ128 - flag);
@@ -120,7 +120,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
             AESCCM_LENPRO(pState) += (Ipp32u)tmpLen;
             pSrc += tmpLen;
             pDst += tmpLen;
-            len -= tmpLen;
+            len -= (int)tmpLen;
         }
 
 #if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
@@ -155,9 +155,12 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
                 CopyBlock(localState + MBS_RIJ128, S, MBS_RIJ128);
                 counterVal += processedLen / MBS_RIJ128;
 
+                /* clear secret data (holds MAC/counter copies) */
+                PurgeBlock(localState, sizeof(localState));
+
                 pSrc += processedLen;
                 pDst += processedLen;
-                len -= processedLen;
+                len -= (int)processedLen;
             }
         }
 #endif
@@ -228,6 +231,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
 
         /* clear secret data */
         PurgeBlock(S, sizeof(S));
+        PurgeBlock(MAC, sizeof(MAC));
     }
 
     return ippStsNoErr;

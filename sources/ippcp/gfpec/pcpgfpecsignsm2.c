@@ -25,6 +25,7 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "gfpec/pcpeccp.h"
+#include "pcptool.h"
 
 /*F*
 //    Name: ippsGFpECSignSM2
@@ -231,6 +232,15 @@ IPPFUN(IppStatus, ippsGFpECSignSM2,(const IppsBigNumState* pMsgDigest,
 #endif
         /* clear ephemeral private key */
         cpBN_zero(pEphPrivate);
+
+        /* clear signing scratch: buffR/buffS held ephPrivate and regPrivate-derived intermediates */
+        PurgeBlock(buffR, ordLen * (int)sizeof(BNU_CHUNK_T));
+        PurgeBlock(buffS, ordLen * (int)sizeof(BNU_CHUNK_T));
+
+        /* scrub dataS on the failure exit since it holds (regPrivate + 1) from the key test above */
+        if (ippStsNoErr != sts) {
+            PurgeBlock(dataS, ordLen * (int)sizeof(BNU_CHUNK_T));
+        }
 
         return sts;
     }

@@ -191,7 +191,7 @@ IPPFUN(IppStatus, ippsRSASign_PSS,(const Ipp8u* pMsg,
             pDB[psLen] ^= 0x01;
 
             /* make sure that top 8*emLen-emBits bits are clear */
-            pDB[0] &= MAKEMASK32(8 - 8 * emLen + emBits);
+            pDB[0] &= (Ipp8u)MAKEMASK32(8 - 8 * emLen + emBits);
         }
 
         /*

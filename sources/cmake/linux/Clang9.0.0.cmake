@@ -28,20 +28,17 @@ set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,noexecstack")
 set(LINK_FLAG_SECURITY "${LINK_FLAG_SECURITY} -Wl,-z,relro -Wl,-z,now")
 
 # Prevents the compiler from using standard libraries and startup files when linking.
-set(LINK_FLAG_DYNAMIC_MACOSX "${LINK_FLAG_SECURITY} -nostdlib")
+set(LINK_FLAG_DYNAMIC_LINUX "${LINK_FLAG_SECURITY} -nostdlib")
 # Dynamically link lib c (libdl is for old apps)
-set(LINK_FLAG_DYNAMIC_MACOSX "${LINK_FLAG_DYNAMIC_MACOSX} -Wl,-call_shared,-lc")
+set(LINK_FLAG_DYNAMIC_LINUX "${LINK_FLAG_DYNAMIC_LINUX} -Wl,-call_shared,-lc")
 # Create a shared library
-set(LINK_FLAG_DYNAMIC_MACOSX "-Wl,-shared")
+set(LINK_FLAG_DYNAMIC_LINUX "${LINK_FLAG_DYNAMIC_LINUX} -Wl,-shared")
 if(${ARCH} MATCHES "ia32")
   # Tells the compiler to generate code for a specific architecture (32)
-  set(LINK_FLAG_DYNAMIC_MACOSX "${LINK_FLAG_DYNAMIC_MACOSX} -m32")
+  set(LINK_FLAG_DYNAMIC_LINUX "${LINK_FLAG_DYNAMIC_LINUX} -m32")
 endif(${ARCH} MATCHES "ia32")
 
-set(LINK_FLAG_PCS_MACOSX "-nostdlib -Wl,-lc")
-if(${ARCH} MATCHES "ia32")
-  set(LINK_FLAG_PCS_MACOSX "${LINK_FLAG_PCS_MACOSX} -m32")
-endif(${ARCH} MATCHES "ia32")
+set(LINK_FLAG_PCS_LINUX "${LINK_FLAG_DYNAMIC_LINUX}")
 
 # compiler
 # Enables the use of blocks and entire functions of assembly code within a C or C++ file

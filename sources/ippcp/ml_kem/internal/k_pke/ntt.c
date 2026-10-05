@@ -29,14 +29,14 @@ IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
 {
     Ipp16u i = 1;
     for (Ipp16u len = 128; len >= 2; len /= 2) {
-        for (Ipp16u start = 0; start < 256; start += 2 * len) {
+        for (Ipp16u start = 0; start < 256; start = (Ipp16u)(start + 2 * len)) {
             Ipp16s zeta = cp_mlkem_zetas_ntt[i];
             i++;
             for (Ipp16u j = start; j < start + len; j++) {
                 // delay reduction, as the minimum possible value here will be in the function's range
                 Ipp16s t           = cp_MontReduce((Ipp32s)zeta * f->values[j + len]);
-                f->values[j + len] = f->values[j] - t;
-                f->values[j]       = f->values[j] + t;
+                f->values[j + len] = (Ipp16s)(f->values[j] - t);
+                f->values[j]       = (Ipp16s)(f->values[j] + t);
             }
         }
     }
@@ -52,15 +52,15 @@ IPP_OWN_DEFN(void, cp_NTT, (Ipp16sPoly * f))
 IPP_OWN_DEFN(void, cp_inverseNTT, (Ipp16sPoly * f))
 {
     Ipp8u i = 127;
-    for (Ipp16u len = 2; len <= 128; len *= 2) {
-        for (Ipp16u start = 0; start < 256; start += 2 * len) {
+    for (Ipp16u len = 2; len <= 128; len = (Ipp16u)(len * 2)) {
+        for (Ipp16u start = 0; start < 256; start = (Ipp16u)(start + 2 * len)) {
             Ipp16s zeta = cp_mlkem_zetas_ntt[i];
             i--;
             for (Ipp16u j = start; j < start + len; j++) {
                 Ipp16s t     = f->values[j];
                 f->values[j] = cp_mlkemBarrettReduce((Ipp32s)(t + f->values[j + len]));
                 // delay reduction, as the minimum possible value here will be in the function's range
-                f->values[j + len] = f->values[j + len] - t;
+                f->values[j + len] = (Ipp16s)(f->values[j + len] - t);
                 f->values[j + len] = cp_MontReduce((Ipp32s)zeta * f->values[j + len]);
             }
         }
@@ -92,10 +92,10 @@ IPPCP_INLINE void cp_baseCaseMultiply(Ipp16s a0, Ipp16s a1,
 {
     Ipp16s tmpC0 = cp_MontReduce((Ipp32s)a1 * b1);
     tmpC0        = cp_MontReduce((Ipp32s)gamma * tmpC0);
-    *c0_ptr      = tmpC0 + cp_MontReduce((Ipp32s)a0 * b0);
+    *c0_ptr      = (Ipp16s)(tmpC0 + cp_MontReduce((Ipp32s)a0 * b0));
 
     Ipp16s tmpC1 = cp_MontReduce((Ipp32s)a0 * b1);
-    *c1_ptr      = tmpC1 + cp_MontReduce((Ipp32s)a1 * b0);
+    *c1_ptr      = (Ipp16s)(tmpC1 + cp_MontReduce((Ipp32s)a1 * b0));
 }
 
 /*

@@ -73,9 +73,9 @@ IPP_OWN_DEFN(IppStatus, cp_MLDSA_keyGen_internal, (const Ipp8u* ksi,
             goto exit;
     }
 
-    s1 = (IppPoly*)cp_mlStorageAllocate(pStorage, l * sizeof(IppPoly) + CP_ML_ALIGNMENT);
-    s2 = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
-    t  = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
+    s1 = (IppPoly*)cp_mlStorageAllocate(pStorage, (Ipp32s)(l * sizeof(IppPoly) + CP_ML_ALIGNMENT));
+    s2 = (IppPoly*)cp_mlStorageAllocate(pStorage, (Ipp32s)(k * sizeof(IppPoly) + CP_ML_ALIGNMENT));
+    t  = (IppPoly*)cp_mlStorageAllocate(pStorage, (Ipp32s)(k * sizeof(IppPoly) + CP_ML_ALIGNMENT));
     if (s1 == NULL || s2 == NULL || t == NULL) {
         sts = ippStsMemAllocErr;
         goto exit;
@@ -88,7 +88,8 @@ IPP_OWN_DEFN(IppStatus, cp_MLDSA_keyGen_internal, (const Ipp8u* ksi,
     // 𝐭 = NTT^−1(𝐀 * NTT(𝐬1)) + 𝐬2
     {
         IppPoly* NTT_s1 =
-            (IppPoly*)cp_mlStorageAllocate(pStorage, l * sizeof(IppPoly) + CP_ML_ALIGNMENT);
+            (IppPoly*)cp_mlStorageAllocate(pStorage,
+                                           (Ipp32s)(l * sizeof(IppPoly) + CP_ML_ALIGNMENT));
         if (NTT_s1 == NULL) {
             sts = ippStsMemAllocErr;
             goto exit;
@@ -101,7 +102,8 @@ IPP_OWN_DEFN(IppStatus, cp_MLDSA_keyGen_internal, (const Ipp8u* ksi,
         sts = cp_ml_expandMatrixMultiplyVectorNTT(rho, NTT_s1, t, mldsaCtx);
         if (sts != ippStsNoErr)
             goto exit;
-        sts = cp_mlStorageRelease(pStorage, l * sizeof(IppPoly) + CP_ML_ALIGNMENT); // NTT_s1
+        sts = cp_mlStorageRelease(pStorage,
+                                  (Ipp32s)(l * sizeof(IppPoly) + CP_ML_ALIGNMENT)); // NTT_s1
         if (sts != ippStsNoErr)
             goto exit;
     }
@@ -112,7 +114,7 @@ IPP_OWN_DEFN(IppStatus, cp_MLDSA_keyGen_internal, (const Ipp8u* ksi,
     }
 
     t0 = t;
-    t1 = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
+    t1 = (IppPoly*)cp_mlStorageAllocate(pStorage, (Ipp32s)(k * sizeof(IppPoly) + CP_ML_ALIGNMENT));
     if (t1 == NULL) {
         sts = ippStsMemAllocErr;
         goto exit;
@@ -139,8 +141,9 @@ IPP_OWN_DEFN(IppStatus, cp_MLDSA_keyGen_internal, (const Ipp8u* ksi,
         PurgeBlock(tr, sizeof(tr)); // zeroize secrets
     }
     /* Release locally used storage */
-    sts = cp_mlStorageRelease(pStorage,
-                              (3 * k + l) * sizeof(IppPoly) + 4 * CP_ML_ALIGNMENT); // s1,s2,t,t1
+    sts = cp_mlStorageRelease(
+        pStorage,
+        (Ipp32s)((3 * k + l) * (Ipp32s)sizeof(IppPoly) + 4 * CP_ML_ALIGNMENT)); // s1,s2,t,t1
     if (sts != ippStsNoErr)
         goto exit;
 

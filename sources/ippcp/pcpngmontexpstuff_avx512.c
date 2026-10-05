@@ -929,7 +929,7 @@ IPP_OWN_DEFN(cpSize, gsMontExpWin_BNU_avx512, (BNU_CHUNK_T* dataY,
     int redBufferLen  = numofVariableBuff_avx512(redLen, 8);
 
     cpSize window     = gsMontExp_WinSize(bitsizeE);
-    BNU_CHUNK_T wmask = (1 << window) - 1;
+    BNU_CHUNK_T wmask = ((BNU_CHUNK_T)1 << window) - 1;
     cpSize nPrecomute = 1 << window;
     int n;
 

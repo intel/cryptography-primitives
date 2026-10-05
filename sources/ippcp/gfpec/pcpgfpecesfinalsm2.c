@@ -27,6 +27,7 @@
 
 #include "gfpec/pcpgfpecessm2.h"
 #include "gfpec/pcpgfpecstuff.h"
+#include "pcptool.h"
 
 /*F*
 //    Name: ippsGFpECESFinal_SM2
@@ -66,9 +67,17 @@ IPPFUN(IppStatus, ippsGFpECESFinal_SM2, (Ipp8u * pTag, int tagLen, IppsECESState
         for (i = 0; i < tagLen; ++i) {
             pTag[i] = pFinal[i];
         }
+        /* clear secret data */
+        PurgeBlock(pFinal, sizeof(pFinal));
     }
 
     pState->state = ECESAlgoFinished; /* cannot proceed further due to closing ippsSM3Update */
+
+    /* clear secret KDF keystream residue (chain is finished, window no longer needed) */
+    PurgeBlock(pState->pKdfWindow, sizeof(pState->pKdfWindow));
+
+    /* clear the raw ECDH shared secret (x||y): fully consumed, no longer needed */
+    PurgeBlock(pState->pSharedSecret, pState->sharedSecretLen);
 
     /* do the operation, but return an error code in 0-case */
     return pState->wasNonZero ? ippStsNoErr : ippStsShareKeyErr;

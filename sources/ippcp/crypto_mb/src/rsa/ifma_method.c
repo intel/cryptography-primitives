@@ -689,6 +689,7 @@ DLL_PUBLIC
 int mbx_RSA_Method_BufSize(const mbx_RSA_Method* m)
 {
 #if ((_MBX <= _MBX_L9) && !(_MBX_AVX_IFMA_SUPPORTED))
+    MBX_UNREFERENCED_PARAMETER(m);
     return 0;
 #else
     return m ? m->buffSize : 0;

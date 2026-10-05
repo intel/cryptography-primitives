@@ -93,10 +93,10 @@ IPPCP_INLINE Ipp8u getSboxValue(Ipp8u x)
 
 IPPCP_INLINE Ipp32u cpSboxT_SMS4(Ipp32u x)
 {
-    Ipp32u y = getSboxValue(x & 0xFF);
-    y |= (Ipp32u)(getSboxValue((x >> 8) & 0xFF) << 8);
-    y |= (Ipp32u)(getSboxValue((x >> 16) & 0xFF) << 16);
-    y |= (Ipp32u)(getSboxValue((x >> 24) & 0xFF) << 24);
+    Ipp32u y = getSboxValue((Ipp8u)(x & 0xFF));
+    y |= (Ipp32u)(getSboxValue((Ipp8u)((x >> 8) & 0xFF)) << 8);
+    y |= (Ipp32u)(getSboxValue((Ipp8u)((x >> 16) & 0xFF)) << 16);
+    y |= (Ipp32u)(getSboxValue((Ipp8u)((x >> 24) & 0xFF)) << 24);
     return y;
 }
 

@@ -214,10 +214,10 @@ int8u ifma_BN_to_mb8(int64u out_mb8[][8], const BIGNUM* const bn[8], int bitLen)
     for (i = 0; i < 8; ++i) {
         if (NULL != bn[i]) {
             byteLens[i] = (int)(BN_num_bytes(bn[i]));
-            if (BN_is_negative(bn[i]) || BN_num_bits(bn[i]) > bitLen) {
+            if (BN_is_negative(bn[i]) || (int)BN_num_bits(bn[i]) > bitLen) {
                 d[i]        = NULL;
                 byteLens[i] = 0;
-                conversion_err_mask |= (1 << i);
+                conversion_err_mask |= (int8u)(1 << i);
                 continue;
             }
 
@@ -226,7 +226,7 @@ int8u ifma_BN_to_mb8(int64u out_mb8[][8], const BIGNUM* const bn[8], int bitLen)
             if (BN_bn2lebinpad(bn[i], d[i], byteLen) != byteLen) {
                 d[i]        = NULL;
                 byteLens[i] = 0;
-                conversion_err_mask |= (1 << i);
+                conversion_err_mask |= (int8u)(1 << i);
                 continue;
             }
 #else
@@ -506,15 +506,15 @@ int8u ifma_BN_transpose_copy(int64u out_mb8[][8], const BIGNUM* const bn[8], int
     for (i = 0; i < 8; ++i) {
         if (NULL == bn[i]) {
             inp[i] = NULL;
-        } else if (BN_is_negative(bn[i]) || BN_num_bits(bn[i]) > bitLen) {
+        } else if (BN_is_negative(bn[i]) || (int)BN_num_bits(bn[i]) > bitLen) {
             inp[i] = NULL;
-            conversion_err_mask |= (1 << i);
+            conversion_err_mask |= (int8u)(1 << i);
         } else {
 #ifndef BN_OPENSSL_PATCH
             inp[i] = buffer[i];
             if (BN_bn2lebinpad(bn[i], (unsigned char*)inp[i], byteLen) != byteLen) {
                 inp[i] = NULL;
-                conversion_err_mask |= (1 << i);
+                conversion_err_mask |= (int8u)(1 << i);
                 continue;
             }
 #else
@@ -810,10 +810,10 @@ int8u ifma_BN_to_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], int bitLen)
     for (i = 0; i < 4; ++i) {
         if (NULL != bn[i]) {
             byteLens[i] = (int)(BN_num_bytes(bn[i]));
-            if (BN_is_negative(bn[i]) || BN_num_bits(bn[i]) > bitLen) {
+            if (BN_is_negative(bn[i]) || (int)BN_num_bits(bn[i]) > bitLen) {
                 d[i]        = NULL;
                 byteLens[i] = 0;
-                conversion_err_mask |= (1 << i);
+                conversion_err_mask |= (int8u)(1 << i);
                 continue;
             }
 
@@ -822,7 +822,7 @@ int8u ifma_BN_to_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4], int bitLen)
             if (BN_bn2lebinpad(bn[i], d[i], byteLen) != byteLen) {
                 d[i]        = NULL;
                 byteLens[i] = 0;
-                conversion_err_mask |= (1 << i);
+                conversion_err_mask |= (int8u)(1 << i);
                 continue;
             }
 #else
@@ -1146,15 +1146,15 @@ int8u ifma_BN_transpose_copy_mb4(int64u out_mb4[][4], const BIGNUM* const bn[4],
     for (int i = 0; i < 4; ++i) {
         if (NULL == bn[i]) {
             inp[i] = NULL;
-        } else if (BN_is_negative(bn[i]) || BN_num_bits(bn[i]) > bitLen) {
+        } else if (BN_is_negative(bn[i]) || (int)BN_num_bits(bn[i]) > bitLen) {
             inp[i] = NULL;
-            conversion_err_mask |= (1 << i);
+            conversion_err_mask |= (int8u)(1 << i);
         } else {
 #ifndef BN_OPENSSL_PATCH
             inp[i] = buffer[i];
             if (BN_bn2lebinpad(bn[i], (unsigned char*)inp[i], byteLen) != byteLen) {
                 inp[i] = NULL;
-                conversion_err_mask |= (1 << i);
+                conversion_err_mask |= (int8u)(1 << i);
                 continue;
             }
 #else

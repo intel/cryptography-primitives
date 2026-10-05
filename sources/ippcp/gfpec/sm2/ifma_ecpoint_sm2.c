@@ -260,7 +260,7 @@ IPP_OWN_DEFN(void, gesm2_add, (PSM2_POINT_IFMA* r,
     /* checking the equality of X and Y coordinates (D - C == 0) and (B - A == 0) */
     const mask8 f_are_zero     = FESM2_IS_ZERO(R);
     const mask8 e_are_zero     = FESM2_IS_ZERO(H);
-    const mask8 point_is_equal = ((e_are_zero & f_are_zero) & (~p_is_inf) & (~q_is_inf));
+    const mask8 point_is_equal = (mask8)((e_are_zero & f_are_zero) & (~p_is_inf) & (~q_is_inf));
 
     __ALIGN64 PSM2_POINT_IFMA r2;
     r2.x = r2.y = r2.z = setzero_i64();

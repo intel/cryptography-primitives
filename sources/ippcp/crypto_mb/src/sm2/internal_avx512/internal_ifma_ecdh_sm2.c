@@ -115,6 +115,8 @@ mbx_status internal_avx512_sm2_ecdh_ssl_mb8(int8u* pa_shared_key[8],
 
     /* clear computed shared keys */
     MB_FUNC_NAME(zero_)((int64u(*)[8]) & R, sizeof(R) / sizeof(U64));
+    /* clear projective-to-affine inversion buffer (1/Z, 1/Z^2 of shared point) */
+    MB_FUNC_NAME(zero_)((int64u(*)[8])Z2, sizeof(Z2) / sizeof(U64));
     return status;
 }
 
@@ -195,6 +197,8 @@ mbx_status internal_avx512_sm2_ecdh_mb8(int8u* pa_shared_key[8],
 
     /* clear computed shared keys */
     MB_FUNC_NAME(zero_)((int64u(*)[8]) & R, sizeof(R) / sizeof(U64));
+    /* clear projective-to-affine inversion buffer (1/Z, 1/Z^2 of shared point) */
+    MB_FUNC_NAME(zero_)((int64u(*)[8])Z2, sizeof(Z2) / sizeof(U64));
     return status;
 }
 

@@ -84,10 +84,10 @@ IPPFUN(IppStatus,
 
         CopyBlock(salt, &tmp_msg[0], salt_len);
 
-        tmp_msg[salt_len + 0] = (i >> 24) & 0xff;
-        tmp_msg[salt_len + 1] = (i >> 16) & 0xff;
-        tmp_msg[salt_len + 2] = (i >> 8) & 0xff;
-        tmp_msg[salt_len + 3] = (i >> 0) & 0xff;
+        tmp_msg[salt_len + 0] = (Ipp8u)((i >> 24) & 0xff);
+        tmp_msg[salt_len + 1] = (Ipp8u)((i >> 16) & 0xff);
+        tmp_msg[salt_len + 2] = (Ipp8u)((i >> 8) & 0xff);
+        tmp_msg[salt_len + 3] = (Ipp8u)((i >> 0) & 0xff);
 
         sts =
             ippsHMACMessage_rmf(tmp_msg, salt_len + 4, pass, pass_len, tmp_msg, hash_len, pMethod);

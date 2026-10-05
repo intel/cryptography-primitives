@@ -447,7 +447,7 @@ void MB_FUNC_NAME(ifma_aminv52_n521_)(U64 r[], const U64 z[])
     /* init result */
     MB_FUNC_NAME(mov_FE521_)(lexp, (U64*)n521_r_mb);
 
-    for (i = 33; i < sizeof(pwr) - 1; i++) {
+    for (i = 33; i < (int)sizeof(pwr) - 1; i++) {
         int v  = pwr[i];
         int hi = (v >> 4) & 0xF;
         int lo = v & 0xF;

@@ -137,7 +137,7 @@ IPPFUN(IppStatus, ippsXMSSVerify, (const Ipp8u* pMsg,
     for (Ipp32s i = 0; i < h; ++i) {
         cp_xmss_set_tree_height(adrs, (Ipp8u)i);
         // if we are the left child
-        if (((pSign->idx / (1 << i)) & 1) == 0) {
+        if (((pSign->idx / (1u << i)) & 1) == 0) {
             // leaf || auth_path
             CopyBlock(temp_key, temp_buf, n);
             CopyBlock(pSign->pAuthPath + (i * n), temp_buf + n, n);

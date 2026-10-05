@@ -25,9 +25,10 @@
 #include "owndefs.h"
 #include "owncp.h"
 #include "gfpec/pcpgfpecstuff.h"
+#include "pcptool.h"
 
 /*F*
-//    Name: ippsGFpECSharedSecretDHC
+//    Name: ippsGFpECSharedSecretDH
 //
 // Purpose: Compute Shared Secret (Diffie-Hellman)
 //
@@ -194,6 +195,8 @@ IPPFUN(IppStatus, ippsGFpECSharedSecretDH, (const IppsBigNumState* pPrivateA,
                 cpGFpElementPad(pShareData + elmLen, nsShare - elmLen, 0);
             }
 
+            /* clear GFp pool buffer holding decoded T.x (the shared secret) before release */
+            PurgeBlock(GFPE_DATA(&elm), GFP_PELEN(pGFE) * (int)sizeof(BNU_CHUNK_T));
             cpGFpReleasePool(1, pGFE); /* GFpElement */
         }
 

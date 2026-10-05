@@ -20,6 +20,10 @@
 #include <internal/rsa/ifma_rsa_arith.h>
 #include <internal/rsa/ifma_rsa_method.h>
 
+/* Exponentiation window size. MUST match the value used to size
+   the method scratch buffer in ifma_method.c */
+#define EXP_WIN_SIZE (5) //(4)
+
 #if (_MBX >= _MBX_K1)
 
 /*
@@ -123,8 +127,12 @@ void ifma_cp_rsa_prv2_layer_mb8(const int8u* const from_pa[8],
     /* convert result from ifma fmt */
     ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, rsaBitlen);
 
-    /* clear exponents */
+    /* clear secret / result-bearing buffers: the private exponent, the result
+    // (plaintext on decrypt) and the exponentiation scratch. n, rr and k0 are
+    // derived from the public modulus and carry no secret, so they are left. */
     zero_mb8(d_mb8, len64);
+    zero_mb8(inout_mb8, len52);
+    zero_mb8(work_buffer, len52 * 2 + (len64 + 1) + (1 << EXP_WIN_SIZE) * len52);
 }
 
 /*
@@ -259,10 +267,11 @@ void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
     /* convert result from ifma fmt */
     ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inp_mb8, rsaBitlen);
 
-    /* clear exponents, p, q */
-    zero_mb8(d_mb8, len64);
-    zero_mb8(q_mb8, len52);
-    zero_mb8(p_mb8, len52);
+    /* clear the whole scratch in one pass: k0, p, q, d, rr, xp, xq, inp and
+    // the exponentiation work_buffer all hold secret or key-derived values.
+    // buffSize reserves 64 bytes for the alignment applied by IFMA_ALIGNED_PTR,
+    // the rest is the region reachable from k0_mb8 */
+    zero_mb8(k0_mb8, (m->buffSize - 64) / (int)(sizeof(int64u) * 8));
 }
 
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
@@ -368,8 +377,12 @@ void ifma_cp_rsa_prv2_layer_mb4(const int8u* const from_pa[4],
     /* convert result from ifma fmt */
     ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, rsaBitlen);
 
-    /* clear exponents */
+    /* clear secret / result-bearing buffers: the private exponent, the result
+    // (plaintext on decrypt) and the exponentiation scratch. n, rr and k0 are
+    // derived from the public modulus and carry no secret, so they are left. */
     zero_mb4(d_mb4, len64);
+    zero_mb4(inout_mb4, len52);
+    zero_mb4(work_buffer, len52 * 2 + (len64 + 1) + (1 << EXP_WIN_SIZE) * len52);
 }
 
 /*
@@ -504,10 +517,11 @@ void ifma_cp_rsa_prv5_layer_mb4(const int8u* const from_pa[4],
     /* convert result from ifma fmt */
     ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inp_mb4, rsaBitlen);
 
-    /* clear exponents, p, q */
-    zero_mb4(d_mb4, len64);
-    zero_mb4(q_mb4, len52);
-    zero_mb4(p_mb4, len52);
+    /* clear the whole scratch in one pass: k0, p, q, d, rr, xp, xq, inp and
+    // the exponentiation work_buffer all hold secret or key-derived values.
+    // buffSize reserves 64 bytes for the alignment applied by IFMA_ALIGNED_PTR,
+    // the rest is the region reachable from k0_mb4 */
+    zero_mb4(k0_mb4, (m->buffSize - 64) / (int)(sizeof(int64u) * 4));
 }
 
 #endif /* #if (_MBX >= _MBX_K1) */

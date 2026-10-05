@@ -43,7 +43,7 @@ IPPCP_INLINE void gf_mul_by_primitive(void* x)
 {
     Ipp64u* x64 = (Ipp64u*)x;
     Ipp64u xorL = ((Ipp64s)x64[1] >> 63) & GF_POLY;
-    Ipp64u addH = ((Ipp64s)x64[0] >> 63) & 1;
+    Ipp64u addH = (Ipp64u)((Ipp64s)x64[0] >> 63) & 1;
     x64[0]      = (x64[0] + x64[0]) ^ xorL;
     x64[1]      = (x64[1] + x64[1]) + addH;
 }

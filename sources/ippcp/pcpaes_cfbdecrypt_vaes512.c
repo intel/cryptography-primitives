@@ -214,7 +214,7 @@ IPP_OWN_DEFN(void, DecryptCFB_RIJ128pipe_VAES_NI, (const Ipp8u* pSrc,       // p
 
     // at least one block left (max 3 blocks)
     if (blocks) {
-        __mmask64 k64 = (1LL << (blocks << 4)) - 1;
+        __mmask64 k64 = (__mmask64)((1LL << (blocks << 4)) - 1);
 
         // load ciphertext
         __m512i ciphLsb0 = _mm512_maskz_expandloadu_epi8(k64 & kLsbMask64, pSrc8);

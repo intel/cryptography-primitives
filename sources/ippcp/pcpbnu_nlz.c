@@ -73,54 +73,54 @@ IPP_OWN_DEFN(cpSize, cpNLZ_BNU, (BNU_CHUNK_T x))
     BNU_CHUNK_T
 #if (BNU_CHUNK_BITS == BNU_CHUNK_64BIT)
     mask = cpIsZero_ct(x & 0xFFFFFFFF00000000);
-    nlz += 32 & mask;
+    nlz += (cpSize)(32 & mask);
     x = ((x << 32) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0xFFFF000000000000);
-    nlz += 16 & mask;
+    nlz += (cpSize)(16 & mask);
     x = ((x << 16) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0xFF00000000000000);
-    nlz += 8 & mask;
+    nlz += (cpSize)(8 & mask);
     x = ((x << 8) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0xF000000000000000);
-    nlz += 4 & mask;
+    nlz += (cpSize)(4 & mask);
     x = ((x << 4) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0xC000000000000000);
-    nlz += 2 & mask;
+    nlz += (cpSize)(2 & mask);
     x = ((x << 2) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0x8000000000000000);
-    nlz += 1 & mask;
+    nlz += (cpSize)(1 & mask);
     x = ((x << 1) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0x8000000000000000);
-    nlz += 1 & mask;
+    nlz += (cpSize)(1 & mask);
 #else
     mask = cpIsZero_ct(x & 0xFFFF0000);
-    nlz += 16 & mask;
+    nlz += (cpSize)(16 & mask);
     x = ((x << 16) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0xFF000000);
-    nlz += 8 & mask;
+    nlz += (cpSize)(8 & mask);
     x = ((x << 8) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0xF0000000);
-    nlz += 4 & mask;
+    nlz += (cpSize)(4 & mask);
     x = ((x << 4) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0xC0000000);
-    nlz += 2 & mask;
+    nlz += (cpSize)(2 & mask);
     x = ((x << 2) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0x80000000);
-    nlz += 1 & mask;
+    nlz += (cpSize)(1 & mask);
     x = ((x << 1) & mask) | (x & ~mask);
 
     mask = cpIsZero_ct(x & 0x80000000);
-    nlz += 1 & mask;
+    nlz += (cpSize)(1 & mask);
 #endif
     return nlz;
 }

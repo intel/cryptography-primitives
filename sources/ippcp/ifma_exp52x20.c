@@ -123,7 +123,7 @@ IPP_OWN_DEFN(void, ifma256_exp52x20, (Ipp64u *out,
         extract_multiplier(red_Y, (const Ipp64u(*)[LEN52])red_table, (int)red_table_idx);
 
         /* process other exp windows */
-        for (exp_bit_no -= EXP_WIN_SIZE; exp_bit_no >= 0; exp_bit_no -= EXP_WIN_SIZE) {
+        for (exp_bit_no -= (int)EXP_WIN_SIZE; exp_bit_no >= 0; exp_bit_no -= (int)EXP_WIN_SIZE) {
             /* series of squaring */
             AMS(red_Y, red_Y, modulus, k0);
             AMS(red_Y, red_Y, modulus, k0);

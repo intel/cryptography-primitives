@@ -123,7 +123,7 @@ IPP_OWN_DEFN(void,
         /* fixed window param */
         cpSize bitsizeE   = BITSIZE_BNU(dataE, nsE);
         cpSize window     = cpMontExp_WinSize(bitsizeE);
-        BNU_CHUNK_T mask  = (1 << window) - 1;
+        BNU_CHUNK_T mask  = ((BNU_CHUNK_T)1 << window) - 1;
         cpSize nPrecomute = 1 << window;
         //cpSize chunkSize = CACHE_LINE_SIZE/nPrecomute;
         int n;
@@ -151,7 +151,7 @@ IPP_OWN_DEFN(void,
             /* extract 1-st window value */
             Ipp32u eChunk    = *((Ipp32u*)((Ipp16u*)dataE + eBit / BITSIZE(Ipp16u)));
             int shift        = eBit & 0xF;
-            Ipp32u windowVal = (eChunk >> shift) & mask;
+            Ipp32u windowVal = (Ipp32u)((eChunk >> shift) & mask);
 
             /* initialize result */
             COPY_BNU(dataY, pResource + windowVal * (BNU_CHUNK_T)nsM, nsM);
@@ -166,7 +166,7 @@ IPP_OWN_DEFN(void,
                 /* extract next window value */
                 eChunk    = *((Ipp32u*)((Ipp16u*)dataE + eBit / BITSIZE(Ipp16u)));
                 shift     = eBit & 0xF;
-                windowVal = (eChunk >> shift) & mask;
+                windowVal = (Ipp32u)((eChunk >> shift) & mask);
 
                 if (windowVal) {
                     /* extract precomputed value and multiply */

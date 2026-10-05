@@ -107,9 +107,12 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_VerifyCore, (const Ipp8u* mu,
     Ipp8u lambda_4            = mldsaCtx->params.lambda_div_4;
     _cpMLDSAStorage* pStorage = &mldsaCtx->storage;
 
-    IppPoly* z  = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
-    IppPoly* h  = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
-    IppPoly* w_ = (IppPoly*)cp_mlStorageAllocate(pStorage, k * sizeof(IppPoly) + CP_ML_ALIGNMENT);
+    IppPoly* z =
+        (IppPoly*)cp_mlStorageAllocate(pStorage, (Ipp32s)(k * sizeof(IppPoly) + CP_ML_ALIGNMENT));
+    IppPoly* h =
+        (IppPoly*)cp_mlStorageAllocate(pStorage, (Ipp32s)(k * sizeof(IppPoly) + CP_ML_ALIGNMENT));
+    IppPoly* w_ =
+        (IppPoly*)cp_mlStorageAllocate(pStorage, (Ipp32s)(k * sizeof(IppPoly) + CP_ML_ALIGNMENT));
     IPP_BADARG_RET((z == NULL || h == NULL || w_ == NULL), ippStsMemAllocErr);
 
     sts = cp_ml_sigDecode(sig, z, h, mldsaCtx);
@@ -172,9 +175,11 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_VerifyCore, (const Ipp8u* mu,
     *is_valid = cpIsEquBlock_ct(c_, c__, lambda_4) & 1;
 
     /* Release locally used storage */
-    sts = cp_mlStorageRelease(pStorage, lambda_4 + CP_ML_ALIGNMENT);                    // c__
+    sts = cp_mlStorageRelease(pStorage, lambda_4 + CP_ML_ALIGNMENT); // c__
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
-    sts = cp_mlStorageRelease(pStorage, 3 * k * sizeof(IppPoly) + 3 * CP_ML_ALIGNMENT); // z,h,w_
+    sts = cp_mlStorageRelease(
+        pStorage,
+        (Ipp32s)(3 * k * (Ipp32s)sizeof(IppPoly) + 3 * CP_ML_ALIGNMENT)); // z,h,w_
     IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
     return sts;

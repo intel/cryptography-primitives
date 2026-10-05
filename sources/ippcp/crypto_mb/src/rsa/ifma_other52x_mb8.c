@@ -3108,7 +3108,7 @@ __MBX_INLINE __m256i lzcnt_epi64(const __m256i a)
 
         stop_count = _mm256_or_si256(stop_count, is_not_zero);
 
-        if (_mm256_movemask_epi8(stop_count) == 0xffffffff)
+        if ((int32u)_mm256_movemask_epi8(stop_count) == 0xffffffff)
             break;
 
         lzcnt = _mm256_or_si256(_mm256_and_si256(stop_count, lzcnt),

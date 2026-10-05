@@ -71,9 +71,9 @@ IPPCP_INLINE void MaskCounter128(Ipp8u* pMaskIV, int ctrBtSize)
     int n;
     for (n = 0; n < MBS_RIJ128; n++) {
         int d                 = n - maskPosition;
-        Ipp8u storedMaskValue = maskValue & ~cpIsMsb_ct((BNU_CHUNK_T)d);
+        Ipp8u storedMaskValue = (Ipp8u)(maskValue & ~cpIsMsb_ct((BNU_CHUNK_T)d));
         pMaskIV[n]            = storedMaskValue;
-        maskValue |= ~cpIsMsb_ct((BNU_CHUNK_T)d);
+        maskValue |= (Ipp8u)~cpIsMsb_ct((BNU_CHUNK_T)d);
     }
 }
 
@@ -270,7 +270,7 @@ static IppStatus cpProcessAES_ctr128(const Ipp8u* pSrc,
 
             pSrc += blocks * MBS_RIJ128;
             pDst += blocks * MBS_RIJ128;
-            dataLen -= blocks * MBS_RIJ128;
+            dataLen -= (int)(blocks * MBS_RIJ128);
         }
 
         if (dataLen) {

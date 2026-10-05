@@ -80,16 +80,20 @@ IPPCP_INLINE IppStatus cp_SampleNTT_MB4(Ipp16sPoly* polyA, const Ipp8u B1[34], c
         }
 
         Ipp16u d1[CP_ML_KEM_NUM_BUFFERS];
-        d1[0] = arrC[0][buffer_bytes_used + 0] + 256 * (arrC[0][buffer_bytes_used + 1] % 16);
-        d1[1] = arrC[1][buffer_bytes_used + 0] + 256 * (arrC[1][buffer_bytes_used + 1] % 16);
-        d1[2] = arrC[2][buffer_bytes_used + 0] + 256 * (arrC[2][buffer_bytes_used + 1] % 16);
-        d1[3] = arrC[3][buffer_bytes_used + 0] + 256 * (arrC[3][buffer_bytes_used + 1] % 16);
+        d1[0] =
+            (Ipp16u)(arrC[0][buffer_bytes_used + 0] + 256 * (arrC[0][buffer_bytes_used + 1] % 16));
+        d1[1] =
+            (Ipp16u)(arrC[1][buffer_bytes_used + 0] + 256 * (arrC[1][buffer_bytes_used + 1] % 16));
+        d1[2] =
+            (Ipp16u)(arrC[2][buffer_bytes_used + 0] + 256 * (arrC[2][buffer_bytes_used + 1] % 16));
+        d1[3] =
+            (Ipp16u)(arrC[3][buffer_bytes_used + 0] + 256 * (arrC[3][buffer_bytes_used + 1] % 16));
 
         Ipp16u d2[CP_ML_KEM_NUM_BUFFERS];
-        d2[0] = arrC[0][buffer_bytes_used + 1] / 16 + 16 * arrC[0][buffer_bytes_used + 2];
-        d2[1] = arrC[1][buffer_bytes_used + 1] / 16 + 16 * arrC[1][buffer_bytes_used + 2];
-        d2[2] = arrC[2][buffer_bytes_used + 1] / 16 + 16 * arrC[2][buffer_bytes_used + 2];
-        d2[3] = arrC[3][buffer_bytes_used + 1] / 16 + 16 * arrC[3][buffer_bytes_used + 2];
+        d2[0] = (Ipp16u)(arrC[0][buffer_bytes_used + 1] / 16 + 16 * arrC[0][buffer_bytes_used + 2]);
+        d2[1] = (Ipp16u)(arrC[1][buffer_bytes_used + 1] / 16 + 16 * arrC[1][buffer_bytes_used + 2]);
+        d2[2] = (Ipp16u)(arrC[2][buffer_bytes_used + 1] / 16 + 16 * arrC[2][buffer_bytes_used + 2]);
+        d2[3] = (Ipp16u)(arrC[3][buffer_bytes_used + 1] / 16 + 16 * arrC[3][buffer_bytes_used + 2]);
 
         // Fill elements of up to 4 polynomials
         for (Ipp32s buf = 0; buf < numBuffers; buf++) {
@@ -141,8 +145,8 @@ IPPCP_INLINE IppStatus cp_SampleNTT(Ipp16sPoly* polyA, const Ipp8u B[34], IppsML
         Ipp8u arrC[3];
         sts = ippsHashSqueeze_rmf(arrC, 3, hash_state);
 
-        Ipp16u d1 = arrC[0] + 256 * (arrC[1] % 16);
-        Ipp16u d2 = arrC[1] / 16 + 16 * arrC[2];
+        Ipp16u d1 = (Ipp16u)(arrC[0] + 256 * (arrC[1] % 16));
+        Ipp16u d2 = (Ipp16u)(arrC[1] / 16 + 16 * arrC[2]);
         if (d1 < mlkemCtx->params.q) {
             polyA->values[j] = (Ipp16s)d1;
             j++;

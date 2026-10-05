@@ -125,4 +125,9 @@ IPP_OWN_DEFN(void, cpComputeDigest, (Ipp8u * pHashTag, int hashTagLen, const Ipp
         IPPCP_GCC_IGNORE_POP
     }
     CopyBlock(hash, pHashTag, hashTagLen);
+
+    /* clear secret data (only the bytes actually written hold secret material:
+       bufferLen bytes of the padded block, ivSize bytes of the hash state) */
+    PurgeBlock(buffer, bufferLen);
+    PurgeBlock(hash, ivSize);
 }

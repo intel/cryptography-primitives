@@ -72,7 +72,7 @@ mbx_status mbx_rsa_public_ssl_mb8(const int8u* const from_pa[8],
         }
 
         /* check rsa size */
-        if (expected_rsa_bitsize != BN_num_bits(n)) {
+        if (expected_rsa_bitsize != (int)BN_num_bits(n)) {
             status = MBX_SET_STS(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
             continue;
         }

@@ -58,8 +58,8 @@ IPPCP_INLINE __m512i adcLo_epi64(__m512i a, __m512i b)
     // check overflow in each low 64-bit of 128-bit numbers
     __mmask8 overMsk = _mm512_cmplt_epu64_mask(a, b);
     // get mask of each high 64-bit that need to be increased
-    overMsk <<= 1;
-    a = _mm512_mask_add_epi64(a, overMsk, a, M512(incHiByOneMask));
+    overMsk = (__mmask8)(overMsk << 1);
+    a       = _mm512_mask_add_epi64(a, overMsk, a, M512(incHiByOneMask));
     return a;
 }
 
@@ -228,8 +228,8 @@ IPP_OWN_DEFN(void, EncryptCTR_RIJ128pipe_VAES_NI, (const Ipp8u* pSrc,
     if (remainded_length) {
         __m512i counter0 = _mm512_add_epi64(incMsk, ctr512);
         __mmask8 overMsk = _mm512_cmplt_epu64_mask(counter0, ctr512);
-        overMsk <<= 1;
-        counter0 = _mm512_mask_add_epi64(counter0, overMsk, counter0, M512(incHiByOneMask));
+        overMsk          = (__mmask8)(overMsk << 1);
+        counter0         = _mm512_mask_add_epi64(counter0, overMsk, counter0, M512(incHiByOneMask));
 
         incMsk = M512(nextIncLoMask);
         ctr512 = counter0;

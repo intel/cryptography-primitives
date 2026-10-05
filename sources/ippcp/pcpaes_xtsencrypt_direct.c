@@ -244,7 +244,7 @@ IPPFUN(IppStatus, ippsAESEncryptXTS_Direct, (const Ipp8u* pSrc,
                     Ipp8u partBlockMask = (Ipp8u)((0xFF) << ((BYTESIZE - encBlocklast) % BYTESIZE));
                     Ipp8u x             = pSrc[AES_BLK_SIZE + partBlockSize];
                     Ipp8u y             = cc[partBlockSize];
-                    x                   = (x & partBlockMask) | (y & ~partBlockMask);
+                    x                   = (Ipp8u)((x & partBlockMask) | (y & ~partBlockMask));
                     pp[partBlockSize]   = x;
                     cc[partBlockSize] &= partBlockMask;
                     partBlockSize++;

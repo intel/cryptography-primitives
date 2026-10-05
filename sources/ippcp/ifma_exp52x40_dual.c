@@ -152,7 +152,7 @@ IPP_OWN_DEFN(void, ifma256_exp52x40_dual, (Ipp64u out [2][LEN52],
                              1);
 
         /* process other exp windows */
-        for (exp_bit_no -= EXP_WIN_SIZE; exp_bit_no >= 0; exp_bit_no -= EXP_WIN_SIZE) {
+        for (exp_bit_no -= (int)EXP_WIN_SIZE; exp_bit_no >= 0; exp_bit_no -= (int)EXP_WIN_SIZE) {
             /* extract pre-computed multiplier from the table */
             {
                 Ipp64u T;

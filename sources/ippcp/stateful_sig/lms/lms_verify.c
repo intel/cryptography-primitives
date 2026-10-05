@@ -95,7 +95,7 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
     Ipp8u* pAuthPath                = pSign->_pAuthPath;
 
     // Check the validity of the parsed signature parameters
-    Ipp32u qLimit = 1 << hParam;
+    Ipp32u qLimit = 1u << hParam;
     if ((lmsTypePk != lmsTypeSig) || (lmotsTypePk != lmotsTypeSig) || (q >= qLimit)) {
         return ippStsBadArgErr;
     }
@@ -175,7 +175,7 @@ IPPFUN(IppStatus, ippsLMSVerify, (const Ipp8u* pMsg,
 
     /*    Compute the candidate LMS root value Tc    */
     /* --------------------------------------------- */
-    Ipp32u node_num  = (1 << hParam) + q;
+    Ipp32u node_num  = (1u << hParam) + q;
     Ipp8u* tmpBuffKc = pBuffer;
     // I || u32str(node_num)
     cp_to_byte(tmpBuffKc + CP_PK_I_BYTESIZE, /*node_num byteLen*/ 4, node_num);

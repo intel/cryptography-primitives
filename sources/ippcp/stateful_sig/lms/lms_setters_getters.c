@@ -319,7 +319,7 @@ IPPFUN(IppStatus, ippsLMSSetSignatureState, (const IppsLMSAlgoType lmsType,
     CP_LMS_SET_SIGN_CTX_ID(pState);
 
     /* Check q value before set */
-    Ipp32u qLimit = 1 << lmsParams.h;
+    Ipp32u qLimit = 1u << lmsParams.h;
     IPP_BADARG_RET(q >= qLimit, ippStsBadArgErr);
 
     pState->_q          = q;

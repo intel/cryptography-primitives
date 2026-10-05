@@ -61,7 +61,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Wformat-security")
 # Warning level = 4
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4 -Wall")
 # Changes all warnings to errors.
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
 # Detects some buffer overruns that overwrite a function's return address, exception handler address, or certain types of parameters.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /GS")
 # Controls how the members of a structure are packed into memory and specifies the same packing for all structures in a module.

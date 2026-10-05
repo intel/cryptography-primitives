@@ -47,7 +47,7 @@
  */
 IPPCP_INLINE mask8 check_bit(const mask8 a, int bit)
 {
-    return (mask8)((mask8)0 - ((a >> bit) & 1u));
+    return (mask8)(0u - (((Ipp32u)a >> bit) & 1u));
 }
 
 /**
@@ -62,7 +62,7 @@ IPPCP_INLINE mask8 check_bit(const mask8 a, int bit)
 IPPCP_INLINE mask8 is_zero_i64(const m512 a)
 {
     const mask8 mask = cmp_i64_mask(a, setzero_i64(), _MM_CMPINT_NE);
-    return check_bit(((mask8)~mask & (mask - 1u)), 7);
+    return check_bit((mask8)(~(Ipp32u)mask & ((Ipp32u)mask - 1u)), 7);
 }
 
 #endif // (_IPP32E >= _IPP32E_K1)

@@ -66,7 +66,7 @@ IPP_OWN_DEFN(IppStatus,
 
     for (Ipp8u i = 0; i < mldsaCtx->params.tau; ++i) {
         Ipp8u j;
-        Ipp8u shifted_i = i + (Ipp8u)(CP_ML_N - mldsaCtx->params.tau);
+        Ipp8u shifted_i = (Ipp8u)(i + (Ipp8u)(CP_ML_N - mldsaCtx->params.tau));
         sts             = ippsHashSqueeze_rmf(&j, 1, hash_state);
         IPP_BADARG_RET((sts != ippStsNoErr), sts);
 
@@ -460,11 +460,11 @@ IPP_OWN_DEFN(IppStatus,
     Ipp8u nBuffs    = 4;
     Ipp8u remainder = (Ipp8u)(k * l & (nBuffs - 1));
     Ipp8u i         = 0;
-    for (; i < k * l - remainder; i += nBuffs) {
+    for (; i < k * l - remainder; i = (Ipp8u)(i + nBuffs)) {
         for (Ipp8u j = 0; j < nBuffs; j++) {
-            Ipp8u ij = i + j;
+            Ipp8u ij = (Ipp8u)(i + j);
             Ipp8u r  = ij / l;
-            Ipp8u s  = ij - (r * l);
+            Ipp8u s  = (Ipp8u)(ij - (r * l));
 
             rho_j_i[j][32] = s;
             rho_j_i[j][33] = r;
@@ -483,9 +483,9 @@ IPP_OWN_DEFN(IppStatus,
     if (remainder != 0) {
         nBuffs = remainder;
         for (Ipp8u j = 0; j < nBuffs; j++) {
-            Ipp8u ij = i + j;
+            Ipp8u ij = (Ipp8u)(i + j);
             Ipp8u r  = ij / l;
-            Ipp8u s  = ij - (r * l);
+            Ipp8u s  = (Ipp8u)(ij - (r * l));
 
             rho_j_i[j][32] = s;
             rho_j_i[j][33] = r;
@@ -542,13 +542,13 @@ IPP_OWN_DEFN(IppStatus,
     CopyBlock(rho, rho_j_i[2], 64);
     CopyBlock(rho, rho_j_i[3], 64);
 
-    Ipp8u nIters = (l + 3) / 4;
+    Ipp8u nIters = (Ipp8u)((l + 3) / 4);
     Ipp8u nBuffs = 4;
 
     // process 1st loop over l
     for (Ipp8u iter = 0; iter < nIters; iter++) {
         for (Ipp8u i = 0; i < nBuffs; i++) {
-            rho_j_i[i][64] = i + iter * 4;
+            rho_j_i[i][64] = (Ipp8u)(i + iter * 4);
             rho_j_i[i][65] = 0;
         }
 
@@ -562,15 +562,15 @@ IPP_OWN_DEFN(IppStatus,
         if (sts != ippStsNoErr)
             goto exit;
 
-        nBuffs = l - nBuffs;
+        nBuffs = (Ipp8u)(l - nBuffs);
     }
 
     // process 2nd loop over k
-    nIters = (k + 3) / 4;
+    nIters = (Ipp8u)((k + 3) / 4);
     nBuffs = 4;
     for (Ipp8u iter = 0; iter < nIters; iter++) {
         for (Ipp8u i = 0; i < nBuffs; i++) {
-            rho_j_i[i][64] = i + iter * 4 + l;
+            rho_j_i[i][64] = (Ipp8u)(i + iter * 4 + l);
             rho_j_i[i][65] = 0;
         }
 
@@ -583,7 +583,7 @@ IPP_OWN_DEFN(IppStatus,
                                        mldsaCtx);
         if (sts != ippStsNoErr)
             goto exit;
-        nBuffs = k - nBuffs;
+        nBuffs = (Ipp8u)(k - nBuffs);
     }
 
 #else
@@ -599,7 +599,7 @@ IPP_OWN_DEFN(IppStatus,
     }
 
     for (Ipp8u r = 0; r < k; r++) {
-        rho_[64] = r + l;
+        rho_[64] = (Ipp8u)(r + l);
         rho_[65] = 0;
         sts      = cp_ml_rejBoundedPoly(rho_, s2 + r, mldsaCtx);
         if (sts != ippStsNoErr)
@@ -626,7 +626,7 @@ IPP_OWN_DEFN(IppStatus,
 {
     IppStatus sts             = ippStsErr;
     Ipp32s gamma_1            = mldsaCtx->params.gamma_1;
-    Ipp8u c                   = 1 + cp_ml_bitlen((Ipp32u)(gamma_1 - 1));
+    Ipp8u c                   = (Ipp8u)(1 + cp_ml_bitlen((Ipp32u)(gamma_1 - 1)));
     Ipp32u bitlen_ab          = cp_ml_bitlen((Ipp32u)(2 * gamma_1 - 1));
     const Ipp8u l             = mldsaCtx->params.l;
     _cpMLDSAStorage* pStorage = &mldsaCtx->storage;
@@ -735,13 +735,13 @@ IPP_OWN_DEFN(IppStatus,
     Ipp8u remainder = (Ipp8u)((k * l) & (nBuffs - 1));
     Ipp8u i         = 0;
     IppPoly temp[4];
-    for (; i < k * l - remainder; i += nBuffs) {
+    for (; i < k * l - remainder; i = (Ipp8u)(i + nBuffs)) {
         Ipp8u r[4];
         Ipp8u s[4];
         for (Ipp8u j = 0; j < nBuffs; j++) {
-            Ipp8u ij = i + j;
+            Ipp8u ij = (Ipp8u)(i + j);
             r[j]     = ij / l;
-            s[j]     = ij - (r[j] * l);
+            s[j]     = (Ipp8u)(ij - (r[j] * l));
 
             rho_j_i[j][32] = s[j];
             rho_j_i[j][33] = r[j];
@@ -761,9 +761,9 @@ IPP_OWN_DEFN(IppStatus,
     if (remainder != 0) {
         nBuffs = remainder;
         for (Ipp8u j = 0; j < nBuffs; j++) {
-            Ipp8u ij = i + j;
+            Ipp8u ij = (Ipp8u)(i + j);
             Ipp8u r  = ij / l;
-            Ipp8u s  = ij - (r * l);
+            Ipp8u s  = (Ipp8u)(ij - (r * l));
 
             rho_j_i[j][32] = s;
             rho_j_i[j][33] = r;

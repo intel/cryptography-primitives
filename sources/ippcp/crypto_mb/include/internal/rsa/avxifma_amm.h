@@ -61,14 +61,14 @@ __MBX_INLINE void ifma_amm52xN_mb4(int64u* out_mb,
     zero_mb4(C, N);
 
     for (i = 0; i < N; i++) {
-        const register __m256i Bi = inpB[i];
+        register const __m256i Bi = inpB[i];
         register __m256i r0, r1, r2, r3, r4, r5, r6, r7;
         int j;
 
         /* calculate C[0] and prepare T */
         r0 = _mm256_madd52lo_epu64(C[0], Bi, inpA[0]);
 
-        const register __m256i T = _mm256_madd52lo_epu64(_mm256_setzero_si256(), r0, K0);
+        register const __m256i T = _mm256_madd52lo_epu64(_mm256_setzero_si256(), r0, K0);
 
         r1 = _mm256_madd52lo_epu64(C[1], Bi, inpA[1]);
 

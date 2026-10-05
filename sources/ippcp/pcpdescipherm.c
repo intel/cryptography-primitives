@@ -96,13 +96,13 @@ static BNU_CHUNK_T getSbox(const BNU_CHUNK_T sbox[], int idx)
 static Ipp8u getSbox8u(const Ipp8u sbox[], int idx)
 {
     int shift = idx % (Ipp32s)((sizeof(BNU_CHUNK_T)) / sizeof(Ipp8u));
-    idx /= ((sizeof(BNU_CHUNK_T)) / sizeof(Ipp8u));
+    idx /= (int)((sizeof(BNU_CHUNK_T)) / sizeof(Ipp8u));
     return (Ipp8u)(getSbox((BNU_CHUNK_T*)sbox, idx) >> (shift * 8));
 }
 static Ipp32u getSbox32u(const Ipp8u sbox[], int idx)
 {
     int shift = idx % (Ipp32s)((sizeof(BNU_CHUNK_T)) / sizeof(Ipp32u));
-    idx /= ((sizeof(BNU_CHUNK_T)) / sizeof(Ipp32u));
+    idx /= (int)((sizeof(BNU_CHUNK_T)) / sizeof(Ipp32u));
     return (Ipp32u)(getSbox((BNU_CHUNK_T*)sbox, idx) >> shift * 32);
 }
 

@@ -76,7 +76,7 @@ IPP_OWN_DEFN(void, cpBigNumListInit, (int feBitSize, int nodes, BigNumNode* pLis
     /* size of buffer per single big number */
     ippsBigNumGetSize(bnLen, &itemSize);
     /* size of list item */
-    itemSize += sizeof(BigNumNode);
+    itemSize += (int)sizeof(BigNumNode);
 
     {
         int n;

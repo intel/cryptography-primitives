@@ -57,9 +57,9 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
     CopyBlock(inRand_N, inRand_N_2, CP_RAND_DATA_BYTES);
     CopyBlock(inRand_N, inRand_N_3, CP_RAND_DATA_BYTES);
     inRand_N_0[32] = *N;
-    inRand_N_1[32] = *N + 1;
-    inRand_N_2[32] = *N + 2;
-    inRand_N_3[32] = *N + 3;
+    inRand_N_1[32] = (Ipp8u)(*N + 1);
+    inRand_N_2[32] = (Ipp8u)(*N + 2);
+    inRand_N_3[32] = (Ipp8u)(*N + 3);
 
     /* Outputs of the PRF function */
     Ipp8u prfOutput_0[CP_ML_KEM_ETA_MAX * 64];
@@ -84,7 +84,7 @@ IPPCP_INLINE IppStatus cp_polyGenInternal_MB4(Ipp16sPoly* pOutPoly,
                                 prfOutput_1,
                                 prfOutput_2,
                                 prfOutput_3,
-                                64 * eta,
+                                (Ipp64u)(64 * eta),
                                 &state_mb4);
 
     /* Final processing of the required amount of the buffers */
@@ -187,7 +187,7 @@ IPPCP_INLINE IppStatus cp_polyGenInternal(Ipp16sPoly* pOutPoly,
 
     inRand_N[32] = *N;
 #if (_IPP32E >= _IPP32E_K0)
-    cp_SHA3_SHAKE256_HashMessage(prfOutput, 64 * eta, inRand_N, 33);
+    cp_SHA3_SHAKE256_HashMessage(prfOutput, (Ipp64u)(64 * eta), inRand_N, 33);
 #else
     IppsHashMethod hash_method_struct;
     sts = ippsHashMethodSet_SHAKE256(&hash_method_struct, 8 * 64 * eta);

@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive. Modular Arithmetic Engine. General Functionality
-// 
+//
 //  Contents:
 //        alm_mont_inv_ct()
 //
@@ -30,6 +30,7 @@
 #include "pcpbnuarith.h"
 #include "gsmodstuff.h"
 #include "pcpmask_ct.h"
+#include "pcptool.h"
 
 /*
 // almost Montgomery Inverse
@@ -129,7 +130,11 @@ IPP_OWN_DEFN(int, alm_mont_inv_ct, (BNU_CHUNK_T * pr, const BNU_CHUNK_T* pa, gsM
     cpSub_BNU(pr, pm, pr, mLen);
 
     /* test if inversion not found (k=0) */
-    k &= cpIsGFpElemEquChunk_ct(pu, mLen, 1);
+    k &= (int)cpIsGFpElemEquChunk_ct(pu, mLen, 1);
+
+    /* clear the secret working set (copy of input `a` and inversion intermediates)
+       before releasing the pool */
+    PurgeBlock(pBuffer, polLength * MOD_PELEN(pME) * (int)sizeof(BNU_CHUNK_T));
 
     gsModPoolFree(pME, polLength);
     return k;

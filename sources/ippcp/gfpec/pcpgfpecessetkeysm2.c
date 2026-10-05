@@ -27,6 +27,7 @@
 
 #include "gfpec/pcpgfpecessm2.h"
 #include "gfpec/pcpgfpecstuff.h"
+#include "pcptool.h"
 
 /*F*
 //    Name: ippsGFpECESSetKey_SM2
@@ -104,6 +105,8 @@ IPPFUN(IppStatus, ippsGFpECESSetKey_SM2, (const IppsBigNumState* pPrivate,
                     pState->wasNonZero = 0;
                     pState->state      = ECESAlgoKeySet;
                 }
+                /* clear GFp pool buffers holding the shared-secret coordinates before release */
+                PurgeBlock(GFPE_DATA(&ptX), 2 * GFP_PELEN(pGFE) * (int)sizeof(BNU_CHUNK_T));
                 cpGFpReleasePool(2, pGFE); /* release ptX and ptY from the pool */
             }
             cpEcGFpReleasePool(1, pEC);    /* release PT from the pool */

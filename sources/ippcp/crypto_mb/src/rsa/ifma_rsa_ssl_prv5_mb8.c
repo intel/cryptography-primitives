@@ -72,8 +72,8 @@ mbx_status mbx_rsa_private_crt_ssl_mb8(const int8u* const from_pa[8],
         }
 
         /* check rsa's factors */
-        if (((expected_rsa_bitsize / 2) != BN_num_bits(p)) ||
-            ((expected_rsa_bitsize / 2) != BN_num_bits(q))) {
+        if (((expected_rsa_bitsize / 2) != (int)BN_num_bits(p)) ||
+            ((expected_rsa_bitsize / 2) != (int)BN_num_bits(q))) {
             status = MBX_SET_STS(status, buf_no, MBX_STATUS_MISMATCH_PARAM_ERR);
             continue;
         }

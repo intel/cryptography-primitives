@@ -202,6 +202,10 @@ static mbx_status sm2_ecdsa_sign_mb8(U64 sign_r[],
 
     /* r = (e + x1) mod n */
     MB_FUNC_NAME(ifma_tomont52_nsm2_)(sign_r, P_eph.X);
+
+    /* clear ephemeral point (projective coords derived from the secret nonce) */
+    MB_FUNC_NAME(zero_)((int64u(*)[8]) & P_eph, sizeof(P_eph) / sizeof(U64));
+
     MB_FUNC_NAME(ifma_tomont52_nsm2_)(msg_digest, msg_digest);
 
     MB_FUNC_NAME(ifma_add52_nsm2_)(sign_r, sign_r, msg_digest); /* sign_r = (e + x1) */

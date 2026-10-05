@@ -83,9 +83,16 @@ IPPFUN(IppStatus, ippsAES_CCMGetTag, (Ipp8u * pTag, int tagLen, const IppsAES_CC
 #else
             encoder((Ipp8u*)MAC, (Ipp8u*)MAC, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
 #endif
+
+            /* clear secret data (holds a copy of the residual data block) */
+            PurgeBlock(BLK, sizeof(BLK));
         }
 
         XorBlock(MAC, AESCCM_S0(pState), pTag, (cpSize)tagLen);
+
+        /* clear secret data (copy of the CCM MAC state) */
+        PurgeBlock(MAC, sizeof(MAC));
+
         return ippStsNoErr;
     }
 }

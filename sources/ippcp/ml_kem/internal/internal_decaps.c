@@ -145,7 +145,7 @@ IPP_OWN_DEFN(IppStatus, cp_MLKEMdecaps_internal, (Ipp8u K[CP_SHARED_SECRET_BYTES
 
     /* 9-10: if c != c` then K` <- K`` */
     BNU_CHUNK_T is_equal = cpIsEquBlock_ct(ciphertext, ciphertext1, ciphertext_size);
-    MASKED_COPY_BNU(K, is_equal, K1, K2, CP_SHARED_SECRET_BYTES);
+    MASKED_COPY_BNU(K, (Ipp8u)is_equal, K1, K2, CP_SHARED_SECRET_BYTES);
 
 exit:
     /* Release all locally used storage and purge stack */

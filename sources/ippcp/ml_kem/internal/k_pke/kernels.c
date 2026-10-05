@@ -45,7 +45,7 @@ IPPCP_INLINE void cp_bitsToBytes(const Ipp8u* pInp, Ipp8u* pOut, const Ipp32u nu
     for (Ipp32u i = 0; i < numElmByteArr; i++) {
         Ipp8u B = 0;
         for (Ipp32u j = 0; j < 8; j++) {
-            B = B + (Ipp8u)(pInp[8 * i + j] << j);
+            B = (Ipp8u)(B + (Ipp8u)(pInp[8 * i + j] << j));
         }
         pOut[i] = B;
     }
@@ -97,7 +97,7 @@ IPP_OWN_DEFN(IppStatus, cp_Compress, (Ipp16u * out, const Ipp16s in, const Ipp16
 
     /* transform numbers from the Barrett reduced form to positive representation */
     Ipp16s u = in;
-    u += (u >> 15) & CP_ML_KEM_Q;
+    u        = (Ipp16s)(u + ((u >> 15) & CP_ML_KEM_Q));
 
     /* Constant-time compression: round(u * 2^d / 3329) mod 2^d
      * To avoid variable-time integer division, the operation is computed as
@@ -155,7 +155,7 @@ IPP_OWN_DEFN(IppStatus, cp_Decompress, (Ipp16u * out, const Ipp16s in, const Ipp
 
     /* transform numbers from the Barrett reduced form to positive representation */
     Ipp16s u = in;
-    u += (u >> 15) & CP_ML_KEM_Q;
+    u        = (Ipp16s)(u + ((u >> 15) & CP_ML_KEM_Q));
 
     /* Constant-time decompression: round(u * 3329 / 2^d) 
      * Since 2^d is a power of 2, division is an exact right-shift.
@@ -253,7 +253,7 @@ IPP_OWN_DEFN(IppStatus,
 /* Batched processing of all bytes from B to bitsArr -
    read all 32*d bytes from B and put 8*32*d elements in bitsArr */
 #if !CP_ML_KEM_MEMORY_OPTIMIZED
-    sts = cp_bytesToBits(B, bitsArr, 32 * d, BITS_BUFFER_BYTESIZE);
+    sts = cp_bytesToBits(B, bitsArr, (Ipp32u)(32 * d), BITS_BUFFER_BYTESIZE);
     if (sts != ippStsNoErr) {
         return sts;
     }
@@ -274,7 +274,7 @@ IPP_OWN_DEFN(IppStatus,
 
         pPolyF->values[i] = 0;
         for (Ipp32u j = 0; j < d; j++) {
-            pPolyF->values[i] += bitsArr[bitsArrIdx * d + j] << j;
+            pPolyF->values[i] = (Ipp16s)(pPolyF->values[i] + (bitsArr[bitsArrIdx * d + j] << j));
         }
     }
 
@@ -303,8 +303,9 @@ IPP_OWN_DEFN(IppStatus, cp_samplePolyCBD, (Ipp16sPoly * pPoly, const Ipp8u* pSee
 /* Batched processing of all bytes from pSeed to seedBits -
    read all 64*eta bytes from pSeed and put 8*64*eta elements in seedBits */
 #if !CP_ML_KEM_MEMORY_OPTIMIZED
-    sts = cp_bytesToBits(pSeed, seedBits, 64 * eta, SEED_BITS_BUFFER_BYTESIZE);
+    sts = cp_bytesToBits(pSeed, seedBits, (Ipp32u)(64 * eta), SEED_BITS_BUFFER_BYTESIZE);
     if (sts != ippStsNoErr) {
+        PurgeBlock(seedBits, sizeof(seedBits));
         return sts;
     }
 #endif
@@ -316,7 +317,7 @@ IPP_OWN_DEFN(IppStatus, cp_samplePolyCBD, (Ipp16sPoly * pPoly, const Ipp8u* pSee
    read 2*eta bytes from pSeed and put 8*2*eta elements in seedBits */
 #if CP_ML_KEM_MEMORY_OPTIMIZED
         if ((i & 7) == 0) {
-            sts |= cp_bytesToBits(pSeed, seedBits, 2 * eta, SEED_BITS_BUFFER_BYTESIZE);
+            sts |= cp_bytesToBits(pSeed, seedBits, (Ipp32u)(2 * eta), SEED_BITS_BUFFER_BYTESIZE);
             pSeed += 2 * eta;
         }
         seedBitsIdx = (i & 7);
@@ -325,14 +326,17 @@ IPP_OWN_DEFN(IppStatus, cp_samplePolyCBD, (Ipp16sPoly * pPoly, const Ipp8u* pSee
         Ipp16s x = 0;
         Ipp16s y = 0;
         for (Ipp8u j = 0; j < eta; j++) {
-            x += seedBits[2 * seedBitsIdx * eta + j];
-            y += seedBits[2 * seedBitsIdx * eta + eta + j];
+            x = (Ipp16s)(x + seedBits[2 * seedBitsIdx * eta + j]);
+            y = (Ipp16s)(y + seedBits[2 * seedBitsIdx * eta + eta + j]);
         }
 
         // The result will be mapped to the canonical positive representation in the reduction step
-        Ipp16s result    = x - y;
+        Ipp16s result    = (Ipp16s)(x - y);
         pPoly->values[i] = cp_mlkemBarrettReduce((Ipp32s)result);
     }
+
+    /* clear CBD sampling intermediate state (derived from secret PRF output) */
+    PurgeBlock(seedBits, sizeof(seedBits));
 
     return sts;
 }

@@ -95,6 +95,10 @@ IPPFUN(IppStatus, ippsAES_CMACGetTag, (Ipp8u * pMD, int mdLen, const IppsAES_CMA
         /* return truncated DAC */
         CopyBlock(locMac, pMD, mdLen);
 
+        /* clear secret data */
+        PurgeBlock(locBuffer, sizeof(locBuffer));
+        PurgeBlock(locMac, sizeof(locMac));
+
         return ippStsNoErr;
     }
 }

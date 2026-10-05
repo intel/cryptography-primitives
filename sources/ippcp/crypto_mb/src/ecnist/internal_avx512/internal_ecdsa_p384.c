@@ -69,7 +69,12 @@ static __mb_mask nistp384_ecdsa_sign_r_mb8(U64 sign_r[], const U64 skey[], int8u
     MB_FUNC_NAME(ifma_frommont52_p384_)(P.X, P.X);
     MB_FUNC_NAME(ifma_fastred52_pn384_)(sign_r, P.X); /* fast reduction p => n */
 
-    return MB_FUNC_NAME(is_zero_FE384_)(sign_r);
+    __mb_mask sign_r_is_zero = MB_FUNC_NAME(is_zero_FE384_)(sign_r);
+
+    /* clear ephemeral point (projective coords derived from the secret nonce) */
+    MB_FUNC_NAME(zero_)((int64u(*)[8])(&P), sizeof(P) / sizeof(U64));
+
+    return sign_r_is_zero;
 }
 
 /*

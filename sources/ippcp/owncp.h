@@ -182,8 +182,10 @@ IPPCP_INLINE Ipp32u IsFeatureEnabled(Ipp64u niMmask) { return (Ipp32u)cpGetFeatu
 #define MASKED_COPY_BNU(dst, mask, src1, src2, len)                  \
     {                                                                \
         cpSize i;                                                    \
+        IPPCP_GCC_IGNORE_PUSH("-Wconversion")                        \
         for (i = 0; i < (len); i++)                                  \
             (dst)[i] = ((mask) & (src1)[i]) | (~(mask) & (src2)[i]); \
+        IPPCP_GCC_IGNORE_POP                                         \
     }
 
 #if (_IPP > _IPP_PX || _IPP32E > _IPP32E_PX) && !defined(__INTEL_COMPILER) && \

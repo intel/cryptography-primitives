@@ -115,7 +115,7 @@ IPP_OWN_DEFN(cpSize, gsMontExpWin_BNU, (BNU_CHUNK_T* dataY,
             /* extract 1-st window value */
             Ipp32u eChunk = *((Ipp32u*)((Ipp16u*)dataEE + eBit / BITSIZE(Ipp16u)));
             int shift     = eBit & 0xF;
-            Ipp32u winVal = (eChunk >> shift) & mask;
+            Ipp32u winVal = (Ipp32u)((eChunk >> shift) & mask);
 
             /* initialize result */
             COPY_BNU(dataY, pTable + winVal * (Ipp32u)nsM, nsM);
@@ -129,7 +129,7 @@ IPP_OWN_DEFN(cpSize, gsMontExpWin_BNU, (BNU_CHUNK_T* dataY,
                 /* extract next window value */
                 eChunk = *((Ipp32u*)((Ipp16u*)dataEE + eBit / BITSIZE(Ipp16u)));
                 shift  = eBit & 0xF;
-                winVal = (eChunk >> shift) & mask;
+                winVal = (Ipp32u)((eChunk >> shift) & mask);
 
                 /* multiply precomputed value  */
                 MOD_METHOD(pMont)->mul(dataY, dataY, pTable + winVal * (Ipp32u)nsM, pMont);

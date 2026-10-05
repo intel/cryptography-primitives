@@ -42,7 +42,7 @@ static void LogicalLeftSift16(const Ipp8u* pSrc, Ipp8u* pDst)
     Ipp32u carry = 0;
     int n;
     for (n = 0; n < 16; n++) {
-        Ipp32u x         = pSrc[16 - 1 - n] + pSrc[16 - 1 - n] + carry;
+        Ipp32u x         = (Ipp32u)pSrc[16 - 1 - n] + pSrc[16 - 1 - n] + carry;
         pDst[16 - 1 - n] = (Ipp8u)x;
         carry            = (x >> 8) & 0xFF;
     }
@@ -113,13 +113,15 @@ IPPFUN(IppStatus, ippsAES_CMACInit, (const Ipp8u* pKey,
 
             msb = (CMAC_K1(pState))[0];
             LogicalLeftSift16(CMAC_K1(pState), CMAC_K1(pState));
-            (CMAC_K1(pState))[MBS_RIJ128 - 1] ^=
-                (Ipp8u)((0 - (msb >> 7)) & 0x87); /* ^ Rb changed for constant time execution */
+            (CMAC_K1(pState))[MBS_RIJ128 - 1] =
+                (Ipp8u)((CMAC_K1(pState))[MBS_RIJ128 - 1] ^
+                        ((0 - (msb >> 7)) & 0x87)); /* ^ Rb changed for constant time execution */
             /* precompute k2 subkey */
             msb = (CMAC_K1(pState))[0];
             LogicalLeftSift16(CMAC_K1(pState), CMAC_K2(pState));
-            (CMAC_K2(pState))[MBS_RIJ128 - 1] ^=
-                (Ipp8u)((0 - (msb >> 7)) & 0x87); /* ^ Rb changed for constant time execution */
+            (CMAC_K2(pState))[MBS_RIJ128 - 1] =
+                (Ipp8u)((CMAC_K2(pState))[MBS_RIJ128 - 1] ^
+                        ((0 - (msb >> 7)) & 0x87)); /* ^ Rb changed for constant time execution */
         }
 
         return sts;

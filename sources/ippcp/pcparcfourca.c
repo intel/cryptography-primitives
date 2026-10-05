@@ -66,7 +66,7 @@ IPPFUN(IppStatus, ippsARCFourInit, (const Ipp8u* pKey, int keyLen, IppsARCFourSt
         }
         j = 0;
         for (i = 0; i < 256; i++) {
-            j += pCtx->Sbox0[i] + kblk[i];
+            j              = (Ipp8u)(j + pCtx->Sbox0[i] + kblk[i]);
             tmp            = pCtx->Sbox0[j];
             pCtx->Sbox0[j] = pCtx->Sbox0[i];
             pCtx->Sbox0[i] = tmp;

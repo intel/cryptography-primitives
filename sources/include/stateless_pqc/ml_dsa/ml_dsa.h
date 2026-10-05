@@ -92,7 +92,7 @@ IPPCP_INLINE Ipp8u cp_ml_bitlen(Ipp32u b)
 IPPCP_INLINE Ipp32s cp_ml_coeffFromThreeBytes(Ipp8u b0, Ipp8u b1, Ipp8u b2)
 {
     if (b2 > 127) {
-        b2 -= 128;
+        b2 = (Ipp8u)(b2 - 128);
     }
     Ipp32s z = ((Ipp32s)(b0)) + (((Ipp32s)(b1)) << 8) + (((Ipp32s)(b2)) << 16);
     return (z < CP_ML_DSA_Q) ? z : -1;
@@ -104,9 +104,9 @@ IPPCP_INLINE Ipp8s cp_ml_coeffFromHalfByte(Ipp8u b, Ipp8u eta)
     Ipp8s b_s = (Ipp8s)b;
     if (eta == 2 && b < 15) {
         // 2 - (b % 5);
-        return 2 - (b_s - (b_s / 5) * 5);
+        return (Ipp8s)(2 - (b_s - (b_s / 5) * 5));
     } else if (eta == 4 && b < 9) {
-        return 4 - b_s;
+        return (Ipp8s)(4 - b_s);
     }
     return -100;
 }
@@ -286,28 +286,28 @@ IPPCP_INLINE void cp_ml_skEncode(const Ipp8u* rho,
     Ipp16u sk_position = 0;
 
     CopyBlock(rho, sk, 32);
-    sk_position += 32;
+    sk_position = (Ipp16u)(sk_position + 32);
 
     CopyBlock(K, sk + sk_position, 32);
-    sk_position += 32;
+    sk_position = (Ipp16u)(sk_position + 32);
 
     CopyBlock(tr, sk + sk_position, 64);
-    sk_position += 64;
+    sk_position = (Ipp16u)(sk_position + 64);
 
     Ipp8u l            = mldsaCtx->params.l;
     Ipp8u k            = mldsaCtx->params.k;
     Ipp8u eta          = mldsaCtx->params.eta;
-    Ipp8u bitlen_2_eta = cp_ml_bitlen(2 * eta);
+    Ipp8u bitlen_2_eta = cp_ml_bitlen((Ipp32u)(2 * eta));
 
     for (Ipp8u i = 0; i < l; i++) {
         cp_ml_bitPack(s1 + i, eta, bitlen_2_eta, sk + sk_position + i * 32 * bitlen_2_eta);
     }
-    sk_position += l * 32 * bitlen_2_eta;
+    sk_position = (Ipp16u)(sk_position + l * 32 * bitlen_2_eta);
 
     for (Ipp8u i = 0; i < k; i++) {
         cp_ml_bitPack(s2 + i, eta, bitlen_2_eta, sk + sk_position + i * 32 * bitlen_2_eta);
     }
-    sk_position += k * 32 * bitlen_2_eta;
+    sk_position = (Ipp16u)(sk_position + k * 32 * bitlen_2_eta);
 
     Ipp32s value = 1 << (CP_ML_DSA_D - 1);
     for (Ipp8u i = 0; i < k; i++) {
@@ -330,28 +330,28 @@ IPPCP_INLINE void cp_ml_skDecode(const Ipp8u* sk,
 {
     Ipp16u sk_position = 0;
     CopyBlock(sk, rho, 32);
-    sk_position += 32;
+    sk_position = (Ipp16u)(sk_position + 32);
 
     CopyBlock(sk + sk_position, K, 32);
-    sk_position += 32;
+    sk_position = (Ipp16u)(sk_position + 32);
 
     CopyBlock(sk + sk_position, tr, 64);
-    sk_position += 64;
+    sk_position = (Ipp16u)(sk_position + 64);
 
     Ipp8u l            = mldsaCtx->params.l;
     Ipp8u k            = mldsaCtx->params.k;
     Ipp8u eta          = mldsaCtx->params.eta;
-    Ipp8u bitlen_2_eta = cp_ml_bitlen(2 * eta);
+    Ipp8u bitlen_2_eta = cp_ml_bitlen((Ipp32u)(2 * eta));
 
     for (Ipp8u i = 0; i < l; i++) {
         cp_ml_bitUnpack(sk + sk_position + i * 32 * bitlen_2_eta, eta, bitlen_2_eta, s1 + i);
     }
-    sk_position += l * 32 * bitlen_2_eta;
+    sk_position = (Ipp16u)(sk_position + l * 32 * bitlen_2_eta);
 
     for (Ipp8u i = 0; i < k; i++) {
         cp_ml_bitUnpack(sk + sk_position + i * 32 * bitlen_2_eta, eta, bitlen_2_eta, s2 + i);
     }
-    sk_position += k * 32 * bitlen_2_eta;
+    sk_position = (Ipp16u)(sk_position + k * 32 * bitlen_2_eta);
 
     Ipp32s value = 1 << (CP_ML_DSA_D - 1);
     for (Ipp8u i = 0; i < k; i++) {
@@ -591,7 +591,7 @@ IPPCP_INLINE void cp_ml_NTT(IppPoly* f)
 {
     Ipp32u i = 1;
     for (Ipp8u len = CP_ML_N / 2; len >= 1; len >>= 1) {
-        for (Ipp32u start = 0; start < CP_ML_N; start += 2 * len) {
+        for (Ipp32u start = 0; start < CP_ML_N; start += 2u * len) {
             Ipp64s zeta = cp_mldsa_montgomery_zetas_ntt[i];
             i++;
             for (Ipp32u j = start; j < start + len; j++) {
@@ -708,7 +708,7 @@ IPPCP_INLINE Ipp32s cp_ml_montgomeryReduce(Ipp64s a)
     // (|a| reaches ~2^45, q_inv ~2^26 -> ~2^71 > INT64_MAX = UB), so compute it as
     // unsigned wraparound: well-defined and yields the same low 32 bits.
     Ipp32s t = (Ipp32s)(Ipp32u)((Ipp64u)a * (Ipp64u)q_inv);
-    t        = (a - (Ipp64s)t * CP_ML_DSA_Q) >> 32;
+    t        = (Ipp32s)((a - (Ipp64s)t * CP_ML_DSA_Q) >> 32);
     return t;
 }
 
