@@ -170,7 +170,7 @@ IPP_OWN_DEFN(IppStatus,
                                         CP_ML_DSA_SAMPLENTT_BUFF_SIZE,
                                         &state_mb4);
         }
-        iter += CP_ML_DSA_SAMPLENTT_TRIPLES;
+        iter = (Ipp16u)(iter + CP_ML_DSA_SAMPLENTT_TRIPLES);
     }
     /* Release locally used storage */
     PurgeBlock(j, sizeof(j));
@@ -340,7 +340,7 @@ IPP_OWN_DEFN(IppStatus,
                                         CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE,
                                         &state_mb4);
         }
-        iter += CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE;
+        iter = (Ipp16u)(iter + CP_ML_DSA_BOUNDED_POLY_BUFF_SIZE);
     }
     /* Release locally used storage */
     PurgeBlock(j, sizeof(j));
@@ -647,11 +647,11 @@ IPP_OWN_DEFN(IppStatus,
     cpSHA3_SHAKE256Ctx_mb4 state_mb4;
     state_mb4.ctx = state_buffer_mb4;
 
-    Ipp8u nIters = (l + 3) / 4;
+    Ipp8u nIters = (Ipp8u)((l + 3) / 4);
     Ipp8u nBuffs = 4;
     for (Ipp8u iter = 0; iter < nIters; iter++) {
         for (Ipp8u i = 0; i < nBuffs; i++) {
-            Ipp32u idx     = mu + i + iter * 4;
+            Ipp32u idx     = mu + (Ipp32u)(i + iter * 4);
             rho_j_i[i][64] = idx & 0xFF;
             rho_j_i[i][65] = (idx >> 8) & 0xFF;
         }
@@ -665,7 +665,7 @@ IPP_OWN_DEFN(IppStatus,
             cp_ml_bitUnpack(v + i * vlen, (Ipp32s)gamma_1, bitlen_ab, out + iter * 4 + i);
         }
 
-        nBuffs = l - nBuffs;
+        nBuffs = (Ipp8u)(l - nBuffs);
     }
 
     /* Release locally used storage */
