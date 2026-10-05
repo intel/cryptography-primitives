@@ -144,7 +144,7 @@ endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 foreach(opt ${MBX_PLATFORM_LIST})
     # Populate C source files in to corresponding folders per library 'letter'
-    set(mbx_c_cache_dir "${CMAKE_BINARY_DIR}/c_sources/crypto_mb/${opt}/c_${ARCH}")
+    set(mbx_c_cache_dir "${PROJECT_BINARY_DIR}/c_sources/crypto_mb/${opt}/c_${ARCH}")
     file(MAKE_DIRECTORY ${mbx_c_cache_dir})
     # Add a prefix to the source files, so that corresponding object files in the merged library are unique named
     foreach (file ${CRYPTO_MB_SOURCES_ORIGINAL})
@@ -181,7 +181,7 @@ foreach(opt ${MBX_PLATFORM_LIST})
 endforeach()
 
 if (MBX_MERGED_BLD)
-    set(DISPATCHER ${CMAKE_BINARY_DIR}/dispatcher/crypto_mb)
+    set(DISPATCHER ${PROJECT_BINARY_DIR}/dispatcher/crypto_mb)
     file(MAKE_DIRECTORY ${DISPATCHER})
     set(DISPATCHER_GENERATOR ${CRYPTO_MB_DISPATCHER_DIR}/gen_disp_crypto_mb.py)
     foreach(incl ${CRYPTO_MB_API})
@@ -191,11 +191,11 @@ if (MBX_MERGED_BLD)
     endforeach()
 
     file(GLOB DISPATCHER_HEADERS
-        ${CMAKE_BINARY_DIR}/dispatcher/crypto_mb/*.h
+        ${PROJECT_BINARY_DIR}/dispatcher/crypto_mb/*.h
         )
 
     file(GLOB DISPATCHER_C_SOURCES
-        ${CMAKE_BINARY_DIR}/dispatcher/crypto_mb/*.c
+        ${PROJECT_BINARY_DIR}/dispatcher/crypto_mb/*.c
         )
 
     set_source_files_properties(${DISPATCHER_C_SOURCES} PROPERTIES COMPILE_FLAGS "${CMAKE_C_FLAGS_SECURITY}")

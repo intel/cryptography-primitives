@@ -131,7 +131,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_LIST_DIR)
   set(IPP_CRYPTO_INCLUDE_DIR ${IPPCRYPTO_INCLUDE_DIRS})
   # Define output directory
   if(NOT CMAKE_OUTPUT_DIR)
-    set(CMAKE_OUTPUT_DIR "${CMAKE_BINARY_DIR}/.build")
+    set(CMAKE_OUTPUT_DIR "${PROJECT_BINARY_DIR}/.build")
   endif()
 else()
 # Build with library sources

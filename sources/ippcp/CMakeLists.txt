@@ -232,7 +232,7 @@ file(GLOB LIBRARY_ASM_SOURCES_ORIGINAL
         ${IPP_CRYPTO_SOURCES_DIR}/asm_${ARCH}/*.asm
     )
 
-set(INTERNAL_INCLUDE_DIR ${CMAKE_BINARY_DIR}/include/autogen_1cpu)
+set(INTERNAL_INCLUDE_DIR ${PROJECT_BINARY_DIR}/include/autogen_1cpu)
 
 set (C_INCLUDE_DIRECTORIES
     ${IPP_CRYPTO_SOURCES_DIR}
@@ -293,7 +293,7 @@ endif()
 # so that they do not intersect in a 'merged' library.
 foreach(opt ${PLATFORM_LIST})
     # Populate ASM source files in to corresponding folders per library 'letter'
-    set(asm_cache_dir "${CMAKE_BINARY_DIR}/asm_sources/${opt}/asm_${ARCH}")
+    set(asm_cache_dir "${PROJECT_BINARY_DIR}/asm_sources/${opt}/asm_${ARCH}")
     file(MAKE_DIRECTORY ${asm_cache_dir})
     # Prefer configure_file() over simple file(COPY) as it creates dependencies, so that cmake project
     # will be regenerated each time when any original file is changed. This is needed to keep all copied files up-to-date.
@@ -311,7 +311,7 @@ foreach(opt ${PLATFORM_LIST})
     #########################################################################################
     # Populate C source files in to corresponding folders per library 'letter'
     if (NOT CODE_COVERAGE)
-        set(c_cache_dir "${CMAKE_BINARY_DIR}/c_sources/${opt}/c_${ARCH}")
+        set(c_cache_dir "${PROJECT_BINARY_DIR}/c_sources/${opt}/c_${ARCH}")
         file(MAKE_DIRECTORY ${c_cache_dir})
         # Add a prefix to the source files, so that corresponding object files in the merged library are unique named
         foreach (file ${LIBRARY_C_SOURCES_ORIGINAL})
@@ -465,7 +465,7 @@ if(NOT MERGED_BLD)
 endif()
 
 if(MERGED_BLD)
-  set(DISPATCHER ${CMAKE_BINARY_DIR}/dispatcher)
+  set(DISPATCHER ${PROJECT_BINARY_DIR}/dispatcher)
   set(IPPCP_API ${IPP_CRYPTO_INCLUDE_DIR}/ippcp.h)
   file(MAKE_DIRECTORY ${DISPATCHER})
 
@@ -496,15 +496,15 @@ if(MERGED_BLD)
     )
 
   file(GLOB DISPATCHER_HEADERS
-    ${CMAKE_BINARY_DIR}/dispatcher/*.h
+    ${PROJECT_BINARY_DIR}/dispatcher/*.h
     )
 
   file(GLOB DISPATCHER_C_SOURCES
-    ${CMAKE_BINARY_DIR}/dispatcher/*.c
+    ${PROJECT_BINARY_DIR}/dispatcher/*.c
     )
 
   file(GLOB DISPATCHER_ASM_SOURCES
-    ${CMAKE_BINARY_DIR}/dispatcher/*.asm
+    ${PROJECT_BINARY_DIR}/dispatcher/*.asm
     )
 
   set(IPPCP_DISPATCHER_OBJS ${TARGET_NAME}_s_dispatcher)

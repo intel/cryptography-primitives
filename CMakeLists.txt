@@ -135,7 +135,7 @@ set(IPP_CRYPTO_DISPATCHER_DIR       "${IPP_CRYPTO_DIR}/sources/dispatcher")
 set(TOOLS_DIR                       "${IPP_CRYPTO_DIR}/tools")
 
 if(NOT CMAKE_OUTPUT_DIR)
-  set(CMAKE_OUTPUT_DIR              "${CMAKE_BINARY_DIR}/.build")
+  set(CMAKE_OUTPUT_DIR              "${PROJECT_BINARY_DIR}/.build")
 endif()
 
 message (STATUS "CMAKE_VERSION ......................... " ${CMAKE_VERSION})
@@ -181,7 +181,7 @@ if (CRYPTO_USE_CLANG_TIDY AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" AND ${CM
 endif ()
 
 message (STATUS "PROJECT ............................... " ${PROJECT_FULL_NAME})
-message (STATUS "CMAKE_BINARY_DIR ...................... " ${CMAKE_BINARY_DIR})
+message (STATUS "PROJECT_BINARY_DIR .................... " ${PROJECT_BINARY_DIR})
 message (STATUS "CMAKE_OUTPUT_DIR ...................... " ${CMAKE_OUTPUT_DIR})
 message (STATUS "CMAKE_SOURCE_DIR ...................... " ${CMAKE_SOURCE_DIR})
 message (STATUS "IPP_CRYPTO_DIR ........................ " ${IPP_CRYPTO_DIR})

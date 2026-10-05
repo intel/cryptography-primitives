@@ -31,56 +31,56 @@ endif()
 
 # pkg-config files for ippcp static libs
 set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_LIB_REL_PATH}")
-configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-static.pc.in" "${CMAKE_BINARY_DIR}/ippcp-static-intel64.pc" @ONLY)
+configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-static.pc.in" "${PROJECT_BINARY_DIR}/ippcp-static-intel64.pc" @ONLY)
 set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_LIB32_REL_PATH}")
-configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-static.pc.in" "${CMAKE_BINARY_DIR}/ippcp-static-ia32.pc" @ONLY)
+configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-static.pc.in" "${PROJECT_BINARY_DIR}/ippcp-static-ia32.pc" @ONLY)
 
 # Pkg-config file for crypto_mb static lib
 set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_LIB_REL_PATH}")
-configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/crypto_mb-static.pc.in" "${CMAKE_BINARY_DIR}/crypto_mb-static-intel64.pc" @ONLY)
+configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/crypto_mb-static.pc.in" "${PROJECT_BINARY_DIR}/crypto_mb-static-intel64.pc" @ONLY)
 
 # pkg-config files for static nonpic libs under Linux and dynamic libs
 if (WIN32)
     # ippcp dynamic libs
     set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_BIN_REL_PATH}")
-    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-dynamic.pc.in" "${CMAKE_BINARY_DIR}/ippcp-dynamic-intel64.pc" @ONLY)
+    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-dynamic.pc.in" "${PROJECT_BINARY_DIR}/ippcp-dynamic-intel64.pc" @ONLY)
     set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_BIN32_REL_PATH}")
-    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-dynamic.pc.in" "${CMAKE_BINARY_DIR}/ippcp-dynamic-ia32.pc" @ONLY)
+    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-dynamic.pc.in" "${PROJECT_BINARY_DIR}/ippcp-dynamic-ia32.pc" @ONLY)
     
     # crypto_mb dynamic lib
     set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_BIN_REL_PATH}")
-    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/crypto_mb-dynamic.pc.in" "${CMAKE_BINARY_DIR}/crypto_mb-dynamic-intel64.pc" @ONLY)
+    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/crypto_mb-dynamic.pc.in" "${PROJECT_BINARY_DIR}/crypto_mb-dynamic-intel64.pc" @ONLY)
 # Linux
 else() 
     # ippcp dynamic and static nonpic libs
     set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_LIB_REL_PATH}/nonpic")
-    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-static.pc.in" "${CMAKE_BINARY_DIR}/ippcp-static-intel64-nonpic.pc" @ONLY)
+    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-static.pc.in" "${PROJECT_BINARY_DIR}/ippcp-static-intel64-nonpic.pc" @ONLY)
     set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_LIB32_REL_PATH}/nonpic")
-    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-static.pc.in" "${CMAKE_BINARY_DIR}/ippcp-static-ia32-nonpic.pc" @ONLY)
+    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-static.pc.in" "${PROJECT_BINARY_DIR}/ippcp-static-ia32-nonpic.pc" @ONLY)
     set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_LIB_REL_PATH}")
-    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-dynamic.pc.in" "${CMAKE_BINARY_DIR}/ippcp-dynamic-intel64.pc" @ONLY)
+    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-dynamic.pc.in" "${PROJECT_BINARY_DIR}/ippcp-dynamic-intel64.pc" @ONLY)
     set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_LIB32_REL_PATH}")
-    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-dynamic.pc.in" "${CMAKE_BINARY_DIR}/ippcp-dynamic-ia32.pc" @ONLY)
+    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/ippcp-dynamic.pc.in" "${PROJECT_BINARY_DIR}/ippcp-dynamic-ia32.pc" @ONLY)
     
     # crypto_mb dynamic lib
     set(LIBDIR_FOR_PC_FILE "\${prefix}/${IPPCP_LIB_REL_PATH}")
-    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/crypto_mb-dynamic.pc.in" "${CMAKE_BINARY_DIR}/crypto_mb-dynamic-intel64.pc" @ONLY)
+    configure_file("${IPP_CRYPTO_DIR}/sources/cmake/pkg-config/crypto_mb-dynamic.pc.in" "${PROJECT_BINARY_DIR}/crypto_mb-dynamic-intel64.pc" @ONLY)
 endif(WIN32)
 
 
 install(FILES
-    "${CMAKE_BINARY_DIR}/ippcp-static-intel64.pc"
-    "${CMAKE_BINARY_DIR}/ippcp-dynamic-intel64.pc"
-    "${CMAKE_BINARY_DIR}/crypto_mb-static-intel64.pc"
-    "${CMAKE_BINARY_DIR}/crypto_mb-dynamic-intel64.pc"
-    "${CMAKE_BINARY_DIR}/ippcp-static-intel64-nonpic.pc"
+    "${PROJECT_BINARY_DIR}/ippcp-static-intel64.pc"
+    "${PROJECT_BINARY_DIR}/ippcp-dynamic-intel64.pc"
+    "${PROJECT_BINARY_DIR}/crypto_mb-static-intel64.pc"
+    "${PROJECT_BINARY_DIR}/crypto_mb-dynamic-intel64.pc"
+    "${PROJECT_BINARY_DIR}/ippcp-static-intel64-nonpic.pc"
     DESTINATION "lib/pkgconfig"
     OPTIONAL)
 
 install(FILES
-    "${CMAKE_BINARY_DIR}/ippcp-static-ia32.pc"
-    "${CMAKE_BINARY_DIR}/ippcp-dynamic-ia32.pc"
-    "${CMAKE_BINARY_DIR}/ippcp-static-ia32-nonpic.pc"
+    "${PROJECT_BINARY_DIR}/ippcp-static-ia32.pc"
+    "${PROJECT_BINARY_DIR}/ippcp-dynamic-ia32.pc"
+    "${PROJECT_BINARY_DIR}/ippcp-static-ia32-nonpic.pc"
     DESTINATION "lib32/pkgconfig"
     OPTIONAL)
 
@@ -89,25 +89,25 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
     
     if ("${ARCH}" STREQUAL "intel64")
-        file(COPY  "${CMAKE_BINARY_DIR}/ippcp-static-intel64.pc"
-                   "${CMAKE_BINARY_DIR}/ippcp-dynamic-intel64.pc"
-                   "${CMAKE_BINARY_DIR}/crypto_mb-static-intel64.pc"
-                   "${CMAKE_BINARY_DIR}/crypto_mb-dynamic-intel64.pc"
+        file(COPY  "${PROJECT_BINARY_DIR}/ippcp-static-intel64.pc"
+                   "${PROJECT_BINARY_DIR}/ippcp-dynamic-intel64.pc"
+                   "${PROJECT_BINARY_DIR}/crypto_mb-static-intel64.pc"
+                   "${PROJECT_BINARY_DIR}/crypto_mb-dynamic-intel64.pc"
             DESTINATION "${CMAKE_OUTPUT_DIR}/${OUTPUTCONFIG}/pkgconfig")
 
         # Linux nonpic libs
         if(UNIX)
-            file(COPY  "${CMAKE_BINARY_DIR}/ippcp-static-intel64-nonpic.pc"
+            file(COPY  "${PROJECT_BINARY_DIR}/ippcp-static-intel64-nonpic.pc"
                 DESTINATION "${CMAKE_OUTPUT_DIR}/${OUTPUTCONFIG}/pkgconfig")
         endif(UNIX)
     else()
-        file(COPY  "${CMAKE_BINARY_DIR}/ippcp-static-ia32.pc"
-                   "${CMAKE_BINARY_DIR}/ippcp-dynamic-ia32.pc"
+        file(COPY  "${PROJECT_BINARY_DIR}/ippcp-static-ia32.pc"
+                   "${PROJECT_BINARY_DIR}/ippcp-dynamic-ia32.pc"
             DESTINATION "${CMAKE_OUTPUT_DIR}/${OUTPUTCONFIG}/pkgconfig")
         
         # Linux nonpic libs
         if(UNIX)
-            file(COPY  "${CMAKE_BINARY_DIR}/ippcp-static-ia32-nonpic.pc"
+            file(COPY  "${PROJECT_BINARY_DIR}/ippcp-static-ia32-nonpic.pc"
                 DESTINATION "${CMAKE_OUTPUT_DIR}/${OUTPUTCONFIG}/pkgconfig")
         endif(UNIX)
     endif("${ARCH}" STREQUAL "intel64") 

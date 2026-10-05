@@ -98,7 +98,7 @@ endif(${ARCH} MATCHES "ia32")
 
 # Build with sanitizers
 if(SANITIZERS)
-  include(${CMAKE_SOURCE_DIR}/sources/cmake/linux/SanitizersSettings.cmake)
+  include(${IPP_CRYPTO_DIR}/sources/cmake/linux/SanitizersSettings.cmake)
   set_sanitizers_flags("C")
 endif(SANITIZERS)
 

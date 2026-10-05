@@ -92,7 +92,7 @@ set(k1_opt "-march=icelake-server -maes -mavx512f -mavx512cd -mavx512vl -mavx512
 # Build with sanitizers
 # FIXME: so far it can be enabled from the IPPCP build only. Change it once crypto_mb build is separated.
 if(SANITIZERS)
-  include(${CMAKE_SOURCE_DIR}/sources/cmake/linux/SanitizersSettings.cmake)
+  include(${IPP_CRYPTO_DIR}/sources/cmake/linux/SanitizersSettings.cmake)
   set_sanitizers_flags("C")
   set_sanitizers_flags("CXX")
 endif(SANITIZERS)
