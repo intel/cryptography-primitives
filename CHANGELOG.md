@@ -4,6 +4,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 
 ## Intel(R) Cryptography Primitives Library 2.4.0
 - Added `ippsLMSGetPublicKeyElems` and `ippsLMSGetSignatureElems` getters to extract the individual components of an LMS public key and signature state.
+- Added the `-DIPPCP_ENABLE_FUNC_DATA_SECTIONS:BOOL=on` build option (off by default) to place each function and data item into its own section (`-ffunction-sections -fdata-sections` on Linux\*, `/Gy /Gw` on Windows\*), enabling linker garbage collection of unused code and data (`-Wl,--gc-sections` / `/OPT:REF`) to reduce the footprint of applications that statically link the library.
 - Added a 4-way multi-buffer SHAKE128/SHAKE256 implementation on Intel® AVX2 (l9), used to batch ML-DSA sampling and ExpandMask and shared with ML-KEM matrix and rejection sampling.
 - Optimized ML-DSA scalar hot paths: division-free Decompose, phase-split rejection sampling, and a short-circuit on the ||z|| bound in the signing loop.
 - Zeroized additional secret-bearing stack and pool scratch before return: hash/HMAC digest buffers, AES-CCM/CMAC/GCM tag scratch, EC signing ephemeral points and modular-inverse working sets (DSA/NR/SM2, single- and multi-buffer), ECDH projective-to-affine inversion buffers, and RSA multi-buffer CRT intermediates.

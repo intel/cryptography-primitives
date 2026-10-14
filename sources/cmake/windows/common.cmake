@@ -26,4 +26,13 @@ else()
   set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DWIN32E -D_ARCH_EM64T") # _WIN32 and _WIN64 are defined by a compiler
 endif(${ARCH} MATCHES "ia32")
 
+# Optionally place each function and data item into its own section, so unused
+# ones can be discarded by the linker (e.g. with --gc-sections).
+# NOTE: /Gy (function-level sections) is already enabled by default on Windows
+# in the per-compiler configs (Intel19.0.0, IntelLLVM2023.1.0, MSVC19.14), so
+# this flag only needs to add /Gw (data-level sections).
+if(IPPCP_ENABLE_FUNC_DATA_SECTIONS)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Gw")
+endif()
+
 #set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DBN_OPENSSL_DISABLE")

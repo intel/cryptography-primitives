@@ -220,6 +220,15 @@ else()
   message (STATUS "BUILD_EXAMPLES ........................ off")
 endif()
 
+# Emit each function/data item into its own section (-ffunction-sections
+# -fdata-sections), enabling linker garbage collection of unused code/data.
+option(IPPCP_ENABLE_FUNC_DATA_SECTIONS "Compile with -ffunction-sections -fdata-sections" OFF)
+if(IPPCP_ENABLE_FUNC_DATA_SECTIONS)
+  message (STATUS "IPPCP_ENABLE_FUNC_DATA_SECTIONS ... on")
+else()
+  message (STATUS "IPPCP_ENABLE_FUNC_DATA_SECTIONS ... off")
+endif()
+
 # Build with sanitizers
 set(SANITIZERS OFF)
 if(BUILD_WITH_SANITIZERS AND UNIX AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL "12.0.0")

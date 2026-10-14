@@ -33,6 +33,19 @@ endif()
 include("${CRYPTO_MB_SOURCES_DIR}/cmake/common.cmake")
 include(${COMPILER_OPTIONS_FILE}) # Get ${CMAKE_C_FLAGS}, ${CMAKE_CXX_FLAGS} and ${AVX512_CFLAGS}
 
+# Optionally place each function/data item into its own section so the linker
+# can garbage-collect unused code/data (collect with --gc-sections / /OPT:REF).
+if(IPPCP_ENABLE_FUNC_DATA_SECTIONS)
+  if(WIN32)
+    # crypto_mb's MSVC config already sets /Gy, but the Intel/IntelLLVM configs do not,
+    # so add both here for all Windows compilers (the main ippcp library likewise sets
+    # /Gy for every compiler)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Gy /Gw")
+  else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections")
+  endif()
+endif()
+
 # Sources
 file(GLOB RSA_SOURCES           "${CRYPTO_MB_SOURCES_DIR}/rsa/*.c"
                                 "${CRYPTO_MB_SOURCES_DIR}/rsa/internal_avx2/*.c"
@@ -119,8 +132,8 @@ else()
 endif()
 
 set(CRYPTO_MB_API ${MB_PUBLIC_HEADERS})
-list(REMOVE_ITEM CRYPTO_MB_API ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/cpu_features.h 
-                               ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/defs.h 
+list(REMOVE_ITEM CRYPTO_MB_API ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/cpu_features.h
+                               ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/defs.h
                                ${CRYPTO_MB_INCLUDE_DIR}/crypto_mb/status.h)
 
 # Generate single-CPU headers

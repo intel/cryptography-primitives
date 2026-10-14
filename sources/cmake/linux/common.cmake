@@ -30,4 +30,10 @@ if(NOT NONPIC_LIB)
   set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPP_PIC")
 endif()
 
+# Optionally place each function and data item into its own section, so unused
+# ones can be discarded by the linker (e.g. with --gc-sections).
+if(IPPCP_ENABLE_FUNC_DATA_SECTIONS)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections")
+endif()
+
 #set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DBN_OPENSSL_DISABLE")
