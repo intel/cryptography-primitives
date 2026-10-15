@@ -40,9 +40,6 @@
   *
   */
 
-/*! Define the macro to enable ML-KEM usage */
-#define IPPCP_PREVIEW_ML_KEM
-
 #include <vector>
 #include <iostream>
 #include <algorithm>

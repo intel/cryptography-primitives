@@ -46,15 +46,6 @@ shared secret.
         int sharedSecretSize;
     } IppsMLKEMInfo;
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   The API family is supported in experimental mode. To use the functions, users need to define
-   the ``IPPCP_PREVIEW_ML_KEM`` macro before including the ``ippcp.h`` header file. See
-   :ref:`Preview Features <experimental>` for more details.
-
 Return Values
 -------------
 

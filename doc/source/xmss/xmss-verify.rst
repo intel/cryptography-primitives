@@ -53,14 +53,6 @@ This function verifies the signature generated using XMSS.
 If ``*pIsSignValid == 1`` then the XMSS signature is valid.
 If ``*pIsSignValid == 0`` then the XMSS signature is not valid.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_XMSS`` macro to use the feature.
-
 Return Values
 -------------
 

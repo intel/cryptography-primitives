@@ -40,9 +40,6 @@
   *
   */
 
-/*! Define the macro to enable ML-DSA usage */
-#define IPPCP_PREVIEW_ML_DSA
-
 #include <vector>
 #include <iostream>
 #include <algorithm>

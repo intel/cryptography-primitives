@@ -61,14 +61,6 @@ according to the algorithm parameter set stored in the state.
    algorithm parameters but not yet valid key values, so the extracted components
    (``I``, ``T1``) will be undefined.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.
-
 Return Values
 -------------
 

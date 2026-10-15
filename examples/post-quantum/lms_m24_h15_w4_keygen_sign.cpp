@@ -29,9 +29,6 @@
   *
   */
 
-/*! Define the macro to enable LMS usage */
-#define IPPCP_PREVIEW_LMS
-
 #include <memory>
 
 #include "ippcp.h"

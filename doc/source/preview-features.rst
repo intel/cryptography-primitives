@@ -8,6 +8,6 @@ Preview features are standard Intel® Cryptography Primitives Library features, 
 
 * Preview features are not available by default. They must be turned on using
   special macros in the following format ``IPPCP_PREVIEW_*`` or
-  the ``IPP_PREVIEW_ALL`` macro that enables all preview features.
+  the ``IPPCP_PREVIEW_ALL`` macro that enables all preview features.
 * API/ABI compatibility is not guaranteed.
 * There is no guarantee these preview features will be supported in future releases.

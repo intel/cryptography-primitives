@@ -51,7 +51,9 @@ Description
 
 .. note::
 
-   ``ippsLMSBufferGetSize`` is deprecated. Please refer to
+   ``ippsLMSBufferGetSize`` is deprecated and remains available as a preview feature only:
+   you need to enable the ``IPPCP_PREVIEW_LMS`` macro to use it, see
+   :ref:`Preview Features <experimental>`. Please refer to
    :ref:`Deprecated Functions <appendix-b-deprecated-functions>`
    section for the recommendations for transition.
 
@@ -62,15 +64,6 @@ Description
 ``ippsLMSVerifyBufferGetSize`` gets the size of the temporary buffer required for ``ippsLMSVerify``.
 
 The result is stored to ``*pSize``.
-
-
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.
-   For more information, see :ref:`Preview Features <experimental>`.
 
 Return Values
 -------------

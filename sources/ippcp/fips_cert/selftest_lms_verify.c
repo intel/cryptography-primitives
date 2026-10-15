@@ -16,7 +16,6 @@
 
 #ifdef IPPCP_FIPS_MODE
 
-#define IPPCP_PREVIEW_LMS 1
 #include "ippcp.h"
 #include "ippcpdefs.h"
 #include "owndefs.h"

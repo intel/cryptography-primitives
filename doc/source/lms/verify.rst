@@ -56,14 +56,6 @@ This function verifies the signature generated using LMS.
 If ``*pIsSignValid == 1`` then the LMS signature is valid.
 If ``*pIsSignValid == 0`` then the LMS signature is invalid.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.
-
 Return Values
 -------------
 

@@ -1335,14 +1335,15 @@ IPPAPI(IppStatus, ippsGFpECDecryptSM2_Ext, (Ipp8u *pOut, int maxOutLen,
 // =========================================================
 */
 
-#ifdef IPPCP_PREVIEW_XMSS
-
 /* XMSS */
 #define XMSS_DEPRECATED "This function is considered to be renamed due to an ambiguous \
 name. Use ippsXMSSVerifyBufferGetSize instead."
 
+/* The deprecated API is still available as a preview feature only */
+#ifdef IPPCP_PREVIEW_XMSS
 IPP_DEPRECATED(XMSS_DEPRECATED) \
 IPPAPI(IppStatus, ippsXMSSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
+#endif // IPPCP_PREVIEW_XMSS
 
 IPPAPI(IppStatus, ippsXMSSVerifyBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, IppsXMSSAlgo OIDAlgo))
 IPPAPI(IppStatus, ippsXMSSKeyGenBufferGetSize, (Ipp32s* pSize, IppsXMSSAlgo OIDAlgo))
@@ -1385,16 +1386,15 @@ IPPAPI(IppStatus, ippsXMSSVerify, (const Ipp8u* pMsg,
                                    const IppsXMSSPublicKeyState* pKey,
                                    Ipp8u* pBuffer))
 
-#endif // IPPCP_PREVIEW_XMSS
-
-#ifdef IPPCP_PREVIEW_LMS
-
 /* Leighton-Micali Signature (LMS) */
 #define LMS_DEPRECATED "This function is considered to be renamed due to an ambiguous \
 name. Use ippsLMSVerifyBufferGetSize instead."
 
+/* The deprecated API is still available as a preview feature only */
+#ifdef IPPCP_PREVIEW_LMS
 IPP_DEPRECATED(LMS_DEPRECATED) \
 IPPAPI(IppStatus, ippsLMSBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
+#endif // IPPCP_PREVIEW_LMS
 
 IPPAPI(IppStatus, ippsLMSVerifyBufferGetSize, (Ipp32s* pSize, Ipp32s maxMessageLength, const IppsLMSAlgoType lmsType))
 IPPAPI(IppStatus, ippsLMSSignatureStateGetSize, (Ipp32s* pSize, const IppsLMSAlgoType lmsType))
@@ -1445,10 +1445,6 @@ IPPAPI(IppStatus, ippsLMSSign, (const Ipp8u* pMsg,
                                 void* pRndParam,
                                 Ipp8u* pBuffer))
 
-#endif // IPPCP_PREVIEW_LMS
-
-#ifdef IPPCP_PREVIEW_ML_KEM
-
 /* Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM) */
 IPPAPI(IppStatus, ippsMLKEM_GetSize, (int* pSize, IppsMLKEMParamSet schemeType))
 IPPAPI(IppStatus, ippsMLKEM_GetInfo, (IppsMLKEMInfo* pInfo, IppsMLKEMParamSet schemeType))
@@ -1467,9 +1463,6 @@ IPPAPI(IppStatus, ippsMLKEM_Encaps, (const Ipp8u* pEncKey, Ipp8u* pCipherText, I
 IPPAPI(IppStatus, ippsMLKEM_Decaps, (const Ipp8u* pDecKey, const Ipp8u* pCipherText,
                                      Ipp8u* pSharedSecret, IppsMLKEMState* pMLKEMCtx, Ipp8u* pScratchBuffer))
 
-#endif // IPPCP_PREVIEW_ML_KEM
-
-#ifdef IPPCP_PREVIEW_ML_DSA
 /* Module-Lattice-Based Digital Signature Algorithm */
 
 IPPAPI(IppStatus, ippsMLDSA_GetSize, (int* pSize))
@@ -1517,7 +1510,6 @@ IPPAPI(IppStatus, ippsMLDSA_Verify_Mu, (const Ipp8u* pMu,
                                         int* pIsSignValid,
                                         IppsMLDSAState* pMLDSAState,
                                         Ipp8u* pScratchBuffer))
-#endif // IPPCP_PREVIEW_ML_DSA
 
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__INTEL_LLVM_COMPILER)
 #pragma warning(pop)

@@ -83,10 +83,3 @@ Description
 This ``enum`` is required to pass one value to XMSS functions instead of
 passing all parameters for the XMSS algorithm.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_XMSS`` macro to use the feature.

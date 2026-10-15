@@ -164,10 +164,3 @@ Description
 ``IppsLMSAlgoType`` is required to pass one value to LMS functions instead of
 passing all parameters for the LMS algorithm call.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.

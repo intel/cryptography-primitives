@@ -171,8 +171,8 @@ if(IPP_REVISION)
   set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPP_REVISION=${IPP_REVISION}")
 endif()
 
-# Enable tech-preview feature in the library
-set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_PREVIEW_XMSS -DIPPCP_PREVIEW_LMS -DIPPCP_PREVIEW_ML_KEM -DIPPCP_PREVIEW_ML_DSA")
+# Build the deprecated preview API, which is still guarded by these macros in the public headers
+set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -DIPPCP_PREVIEW_XMSS -DIPPCP_PREVIEW_LMS")
 
 set(LIBRARY_DEFINES "${LIBRARY_DEFINES} -D_NO_IPP_DEPRECATED") # do not warn about ippcp deprecated functions
 # set BN_OPENSSL_DISABLE for Intel Cryptography Primitives Library

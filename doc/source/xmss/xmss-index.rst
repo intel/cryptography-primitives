@@ -22,7 +22,6 @@ Example 1. Key Generation and Signing
 
 .. code:: cpp
 
-    #define IPPCP_PREVIEW_XMSS
     #include "ippcp.h"
 
     ...
@@ -53,7 +52,6 @@ Example 2. Verification
 
 .. code:: cpp
 
-    #define IPPCP_PREVIEW_XMSS
     #include "ippcp.h"
 
     ...

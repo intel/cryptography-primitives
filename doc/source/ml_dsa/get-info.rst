@@ -44,15 +44,6 @@ type. The sizes are used to allocate memory for the public key, private key, and
         int signatureSize;
     } IppsMLDSAInfo;
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   The API family is supported in experimental mode. To use the functions, users need to define
-   the ``IPPCP_PREVIEW_ML_DSA`` macro before including the ``ippcp.h`` header file. See
-   :ref:`Preview Features <experimental>` for more details.
-
 Return Values
 -------------
 

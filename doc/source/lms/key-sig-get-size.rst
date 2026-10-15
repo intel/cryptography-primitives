@@ -54,14 +54,6 @@ Description
 
 ``ippsLMSSignatureStateGetSize``  gets the size of the signature state.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.
-   For more information, see :ref:`Preview Features <experimental>`.
-
 Return Values
 -------------
 

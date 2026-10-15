@@ -19,15 +19,6 @@ and provides 3 main primitives:
 The security of ML-KEM is related to the computational difficulty of the *Module Learning with
 Errors* problem.
 
-.. note::
-
-   .. rubric:: API usage
-      :class: NoteTipHead
-
-   The API family is supported in experimental mode. To use the functions, users need to define
-   the ``IPPCP_PREVIEW_ML_KEM`` macro before including the ``ippcp.h`` header file. See
-   :ref:`Preview Features <experimental>` for more details.
-
 .. _ml-kem-params:
 
 The supported ML-KEM parameter sets:

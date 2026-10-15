@@ -45,15 +45,6 @@ size of the output parameters depends on the selected scheme type and can be obt
 The working buffer should be allocated with the size not less than provided by
 :ref:`ippsMLKEM_DecapsBufferGetSize <ml-kem-buffers-get-size>` function.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   The API family is supported in experimental mode. To use the functions, users need to define
-   the ``IPPCP_PREVIEW_ML_KEM`` macro before including the ``ippcp.h`` header file. See
-   :ref:`Preview Features <experimental>` for more details.
-
 Return Values
 -------------
 

@@ -55,15 +55,6 @@ parameter, please see :ref:`User's Implementation of a RNG <users-implementation
 for more information on creating a customer-defined RNG object. If ``rndFunc`` is ``NULL``, an internal
 default random number generator based on the ``RDSEED`` hardware instruction is used.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   The API family is supported in experimental mode. To use the functions, users need to define
-   the ``IPPCP_PREVIEW_ML_DSA`` macro before including the ``ippcp.h`` header file. See
-   :ref:`Preview Features <experimental>` for more details.
-
 Return Values
 -------------
 

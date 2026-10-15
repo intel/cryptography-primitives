@@ -79,14 +79,6 @@ The scheme of the private key is shown below:
    If it is not, the value will be reduced to the nearest lower multiple of ``m``
    inside the implementation.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.
-
 Return Values
 -------------
 

@@ -44,14 +44,6 @@ Description
 
 The result is stored to ``*pSize``.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_XMSS`` macro to use the feature.
-
 Return Values
 -------------
 

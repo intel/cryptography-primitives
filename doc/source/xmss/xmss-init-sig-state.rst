@@ -56,14 +56,6 @@ The scheme of the signature is shown below:
 
 ``n``, ``len`` are WOTS+ parameters, ``h`` is the XMSS tree height.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_XMSS`` macro to use the feature.
-
 Return Values
 -------------
 

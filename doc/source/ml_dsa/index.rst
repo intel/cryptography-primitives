@@ -25,15 +25,6 @@ The signature generation implementation does not incorporate
 additional constant-time techniques. It performs honest acceptance-rejection
 sampling as specified in the FIPS 204 standard to achieve optimal performance.
 
-.. note::
-
-   .. rubric:: API usage
-      :class: NoteTipHead
-
-   The API family is supported in experimental mode. To use the functions, users need to define
-   the ``IPPCP_PREVIEW_ML_DSA`` macro before including the ``ippcp.h`` header file. See
-   :ref:`Preview Features <experimental>` for more details.
-
 .. _ml-dsa-params:
 
 Supported ML-DSA Parameter Sets

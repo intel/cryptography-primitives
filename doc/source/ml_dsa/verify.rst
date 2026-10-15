@@ -68,15 +68,6 @@ The functions verify the digital signature using the provided public key.
 * ``ippsMLDSA_Verify`` computes the message hash (Mu) internally using the provided message and context. The working buffer should be allocated with a size not less than the one provided by the :ref:`ippsMLDSA_VerifyBufferGetSize <ml-dsa-buffers-get-size>` function.
 * ``ippsMLDSA_Verify_Mu`` uses a pre-computed message hash (Mu), which allows bypassing the internal buffering of large messages. The working buffer should be allocated with a size not less than the one provided by the :ref:`ippsMLDSA_Verify_Mu_BufferGetSize <ml-dsa-buffers-get-size>` function.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   The API family is supported in experimental mode. To use the functions, users need to define
-   the ``IPPCP_PREVIEW_ML_DSA`` macro before including the ``ippcp.h`` header file. See
-   :ref:`Preview Features <experimental>` for more details.
-
 Return Values
 -------------
 

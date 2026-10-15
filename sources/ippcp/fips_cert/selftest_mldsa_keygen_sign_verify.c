@@ -16,10 +16,6 @@
 
 #ifdef IPPCP_FIPS_MODE
 
-#ifndef IPPCP_PREVIEW_ML_DSA
-#define IPPCP_PREVIEW_ML_DSA (1)
-#endif
-
 #include "ippcp.h"
 #include "owndefs.h"
 #include "dispatcher.h"

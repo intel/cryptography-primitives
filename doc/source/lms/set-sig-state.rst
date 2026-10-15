@@ -74,14 +74,6 @@ The scheme of the LM-OTS signature is shown below:
 
 ``n``, ``p`` are LM-OTS parameters.
 
-.. note::
-
-   .. rubric:: Important
-      :class: NoteTipHead
-
-   This is a :ref:`Preview Feature <experimental>`.
-   You need to enable the ``IPPCP_PREVIEW_LMS`` macro to use the feature.
-
 Return Values
 -------------
 
