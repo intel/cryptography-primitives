@@ -855,13 +855,6 @@ and provides 3 main primitives:</p>
 </ul>
 <p>The security of ML-KEM is related to the computational difficulty of the <em>Module Learning with
 Errors</em> problem.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p class="notetiphead rubric">API usage</p>
-<p>The API family is supported in experimental mode. To use the functions, users need to define
-the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_ML_KEM</span></code> macro before including the <code class="docutils literal notranslate"><span class="pre">ippcp.h</span></code> header file. See
-<a class="reference internal" href="../preview-features.html#experimental"><span class="std std-ref">Preview Features</span></a> for more details.</p>
-</div>
 <section id="the-supported-ml-kem-parameter-sets">
 <span id="ml-kem-params"></span><h2>The supported ML-KEM parameter sets:<a class="headerlink" href="#the-supported-ml-kem-parameter-sets" title="Link to this heading">#</a></h2>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span>
@@ -915,9 +908,6 @@ the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_M
 <span class="cm">  *  https://csrc.nist.gov/pubs/fips/203/final</span>
 <span class="cm">  *</span>
 <span class="cm">  */</span>
-
-<span class="cm">/*! Define the macro to enable ML-KEM usage */</span>
-<span class="cp">#define IPPCP_PREVIEW_ML_KEM</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>

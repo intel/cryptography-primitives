@@ -897,13 +897,6 @@ The working buffer should be allocated with the size not less than provided by
 parameter, please see <a class="reference internal" href="../trng_prng/user-s-implementation-of-a-pseudorandom-number.html#users-implementation-of-a-pseudorandom-num-gen"><span class="std std-ref">User’s Implementation of a RNG</span></a>
 for more information on creating a customer-defined RNG object. If <code class="docutils literal notranslate"><span class="pre">rndFunc</span></code> is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, an internal
 default random number generator based on the <code class="docutils literal notranslate"><span class="pre">RDSEED</span></code> hardware instruction is used.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p class="notetiphead rubric">Important</p>
-<p>The API family is supported in experimental mode. To use the functions, users need to define
-the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_ML_DSA</span></code> macro before including the <code class="docutils literal notranslate"><span class="pre">ippcp.h</span></code> header file. See
-<a class="reference internal" href="../preview-features.html#experimental"><span class="std std-ref">Preview Features</span></a> for more details.</p>
-</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>

@@ -916,13 +916,6 @@ The value is set to 1 if the signature is valid, and 0 if the signature is inval
 <li><p><code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify</span></code> computes the message hash (Mu) internally using the provided message and context. The working buffer should be allocated with a size not less than the one provided by the <a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">ippsMLDSA_VerifyBufferGetSize</span></a> function.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ippsMLDSA_Verify_Mu</span></code> uses a pre-computed message hash (Mu), which allows bypassing the internal buffering of large messages. The working buffer should be allocated with a size not less than the one provided by the <a class="reference internal" href="buffers-get-size.html#ml-dsa-buffers-get-size"><span class="std std-ref">ippsMLDSA_Verify_Mu_BufferGetSize</span></a> function.</p></li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p class="notetiphead rubric">Important</p>
-<p>The API family is supported in experimental mode. To use the functions, users need to define
-the <code class="docutils literal notranslate"><span class="pre">IPPCP_PREVIEW_ML_DSA</span></code> macro before including the <code class="docutils literal notranslate"><span class="pre">ippcp.h</span></code> header file. See
-<a class="reference internal" href="../preview-features.html#experimental"><span class="std std-ref">Preview Features</span></a> for more details.</p>
-</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>
