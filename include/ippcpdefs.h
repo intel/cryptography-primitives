@@ -372,6 +372,7 @@ typedef enum {
  #define   ippCPUID_AVX2VCLMUL  INT64_SUFFIX(0x8000000000)        /* Intel® instruction VPCLMULQDQ                                                        */
  #define   ippCPUID_AVX2SM3     INT64_SUFFIX(0x10000000000)       /* Intel® Advanced Vector Extensions 256 Bit SM3 instructions                           */
  #define   ippCPUID_AVX2SM4     INT64_SUFFIX(0x20000000000)       /* Intel® Advanced Vector Extensions 256 Bit SM4 instructions                           */
+ #define   ippCPUID_SM4         ippCPUID_AVX2SM4                  /* Intel® SM4 instructions (leaf 7/1 EAX bit2); width from the part's VL (128/256/512)   */
  #define   ippCPUID_AVX2SHA512  INT64_SUFFIX(0x40000000000)       /* Intel® Advanced Vector Extensions 256 Bit SHA512 instructions                        */
  #define   ippCPUID_AVX10_2     INT64_SUFFIX(0x80000000000)         /* Intel(R) Advanced Vector Extensions 10 */
 #endif /* IPP_CPU_FEATURES__ */

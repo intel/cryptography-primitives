@@ -9,6 +9,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Optimized ML-DSA scalar hot paths: division-free Decompose, phase-split rejection sampling, and a short-circuit on the ||z|| bound in the signing loop.
 - Zeroized additional secret-bearing stack and pool scratch before return: hash/HMAC digest buffers, AES-CCM/CMAC/GCM tag scratch, EC signing ephemeral points and modular-inverse working sets (DSA/NR/SM2, single- and multi-buffer), ECDH projective-to-affine inversion buffers, and RSA multi-buffer CRT intermediates.
 - XMSS, LMS, ML-KEM, ML-DSA are no longer preview features: the `IPPCP_PREVIEW_*` macros are not needed to use them.
+- Added single-buffer SM4 optimizations that use the SM4 instructions on CPUs with Intel® AVX10.2, covering ECB, CBC decryption, CFB128 decryption and CTR.
 
 ## Intel(R) Cryptography Primitives Library 2.3.0
 - Updated ML-KEM to use RDSEED as the internal randomness source; optimized byte/bit conversion hot paths and introduced Montgomery-domain arithmetic for NTT operations to improve performance.

@@ -236,6 +236,48 @@ IPP_OWN_DECL(void, cpSMS4_CFB_dec_gfni512, (Ipp8u* pOut,
 #endif /* #if defined (__INTEL_COMPILER) || defined (__INTEL_LLVM_COMPILER) || !defined (_MSC_VER) || (_MSC_VER >= 1920) */
 #endif /* (_IPP32E>=_IPP32E_K1) */
 
+#if (_IPP32E >= _IPP32E_D1)
+
+/* AVX-512 (zmm) SM4-NI bulk kernels (pcpsm4d1_ni_as.asm). vsm4rnds4 does 4 SM4
+   rounds per 128-bit lane -> 4 blocks per zmm, x16 interleave. Same bulk-helper
+   contract and ABI as the _gfni512 kernels above: process whole 4-block groups,
+   return block-aligned processedLen; a sub-16-byte final chunk is the caller's. */
+#define cpSMS4_ECB_ni_512_bulk OWNAPI(cpSMS4_ECB_ni_512_bulk)
+/* clang-format off */
+IPP_OWN_DECL(int, cpSMS4_ECB_ni_512_bulk, (Ipp8u* pOut,
+                                           const Ipp8u* pInp,
+                                           int len,
+                                           const Ipp32u* pRKey))
+/* clang-format on */
+#define cpSMS4_CTR_ni_512_bulk OWNAPI(cpSMS4_CTR_ni_512_bulk)
+/* clang-format off */
+IPP_OWN_DECL(int, cpSMS4_CTR_ni_512_bulk, (Ipp8u* pOut,
+                                           const Ipp8u* pInp,
+                                           int len,
+                                           const Ipp32u* pRKey,
+                                           const Ipp8u* pCtrMask,
+                                           Ipp8u* pCtr))
+/* clang-format on */
+#define cpSMS4_CBC_dec_ni_512_bulk OWNAPI(cpSMS4_CBC_dec_ni_512_bulk)
+/* clang-format off */
+IPP_OWN_DECL(int, cpSMS4_CBC_dec_ni_512_bulk, (Ipp8u* pOut,
+                                               const Ipp8u* pInp,
+                                               int len,
+                                               const Ipp32u* pRKey,
+                                               Ipp8u* pIV))
+/* clang-format on */
+#define cpSMS4_CFB_dec_ni_512_bulk OWNAPI(cpSMS4_CFB_dec_ni_512_bulk)
+/* clang-format off */
+IPP_OWN_DECL(int, cpSMS4_CFB_dec_ni_512_bulk, (Ipp8u* pOut,
+                                               const Ipp8u* pInp,
+                                               int len,
+                                               int cfbBlkSize,
+                                               const Ipp32u* pRKey,
+                                               Ipp8u* pIV))
+/* clang-format on */
+
+#endif /* (_IPP32E>=_IPP32E_D1) */
+
 #endif /* (_IPP>=_IPP_H9) || (_IPP32E>=_IPP32E_L9) */
 
 #endif

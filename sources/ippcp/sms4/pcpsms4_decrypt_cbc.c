@@ -67,6 +67,17 @@ IPP_OWN_DEFN(void, cpDecryptSMS4_cbc, (const Ipp8u* pIV,
     CopyBlock16(pIV, iv);
 
 /* do decryption */
+#if (_IPP32E >= _IPP32E_D1)
+    /* The d1 index is selected only when APX_FEATURES holds, which now names SM4 and
+       512-bit AVX10.2, so this tier needs no runtime feature test and no fallback to a
+       lower one. Lower ISAs build the dispatch chain in the #else below. */
+    {
+        int processedLen = cpSMS4_CBC_dec_ni_512_bulk(pDst, pSrc, dataLen, pRoundKeys, (Ipp8u*)iv);
+        pSrc += processedLen;
+        pDst += processedLen;
+        dataLen -= processedLen;
+    }
+#else
 #if (_IPP32E >= _IPP32E_L9)
     if (IsFeatureEnabled(ippCPUID_AVX2SM4)) { /* can be optimized further */
         for (; dataLen > 0; dataLen -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4) {
@@ -101,8 +112,11 @@ IPP_OWN_DEFN(void, cpDecryptSMS4_cbc, (const Ipp8u* pIV,
         dataLen -= processedLen;
     }
 #endif
+#endif
 
-    for (; dataLen > 0; dataLen -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4) {
+    /* Block remainder. Every bulk kernel above returns a block-aligned length, so on the
+       tiers that have one this loop does nothing; it is the whole job on the generic path. */
+    while (dataLen >= MBS_SMS4) {
 
         cpSMS4_Cipher((Ipp8u*)tmp, (Ipp8u*)pSrc, pRoundKeys);
 
@@ -114,6 +128,10 @@ IPP_OWN_DEFN(void, cpDecryptSMS4_cbc, (const Ipp8u* pIV,
         CopyBlock16(pSrc, iv);
 
         CopyBlock16(tmp, pDst);
+
+        pSrc += MBS_SMS4;
+        pDst += MBS_SMS4;
+        dataLen -= MBS_SMS4;
     }
 
     /* clear secret data */

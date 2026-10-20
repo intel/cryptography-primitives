@@ -312,7 +312,10 @@ IPPFUN(int, ippcpGetEnabledNumThreads, (void)) { return cpthreads_omp_of_n_ipp; 
     (AVX3X_FEATURES | ippCPUID_SHA | ippCPUID_AVX512VBMI | ippCPUID_AVX512VBMI2 | \
      ippCPUID_AVX512IFMA | ippCPUID_AVX512GFNI | ippCPUID_AVX512VAES | ippCPUID_AVX512VCLMUL)
 
-#define APX_FEATURES (AVX3I_FEATURES | ippCPUID_AVX10_2)
+/* An AVX10.2 part is expected to provide the SM4 instructions and 512-bit vectors, so
+   both belong in the gate that selects this index; AVX512F arrives via AVX3X_FEATURES.
+   Naming SM4 here is what lets the SM4 kernels skip a per-call feature test. */
+#define APX_FEATURES (AVX3I_FEATURES | ippCPUID_AVX10_2 | ippCPUID_SM4)
 
 
 IppStatus owncpFeaturesToIdx(Ipp64u* cpuFeatures, int* index)

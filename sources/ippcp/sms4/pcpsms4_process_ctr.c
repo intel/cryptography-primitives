@@ -113,6 +113,47 @@ IPP_OWN_DEFN(IppStatus, cpProcessSMS4_ctr, (const Ipp8u* pSrc,
         /* copy counter */
         CopyBlock16(pCtrValue, counter);
 
+#if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
+        /* Counter mask for the bulk paths: 1-bits over the incrementing counter
+           field, 0-bits over the fixed nonce. maskIV reuses the output buffer,
+           which the bulk kernels don't touch. The block-by-block paths ignore it. */
+        Ipp8u* maskIV    = TMP;
+        Ipp8u* maskValue = TMP + 2 * MBS_SMS4;
+        /* The zmm SM4-NI kernel (D1) finishes a 1-3 block tail with a masked pass, so it
+           takes any whole block; the lower-tier kernels do 4-block groups only. Kept a
+           compile-time constant so the compare stays against an immediate. In a D1 build
+           the lower tiers just ignore the mask until their own 4-block threshold. */
+#if (_IPP32E >= _IPP32E_D1)
+        if (dataLen >= MBS_SMS4) {
+#else
+        if (dataLen >= 4 * MBS_SMS4) {
+#endif
+            int n;
+            int maskPosition = (MBS_SMS4 * 8 - ctrNumBitSize) / 8;
+            *maskValue       = (Ipp8u)(0xFF >> (MBS_SMS4 * 8 - ctrNumBitSize) % 8);
+
+            for (n = 0; n < maskPosition; n++)
+                maskIV[n] = 0;
+            maskIV[maskPosition] = *maskValue;
+            for (n = maskPosition + 1; n < MBS_SMS4; n++)
+                maskIV[n] = 0xFF;
+        }
+#endif
+
+#if (_IPP32E >= _IPP32E_D1)
+        /* The d1 index is selected only when APX_FEATURES holds, which now names SM4 and
+           512-bit AVX10.2, so this tier needs no runtime feature test and no fallback to a
+           lower one. Lower ISAs build the dispatch chain in the #else below.
+           No length gate: the kernel returns 0 for a sub-block length, and reads the mask
+           only after that early out. */
+        {
+            int processedLen =
+                cpSMS4_CTR_ni_512_bulk(pDst, pSrc, dataLen, SMS4_RK(pCtx), maskIV, counter);
+            pSrc += processedLen;
+            pDst += processedLen;
+            dataLen -= processedLen;
+        }
+#else
 #if (_IPP32E >= _IPP32E_L9)
         if (IsFeatureEnabled(ippCPUID_AVX2SM4)) { /* can be optimized further */
             /* block-by-block processing */
@@ -134,22 +175,7 @@ IPP_OWN_DEFN(IppStatus, cpProcessSMS4_ctr, (const Ipp8u* pSrc,
 /* do CTR processing */
 #if (_IPP >= _IPP_P8) || (_IPP32E >= _IPP32E_Y8)
 
-            Ipp8u* maskIV = TMP;
-            /* output is not used together with maskIV, so this is why buffer for both values is the same */
-            Ipp8u* maskValue = TMP + 2 * MBS_SMS4;
-
             if (dataLen >= 4 * MBS_SMS4) {
-                /* construct ctr mask */
-                int n;
-                int maskPosition = (MBS_SMS4 * 8 - ctrNumBitSize) / 8;
-                *maskValue       = (Ipp8u)(0xFF >> (MBS_SMS4 * 8 - ctrNumBitSize) % 8);
-
-                for (n = 0; n < maskPosition; n++)
-                    maskIV[n] = 0;
-                maskIV[maskPosition] = *maskValue;
-                for (n = maskPosition + 1; n < MBS_SMS4; n++)
-                    maskIV[n] = 0xFF;
-
                 int processedLen = 0;
 
 #if (_IPP32E >= _IPP32E_K1)
@@ -172,6 +198,7 @@ IPP_OWN_DEFN(IppStatus, cpProcessSMS4_ctr, (const Ipp8u* pSrc,
             }
 #endif
         }
+#endif
 
         {
 

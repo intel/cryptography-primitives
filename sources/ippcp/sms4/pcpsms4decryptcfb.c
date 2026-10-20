@@ -134,7 +134,30 @@ IPPFUN(IppStatus, ippsSMS4DecryptCFB, (const Ipp8u* pSrc,
     /* test stream integrity */
     IPP_BADARG_RET((len % cfbBlkSize), ippStsUnderRunErr);
 
-/* do encryption */
+/* do decryption */
+#if (_IPP32E >= _IPP32E_D1)
+    /* The d1 index is selected only when APX_FEATURES holds, which now names SM4 and
+       512-bit AVX10.2, so no runtime feature test is needed. The cfbBlkSize test stays:
+       it is a parameter, not a feature, and sub-block widths are serial by nature.
+       No compiler guard either - the kernel is nasm, so it links the same everywhere. */
+    if (cfbBlkSize == MBS_SMS4) {
+
+        __ALIGN16 Ipp8u IV[MBS_SMS4];
+        CopyBlock16(pIV, IV);
+
+        int processedLen =
+            cpSMS4_CFB_dec_ni_512_bulk(pDst, pSrc, len, cfbBlkSize, SMS4_RK(pCtx), IV);
+        pSrc += processedLen;
+        pDst += processedLen;
+        len -= processedLen;
+
+        if (len) {
+            cpDecryptSMS4_cfb(IV, pSrc, pDst, len / cfbBlkSize, cfbBlkSize, pCtx); /* tail */
+        }
+    } else {
+        cpDecryptSMS4_cfb(pIV, pSrc, pDst, len / cfbBlkSize, cfbBlkSize, pCtx);
+    }
+#else
 #if (_IPP32E >= _IPP32E_K1)
 #if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) || !defined(_MSC_VER) || \
     (_MSC_VER >= 1920)
@@ -165,6 +188,8 @@ IPPFUN(IppStatus, ippsSMS4DecryptCFB, (const Ipp8u* pSrc,
     {
         cpDecryptSMS4_cfb(pIV, pSrc, pDst, len / cfbBlkSize, cfbBlkSize, pCtx);
     }
+
+#endif
 
     return ippStsNoErr;
 }

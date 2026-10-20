@@ -70,6 +70,17 @@ IPPFUN(IppStatus, ippsSMS4DecryptECB, (const Ipp8u* pSrc,
     IPP_BADARG_RET((len & (MBS_SMS4 - 1)), ippStsUnderRunErr);
 
 /* do encryption */
+#if (_IPP32E >= _IPP32E_D1)
+    /* The d1 index is selected only when APX_FEATURES holds, which now names SM4 and
+       512-bit AVX10.2, so this tier needs no runtime feature test and no fallback to a
+       lower one. Lower ISAs build the dispatch chain in the #else below. */
+    {
+        int processedLen = cpSMS4_ECB_ni_512_bulk(pDst, pSrc, len, SMS4_DRK(pCtx));
+        pSrc += processedLen;
+        pDst += processedLen;
+        len -= processedLen;
+    }
+#else
 #if (_IPP32E >= _IPP32E_L9)
     if (IsFeatureEnabled(ippCPUID_AVX2SM4)) { /* can be optimized further */
         for (; len > 0; len -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4) {
@@ -97,8 +108,15 @@ IPPFUN(IppStatus, ippsSMS4DecryptECB, (const Ipp8u* pSrc,
     } else
 #endif
 
-        for (; len > 0; len -= MBS_SMS4, pSrc += MBS_SMS4, pDst += MBS_SMS4)
+        while (len >= MBS_SMS4) {
             cpSMS4_Cipher(pDst, pSrc, SMS4_DRK(pCtx));
+
+            pSrc += MBS_SMS4;
+            pDst += MBS_SMS4;
+            len -= MBS_SMS4;
+        }
+
+#endif
 
     return ippStsNoErr;
 }
