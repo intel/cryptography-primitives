@@ -368,6 +368,96 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
                                  __mmask16 mb_mask,
                                  const int dir);
 
+#if defined(MBX_SM4NI_ENABLED)
+/*
+// SM4-NI (VSM4RNDS4) kernels, Intel® AVX10.2 tier.
+//
+// VSM4RNDS4 takes its round key from the corresponding 128-bit lane of the second
+// source, so one zmm holds 4 buffers x 1 block, each under its own key - no
+// cross-block transpose and no S-box synthesis. Defined in sm4_ni_kernels_mb16.c,
+// the only translation unit built with Intel® AVX10.2 enabled, and reachable only
+// when internal_sm4ni_dispatch() says the CPU supports it.
+//
+// That dispatch check lives in common/cpu_features.c, so nothing in the Intel® AVX10.2
+// translation unit runs before the CPU has been found to support it.
+*/
+extern int internal_sm4ni_dispatch(void);
+
+#define sm4_ni_ecb_kernel_mb16 OWNAPI(sm4_ni_ecb_kernel_mb16)
+mbx_status16 sm4_ni_ecb_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                    const int8u* pa_inp[SM4_LINES],
+                                    const int len[SM4_LINES],
+                                    const int32u* key_sched[SM4_ROUNDS],
+                                    __mmask16 mb_mask,
+                                    int operation);
+#define sm4_ni_cbc_enc_kernel_mb16 OWNAPI(sm4_ni_cbc_enc_kernel_mb16)
+mbx_status16 sm4_ni_cbc_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                        const int8u* pa_inp[SM4_LINES],
+                                        const int len[SM4_LINES],
+                                        const int32u* key_sched[SM4_ROUNDS],
+                                        __mmask16 mb_mask,
+                                        const int8u* pa_iv[SM4_LINES]);
+#define sm4_ni_cfb128_enc_kernel_mb16 OWNAPI(sm4_ni_cfb128_enc_kernel_mb16)
+mbx_status16 sm4_ni_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                           const int8u* pa_inp[SM4_LINES],
+                                           const int len[SM4_LINES],
+                                           const int32u* key_sched[SM4_ROUNDS],
+                                           const int8u* pa_iv[SM4_LINES],
+                                           __mmask16 mb_mask);
+#define sm4_ni_cbc_dec_kernel_mb16 OWNAPI(sm4_ni_cbc_dec_kernel_mb16)
+mbx_status16 sm4_ni_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                        const int8u* pa_inp[SM4_LINES],
+                                        const int len[SM4_LINES],
+                                        const int32u* key_sched[SM4_ROUNDS],
+                                        __mmask16 mb_mask,
+                                        const int8u* pa_iv[SM4_LINES]);
+#define sm4_ni_cfb128_dec_kernel_mb16 OWNAPI(sm4_ni_cfb128_dec_kernel_mb16)
+mbx_status16 sm4_ni_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                           const int8u* pa_inp[SM4_LINES],
+                                           const int len[SM4_LINES],
+                                           const int32u* key_sched[SM4_ROUNDS],
+                                           const int8u* pa_iv[SM4_LINES],
+                                           __mmask16 mb_mask);
+#define sm4_ni_ctr128_kernel_mb16 OWNAPI(sm4_ni_ctr128_kernel_mb16)
+mbx_status16 sm4_ni_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                       const int8u* pa_inp[SM4_LINES],
+                                       const int len[SM4_LINES],
+                                       const int32u* key_sched[SM4_ROUNDS],
+                                       __mmask16 mb_mask,
+                                       int8u* pa_ctr[SM4_LINES]);
+#define sm4_ni_ofb_kernel_mb16 OWNAPI(sm4_ni_ofb_kernel_mb16)
+mbx_status16 sm4_ni_ofb_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                    const int8u* pa_inp[SM4_LINES],
+                                    const int len[SM4_LINES],
+                                    const int32u* key_sched[SM4_ROUNDS],
+                                    __mmask16 mb_mask,
+                                    int8u* pa_iv[SM4_LINES]);
+#define sm4_ni_gctr_kernel_mb16 OWNAPI(sm4_ni_gctr_kernel_mb16)
+mbx_status16 sm4_ni_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                     const int8u* const pa_inp[SM4_LINES],
+                                     const int len[SM4_LINES],
+                                     const int32u* key_sched[SM4_ROUNDS],
+                                     __mmask16 mb_mask,
+                                     __m128i pa_ctr[SM4_LINES],
+                                     const int gcm_order[SM4_LINES]);
+#define sm4_ni_xts_kernel_mb16 OWNAPI(sm4_ni_xts_kernel_mb16)
+mbx_status16 sm4_ni_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
+                                    const int8u* pa_inp[SM4_LINES],
+                                    const int len[SM4_LINES],
+                                    const int32u* key_sched1[SM4_ROUNDS],
+                                    const int32u* key_sched2[SM4_ROUNDS],
+                                    const int8u* pa_tweak[SM4_LINES],
+                                    __mmask16 mb_mask,
+                                    const int dir);
+#define sm4_ni_cbc_mac_kernel_mb16 OWNAPI(sm4_ni_cbc_mac_kernel_mb16)
+void sm4_ni_cbc_mac_kernel_mb16(__m128i pa_out[SM4_LINES],
+                                const int8u* const pa_inp[SM4_LINES],
+                                const int len[SM4_LINES],
+                                const int32u* key_sched[SM4_ROUNDS],
+                                __mmask16 mb_mask,
+                                const int8u* pa_iv[SM4_LINES]);
+#endif /* MBX_SM4NI_ENABLED */
+
 mbx_status16 internal_avx512_sm4_set_round_keys_mb16(int32u* key_sched[SM4_ROUNDS],
                                                      const int8u* pa_inp_key[SM4_LINES],
                                                      __mmask16 mb_mask);

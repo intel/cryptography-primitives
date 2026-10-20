@@ -101,6 +101,10 @@
 #define mbcpCPUID_BMI2 \
     0x8000000000LL /* BMI2                                                                                          */
 #define mbcpCPUID_AVXIFMA 0x10000000000LL
+#define mbcpCPUID_SM4 \
+    0x20000000000LL /* SM4 instructions (VSM4RNDS4, VSM4KEY4)                                                       */
+#define mbcpCPUID_AVX10_2 \
+    0x40000000000LL /* Intel® Advanced Vector Extensions 10 version 2                                               */
 
 /* general sets of the cpu features */
 #define MBX_AVX512_GENERAL_ISA                                                      \

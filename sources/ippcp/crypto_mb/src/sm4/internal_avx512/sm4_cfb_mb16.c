@@ -30,6 +30,11 @@ mbx_status16 sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
     __ALIGN64 const int8u* loc_inp[SM4_LINES];
     __ALIGN64 int8u* loc_out[SM4_LINES];
 
+#if defined(MBX_SM4NI_ENABLED)
+    if (internal_sm4ni_dispatch())
+        return sm4_ni_cfb128_enc_kernel_mb16(pa_out, pa_inp, len, key_sched, pa_iv, mb_mask);
+#endif
+
     /* Get the copy of input data lengths in bytes */
     __m512i loc_len = _mm512_loadu_si512(len);
     int* p_loc_len  = (int*)&loc_len;
@@ -288,6 +293,12 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
     mbx_status16 status = 0;
     __ALIGN64 const int8u* loc_inp[SM4_LINES];
     __ALIGN64 int8u* loc_out[SM4_LINES];
+
+#if defined(MBX_SM4NI_ENABLED)
+    if (internal_sm4ni_dispatch())
+        return sm4_ni_cfb128_dec_kernel_mb16(pa_out, pa_inp, len, key_sched, pa_iv, mb_mask);
+#endif
+
     /* Registers to store ciphertext blocks to be XOR'ed with output of SM4 cipher stage */
     __m512i STORED_CT[16];
 

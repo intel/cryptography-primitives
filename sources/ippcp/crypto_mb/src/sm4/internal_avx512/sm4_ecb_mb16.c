@@ -39,6 +39,11 @@ mbx_status16 sm4_ecb_kernel_mb16(int8u* pa_out[SM4_LINES],
     __ALIGN64 const int8u* loc_inp[SM4_LINES];
     __ALIGN64 int8u* loc_out[SM4_LINES];
 
+#if defined(MBX_SM4NI_ENABLED)
+    if (internal_sm4ni_dispatch())
+        return sm4_ni_ecb_kernel_mb16(pa_out, pa_inp, len, key_sched, mb_mask, operation);
+#endif
+
     /* Length of the input data in 128-bit chunks - number of SM4 blocks */
     __m512i num_blocks;
     GET_NUM_BLOCKS(num_blocks, len, SM4_BLOCK_SIZE);

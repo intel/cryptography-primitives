@@ -158,6 +158,35 @@ else()
   endif()
 endif()
 
+# check if the SM4-NI (VSM4RNDS4) kernels are buildable by the toolchain.
+# Probed by compiling rather than by version: GCC has the intrinsic since 15, but
+# needs binutils >= 2.42 to assemble it, so the same compiler passes or fails
+# depending on the assembler on PATH - no version test can see that.
+if(MSVC AND NOT (("${CMAKE_C_COMPILER_ID}" STREQUAL "IntelLLVM") OR ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")))
+  set(SM4NI_OPT_FLAGS "/arch:AVX10.2")
+else()
+  set(SM4NI_OPT_FLAGS "-msm4 -mavx10.2")
+endif()
+
+include(CheckCSourceCompiles)
+set(CMAKE_REQUIRED_FLAGS "${SM4NI_OPT_FLAGS}")
+check_c_source_compiles("
+#include <immintrin.h>
+int main(void)
+{
+    __m512i a = _mm512_setzero_si512();
+    a = _mm512_sm4rnds4_epi32(a, a);
+    return _mm_cvtsi128_si32(_mm512_castsi512_si128(a));
+}"
+    MBX_CC_SM4NI_SUPPORT)
+unset(CMAKE_REQUIRED_FLAGS)
+
+if(MBX_CC_SM4NI_SUPPORT)
+  message(STATUS "Intel® SM4-NI (Intel® AVX10.2) ........ on")
+else()
+  message(STATUS "Intel® SM4-NI (Intel® AVX10.2) ........ off, compiler version Intel ICX >= 2025.0.0, CLANG >= 20.0.0 or GCC >= 15.0.0 with binutils >= 2.42 is required")
+endif()
+
 if(MB_STANDALONE)
     foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
         string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )

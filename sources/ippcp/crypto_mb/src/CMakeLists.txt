@@ -171,8 +171,23 @@ foreach(opt ${MBX_PLATFORM_LIST})
 
     # Put a specific define into the library if Intel® AVX-IFMA instructions are supported by the compiler
     set(MBX_LIBRARY_DEFINES "${MBX_AVXIFMA_SUPPORT_DEFINE}" "${${opt}_def}" "$<$<BOOL:${MBX_MERGED_BLD}>:_MBX_MERGED_BLD>")
+    # MBX_SM4NI_ENABLED tells the k1 SM4 callers that the SM4-NI kernels exist and may
+    # be dispatched to at run time. It carries no Intel® AVX10.2 code by itself.
+    if(MBX_CC_SM4NI_SUPPORT AND ("${opt}" STREQUAL "k1"))
+        list(APPEND MBX_LIBRARY_DEFINES "MBX_SM4NI_ENABLED")
+    endif()
     set_source_files_properties(${MBX_C_SOURCES_${opt}} PROPERTIES COMPILE_DEFINITIONS  "${MBX_LIBRARY_DEFINES}"
                                                                    COMPILE_FLAGS        "${OPT_FLAGS_${opt}} ${CMAKE_C_FLAGS_SECURITY}")
+
+    # The SM4-NI kernels are the only place Intel® AVX10.2 is enabled, and they are
+    # reached only behind the runtime check in internal_sm4ni_dispatch(). Keep them in
+    # this one translation unit: with these flags the compiler is free to emit Intel®
+    # AVX10.2 anywhere, which would fault on a CPU that does not support it.
+    if(MBX_CC_SM4NI_SUPPORT AND ("${opt}" STREQUAL "k1"))
+        set_source_files_properties(${mbx_c_cache_dir}/${opt}_sm4_ni_kernels_mb16.c PROPERTIES
+            COMPILE_DEFINITIONS "${MBX_LIBRARY_DEFINES}"
+            COMPILE_FLAGS       "${OPT_FLAGS_${opt}} ${SM4NI_OPT_FLAGS} ${CMAKE_C_FLAGS_SECURITY}")
+    endif()
 endforeach()
 
 # build object libraries

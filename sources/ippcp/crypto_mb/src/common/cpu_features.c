@@ -172,6 +172,7 @@ static const cpu_feature_map cpu_feature_detector_7_0[] = {
 
 static const cpu_feature_map cpu_feature_detector_7_1[] = {
     { eax_, BIT23, mbcpCPUID_AVXIFMA },
+    { eax_, BIT02, mbcpCPUID_SM4 },
 };
 /* clang-format on */
 
@@ -245,6 +246,16 @@ int64u mbx_get_cpu_features(void)
                                                    cpu_feature_detector_7_1,
                                                    sizeof(cpu_feature_detector_7_1) /
                                                        sizeof(cpu_feature_map));
+
+            /* Intel® AVX10 reports its version in a leaf of its own, so the feature
+               bit table above cannot express it. The eax_/ebx_/... aliases are
+               #undef'd by this point, hence the raw cpu_info[] indices. */
+            /* edx[19] - Intel® AVX10 converged vector ISA */
+            if (cpu_info[3] & BIT19) {
+                _mbcp_cpuid(cpu_info, 0x24, 0);
+                if ((cpu_info[1] & 0x00FF) >= 2) /* ebx[0:7] - Intel® AVX10 version */
+                    features |= mbcpCPUID_AVX10_2;
+            }
         }
     }
 
@@ -260,6 +271,10 @@ int64u mbx_get_cpu_features(void)
 #define CRYPTO_MB_REQUIRED_CPU_FEATURES_L9 \
     (mbcpCPUID_MOVBE | mbcpCPUID_AVX2 | mbcpCPUID_RDSEED | mbcpCPUID_AVXIFMA | mbcpAVX_ENABLEDBYOS)
 
+/* The zmm SM4-NI kernels sit on top of the k1 path, so they need everything k1 needs */
+#define CRYPTO_MB_REQUIRED_CPU_FEATURES_SM4NI \
+    (CRYPTO_MB_REQUIRED_CPU_FEATURES_K1 | mbcpCPUID_SM4 | mbcpCPUID_AVX10_2)
+
 int internal_is_k1_applicable(int64u cpu_features)
 {
     int64u features = cpu_features;
@@ -274,6 +289,15 @@ int internal_is_l9_applicable(int64u cpu_features)
     if (0 == features)
         features = mbx_get_cpu_features();
     return (CRYPTO_MB_REQUIRED_CPU_FEATURES_L9 == (features & CRYPTO_MB_REQUIRED_CPU_FEATURES_L9));
+}
+
+int internal_is_sm4ni_applicable(int64u cpu_features)
+{
+    int64u features = cpu_features;
+    if (0 == features)
+        features = mbx_get_cpu_features();
+    return (CRYPTO_MB_REQUIRED_CPU_FEATURES_SM4NI ==
+            (features & CRYPTO_MB_REQUIRED_CPU_FEATURES_SM4NI));
 }
 
 DLL_PUBLIC
@@ -294,6 +318,20 @@ extern int* _mbx_own_get_index()
             mbx_own_lib_index = 1; // L9 code path
     }
     return &mbx_own_lib_index;
+}
+
+static int mbx_sm4ni_dispatch_index = -1;
+
+/* choosing the SM4-NI kernels inside the K1 code path. Cached like the index above because
+   mbx_get_cpu_features() re-runs the whole CPUID sweep on every call unless the application
+   set the features itself, which would otherwise dominate every SM4 kernel invocation.
+   Racing threads compute the same value and store a single int, so either order gives the
+   same answer. -1 means undecided. */
+int internal_sm4ni_dispatch(void)
+{
+    if (0 > mbx_sm4ni_dispatch_index)
+        mbx_sm4ni_dispatch_index = internal_is_sm4ni_applicable(0) ? 1 : 0;
+    return mbx_sm4ni_dispatch_index;
 }
 
 /* structure for determining the number of buffers(WIDTH) for the algorithm */

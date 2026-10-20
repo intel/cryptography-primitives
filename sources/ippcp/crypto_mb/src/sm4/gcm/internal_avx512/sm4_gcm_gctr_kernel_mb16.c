@@ -218,6 +218,20 @@ void sm4_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
 
     mb_mask = loc_mb_mask;
 
+#if defined(MBX_SM4NI_ENABLED)
+    if (internal_sm4ni_dispatch()) {
+        /* mb_mask is back in natural line order here, matching pa_inp/pa_out */
+        sm4_ni_gctr_kernel_mb16(pa_out,
+                                pa_inp,
+                                len,
+                                key_sched,
+                                mb_mask,
+                                SM4_GCM_CONTEXT_CTR(p_context),
+                                rearrangeOrder);
+        return;
+    }
+#endif
+
     const int8u* loc_inp[SM4_LINES];
     int8u* loc_out[SM4_LINES];
 
