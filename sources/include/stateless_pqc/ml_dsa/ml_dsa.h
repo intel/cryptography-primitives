@@ -587,54 +587,13 @@ IPPCP_INLINE void cp_ml_useHintVector(IppPoly* h,
 // =============================================
 
 // Algorithm 41 NTT(w)
-IPPCP_INLINE void cp_ml_NTT(IppPoly* f)
-{
-    Ipp32u i = 1;
-    for (Ipp8u len = CP_ML_N / 2; len >= 1; len >>= 1) {
-        for (Ipp32u start = 0; start < CP_ML_N; start += 2u * len) {
-            Ipp64s zeta = cp_mldsa_montgomery_zetas_ntt[i];
-            i++;
-            for (Ipp32u j = start; j < start + len; j++) {
-                Ipp32s t           = cp_ml_montgomeryReduce(zeta * (Ipp64s)f->values[j + len]);
-                f->values[j + len] = (f->values[j] - t);
-                f->values[j]       = (f->values[j] + t);
-                f->values[j] -= (-(f->values[j] >= CP_ML_DSA_Q)) & CP_ML_DSA_Q;
-            }
-        }
-    }
-}
+#define cp_ml_NTT OWNAPI(cp_ml_NTT)
+IPP_OWN_DECL(void, cp_ml_NTT, (IppPoly * f))
 
 // Algorithm 42 NTT^−1(w)
-IPPCP_INLINE void cp_ml_inverseNTT(IppPoly* w, int addq)
-{
-    Ipp32u m = CP_ML_N;
-    for (Ipp32u len = 1; len < CP_ML_N; len <<= 1) {
-        for (Ipp32u start = 0; start < CP_ML_N; start += 2 * len) {
-            m--;
-            Ipp32s z = -cp_mldsa_montgomery_zetas_ntt[m];
-            for (Ipp32u j = start; j < start + len; ++j) {
-                Ipp32s t     = w->values[j];
-                w->values[j] = (t + w->values[j + len]);
-                w->values[j] -= (-(w->values[j] >= CP_ML_DSA_Q)) & CP_ML_DSA_Q;
-                w->values[j + len] = (t - w->values[j + len]);
-                w->values[j + len] = cp_ml_montgomeryReduce((Ipp64s)z * w->values[j + len]);
-            }
-        }
-    }
+#define cp_ml_inverseNTT OWNAPI(cp_ml_inverseNTT)
+IPP_OWN_DECL(void, cp_ml_inverseNTT, (IppPoly * f, int addq))
 
-    Ipp64s f = 41978; // (((2 ^ 32) ^ 2) / N) % Q
-    for (Ipp32u i = 0; i < CP_ML_N; i++) {
-        w->values[i] = cp_ml_montgomeryReduce((Ipp64s)f * w->values[i]);
-    }
-
-    // extra reduce step for montgomery to add q (comparison mask, see cp_ml_barrettReduce)
-    if (addq == 1) {
-        for (Ipp32u j = 0; j < CP_ML_N; ++j) {
-            w->values[j] = cp_ml_simplifiedBarrettReduce(
-                w->values[j] + ((-(Ipp32s)(w->values[j] < 0)) & CP_ML_DSA_Q));
-        }
-    }
-}
 
 IPPCP_INLINE void cp_ml_NTT_output(const IppPoly* in, IppPoly* out)
 {
@@ -672,12 +631,9 @@ IPPCP_INLINE void cp_ml_scalarNTT(const IppPoly* a, IppPoly* b, Ipp32s c)
 }
 
 // Algorithm 45 MultiplyNTT(𝑎,̂𝑏)
-IPPCP_INLINE void cp_ml_multiplyNTT(const IppPoly* a, const IppPoly* b, IppPoly* c)
-{
-    for (Ipp32u i = 0; i < CP_ML_N; i++) {
-        c->values[i] = cp_ml_montgomeryReduce((Ipp64s)(a->values[i]) * (b->values[i]));
-    }
-}
+#define cp_ml_multiplyNTT OWNAPI(cp_ml_multiplyNTT)
+IPP_OWN_DECL(void, cp_ml_multiplyNTT, (const IppPoly* a, const IppPoly* b, IppPoly* c))
+
 
 // Algorithm 48 MatrixVectorNTT(𝐌,̂ 𝐯)
 IPPCP_INLINE void cp_ml_matrixVectorNTT(IppPoly* M, IppPoly* v, IppPoly* w, Ipp32s l, Ipp32s k)
