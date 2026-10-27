@@ -111,82 +111,380 @@ IPPCP_INLINE Ipp8s cp_ml_coeffFromHalfByte(Ipp8u b, Ipp8u eta)
     return -100;
 }
 
+// Bit packing (Algorithms 16-19). Group-unrolled per-bitlen fast paths. Each groups a whole
+// number of coefficients into a whole number of bytes with constant shifts; groups are
+// independent, so the compiler can vectorize them.
+//
+// Two field transforms:
+//   centered ("bitPack"):       field = base - coeff   (s1/s2, t0, z)
+//   simple  ("simpleBitPack"):  field = coeff          (t1, w1)
+//
+// Only the bitlens the three parameter sets actually reach have a group function:
+// centered 3, 4 (s1/s2), 13 (t0), 18, 20 (z); simple 4, 6 (w1), 10 (t1).
+
+// bitlen 3: 8 coefficients in 3 bytes
+IPPCP_INLINE void cp_ml_packGroup3(const Ipp32s* coeffsIn, Ipp32s base, Ipp8u* packedOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 8; group++) {
+        Ipp8u* dstBytes      = packedOut + 3 * group;
+        const Ipp32s* coeffs = coeffsIn + 8 * group;
+        Ipp32u field0        = (Ipp32u)(base - coeffs[0]) & 0x7u;
+        Ipp32u field1        = (Ipp32u)(base - coeffs[1]) & 0x7u;
+        Ipp32u field2        = (Ipp32u)(base - coeffs[2]) & 0x7u;
+        Ipp32u field3        = (Ipp32u)(base - coeffs[3]) & 0x7u;
+        Ipp32u field4        = (Ipp32u)(base - coeffs[4]) & 0x7u;
+        Ipp32u field5        = (Ipp32u)(base - coeffs[5]) & 0x7u;
+        Ipp32u field6        = (Ipp32u)(base - coeffs[6]) & 0x7u;
+        Ipp32u field7        = (Ipp32u)(base - coeffs[7]) & 0x7u;
+
+        dstBytes[0] = (Ipp8u)(field0 | (field1 << 3) | (field2 << 6));
+        dstBytes[1] = (Ipp8u)((field2 >> 2) | (field3 << 1) | (field4 << 4) | (field5 << 7));
+        dstBytes[2] = (Ipp8u)((field5 >> 1) | (field6 << 2) | (field7 << 5));
+    }
+}
+IPPCP_INLINE void cp_ml_unpackGroup3(const Ipp8u* packed, Ipp32s base, Ipp32s* coeffsOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 8; group++) {
+        const Ipp8u* srcBytes = packed + 3 * group;
+        Ipp32s* coeffs        = coeffsOut + 8 * group;
+
+        coeffs[0] = base - (Ipp32s)((srcBytes[0]) & 0x7u);
+        coeffs[1] = base - (Ipp32s)(((srcBytes[0] >> 3)) & 0x7u);
+        coeffs[2] = base - (Ipp32s)(((srcBytes[0] >> 6) | ((Ipp32u)srcBytes[1] << 2)) & 0x7u);
+        coeffs[3] = base - (Ipp32s)(((srcBytes[1] >> 1)) & 0x7u);
+        coeffs[4] = base - (Ipp32s)(((srcBytes[1] >> 4)) & 0x7u);
+        coeffs[5] = base - (Ipp32s)(((srcBytes[1] >> 7) | ((Ipp32u)srcBytes[2] << 1)) & 0x7u);
+        coeffs[6] = base - (Ipp32s)(((srcBytes[2] >> 2)) & 0x7u);
+        coeffs[7] = base - (Ipp32s)(((srcBytes[2] >> 5)) & 0x7u);
+    }
+}
+
+// bitlen 4: 2 coefficients in 1 byte
+IPPCP_INLINE void cp_ml_packGroup4(const Ipp32s* coeffsIn, Ipp32s base, Ipp8u* packedOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 2; group++) {
+        Ipp8u* dstBytes      = packedOut + 1 * group;
+        const Ipp32s* coeffs = coeffsIn + 2 * group;
+        Ipp32u field0        = (Ipp32u)(base - coeffs[0]) & 0xFu;
+        Ipp32u field1        = (Ipp32u)(base - coeffs[1]) & 0xFu;
+
+        dstBytes[0] = (Ipp8u)(field0 | (field1 << 4));
+    }
+}
+IPPCP_INLINE void cp_ml_unpackGroup4(const Ipp8u* packed, Ipp32s base, Ipp32s* coeffsOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 2; group++) {
+        const Ipp8u* srcBytes = packed + 1 * group;
+        Ipp32s* coeffs        = coeffsOut + 2 * group;
+
+        coeffs[0] = base - (Ipp32s)((srcBytes[0]) & 0xFu);
+        coeffs[1] = base - (Ipp32s)(((srcBytes[0] >> 4)) & 0xFu);
+    }
+}
+IPPCP_INLINE void cp_ml_packSimpleGroup4(const Ipp32s* coeffsIn, Ipp8u* packedOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 2; group++) {
+        Ipp8u* dstBytes      = packedOut + 1 * group;
+        const Ipp32s* coeffs = coeffsIn + 2 * group;
+        Ipp32u field0        = (Ipp32u)(coeffs[0]) & 0xFu;
+        Ipp32u field1        = (Ipp32u)(coeffs[1]) & 0xFu;
+
+        dstBytes[0] = (Ipp8u)(field0 | (field1 << 4));
+    }
+}
+IPPCP_INLINE void cp_ml_unpackSimpleGroup4(const Ipp8u* packed, Ipp32s* coeffsOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 2; group++) {
+        const Ipp8u* srcBytes = packed + 1 * group;
+        Ipp32s* coeffs        = coeffsOut + 2 * group;
+
+        coeffs[0] = (Ipp32s)((srcBytes[0]) & 0xFu);
+        coeffs[1] = (Ipp32s)(((srcBytes[0] >> 4)) & 0xFu);
+    }
+}
+
+// bitlen 6: 4 coefficients in 3 bytes
+IPPCP_INLINE void cp_ml_packSimpleGroup6(const Ipp32s* coeffsIn, Ipp8u* packedOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 4; group++) {
+        Ipp8u* dstBytes      = packedOut + 3 * group;
+        const Ipp32s* coeffs = coeffsIn + 4 * group;
+        Ipp32u field0        = (Ipp32u)(coeffs[0]) & 0x3Fu;
+        Ipp32u field1        = (Ipp32u)(coeffs[1]) & 0x3Fu;
+        Ipp32u field2        = (Ipp32u)(coeffs[2]) & 0x3Fu;
+        Ipp32u field3        = (Ipp32u)(coeffs[3]) & 0x3Fu;
+
+        dstBytes[0] = (Ipp8u)(field0 | (field1 << 6));
+        dstBytes[1] = (Ipp8u)((field1 >> 2) | (field2 << 4));
+        dstBytes[2] = (Ipp8u)((field2 >> 4) | (field3 << 2));
+    }
+}
+IPPCP_INLINE void cp_ml_unpackSimpleGroup6(const Ipp8u* packed, Ipp32s* coeffsOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 4; group++) {
+        const Ipp8u* srcBytes = packed + 3 * group;
+        Ipp32s* coeffs        = coeffsOut + 4 * group;
+
+        coeffs[0] = (Ipp32s)((srcBytes[0]) & 0x3Fu);
+        coeffs[1] = (Ipp32s)(((srcBytes[0] >> 6) | ((Ipp32u)srcBytes[1] << 2)) & 0x3Fu);
+        coeffs[2] = (Ipp32s)(((srcBytes[1] >> 4) | ((Ipp32u)srcBytes[2] << 4)) & 0x3Fu);
+        coeffs[3] = (Ipp32s)(((srcBytes[2] >> 2)) & 0x3Fu);
+    }
+}
+
+// bitlen 10: 4 coefficients in 5 bytes
+IPPCP_INLINE void cp_ml_packSimpleGroup10(const Ipp32s* coeffsIn, Ipp8u* packedOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 4; group++) {
+        Ipp8u* dstBytes      = packedOut + 5 * group;
+        const Ipp32s* coeffs = coeffsIn + 4 * group;
+        Ipp32u field0        = (Ipp32u)(coeffs[0]) & 0x3FFu;
+        Ipp32u field1        = (Ipp32u)(coeffs[1]) & 0x3FFu;
+        Ipp32u field2        = (Ipp32u)(coeffs[2]) & 0x3FFu;
+        Ipp32u field3        = (Ipp32u)(coeffs[3]) & 0x3FFu;
+
+        dstBytes[0] = (Ipp8u)(field0);
+        dstBytes[1] = (Ipp8u)((field0 >> 8) | (field1 << 2));
+        dstBytes[2] = (Ipp8u)((field1 >> 6) | (field2 << 4));
+        dstBytes[3] = (Ipp8u)((field2 >> 4) | (field3 << 6));
+        dstBytes[4] = (Ipp8u)((field3 >> 2));
+    }
+}
+IPPCP_INLINE void cp_ml_unpackSimpleGroup10(const Ipp8u* packed, Ipp32s* coeffsOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 4; group++) {
+        const Ipp8u* srcBytes = packed + 5 * group;
+        Ipp32s* coeffs        = coeffsOut + 4 * group;
+
+        coeffs[0] = (Ipp32s)((srcBytes[0] | ((Ipp32u)srcBytes[1] << 8)) & 0x3FFu);
+        coeffs[1] = (Ipp32s)(((srcBytes[1] >> 2) | ((Ipp32u)srcBytes[2] << 6)) & 0x3FFu);
+        coeffs[2] = (Ipp32s)(((srcBytes[2] >> 4) | ((Ipp32u)srcBytes[3] << 4)) & 0x3FFu);
+        coeffs[3] = (Ipp32s)(((srcBytes[3] >> 6) | ((Ipp32u)srcBytes[4] << 2)) & 0x3FFu);
+    }
+}
+
+// bitlen 13: 8 coefficients in 13 bytes
+IPPCP_INLINE void cp_ml_packGroup13(const Ipp32s* coeffsIn, Ipp32s base, Ipp8u* packedOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 8; group++) {
+        Ipp8u* dstBytes      = packedOut + 13 * group;
+        const Ipp32s* coeffs = coeffsIn + 8 * group;
+        Ipp32u field0        = (Ipp32u)(base - coeffs[0]) & 0x1FFFu;
+        Ipp32u field1        = (Ipp32u)(base - coeffs[1]) & 0x1FFFu;
+        Ipp32u field2        = (Ipp32u)(base - coeffs[2]) & 0x1FFFu;
+        Ipp32u field3        = (Ipp32u)(base - coeffs[3]) & 0x1FFFu;
+        Ipp32u field4        = (Ipp32u)(base - coeffs[4]) & 0x1FFFu;
+        Ipp32u field5        = (Ipp32u)(base - coeffs[5]) & 0x1FFFu;
+        Ipp32u field6        = (Ipp32u)(base - coeffs[6]) & 0x1FFFu;
+        Ipp32u field7        = (Ipp32u)(base - coeffs[7]) & 0x1FFFu;
+
+        dstBytes[0]  = (Ipp8u)(field0);
+        dstBytes[1]  = (Ipp8u)((field0 >> 8) | (field1 << 5));
+        dstBytes[2]  = (Ipp8u)((field1 >> 3));
+        dstBytes[3]  = (Ipp8u)((field1 >> 11) | (field2 << 2));
+        dstBytes[4]  = (Ipp8u)((field2 >> 6) | (field3 << 7));
+        dstBytes[5]  = (Ipp8u)((field3 >> 1));
+        dstBytes[6]  = (Ipp8u)((field3 >> 9) | (field4 << 4));
+        dstBytes[7]  = (Ipp8u)((field4 >> 4));
+        dstBytes[8]  = (Ipp8u)((field4 >> 12) | (field5 << 1));
+        dstBytes[9]  = (Ipp8u)((field5 >> 7) | (field6 << 6));
+        dstBytes[10] = (Ipp8u)((field6 >> 2));
+        dstBytes[11] = (Ipp8u)((field6 >> 10) | (field7 << 3));
+        dstBytes[12] = (Ipp8u)((field7 >> 5));
+    }
+}
+IPPCP_INLINE void cp_ml_unpackGroup13(const Ipp8u* packed, Ipp32s base, Ipp32s* coeffsOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 8; group++) {
+        const Ipp8u* srcBytes = packed + 13 * group;
+        Ipp32s* coeffs        = coeffsOut + 8 * group;
+
+        coeffs[0] = base - (Ipp32s)((srcBytes[0] | ((Ipp32u)srcBytes[1] << 8)) & 0x1FFFu);
+        coeffs[1] = base - (Ipp32s)(((srcBytes[1] >> 5) | ((Ipp32u)srcBytes[2] << 3) |
+                                     ((Ipp32u)srcBytes[3] << 11)) &
+                                    0x1FFFu);
+        coeffs[2] = base - (Ipp32s)(((srcBytes[3] >> 2) | ((Ipp32u)srcBytes[4] << 6)) & 0x1FFFu);
+        coeffs[3] = base - (Ipp32s)(((srcBytes[4] >> 7) | ((Ipp32u)srcBytes[5] << 1) |
+                                     ((Ipp32u)srcBytes[6] << 9)) &
+                                    0x1FFFu);
+        coeffs[4] = base - (Ipp32s)(((srcBytes[6] >> 4) | ((Ipp32u)srcBytes[7] << 4) |
+                                     ((Ipp32u)srcBytes[8] << 12)) &
+                                    0x1FFFu);
+        coeffs[5] = base - (Ipp32s)(((srcBytes[8] >> 1) | ((Ipp32u)srcBytes[9] << 7)) & 0x1FFFu);
+        coeffs[6] = base - (Ipp32s)(((srcBytes[9] >> 6) | ((Ipp32u)srcBytes[10] << 2) |
+                                     ((Ipp32u)srcBytes[11] << 10)) &
+                                    0x1FFFu);
+        coeffs[7] = base - (Ipp32s)(((srcBytes[11] >> 3) | ((Ipp32u)srcBytes[12] << 5)) & 0x1FFFu);
+    }
+}
+
+// bitlen 18: 4 coefficients in 9 bytes
+IPPCP_INLINE void cp_ml_packGroup18(const Ipp32s* coeffsIn, Ipp32s base, Ipp8u* packedOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 4; group++) {
+        Ipp8u* dstBytes      = packedOut + 9 * group;
+        const Ipp32s* coeffs = coeffsIn + 4 * group;
+        Ipp32u field0        = (Ipp32u)(base - coeffs[0]) & 0x3FFFFu;
+        Ipp32u field1        = (Ipp32u)(base - coeffs[1]) & 0x3FFFFu;
+        Ipp32u field2        = (Ipp32u)(base - coeffs[2]) & 0x3FFFFu;
+        Ipp32u field3        = (Ipp32u)(base - coeffs[3]) & 0x3FFFFu;
+
+        dstBytes[0] = (Ipp8u)(field0);
+        dstBytes[1] = (Ipp8u)((field0 >> 8));
+        dstBytes[2] = (Ipp8u)((field0 >> 16) | (field1 << 2));
+        dstBytes[3] = (Ipp8u)((field1 >> 6));
+        dstBytes[4] = (Ipp8u)((field1 >> 14) | (field2 << 4));
+        dstBytes[5] = (Ipp8u)((field2 >> 4));
+        dstBytes[6] = (Ipp8u)((field2 >> 12) | (field3 << 6));
+        dstBytes[7] = (Ipp8u)((field3 >> 2));
+        dstBytes[8] = (Ipp8u)((field3 >> 10));
+    }
+}
+IPPCP_INLINE void cp_ml_unpackGroup18(const Ipp8u* packed, Ipp32s base, Ipp32s* coeffsOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 4; group++) {
+        const Ipp8u* srcBytes = packed + 9 * group;
+        Ipp32s* coeffs        = coeffsOut + 4 * group;
+
+        coeffs[0] = base - (Ipp32s)((srcBytes[0] | ((Ipp32u)srcBytes[1] << 8) |
+                                     ((Ipp32u)srcBytes[2] << 16)) &
+                                    0x3FFFFu);
+        coeffs[1] = base - (Ipp32s)(((srcBytes[2] >> 2) | ((Ipp32u)srcBytes[3] << 6) |
+                                     ((Ipp32u)srcBytes[4] << 14)) &
+                                    0x3FFFFu);
+        coeffs[2] = base - (Ipp32s)(((srcBytes[4] >> 4) | ((Ipp32u)srcBytes[5] << 4) |
+                                     ((Ipp32u)srcBytes[6] << 12)) &
+                                    0x3FFFFu);
+        coeffs[3] = base - (Ipp32s)(((srcBytes[6] >> 6) | ((Ipp32u)srcBytes[7] << 2) |
+                                     ((Ipp32u)srcBytes[8] << 10)) &
+                                    0x3FFFFu);
+    }
+}
+
+// bitlen 20: 2 coefficients in 5 bytes
+IPPCP_INLINE void cp_ml_packGroup20(const Ipp32s* coeffsIn, Ipp32s base, Ipp8u* packedOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 2; group++) {
+        Ipp8u* dstBytes      = packedOut + 5 * group;
+        const Ipp32s* coeffs = coeffsIn + 2 * group;
+        Ipp32u field0        = (Ipp32u)(base - coeffs[0]) & 0xFFFFFu;
+        Ipp32u field1        = (Ipp32u)(base - coeffs[1]) & 0xFFFFFu;
+
+        dstBytes[0] = (Ipp8u)(field0);
+        dstBytes[1] = (Ipp8u)((field0 >> 8));
+        dstBytes[2] = (Ipp8u)((field0 >> 16) | (field1 << 4));
+        dstBytes[3] = (Ipp8u)((field1 >> 4));
+        dstBytes[4] = (Ipp8u)((field1 >> 12));
+    }
+}
+IPPCP_INLINE void cp_ml_unpackGroup20(const Ipp8u* packed, Ipp32s base, Ipp32s* coeffsOut)
+{
+    for (Ipp32u group = 0; group < CP_ML_N / 2; group++) {
+        const Ipp8u* srcBytes = packed + 5 * group;
+        Ipp32s* coeffs        = coeffsOut + 2 * group;
+
+        coeffs[0] = base - (Ipp32s)((srcBytes[0] | ((Ipp32u)srcBytes[1] << 8) |
+                                     ((Ipp32u)srcBytes[2] << 16)) &
+                                    0xFFFFFu);
+        coeffs[1] = base - (Ipp32s)(((srcBytes[2] >> 4) | ((Ipp32u)srcBytes[3] << 4) |
+                                     ((Ipp32u)srcBytes[4] << 12)) &
+                                    0xFFFFFu);
+    }
+}
+
 // Algorithm 16 SimpleBitPack(𝑤, 𝑏)
 IPPCP_INLINE void cp_ml_simpleBitPack(const IppPoly* w, const Ipp32u bitlen_b, Ipp8u* out)
 {
-    for (Ipp32u i = 0; i < 32 * bitlen_b; i++) {
-        out[i] = 0;
-    }
-
-    for (Ipp32u i = 0; i < CP_ML_N; i++) {
-        Ipp32s temp = w->values[i];
-        for (Ipp32u ii = 0; ii < bitlen_b; ii++) {
-            Ipp32u idx = i * bitlen_b + ii;
-            out[idx >> 3] |= (Ipp8u)((temp & 1) << (idx & 7));
-            temp >>= 1;
+    switch (bitlen_b) {
+    case 4:
+        cp_ml_packSimpleGroup4(w->values, out);
+        break;
+    case 6:
+        cp_ml_packSimpleGroup6(w->values, out);
+        break;
+    case 10:
+        cp_ml_packSimpleGroup10(w->values, out);
+        break;
+    default:
+        for (Ipp32u i = 0; i < 32 * bitlen_b; i++) {
+            out[i] = 0;
         }
+        break;
     }
 }
 
 // Algorithm 17 BitPack(𝑤, 𝑎, 𝑏)
 IPPCP_INLINE void cp_ml_bitPack(const IppPoly* w, Ipp32s b, Ipp32u bitlen_ab, Ipp8u* out)
 {
-    for (Ipp32u i = 0; i < 32 * bitlen_ab; i++) {
-        out[i] = 0;
-    }
-
-    for (Ipp32u i = 0; i < CP_ML_N; i++) {
-        Ipp32s temp = b - w->values[i];
-        for (Ipp32u ii = 0; ii < bitlen_ab; ii++) {
-            Ipp32u idx = i * bitlen_ab + ii;
-            out[idx >> 3] |= (Ipp8u)((temp & 1) << (idx & 7));
-            temp >>= 1;
+    switch (bitlen_ab) {
+    case 3:
+        cp_ml_packGroup3(w->values, b, out);
+        break;
+    case 4:
+        cp_ml_packGroup4(w->values, b, out);
+        break;
+    case 13:
+        cp_ml_packGroup13(w->values, b, out);
+        break;
+    case 18:
+        cp_ml_packGroup18(w->values, b, out);
+        break;
+    case 20:
+        cp_ml_packGroup20(w->values, b, out);
+        break;
+    default:
+        for (Ipp32u i = 0; i < 32 * bitlen_ab; i++) {
+            out[i] = 0;
         }
+        break;
     }
 }
 
-// Algorithm 18 SimpleBitUnpack(v, b)
-// length of v = 32 * bitlen b
+// Algorithm 18 SimpleBitUnpack(v, b); length of v = 32 * bitlen b
 IPPCP_INLINE void cp_ml_simpleBitUnpack(const Ipp8u* v, Ipp32u bitlen_b, IppPoly* out)
 {
-    for (int i = 0; i < CP_ML_N; i++) {
-        out->values[i] = 0;
-    }
-
-    for (Ipp32u i = 0; i < CP_ML_N; i++) {
-        Ipp32s temp = 0;
-
-        // Extract c bits for this coefficient, processing from MSB to LSB
-        for (Ipp32u j = 0; j < bitlen_b; j++) {
-            Ipp32u bitPosition = i * bitlen_b + (bitlen_b - 1 - j); // Reverse bit order
-
-            Ipp8u bitValue = (v[bitPosition >> 3] >> (bitPosition & 7)) & 1;
-            temp           = (temp << 1) | bitValue;
+    switch (bitlen_b) {
+    case 4:
+        cp_ml_unpackSimpleGroup4(v, out->values);
+        break;
+    case 6:
+        cp_ml_unpackSimpleGroup6(v, out->values);
+        break;
+    case 10:
+        cp_ml_unpackSimpleGroup10(v, out->values);
+        break;
+    default:
+        for (Ipp32u i = 0; i < CP_ML_N; i++) {
+            out->values[i] = 0;
         }
-
-        out->values[i] = temp;
+        break;
     }
 }
 
 // Algorithm 19 BitUnpack(𝑣, 𝑎, 𝑏)
 IPPCP_INLINE void cp_ml_bitUnpack(const Ipp8u* v, Ipp32s b, Ipp32u bitlen_ab, IppPoly* out)
 {
-    for (int i = 0; i < CP_ML_N; i++) {
-        out->values[i] = 0;
-    }
-
-    for (Ipp32u i = 0; i < CP_ML_N; i++) {
-        Ipp32s temp = 0;
-
-        // Extract c bits for this coefficient, processing from MSB to LSB
-        for (Ipp32u j = 0; j < bitlen_ab; j++) {
-            Ipp32u bitPosition = i * bitlen_ab + (bitlen_ab - 1 - j); // Reverse bit order
-
-            Ipp8u bitValue = (v[bitPosition >> 3] >> (bitPosition & 7)) & 1;
-            temp           = (temp << 1) | bitValue;
+    switch (bitlen_ab) {
+    case 3:
+        cp_ml_unpackGroup3(v, b, out->values);
+        break;
+    case 4:
+        cp_ml_unpackGroup4(v, b, out->values);
+        break;
+    case 13:
+        cp_ml_unpackGroup13(v, b, out->values);
+        break;
+    case 18:
+        cp_ml_unpackGroup18(v, b, out->values);
+        break;
+    case 20:
+        cp_ml_unpackGroup20(v, b, out->values);
+        break;
+    default:
+        for (Ipp32u i = 0; i < CP_ML_N; i++) {
+            out->values[i] = 0;
         }
-
-        out->values[i] = b - temp;
+        break;
     }
 }
 
@@ -447,9 +745,8 @@ IPPCP_INLINE Ipp32s cp_ml_barrettReduce(Ipp64s x)
     // 3. res = x - floor((mu*x)/2^24)*n
     Ipp32s res = (Ipp32s)(x - t);
 
-    // 4. if res >= n then res -= n. The mask is built from a comparison rather than a sign
-    // shift: right-shifting a negative signed value is implementation-defined, while
-    // (-(Ipp32s)(res < 0)) is fully defined and compiles to the same setcc + neg + and.
+    // 4. if res >= n then res -= n. The mask uses a comparison, not a sign shift:
+    // right-shifting a negative signed value is implementation-defined.
     res -= CP_ML_DSA_Q;
     res += (-(Ipp32s)(res < 0)) & CP_ML_DSA_Q;
     res += (-(Ipp32s)(res < 0)) & CP_ML_DSA_Q;
