@@ -70,15 +70,15 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 # Suppress warnings from casts from a pointer to an integer type of a different size
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-pointer-to-int-cast")
 
-# Optimization level = 3, no-debug definition (turns off asserts)
-set(CMAKE_C_FLAGS_RELEASE " -O3 -DNDEBUG")
+# Optimization level = 3, precise floating-point model, no-debug definition (turns off asserts)
+set(CMAKE_C_FLAGS_RELEASE " -O3 -fp-model=precise -DNDEBUG")
 if(NOT DEFINED NO_FORTIFY_SOURCE)
   # Security flag that adds compile-time and run-time checks
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=3")
 endif()
 
-# DEBUG flags - optimization level = 0, generation GDB information (-g)
-set (CMAKE_C_FLAGS_DEBUG " -O0 -g")
+# DEBUG flags - optimization level = 0, generation GDB information (-g), precise floating-point model
+set (CMAKE_C_FLAGS_DEBUG " -O0 -g -fp-model=precise")
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
 

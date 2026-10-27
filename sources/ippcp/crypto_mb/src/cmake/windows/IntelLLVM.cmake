@@ -75,6 +75,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Qstd=c99")
 set(CMAKE_C_FLAGS_RELEASE "/MT")
 # Optimization level = 3
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O3")
+# Precise floating-point model
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /fp:precise")
 # Remove debug information from Release builds
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /DNDEBUG")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -mllvm --intel-codeview-always-emit-compiler-info=false")
@@ -86,6 +88,8 @@ set(CMAKE_C_FLAGS_DEBUG "/MTd")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Zi")
 # Turns off all optimizations.
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od")
+# Precise floating-point model
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /fp:precise")
 # Debug macro
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /D_DEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")

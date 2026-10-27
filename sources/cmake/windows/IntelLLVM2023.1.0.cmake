@@ -81,6 +81,8 @@ set(CMAKE_C_FLAGS_DEBUG "/MTd")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Zi")
 # Turns off all optimizations in the program and speeds compilation.
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od")
+# Precise floating-point model
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /fp:precise")
 # Debug macro
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /DDEBUG")
 
@@ -90,6 +92,8 @@ set(CMAKE_C_FLAGS_RELEASE "/MT")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zl")
 # "Maximize Speed". Selects a predefined set of options that affect the size and speed of generated code.
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O3")
+# Precise floating-point model
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /fp:precise")
 # Remove debug information from Release builds
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /DNDEBUG")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -mllvm --intel-codeview-always-emit-compiler-info=false")

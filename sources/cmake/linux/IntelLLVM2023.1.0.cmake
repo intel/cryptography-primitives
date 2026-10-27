@@ -92,16 +92,16 @@ if(CODE_COVERAGE)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-instr-generate -fcoverage-mapping")
 endif()
 
-# Optimization level = 3, no-debug definition (turns off asserts), warning level = 3, treat warnings as errors
-set(CMAKE_C_FLAGS_RELEASE " -O3 -ffast-math -DNDEBUG -Wall -Wno-unused-function -Werror")
+# Optimization level = 3, precise floating-point model, no-debug definition (turns off asserts), warning level = 3, treat warnings as errors
+set(CMAKE_C_FLAGS_RELEASE " -O3 -fp-model=precise -DNDEBUG -Wall -Wno-unused-function -Werror")
 # Enabling additional warnings
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wconversion -Wimplicit-fallthrough -Wextra -Wunknown-pragmas")
 
 # Security flag that adds compile-time and run-time checks
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -D_FORTIFY_SOURCE=3")
 
-# DEBUG flags - optimization level = 0, generation GDB information (-g)
-set (CMAKE_C_FLAGS_DEBUG " -O0 -g")
+# DEBUG flags - optimization level = 0, generation GDB information (-g), precise floating-point model
+set (CMAKE_C_FLAGS_DEBUG " -O0 -g -fp-model=precise")
 
 # Alignment for structures on byte boundaries (= 16)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Zp16")
