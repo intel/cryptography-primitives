@@ -66,7 +66,7 @@ Return Values
    * - ippStsLengthErr
      - Indicates an error condition if len is less than zero or the value that
        accumulates len parameters from previous calls to AES_CCMEncrypt with
-       the current value of len exceeds the tag length specified in the
+       the current value of len exceeds the message length specified in the
        previous call to :ref:`AES_CCMMessageLen <aes_ccmmessagelen>`.
 
 

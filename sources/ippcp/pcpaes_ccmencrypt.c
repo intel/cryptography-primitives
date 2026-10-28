@@ -154,6 +154,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
                 CopyBlock(localState, MAC, MBS_RIJ128);
                 CopyBlock(localState + MBS_RIJ128, S, MBS_RIJ128);
                 counterVal += processedLen / MBS_RIJ128;
+                AESCCM_LENPRO(pState) += processedLen;
 
                 /* clear secret data (holds MAC/counter copies) */
                 PurgeBlock(localState, sizeof(localState));

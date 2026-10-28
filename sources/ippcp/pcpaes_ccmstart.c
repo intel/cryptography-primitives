@@ -42,6 +42,9 @@
 //                            pAD == NULL
 //    ippStsContextMatchErr   !VALID_AESCCM_ID()
 //    ippStsLengthErr         13 < ivLen < 7
+//                            adLen < 0
+//                            msgLen does not fit into (15 - ivLen) bytes
+//                            msgLen > (2^32 - 1) * 16
 //    ippStsNoErr             no errors
 //
 // Parameters:
@@ -67,6 +70,12 @@ IPPFUN(IppStatus, ippsAES_CCMStart, (const Ipp8u* pIV,
     /* test IV (or nonce) */
     IPP_BAD_PTR1_RET(pIV);
     IPP_BADARG_RET((ivLen < 7) || (ivLen > 13), ippStsLengthErr);
+
+    /* test message length: it must fit into the (15 - ivLen)-byte length field of B0
+       (any value fits when ivLen == 7), and its blocks must not overflow the 32-bit counter */
+    IPP_BADARG_RET((ivLen > 7 && (AESCCM_MSGLEN(pState) >> (8 * (MBS_RIJ128 - 1 - ivLen))) != 0) ||
+                       AESCCM_MSGLEN(pState) > (Ipp64u)IPP_MAX_32U * MBS_RIJ128,
+                   ippStsLengthErr);
 
     /* test AAD pointer if defined */
     IPP_BADARG_RET(adLen < 0, ippStsLengthErr);

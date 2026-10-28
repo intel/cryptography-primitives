@@ -61,12 +61,15 @@ Return Values
 
    * - ippStsNoErr    
      - Indicates no error. Any other value indicates an error or warning.
-   * - pState   
+   * - ippStsNullPtrErr
      - Indicates an error condition if any of the specified pointers is NULL.
-   * - pState   
+   * - ippStsContextMatchErr
      - Indicates an error condition if the context parameter does not match the operation.
-   * - pState   
-     - Indicates an error condition if ivLen < 7 or ivLen > 13 .
+   * - ippStsLengthErr
+     - Indicates an error condition if ivLen < 7 or ivLen > 13, if adLen is
+       less than zero, or if the message length specified in the previous
+       call to :ref:`AES_CCMMessageLen <aes_ccmmessagelen>` does not fit
+       into 15 - ivLen bytes or exceeds (2\ :sup:`32` - 1) * 16 bytes.
 
 
 
