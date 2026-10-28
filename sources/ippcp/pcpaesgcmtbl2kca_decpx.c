@@ -51,10 +51,8 @@ IPP_OWN_DEFN(void, wrpAesGcmDec_table2K, (Ipp8u* pDst,
                                           IppsAES_GCMState* pState))
 /* clang-format on */
 {
-    //AesGcmAuth_table2K(AESGCM_GHASH(pState), pSrc, len, AESGCM_HKEY(pState), AesGcmConst_table);
-    AesGcmAuth_table2K_ct(AESGCM_GHASH(pState), pSrc, len, AESGCM_HKEY(pState), AesGcmConst_table);
-
     {
+        Ipp8u* pHash     = AESGCM_GHASH(pState);
         Ipp8u* pCounter  = AESGCM_COUNTER(pState);
         Ipp8u* pECounter = AESGCM_ECOUNTER(pState);
 
@@ -62,8 +60,12 @@ IPP_OWN_DEFN(void, wrpAesGcmDec_table2K, (Ipp8u* pDst,
         RijnCipher encoder        = RIJ_ENCODER(pAES);
 
         while (len >= BLOCK_SIZE) {
-            /* encrypt whole AES block */
-            XorBlock16(pSrc, pECounter, pDst);
+            /* read the source block once, then authenticate and decrypt it */
+            Ipp8u srcBlock[BLOCK_SIZE];
+            CopyBlock16(pSrc, srcBlock);
+            XorBlock16(srcBlock, pHash, pHash);
+            AesGcmMulGcm_table2K_ct(pHash, AESGCM_HKEY(pState), AesGcmConst_table);
+            XorBlock16(srcBlock, pECounter, pDst);
 
             pSrc += BLOCK_SIZE;
             pDst += BLOCK_SIZE;

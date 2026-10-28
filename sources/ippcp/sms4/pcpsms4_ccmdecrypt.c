@@ -88,7 +88,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMDecrypt, (const Ipp8u* pSrc,
         IppsSMS4Spec* pSMS4 = SMS4CCM_CIPHER(pCtx);
 
         /* buffer for secret data */
-        __ALIGN16 Ipp32u TMP[3 * (MBS_SMS4 / sizeof(Ipp32u)) + 6];
+        __ALIGN16 Ipp32u TMP[4 * (MBS_SMS4 / sizeof(Ipp32u)) + 6];
 
         /*
          MAC          size = MBS_SMS4/sizeof(Ipp32u)
@@ -99,6 +99,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMDecrypt, (const Ipp8u* pSrc,
          tmpLen       size = 1
          counterVal   size = 1
          counterEnc   size = 2
+         dstBlock     size = MBS_SMS4/sizeof(Ipp32u)
       */
 
         Ipp32u* MAC        = TMP;
@@ -109,6 +110,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMDecrypt, (const Ipp8u* pSrc,
         Ipp32u* tmpLen     = TMP + 3 * (MBS_SMS4 / sizeof(Ipp32u)) + 2;
         Ipp32u* counterVal = TMP + 3 * (MBS_SMS4 / sizeof(Ipp32u)) + 3;
         Ipp32u* counterEnc = TMP + 3 * (MBS_SMS4 / sizeof(Ipp32u)) + 4;
+        Ipp32u* dstBlock   = TMP + 3 * (MBS_SMS4 / sizeof(Ipp32u)) + 6;
 
         *flag = (Ipp32u)(SMS4CCM_LENPRO(pCtx) & (MBS_SMS4 - 1));
 
@@ -123,10 +125,9 @@ IPPFUN(IppStatus, ippsSMS4_CCMDecrypt, (const Ipp8u* pSrc,
 
         if (*flag) {
             *tmpLen = (Ipp32u)(IPP_MIN((Ipp32u)len, MBS_SMS4 - *flag));
-            XorBlock(pSrc, (Ipp8u*)S + *flag, pDst, (Ipp32s)(*tmpLen));
-
-            /* copy as much input as possible into the internal buffer*/
-            CopyBlock(pDst, SMS4CCM_BLK(pCtx) + *flag, (cpSize)(*tmpLen));
+            /* decrypt into the internal buffer and copy out, so the MAC never reads pDst */
+            XorBlock(pSrc, (Ipp8u*)S + *flag, SMS4CCM_BLK(pCtx) + *flag, (Ipp32s)(*tmpLen));
+            CopyBlock(SMS4CCM_BLK(pCtx) + *flag, pDst, (cpSize)(*tmpLen));
 
             /* update MAC */
             if (*flag + *tmpLen == MBS_SMS4) {
@@ -149,11 +150,12 @@ IPPFUN(IppStatus, ippsSMS4_CCMDecrypt, (const Ipp8u* pSrc,
             /* encode counter block */
             cpSMS4_Cipher((Ipp8u*)S, (Ipp8u*)CTR, SMS4_RK(pSMS4));
 
-            /* store cipher text */
-            XorBlock16(pSrc, S, pDst);
+            /* store plain text */
+            XorBlock16(pSrc, S, dstBlock);
+            CopyBlock16(dstBlock, pDst);
 
             /* update MAC */
-            XorBlock16(MAC, pDst, MAC);
+            XorBlock16(MAC, dstBlock, MAC);
             cpSMS4_Cipher((Ipp8u*)MAC, (Ipp8u*)MAC, SMS4_RK(pSMS4));
 
             SMS4CCM_LENPRO(pCtx) += MBS_SMS4;
@@ -171,14 +173,12 @@ IPPFUN(IppStatus, ippsSMS4_CCMDecrypt, (const Ipp8u* pSrc,
             /* encode counter block */
             cpSMS4_Cipher((Ipp8u*)S, (Ipp8u*)CTR, SMS4_RK(pSMS4));
 
-            /* store cipher text */
-            XorBlock(pSrc, S, pDst, len);
-
             /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
             len = (IPP_MIN(len, MBS_SMS4 - 1));
 
-            /* store partial data block */
-            CopyBlock(pDst, SMS4CCM_BLK(pCtx), len);
+            /* store partial data block, then the plain text */
+            XorBlock(pSrc, S, SMS4CCM_BLK(pCtx), len);
+            CopyBlock(SMS4CCM_BLK(pCtx), pDst, len);
 
             SMS4CCM_LENPRO(pCtx) += (Ipp64u)len;
         }

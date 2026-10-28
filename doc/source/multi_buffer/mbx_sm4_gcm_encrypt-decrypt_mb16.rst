@@ -42,6 +42,8 @@ The functions also update the context with intermediate hash value.
 
 .. note:: ``mbx_sm4_gcm_encrypt_mb16a`` and ``mbx_sm4_gcm_decrypt_mb16`` have several call sequence restrictions. See :ref:`sm4_gsm_algorithm_functions` page for details.
 
+.. note:: These functions run the cipher and the authentication as two separate passes over each buffer, so they can read ``pa_in`` more than once and read ``pa_out`` back. If another party can change these buffers during the call, copy the data to private memory first.
+
 Return Values
 -------------
 

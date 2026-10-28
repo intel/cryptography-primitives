@@ -86,6 +86,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
         Ipp32u MAC[NB(128)];
         Ipp32u CTR[NB(128)];
         Ipp32u S[NB(128)];
+        Ipp32u srcBlock[NB(128)];
         /* extract from the state */
         CopyBlock16(AESCCM_MAC(pState), MAC);
         CopyBlock16(AESCCM_CTR0(pState), CTR);
@@ -101,7 +102,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
             /* copy as much input as possible into the internal buffer*/
             CopyBlock(pSrc, AESCCM_BLK(pState) + flag, (Ipp32s)tmpLen);
 
-            XorBlock(pSrc, (Ipp8u*)S + flag, pDst, (Ipp32s)tmpLen);
+            XorBlock(AESCCM_BLK(pState) + flag, (Ipp8u*)S + flag, pDst, (Ipp32s)tmpLen);
 
             /* update MAC */
             if (flag + (Ipp32u)tmpLen == MBS_RIJ128) {
@@ -169,8 +170,11 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
         while (len >= MBS_RIJ128) {
             Ipp32u counterEnc[2];
 
+            /* read the source block once, for both the MAC and the cipher text */
+            CopyBlock16(pSrc, srcBlock);
+
             /* update MAC */
-            XorBlock16(MAC, pSrc, MAC);
+            XorBlock16(MAC, srcBlock, MAC);
 #if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
             encoder((Ipp8u*)MAC, (Ipp8u*)MAC, RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox /*NULL*/);
 #else
@@ -190,7 +194,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
 #endif
 
             /* store cipher text */
-            XorBlock16(pSrc, S, pDst);
+            XorBlock16(srcBlock, S, pDst);
 
             AESCCM_LENPRO(pState) += MBS_RIJ128;
             pSrc += MBS_RIJ128;
@@ -220,7 +224,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
 #endif
 
             /* store cipher text */
-            XorBlock(pSrc, S, pDst, len);
+            XorBlock(AESCCM_BLK(pState), S, pDst, len);
 
             AESCCM_LENPRO(pState) += (Ipp64u)len;
         }
@@ -233,6 +237,7 @@ IPPFUN(IppStatus, ippsAES_CCMEncrypt, (const Ipp8u* pSrc,
         /* clear secret data */
         PurgeBlock(S, sizeof(S));
         PurgeBlock(MAC, sizeof(MAC));
+        PurgeBlock(srcBlock, sizeof(srcBlock));
     }
 
     return ippStsNoErr;

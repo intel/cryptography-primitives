@@ -87,6 +87,7 @@ IPPFUN(IppStatus, ippsAES_CCMDecrypt, (const Ipp8u* pSrc,
         Ipp32u MAC[NB(128)];
         Ipp32u CTR[NB(128)];
         Ipp32u S[NB(128)];
+        Ipp32u dstBlock[NB(128)];
         /* extract from the state */
         CopyBlock16(AESCCM_MAC(pState), MAC);
         CopyBlock16(AESCCM_CTR0(pState), CTR);
@@ -98,10 +99,9 @@ IPPFUN(IppStatus, ippsAES_CCMDecrypt, (const Ipp8u* pSrc,
 
         if (flag) {
             Ipp32u tmpLen = (Ipp32u)(IPP_MIN((Ipp32u)len, MBS_RIJ128 - flag));
-            XorBlock(pSrc, (Ipp8u*)S + flag, pDst, (Ipp32s)tmpLen);
-
-            /* copy as much input as possible into the internal buffer*/
-            CopyBlock(pDst, AESCCM_BLK(pState) + flag, (Ipp32s)tmpLen);
+            /* decrypt into the internal buffer and copy out, so the MAC never reads pDst */
+            XorBlock(pSrc, (Ipp8u*)S + flag, AESCCM_BLK(pState) + flag, (Ipp32s)tmpLen);
+            CopyBlock(AESCCM_BLK(pState) + flag, pDst, (Ipp32s)tmpLen);
 
             /* update MAC */
             if (flag + tmpLen == MBS_RIJ128) {
@@ -182,11 +182,12 @@ IPPFUN(IppStatus, ippsAES_CCMDecrypt, (const Ipp8u* pSrc,
             encoder((Ipp8u*)CTR, (Ipp8u*)S, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
 #endif
 
-            /* store cipher text */
-            XorBlock16(pSrc, S, pDst);
+            /* store plain text */
+            XorBlock16(pSrc, S, dstBlock);
+            CopyBlock16(dstBlock, pDst);
 
             /* update MAC */
-            XorBlock16(MAC, pDst, MAC);
+            XorBlock16(MAC, dstBlock, MAC);
 //encoder(MAC, MAC, RIJ_NR(pAES), RIJ_EKEYS(pAES), (const Ipp32u (*)[256])RIJ_ENC_SBOX(pAES));
 #if (_ALG_AES_SAFE_ == _ALG_AES_SAFE_COMPACT_SBOX_)
             encoder((Ipp8u*)MAC, (Ipp8u*)MAC, RIJ_NR(pAES), RIJ_EKEYS(pAES), RijEncSbox /*NULL*/);
@@ -215,14 +216,12 @@ IPPFUN(IppStatus, ippsAES_CCMDecrypt, (const Ipp8u* pSrc,
             encoder((Ipp8u*)CTR, (Ipp8u*)S, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
 #endif
 
-            /* store cipher text */
-            XorBlock(pSrc, S, pDst, len);
-
             /* workaround to avoid false positive stringop-overflow error on gcc10.1 and gcc11.1 */
             len = (IPP_MIN(len, MBS_RIJ128 - 1));
 
-            /* store partial data block */
-            CopyBlock(pDst, AESCCM_BLK(pState), len);
+            /* store partial data block, then the plain text */
+            XorBlock(pSrc, S, AESCCM_BLK(pState), len);
+            CopyBlock(AESCCM_BLK(pState), pDst, len);
 
             AESCCM_LENPRO(pState) += (Ipp64u)len;
         }
@@ -235,6 +234,7 @@ IPPFUN(IppStatus, ippsAES_CCMDecrypt, (const Ipp8u* pSrc,
         /* clear secret data */
         PurgeBlock(S, sizeof(S));
         PurgeBlock(MAC, sizeof(MAC));
+        PurgeBlock(dstBlock, sizeof(dstBlock));
     }
 
     return ippStsNoErr;

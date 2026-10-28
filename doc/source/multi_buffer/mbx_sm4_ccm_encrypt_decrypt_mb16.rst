@@ -41,6 +41,8 @@ The unctions also update the context with an intermediate hash value.
 
 .. note:: These functions have several call sequence restrictions. See :ref:`sm4_ccm_algorithm_functions` for details.
 
+.. note:: These functions run the cipher and the authentication as two separate passes over each buffer, so they can read ``pa_in`` more than once and read ``pa_out`` back. If another party can change these buffers during the call, copy the data to private memory first.
+
 Return Values
 -------------
 

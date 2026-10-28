@@ -110,7 +110,8 @@ IPPFUN(IppStatus, ippsAES_SIVDecrypt, (const Ipp8u* pSrc,
     {
         int n;
 
-        /* iv an dmask */
+        /* synthetic iv (read from pSIV once), iv and mask */
+        Ipp8u siv[MBS_RIJ128];
         Ipp8u iv[MBS_RIJ128];
         Ipp8u vmask[MBS_RIJ128] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
                                     0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff, 0xff, 0xff };
@@ -118,11 +119,12 @@ IPPFUN(IppStatus, ippsAES_SIVDecrypt, (const Ipp8u* pSrc,
         Ipp8u aesBlob[sizeof(IppsAESSpec)];
         IppsAESSpec* paesCtx = (IppsAESSpec*)aesBlob;
 
+        CopyBlock16(pSIV, siv);
         ippsAESInit(pConfKey, keyLen, paesCtx, sizeof(aesBlob));
 
         /* construct iv */
         for (n = 0; n < MBS_RIJ128; n++)
-            iv[n] = pSIV[n] & vmask[n];
+            iv[n] = siv[n] & vmask[n];
 
         /* perform AES-CTR decryption */
         ippsAESDecryptCTR(pSrc, pDst, len, paesCtx, iv, BITSIZE(iv));
@@ -145,7 +147,7 @@ IPPFUN(IppStatus, ippsAES_SIVDecrypt, (const Ipp8u* pSrc,
 
         /* test */
         {
-            BNU_CHUNK_T authMask = cpIsEquBlock_ct(pSIV, iv, MBS_RIJ128);
+            BNU_CHUNK_T authMask = cpIsEquBlock_ct(siv, iv, MBS_RIJ128);
 
             cpMaskedClear_ct_8u(pDst, len, authMask);
 

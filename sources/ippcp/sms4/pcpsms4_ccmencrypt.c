@@ -86,7 +86,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt, (const Ipp8u* pSrc,
         IppsSMS4Spec* pSMS4 = SMS4CCM_CIPHER(pCtx);
 
         /* buffer for secret data */
-        __ALIGN16 Ipp32u TMP[3 * (MBS_SMS4 / sizeof(Ipp32u)) + 6];
+        __ALIGN16 Ipp32u TMP[4 * (MBS_SMS4 / sizeof(Ipp32u)) + 6];
 
         /*
          MAC          size = MBS_SMS4/sizeof(Ipp32u)
@@ -97,6 +97,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt, (const Ipp8u* pSrc,
          tmpLen       size = 1
          counterVal   size = 1
          counterEnc   size = 2
+         srcBlock     size = MBS_SMS4/sizeof(Ipp32u)
       */
 
         Ipp32u* MAC        = TMP;
@@ -107,6 +108,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt, (const Ipp8u* pSrc,
         Ipp32u* tmpLen     = TMP + 3 * (MBS_SMS4 / sizeof(Ipp32u)) + 2;
         Ipp32u* counterVal = TMP + 3 * (MBS_SMS4 / sizeof(Ipp32u)) + 3;
         Ipp32u* counterEnc = TMP + 3 * (MBS_SMS4 / sizeof(Ipp32u)) + 4;
+        Ipp32u* srcBlock   = TMP + 3 * (MBS_SMS4 / sizeof(Ipp32u)) + 6;
 
         *flag = (Ipp32u)(SMS4CCM_LENPRO(pCtx) & (MBS_SMS4 - 1));
 
@@ -125,7 +127,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt, (const Ipp8u* pSrc,
             /* copy as much input as possible into the internal buffer*/
             CopyBlock(pSrc, SMS4CCM_BLK(pCtx) + *flag, (cpSize)(*tmpLen));
 
-            XorBlock(pSrc, (Ipp8u*)S + *flag, pDst, (cpSize)(*tmpLen));
+            XorBlock(SMS4CCM_BLK(pCtx) + *flag, (Ipp8u*)S + *flag, pDst, (cpSize)(*tmpLen));
 
             /* update MAC */
             if (*flag + *tmpLen == MBS_SMS4) {
@@ -140,8 +142,11 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt, (const Ipp8u* pSrc,
         }
 
         while (len >= MBS_SMS4) {
+            /* read the source block once, for both the MAC and the cipher text */
+            CopyBlock16(pSrc, srcBlock);
+
             /* update MAC */
-            XorBlock16(MAC, pSrc, MAC);
+            XorBlock16(MAC, srcBlock, MAC);
             cpSMS4_Cipher((Ipp8u*)MAC, (Ipp8u*)MAC, SMS4_RK(pSMS4));
 
             /* increment counter and format counter block */
@@ -153,7 +158,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt, (const Ipp8u* pSrc,
             cpSMS4_Cipher((Ipp8u*)S, (Ipp8u*)CTR, SMS4_RK(pSMS4));
 
             /* store cipher text */
-            XorBlock16(pSrc, S, pDst);
+            XorBlock16(srcBlock, S, pDst);
 
             SMS4CCM_LENPRO(pCtx) += MBS_SMS4;
             pSrc += MBS_SMS4;
@@ -177,7 +182,7 @@ IPPFUN(IppStatus, ippsSMS4_CCMEncrypt, (const Ipp8u* pSrc,
             cpSMS4_Cipher((Ipp8u*)S, (Ipp8u*)CTR, SMS4_RK(pSMS4));
 
             /* store cipher text */
-            XorBlock(pSrc, S, pDst, len);
+            XorBlock(SMS4CCM_BLK(pCtx), S, pDst, len);
 
             SMS4CCM_LENPRO(pCtx) += (Ipp64u)len;
         }

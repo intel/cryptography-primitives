@@ -79,6 +79,9 @@ The computation includes the following steps:
    initial counter value (``CTR0``) equal to the synthetic initialization
    vector xored with a fixed mask.
 
+.. note::
+   These steps read the plaintext (``pSrc``) twice. If another party can change ``pSrc`` during the call, copy the plaintext to private memory first.
+
 
 Return Values
 -------------

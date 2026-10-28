@@ -142,13 +142,18 @@ IPPFUN(IppStatus, ippsAES_GCMEncrypt, (const Ipp8u* pSrc,
    // process text (encrypt and authenticate)
    */
 
+    /* Hash the ciphertext from a local copy and never read pDst back, so the
+       tag covers the bytes we output even if the destination buffer changes. */
+    Ipp8u ctBlock[BLOCK_SIZE];
+
     /* process partial block */
     if (AESGCM_BUFLEN(pState)) {
         int locLen = IPP_MIN(len, BLOCK_SIZE - AESGCM_BUFLEN(pState));
         /* ctr encryption */
-        XorBlock(pSrc, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), pDst, locLen);
+        XorBlock(pSrc, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), ctBlock, locLen);
+        CopyBlock(ctBlock, pDst, locLen);
         /* authentication */
-        XorBlock(pDst,
+        XorBlock(ctBlock,
                  AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
                  AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
                  locLen);
@@ -209,8 +214,9 @@ IPPFUN(IppStatus, ippsAES_GCMEncrypt, (const Ipp8u* pSrc,
 
     /* process the rest of text */
     if (len) {
-        XorBlock(pSrc, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), pDst, len);
-        XorBlock(pDst,
+        XorBlock(pSrc, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), ctBlock, len);
+        CopyBlock(ctBlock, pDst, len);
+        XorBlock(ctBlock,
                  AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
                  AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
                  len);

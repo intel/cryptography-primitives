@@ -106,7 +106,8 @@ IPPFUN(IppStatus, ippsAES_SIVEncrypt, (const Ipp8u* pSrc,
     {
         int n;
 
-        /* iv and mask */
+        /* synthetic iv (computed locally, pSIV is only written), iv and mask */
+        Ipp8u siv[MBS_RIJ128];
         Ipp8u iv[MBS_RIJ128];
         Ipp8u vmask[MBS_RIJ128] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
                                     0x7f, 0xff, 0xff, 0xff, 0x7f, 0xff, 0xff, 0xff };
@@ -117,21 +118,22 @@ IPPFUN(IppStatus, ippsAES_SIVEncrypt, (const Ipp8u* pSrc,
         {
             Ipp8u ctxBlob[sizeof(IppsAES_CMACState)];
             IppsAES_CMACState* pCtx = (IppsAES_CMACState*)ctxBlob;
-            cpAES_S2V_init(pSIV, pAuthKey, keyLen, pCtx, sizeof(ctxBlob));
+            cpAES_S2V_init(siv, pAuthKey, keyLen, pCtx, sizeof(ctxBlob));
 
             for (n = 0; n < numAD; n++) {
-                cpAES_S2V_update(pSIV, pAD[n], pADlen[n], pCtx);
+                cpAES_S2V_update(siv, pAD[n], pADlen[n], pCtx);
             }
-            cpAES_S2V_final(pSIV, pSrc, len, pCtx);
+            cpAES_S2V_final(siv, pSrc, len, pCtx);
 
             PurgeBlock(&ctxBlob, sizeof(ctxBlob));
         }
+        CopyBlock16(siv, pSIV);
 
         ippsAESInit(pConfKey, keyLen, paesCtx, sizeof(aesBlob));
 
         /*construct iv */
         for (n = 0; n < MBS_RIJ128; n++)
-            iv[n] = pSIV[n] & vmask[n];
+            iv[n] = siv[n] & vmask[n];
 
         /* perform AES-CTR encryption */
         ippsAESEncryptCTR(pSrc, pDst, len, paesCtx, iv, BITSIZE(iv));

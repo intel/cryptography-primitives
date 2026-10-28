@@ -88,6 +88,9 @@ plaintextauthentication is considered failed (\*pAuthPassed = 0).
 .. warning::
    Consume ``pDst`` only if ``*pAuthPassed == 1``. If authentication fails, the application MUST scrub ``pDst`` immediately to prevent the processing of forged data.
 
+.. note::
+   The function writes the plaintext to ``pDst`` and then reads it back to re-compute the synthetic initialization vector. If another party can change ``pDst`` during the call, decrypt into private memory.
+
 
 
 Return Values

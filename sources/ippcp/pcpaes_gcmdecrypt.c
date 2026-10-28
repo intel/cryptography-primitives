@@ -141,16 +141,21 @@ IPPFUN(IppStatus, ippsAES_GCMDecrypt, (const Ipp8u* pSrc,
 #if (_IPP32E >= _IPP32E_K0)
     condNoisedGCMDecryption(pSrc, pDst, len, pState);
 #else
+    /* Read pSrc once, so GHASH and the plaintext use the same bytes even if
+       the source buffer changes during the call. */
+    Ipp8u srcBlock[BLOCK_SIZE];
+
     /* process partial block */
     if (AESGCM_BUFLEN(pState)) {
         int locLen = IPP_MIN(len, BLOCK_SIZE - AESGCM_BUFLEN(pState));
+        CopyBlock(pSrc, srcBlock, locLen);
         /* authentication */
-        XorBlock(pSrc,
+        XorBlock(srcBlock,
                  AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
                  AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
                  locLen);
         /* ctr decryption */
-        XorBlock(pSrc, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), pDst, locLen);
+        XorBlock(srcBlock, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), pDst, locLen);
 
         AESGCM_BUFLEN(pState) += locLen;
         AESGCM_TXT_LEN(pState) += (Ipp64u)locLen;
@@ -208,12 +213,13 @@ IPPFUN(IppStatus, ippsAES_GCMDecrypt, (const Ipp8u* pSrc,
 
     /* process the rest of text */
     if (len) {
+        CopyBlock(pSrc, srcBlock, len);
         /* ctr encryption */
-        XorBlock(pSrc,
+        XorBlock(srcBlock,
                  AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
                  AESGCM_GHASH(pState) + AESGCM_BUFLEN(pState),
                  len);
-        XorBlock(pSrc, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), pDst, len);
+        XorBlock(srcBlock, AESGCM_ECOUNTER(pState) + AESGCM_BUFLEN(pState), pDst, len);
 
         AESGCM_BUFLEN(pState) += len;
         AESGCM_TXT_LEN(pState) += (Ipp64u)len;

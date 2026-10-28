@@ -16,6 +16,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Fixed the counter increment in ippsAESEncryptCTR and ippsAESDecryptCTR on the Intel® AVX-512 VAES (k1) and Intel® AVX10.2 (d1) code paths for counter sizes from 65 to 127 bits.
 - Fixed `ippsAES_CCMStart`, `ippsSMS4_CCMStart`, `ippsAES_CCMEncrypt` and `ippsAES_CCMDecrypt` to return `ippStsLengthErr` when the message length is too large for the CCM length field or the block counter, or when the processed data exceeds the length set by `ippsAES_CCMMessageLen`.
 - Added XMSS examples: key generation, signing and verification of the generated signature and verification of a signature from an externally provided public key and signature components.
+- Changed `ippsAES_GCMEncrypt`, `ippsAES_GCMDecrypt`, `ippsAES_CCMEncrypt`, `ippsAES_CCMDecrypt`, `ippsSMS4_CCMEncrypt` and `ippsSMS4_CCMDecrypt` to read each source byte only once and to never read the destination buffer back, on all code paths. `ippsAES_SIVEncrypt` no longer reads the `pSIV` output back, and `ippsAES_SIVDecrypt` reads the `pSIV` input once. The multi-buffer SM4-GCM and SM4-CCM documentation now states that these functions may read the input more than once and read the output back.
 
 ## Intel(R) Cryptography Primitives Library 2.3.0
 - Updated ML-KEM to use RDSEED as the internal randomness source; optimized byte/bit conversion hot paths and introduced Montgomery-domain arithmetic for NTT operations to improve performance.

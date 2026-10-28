@@ -50,9 +50,7 @@ IPP_OWN_DEFN(void, wrpAesGcmEnc_table2K, (Ipp8u* pDst,
                                           IppsAES_GCMState* pState))
 /* clang-format on */
 {
-    Ipp8u* pHashedData = pDst;
-    int hashedDataLen  = len;
-
+    Ipp8u* pHash     = AESGCM_GHASH(pState);
     Ipp8u* pCounter  = AESGCM_COUNTER(pState);
     Ipp8u* pECounter = AESGCM_ECOUNTER(pState);
 
@@ -60,8 +58,12 @@ IPP_OWN_DEFN(void, wrpAesGcmEnc_table2K, (Ipp8u* pDst,
     RijnCipher encoder        = RIJ_ENCODER(pAES);
 
     while (len >= BLOCK_SIZE) {
-        /* encrypt whole AES block */
-        XorBlock16(pSrc, pECounter, pDst);
+        /* encrypt whole AES block, then authenticate it without reading pDst back */
+        Ipp8u ctBlock[BLOCK_SIZE];
+        XorBlock16(pSrc, pECounter, ctBlock);
+        CopyBlock16(ctBlock, pDst);
+        XorBlock16(ctBlock, pHash, pHash);
+        AesGcmMulGcm_table2K_ct(pHash, AESGCM_HKEY(pState), AesGcmConst_table);
 
         pSrc += BLOCK_SIZE;
         pDst += BLOCK_SIZE;
@@ -77,13 +79,6 @@ IPP_OWN_DEFN(void, wrpAesGcmEnc_table2K, (Ipp8u* pDst,
         encoder(pCounter, pECounter, RIJ_NR(pAES), RIJ_EKEYS(pAES), NULL);
 #endif
     }
-
-    //AesGcmAuth_table2K(AESGCM_GHASH(pState), pHashedData, hashedDataLen, AESGCM_HKEY(pState), AesGcmConst_table);
-    AesGcmAuth_table2K_ct(AESGCM_GHASH(pState),
-                          pHashedData,
-                          hashedDataLen,
-                          AESGCM_HKEY(pState),
-                          AesGcmConst_table);
 }
 
 #endif
