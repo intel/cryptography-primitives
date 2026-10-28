@@ -908,6 +908,10 @@ pAuthKey key, and AD[] to
 initial counter value (<code class="docutils literal notranslate"><span class="pre">CTR0</span></code>) equal to the synthetic initialization
 vector xored with a fixed mask.</p></li>
 </ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These steps read the plaintext (<code class="docutils literal notranslate"><span class="pre">pSrc</span></code>) twice. If another party can change <code class="docutils literal notranslate"><span class="pre">pSrc</span></code> during the call, copy the plaintext to private memory first.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>

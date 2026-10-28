@@ -881,6 +881,10 @@ The unctions also update the context with an intermediate hash value.</p>
 <p class="admonition-title">Note</p>
 <p>These functions have several call sequence restrictions. See <a class="reference internal" href="sm4_ccm_algorithm_functions.html#sm4-ccm-algorithm-functions"><span class="std std-ref">SM4 CCM Algorithm Functions</span></a> for details.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These functions run the cipher and the authentication as two separate passes over each buffer, so they can read <code class="docutils literal notranslate"><span class="pre">pa_in</span></code> more than once and read <code class="docutils literal notranslate"><span class="pre">pa_out</span></code> back. If another party can change these buffers during the call, copy the data to private memory first.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>

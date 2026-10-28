@@ -919,6 +919,10 @@ plaintextauthentication is considered failed (*pAuthPassed = 0).</p>
 <p class="admonition-title">Warning</p>
 <p>Consume <code class="docutils literal notranslate"><span class="pre">pDst</span></code> only if <code class="docutils literal notranslate"><span class="pre">*pAuthPassed</span> <span class="pre">==</span> <span class="pre">1</span></code>. If authentication fails, the application MUST scrub <code class="docutils literal notranslate"><span class="pre">pDst</span></code> immediately to prevent the processing of forged data.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The function writes the plaintext to <code class="docutils literal notranslate"><span class="pre">pDst</span></code> and then reads it back to re-compute the synthetic initialization vector. If another party can change <code class="docutils literal notranslate"><span class="pre">pDst</span></code> during the call, decrypt into private memory.</p>
+</div>
 </section>
 <section id="return-values">
 <h2>Return Values<a class="headerlink" href="#return-values" title="Link to this heading">#</a></h2>
