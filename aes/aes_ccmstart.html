@@ -888,14 +888,17 @@ pAD, int adLen, IppsAES_CCMState* pCtx);</p>
 <tr class="row-odd"><td><p>ippStsNoErr</p></td>
 <td><p>Indicates no error. Any other value indicates an error or warning.</p></td>
 </tr>
-<tr class="row-even"><td><p>pState</p></td>
+<tr class="row-even"><td><p>ippStsNullPtrErr</p></td>
 <td><p>Indicates an error condition if any of the specified pointers is NULL.</p></td>
 </tr>
-<tr class="row-odd"><td><p>pState</p></td>
+<tr class="row-odd"><td><p>ippStsContextMatchErr</p></td>
 <td><p>Indicates an error condition if the context parameter does not match the operation.</p></td>
 </tr>
-<tr class="row-even"><td><p>pState</p></td>
-<td><p>Indicates an error condition if ivLen &lt; 7 or ivLen &gt; 13 .</p></td>
+<tr class="row-even"><td><p>ippStsLengthErr</p></td>
+<td><p>Indicates an error condition if ivLen &lt; 7 or ivLen &gt; 13, if adLen is
+less than zero, or if the message length specified in the previous
+call to <a class="reference internal" href="aes_ccmmessagelen.html#aes-ccmmessagelen"><span class="std std-ref">AES_CCMMessageLen</span></a> does not fit
+into 15 - ivLen bytes or exceeds (2<sup>32</sup> - 1) * 16 bytes.</p></td>
 </tr>
 </tbody>
 </table>
