@@ -43,8 +43,10 @@ set(IPPCP_EXAMPLES
   hash/sm3_hash_rmf.cpp
   hash/xof_shake128_hash_rmf.cpp
   # Post-quantum algorithms examples
-  post-quantum/lms_m32_h5_w8_verification.cpp
-  post-quantum/lms_m24_h15_w4_keygen_sign.cpp
+  post-quantum/lms_m32_h5_w8_verify_external_pubkey_signature.cpp
+  post-quantum/lms_m24_h15_w4_keygen_sign_verify.cpp
+  post-quantum/xmss_10_256_keygen_sign_verify.cpp
+  post-quantum/xmss_16_256_verify_external_pubkey_signature.cpp
   post-quantum/ml_kem_512_keygen_encaps_decaps.cpp
   post-quantum/ml_dsa_87_keygen_sign_verify.cpp
   # Elliptic curve algorithms examples

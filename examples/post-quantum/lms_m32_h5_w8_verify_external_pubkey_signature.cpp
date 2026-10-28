@@ -20,7 +20,8 @@
   *
   *  \brief Leighton-Micali Hash-Based Signatures (LMS) example
   *
-  *  This example demonstrates usage of LMS signatures verification.
+  *  This example demonstrates verification of an LMS signature using an
+  *  externally provided LMS public key and signature components.
   *
   *  The LMS algorithm is implemented according to the
   *  "Leighton-Micali Hash-Based Signatures" document:

@@ -56,11 +56,11 @@ int main(void)
     IppStatus status = ippStsNoErr;
 
     /* Skip the example in case HW RNG is not supported */
-    if (!isAvailablePRNG_HW()) {
+    if (!isAvailableTRNG_HW()) {
         printSkippedExampleDetails(
             "ippsMLDSA_KeyGen/ippsMLDSA_Sign/ippsMLDSA_Verify",
             "ML-DSA scheme with ML_DSA_87 parameter",
-            "RDRAND instruction is not supported by the CPU but is required\n for this example.");
+            "RDSEED instruction is not supported by the CPU but is required\n for this example.");
         return status;
     }
 

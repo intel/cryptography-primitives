@@ -52,19 +52,18 @@ Ipp8u pMsg[] = { 0x04, 0x3d, 0x64, 0x00, 0x10, 0x3b, 0x16, 0x0c, 0xf1, 0x89, 0xb
                  0xef, 0x9c, 0xbe, 0x85, 0x5d, 0xcc, 0x73, 0x1b, 0x16, 0xdd, 0x13, 0x6e, 0x5c,
                  0x44, 0x15, 0x8b, 0xf1, 0xe9, 0x8c, 0xc5, 0x9c, 0x6f, 0x6c, 0xb2 };
 
-/* Deleter to use in unique_ptr to clean the memory during the object's destruction */
-
 int main(void)
 {
     /* Skip the example in case HW RNG is not supported */
-    if (!isAvailablePRNG_HW()) {
+    if (!isAvailableTRNG_HW()) {
         printSkippedExampleDetails(
             "ippsLMSKeyGen/ippsLMSSign",
             "LMS with LMS_SHA256_M24_H15 and LMOTS_SHA256_N24_W4 parameters",
-            "RDRAND instruction is not supported by the CPU but is required\n for this example.");
+            "RDSEED instruction is not supported by the CPU but is required\n for this example.");
         return ippStsNoErr;
     }
 
+    /* Deleter to use in unique_ptr to clean the memory during the object's destruction */
     auto toIpp8uDeleter = [](auto* pData) { delete[] (Ipp8u*)pData; };
 
     /* Internal function status */
@@ -89,10 +88,8 @@ int main(void)
         return status;
 
     /* 3. Allocate memory for scratch buffers */
-    std::unique_ptr<Ipp8u, decltype(toIpp8uDeleter)> pScratchKeyGenBuffer(new Ipp8u[buffKeyGenSize],
-                                                                          toIpp8uDeleter);
-    std::unique_ptr<Ipp8u, decltype(toIpp8uDeleter)> pScratchSignBuffer(new Ipp8u[buffSignSize],
-                                                                        toIpp8uDeleter);
+    std::unique_ptr<Ipp8u[]> pScratchKeyGenBuffer(new Ipp8u[buffKeyGenSize]);
+    std::unique_ptr<Ipp8u[]> pScratchSignBuffer(new Ipp8u[buffSignSize]);
 
     /* 4. Get the LMS private key state size */
     int ippcpPrivKeySize;
@@ -160,8 +157,7 @@ int main(void)
     if (!checkStatus("ippsLMSVerifyBufferGetSize", ippStsNoErr, status))
         return status;
 
-    std::unique_ptr<Ipp8u, decltype(toIpp8uDeleter)> pScratchVerifyBuffer(new Ipp8u[buffVerifySize],
-                                                                          toIpp8uDeleter);
+    std::unique_ptr<Ipp8u[]> pScratchVerifyBuffer(new Ipp8u[buffVerifySize]);
 
     int is_valid = 0;
     status       = ippsLMSVerify(pMsg,
