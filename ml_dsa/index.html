@@ -930,11 +930,11 @@ sampling as specified in the FIPS 204 standard to achieve optimal performance.</
 <span class="w">    </span><span class="n">IppStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ippStsNoErr</span><span class="p">;</span>
 
 <span class="w">    </span><span class="cm">/* Skip the example in case HW RNG is not supported */</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isAvailablePRNG_HW</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">isAvailableTRNG_HW</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">printSkippedExampleDetails</span><span class="p">(</span>
 <span class="w">            </span><span class="s">"ippsMLDSA_KeyGen/ippsMLDSA_Sign/ippsMLDSA_Verify"</span><span class="p">,</span>
 <span class="w">            </span><span class="s">"ML-DSA scheme with ML_DSA_87 parameter"</span><span class="p">,</span>
-<span class="w">            </span><span class="s">"RDRAND instruction is not supported by the CPU but is required</span><span class="se">\n</span><span class="s"> for this example."</span><span class="p">);</span>
+<span class="w">            </span><span class="s">"RDSEED instruction is not supported by the CPU but is required</span><span class="se">\n</span><span class="s"> for this example."</span><span class="p">);</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
