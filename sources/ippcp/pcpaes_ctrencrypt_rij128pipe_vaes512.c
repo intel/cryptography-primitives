@@ -46,6 +46,10 @@ static __ALIGN64 Ipp8u swapBytes[] = { 7,  6,  5,  4,  3,  2,  1,  0,  15, 14, 1
                                        55, 54, 53, 52, 51, 50, 49, 48, 63, 62, 61, 60, 59, 58, 57, 56 };
 /* clang-format on */
 
+/* The four 128-bit counters j = 0..3 in a 512-bit register are kept as Little-Endian
+ * 64-bit halves in the Big-Endian order of the counter block:
+ * qword 2j is the high half of counter j, qword 2j+1 is its low half */
+
 /* Increment masks for Hi-Lo 64-bit parts of 128-bit numbers in 512-bit register */
 static __ALIGN64 Ipp64u startIncLoMask[] = { 0x0, 0x0, 0x0, 0x1, 0x0, 0x2, 0x0, 0x3 };
 static __ALIGN64 Ipp64u nextIncLoMask[]  = { 0x0, 0x4, 0x0, 0x4, 0x0, 0x4, 0x0, 0x4 };
@@ -55,10 +59,11 @@ static __ALIGN64 Ipp64u incHiByOneMask[] = { 0x1, 0x0, 0x1, 0x0, 0x1, 0x0, 0x1, 
 IPPCP_INLINE __m512i adcLo_epi64(__m512i a, __m512i b)
 {
     a = _mm512_add_epi64(a, b);
-    // check overflow in each low 64-bit of 128-bit numbers
+    // check overflow in each low 64-bit (odd qword) of 128-bit numbers;
+    // even qwords never overflow, so the compare needs no mask
     __mmask8 overMsk = _mm512_cmplt_epu64_mask(a, b);
-    // get mask of each high 64-bit that need to be increased
-    overMsk = (__mmask8)(overMsk << 1);
+    // get mask of each high 64-bit (even qword) that need to be increased
+    overMsk = (__mmask8)(overMsk >> 1);
     a       = _mm512_mask_add_epi64(a, overMsk, a, M512(incHiByOneMask));
     return a;
 }
@@ -89,8 +94,6 @@ IPP_OWN_DEFN(void, EncryptCTR_RIJ128pipe_VAES_NI, (const Ipp8u* pSrc,
     __m512i* pSrc512 = (__m512i*)pSrc;
     __m512i* pDst512 = (__m512i*)pDst;
 
-    Ipp64u* pCtr64 = (Ipp64u*)pCtrValue;
-
     // Initial counter
     __m128i initialCtr128 = _mm_maskz_loadu_epi64(0x03, pCtrValue);
     __m128i ctrBitMask128 = _mm_maskz_loadu_epi64(0x03, pCtrBitMask);
@@ -101,11 +104,8 @@ IPP_OWN_DEFN(void, EncryptCTR_RIJ128pipe_VAES_NI, (const Ipp8u* pSrc,
     __m512i ctrBitMask512  = _mm512_broadcast_i64x2(ctrBitMask128);
     __m512i templateCtr512 = _mm512_broadcast_i64x2(templateCtr128);
 
-    Ipp64u ctr64_h = ENDIANNESS64(pCtr64[0]); // high 64-bit of BE counter converted to LE
-    Ipp64u ctr64_l = ENDIANNESS64(pCtr64[1]); // low 64-bit of BE counter converted to LE
-
-    __m512i ctr512 =
-        _mm512_set4_epi64((Ipp64s)ctr64_l, (Ipp64s)ctr64_h, (Ipp64s)ctr64_l, (Ipp64s)ctr64_h);
+    // initial counter in each 128-bit lane, its high and low 64-bit converted to LE
+    __m512i ctr512 = _mm512_shuffle_epi8(_mm512_broadcast_i64x2(initialCtr128), M512(swapBytes));
 
     // int blocks;
     int remainded_length;
@@ -226,22 +226,17 @@ IPP_OWN_DEFN(void, EncryptCTR_RIJ128pipe_VAES_NI, (const Ipp8u* pSrc,
     }
 
     if (remainded_length) {
-        __m512i counter0 = _mm512_add_epi64(incMsk, ctr512);
-        __mmask8 overMsk = _mm512_cmplt_epu64_mask(counter0, ctr512);
-        overMsk          = (__mmask8)(overMsk << 1);
-        counter0         = _mm512_mask_add_epi64(counter0, overMsk, counter0, M512(incHiByOneMask));
+        __m512i counter0 = adcLo_epi64(incMsk, ctr512);
 
         incMsk = M512(nextIncLoMask);
         ctr512 = counter0;
 
         // convert back to BE and add nonce
-        counter0 = _mm512_shuffle_epi8(counter0, M512(swapBytes));
-        counter0 = _mm512_and_epi64(counter0, ctrBitMask512);
-        counter0 = _mm512_or_epi64(counter0, templateCtr512);
+        counter0 = applyNonce(counter0, ctrBitMask512, templateCtr512);
 
         cpAESEncrypt1_VAES_NI(&counter0, pKeys, cipherRounds);
 
-        __mmask64 rw_mask = (__mmask64)((1LL << remainded_length) - 1);
+        __mmask64 rw_mask = (__mmask64)((1ULL << remainded_length) - 1);
 
         __m512i blk0 = _mm512_maskz_loadu_epi8(rw_mask, pSrc512);
         blk0         = _mm512_xor_si512(blk0, counter0);

@@ -13,6 +13,7 @@ This is a list of notable changes to Intel® Cryptography Primitives Library, in
 - Added single-buffer SM4 optimizations that use the SM4 instructions on CPUs with Intel® AVX10.2, covering ECB, CBC decryption, CFB128 decryption and CTR.
 - Added multi-buffer SM4 optimizations that use the SM4 instructions on CPUs with Intel® AVX10.2, covering ECB, CBC, CBC-MAC, CFB128, CTR, OFB, XTS and the counter mode inside GCM, which SM4-CCM and SM4-GCM also use.
 - Added optimizations for the ML-DSA NTT, inverse NTT, and multiply NTT with Intel® AVX2 (l9 and above).
+- Fixed the counter increment in ippsAESEncryptCTR and ippsAESDecryptCTR on the Intel® AVX-512 VAES (k1) and Intel® AVX10.2 (d1) code paths for counter sizes from 65 to 127 bits.
 - Fixed `ippsAES_CCMStart`, `ippsSMS4_CCMStart`, `ippsAES_CCMEncrypt` and `ippsAES_CCMDecrypt` to return `ippStsLengthErr` when the message length is too large for the CCM length field or the block counter, or when the processed data exceeds the length set by `ippsAES_CCMMessageLen`.
 - Added XMSS examples: key generation, signing and verification of the generated signature and verification of a signature from an externally provided public key and signature components.
 
