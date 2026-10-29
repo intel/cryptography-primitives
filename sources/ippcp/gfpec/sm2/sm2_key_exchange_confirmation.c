@@ -18,6 +18,7 @@
 #include "owndefs.h"
 #include "gfpec/sm2/sm2_key_exchange_method.h"
 #include "gfpec/sm2/sm2_stuff.h"
+#include "pcpmask_ct.h"
 
 /**
  * @brief ippsGFpECKeyExchangeSM2_Confirm
@@ -110,7 +111,8 @@ IPPFUN(IppStatus, ippsGFpECKeyExchangeSM2_Confirm, (const Ipp8u pSPeer[IPP_SM3_D
         cpSM2KE_compute_hash_SM3(pBuff, pBuff, sizeSab_SM3);
 
         /* pS == S(1/2) */
-        *pStatus = EquBlock((Ipp8u*)pBuff, pSPeer, IPP_SM3_DIGEST_BYTESIZE) ? 1 : 0;
+        BNU_CHUNK_T statusMask = cpIsEquBlock_ct((Ipp8u*)pBuff, pSPeer, IPP_SM3_DIGEST_BYTESIZE);
+        *pStatus               = (int)(statusMask & 1);
 
         cpGFpReleasePool(3, pME);
         return ippStsNoErr;

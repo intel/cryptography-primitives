@@ -202,7 +202,11 @@ IPPCP_INLINE void XorBlock32(const void* pSrc1, const void* pSrc2, void* pDst)
 }
 
 
-/* compare (equivalence) */
+/* compare (equivalence)
+// WARNING: this function is not guaranteed to be constant-time (the final
+// reduction relies on the C '!' operator, which may compile to a branch).
+// Use it for public data only. For secret data use cpIsEquBlock_ct()
+*/
 IPPCP_INLINE int EquBlock(const void* pSrc1, const void* pSrc2, int len)
 {
     const Ipp8u* p1 = (const Ipp8u*)pSrc1;

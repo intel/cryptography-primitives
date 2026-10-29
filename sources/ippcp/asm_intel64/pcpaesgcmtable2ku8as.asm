@@ -91,6 +91,11 @@ ENDFUNC getAesGcmConst_table_ct
 ;
 ; void AesGcmMulGcm_table2K(Ipp8u* pHash, const Ipp8u* pPrecomputedData, const void* pParam)
 ;
+; WARNING: NOT constant-time. Its main GHASH multiply performs secret-index-dependent
+; table loads (movdqa/pxor [r8 + ... + rcx], rcx derived from the hash value), which
+; leaks via cache timing. This routine is SUPERSEDED and is not dispatched by any live
+; path. Kept for reference only
+;
 align IPP_ALIGN_FACTOR
 IPPASM AesGcmMulGcm_table2K,PUBLIC
         USES_GPR rsi,rdi,rbx

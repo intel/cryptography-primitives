@@ -125,18 +125,18 @@ IPPFUN(IppStatus, ippsRSAVerify_PSS_rmf, (const Ipp8u* pMsg,
         pBuffer += (nsN + 1) * 2;
 
         /*
-      // public-key operation
-      */
+        // public-key operation
+        */
         ippsSetOctString_BN(pSign, k, &bnP);
         gsRSApub_cipher(&bnC, &bnP, pKey, pBuffer);
 
         /*
-      // EMSA-PSS verification
-      */
+        // EMSA-PSS verification
+        */
         {
             /* convert BN into octet string EM
-         // EM = maskedDB || H || 0xBC
-         */
+            // EM = maskedDB || H || 0xBC
+            */
             Ipp8u* pEM = (Ipp8u*)BN_BUFFER(&bnC);
             ippsGetOctString_BN(pEM, emLen, &bnC);
 
@@ -157,7 +157,10 @@ IPPFUN(IppStatus, ippsRSAVerify_PSS_rmf, (const Ipp8u* pMsg,
                 /* make sure that top 8*emLen-emBits bits are clear */
                 pDB[0] &= (Ipp8u)MAKEMASK32(8 - 8 * emLen + emBits);
 
-                /* skip over padding string (PS) */
+                /* skip over padding string (PS)
+                // Since DB is derived from the public signature
+                // and public key only, early exit is acceptable here
+                */
                 for (psLen = 0; psLen < dbLen; psLen++)
                     if (pDB[psLen])
                         break;
@@ -168,10 +171,10 @@ IPPFUN(IppStatus, ippsRSAVerify_PSS_rmf, (const Ipp8u* pMsg,
                     int saltLen = dbLen - 1 - psLen;
 
                     /* construct message M'
-               // M' = (00 00 00 00 00 00 00 00) || mHash || salt
-               // where:
-               //    mHash = HASH(pMsg)
-               */
+                    // M' = (00 00 00 00 00 00 00 00) || mHash || salt
+                    // where:
+                    //    mHash = HASH(pMsg)
+                    */
                     PadBlock(0, pM, 8);
                     CopyBlock(hashMsg, pM + 8, hashLen);
                     CopyBlock(pDB + psLen + 1, pM + 8 + hashLen, saltLen);
@@ -179,7 +182,10 @@ IPPFUN(IppStatus, ippsRSAVerify_PSS_rmf, (const Ipp8u* pMsg,
                     /* H' = HASH(M') */
                     ippsHashMessage_rmf(pM, 8 + hashLen + saltLen, pM, pMethod);
 
-                    /* compare H ~ H' */
+                    /* compare H ~ H'
+                    // Since H and H' are derived from public data only,
+                    // using EquBlock is acceptable
+                    */
                     *pIsValid = EquBlock(pH, pM, hashLen);
                 }
             }

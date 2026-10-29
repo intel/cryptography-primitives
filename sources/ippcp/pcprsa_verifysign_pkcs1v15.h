@@ -65,6 +65,9 @@ static int VerifySign(const Ipp8u* pMsg,
 
     /* EMSA-PKCS-v1_5 encoding */
     if (EMSA_PKCSv15(pMsg, msgLen, pSalt, saltLen, (Ipp8u*)(BN_NUMBER(&bnC)), k)) {
+        /* Since both the recovered EM (s^e mod n) and the expected encoding
+        // are derived from public data only, using EquBlock is acceptable
+        */
         *pIsValid = 1 == EquBlock((Ipp8u*)(BN_BUFFER(&bnC)), (Ipp8u*)(BN_NUMBER(&bnC)), k);
         return 1;
     } else

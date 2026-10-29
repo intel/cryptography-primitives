@@ -14,11 +14,11 @@
 * limitations under the License.
 *************************************************************************/
 
-/* 
-// 
+/*
+//
 //  Purpose:
 //     Cryptography Primitive. AES keys expansion
-// 
+//
 //  Contents:
 //        cpExpandAesKey_NI()
 //
@@ -37,6 +37,9 @@ IPP_OWN_DEFN(void, cpExpandAesKey_NI, (const Ipp8u* pSecret, IppsAESSpec* pCtx))
     Ipp8u* pEncKeys = RIJ_EKEYS(pCtx);
     Ipp8u* pDecKeys = RIJ_DKEYS(pCtx);
 
+    /* nRounds depends only on the public key length,
+    // so this switch is safe with respect to the key value
+    */
     switch (nRounds) {
     case 12:
         aes192_KeyExpansion_NI(pEncKeys, pSecret);
