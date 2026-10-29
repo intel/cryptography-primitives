@@ -70,14 +70,14 @@ static __ALIGN64 const int64u sm4_ni_xts_poly[] = { 0x87, 0, 0x87, 0, 0x87, 0, 0
 //
 // For decryption SM4 is its own inverse with the round keys reversed, so the step
 // walks the schedule downward.
+//
+// The kernels get the schedule through the int32u* key_sched[] parameter the GFNI
+// kernels use, so each caller casts it back to the mbx_sm4_key_schedule it really is.
 */
 static void sm4_ni_repack_keys(__m512i round_keys[SM4_NI_GROUPS][SM4_NI_KEY_STEPS],
-                               const int32u* key_sched[SM4_ROUNDS],
+                               const mbx_sm4_key_schedule* key_sched,
                                int operation)
 {
-    /* callers pass a mbx_sm4_key_schedule, i.e. int32u[SM4_ROUNDS][SM4_LINES], through a
-       parameter declared as an array of pointers - the same pun the GFNI kernels rely on */
-    const int32u(*schedule)[SM4_LINES] = (const int32u(*)[SM4_LINES])key_sched;
     /* staging for one zmm of round keys; held outside the loops so it is wiped once */
     __ALIGN64 int32u lanes[SM4_LINES];
     /* operation is +1 for encryption and -1 for decryption, so it doubles as the direction
@@ -90,7 +90,7 @@ static void sm4_ni_repack_keys(__m512i round_keys[SM4_NI_GROUPS][SM4_NI_KEY_STEP
                 for (int rnd = 0; rnd < 4; rnd++) {
                     const int round_index = first_round + operation * (4 * step + rnd);
 
-                    lanes[4 * lane + rnd] = schedule[round_index][4 * group + lane];
+                    lanes[4 * lane + rnd] = (*key_sched)[round_index][4 * group + lane];
                 }
             }
             round_keys[group][step] = _mm512_load_si512(lanes);
@@ -316,7 +316,7 @@ mbx_status16 sm4_ni_ecb_kernel_mb16(int8u* pa_out[SM4_LINES],
     int max_blocks = 0;
     int min_blocks = 0;
 
-    sm4_ni_repack_keys(round_keys, key_sched, operation);
+    sm4_ni_repack_keys(round_keys, (const mbx_sm4_key_schedule*)key_sched, operation);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         loc_inp[buf_no]    = pa_inp[buf_no];
@@ -414,7 +414,7 @@ mbx_status16 sm4_ni_cbc_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
     int num_blocks[SM4_LINES];
     int max_blocks = 0;
 
-    sm4_ni_repack_keys(round_keys, key_sched, SM4_ENC);
+    sm4_ni_repack_keys(round_keys, (const mbx_sm4_key_schedule*)key_sched, SM4_ENC);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         loc_inp[buf_no]    = pa_inp[buf_no];
@@ -491,7 +491,7 @@ mbx_status16 sm4_ni_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
     int num_blocks[SM4_LINES];
     int max_blocks = 0;
 
-    sm4_ni_repack_keys(round_keys, key_sched, SM4_ENC);
+    sm4_ni_repack_keys(round_keys, (const mbx_sm4_key_schedule*)key_sched, SM4_ENC);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         loc_inp[buf_no]    = pa_inp[buf_no];
@@ -569,7 +569,7 @@ void sm4_ni_cbc_mac_kernel_mb16(__m128i pa_out[SM4_LINES],
     int num_blocks[SM4_LINES];
     int max_blocks = 0;
 
-    sm4_ni_repack_keys(round_keys, key_sched, SM4_ENC);
+    sm4_ni_repack_keys(round_keys, (const mbx_sm4_key_schedule*)key_sched, SM4_ENC);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         loc_inp[buf_no]    = pa_inp[buf_no];
@@ -674,7 +674,9 @@ static mbx_status16 sm4_ni_chained_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
     int min_blocks = 0;
 
     /* CFB decryption runs the cipher forward over the previous ciphertext */
-    sm4_ni_repack_keys(round_keys, key_sched, (SM4_NI_DEC_MODE_CFB == mode) ? SM4_ENC : SM4_DEC);
+    sm4_ni_repack_keys(round_keys,
+                       (const mbx_sm4_key_schedule*)key_sched,
+                       (SM4_NI_DEC_MODE_CFB == mode) ? SM4_ENC : SM4_DEC);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         loc_inp[buf_no]    = pa_inp[buf_no];
@@ -889,7 +891,7 @@ mbx_status16 sm4_ni_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
     int max_blocks      = 0;
     int min_full_blocks = 0;
 
-    sm4_ni_repack_keys(round_keys, key_sched, SM4_ENC);
+    sm4_ni_repack_keys(round_keys, (const mbx_sm4_key_schedule*)key_sched, SM4_ENC);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         const int active = ((mb_mask >> buf_no) & 1) && (len[buf_no] > 0);
@@ -1027,7 +1029,7 @@ mbx_status16 sm4_ni_ofb_kernel_mb16(int8u* pa_out[SM4_LINES],
     int num_blocks[SM4_LINES];
     int max_blocks = 0;
 
-    sm4_ni_repack_keys(round_keys, key_sched, SM4_ENC);
+    sm4_ni_repack_keys(round_keys, (const mbx_sm4_key_schedule*)key_sched, SM4_ENC);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         const int active = ((mb_mask >> buf_no) & 1) && (len[buf_no] > 0);
@@ -1113,7 +1115,7 @@ mbx_status16 sm4_ni_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
     int max_blocks      = 0;
     int min_full_blocks = 0;
 
-    sm4_ni_repack_keys(round_keys, key_sched, SM4_ENC);
+    sm4_ni_repack_keys(round_keys, (const mbx_sm4_key_schedule*)key_sched, SM4_ENC);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         const int active = ((mb_mask >> buf_no) & 1) && (len[buf_no] > 0);
@@ -1255,7 +1257,7 @@ static void sm4_ni_xts_encrypt_tweaks(__m512i tweak[SM4_NI_GROUPS],
     __ALIGN64 __m512i tweak_keys[SM4_NI_GROUPS][SM4_NI_KEY_STEPS];
     __ALIGN64 __m512i z[SM4_NI_GROUPS];
 
-    sm4_ni_repack_keys(tweak_keys, key_sched2, SM4_ENC);
+    sm4_ni_repack_keys(tweak_keys, (const mbx_sm4_key_schedule*)key_sched2, SM4_ENC);
 
     for (int group = 0; group < SM4_NI_GROUPS; group++)
         z[group] = sm4_ni_gather_4x1(&pa_tweak[4 * group], sm4_ni_iv_lane_mask(num_blocks, group));
@@ -1360,7 +1362,7 @@ mbx_status16 sm4_ni_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
     int partial[SM4_LINES];    /* bytes in the trailing partial block, 0 if none */
     int max_blocks = 0;
 
-    sm4_ni_repack_keys(round_keys, key_sched1, operation);
+    sm4_ni_repack_keys(round_keys, (const mbx_sm4_key_schedule*)key_sched1, operation);
 
     for (int buf_no = 0; buf_no < SM4_LINES; buf_no++) {
         const int active  = ((mb_mask >> buf_no) & 1) && (len[buf_no] >= SM4_BLOCK_SIZE);

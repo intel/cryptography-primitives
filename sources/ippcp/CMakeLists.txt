@@ -159,7 +159,7 @@ execute_process(
 message(STATUS "Assembler version string .............. " ${NASM_VERSION_VERBOSE})
 string(REGEX MATCH "([0-9]+\\.[0-9]+(\\.[0-9]+)?(rc[0-9]*)?)" DETECTED_NASM_VERSION ${NASM_VERSION_VERBOSE})
 message(STATUS "Assembler version ..................... " ${DETECTED_NASM_VERSION})
-set(REQUIRED_NASM_VERSION "2.16.02")
+set(REQUIRED_NASM_VERSION "3.01")
 if(${DETECTED_NASM_VERSION} VERSION_LESS ${REQUIRED_NASM_VERSION})
     message(FATAL_ERROR "Required NASM version ${REQUIRED_NASM_VERSION}, detected ${DETECTED_NASM_VERSION}.")
 endif()
