@@ -3,22 +3,28 @@
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
 ## Intel(R) Cryptography Primitives Library 2.4.0
-- Added `ippsLMSGetPublicKeyElems` and `ippsLMSGetSignatureElems` getters to extract the individual components of an LMS public key and signature state.
-- Added the `-DIPPCP_ENABLE_FUNC_DATA_SECTIONS:BOOL=on` build option (off by default) to place each function and data item into its own section (`-ffunction-sections -fdata-sections` on Linux\*, `/Gy /Gw` on Windows\*), enabling linker garbage collection of unused code and data (`-Wl,--gc-sections` / `/OPT:REF`) to reduce the footprint of applications that statically link the library.
-- Added a 4-way multi-buffer SHAKE128/SHAKE256 implementation on Intel® AVX2 (l9), used to batch ML-DSA sampling and ExpandMask and shared with ML-KEM matrix and rejection sampling.
-- Optimized ML-DSA scalar hot paths: division-free Decompose, phase-split rejection sampling, and a short-circuit on the ||z|| bound in the signing loop.
-- Optimized ML-DSA bit packing and unpacking of keys and signatures, and rearranged the scalar NTT and inverse NTT loops so the compiler can vectorize every layer.
-- Zeroized additional secret-bearing stack and pool scratch before return: hash/HMAC digest buffers, AES-CCM/CMAC/GCM tag scratch, EC signing ephemeral points and modular-inverse working sets (DSA/NR/SM2, single- and multi-buffer), ECDH projective-to-affine inversion buffers, and RSA multi-buffer CRT intermediates.
+
+### New features and changes
 - XMSS, LMS, ML-KEM, ML-DSA are no longer preview features: the `IPPCP_PREVIEW_*` macros are not needed to use them.
+- Added `ippsLMSGetPublicKeyElems` and `ippsLMSGetSignatureElems` getters to extract the individual components of an LMS public key and signature state.
+- Added XMSS examples: key generation, signing and verification of the generated signature and verification of a signature from an externally provided public key and signature components.
+- Added the `-DIPPCP_ENABLE_FUNC_DATA_SECTIONS:BOOL=on` build option (off by default) to place each function and data item into its own section (`-ffunction-sections -fdata-sections` on Linux\*, `/Gy /Gw` on Windows\*), enabling linker garbage collection of unused code and data (`-Wl,--gc-sections` / `/OPT:REF`) to reduce the footprint of applications that statically link the library.
+- Increased minimum required NASM\* version to 3.01 for library build.
+
+### Performance
 - Added single-buffer SM4 optimizations that use the SM4 instructions on CPUs with Intel® AVX10.2, covering ECB, CBC decryption, CFB128 decryption and CTR.
 - Added multi-buffer SM4 optimizations that use the SM4 instructions on CPUs with Intel® AVX10.2, covering ECB, CBC, CBC-MAC, CFB128, CTR, OFB, XTS and the counter mode inside GCM, which SM4-CCM and SM4-GCM also use.
 - Added optimizations for the ML-DSA NTT, inverse NTT, and multiply NTT with Intel® AVX2 (l9 and above).
+- Optimized ML-DSA scalar hot paths: division-free Decompose, phase-split rejection sampling, and a short-circuit on the ||z|| bound in the signing loop.
+- Optimized ML-DSA bit packing and unpacking of keys and signatures, and rearranged the scalar NTT and inverse NTT loops so the compiler can vectorize every layer.
+- Added a 4-way multi-buffer SHAKE128/SHAKE256 implementation on Intel® AVX2 (l9), used to batch ML-DSA sampling and ExpandMask and shared with ML-KEM matrix and rejection sampling.
+- Improved LMS key-generation performance by optimizing repeated SHA-256 hashing during LM-OTS public-key generation.
+
+### Fixes
 - Fixed the counter increment in ippsAESEncryptCTR and ippsAESDecryptCTR on the Intel® AVX-512 VAES (k1) and Intel® AVX10.2 (d1) code paths for counter sizes from 65 to 127 bits.
 - Fixed `ippsAES_CCMStart`, `ippsSMS4_CCMStart`, `ippsAES_CCMEncrypt` and `ippsAES_CCMDecrypt` to return `ippStsLengthErr` when the message length is too large for the CCM length field or the block counter, or when the processed data exceeds the length set by `ippsAES_CCMMessageLen`.
-- Added XMSS examples: key generation, signing and verification of the generated signature and verification of a signature from an externally provided public key and signature components.
+- Zeroized additional secret-bearing stack and pool scratch before return: hash/HMAC digest buffers, AES-CCM/CMAC/GCM tag scratch, EC signing ephemeral points and modular-inverse working sets (DSA/NR/SM2, single- and multi-buffer), ECDH projective-to-affine inversion buffers, and RSA multi-buffer CRT intermediates.
 - Changed `ippsAES_GCMEncrypt`, `ippsAES_GCMDecrypt`, `ippsAES_CCMEncrypt`, `ippsAES_CCMDecrypt`, `ippsSMS4_CCMEncrypt` and `ippsSMS4_CCMDecrypt` to read each source byte only once and to never read the destination buffer back, on all code paths. `ippsAES_SIVEncrypt` no longer reads the `pSIV` output back, and `ippsAES_SIVDecrypt` reads the `pSIV` input once. The multi-buffer SM4-GCM and SM4-CCM documentation now states that these functions may read the input more than once and read the output back.
-- Improved LMS key-generation performance by optimizing repeated SHA-256 hashing during LM-OTS public-key generation.
-- Increased minimum required NASM\* version to 3.01 for library build.
 
 ## Intel(R) Cryptography Primitives Library 2.3.0
 - Updated ML-KEM to use RDSEED as the internal randomness source; optimized byte/bit conversion hot paths and introduced Montgomery-domain arithmetic for NTT operations to improve performance.
