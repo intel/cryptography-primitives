@@ -15,6 +15,43 @@
 *************************************************************************/
 #include "stateful_sig/lms_internal/lmots.h"
 #include "stateful_sig/common.h"
+#include "hash/pcphash_rmf.h"
+
+#define CP_LMOTS_HASH_PREFIX_BYTESIZE \
+    (CP_PK_I_BYTESIZE + 4 /* q */ + 2 /* i */ + 1 /* D_PRIV or j */)
+
+/*
+ * out may alias block because hashUpdate consumes the block before writing out. LM-OTS hashes
+ * contain whole SHA-256 words, but the 23-byte prefix leaves out unaligned, so serialize through
+ * byte stores instead of hashOctStr's word stores.
+ */
+static void cp_lmots_hash_one_block(const Ipp8u block[MBS_SHA256],
+                                    Ipp8u* out,
+                                    const Ipp32s outLen,
+                                    DigestSHA256 hash,
+                                    const IppsHashMethod* hash_method)
+{
+    hash_method->hashInit(hash);
+    hash_method->hashUpdate(hash, block, MBS_SHA256);
+    for (Ipp32s i = 0; i < outLen / (Ipp32s)sizeof(Ipp32u); i++) {
+        cp_to_byte(out + i * (Ipp32s)sizeof(Ipp32u), (Ipp32s)sizeof(Ipp32u), hash[i]);
+    }
+}
+
+static void cp_lmots_prepare_one_block(Ipp8u block[MBS_SHA256],
+                                       Ipp8u* pI,
+                                       const Ipp32u q,
+                                       const Ipp32s dataLen,
+                                       const IppsHashMethod* hash_method)
+{
+    const Ipp32s msgLen = CP_LMOTS_HASH_PREFIX_BYTESIZE + dataLen;
+
+    PadBlock(0, block, MBS_SHA256);
+    CopyBlock(pI, block, CP_PK_I_BYTESIZE);
+    cp_to_byte(block + CP_PK_I_BYTESIZE, /*q byteLen*/ 4, q);
+    block[msgLen] = 0x80;
+    hash_method->msgLenRep(block + MBS_SHA256 - hash_method->msgLenRepSize, (Ipp64u)msgLen, 0);
+}
 
 /*
  * Does the randomized hashing for OTS (H function in the Spec)
@@ -87,53 +124,57 @@ IPP_OWN_DEFN(IppStatus, cp_lms_OTS_genPK, (
             Ipp8u* out, Ipp8u* temp_buf, const cpLMOTSParams* params))
 /* clang-format on */
 {
-    IppStatus retCode   = ippStsErr;
+    IppStatus retCode;
     const Ipp32s nParam = (Ipp32s)params->n;
     const Ipp32u wParam = params->w;
     const Ipp32u pParam = params->p;
     const Ipp32u two_w  = (1u << wParam);
-    Ipp8u D_PRIV_       = D_PRIV;
 
     Ipp8u* I_q = temp_buf;
     CopyBlock(pI, I_q, CP_PK_I_BYTESIZE);
     cp_to_byte(I_q + CP_PK_I_BYTESIZE, /*q byteLen*/ 4, q);
 
+    DigestSHA256 hash;
+    __ALIGN8 Ipp8u derivationBlock[MBS_SHA256];
+    __ALIGN8 Ipp8u chainBlock[MBS_SHA256];
+    cp_lmots_prepare_one_block(derivationBlock, pI, q, seedLen, params->hash_method);
+    cp_lmots_prepare_one_block(chainBlock, pI, q, nParam, params->hash_method);
+
+    derivationBlock[CP_PK_I_BYTESIZE + 4 + 2] = D_PRIV;
+    CopyBlock(secret_seed, derivationBlock + CP_LMOTS_HASH_PREFIX_BYTESIZE, seedLen);
+
     Ipp8u* sk_begin = (I_q + CP_PK_I_BYTESIZE + 4 + 2 + 1 + CP_LMS_MAX_HASH_BYTESIZE);
     Ipp8u* sk       = sk_begin; // size = n * p
     for (Ipp32u i = 0; i < pParam; i++) {
+        cp_to_byte(derivationBlock + CP_PK_I_BYTESIZE + 4, /*i byteLen*/ 2, i);
+        cp_to_byte(chainBlock + CP_PK_I_BYTESIZE + 4, /*i byteLen*/ 2, i);
+
         // generate secret key from secret seed
         // x_q[i] = cp_lms_H(I || u32str(q) || u16str(i) || u8str(0xff) || SEED)
-        retCode = cp_lms_H(I_q,
-                           CP_PK_I_BYTESIZE + /*q byteLen*/ 4,
-                           i,
-                           /*i byteLen*/ 2,
-                           &D_PRIV_,
-                           /*D_PRIV byteLen*/ 1,
-                           secret_seed,
-                           seedLen,
-                           sk,
-                           nParam,
-                           params->hash_method);
-        IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+        cp_lmots_hash_one_block(derivationBlock,
+                                chainBlock + CP_LMOTS_HASH_PREFIX_BYTESIZE,
+                                nParam,
+                                hash,
+                                params->hash_method);
 
         // chaining
         for (Ipp8u j = 0; j < two_w - 1; j++) {
             // sk = cp_lms_H(I || u32str(q) || u16str(i) || u8str(j) || sk)
-            retCode = cp_lms_H(I_q,
-                               CP_PK_I_BYTESIZE + /*q byteLen*/ 4,
-                               i,
-                               /*i byteLen*/ 2,
-                               &j,
-                               /*j byteLen*/ 1,
-                               sk,
-                               nParam,
-                               sk,
-                               nParam,
-                               params->hash_method);
-            IPP_BADARG_RET((ippStsNoErr != retCode), retCode)
+            chainBlock[CP_PK_I_BYTESIZE + 4 + 2] = j;
+            cp_lmots_hash_one_block(chainBlock,
+                                    chainBlock + CP_LMOTS_HASH_PREFIX_BYTESIZE,
+                                    nParam,
+                                    hash,
+                                    params->hash_method);
         }
+        CopyBlock(chainBlock + CP_LMOTS_HASH_PREFIX_BYTESIZE, sk, nParam);
         sk += nParam;
     }
+
+    PurgeBlock(hash, sizeof(hash));
+    PurgeBlock(derivationBlock, MBS_SHA256);
+    PurgeBlock(chainBlock, MBS_SHA256);
+
     // public_key = cp_lms_H(I || u32str(q) || u16str(D_PBLC) || sk)
     retCode = cp_lms_H(I_q,
                        CP_PK_I_BYTESIZE + /*q byteLen*/ 4,
