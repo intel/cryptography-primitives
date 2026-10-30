@@ -33,7 +33,9 @@ static void cp_lmots_hash_one_block(const Ipp8u block[MBS_SHA256],
 {
     hash_method->hashInit(hash);
     hash_method->hashUpdate(hash, block, MBS_SHA256);
-    for (Ipp32s i = 0; i < outLen / (Ipp32s)sizeof(Ipp32u); i++) {
+    /* Bounding by the digest size as min of output len and size of hash */
+    const Ipp32s nWords = IPP_MIN(outLen, CP_LMS_MAX_HASH_BYTESIZE) / (Ipp32s)sizeof(Ipp32u);
+    for (Ipp32s i = 0; i < nWords; i++) {
         cp_to_byte(out + i * (Ipp32s)sizeof(Ipp32u), (Ipp32s)sizeof(Ipp32u), hash[i]);
     }
 }
