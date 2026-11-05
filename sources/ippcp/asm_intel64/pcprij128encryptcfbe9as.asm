@@ -90,6 +90,13 @@ segment .text align=IPP_ALIGN_FACTOR
 ;*                               const Ipp8u* pIV)
 ;***************************************************************
 
+;
+; With cfbSize < 16, the 16-byte loads from the staging buffer at
+; [rsp+5*16] also pick up leftover stack bytes past the copied input.
+; They never reach the output or the next IV, so this is harmless today.
+; Zero the buffer first if a change ever lets them through.
+;
+
 ;;
 ;; Lib = Y8
 ;;

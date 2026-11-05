@@ -91,6 +91,13 @@
 ;*                                   const Ipp8u* pIV)
 ;***************************************************************
 
+;
+; With cfbSize < 16, the 16-byte loads from the staging buffer at
+; [esp+1*16] also pick up leftover stack bytes past the copied input.
+; They never reach the output, so this is harmless today.
+; Zero the buffer first if a change ever lets them through.
+;
+
 ;%if (_IPP >= _IPP_P8) && (_IPP < _IPP_G9)
 %if (_IPP >= _IPP_P8)
 ;;
