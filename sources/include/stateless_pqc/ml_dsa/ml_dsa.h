@@ -61,7 +61,13 @@ struct _cpMLDSAState {
 #define CP_ML_DSA_Q          (8380417)
 #define CP_ML_DSA_D          (13)
 #define CP_ML_DSA_N_BLOCKS   (32)
-#define CP_ML_DSA_BITLEN_Q_D (10) // cp_ml_bitlen(CP_ML_DSA_Q - 1) - CP_ML_DSA_D
+#define CP_ML_DSA_BITLEN_Q_D (10) // bitlen(CP_ML_DSA_Q - 1) - CP_ML_DSA_D
+/* Bit lengths that depend on the parameter set: bitlen(2 * eta), bitlen(2 * gamma1 - 1)
+   and bitlen((Q - 1) / (2 * gamma2) - 1). Written as their two possible values so the
+   compiler keeps only those two cases of the pack/unpack switch. */
+#define CP_ML_DSA_BITLEN_2ETA(eta)       ((eta) == 2 ? 3 : 4)
+#define CP_ML_DSA_BITLEN_2GAMMA1(gamma1) ((gamma1) == (1 << 17) ? 18 : 20)
+#define CP_ML_DSA_BITLEN_W1(gamma2)      ((gamma2) == (CP_ML_DSA_Q - 1) / 88 ? 6 : 4)
 
 #define CP_ML_DSA_MAX_SIGN_ITERATIONS             (815)
 #define CP_ML_DSA_MAX_REJ_BOUNDED_POLY_ITERATIONS (482)
@@ -71,18 +77,6 @@ struct _cpMLDSAState {
 //-------------------------------//
 // Kernel functions declaration
 //-------------------------------//
-
-// The bit length of b is the number of digits that would appear in a base-2 representation of b,
-// where the most significant digit in the representation is assumed to be a 1 (e.g., bitlen 32 = 6 and bitlen 31 = 5).
-IPPCP_INLINE Ipp8u cp_ml_bitlen(Ipp32u b)
-{
-    Ipp8u len = 0;
-    while (b > 0) {
-        len++;
-        b >>= 1;
-    }
-    return len;
-}
 
 // =============================================
 // 7.1 Conversion Between Data Types
@@ -595,7 +589,7 @@ IPPCP_INLINE void cp_ml_skEncode(const Ipp8u* rho,
     Ipp8u l            = mldsaCtx->params.l;
     Ipp8u k            = mldsaCtx->params.k;
     Ipp8u eta          = mldsaCtx->params.eta;
-    Ipp8u bitlen_2_eta = cp_ml_bitlen((Ipp32u)(2 * eta));
+    Ipp8u bitlen_2_eta = CP_ML_DSA_BITLEN_2ETA(eta);
 
     for (Ipp8u i = 0; i < l; i++) {
         cp_ml_bitPack(s1 + i, eta, bitlen_2_eta, sk + sk_position + i * 32 * bitlen_2_eta);
@@ -609,10 +603,7 @@ IPPCP_INLINE void cp_ml_skEncode(const Ipp8u* rho,
 
     Ipp32s value = 1 << (CP_ML_DSA_D - 1);
     for (Ipp8u i = 0; i < k; i++) {
-        cp_ml_bitPack(t0 + i,
-                      value,
-                      cp_ml_bitlen(2 * (Ipp32u)value - 1),
-                      sk + sk_position + i * 32 * CP_ML_DSA_D);
+        cp_ml_bitPack(t0 + i, value, CP_ML_DSA_D, sk + sk_position + i * 32 * CP_ML_DSA_D);
     }
 }
 
@@ -639,7 +630,7 @@ IPPCP_INLINE void cp_ml_skDecode(const Ipp8u* sk,
     Ipp8u l            = mldsaCtx->params.l;
     Ipp8u k            = mldsaCtx->params.k;
     Ipp8u eta          = mldsaCtx->params.eta;
-    Ipp8u bitlen_2_eta = cp_ml_bitlen((Ipp32u)(2 * eta));
+    Ipp8u bitlen_2_eta = CP_ML_DSA_BITLEN_2ETA(eta);
 
     for (Ipp8u i = 0; i < l; i++) {
         cp_ml_bitUnpack(sk + sk_position + i * 32 * bitlen_2_eta, eta, bitlen_2_eta, s1 + i);
@@ -653,10 +644,7 @@ IPPCP_INLINE void cp_ml_skDecode(const Ipp8u* sk,
 
     Ipp32s value = 1 << (CP_ML_DSA_D - 1);
     for (Ipp8u i = 0; i < k; i++) {
-        cp_ml_bitUnpack(sk + sk_position + i * 32 * CP_ML_DSA_D,
-                        value,
-                        cp_ml_bitlen((Ipp32u)(2 * value - 1)),
-                        t0 + i);
+        cp_ml_bitUnpack(sk + sk_position + i * 32 * CP_ML_DSA_D, value, CP_ML_DSA_D, t0 + i);
     }
 }
 
@@ -669,7 +657,7 @@ IPPCP_INLINE void cp_ml_sigEncode(const IppPoly* z,
     Ipp8u lambda_4        = mldsaCtx->params.lambda_div_4;
     Ipp8u l               = mldsaCtx->params.l;
     Ipp32s gamma_1        = mldsaCtx->params.gamma_1;
-    Ipp8u bitlen_2_gamma1 = cp_ml_bitlen((Ipp32u)(2 * gamma_1 - 1));
+    Ipp8u bitlen_2_gamma1 = CP_ML_DSA_BITLEN_2GAMMA1(gamma_1);
 
     // Encode z
     Ipp8u* pEncodedSig = sig + lambda_4;
@@ -693,7 +681,7 @@ IPPCP_INLINE IppStatus cp_ml_sigDecode(const Ipp8u* sig,
     Ipp8u lambda_4        = mldsaCtx->params.lambda_div_4;
     Ipp8u l               = mldsaCtx->params.l;
     Ipp32s gamma_1        = mldsaCtx->params.gamma_1;
-    Ipp8u bitlen_2_gamma1 = cp_ml_bitlen((Ipp32u)(2 * gamma_1 - 1));
+    Ipp8u bitlen_2_gamma1 = CP_ML_DSA_BITLEN_2GAMMA1(gamma_1);
 
     // Decode z
     const Ipp8u* pEncodedSig = sig + lambda_4;
@@ -711,8 +699,7 @@ IPPCP_INLINE IppStatus cp_ml_sigDecode(const Ipp8u* sig,
 // Algorithm 28 w1Encode(𝐰1)
 IPPCP_INLINE void cp_ml_w1Encode(const IppPoly* w1, Ipp8u* w1_, IppsMLDSAState* mldsaCtx)
 {
-    Ipp32s value       = (CP_ML_DSA_Q - 1) / (2 * mldsaCtx->params.gamma_2) - 1;
-    const Ipp8u bitlen = cp_ml_bitlen((Ipp32u)value);
+    const Ipp8u bitlen = CP_ML_DSA_BITLEN_W1(mldsaCtx->params.gamma_2);
     // Encode w1 into w1_
     for (Ipp32u i = 0; i < mldsaCtx->params.k; ++i) {
         cp_ml_simpleBitPack(w1 + i, bitlen, w1_ + i * 32 * bitlen);

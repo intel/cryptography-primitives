@@ -626,8 +626,8 @@ IPP_OWN_DEFN(IppStatus,
 {
     IppStatus sts             = ippStsErr;
     Ipp32s gamma_1            = mldsaCtx->params.gamma_1;
-    Ipp8u c                   = (Ipp8u)(1 + cp_ml_bitlen((Ipp32u)(gamma_1 - 1)));
-    Ipp32u bitlen_ab          = cp_ml_bitlen((Ipp32u)(2 * gamma_1 - 1));
+    Ipp8u c                   = CP_ML_DSA_BITLEN_2GAMMA1(gamma_1);
+    Ipp32u bitlen_ab          = CP_ML_DSA_BITLEN_2GAMMA1(gamma_1);
     const Ipp8u l             = mldsaCtx->params.l;
     _cpMLDSAStorage* pStorage = &mldsaCtx->storage;
 

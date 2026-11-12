@@ -272,12 +272,11 @@ static void keccakf_x4(__m256i state[25])
     __m256i thetaD0, thetaD1, thetaD2, thetaD3, thetaD4;
     __m256i chiIn0, chiIn1, chiIn2, chiIn3, chiIn4;
 
-    FOUR_ROUNDS(0);
-    FOUR_ROUNDS(4);
-    FOUR_ROUNDS(8);
-    FOUR_ROUNDS(12);
-    FOUR_ROUNDS(16);
-    FOUR_ROUNDS(20);
+    /* FOUR_ROUNDS leaves every state word under its own name again, so a loop over it is the
+       same computation as 6 unrolled copies */
+    for (int round = 0; round < 24; round += 4) {
+        FOUR_ROUNDS(round);
+    }
 
     state[0]  = word00;
     state[1]  = word01;

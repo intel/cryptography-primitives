@@ -156,8 +156,7 @@ IPP_OWN_DEFN(IppStatus,  cp_MLDSA_VerifyCore, (const Ipp8u* mu,
     IPP_BADARG_RET((c__ == NULL), ippStsMemAllocErr);
     {
         IppsHashMethod shake256_method;
-        Ipp32s encodeSize =
-            32 * k * cp_ml_bitlen((Ipp32u)((CP_ML_DSA_Q - 1) / (2 * mldsaCtx->params.gamma_2) - 1));
+        Ipp32s encodeSize = 32 * k * CP_ML_DSA_BITLEN_W1(mldsaCtx->params.gamma_2);
         Ipp8u* hash_input = cp_mlStorageAllocate(pStorage, (64 + encodeSize) + CP_ML_ALIGNMENT);
         IPP_BADARG_RET((hash_input == NULL), ippStsMemAllocErr);
 

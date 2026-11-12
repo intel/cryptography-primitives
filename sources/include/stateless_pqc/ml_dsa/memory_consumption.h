@@ -70,10 +70,8 @@ IPPCP_INLINE IppStatus mldsaMemoryConsumption(const IppsMLDSAState* pMLDSACtx,
 
     if (msg_size != IPPCP_MLDSA_NO_MESSAGE) {
         /* Sign memory consumption */
-        Ipp32s encodeSize =
-            32 * k *
-            cp_ml_bitlen((Ipp32u)((CP_ML_DSA_Q - 1) / (2 * pMLDSACtx->params.gamma_2) - 1));
-        locSignBytes = (2 * k + l) * sizeof_polynom + 3 * CP_ML_ALIGNMENT;
+        Ipp32s encodeSize = 32 * k * CP_ML_DSA_BITLEN_W1(pMLDSACtx->params.gamma_2);
+        locSignBytes      = (2 * k + l) * sizeof_polynom + 3 * CP_ML_ALIGNMENT;
 #if !CP_ML_MEMORY_OPTIMIZATION
         locSignBytes += k * l * sizeof_polynom + CP_ML_ALIGNMENT;
 #endif // !CP_ML_MEMORY_OPTIMIZATION
