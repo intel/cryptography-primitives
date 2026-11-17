@@ -2,6 +2,11 @@
 
 This is a list of notable changes to Intel® Cryptography Primitives Library, in reverse chronological order.
 
+## Intel(R) Cryptography Primitives Library 2.5.0
+
+### Fixes
+- Fixed the CPU checks in the single-CPU multi-buffer libraries (built with `MERGED_BLD` off): `mbx_is_crypto_mb_applicable()` and `mbx_get_algo_info()` now describe the library's own code path. Before, the `l9` library reported the `k1` algorithms as available on CPUs with Intel® AVX-512, and the `k1` library crashed with an illegal instruction in these functions on CPUs without Intel® AVX-512.
+
 ## Intel(R) Cryptography Primitives Library 2.4.0
 
 ### New features and changes

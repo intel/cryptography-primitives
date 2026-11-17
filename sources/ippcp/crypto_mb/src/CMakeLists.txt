@@ -112,12 +112,13 @@ if (MBX_MERGED_BLD)
     list(REMOVE_ITEM CRYPTO_MB_SOURCES_ORIGINAL ${CPU_FEATURES_FILE})
 endif()
 
-set_source_files_properties(${CPU_FEATURES_FILE} PROPERTIES  COMPILE_DEFINITIONS  "${MBX_AVXIFMA_SUPPORT_DEFINE}")
 if("${OS_STRING}" STREQUAL "windows")
-    set_source_files_properties(${CPU_FEATURES_FILE} PROPERTIES  COMPILE_FLAGS  "${CMAKE_C_FLAGS_SECURITY} /Od")
+    set(CPU_FEATURES_COMPILE_FLAGS "${CMAKE_C_FLAGS_SECURITY} /Od")
 else()
-    set_source_files_properties(${CPU_FEATURES_FILE} PROPERTIES  COMPILE_FLAGS  "${CMAKE_C_FLAGS_SECURITY} -O0")
+    set(CPU_FEATURES_COMPILE_FLAGS "${CMAKE_C_FLAGS_SECURITY} -O0")
 endif()
+set_source_files_properties(${CPU_FEATURES_FILE} PROPERTIES  COMPILE_DEFINITIONS  "${MBX_AVXIFMA_SUPPORT_DEFINE}"
+                                                             COMPILE_FLAGS        "${CPU_FEATURES_COMPILE_FLAGS}")
 
 if(BN_OPENSSL_PATCH) # Off by default
     list(APPEND AVX512_LIBRARY_DEFINES "BN_OPENSSL_PATCH")
@@ -178,6 +179,12 @@ foreach(opt ${MBX_PLATFORM_LIST})
     endif()
     set_source_files_properties(${MBX_C_SOURCES_${opt}} PROPERTIES COMPILE_DEFINITIONS  "${MBX_LIBRARY_DEFINES}"
                                                                    COMPILE_FLAGS        "${OPT_FLAGS_${opt}} ${CMAKE_C_FLAGS_SECURITY}")
+    # The 1CPU library's copy of cpu_features.c must run on any CPU too, so it is built without
+    # the ${opt} options; it keeps the ${opt} defines, which select the library's own code path.
+    if(NOT MBX_MERGED_BLD)
+        set_source_files_properties(${mbx_c_cache_dir}/${opt}_cpu_features.c PROPERTIES
+            COMPILE_FLAGS "${CPU_FEATURES_COMPILE_FLAGS}")
+    endif()
 
     # The SM4-NI kernels are the only place Intel® AVX10.2 is enabled, and they are
     # reached only behind the runtime check in internal_sm4ni_dispatch(). Keep them in

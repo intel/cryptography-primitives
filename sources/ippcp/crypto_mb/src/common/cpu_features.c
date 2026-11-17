@@ -303,10 +303,24 @@ int internal_is_sm4ni_applicable(int64u cpu_features)
 DLL_PUBLIC
 int mbx_is_crypto_mb_applicable(int64u cpu_features)
 {
+    /* a single-CPU library (_K1 or _L9 defined) can run only its own code path */
+#if defined(_K1)
+    return internal_is_k1_applicable(cpu_features);
+#elif defined(_L9)
+    return internal_is_l9_applicable(cpu_features);
+#else
     return (internal_is_k1_applicable(cpu_features) || internal_is_l9_applicable(cpu_features));
+#endif
 }
 
+/* a single-CPU library (_K1 or _L9 defined) has only its own code path */
+#if defined(_K1)
+static int mbx_own_lib_index = 0; // K1 code path
+#elif defined(_L9)
+static int mbx_own_lib_index = 1; // L9 code path
+#else
 static int mbx_own_lib_index = -1;
+#endif
 
 /* choosing the code path */
 extern int* _mbx_own_get_index()
@@ -391,8 +405,6 @@ static const algo_width_map arr_algo_width_l9[] = {
 DLL_PUBLIC
 MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo)
 {
-    const int k1_applicable = internal_is_k1_applicable(0);
-    const int l9_applicable = internal_is_l9_applicable(0);
     const struct {
         const algo_width_map* arr_algo_width;
         unsigned num_tbl;
@@ -404,8 +416,8 @@ MBX_ALGO_INFO mbx_get_algo_info(enum MBX_ALGO algo)
     };
     MBX_ALGO_INFO num_width = 0;
 
-    /* check CPU feature */
-    if (0 == k1_applicable && 0 == l9_applicable)
+    /* check CPU feature (a single-CPU library: its own code path only) */
+    if (0 == mbx_is_crypto_mb_applicable(0))
         return num_width;
 
     /* get selected architecture */
