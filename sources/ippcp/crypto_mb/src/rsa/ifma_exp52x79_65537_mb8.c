@@ -62,7 +62,7 @@ void EXP52x79_pub65537_mb8(int64u out[][8],
     pint64u_x8 red_X = (pint64u_x8)(red_Y + LEN52);
 
     /* convert base into redundant domain */
-    zero_mb8(red_X, LEN52);
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64));
     ifma_amm52x79_mb8((int64u*)red_X,
                       (int64u*)base,
                       (int64u*)toMont,
@@ -81,7 +81,7 @@ void EXP52x79_pub65537_mb8(int64u out[][8],
                       (int64u*)k0);
 
     /* convert result back in regular 2^52 domain */
-    zero_mb8(red_X, LEN52);
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64));
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
     ifma_amm52x79_mb8((int64u*)out, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
 }
@@ -128,7 +128,7 @@ void EXP52x79_pub65537_mb4(int64u out[][4],
     pint64u_x4 red_X = (pint64u_x4)(red_Y + LEN52);
 
     /* convert base into redundant domain */
-    zero_mb4(red_X, LEN52);
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64));
     ifma_amm52x79_mb4((int64u*)red_X,
                       (int64u*)base,
                       (int64u*)toMont,
@@ -147,7 +147,7 @@ void EXP52x79_pub65537_mb4(int64u out[][4],
                       (int64u*)k0);
 
     /* convert result back in regular 2^52 domain */
-    zero_mb4(red_X, LEN52);
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64));
     _mm256_store_si256((__m256i*)red_X, _mm256_set1_epi64x(1));
     ifma_amm52x79_mb4((int64u*)out, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
 }

@@ -55,7 +55,7 @@ mbx_status ifma_ssl_rsa1K_prv2_layer_mb8(const int8u* const from_pa[8],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52][8];
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -83,7 +83,7 @@ mbx_status ifma_ssl_rsa1K_prv2_layer_mb8(const int8u* const from_pa[8],
     ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
 
     /* clear exponents */
-    zero_mb8(d_mb8, LEN64);
+    MB_FUNC_NAME(zero_)(d_mb8, LEN64 * sizeof(U64));
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -113,7 +113,7 @@ mbx_status ifma_ssl_rsa2K_prv2_layer_mb8(const int8u* const from_pa[8],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52][8];
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -141,7 +141,7 @@ mbx_status ifma_ssl_rsa2K_prv2_layer_mb8(const int8u* const from_pa[8],
     ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
 
     /* clear exponents */
-    zero_mb8(d_mb8, LEN64);
+    MB_FUNC_NAME(zero_)(d_mb8, LEN64 * sizeof(U64));
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -171,7 +171,7 @@ mbx_status ifma_ssl_rsa3K_prv2_layer_mb8(const int8u* const from_pa[8],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52][8];
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -199,7 +199,7 @@ mbx_status ifma_ssl_rsa3K_prv2_layer_mb8(const int8u* const from_pa[8],
     ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
 
     /* clear exponents */
-    zero_mb8(d_mb8, LEN64);
+    MB_FUNC_NAME(zero_)(d_mb8, LEN64 * sizeof(U64));
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -229,7 +229,7 @@ mbx_status ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52][8];
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -257,7 +257,7 @@ mbx_status ifma_ssl_rsa4K_prv2_layer_mb8(const int8u* const from_pa[8],
     ifma_mb8_to_HexStr8(to_pa, (const int64u(*)[8])inout_mb8, RSA_BITLEN);
 
     /* clear exponents */
-    zero_mb8(d_mb8, LEN64);
+    MB_FUNC_NAME(zero_)(d_mb8, LEN64 * sizeof(U64));
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -295,7 +295,7 @@ mbx_status ifma_ssl_rsa1K_prv2_layer_mb4(const int8u* const from_pa[4],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52][4];
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -323,7 +323,7 @@ mbx_status ifma_ssl_rsa1K_prv2_layer_mb4(const int8u* const from_pa[4],
     ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
 
     /* clear exponents */
-    zero_mb4(d_mb4, LEN64);
+    MB_FUNC_NAME(zero_)(d_mb4, LEN64 * sizeof(U64));
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -353,7 +353,7 @@ mbx_status ifma_ssl_rsa2K_prv2_layer_mb4(const int8u* const from_pa[4],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52][4];
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -381,7 +381,7 @@ mbx_status ifma_ssl_rsa2K_prv2_layer_mb4(const int8u* const from_pa[4],
     ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
 
     /* clear exponents */
-    zero_mb4(d_mb4, LEN64);
+    MB_FUNC_NAME(zero_)(d_mb4, LEN64 * sizeof(U64));
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -411,7 +411,7 @@ mbx_status ifma_ssl_rsa3K_prv2_layer_mb4(const int8u* const from_pa[4],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52][4];
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -439,7 +439,7 @@ mbx_status ifma_ssl_rsa3K_prv2_layer_mb4(const int8u* const from_pa[4],
     ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
 
     /* clear exponents */
-    zero_mb4(d_mb4, LEN64);
+    MB_FUNC_NAME(zero_)(d_mb4, LEN64 * sizeof(U64));
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 
@@ -469,7 +469,7 @@ mbx_status ifma_ssl_rsa4K_prv2_layer_mb4(const int8u* const from_pa[4],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1 + (LEN64 + 1) + (1 << EXP_WIN_SIZE) * LEN52][4];
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -497,7 +497,7 @@ mbx_status ifma_ssl_rsa4K_prv2_layer_mb4(const int8u* const from_pa[4],
     ifma_mb4_to_HexStr4(to_pa, (const int64u(*)[4])inout_mb4, RSA_BITLEN);
 
     /* clear exponents */
-    zero_mb4(d_mb4, LEN64);
+    MB_FUNC_NAME(zero_)(d_mb4, LEN64 * sizeof(U64));
 
     return MBX_SET_STS_BY_MASK(0, bn_err_mask, MBX_STATUS_MISMATCH_PARAM_ERR);
 

@@ -97,7 +97,7 @@ mbx_status ifma_exp_mb(int64u* const out_pa[8],
         pint64u_x8 work_buffer = mod_mb8 + MULTIPLE_OF(len52, 10);
 
         /* convert modulus to ifma fmt */
-        zero_mb8(mod_mb8, MULTIPLE_OF(len52, 10));
+        MB_FUNC_NAME(zero_)(mod_mb8, MULTIPLE_OF(len52, 10) * (int)sizeof(U64));
         ifma_BNU_to_mb8(mod_mb8, mod_pa, mod_bits);
 
         /* compute k0[] */
@@ -110,7 +110,7 @@ mbx_status ifma_exp_mb(int64u* const out_pa[8],
         ifma_BNU_to_mb8(inout_mb8, base_pa, mod_bits);
 
         /* re-arrange exps to ifma */
-        zero_mb8(expz_mb8, len64 + 1);
+        MB_FUNC_NAME(zero_)(expz_mb8, (len64 + 1) * (int)sizeof(U64));
         ifma_BNU_transpose_copy(expz_mb8, exp_pa, exp_bits);
 
         /* exponentiation */
@@ -127,7 +127,7 @@ mbx_status ifma_exp_mb(int64u* const out_pa[8],
         ifma_mb8_to_BNU(out_pa, (const int64u(*)[8])inout_mb8, mod_bits);
 
         /* clear exponents */
-        zero_mb8(expz_mb8, len64);
+        MB_FUNC_NAME(zero_)(expz_mb8, len64 * (int)sizeof(U64));
     }
 
     return status;

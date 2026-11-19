@@ -85,8 +85,8 @@ mbx_status internal_avx512_ed25519_public_key_mb8(
                         GE25519_COMP_BITSIZE);
 
         /* clear memory containing potentially secret data */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])scalar, sizeof(scalar) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])sha512_digest, sizeof(sha512_digest) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
+        MB_FUNC_NAME(zero_)(sha512_digest, sizeof(sha512_digest));
     }
     return status;
 }
@@ -229,9 +229,9 @@ mbx_status MB_FUNC_NAME(internal_avx512_ed25519_sign_)(
         ifma_mb8_to_BNU((int64u* const*)pa_sign_s, (const int64u(*)[8])mb_sign_s, N25519_BITSIZE);
 
         /* clear memory containing potentially secret data */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])az, sizeof(az) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])nonce, sizeof(nonce) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])mb_scalar, sizeof(mb_scalar) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(az, sizeof(az));
+        MB_FUNC_NAME(zero_)(nonce, sizeof(nonce));
+        MB_FUNC_NAME(zero_)(mb_scalar, sizeof(mb_scalar));
     }
 
     return status;

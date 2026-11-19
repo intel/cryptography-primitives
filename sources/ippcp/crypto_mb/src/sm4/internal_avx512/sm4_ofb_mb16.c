@@ -102,11 +102,11 @@ mbx_status16 sm4_ofb_kernel_mb16(int8u* pa_out[SM4_LINES],
     TRANSPOSE_4x16_I32_EPI32(&iv0, &iv1, &iv2, &iv3, pa_iv, tmp_mask);
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8]) & iv0, 1);
-    zero_mb8((int64u(*)[8]) & iv1, 1);
-    zero_mb8((int64u(*)[8]) & iv2, 1);
-    zero_mb8((int64u(*)[8]) & iv3, 1);
-    zero_mb8((int64u(*)[8]) & tmp, 1);
+    MB_FUNC_NAME(zero_)(&iv0, sizeof(iv0));
+    MB_FUNC_NAME(zero_)(&iv1, sizeof(iv1));
+    MB_FUNC_NAME(zero_)(&iv2, sizeof(iv2));
+    MB_FUNC_NAME(zero_)(&iv3, sizeof(iv3));
+    MB_FUNC_NAME(zero_)(&tmp, sizeof(tmp));
 
     return status;
 }

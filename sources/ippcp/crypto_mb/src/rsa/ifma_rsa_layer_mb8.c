@@ -49,7 +49,7 @@ void ifma_cp_rsa_pub_layer_mb8(const int8u* const from_pa[8],
     pint64u_x8 work_buffer = n_mb8 + len52;
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(len52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(len52, 10) * (int)sizeof(U64));
     ifma_BNU_to_mb8(n_mb8, n_pa, rsaBitlen);
 
     /* compute k0[] */
@@ -100,7 +100,7 @@ void ifma_cp_rsa_prv2_layer_mb8(const int8u* const from_pa[8],
     pint64u_x8 work_buffer = n_mb8 + len52;
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(len52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(len52, 10) * (int)sizeof(U64));
     ifma_BNU_to_mb8(n_mb8, n_pa, rsaBitlen);
 
     /* compute k0[] */
@@ -130,9 +130,10 @@ void ifma_cp_rsa_prv2_layer_mb8(const int8u* const from_pa[8],
     /* clear secret / result-bearing buffers: the private exponent, the result
     // (plaintext on decrypt) and the exponentiation scratch. n, rr and k0 are
     // derived from the public modulus and carry no secret, so they are left. */
-    zero_mb8(d_mb8, len64);
-    zero_mb8(inout_mb8, len52);
-    zero_mb8(work_buffer, len52 * 2 + (len64 + 1) + (1 << EXP_WIN_SIZE) * len52);
+    MB_FUNC_NAME(zero_)(d_mb8, len64 * (int)sizeof(U64));
+    MB_FUNC_NAME(zero_)(inout_mb8, len52 * (int)sizeof(U64));
+    MB_FUNC_NAME(zero_)
+    (work_buffer, (len52 * 2 + (len64 + 1) + (1 << EXP_WIN_SIZE) * len52) * (int)sizeof(U64));
 }
 
 /*
@@ -169,7 +170,7 @@ void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
     pint64u_x8 work_buffer = inp_mb8 + len52 * 2;
 
     /* convert input to ifma fmt */
-    zero_mb8(inp_mb8, len52 * 2);
+    MB_FUNC_NAME(zero_)(inp_mb8, len52 * 2 * (int)sizeof(U64));
     ifma_HexStr8_to_mb8(inp_mb8, from_pa, rsaBitlen);
 
     /*
@@ -260,7 +261,7 @@ void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
                  (const int64u(*)[8])p_mb8); /* correction */
 
     /* xp = (xp*q + xq) */
-    zero_mb8(inp_mb8, len52 * 2);
+    MB_FUNC_NAME(zero_)(inp_mb8, len52 * 2 * (int)sizeof(U64));
     copy_mb8(inp_mb8, (const int64u(*)[8])xq_mb8, len52);
     m->mla52x(inp_mb8, (const int64u(*)[8])xp_mb8, (const int64u(*)[8])q_mb8);
 
@@ -271,7 +272,7 @@ void ifma_cp_rsa_prv5_layer_mb8(const int8u* const from_pa[8],
     // the exponentiation work_buffer all hold secret or key-derived values.
     // buffSize reserves 64 bytes for the alignment applied by IFMA_ALIGNED_PTR,
     // the rest is the region reachable from k0_mb8 */
-    zero_mb8(k0_mb8, (m->buffSize - 64) / (int)(sizeof(int64u) * 8));
+    MB_FUNC_NAME(zero_)(k0_mb8, m->buffSize - 64);
 }
 
 #elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
@@ -299,7 +300,7 @@ void ifma_cp_rsa_pub_layer_mb4(const int8u* const from_pa[4],
     pint64u_x4 work_buffer = n_mb4 + len52;
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(len52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(len52, 10) * (int)sizeof(U64));
     ifma_BNU_to_mb4(n_mb4, n_pa, rsaBitlen);
 
     /* compute k0[] */
@@ -350,7 +351,7 @@ void ifma_cp_rsa_prv2_layer_mb4(const int8u* const from_pa[4],
     pint64u_x4 work_buffer = n_mb4 + len52;
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(len52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(len52, 10) * (int)sizeof(U64));
     ifma_BNU_to_mb4(n_mb4, n_pa, rsaBitlen);
 
     /* compute k0[] */
@@ -380,9 +381,10 @@ void ifma_cp_rsa_prv2_layer_mb4(const int8u* const from_pa[4],
     /* clear secret / result-bearing buffers: the private exponent, the result
     // (plaintext on decrypt) and the exponentiation scratch. n, rr and k0 are
     // derived from the public modulus and carry no secret, so they are left. */
-    zero_mb4(d_mb4, len64);
-    zero_mb4(inout_mb4, len52);
-    zero_mb4(work_buffer, len52 * 2 + (len64 + 1) + (1 << EXP_WIN_SIZE) * len52);
+    MB_FUNC_NAME(zero_)(d_mb4, len64 * (int)sizeof(U64));
+    MB_FUNC_NAME(zero_)(inout_mb4, len52 * (int)sizeof(U64));
+    MB_FUNC_NAME(zero_)
+    (work_buffer, (len52 * 2 + (len64 + 1) + (1 << EXP_WIN_SIZE) * len52) * (int)sizeof(U64));
 }
 
 /*
@@ -419,7 +421,7 @@ void ifma_cp_rsa_prv5_layer_mb4(const int8u* const from_pa[4],
     pint64u_x4 work_buffer = inp_mb4 + len52 * 2;
 
     /* convert input to ifma fmt */
-    zero_mb4(inp_mb4, len52 * 2);
+    MB_FUNC_NAME(zero_)(inp_mb4, len52 * 2 * (int)sizeof(U64));
     ifma_HexStr4_to_mb4(inp_mb4, from_pa, rsaBitlen);
 
     /*
@@ -510,7 +512,7 @@ void ifma_cp_rsa_prv5_layer_mb4(const int8u* const from_pa[4],
                  (const int64u(*)[4])p_mb4); /* correction */
 
     /* xp = (xp*q + xq) */
-    zero_mb4(inp_mb4, len52 * 2);
+    MB_FUNC_NAME(zero_)(inp_mb4, len52 * 2 * (int)sizeof(U64));
     copy_mb4(inp_mb4, (const int64u(*)[4])xq_mb4, len52);
     m->mla52x(inp_mb4, (const int64u(*)[4])xp_mb4, (const int64u(*)[4])q_mb4);
 
@@ -521,7 +523,7 @@ void ifma_cp_rsa_prv5_layer_mb4(const int8u* const from_pa[4],
     // the exponentiation work_buffer all hold secret or key-derived values.
     // buffSize reserves 64 bytes for the alignment applied by IFMA_ALIGNED_PTR,
     // the rest is the region reachable from k0_mb4 */
-    zero_mb4(k0_mb4, (m->buffSize - 64) / (int)(sizeof(int64u) * 4));
+    MB_FUNC_NAME(zero_)(k0_mb4, m->buffSize - 64);
 }
 
 #endif /* #if (_MBX >= _MBX_K1) */

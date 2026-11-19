@@ -492,7 +492,7 @@ void MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(P256_POINT* r,
     MB_FUNC_NAME(mov_FE256_)(r->Z, R.Z);
 
     /* clear r (to fix potential security flaw in case of ecdh */
-    MB_FUNC_NAME(zero_)((int64u(*)[8]) & R, sizeof(R) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&R, sizeof(R));
 
     /* clear stubs of secret scalar */
     clear_secret_context(&wvalue, &dvalue, &dsign);

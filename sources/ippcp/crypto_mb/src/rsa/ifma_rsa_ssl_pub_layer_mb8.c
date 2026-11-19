@@ -49,7 +49,7 @@ mbx_status ifma_ssl_rsa1K_pub_layer_mb8(const int8u* const from_pa[8],
     __ALIGN64 int64u work_buffer[LEN52 * 2][8];
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -96,7 +96,7 @@ mbx_status ifma_ssl_rsa2K_pub_layer_mb8(const int8u* const from_pa[8],
     __ALIGN64 int64u work_buffer[LEN52 * 2][8];
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -143,7 +143,7 @@ mbx_status ifma_ssl_rsa3K_pub_layer_mb8(const int8u* const from_pa[8],
     __ALIGN64 int64u work_buffer[LEN52 * 2][8];
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -190,7 +190,7 @@ mbx_status ifma_ssl_rsa4K_pub_layer_mb8(const int8u* const from_pa[8],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1][8];
 
     /* convert modulus to ifma fmt */
-    zero_mb8(n_mb8, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb8, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb8(n_mb8, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -242,7 +242,7 @@ mbx_status ifma_ssl_rsa1K_pub_layer_mb4(const int8u* const from_pa[4],
     __ALIGN64 int64u work_buffer[LEN52 * 2][4];
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -289,7 +289,7 @@ mbx_status ifma_ssl_rsa2K_pub_layer_mb4(const int8u* const from_pa[4],
     __ALIGN64 int64u work_buffer[LEN52 * 2][4];
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -336,7 +336,7 @@ mbx_status ifma_ssl_rsa3K_pub_layer_mb4(const int8u* const from_pa[4],
     __ALIGN64 int64u work_buffer[LEN52 * 2][4];
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */
@@ -383,7 +383,7 @@ mbx_status ifma_ssl_rsa4K_pub_layer_mb4(const int8u* const from_pa[4],
     __ALIGN64 int64u work_buffer[LEN52 * 2 + 1][4];
 
     /* convert modulus to ifma fmt */
-    zero_mb4(n_mb4, MULTIPLE_OF(LEN52, 10));
+    MB_FUNC_NAME(zero_)(n_mb4, MULTIPLE_OF(LEN52, 10) * sizeof(U64));
     int8u bn_err_mask = ifma_BN_to_mb4(n_mb4, n_pa, RSA_BITLEN);
 
     /* compute k0[] */

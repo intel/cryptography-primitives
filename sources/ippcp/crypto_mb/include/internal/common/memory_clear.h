@@ -19,16 +19,17 @@
 
 #include <internal/common/ifma_defs.h>
 
-#if (_MBX >= _MBX_K1)
+#if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
 
-/* Clear mb8 buffer */
-EXTERN_C void zero_mb8(int64u (*redOut)[8], int len);
+/*
+ * Zeroize len bytes starting at out (zero_mb8 in the k1 build, zero_mb4 in the l9 build).
+ * The stores are not removed by the compiler, also when the buffer is dead afterwards.
+ *
+ *   out - buffer to clear, any alignment
+ *   len - number of bytes to clear, len >= 0
+ */
+EXTERN_C void MB_FUNC_NAME(zero_)(void* out, int len);
 
-#elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
-
-/* Clear mb4 buffer */
-EXTERN_C void zero_mb4(void* redOut, int len);
-
-#endif /* #if (_MBX >= _MBX_K1) */
+#endif /* #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)) */
 
 #endif /* IFMA_MEMORY_CLEAR_H */

@@ -1289,11 +1289,11 @@ mbx_status MB_FUNC_NAME(internal_avx512_x25519_)(int8u* const pa_shared_key[8],
         ifma_mb8_to_BNU((int64u* const*)pa_shared_key, (const int64u(*)[8])shared52_mb8, 256);
 
         /* clear computed shared keys and it sum */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])shared52_mb8, sizeof(shared52_mb8) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8]) & shared52_sum, 1);
+        MB_FUNC_NAME(zero_)(shared52_mb8, sizeof(shared52_mb8));
+        MB_FUNC_NAME(zero_)(&shared52_sum, sizeof(shared52_sum));
 
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])private64_mb8, sizeof(private64_mb8) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(private64_mb8, sizeof(private64_mb8));
     }
 
     return status;
@@ -1678,7 +1678,7 @@ mbx_status MB_FUNC_NAME(internal_avx512_x25519_public_key_)(int8u* const pa_publ
         ifma_mb8_to_BNU((int64u* const*)pa_public_key, (const int64u(*)[8])Ux1, 256);
 
         /* clear secret */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])scalar_mb8, sizeof(scalar_mb8) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(scalar_mb8, sizeof(scalar_mb8));
     }
 
     return status;

@@ -53,7 +53,7 @@ mbx_status internal_avx512_sm2_ecdh_ssl_mb8(int8u* pa_shared_key[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])secretz, sizeof(secretz) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
         return status;
     }
 
@@ -90,7 +90,7 @@ mbx_status internal_avx512_sm2_ecdh_ssl_mb8(int8u* pa_shared_key[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])secretz, sizeof(secretz) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
         return status;
     }
 
@@ -100,7 +100,7 @@ mbx_status internal_avx512_sm2_ecdh_ssl_mb8(int8u* pa_shared_key[8],
     MB_FUNC_NAME(ifma_ec_sm2_mul_point_)(&R, &P, secretz);
 
     /* clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])secretz, sizeof(secretz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
 
     /* return affine R.x */
     __ALIGN64 U64 Z2[PSM2_LEN52];
@@ -114,9 +114,9 @@ mbx_status internal_avx512_sm2_ecdh_ssl_mb8(int8u* pa_shared_key[8],
     ifma_mb8_to_HexStr8(pa_shared_key, (const int64u(*)[8])R.X, PSM2_BITSIZE);
 
     /* clear computed shared keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8]) & R, sizeof(R) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&R, sizeof(R));
     /* clear projective-to-affine inversion buffer (1/Z, 1/Z^2 of shared point) */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])Z2, sizeof(Z2) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(Z2, sizeof(Z2));
     return status;
 }
 
@@ -143,7 +143,7 @@ mbx_status internal_avx512_sm2_ecdh_mb8(int8u* pa_shared_key[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])secretz, sizeof(secretz) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
         return status;
     }
 
@@ -172,7 +172,7 @@ mbx_status internal_avx512_sm2_ecdh_mb8(int8u* pa_shared_key[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])secretz, sizeof(secretz) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
         return status;
     }
 
@@ -182,7 +182,7 @@ mbx_status internal_avx512_sm2_ecdh_mb8(int8u* pa_shared_key[8],
     MB_FUNC_NAME(ifma_ec_sm2_mul_point_)(&R, &P, secretz);
 
     /* clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])secretz, sizeof(secretz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
 
     /* return affine R.x */
     __ALIGN64 U64 Z2[PSM2_LEN52];
@@ -196,9 +196,9 @@ mbx_status internal_avx512_sm2_ecdh_mb8(int8u* pa_shared_key[8],
     ifma_mb8_to_HexStr8(pa_shared_key, (const int64u(*)[8])R.X, PSM2_BITSIZE);
 
     /* clear computed shared keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8]) & R, sizeof(R) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&R, sizeof(R));
     /* clear projective-to-affine inversion buffer (1/Z, 1/Z^2 of shared point) */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])Z2, sizeof(Z2) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(Z2, sizeof(Z2));
     return status;
 }
 

@@ -620,6 +620,7 @@ if ((NOT NO_CRYPTO_MB) AND ("${ARCH}" STREQUAL "intel64"))
     # Throw these variables further up, so that tests can grab them and link to crypto_mb libraries
     set(MB_DYN_LIB_TARGET    "${MB_DYN_LIB_TARGET}" PARENT_SCOPE)
     set(MB_STATIC_LIB_TARGET "${MB_STATIC_LIB_TARGET}" PARENT_SCOPE)
+    set(MBX_CC_AVXIFMA_SUPPORT "${MBX_CC_AVXIFMA_SUPPORT}" PARENT_SCOPE)
 
     # Copy crypto_mb public headers to the output directory
     foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})

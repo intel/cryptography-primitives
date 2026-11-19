@@ -487,7 +487,7 @@ void MB_FUNC_NAME(ifma_ec_sm2_mul_point_)(SM2_POINT* r, const SM2_POINT* p, cons
     MB_FUNC_NAME(mov_FESM2_)(r->Z, R.Z);
 
     /* clear r (to fix potential secutity flaw in case of ecdh */
-    MB_FUNC_NAME(zero_)((int64u(*)[8]) & R, sizeof(R) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&R, sizeof(R));
 
     /* clear stubs of secret scalar */
     clear_secret_context(&wvalue, &dvalue, &dsign);

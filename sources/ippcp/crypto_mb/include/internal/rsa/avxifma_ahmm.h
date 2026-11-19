@@ -67,7 +67,7 @@ __MBX_INLINE void ifma_ahmm52xN_mb4(int64u* out_mb,
     __m256i C[40 + 1];
 
     assert(N <= 40);
-    zero_mb4(C, N + 1);
+    MB_FUNC_NAME(zero_)(C, (N + 1) * (int)sizeof(U64));
 
     // Precomputed Montgomery constant (-M^(-1) mod 2^(52))
     const __m256i mont_constant = _mm256_loadu_si256((const __m256i*)k0_mb);

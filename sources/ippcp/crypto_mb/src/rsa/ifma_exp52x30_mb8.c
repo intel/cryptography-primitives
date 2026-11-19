@@ -193,7 +193,7 @@ void EXP52x30_mb8(int64u out[][8],
     /*
    // compute table of powers base^i, i=0, ..., (2^EXP_WIN_SIZE) -1
    */
-    zero_mb8(red_X, LEN52); /* table[0] = mont(x^0) = mont(1) */
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64)); /* table[0] = mont(x^0) = mont(1) */
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
     ifma_amm52x30_mb8((int64u*)red_table[0],
                       (int64u*)red_X,
@@ -277,10 +277,10 @@ void EXP52x30_mb8(int64u out[][8],
     }
 
     /* clear exponents */
-    zero_mb8(expz, LEN64);
+    MB_FUNC_NAME(zero_)(expz, LEN64 * sizeof(U64));
 
     /* convert result back in regular 2^52 domain */
-    zero_mb8(red_X, LEN52);
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64));
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
     ifma_amm52x30_mb8((int64u*)out, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
 }
@@ -350,7 +350,7 @@ void EXP52x30_mb4(int64u out[][4],
 
     // compute table of powers base^i, i=0, ..., (2^EXP_WIN_SIZE) -1
     _mm256_storeu_si256((__m256i*)red_X, _mm256_set1_epi64x(1));
-    zero_mb4(&red_X[1], LEN52 - 1); /* table[0] = mont(x^0) = mont(1) */
+    MB_FUNC_NAME(zero_)(&red_X[1], (LEN52 - 1) * sizeof(U64)); /* table[0] = mont(x^0) = mont(1) */
 
     // red_table[0] = R = 2^(LEN52*DIGIT_SIZE) mod modulus
     ifma_amm52x30_mb4((int64u*)red_table[0],
@@ -456,11 +456,11 @@ void EXP52x30_mb4(int64u out[][4],
     }
 
     /* clear exponents */
-    zero_mb4(expz, LEN64);
+    MB_FUNC_NAME(zero_)(expz, LEN64 * sizeof(U64));
 
     /* convert result back in regular 2^DIGIT_SIZE domain */
     _mm256_store_si256((__m256i*)red_X, _mm256_set1_epi64x(1));
-    zero_mb4(&red_X[1], LEN52 - 1);
+    MB_FUNC_NAME(zero_)(&red_X[1], (LEN52 - 1) * sizeof(U64));
 
     ifma_amm52x30_mb4((int64u*)out, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
 }

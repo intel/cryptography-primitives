@@ -57,12 +57,6 @@ __MBX_INLINE U64 cmov_U64(U64 a, U64 b, __mb_mask kmask) { return mask_mov64(a, 
 /* Internal functions that operates on field elements(FE) */
 /**********************************************************/
 
-/* Set FE to zero */
-__MBX_INLINE void MB_FUNC_NAME(zero_FE256_)(U64 T[])
-{
-    T[0] = T[1] = T[2] = T[3] = T[4] = get_zero64();
-}
-
 /* Check if FE is zero */
 __MBX_INLINE __mb_mask MB_FUNC_NAME(is_zero_FE256_)(const U64 T[])
 {

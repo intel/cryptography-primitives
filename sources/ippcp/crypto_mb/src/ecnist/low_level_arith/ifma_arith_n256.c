@@ -135,7 +135,7 @@ void MB_FUNC_NAME(ifma_aminv52_n256_)(U64 r[], const U64 z[])
     }
 
     /* Clear the table with the powers of the input z (z can be a secret value) */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])pwr_z_Tbl, sizeof(pwr_z_Tbl) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(pwr_z_Tbl, sizeof(pwr_z_Tbl));
 }
 
 /*=====================================================================

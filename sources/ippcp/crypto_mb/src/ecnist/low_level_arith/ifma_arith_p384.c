@@ -403,11 +403,11 @@ void MB_FUNC_NAME(ifma_aminv52_p384_)(U64 r[], const U64 z[])
     fe52_mul(r, v, zD);
 
     /* Clear the temporary buffers with the powers of the input z (z can be a secret value) */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])u, sizeof(u) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])v, sizeof(v) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])zD, sizeof(zD) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])zE, sizeof(zE) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])zF, sizeof(zF) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(u, sizeof(u));
+    MB_FUNC_NAME(zero_)(v, sizeof(v));
+    MB_FUNC_NAME(zero_)(zD, sizeof(zD));
+    MB_FUNC_NAME(zero_)(zE, sizeof(zE));
+    MB_FUNC_NAME(zero_)(zF, sizeof(zF));
 }
 
 /*=====================================================================

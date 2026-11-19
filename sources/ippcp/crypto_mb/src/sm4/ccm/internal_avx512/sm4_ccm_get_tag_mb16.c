@@ -110,9 +110,9 @@ mbx_status16 sm4_ccm_get_tag_mb16(int8u* pa_out[SM4_LINES],
     }
 
     /* Clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])tag_blocks, sizeof(tag_blocks) / sizeof(tag_blocks[0]));
-    zero_mb8((int64u(*)[8])hash_blocks, sizeof(hash_blocks) / sizeof(hash_blocks[0]));
-    zero_mb8((int64u(*)[8])s0_blocks, sizeof(s0_blocks) / sizeof(s0_blocks[0]));
+    MB_FUNC_NAME(zero_)(tag_blocks, sizeof(tag_blocks));
+    MB_FUNC_NAME(zero_)(hash_blocks, sizeof(hash_blocks));
+    MB_FUNC_NAME(zero_)(s0_blocks, sizeof(s0_blocks));
 
     return status;
 }

@@ -273,7 +273,7 @@ __MBX_INLINE void AMS52xN_diagonal_mb4(int64u* out_mb,
     __m256i res[79 * 2];
 
     assert(N <= 79);
-    zero_mb4(res, 2 * N);
+    MB_FUNC_NAME(zero_)(res, 2 * N * (int)sizeof(U64));
 
     /* generic square */
     ams52xN_square_diagonal_mb4(res, (const __m256i*)inpA_mb, N);

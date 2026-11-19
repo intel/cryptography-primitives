@@ -58,7 +58,7 @@ __MBX_INLINE void ifma_amm52xN_mb4(int64u* out_mb,
     int i;
 
     assert(N <= 79);
-    zero_mb4(C, N);
+    MB_FUNC_NAME(zero_)(C, N * (int)sizeof(U64));
 
     for (i = 0; i < N; i++) {
         register const __m256i Bi = inpB[i];

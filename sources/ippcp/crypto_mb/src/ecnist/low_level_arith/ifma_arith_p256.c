@@ -390,14 +390,14 @@ void MB_FUNC_NAME(ifma_aminv52_p256_)(U64 r[], const U64 z[])
     mul_p256(r, tmp1, tmp2);
 
     /* Clear the temporary buffers with the powers of the input z (z can be a secret value) */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])tmp1, sizeof(tmp1) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])tmp2, sizeof(tmp2) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e2, sizeof(e2) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e4, sizeof(e4) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e8, sizeof(e8) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e16, sizeof(e16) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e32, sizeof(e32) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])e64, sizeof(e64) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(tmp1, sizeof(tmp1));
+    MB_FUNC_NAME(zero_)(tmp2, sizeof(tmp2));
+    MB_FUNC_NAME(zero_)(e2, sizeof(e2));
+    MB_FUNC_NAME(zero_)(e4, sizeof(e4));
+    MB_FUNC_NAME(zero_)(e8, sizeof(e8));
+    MB_FUNC_NAME(zero_)(e16, sizeof(e16));
+    MB_FUNC_NAME(zero_)(e32, sizeof(e32));
+    MB_FUNC_NAME(zero_)(e64, sizeof(e64));
 }
 
 /*=====================================================================

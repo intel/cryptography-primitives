@@ -66,7 +66,7 @@ static __mb_mask MB_FUNC_NAME(nistp256_ecdsa_sign_r_)(U64 sign_r[], const U64 sk
     __mb_mask sign_r_is_zero = MB_FUNC_NAME(is_zero_FE256_)(sign_r);
 
     /* Clear ephemeral point (projective coords derived from the secret nonce) */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])(&P), sizeof(P) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&P, sizeof(P));
 
     return sign_r_is_zero;
 }
@@ -132,7 +132,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_)(
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear key's inversion */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])T, sizeof(T) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(T, sizeof(T));
         return status;
     }
     /* Compute inversion of ephemeral key */
@@ -141,7 +141,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_)(
     ifma_mb_to_BNU(pa_inv_eph_skey, (const int64u(*)[MB_WIDTH])T, P256_BITSIZE);
 
     /* Clear key's inversion */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])T, sizeof(T) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(T, sizeof(T));
 
     /* Convert keys into scalars */
     U64 scalarz[P256_LEN64 + 1];
@@ -152,7 +152,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_)(
     __mb_mask stt_mask = MB_FUNC_NAME(nistp256_ecdsa_sign_r_)(T, scalarz);
 
     /* Clear copy of the ephemeral secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     /* Return results in suitable format */
     ifma_mb_to_BNU(pa_sign_rp, (const int64u(*)[MB_WIDTH])T, P256_BITSIZE);
@@ -215,9 +215,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_)(
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the ephemeral secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])inv_eph, sizeof(inv_eph) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(inv_eph, sizeof(inv_eph));
         /* Clear copy of the regular secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])reg_skey, sizeof(reg_skey) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
         return status;
     }
 
@@ -226,8 +226,8 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_)(
         MB_FUNC_NAME(nistp256_ecdsa_sign_s_)(sign_s, msg, sign_r, inv_eph, reg_skey);
 
     /* Clear copy of the ephemeral and regular secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])inv_eph, sizeof(inv_eph) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])reg_skey, sizeof(reg_skey) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(inv_eph, sizeof(inv_eph));
+    MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
 
     /* Convert sign_r and sing_s to strings */
     ifma_mb_to_HexStr(pa_sign_r, (const int64u(*)[MB_WIDTH])sign_r, P256_BITSIZE);
@@ -296,9 +296,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_)(int8u* pa_sign_r[MB_WIDTH
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the ephemeral and regular secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])inv_eph_key, sizeof(inv_eph_key) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalar, sizeof(scalar) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])reg_key, sizeof(reg_key) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(inv_eph_key, sizeof(inv_eph_key));
+        MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
+        MB_FUNC_NAME(zero_)(reg_key, sizeof(reg_key));
         return status;
     }
 
@@ -312,9 +312,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_)(int8u* pa_sign_r[MB_WIDTH
         MB_FUNC_NAME(nistp256_ecdsa_sign_s_)(sign_s, msg, sign_r, inv_eph_key, reg_key);
 
     /* Clear copy of the ephemeral and regular secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])inv_eph_key, sizeof(inv_eph_key) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalar, sizeof(scalar) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])reg_key, sizeof(reg_key) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(inv_eph_key, sizeof(inv_eph_key));
+    MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
+    MB_FUNC_NAME(zero_)(reg_key, sizeof(reg_key));
 
     /* Convert signature components to strings */
     ifma_mb_to_HexStr(pa_sign_r, (const int64u(*)[MB_WIDTH])sign_r, P256_BITSIZE);
@@ -366,7 +366,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_ssl_)(
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear key's inversion */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])T, sizeof(T) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(T, sizeof(T));
         return status;
     }
     /* Compute inversion of ephemeral key */
@@ -376,7 +376,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_ssl_)(
         MB_FUNC_NAME(ifma_to_BN_)(pa_inv_skey, (const int64u(*)[MB_WIDTH])T, P256_BITSIZE, status);
 
     /* Clear key's inversion */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])T, sizeof(T) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(T, sizeof(T));
 
     /* Convert keys into scalars */
     U64 scalarz[P256_LEN64 + 1];
@@ -390,7 +390,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_setup_ssl_)(
     __mb_mask stt_mask = MB_FUNC_NAME(nistp256_ecdsa_sign_r_)(T, scalarz);
 
     /* Clear copy of the ephemeral secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     /* Return results in suitable format */
     bn_err_mask |=
@@ -467,9 +467,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_ssl_)(
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the ephemeral secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])inv_eph, sizeof(inv_eph) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(inv_eph, sizeof(inv_eph));
         /* Clear copy of the regular secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])reg_skey, sizeof(reg_skey) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
         return status;
     }
 
@@ -478,8 +478,8 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_complete_ssl_)(
         MB_FUNC_NAME(nistp256_ecdsa_sign_s_)(sign_s, msg, sign_r, inv_eph, reg_skey);
 
     /* Clear copy of the ephemeral and regular secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])inv_eph, sizeof(inv_eph) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])reg_skey, sizeof(reg_skey) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(inv_eph, sizeof(inv_eph));
+    MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
 
     /* Convert sign_r and sing_s to strings */
     ifma_mb_to_HexStr(pa_sign_r, (const int64u(*)[MB_WIDTH])sign_r, P256_BITSIZE);
@@ -558,9 +558,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_ssl_)(
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the ephemeral and regular secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])inv_eph_key, sizeof(inv_eph_key) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalar, sizeof(scalar) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])reg_key, sizeof(reg_key) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(inv_eph_key, sizeof(inv_eph_key));
+        MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
+        MB_FUNC_NAME(zero_)(reg_key, sizeof(reg_key));
         return status;
     }
 
@@ -574,9 +574,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdsa_sign_ssl_)(
         MB_FUNC_NAME(nistp256_ecdsa_sign_s_)(sign_s, msg, sign_r, inv_eph_key, reg_key);
 
     /* Clear copy of the ephemeral and regular secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])inv_eph_key, sizeof(inv_eph_key) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalar, sizeof(scalar) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])reg_key, sizeof(reg_key) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(inv_eph_key, sizeof(inv_eph_key));
+    MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
+    MB_FUNC_NAME(zero_)(reg_key, sizeof(reg_key));
 
     /* Convert signature components to strings */
     ifma_mb_to_HexStr(pa_sign_r, (const int64u(*)[MB_WIDTH])sign_r, P256_BITSIZE);

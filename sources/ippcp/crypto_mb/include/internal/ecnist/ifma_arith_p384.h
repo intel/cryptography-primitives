@@ -46,12 +46,6 @@ static const int64u VMASK52[sizeof(U64) / sizeof(int64u)] = { REP8_DECL(DIGIT_MA
     R##I = and64(R##I, loadu64(VMASK52));
 
 
-/* set FE to zero */
-__MBX_INLINE void MB_FUNC_NAME(zero_FE384_)(U64 T[])
-{
-    T[0] = T[1] = T[2] = T[3] = T[4] = T[5] = T[6] = T[7] = get_zero64();
-}
-
 /* check if FE is zero */
 __MBX_INLINE __mb_mask MB_FUNC_NAME(is_zero_FE384_)(const U64 T[])
 {

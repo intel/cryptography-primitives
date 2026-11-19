@@ -62,7 +62,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdh_)(int8u* pa_shared_key[MB_WIDTH],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
         return status;
     }
 
@@ -89,7 +89,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdh_)(int8u* pa_shared_key[MB_WIDTH],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
         return status;
     }
 
@@ -98,7 +98,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdh_)(int8u* pa_shared_key[MB_WIDTH],
     MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(&R, &P, secretz);
 
     /* Clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
 
     /* Return affine R.x */
     __ALIGN64 U64 Z2[P256_LEN52];
@@ -113,9 +113,9 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecdh_)(int8u* pa_shared_key[MB_WIDTH],
     ifma_mb_to_HexStr(pa_shared_key, (const int64u(*)[MB_WIDTH])R.X, P256_BITSIZE);
 
     /* Clear computed shared keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])(&R), sizeof(R) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&R, sizeof(R));
     /* Clear projective-to-affine inversion buffer (1/Z, 1/Z^2 of shared point) */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])Z2, sizeof(Z2) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(Z2, sizeof(Z2));
 
     return status;
 }
@@ -164,7 +164,7 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
         return status;
     }
 
@@ -200,7 +200,7 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* Clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
         return status;
     }
 
@@ -209,7 +209,7 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
     MB_FUNC_NAME(ifma_ec_nistp256_mul_point_)(&R, &P, secretz);
 
     /* Clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])secretz, sizeof(secretz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(secretz, sizeof(secretz));
 
     /* Return affine R.x */
     __ALIGN64 U64 Z2[P256_LEN52];
@@ -224,9 +224,9 @@ mbx_status MB_FUNC_NAME(internal_mbx_nistp256_ecdh_ssl_)(int8u* pa_shared_key[MB
     ifma_mb_to_HexStr(pa_shared_key, (const int64u(*)[MB_WIDTH])R.X, P256_BITSIZE);
 
     /* Clear computed shared keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])(&R), sizeof(R) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&R, sizeof(R));
     /* Clear projective-to-affine inversion buffer (1/Z, 1/Z^2 of shared point) */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])Z2, sizeof(Z2) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(Z2, sizeof(Z2));
 
     return status;
 }

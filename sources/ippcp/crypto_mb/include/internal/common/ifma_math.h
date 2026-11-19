@@ -249,6 +249,10 @@
         return _mm256_loadu_si256((U64*)p);
     }
 
+    __MBX_INLINE void storeu64(const void* p, U64 v) {
+        _mm256_storeu_si256((U64*)p, v);
+    }
+
     __MBX_INLINE U64 sub64(U64 a, U64 b) {
         return _mm256_sub_epi64(a, b);
     }

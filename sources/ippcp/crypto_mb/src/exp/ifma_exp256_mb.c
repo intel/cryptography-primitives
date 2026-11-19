@@ -114,7 +114,7 @@ void ifma_modexp256_mb(int64u out[][8],
     /*
    // compute table of powers base^i, i=0, ..., (2^EXP_WIN_SIZE) -1
    */
-    zero_mb8(red_X, LEN52); /* table[0] = mont(x^0) = mont(1) */
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64)); /* table[0] = mont(x^0) = mont(1) */
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
     ifma_amm52x5_mb8((U64*)red_table[0],
                      (const U64*)red_X,
@@ -201,7 +201,7 @@ void ifma_modexp256_mb(int64u out[][8],
     }
 
     /* convert result back in regular 2^52 domain */
-    zero_mb8(red_X, LEN52);
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64));
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
     ifma_amm52x5_mb8((U64*)out,
                      (const U64*)red_Y,
@@ -209,7 +209,7 @@ void ifma_modexp256_mb(int64u out[][8],
                      (const U64*)modulus,
                      (int64u*)k0);
 
-    zero_mb8(red_Y, LEN52);
+    MB_FUNC_NAME(zero_)(red_Y, LEN52 * sizeof(U64));
 }
 
 #endif /* #if (_MBX>=_MBX_K1) */

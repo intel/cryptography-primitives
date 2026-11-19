@@ -113,7 +113,7 @@ mbx_status16 sm4_gcm_get_tag_mb16(int8u* pa_out[SM4_LINES],
     }
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])tag_blocks, sizeof(tag_blocks) / sizeof(tag_blocks[0]));
+    MB_FUNC_NAME(zero_)(tag_blocks, sizeof(tag_blocks));
 
     return status;
 }

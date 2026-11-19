@@ -209,7 +209,7 @@ static void sm4_ctr128_mask_kernel_mb16(__m512i* CTR,
     }
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
+    MB_FUNC_NAME(zero_)(TMP, sizeof(TMP));
 }
 
 
@@ -417,8 +417,8 @@ mbx_status16 sm4_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
     }
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
-    zero_mb8((int64u(*)[8])CTR, sizeof(CTR) / sizeof(CTR[0]));
+    MB_FUNC_NAME(zero_)(TMP, sizeof(TMP));
+    MB_FUNC_NAME(zero_)(CTR, sizeof(CTR));
 
     return status;
 }

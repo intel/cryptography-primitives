@@ -74,7 +74,7 @@ static __mb_mask nistp521_ecdsa_sign_r_mb8(U64 sign_r[], const U64 skey[], int8u
     __mb_mask sign_r_is_zero = MB_FUNC_NAME(is_zero_FE521_)(sign_r);
 
     /* clear ephemeral point (projective coords derived from the secret nonce) */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])(&P), sizeof(P) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&P, sizeof(P));
 
     return sign_r_is_zero;
 }
@@ -183,7 +183,7 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_setup_mb8(int64u* pa_inv_eph_skey
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear key's inversion */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])T, sizeof(T) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(T, sizeof(T));
         return status;
     }
 
@@ -192,7 +192,7 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_setup_mb8(int64u* pa_inv_eph_skey
     ifma_mb8_to_BNU(pa_inv_eph_skey, (const int64u(*)[8])T, P521_BITSIZE);
 
     /* clear key's inversion */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])T, sizeof(T) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(T, sizeof(T));
 
     /* convert keys into scalars */
     U64 scalarz[P521_LEN64 + 1];
@@ -202,7 +202,7 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_setup_mb8(int64u* pa_inv_eph_skey
     int8u stt_mask = nistp521_ecdsa_sign_r_mb8(T, scalarz, pBuffer);
 
     /* clear copy of the ephemeral secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     /* return results in suitable format */
     ifma_mb8_to_BNU(pa_sign_rp, (const int64u(*)[8])T, P521_BITSIZE);
@@ -247,9 +247,9 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_complete_mb8(int8u* pa_sign_r[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the ephemeral secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])inv_eph, sizeof(inv_eph) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(inv_eph, sizeof(inv_eph));
         /* clear copy of the regular secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
         return status;
     }
 
@@ -257,9 +257,9 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_complete_mb8(int8u* pa_sign_r[8],
     nistp521_ecdsa_sign_s_mb8(sign_s, msg, sign_r, inv_eph, reg_skey, pBuffer);
 
     /* clear copy of the ephemeral secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])inv_eph, sizeof(inv_eph) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(inv_eph, sizeof(inv_eph));
     /* clear copy of the regular secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
 
     /* check if sign_r!=0 and sign_s!=0 */
     int8u stt_mask_r = MB_FUNC_NAME(is_zero_FE521_)(sign_r);
@@ -311,10 +311,10 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_mb8(int8u* pa_sign_r[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the ephemeral secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])inv_eph_key, sizeof(inv_eph_key) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])scalar, sizeof(scalar) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(inv_eph_key, sizeof(inv_eph_key));
+        MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
         /* clear copy of the regular secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])reg_key, sizeof(reg_key) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_key, sizeof(reg_key));
         return status;
     }
 
@@ -326,11 +326,11 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_mb8(int8u* pa_sign_r[8],
     nistp521_ecdsa_sign_s_mb8(sign_s, msg, sign_r, inv_eph_key, reg_key, pBuffer);
 
     /* clear copy of the ephemeral secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])inv_eph_key, sizeof(inv_eph_key) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalar, sizeof(scalar) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(inv_eph_key, sizeof(inv_eph_key));
+    MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
 
     /* clear copy of the regular secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])reg_key, sizeof(reg_key) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(reg_key, sizeof(reg_key));
 
     /* check if sign_r!=0 and sign_s!=0 */
     int8u stt_mask_r = MB_FUNC_NAME(is_zero_FE521_)(sign_r);
@@ -428,7 +428,7 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear key's inversion */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])T, sizeof(T) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(T, sizeof(T));
         return status;
     }
 
@@ -437,7 +437,7 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey
     int8u bn_err_mask = ifma_to_BN_mb8(pa_inv_skey, (const int64u(*)[8])T, P521_BITSIZE, status);
 
     /* clear key's inversion */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])T, sizeof(T) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(T, sizeof(T));
 
     /* convert keys into scalars */
     U64 scalarz[P521_LEN64 + 1];
@@ -450,7 +450,7 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_setup_ssl_mb8(BIGNUM* pa_inv_skey
     int8u stt_mask = nistp521_ecdsa_sign_r_mb8(T, scalarz, pBuffer);
 
     /* clear copy of the ephemeral secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     /* store results in suitable format */
     bn_err_mask |= ifma_to_BN_mb8(pa_sign_rp, (const int64u(*)[8])T, P521_BITSIZE, status);
@@ -507,9 +507,9 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_complete_ssl_mb8(
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the ephemeral secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])inv_eph, sizeof(inv_eph) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(inv_eph, sizeof(inv_eph));
         /* clear copy of the regular secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
         return status;
     }
 
@@ -517,9 +517,9 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_complete_ssl_mb8(
     nistp521_ecdsa_sign_s_mb8(sign_s, msg, sign_r, inv_eph, reg_skey, pBuffer);
 
     /* clear copy of the ephemeral secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])inv_eph, sizeof(inv_eph) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(inv_eph, sizeof(inv_eph));
     /* clear copy of the regular secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
 
     /* convert sign_r and sing_s to strings */
     ifma_mb8_to_HexStr8(pa_sign_r, (const int64u(*)[8])sign_r, P521_BITSIZE);
@@ -578,10 +578,10 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the ephemeral secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])inv_eph_key, sizeof(inv_eph_key) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])scalar, sizeof(scalar) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(inv_eph_key, sizeof(inv_eph_key));
+        MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
         /* clear copy of the regular secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])reg_key, sizeof(reg_key) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_key, sizeof(reg_key));
         return status;
     }
 
@@ -593,11 +593,11 @@ mbx_status internal_avx512_nistp521_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
     nistp521_ecdsa_sign_s_mb8(sign_s, msg, sign_r, inv_eph_key, reg_key, pBuffer);
 
     /* clear copy of the ephemeral secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])inv_eph_key, sizeof(inv_eph_key) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalar, sizeof(scalar) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(inv_eph_key, sizeof(inv_eph_key));
+    MB_FUNC_NAME(zero_)(scalar, sizeof(scalar));
 
     /* clear copy of the regular secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])reg_key, sizeof(reg_key) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(reg_key, sizeof(reg_key));
 
     /* convert signature components to strings */
     ifma_mb8_to_HexStr8(pa_sign_r, (const int64u(*)[8])sign_r, P521_BITSIZE);

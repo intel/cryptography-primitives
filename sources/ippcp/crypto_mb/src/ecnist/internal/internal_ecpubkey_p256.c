@@ -63,7 +63,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_)(int64u* pa_pubx[MB_WIDT
     /* Compute public keys */
     MB_FUNC_NAME(ifma_ec_nistp256_mul_pointbase_)(&P, scalarz);
     /* Clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     if (!use_jproj_coords)
         MB_FUNC_NAME(get_nistp256_ec_affine_coords_)(P.X, P.Y, &P);
@@ -133,7 +133,7 @@ mbx_status MB_FUNC_NAME(internal_nistp256_ecpublic_key_ssl_)(BIGNUM* pa_pubx[MB_
     /* Compute public keys */
     MB_FUNC_NAME(ifma_ec_nistp256_mul_pointbase_)(&P, scalarz);
     /* Clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     if (!use_jproj_coords)
         MB_FUNC_NAME(get_nistp256_ec_affine_coords_)(P.X, P.Y, &P);

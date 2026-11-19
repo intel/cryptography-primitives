@@ -104,11 +104,11 @@ mbx_status16 sm4_cbc_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
     }
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8]) & z0, 1);
-    zero_mb8((int64u(*)[8]) & z1, 1);
-    zero_mb8((int64u(*)[8]) & z2, 1);
-    zero_mb8((int64u(*)[8]) & z3, 1);
-    zero_mb8((int64u(*)[8]) & xi, 1);
+    MB_FUNC_NAME(zero_)(&z0, sizeof(z0));
+    MB_FUNC_NAME(zero_)(&z1, sizeof(z1));
+    MB_FUNC_NAME(zero_)(&z2, sizeof(z2));
+    MB_FUNC_NAME(zero_)(&z3, sizeof(z3));
+    MB_FUNC_NAME(zero_)(&xi, sizeof(xi));
     return status;
 }
 
@@ -203,11 +203,11 @@ void sm4_cbc_mac_kernel_mb16(__m128i pa_out[SM4_LINES],
     TRANSPOSE_4x16_I32_O128_EPI32(&z0, &z1, &z2, &z3, pa_out, mb_mask);
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8]) & z0, 1);
-    zero_mb8((int64u(*)[8]) & z1, 1);
-    zero_mb8((int64u(*)[8]) & z2, 1);
-    zero_mb8((int64u(*)[8]) & z3, 1);
-    zero_mb8((int64u(*)[8]) & xi, 1);
+    MB_FUNC_NAME(zero_)(&z0, sizeof(z0));
+    MB_FUNC_NAME(zero_)(&z1, sizeof(z1));
+    MB_FUNC_NAME(zero_)(&z2, sizeof(z2));
+    MB_FUNC_NAME(zero_)(&z3, sizeof(z3));
+    MB_FUNC_NAME(zero_)(&xi, sizeof(xi));
 }
 
 static void sm4_cbc_dec_incomplete_buff_mb16(const int8u* loc_inp[SM4_LINES],
@@ -454,7 +454,7 @@ mbx_status16 sm4_cbc_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
     /* compute incomplete buffer loading */
     sm4_cbc_dec_incomplete_buff_mb16(loc_inp, loc_out, num_blocks, p_rk, mb_mask, TMP, STORED_CT);
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
+    MB_FUNC_NAME(zero_)(TMP, sizeof(TMP));
 
     return status;
 }

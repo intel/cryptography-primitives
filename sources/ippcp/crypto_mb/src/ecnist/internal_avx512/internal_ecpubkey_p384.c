@@ -57,7 +57,7 @@ mbx_status internal_avx512_nistp384_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
     /* compute public keys */
     MB_FUNC_NAME(ifma_ec_nistp384_mul_pointbase_)(&P, scalarz);
     /* clear copy of secret */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     if (!use_jproj_coords)
         MB_FUNC_NAME(get_nistp384_ec_affine_coords_)(P.X, P.Y, &P);
@@ -140,7 +140,7 @@ mbx_status internal_avx512_nistp384_ecpublic_key_mb8(int64u* pa_pubx[8],
     /* compute public keys */
     MB_FUNC_NAME(ifma_ec_nistp384_mul_pointbase_)(&P, scalarz);
     /* clear copy of secret */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     if (!use_jproj_coords)
         MB_FUNC_NAME(get_nistp384_ec_affine_coords_)(P.X, P.Y, &P);

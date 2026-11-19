@@ -432,7 +432,7 @@ static void sm4_xts_mask_kernel_mb16(__m512i* NEXT_TWEAK,
         }
     }
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
+    MB_FUNC_NAME(zero_)(TMP, sizeof(TMP));
 }
 
 mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
@@ -652,8 +652,8 @@ mbx_status16 sm4_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
         sm4_xts_mask_kernel_mb16(NEXT_TWEAK, p_rk1, loc_len, loc_inp, loc_out, mb_mask, operation);
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
-    zero_mb8((int64u(*)[8])TWEAK, sizeof(TWEAK) / sizeof(TWEAK[0]));
+    MB_FUNC_NAME(zero_)(TMP, sizeof(TMP));
+    MB_FUNC_NAME(zero_)(TWEAK, sizeof(TWEAK));
 
     return status;
 }

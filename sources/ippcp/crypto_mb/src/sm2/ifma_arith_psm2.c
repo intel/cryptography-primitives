@@ -284,11 +284,11 @@ void MB_FUNC_NAME(ifma_aminv52_psm2_)(U64 r[], const U64 z[])
     mul_psm2(r, r, D);
 
     /* Clear the temporary buffers with the powers of the input z (z can be a secret value) */
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])tmp1, sizeof(tmp1) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])tmp2, sizeof(tmp2) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])D, sizeof(D) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])E, sizeof(E) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[MB_WIDTH])F, sizeof(F) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(tmp1, sizeof(tmp1));
+    MB_FUNC_NAME(zero_)(tmp2, sizeof(tmp2));
+    MB_FUNC_NAME(zero_)(D, sizeof(D));
+    MB_FUNC_NAME(zero_)(E, sizeof(E));
+    MB_FUNC_NAME(zero_)(F, sizeof(F));
 }
 
 void MB_FUNC_NAME(ifma_reduce52_psm2_)(U64 R[], const U64 A[])

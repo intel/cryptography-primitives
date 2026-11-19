@@ -80,11 +80,11 @@ mbx_status16 internal_avx512_sm4_set_round_keys_mb16(int32u* key_sched[SM4_ROUND
         SM4_FOUR_RK(z0, z1, z2, z3, rki, pCK, p_rk);
 
     /* clear copies of sensitive data and round keys */
-    zero_mb8((int64u(*)[8]) & z0, 1);
-    zero_mb8((int64u(*)[8]) & z1, 1);
-    zero_mb8((int64u(*)[8]) & z2, 1);
-    zero_mb8((int64u(*)[8]) & z3, 1);
-    zero_mb8((int64u(*)[8]) & rki, 1);
+    MB_FUNC_NAME(zero_)(&z0, sizeof(z0));
+    MB_FUNC_NAME(zero_)(&z1, sizeof(z1));
+    MB_FUNC_NAME(zero_)(&z2, sizeof(z2));
+    MB_FUNC_NAME(zero_)(&z3, sizeof(z3));
+    MB_FUNC_NAME(zero_)(&rki, sizeof(rki));
 
     return status;
 }

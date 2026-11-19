@@ -62,7 +62,7 @@ mbx_status internal_avx512_sm2_ecpublic_key_ssl_mb8(BIGNUM* pa_pubx[8],
     /* compute public keys */
     MB_FUNC_NAME(ifma_ec_sm2_mul_pointbase_)(&P, scalarz);
     /* clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     if (!use_jproj_coords)
         MB_FUNC_NAME(get_sm2_ec_affine_coords_)(P.X, P.Y, &P);
@@ -144,7 +144,7 @@ mbx_status internal_avx512_sm2_ecpublic_key_mb8(int64u* pa_pubx[8],
     /* compute public keys */
     MB_FUNC_NAME(ifma_ec_sm2_mul_pointbase_)(&P, scalarz);
     /* clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalarz, sizeof(scalarz) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalarz, sizeof(scalarz));
 
     if (!use_jproj_coords)
         MB_FUNC_NAME(get_sm2_ec_affine_coords_)(P.X, P.Y, &P);

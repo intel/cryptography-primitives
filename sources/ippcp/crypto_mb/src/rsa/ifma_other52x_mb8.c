@@ -2388,7 +2388,7 @@ void ifma_montRR52x_mb8(int64u pRR[][8], int64u pM[][8], int convBitLen)
     int pwrLen = NUMBER_OF_DIGITS(pwr + 1, DIGIT_SIZE);
 
     /* set 2^(ifmaBitLen*2) */
-    zero_mb8(pwr2_mb8, pwrLen);
+    MB_FUNC_NAME(zero_)(pwr2_mb8, pwrLen * (int)sizeof(U64));
     _mm512_store_si512(pwr2_mb8[pwrLen - 1], _mm512_slli_epi64(_mm512_set1_epi64(1), (int32u)s));
 
     /* 2^(ifmaBitLen*2) mod M */
@@ -3184,7 +3184,7 @@ void ifma_montRR52x_mb4(int64u pRR[][4], int64u pM[][4], int convBitLen)
     const int pwrLen = NUMBER_OF_DIGITS(pwr + 1, DIGIT_SIZE);
 
     /* set 2^(ifmaBitLen*2) */
-    zero_mb4(pwr2_mb4, pwrLen);
+    MB_FUNC_NAME(zero_)(pwr2_mb4, pwrLen * (int)sizeof(U64));
 
     const __m256i two_power_s = _mm256_slli_epi64(_mm256_set1_epi64x(1), s);
 

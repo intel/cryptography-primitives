@@ -30,12 +30,6 @@
 #define PSM2_LEN64 NUMBER_OF_DIGITS(PSM2_BITSIZE, 64)
 #define PSM2_LEN8  NUMBER_OF_DIGITS(PSM2_BITSIZE, 8)
 
-/* set FE to zero */
-__MBX_INLINE void MB_FUNC_NAME(zero_FESM2_)(U64 T[])
-{
-    T[0] = T[1] = T[2] = T[3] = T[4] = get_zero64();
-}
-
 /* check if FE is zero */
 __MBX_INLINE __mb_mask MB_FUNC_NAME(is_zero_FESM2_)(const U64 T[])
 {

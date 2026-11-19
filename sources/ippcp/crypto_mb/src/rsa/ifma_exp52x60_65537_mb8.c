@@ -80,7 +80,7 @@ void EXP52x60_pub65537_mb8(int64u out[][8],
                       (int64u*)k0);
 
     /* convert result back in regular 2^52 domain */
-    zero_mb8(red_X, LEN52);
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64));
     _mm512_store_si512(red_X, _mm512_set1_epi64(1));
     ifma_amm52x60_mb8((int64u*)out, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
 }
@@ -145,7 +145,7 @@ void EXP52x60_pub65537_mb4(int64u out[][4],
                       (int64u*)k0);
 
     /* convert result back in regular 2^52 domain */
-    zero_mb4(red_X, LEN52);
+    MB_FUNC_NAME(zero_)(red_X, LEN52 * sizeof(U64));
     _mm256_store_si256((__m256i*)red_X, _mm256_set1_epi64x(1));
     ifma_amm52x60_mb4((int64u*)out, (int64u*)red_Y, (int64u*)red_X, (int64u*)modulus, (int64u*)k0);
 }

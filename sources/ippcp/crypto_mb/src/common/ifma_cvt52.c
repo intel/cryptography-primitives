@@ -608,25 +608,6 @@ __MBX_INLINE void transpose_4x64bx4(__m256i* w0, __m256i* w1, __m256i* w2, __m25
      */
 }
 
-#if defined(_MSC_VER) && !defined(__clang__)
-#pragma optimize("", off)
-#endif
-
-MBX_ZEROING_FUNC_ATTRIBUTES
-void zero_u256(int8u* buffer)
-{
-#if defined(__GNUC__)
-    // Avoid dead code elimination for GNU compilers
-    ASM("");
-#endif
-
-    _mm256_storeu_si256((__m256i*)buffer, _mm256_setzero_si256());
-}
-
-#if defined(_MSC_VER) && !defined(__clang__)
-#pragma optimize("", on)
-#endif
-
 /*
 // transpose 4 SB into MB including (reverse bytes and) radix 2^64 => 2^52 conversion
 //
@@ -695,7 +676,7 @@ __MBX_INLINE void transform_4sb_to_mb4(U64 out_mb4[],
                 X[k] = _mm256_inserti128_si256(_mm256_castsi128_si256(t128b), t128a, 1);
             }
 
-            zero_u256(buffer);
+            MB_FUNC_NAME(zero_)(buffer, sizeof(buffer));
 
         } else {
             const int sbidx = i;

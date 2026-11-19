@@ -18,36 +18,49 @@
 #include <internal/common/ifma_math.h>
 #include <internal/common/memory_clear.h>
 
-#if (_MBX >= _MBX_K1)
+#if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED))
 
-__NOINLINE
-void zero_mb8(int64u (*out)[8], int len)
-{
-#if defined(__GNUC__)
-    // Avoid dead code elimination for GNU compilers
-    ASM("");
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma optimize("", off)
 #endif
-    __m512i T = _mm512_setzero_si512();
-    int i;
-    for (i = 0; i < len; i++)
-        _mm512_storeu_si512(out[i], T);
+
+/*
+ * One implementation for both builds: U64 is __m512i in the k1 build (zero_mb8)
+ * and __m256i in the l9 build (zero_mb4). Only the tail shorter than one vector differs.
+ * The tail is not a plain byte loop: the compiler vectorizes such a loop, which makes
+ * the function several times larger.
+ */
+__NOINLINE
+void MB_FUNC_NAME(zero_)(void* out, int len)
+{
+    const U64 T = get_zero64();
+    int8u* p    = (int8u*)out;
+    int i       = 0;
+
+    for (; i <= len - (int)sizeof(U64); i += (int)sizeof(U64))
+        storeu64(p + i, T);
+
+#if (SIMD_LEN == 512)
+    /* tail: one masked store; the bytes that are masked out are not accessed */
+    if (i < len)
+        _mm512_mask_storeu_epi8(p + i, (__mmask64)(((int64u)1 << (len - i)) - 1), T);
+#else
+    /* tail: AVX2 has no byte-masked store; volatile byte stores are not vectorized */
+    for (; i < len; i++)
+        ((volatile int8u*)p)[i] = 0;
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+    /*
+     * Compiler barrier: the buffer is treated as read here, so the stores above
+     * cannot be removed as dead stores, also under link-time optimization.
+     */
+    __asm__ __volatile__("" : : "r"(out) : "memory");
+#endif
 }
 
-#elif ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)
-
-__NOINLINE
-void zero_mb4(void* out, int len)
-{
-#if defined(__GNUC__)
-    // Avoid dead code elimination for GNU compilers
-    ASM("");
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma optimize("", on)
 #endif
-    const __m256i T = _mm256_setzero_si256();
-    __m256i* p_out  = (__m256i*)out;
-    int i;
 
-    for (i = 0; i < len; i++)
-        _mm256_storeu_si256(p_out++, T);
-}
-
-#endif /* #if (_MBX >= _MBX_K1) */
+#endif /* #if ((_MBX >= _MBX_K1) || ((_MBX >= _MBX_L9) && _MBX_AVX_IFMA_SUPPORTED)) */

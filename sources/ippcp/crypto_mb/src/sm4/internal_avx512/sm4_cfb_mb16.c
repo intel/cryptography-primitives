@@ -101,16 +101,16 @@ mbx_status16 sm4_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
     }
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8]) & iv0, 1);
-    zero_mb8((int64u(*)[8]) & iv1, 1);
-    zero_mb8((int64u(*)[8]) & iv2, 1);
-    zero_mb8((int64u(*)[8]) & iv3, 1);
+    MB_FUNC_NAME(zero_)(&iv0, sizeof(iv0));
+    MB_FUNC_NAME(zero_)(&iv1, sizeof(iv1));
+    MB_FUNC_NAME(zero_)(&iv2, sizeof(iv2));
+    MB_FUNC_NAME(zero_)(&iv3, sizeof(iv3));
 
-    zero_mb8((int64u(*)[8]) & z0, 1);
-    zero_mb8((int64u(*)[8]) & z1, 1);
-    zero_mb8((int64u(*)[8]) & z2, 1);
-    zero_mb8((int64u(*)[8]) & z3, 1);
-    zero_mb8((int64u(*)[8]) & tmp, 1);
+    MB_FUNC_NAME(zero_)(&z0, sizeof(z0));
+    MB_FUNC_NAME(zero_)(&z1, sizeof(z1));
+    MB_FUNC_NAME(zero_)(&z2, sizeof(z2));
+    MB_FUNC_NAME(zero_)(&z3, sizeof(z3));
+    MB_FUNC_NAME(zero_)(&tmp, sizeof(tmp));
 
     return status;
 }
@@ -280,7 +280,7 @@ static void sm4_cfb128_mask_dec_kernel_mb16(const int8u** loc_inp,
     }
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
+    MB_FUNC_NAME(zero_)(TMP, sizeof(TMP));
 }
 
 mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
@@ -523,7 +523,7 @@ mbx_status16 sm4_cfb128_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
         sm4_cfb128_mask_dec_kernel_mb16(loc_inp, loc_out, loc_len, p_rk, tmp_mask, STORED_CT);
 
     /* clear local copy of sensitive data */
-    zero_mb8((int64u(*)[8])TMP, sizeof(TMP) / sizeof(TMP[0]));
+    MB_FUNC_NAME(zero_)(TMP, sizeof(TMP));
     return status;
 }
 

@@ -204,7 +204,7 @@ static mbx_status sm2_ecdsa_sign_mb8(U64 sign_r[],
     MB_FUNC_NAME(ifma_tomont52_nsm2_)(sign_r, P_eph.X);
 
     /* clear ephemeral point (projective coords derived from the secret nonce) */
-    MB_FUNC_NAME(zero_)((int64u(*)[8]) & P_eph, sizeof(P_eph) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(&P_eph, sizeof(P_eph));
 
     MB_FUNC_NAME(ifma_tomont52_nsm2_)(msg_digest, msg_digest);
 
@@ -227,7 +227,7 @@ static mbx_status sm2_ecdsa_sign_mb8(U64 sign_r[],
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
 
-    MB_FUNC_NAME(zero_)((int64u(*)[8])tmp, sizeof(tmp) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(tmp, sizeof(tmp));
 
     /* s = ( (1 + da)^-(1) * (k - r*da) ) */
     MB_FUNC_NAME(ifma_tomont52_nsm2_)(tmp, (U64*)ones);
@@ -353,8 +353,8 @@ mbx_status internal_avx512_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])eph_skey, sizeof(eph_skey) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
+        MB_FUNC_NAME(zero_)(eph_skey, sizeof(eph_skey));
         return status;
     }
 
@@ -385,8 +385,8 @@ mbx_status internal_avx512_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])eph_skey, sizeof(eph_skey) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
+        MB_FUNC_NAME(zero_)(eph_skey, sizeof(eph_skey));
         return status;
     }
 
@@ -422,9 +422,9 @@ mbx_status internal_avx512_sm2_ecdsa_sign_mb8(int8u* pa_sign_r[8],
     status = sm2_ecdsa_sign_mb8(sign_r, sign_s, msg, scalar_eph_skey, eph_skey, reg_skey, status);
 
     /* clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalar_eph_skey, sizeof(scalar_eph_skey) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[8])eph_skey, sizeof(eph_skey) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalar_eph_skey, sizeof(scalar_eph_skey));
+    MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
+    MB_FUNC_NAME(zero_)(eph_skey, sizeof(eph_skey));
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;
@@ -559,8 +559,8 @@ mbx_status internal_avx512_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])eph_skey, sizeof(eph_skey) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
+        MB_FUNC_NAME(zero_)(eph_skey, sizeof(eph_skey));
         return status;
     }
 
@@ -597,8 +597,8 @@ mbx_status internal_avx512_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
 
     if (!MBX_IS_ANY_OK_STS(status)) {
         /* clear copy of the secret keys */
-        MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
-        MB_FUNC_NAME(zero_)((int64u(*)[8])eph_skey, sizeof(eph_skey) / sizeof(U64));
+        MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
+        MB_FUNC_NAME(zero_)(eph_skey, sizeof(eph_skey));
         return status;
     }
 
@@ -637,9 +637,9 @@ mbx_status internal_avx512_sm2_ecdsa_sign_ssl_mb8(int8u* pa_sign_r[8],
     status = sm2_ecdsa_sign_mb8(sign_r, sign_s, msg, scalar_eph_skey, eph_skey, reg_skey, status);
 
     /* clear copy of the secret keys */
-    MB_FUNC_NAME(zero_)((int64u(*)[8])scalar_eph_skey, sizeof(scalar_eph_skey) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[8])reg_skey, sizeof(reg_skey) / sizeof(U64));
-    MB_FUNC_NAME(zero_)((int64u(*)[8])eph_skey, sizeof(eph_skey) / sizeof(U64));
+    MB_FUNC_NAME(zero_)(scalar_eph_skey, sizeof(scalar_eph_skey));
+    MB_FUNC_NAME(zero_)(reg_skey, sizeof(reg_skey));
+    MB_FUNC_NAME(zero_)(eph_skey, sizeof(eph_skey));
 
     if (!MBX_IS_ANY_OK_STS(status))
         return status;

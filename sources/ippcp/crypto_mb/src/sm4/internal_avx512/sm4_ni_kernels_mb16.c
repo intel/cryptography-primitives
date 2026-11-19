@@ -97,7 +97,7 @@ static void sm4_ni_repack_keys(__m512i round_keys[SM4_NI_GROUPS][SM4_NI_KEY_STEP
         }
     }
 
-    zero_mb8((int64u(*)[8])lanes, 1);
+    MB_FUNC_NAME(zero_)(lanes, sizeof(lanes));
 }
 
 /*
@@ -351,7 +351,7 @@ mbx_status16 sm4_ni_ecb_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(__m512i));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
     /* Tail: the lines have run ragged, so fall back to one block per line per pass
@@ -382,10 +382,10 @@ mbx_status16 sm4_ni_ecb_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
 
     return status;
 }
@@ -465,11 +465,11 @@ mbx_status16 sm4_ni_cbc_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])chain, sizeof(chain) / sizeof(chain[0]));
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
+    MB_FUNC_NAME(zero_)(chain, sizeof(chain));
 
     return status;
 }
@@ -540,11 +540,11 @@ mbx_status16 sm4_ni_cfb128_enc_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])chain, sizeof(chain) / sizeof(chain[0]));
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
+    MB_FUNC_NAME(zero_)(chain, sizeof(chain));
 
     return status;
 }
@@ -616,7 +616,7 @@ void sm4_ni_cbc_mac_kernel_mb16(__m128i pa_out[SM4_LINES],
                     loc_inp[4 * group + lane] += SM4_BLOCK_SIZE;
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
     /* the tag is the final chain value */
@@ -637,8 +637,8 @@ void sm4_ni_cbc_mac_kernel_mb16(__m128i pa_out[SM4_LINES],
                               _mm512_extracti64x2_epi64(chain[group], 3));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])chain, sizeof(chain) / sizeof(chain[0]));
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
+    MB_FUNC_NAME(zero_)(chain, sizeof(chain));
 }
 
 /*
@@ -733,8 +733,8 @@ static mbx_status16 sm4_ni_chained_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(__m512i));
-        zero_mb8((int64u(*)[8])cipher_text, sizeof(cipher_text) / sizeof(__m512i));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
+        MB_FUNC_NAME(zero_)(cipher_text, sizeof(cipher_text));
     }
 
     /* tail: one block per line, masking the lines that are already done */
@@ -779,12 +779,12 @@ static mbx_status16 sm4_ni_chained_dec_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
-        zero_mb8((int64u(*)[8])cipher_text, sizeof(cipher_text) / sizeof(cipher_text[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
+        MB_FUNC_NAME(zero_)(cipher_text, sizeof(cipher_text));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])chain, sizeof(chain) / sizeof(chain[0]));
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
+    MB_FUNC_NAME(zero_)(chain, sizeof(chain));
 
     return status;
 }
@@ -857,7 +857,7 @@ __MBX_INLINE void sm4_ni_xor_store_partial(__m512i keystream,
         _mm_mask_storeu_epi8(out[lane] + offset, byte_mask, _mm_xor_si128(k, pt));
     }
 
-    zero_mb8((int64u(*)[8])ks, sizeof(ks) / sizeof(int64u) / 8);
+    MB_FUNC_NAME(zero_)(ks, sizeof(ks));
 }
 
 /* GCM counter step: a 32-bit add on bytes 0..3 of each lane, wrapping there without
@@ -950,7 +950,7 @@ mbx_status16 sm4_ni_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(__m512i));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
     /* tail: one block per line, byte-granular so a partial final block is handled */
@@ -983,7 +983,7 @@ mbx_status16 sm4_ni_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
     /* Write the counters back, advanced by the number of blocks consumed. Derived from the
@@ -999,8 +999,8 @@ mbx_status16 sm4_ni_ctr128_kernel_mb16(int8u* pa_out[SM4_LINES],
         _mm_storeu_si128((__m128i*)pa_ctr[buf_no], _mm_shuffle_epi8(c, endian));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])ctr, sizeof(ctr) / sizeof(ctr[0]));
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
+    MB_FUNC_NAME(zero_)(ctr, sizeof(ctr));
 
     return status;
 }
@@ -1074,11 +1074,11 @@ mbx_status16 sm4_ni_ofb_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])chain, sizeof(chain) / sizeof(chain[0]));
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
+    MB_FUNC_NAME(zero_)(chain, sizeof(chain));
 
     return status;
 }
@@ -1146,7 +1146,7 @@ mbx_status16 sm4_ni_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
                                 pa_ctr[gcm_order[buf_no]]);
         }
         ctr[group] = _mm512_load_si512(packed);
-        zero_mb8((int64u(*)[8])packed, sizeof(packed) / sizeof(int64u) / 8);
+        MB_FUNC_NAME(zero_)(packed, sizeof(packed));
     }
 
     int block = 0;
@@ -1184,7 +1184,7 @@ mbx_status16 sm4_ni_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(__m512i));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
     /* tail: one block per line, byte-granular for a partial final block */
@@ -1217,7 +1217,7 @@ mbx_status16 sm4_ni_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
             }
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
     /* advance the stored counters by the number of blocks consumed, back into GCM order */
@@ -1229,8 +1229,8 @@ mbx_status16 sm4_ni_gctr_kernel_mb16(int8u* pa_out[SM4_LINES],
             _mm_add_epi32(pa_ctr[gcm_order[buf_no]], _mm_maskz_loadu_epi32(1, &num_blocks[buf_no]));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])ctr, sizeof(ctr) / sizeof(ctr[0]));
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
+    MB_FUNC_NAME(zero_)(ctr, sizeof(ctr));
 
     return status;
 }
@@ -1267,8 +1267,8 @@ static void sm4_ni_xts_encrypt_tweaks(__m512i tweak[SM4_NI_GROUPS],
     for (int group = 0; group < SM4_NI_GROUPS; group++)
         tweak[group] = _mm512_shuffle_epi8(z[group], _mm512_load_si512(sm4_ni_shuf_out));
 
-    zero_mb8((int64u(*)[8])tweak_keys, sizeof(tweak_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+    MB_FUNC_NAME(zero_)(tweak_keys, sizeof(tweak_keys));
+    MB_FUNC_NAME(zero_)(z, sizeof(z));
 }
 
 __MBX_INLINE int sm4_ni_xts_has_partial(const int partial[SM4_LINES])
@@ -1322,7 +1322,7 @@ __MBX_INLINE __m512i sm4_ni_xts_build_stolen(const int8u* const input[SM4_NI_LAN
 
     const __m512i z = _mm512_load_si512(block);
 
-    zero_mb8((int64u(*)[8])block, sizeof(block) / sizeof(int64u) / 8);
+    MB_FUNC_NAME(zero_)(block, sizeof(block));
 
     return z;
 }
@@ -1458,10 +1458,10 @@ mbx_status16 sm4_ni_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
                         _mm_load_si128((const __m128i*)&cur_tweak[lane * SM4_BLOCK_SIZE]));
             }
 
-            zero_mb8((int64u(*)[8])cur_tweak, sizeof(cur_tweak) / sizeof(int64u) / 8);
+            MB_FUNC_NAME(zero_)(cur_tweak, sizeof(cur_tweak));
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
     }
 
     /*
@@ -1509,7 +1509,7 @@ mbx_status16 sm4_ni_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
                     _mm_store_si128((__m128i*)full_out[buf_no],
                                     _mm_load_si128((const __m128i*)&tmp[lane * SM4_BLOCK_SIZE]));
             }
-            zero_mb8((int64u(*)[8])tmp, sizeof(tmp) / sizeof(int64u) / 8);
+            MB_FUNC_NAME(zero_)(tmp, sizeof(tmp));
         }
 
         for (int group = 0; group < SM4_NI_GROUPS; group++)
@@ -1537,19 +1537,19 @@ mbx_status16 sm4_ni_xts_kernel_mb16(int8u* pa_out[SM4_LINES],
                                      rem_mask,
                                      _mm_load_si128((const __m128i*)full_out[buf_no]));
             }
-            zero_mb8((int64u(*)[8])tmp, sizeof(tmp) / sizeof(int64u) / 8);
+            MB_FUNC_NAME(zero_)(tmp, sizeof(tmp));
         }
 
-        zero_mb8((int64u(*)[8])z, sizeof(z) / sizeof(z[0]));
-        zero_mb8((int64u(*)[8])packed_full, sizeof(packed_full) / sizeof(packed_full[0]));
-        zero_mb8((int64u(*)[8])packed_steal, sizeof(packed_steal) / sizeof(packed_steal[0]));
-        zero_mb8((int64u(*)[8])full_out, sizeof(full_out) / sizeof(int64u) / 8);
+        MB_FUNC_NAME(zero_)(z, sizeof(z));
+        MB_FUNC_NAME(zero_)(packed_full, sizeof(packed_full));
+        MB_FUNC_NAME(zero_)(packed_steal, sizeof(packed_steal));
+        MB_FUNC_NAME(zero_)(full_out, sizeof(full_out));
     }
 
-    zero_mb8((int64u(*)[8])round_keys, sizeof(round_keys) / sizeof(__m512i));
-    zero_mb8((int64u(*)[8])tweak, sizeof(tweak) / sizeof(tweak[0]));
-    zero_mb8((int64u(*)[8])tweak_last, sizeof(tweak_last) / sizeof(int64u) / 8);
-    zero_mb8((int64u(*)[8])tweak_steal, sizeof(tweak_steal) / sizeof(int64u) / 8);
+    MB_FUNC_NAME(zero_)(round_keys, sizeof(round_keys));
+    MB_FUNC_NAME(zero_)(tweak, sizeof(tweak));
+    MB_FUNC_NAME(zero_)(tweak_last, sizeof(tweak_last));
+    MB_FUNC_NAME(zero_)(tweak_steal, sizeof(tweak_steal));
 
     return status;
 }
