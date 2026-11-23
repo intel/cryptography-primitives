@@ -71,25 +71,34 @@ IPP_OWN_DEFN(void, cpComputeDigest, (Ipp8u * pHashTag, int hashTagLen, const Ipp
 
         if (msgLenRepSize > (int)(sizeof(Ipp64u))) {
 #if (IPP_ENDIAN == IPP_BIG_ENDIAN)
-            ((Ipp64u*)(buffer + bufferLen))[-2] = hi;
+            const Ipp64u lenHiRep = hi;
 #else
-            ((Ipp64u*)(buffer + bufferLen))[-2] = ENDIANNESS64(hi);
+            const Ipp64u lenHiRep = ENDIANNESS64(hi);
 #endif
+            CopyBlock(&lenHiRep,
+                      buffer + bufferLen - 2 * (int)sizeof(Ipp64u),
+                      (cpSize)sizeof(Ipp64u));
         }
 
-        /* recall about MD5 specific */
-        if (ippHashAlg_MD5 != HASH_ALG_ID(pCtx)) {
+        {
+            Ipp64u lenLoRep;
+            /* recall about MD5 specific */
+            if (ippHashAlg_MD5 != HASH_ALG_ID(pCtx)) {
 #if (IPP_ENDIAN == IPP_BIG_ENDIAN)
-            ((Ipp64u*)(buffer + bufferLen))[-1] = lo;
+                lenLoRep = lo;
 #else
-            ((Ipp64u*)(buffer + bufferLen))[-1] = ENDIANNESS64(lo);
+                lenLoRep = ENDIANNESS64(lo);
 #endif
-        } else {
+            } else {
 #if (IPP_ENDIAN == IPP_BIG_ENDIAN)
-            ((Ipp64u*)(buffer + bufferLen))[-1] = ENDIANNESS64(lo);
+                lenLoRep = ENDIANNESS64(lo);
 #else
-            ((Ipp64u*)(buffer + bufferLen))[-1] = lo;
+                lenLoRep = lo;
 #endif
+            }
+            CopyBlock(&lenLoRep,
+                      buffer + bufferLen - 1 * (int)sizeof(Ipp64u),
+                      (cpSize)sizeof(Ipp64u));
         }
     }
 

@@ -107,7 +107,7 @@ IPPFUN(IppStatus, ippsHashMessage, (const Ipp8u* pMsg, int len, Ipp8u* pMD, IppH
         /* copy message bitlength representation */
         if (ippHashAlg_MD5 != hashAlg)
             msgLenBits = ENDIANNESS64(msgLenBits);
-        ((Ipp64u*)(buffer + bufferLen))[-1] = msgLenBits;
+        CopyBlock(&msgLenBits, buffer + bufferLen - (int)MSG_LEN_REP, (cpSize)MSG_LEN_REP);
 
 #undef MSG_LEN_REP
 

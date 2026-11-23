@@ -88,7 +88,7 @@ IPP_OWN_DEFN(static void, md5_msgRep, (Ipp8u * pDst, Ipp64u lenLo, Ipp64u lenHi)
 {
     IPP_UNREFERENCED_PARAMETER(lenHi);
     lenLo <<= 3;
-    ((Ipp64u*)(pDst))[0] = lenLo;
+    CopyBlock(&lenLo, pDst, (cpSize)sizeof(Ipp64u));
 }
 
 #define cpFinalizeMD5 OWNAPI(cpFinalizeMD5)

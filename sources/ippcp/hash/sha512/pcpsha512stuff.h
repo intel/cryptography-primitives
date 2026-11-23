@@ -231,10 +231,10 @@ IPP_OWN_DEFN(static void, sha512_224_hashOctString, (Ipp8u* pMD,
 
 IPP_OWN_DEFN(static void, sha512_msgRep, (Ipp8u * pDst, Ipp64u lenLo, Ipp64u lenHi))
 {
-    lenHi                = LSL64(lenHi, 3) | LSR64(lenLo, 63 - 3);
-    lenLo                = LSL64(lenLo, 3);
-    ((Ipp64u*)(pDst))[0] = ENDIANNESS64(lenHi);
-    ((Ipp64u*)(pDst))[1] = ENDIANNESS64(lenLo);
+    lenHi = ENDIANNESS64(LSL64(lenHi, 3) | LSR64(lenLo, 63 - 3));
+    lenLo = ENDIANNESS64(LSL64(lenLo, 3));
+    CopyBlock(&lenHi, pDst, (cpSize)sizeof(Ipp64u));
+    CopyBlock(&lenLo, pDst + sizeof(Ipp64u), (cpSize)sizeof(Ipp64u));
 }
 
 IPP_OWN_DEFN(static IppStatus, GetSizeSHA512, (int* pSize))

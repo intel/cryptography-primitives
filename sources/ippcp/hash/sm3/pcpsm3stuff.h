@@ -102,8 +102,8 @@ IPP_OWN_DEFN(static void, sm3_hashOctString, (Ipp8u * pMD, void* pHashVal, const
 IPP_OWN_DEFN(static void, sm3_msgRep, (Ipp8u * pDst, Ipp64u lenLo, Ipp64u lenHi))
 {
     IPP_UNREFERENCED_PARAMETER(lenHi);
-    lenLo                = ENDIANNESS64(lenLo << 3);
-    ((Ipp64u*)(pDst))[0] = lenLo;
+    lenLo = ENDIANNESS64(lenLo << 3);
+    CopyBlock(&lenLo, pDst, (cpSize)sizeof(Ipp64u));
 }
 
 #define cpFinalizeSM3 OWNAPI(cpFinalizeSM3)
