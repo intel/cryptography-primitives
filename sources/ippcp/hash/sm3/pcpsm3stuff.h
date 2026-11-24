@@ -106,11 +106,4 @@ IPP_OWN_DEFN(static void, sm3_msgRep, (Ipp8u * pDst, Ipp64u lenLo, Ipp64u lenHi)
     CopyBlock(&lenLo, pDst, (cpSize)sizeof(Ipp64u));
 }
 
-#define cpFinalizeSM3 OWNAPI(cpFinalizeSM3)
-/* clang-format off */
-IPP_OWN_DECL(void, cpFinalizeSM3, (DigestSHA1 pHash,
-                                   const Ipp8u* inpBuffer,
-                                   int inpLen,
-                                   Ipp64u processedMsgLen))
-/* clang-format on */
 #endif /* #if !defined _PCP_SM3_STUFF_H */

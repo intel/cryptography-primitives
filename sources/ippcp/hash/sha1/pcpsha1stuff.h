@@ -92,11 +92,4 @@ IPP_OWN_DEFN(static void, sha1_msgRep, (Ipp8u * pDst, Ipp64u lenLo, Ipp64u lenHi
     CopyBlock(&lenLo, pDst, (cpSize)sizeof(Ipp64u));
 }
 
-#define cpFinalizeSHA1 OWNAPI(cpFinalizeSHA1)
-/* clang-format off */
-IPP_OWN_DECL(void, cpFinalizeSHA1, (DigestSHA1 pHash,
-                                    const Ipp8u* inpBuffer,
-                                    int inpLen,
-                                    Ipp64u processedMsgLen))
-/* clang-format on */
 #endif /* #if !defined(_CP_HASH_SHA1) */

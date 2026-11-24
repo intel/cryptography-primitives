@@ -176,11 +176,4 @@ IPP_OWN_DECL(IppStatus, cpSHA256MessageDigest, (DigestSHA256 hash,
                                                 int msgLen,
                                                 const DigestSHA256 IV))
 /* clang-format on */
-#define cpFinalizeSHA256 OWNAPI(cpFinalizeSHA256)
-/* clang-format off */
-IPP_OWN_DECL(void, cpFinalizeSHA256, (DigestSHA256 pHash,
-                                      const Ipp8u* inpBuffer,
-                                      int inpLen,
-                                      Ipp64u processedMsgLen))
-/* clang-format on */
 #endif /* #if !defined(_PCP_SHA256_STUFF_H) */

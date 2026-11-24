@@ -245,8 +245,6 @@ IPP_OWN_DEFN(static IppStatus, GetSizeSHA512, (int* pSize))
     return ippStsNoErr;
 }
 
-/* #define cpFinalizeSHA512 OWNAPI(cpFinalizeSHA512) */
-/* IPP_OWN_DECL (void, cpFinalizeSHA512, (DigestSHA512 pHash, const Ipp8u* inpBuffer, int inpLen, Ipp64u lenLo, Ipp64u lenHi)) */
 #define cpSHA512MessageDigest OWNAPI(cpSHA512MessageDigest)
 /* clang-format off */
 IPP_OWN_DECL(IppStatus, cpSHA512MessageDigest, (DigestSHA512 hash,
@@ -256,34 +254,5 @@ IPP_OWN_DECL(IppStatus, cpSHA512MessageDigest, (DigestSHA512 hash,
 /* clang-format on */
 #define InitSHA512 OWNAPI(InitSHA512)
 IPP_OWN_DECL(IppStatus, InitSHA512, (IppsSHA512State * pState, const DigestSHA512 IV))
-
-/* clang-format off */
-IPP_OWN_DEFN(static void, cpFinalizeSHA512, (DigestSHA512 pHash,
-                                             const Ipp8u* inpBuffer,
-                                             int inpLen,
-                                             Ipp64u lenLo,
-                                             Ipp64u lenHi))
-/* clang-format on */
-{
-    /* local buffer and it length */
-    Ipp8u buffer[MBS_SHA512 * 2];
-    int bufferLen = inpLen < (MBS_SHA512 - (int)MLR_SHA512) ? MBS_SHA512 : MBS_SHA512 * 2;
-
-    /* copy rest of message into internal buffer */
-    CopyBlock(inpBuffer, buffer, inpLen);
-
-    /* pad message */
-    buffer[inpLen++] = 0x80;
-    PadBlock(0, buffer + inpLen, (cpSize)(bufferLen - inpLen - (int)MLR_SHA512));
-
-    /* message length representation */
-    lenHi                               = LSL64(lenHi, 3) | LSR64(lenLo, 63 - 3);
-    lenLo                               = LSL64(lenLo, 3);
-    ((Ipp64u*)(buffer + bufferLen))[-2] = ENDIANNESS64(lenHi);
-    ((Ipp64u*)(buffer + bufferLen))[-1] = ENDIANNESS64(lenLo);
-
-    /* complete hash computation */
-    UpdateSHA512(pHash, buffer, bufferLen, sha512_cnt);
-}
 
 #endif /* #if !defined(_PCP_SHA512_STUFF_H) */
